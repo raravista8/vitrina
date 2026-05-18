@@ -1,0 +1,12 @@
+# T0.1 placeholder. T0.3 will land the production-shaped compose with
+# explicit `internal_network` and isolated `parser_network` (no route to
+# Postgres/Redis from parser-worker) per ADR-0002 + SECURITY.md T3.3, T5.4.
+
+# Intentionally non-functional in T0.1 — running `make dev` before T0.3 will
+# fail by design.
+version: "3.9"
+
+services:
+  placeholder:
+    image: busybox:1.36
+    command: ["sh", "-c", "echo 'T0.3 will replace this compose file' && sleep 1"]

@@ -1,0 +1,5 @@
+# T0.1 placeholder for local-only overrides (volume mounts, hot reload).
+# T0.3 will fill this in.
+version: "3.9"
+
+services: {}

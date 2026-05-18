@@ -1,0 +1,85 @@
+"""Application configuration.
+
+Pydantic Settings, fail-fast: the process refuses to start if a required
+secret is missing in production. See `docs/ARCHITECTURE.md` §11.
+
+T0.1 covers the minimum surface needed for `app.main` to import. Subsequent
+tasks expand this with per-domain config blocks (auth, leads, parsers, etc).
+"""
+
+from __future__ import annotations
+
+from enum import StrEnum
+from functools import lru_cache
+from typing import Self
+
+from pydantic import Field, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Environment(StrEnum):
+    development = "development"
+    staging = "staging"
+    production = "production"
+
+
+class LogLevel(StrEnum):
+    DEBUG = "DEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+    )
+
+    # ---- Core --------------------------------------------------------------
+    environment: Environment = Environment.development
+    debug: bool = True
+    log_level: LogLevel = LogLevel.INFO
+    app_base_url: str = "http://localhost:8000"
+    landing_base_url: str = "http://localhost:3000"
+    sites_base_domain: str = "vitrina.site"
+
+    # ---- Datastores --------------------------------------------------------
+    database_url: str = "postgresql+asyncpg://vitrina_app:change_me_in_prod@postgres:5432/vitrina"
+    alembic_database_url: str = (
+        "postgresql+psycopg://vitrina_app:change_me_in_prod@postgres:5432/vitrina"
+    )
+    redis_url: str = "redis://redis:6379/0"
+
+    # ---- Sentry ------------------------------------------------------------
+    sentry_dsn: str | None = None
+    sentry_environment: str = "development"
+    sentry_traces_sample_rate: float = Field(default=0.1, ge=0.0, le=1.0)
+
+    # ---- Rate limits -------------------------------------------------------
+    rate_limit_applications_per_ip_per_hour: int = 3
+    rate_limit_leads_per_ip_per_hour: int = 3
+    rate_limit_leads_per_ip_per_day: int = 10
+    rate_limit_preview_per_ip_per_min: int = 10
+
+    # ---- Feature flags -----------------------------------------------------
+    feature_max_bot: bool = False
+    feature_auto_sync: bool = False
+
+    @model_validator(mode="after")
+    def _validate_production(self) -> Self:
+        if self.environment is Environment.production:
+            if self.debug:
+                raise ValueError("DEBUG must be false in production")
+            if self.log_level is LogLevel.DEBUG:
+                raise ValueError("LOG_LEVEL=DEBUG is forbidden in production")
+        return self
+
+
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    """Singleton accessor. Tests can clear via `get_settings.cache_clear()`."""
+    return Settings()

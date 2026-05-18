@@ -1,0 +1,16 @@
+{# T0.1 placeholder. T2.5 will replace with the production template
+   (hero, gallery, about, services, contact + Schema.org JSON-LD, CSP,
+   sitemap link, OG tags). Jinja autoescape stays ON globally;
+   `{{ x | safe }}` is forbidden by lint. #}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ site.title | default("Vitrina") }}</title>
+  </head>
+  <body>
+    <h1>{{ site.title | default("Vitrina — sites-template placeholder") }}</h1>
+    <p>This template will be implemented in T2.5.</p>
+  </body>
+</html>

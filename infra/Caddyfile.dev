@@ -1,0 +1,11 @@
+# T0.1 placeholder. Local-only Caddy with self-signed cert; T2.4 will wire it
+# to the api and landing containers.
+
+{
+    auto_https off
+}
+
+localhost:8443 {
+    tls internal
+    respond "Vitrina dev Caddy — T2.4 will wire upstreams" 200
+}
