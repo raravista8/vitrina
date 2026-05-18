@@ -1,0 +1,6 @@
+# T0.1 placeholder. T2.4 will land the production Caddyfile:
+#  - wildcard SSL for *.vitrina.site via Let's Encrypt DNS-01 (Selectel DNS API)
+#  - HSTS preload, security headers (CSP, X-Frame-Options, etc — per SECURITY.md A02)
+#  - reverse-proxy to api over UNIX socket (mitigates threat T2.1)
+#
+# Until then, do not deploy this file.
