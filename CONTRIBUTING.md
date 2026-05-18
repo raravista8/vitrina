@@ -74,14 +74,17 @@ nvm install 20 && nvm use 20
 # 4. Install deps
 make install
 
-# 5. Setup env
+# 5. Install git hooks (one-time per clone)
+cd backend && poetry run pre-commit install && cd ..
+
+# 6. Setup env
 cp .env.example .env  # then edit secrets
 op signin  # 1Password CLI
 
-# 6. Start everything
+# 7. Start everything
 make dev  # docker compose up -d
 
-# 7. Run migrations
+# 8. Run migrations
 make migrate
 
 # 8. Seed test admin

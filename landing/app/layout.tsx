@@ -8,11 +8,7 @@ export const metadata: Metadata = {
     "Сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram, Яндекс.Карты, фото) и сам обновляет его каждую неделю.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
       <body className="min-h-screen bg-white text-neutral-900 antialiased">{children}</body>

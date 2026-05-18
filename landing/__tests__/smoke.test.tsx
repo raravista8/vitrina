@@ -6,8 +6,6 @@ import HomePage from "@/app/page";
 describe("scaffolding smoke", () => {
   it("renders the canonical H1 placeholder", () => {
     render(<HomePage />);
-    expect(
-      screen.getByRole("heading", { level: 1, name: /сам себя ведёт/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /сам себя ведёт/i })).toBeInTheDocument();
   });
 });

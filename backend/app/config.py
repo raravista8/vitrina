@@ -48,10 +48,12 @@ class Settings(BaseSettings):
     sites_base_domain: str = "vitrina.site"
 
     # ---- Datastores --------------------------------------------------------
-    database_url: str = "postgresql+asyncpg://vitrina_app:change_me_in_prod@postgres:5432/vitrina"
-    alembic_database_url: str = (
-        "postgresql+psycopg://vitrina_app:change_me_in_prod@postgres:5432/vitrina"
-    )
+    # Defaults assume a local Postgres with peer/trust auth (no password) —
+    # suitable for `poetry run uvicorn` on the host without docker-compose.
+    # docker-compose and prod override DATABASE_URL / ALEMBIC_DATABASE_URL
+    # via env vars with the full Basic-Auth form (see .env.example).
+    database_url: str = "postgresql+asyncpg://localhost/vitrina"
+    alembic_database_url: str = "postgresql+psycopg://localhost/vitrina"
     redis_url: str = "redis://redis:6379/0"
 
     # ---- Sentry ------------------------------------------------------------
