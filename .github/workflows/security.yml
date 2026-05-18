@@ -1,0 +1,67 @@
+name: security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Nightly at 02:00 UTC (05:00 MSK) — catches new CVE advisories on locked deps.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ---- Backend SAST + SCA --------------------------------------------------
+
+  backend-bandit:
+    name: backend / bandit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-backend
+      - name: bandit -r app -ll
+        working-directory: backend
+        run: poetry run bandit -r app -ll -c pyproject.toml
+
+  backend-pip-audit:
+    name: backend / pip-audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-backend
+      - name: pip-audit --strict
+        working-directory: backend
+        run: poetry run pip-audit --strict
+
+  # ---- Landing SCA ---------------------------------------------------------
+
+  landing-npm-audit:
+    name: landing / npm audit (high+)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-landing
+      - name: npm audit --audit-level=high
+        working-directory: landing
+        run: npm audit --audit-level=high
+
+  # ---- Secret scanning -----------------------------------------------------
+
+  gitleaks:
+    name: secrets / gitleaks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so gitleaks can scan every commit (not just the diff).
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No paid GITLEAKS_LICENSE — action runs in OSS mode for public repos.

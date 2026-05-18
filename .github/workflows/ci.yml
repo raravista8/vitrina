@@ -1,0 +1,96 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Cancel in-flight PR runs when a new commit lands; keep main runs.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ---- Backend -------------------------------------------------------------
+
+  backend-lint:
+    name: backend / ruff
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-backend
+      - name: ruff check
+        working-directory: backend
+        run: poetry run ruff check
+      - name: ruff format --check
+        working-directory: backend
+        run: poetry run ruff format --check
+
+  backend-typecheck:
+    name: backend / mypy --strict
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-backend
+      - name: mypy --strict
+        working-directory: backend
+        run: poetry run mypy app
+
+  backend-test:
+    name: backend / pytest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-backend
+      - name: pytest (unit + integration + security)
+        working-directory: backend
+        run: poetry run pytest -m "not e2e and not slow"
+
+  # ---- Landing -------------------------------------------------------------
+
+  landing-lint:
+    name: landing / eslint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-landing
+      - working-directory: landing
+        run: npm run lint
+
+  landing-typecheck:
+    name: landing / tsc --noEmit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-landing
+      - working-directory: landing
+        run: npm run typecheck
+
+  landing-test:
+    name: landing / vitest
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-landing
+      - working-directory: landing
+        run: npm test
+
+  # ---- Infra ---------------------------------------------------------------
+
+  compose-validate:
+    name: infra / docker compose config
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Seed .env from example so compose substitution succeeds
+        run: cp .env.example .env
+      - name: Validate compose YAML (dev + prod profiles merged)
+        run: |
+          docker compose \
+            --env-file .env \
+            -f infra/docker-compose.yml \
+            -f infra/docker-compose.dev.yml \
+            config --quiet

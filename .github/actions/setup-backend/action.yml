@@ -1,0 +1,36 @@
+name: Setup backend
+description: >-
+  Install Python 3.12.7 + Poetry 1.8.3 + cached venv from backend/poetry.lock.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12.7"
+
+    - name: Install Poetry
+      shell: bash
+      run: |
+        pipx install "poetry==1.8.3"
+        poetry --version
+
+    - name: Configure Poetry (venv in project for caching)
+      shell: bash
+      working-directory: backend
+      run: |
+        poetry config virtualenvs.in-project true
+        poetry config virtualenvs.create true
+
+    - name: Cache backend venv
+      uses: actions/cache@v4
+      with:
+        path: backend/.venv
+        key: poetry-${{ runner.os }}-py3.12.7-${{ hashFiles('backend/poetry.lock') }}
+        restore-keys: |
+          poetry-${{ runner.os }}-py3.12.7-
+
+    - name: Install backend dependencies
+      shell: bash
+      working-directory: backend
+      run: poetry install --with dev --no-interaction --no-ansi
