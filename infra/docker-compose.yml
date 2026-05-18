@@ -1,12 +1,141 @@
-# T0.1 placeholder. T0.3 will land the production-shaped compose with
-# explicit `internal_network` and isolated `parser_network` (no route to
-# Postgres/Redis from parser-worker) per ADR-0002 + SECURITY.md T3.3, T5.4.
+# Vitrina — production-shape stack.
+# Per ADR-0002 (modular monolith) and SECURITY.md §2 boundaries:
+#   - postgres + redis isolated on `internal_net` (no host port exposure here;
+#     `docker-compose.dev.yml` opens them for local tooling)
+#   - parser-worker and content-worker live on `parser_net` only — they
+#     communicate with the queue (redis) but have NO route to postgres
+#   - api, sync-worker, tg-bot live on `internal_net` with DB access
+#
+# Run with:  make dev          (adds docker-compose.dev.yml overrides)
+# Or:        docker compose --env-file ../.env -f infra/docker-compose.yml up -d
+#
+# All container env comes from the repo-root `.env` (cp .env.example .env first).
 
-# Intentionally non-functional in T0.1 — running `make dev` before T0.3 will
-# fail by design.
-version: "3.9"
+x-build: &backend-build
+  context: ../backend
+  dockerfile: Dockerfile
+
+x-restart: &restart
+  restart: unless-stopped
+
+x-worker-hardening: &worker-hardening
+  cap_drop: [ALL]
+  security_opt:
+    - no-new-privileges:true
+  read_only: false  # workers need to write Playwright caches + tempfiles
 
 services:
-  placeholder:
-    image: busybox:1.36
-    command: ["sh", "-c", "echo 'T0.3 will replace this compose file' && sleep 1"]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vitrina}
+      POSTGRES_USER: ${POSTGRES_USER:-vitrina_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    networks: [internal_net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    <<: *restart
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis_data:/data
+    # Redis straddles both networks intentionally: it is the only bridge
+    # between the api and the isolated workers (see ARCHITECTURE.md §4
+    # "Communication summary" — workers ↔ API only via Redis-queues).
+    networks: [internal_net, parser_net]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    <<: *restart
+
+  api:
+    build: *backend-build
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    env_file: [../.env]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    networks: [internal_net]
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/healthz', timeout=2).status==200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    <<: *restart
+
+  parser-worker:
+    build: *backend-build
+    command: ["python", "-m", "app.workers.parser"]
+    env_file: [../.env]
+    depends_on:
+      redis: { condition: service_healthy }
+    # No internal_net — workers MUST NOT be able to reach postgres.
+    # Verification: `docker compose exec parser-worker nc -w2 postgres 5432`
+    # should fail (name not resolvable on parser_net).
+    networks: [parser_net]
+    <<: [*restart, *worker-hardening]
+
+  content-worker:
+    build: *backend-build
+    command: ["python", "-m", "app.workers.content"]
+    env_file: [../.env]
+    depends_on:
+      redis: { condition: service_healthy }
+    networks: [parser_net]
+    <<: [*restart, *worker-hardening]
+
+  sync-worker:
+    build: *backend-build
+    command: ["python", "-m", "app.workers.sync"]
+    env_file: [../.env]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    networks: [internal_net]
+    <<: *restart
+
+  tg-bot:
+    build: *backend-build
+    command: ["python", "-m", "app.bot.main"]
+    env_file: [../.env]
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [internal_net]
+    <<: *restart
+
+  landing:
+    build:
+      context: ../landing
+      dockerfile: Dockerfile
+    env_file: [../.env]
+    networks: [internal_net]
+    <<: *restart
+
+networks:
+  internal_net:
+    driver: bridge
+  parser_net:
+    driver: bridge
+    # `internal: false` because parser/content workers need outbound HTTPS
+    # to YandexGPT, YMaps Geosearch, Telegram, etc. The isolation is from
+    # postgres (which is on internal_net only), not from the internet.
+
+volumes:
+  postgres_data:
+  redis_data:
