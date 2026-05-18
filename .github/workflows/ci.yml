@@ -17,7 +17,7 @@ jobs:
   # ---- Backend -------------------------------------------------------------
 
   backend-lint:
-    name: backend / ruff
+    name: backend / ruff + import-linter
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +28,9 @@ jobs:
       - name: ruff format --check
         working-directory: backend
         run: poetry run ruff format --check
+      - name: import-linter (hexagonal + forbidden-imports contracts)
+        working-directory: backend
+        run: poetry run lint-imports
 
   backend-typecheck:
     name: backend / mypy --strict

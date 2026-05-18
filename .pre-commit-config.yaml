@@ -92,6 +92,13 @@ repos:
         entry: bash -c 'cd backend && poetry run bandit -r app -ll -c pyproject.toml'
         pass_filenames: false
 
+      - id: import-linter
+        name: import-linter (backend hexagonal + forbidden-imports contracts)
+        language: system
+        files: ^backend/(app|.importlinter).*
+        entry: bash -c 'cd backend && poetry run lint-imports'
+        pass_filenames: false
+
   # ---- Local Node hooks (landing) ------------------------------------------
   - repo: local
     hooks:

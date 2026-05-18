@@ -1,0 +1,78 @@
+; import-linter contracts — enforced via `lint-imports` (locally and in CI).
+; Read by `cd backend && poetry run lint-imports`.
+;
+; The contracts encode three locked-in decisions:
+;   1. Hexagonal core boundary  — ADR-0002
+;   2. YandexGPT-only for LLM   — ADR-0003 / CLAUDE.md hard rules
+;   3. No raw IG/TG scrapers    — ADR-0004 / ADR-0005 / CLAUDE.md hard rules
+;
+; Violating any of these is a security or architectural regression — the rule
+; lives here, not as a code comment, so it cannot be silently bypassed.
+
+[importlinter]
+root_package = app
+include_external_packages = True
+
+; ---- Contract 1: Hexagonal core --------------------------------------------
+; `app.core/*` is the pure-domain layer. It must depend only on:
+;   - stdlib + safe third-party libs (pydantic, cryptography, etc.)
+;   - other `app.core` submodules
+;   - `app.utils`  (logging, errors, security helpers — framework-agnostic)
+;
+; In particular it must NEVER import:
+;   - `app.infrastructure` (concrete DB/Redis/S3/YandexGPT/TG/MAX adapters)
+;   - `app.api`            (FastAPI routers, schemas, middleware)
+;   - `app.admin`          (Jinja2 admin views)
+;   - `app.workers`        (RQ entrypoints — wire infrastructure to core)
+;   - `app.bot`            (aiogram bot handlers)
+
+[importlinter:contract:hexagonal-core]
+name = core must not depend on infrastructure / api / admin / workers / bot
+type = forbidden
+source_modules =
+    app.core
+forbidden_modules =
+    app.infrastructure
+    app.api
+    app.admin
+    app.workers
+    app.bot
+
+; ---- Contract 2: LLM provider lockdown -------------------------------------
+; ADR-0003 fixes YandexGPT as the only LLM. CLAUDE.md hard rule forbids
+; openai / anthropic / google.generativeai under any circumstance (cross-border
+; transfer of PII to non-RF providers is prohibited by ФЗ-152).
+
+[importlinter:contract:no-llm-providers-except-yandex]
+name = Only YandexGPT permitted (ADR-0003); no other LLM SDKs
+type = forbidden
+source_modules =
+    app
+forbidden_modules =
+    openai
+    anthropic
+    cohere
+    langchain
+    langchain_core
+    llama_index
+    google
+; Note on `google`: import-linter does not accept subpackage paths
+; (`google.generativeai`) for external packages. We block the entire `google`
+; namespace; when a future task (e.g. T2.6 Google Search Console) needs
+; google-auth or googleapiclient, add explicit `ignore_imports` entries here.
+
+; ---- Contract 3: Scraper lockdown ------------------------------------------
+; ADR-0004: Instagram out of scope; no Graph API, no scraping libs.
+; ADR-0005: TG parsing only via Bot API + web-view + HTML export (never userbot).
+
+[importlinter:contract:no-prohibited-scrapers]
+name = No Instagram/Telegram raw-scraper libraries (ADR-0004, ADR-0005)
+type = forbidden
+source_modules =
+    app
+forbidden_modules =
+    telethon
+    pyrogram
+    instaloader
+    instagram_private_api
+    instagrapi
