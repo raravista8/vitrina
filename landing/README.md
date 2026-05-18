@@ -16,12 +16,12 @@ Or run the whole stack via `make dev` from repo root.
 
 ## Commands
 
-| npm script        | What it does                          |
-|-------------------|---------------------------------------|
-| `npm run dev`     | next dev on :3000                     |
-| `npm run build`   | next build (SSG where possible)       |
-| `npm run start`   | next start (production)               |
-| `npm run lint`    | eslint via next/core-web-vitals       |
-| `npm run typecheck` | tsc --noEmit                        |
-| `npm test`        | vitest run                            |
-| `npm run format`  | prettier --write                      |
+| npm script          | What it does                    |
+| ------------------- | ------------------------------- |
+| `npm run dev`       | next dev on :3000               |
+| `npm run build`     | next build (SSG where possible) |
+| `npm run start`     | next start (production)         |
+| `npm run lint`      | eslint via next/core-web-vitals |
+| `npm run typecheck` | tsc --noEmit                    |
+| `npm test`          | vitest run                      |
+| `npm run format`    | prettier --write                |

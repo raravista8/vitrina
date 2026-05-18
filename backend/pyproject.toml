@@ -144,6 +144,13 @@ ignore = [
 "tests/**/*.py" = ["S", "ARG", "N802", "N803"]
 "alembic/env.py" = ["S", "E402"]
 
+[tool.ruff.lint.isort]
+# `alembic/` is the migrations directory — ruff would otherwise auto-detect
+# it as a first-party package by name and reorder `from alembic import …`.
+# Force the library back into third-party.
+known-first-party = ["app"]
+known-third-party = ["alembic"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
