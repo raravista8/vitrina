@@ -98,7 +98,7 @@ security-check: security-backend security-landing security-secrets ## bandit + p
 .PHONY: security-backend
 security-backend:
 	cd $(BACKEND) && poetry run bandit -r app -ll -c pyproject.toml
-	cd $(BACKEND) && poetry run pip-audit --strict --disable-pip || (echo "pip-audit failed"; exit 1)
+	cd $(BACKEND) && poetry run pip-audit --strict
 
 .PHONY: security-landing
 security-landing:
