@@ -5,14 +5,9 @@ raised only at the API boundary. The API exception handler maps DomainError
 codes to HTTP responses.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import TypeAlias, TypeVar
 
 from result import Err, Ok, Result
-
-T = TypeVar("T")
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,7 +23,7 @@ class DomainError(Exception):
         return f"{self.code}: {self.message}" if self.message else self.code
 
 
-# Convenience alias: domain functions return `DomainResult[Foo]`.
-DomainResult: TypeAlias = Result[T, DomainError]
+# Convenience alias: domain functions return `DomainResult[Foo]` (PEP 695).
+type DomainResult[T] = Result[T, DomainError]
 
 __all__ = ["DomainError", "DomainResult", "Err", "Ok", "Result"]
