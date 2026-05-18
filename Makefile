@@ -85,6 +85,7 @@ lint: lint-backend lint-landing ## ruff + mypy (backend) + eslint (landing)
 lint-backend:
 	cd $(BACKEND) && poetry run ruff check app tests
 	cd $(BACKEND) && poetry run ruff format --check app tests
+	cd $(BACKEND) && poetry run lint-imports
 
 .PHONY: lint-landing
 lint-landing:
