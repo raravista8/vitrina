@@ -14,13 +14,14 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from app.infrastructure.postgres import Base
+
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# T1.1: replace None with `from app.infrastructure.postgres.models import Base; Base.metadata`
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def _get_url() -> str:
