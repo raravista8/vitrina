@@ -59,6 +59,8 @@ commits, PR template, troubleshooting).
 | `make lint`            | ruff (backend) + eslint (landing)         |
 | `make typecheck`       | mypy --strict + tsc --noEmit              |
 | `make security-check`  | bandit + pip-audit + npm audit + gitleaks |
+| `make hooks-install`   | install pre-commit + commit-msg hooks     |
+| `make hooks`           | run every pre-commit hook on every file   |
 | `make migrate`         | alembic upgrade head                      |
 
 ## Specification

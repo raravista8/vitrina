@@ -27,6 +27,18 @@ install-backend:
 install-landing:
 	cd $(LANDING) && npm install
 
+.PHONY: hooks-install
+hooks-install: ## Wire .pre-commit-config.yaml into .git/hooks (one-time per clone)
+	cd $(BACKEND) && poetry run pre-commit install
+
+.PHONY: hooks
+hooks: ## Run every pre-commit hook against every tracked file
+	cd $(BACKEND) && poetry run pre-commit run --all-files
+
+.PHONY: hooks-update
+hooks-update: ## Bump pre-commit hook revisions in .pre-commit-config.yaml
+	cd $(BACKEND) && poetry run pre-commit autoupdate
+
 # ---- Dev loop ----------------------------------------------------------------
 
 .PHONY: dev

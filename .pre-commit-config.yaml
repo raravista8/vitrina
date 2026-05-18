@@ -1,0 +1,111 @@
+# T0.2 — Vitrina pre-commit hooks.
+#
+# Install (once per clone):
+#   cd backend && poetry install --with dev
+#   poetry run pre-commit install
+#
+# `default_install_hook_types` registers both pre-commit and commit-msg
+# stages, so the single `pre-commit install` above wires up both. To run
+# every hook manually against the whole repo:
+#   poetry run pre-commit run --all-files
+
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  # ---- General hygiene -----------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+      - id: end-of-file-fixer
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]
+        # Generated lockfiles are large but tracked intentionally.
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # ---- Secret scanning (defence in depth, two independent scanners) --------
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.4
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|\.secrets\.baseline$
+
+  # ---- Conventional commits (commit-msg stage) -----------------------------
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, chore, docs, test, refactor, style, perf, build, ci]
+
+  # ---- Local Python hooks (single source of truth = poetry env) ------------
+  # All Python tooling runs through poetry so versions match pyproject.toml.
+  # `pass_filenames: false` is intentional: ruff/mypy/bandit are project-wide
+  # and benefit from caches; per-file invocation would be slower and break
+  # mypy's import resolution.
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check (backend)
+        language: system
+        files: ^backend/.+\.py$
+        entry: bash -c 'cd backend && poetry run ruff check'
+        pass_filenames: false
+
+      - id: ruff-format
+        name: ruff format --check (backend)
+        language: system
+        files: ^backend/.+\.py$
+        entry: bash -c 'cd backend && poetry run ruff format --check'
+        pass_filenames: false
+
+      - id: mypy
+        name: mypy --strict (backend)
+        language: system
+        files: ^backend/app/.+\.py$
+        entry: bash -c 'cd backend && poetry run mypy app'
+        pass_filenames: false
+
+      - id: bandit
+        name: bandit (backend)
+        language: system
+        files: ^backend/app/.+\.py$
+        entry: bash -c 'cd backend && poetry run bandit -r app -ll -c pyproject.toml'
+        pass_filenames: false
+
+  # ---- Local Node hooks (landing) ------------------------------------------
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint (landing)
+        language: system
+        files: ^landing/.+\.(ts|tsx|js|jsx|mjs)$
+        entry: bash -c 'cd landing && npx eslint --max-warnings 0 .'
+        pass_filenames: false
+
+      - id: prettier
+        name: prettier --check (landing)
+        language: system
+        files: ^landing/.+\.(ts|tsx|js|jsx|mjs|json|css|md|mdx|html)$
+        exclude: ^landing/package-lock\.json$
+        entry: bash -c 'cd landing && npx prettier --check .'
+        pass_filenames: false
