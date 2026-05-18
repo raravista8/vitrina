@@ -29,8 +29,12 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-vitrina}
-      POSTGRES_USER: ${POSTGRES_USER:-vitrina_app}
+      POSTGRES_USER: ${POSTGRES_USER:-vitrina_migrator}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+      # Passwords consumed by infra/postgres/init/01_roles.sh on first boot.
+      VITRINA_APP_PASSWORD: ${VITRINA_APP_PASSWORD:?VITRINA_APP_PASSWORD required}
+      VITRINA_READONLY_PASSWORD: ${VITRINA_READONLY_PASSWORD:?VITRINA_READONLY_PASSWORD required}
+      VITRINA_AUDIT_WRITER_PASSWORD: ${VITRINA_AUDIT_WRITER_PASSWORD:?VITRINA_AUDIT_WRITER_PASSWORD required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
