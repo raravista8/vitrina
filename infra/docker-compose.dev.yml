@@ -1,5 +1,79 @@
-# T0.1 placeholder for local-only overrides (volume mounts, hot reload).
-# T0.3 will fill this in.
-version: "3.9"
+# Local-dev overrides on top of docker-compose.yml.
+#
+# Differences vs prod-shape:
+#   - postgres/redis ports exposed to the host so you can connect with psql /
+#     redis-cli / your IDE
+#   - api exposes :8000 directly (no Caddy in dev — comes in T2.4)
+#   - landing runs `next dev` with the source bind-mounted for hot reload
+#   - backend code is bind-mounted so uvicorn --reload picks up changes
+#     without rebuilding the image
+#   - Playwright cache is bind-mounted across worker rebuilds
 
-services: {}
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  api:
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app/app
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ../backend/app:/app/app
+      - ../backend/alembic:/app/alembic
+      - ../backend/alembic.ini:/app/alembic.ini
+
+  parser-worker:
+    volumes:
+      - ../backend/app:/app/app
+      - playwright_cache:/home/vitrina/.cache/ms-playwright
+
+  content-worker:
+    volumes:
+      - ../backend/app:/app/app
+
+  sync-worker:
+    volumes:
+      - ../backend/app:/app/app
+
+  tg-bot:
+    volumes:
+      - ../backend/app:/app/app
+
+  landing:
+    build:
+      # `deps` stage = node_modules only, no `npm run build`. Source comes
+      # from the bind-mounts below so `next dev` hot-reloads.
+      target: deps
+    command: ["npm", "run", "dev"]
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ../landing/app:/app/app
+      - ../landing/components:/app/components
+      - ../landing/lib:/app/lib
+      - ../landing/content:/app/content
+      - ../landing/public:/app/public
+      - ../landing/eslint.config.mjs:/app/eslint.config.mjs
+      - ../landing/next.config.mjs:/app/next.config.mjs
+      - ../landing/tailwind.config.ts:/app/tailwind.config.ts
+      - ../landing/postcss.config.mjs:/app/postcss.config.mjs
+      - ../landing/tsconfig.json:/app/tsconfig.json
+      - landing_next:/app/.next
+
+volumes:
+  playwright_cache:
+  landing_next:

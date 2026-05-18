@@ -41,17 +41,40 @@ hooks-update: ## Bump pre-commit hook revisions in .pre-commit-config.yaml
 
 # ---- Dev loop ----------------------------------------------------------------
 
+DC := docker compose --env-file .env \
+	-f infra/docker-compose.yml \
+	-f infra/docker-compose.dev.yml
+
 .PHONY: dev
-dev: ## Bring up the local docker compose stack
-	docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml up -d --build
+dev: .env ## Bring up the local docker compose stack (postgres+redis+api+workers+bot+landing)
+	$(DC) up -d --build
 
 .PHONY: dev-down
 dev-down:
-	docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml down
+	$(DC) down
 
 .PHONY: dev-logs
 dev-logs:
-	docker compose -f infra/docker-compose.yml -f infra/docker-compose.dev.yml logs -f
+	$(DC) logs -f
+
+.PHONY: dev-ps
+dev-ps:
+	$(DC) ps
+
+.PHONY: dev-verify-isolation
+dev-verify-isolation: ## Confirm parser-worker can NOT reach postgres (SECURITY.md T5.4)
+	@echo "Expected: parser-worker fails to resolve/connect to postgres:5432"
+	@! $(DC) exec -T parser-worker python -c "import socket; socket.create_connection(('postgres', 5432), timeout=2)" 2>&1 \
+		|| (echo "FAIL: parser-worker reached postgres — network isolation broken"; exit 1)
+	@echo "OK: parser-worker is isolated from postgres"
+
+# Auto-create .env from .env.example so the first `make dev` doesn't fail
+# on missing substitution variables. User MUST edit secrets before going to prod.
+.env:
+	@if [ ! -f .env ]; then \
+		echo ">>> Creating .env from .env.example (edit secrets before production!)"; \
+		cp .env.example .env; \
+	fi
 
 # ---- Quality gates -----------------------------------------------------------
 
