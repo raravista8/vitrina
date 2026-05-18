@@ -1,20 +1,14 @@
-// ESLint 9 flat config. Next 16 deprecated `next lint`; we now invoke
-// `eslint .` directly via the `lint` script. The FlatCompat shim lets us
-// pull in `eslint-config-next`, which still ships legacy config presets.
+// ESLint 9 flat config. Next 16's eslint-config-next ships native flat
+// configs via subpath exports; FlatCompat is not required (and conflicts
+// with how `@next/eslint-plugin-next` registers plugins).
 
-import { FlatCompat } from "@eslint/eslintrc";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
-});
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 
 export default [
   {
     ignores: [".next/**", "node_modules/**", "out/**", "dist/**", "coverage/**"],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
   {
     rules: {
       "react/no-unescaped-entities": "off",
