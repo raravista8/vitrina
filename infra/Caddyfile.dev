@@ -1,11 +1,54 @@
-# T0.1 placeholder. Local-only Caddy with self-signed cert; T2.4 will wire it
-# to the api and landing containers.
-
+# Vitrina dev Caddyfile (T2.4).
+#
+# Mirrors the production routing but uses Caddy's `tls internal` so no ACME
+# / DNS API tokens are required for local work. The dev cert is signed by
+# Caddy's own local CA — `caddy trust` (one-time) installs it as a trusted
+# root on the host, after which https://localhost works in browsers
+# without a warning.
+#
+# NO HSTS here — HSTS on localhost would poison developer browsers across
+# every project.
 {
-    auto_https off
+	# auto_https on by default — Caddy generates a local cert on first
+	# request.  Don't try to talk to Let's Encrypt; pin tls internal.
+	local_certs
+	storage file_system {
+		root /data/caddy
+	}
 }
 
-localhost:8443 {
-    tls internal
-    respond "Vitrina dev Caddy — T2.4 will wire upstreams" 200
+localhost {
+	tls internal
+
+	@api path /api/*
+	handle @api {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		reverse_proxy landing:3000 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+}
+
+# Wildcard testing — `*.localhost` resolves to 127.0.0.1 in most browsers.
+# Useful for trying the customer-site routing locally.
+*.localhost {
+	tls internal
+
+	@api path /api/*
+	handle @api {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+		}
+	}
+
+	handle {
+		# Local dev doesn't have an Object Storage upstream — serve a tiny
+		# placeholder so the routing is testable end-to-end.
+		respond "Dev placeholder for {host} — production fronts Object Storage" 200
+	}
 }

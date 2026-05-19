@@ -3,7 +3,9 @@
 # Differences vs prod-shape:
 #   - postgres/redis ports exposed to the host so you can connect with psql /
 #     redis-cli / your IDE
-#   - api exposes :8000 directly (no Caddy in dev — comes in T2.4)
+#   - api exposes :8000 directly (handy for curling without Caddy in the way)
+#   - caddy uses Caddyfile.dev with `tls internal` — no ACME / Selectel
+#     tokens required; `caddy trust` once on the host installs the local CA
 #   - landing runs `next dev` with the source bind-mounted for hot reload
 #   - backend code is bind-mounted so uvicorn --reload picks up changes
 #     without rebuilding the image
@@ -52,6 +54,30 @@ services:
   tg-bot:
     volumes:
       - ../backend/app:/app/app
+
+  caddy:
+    # Dev uses `tls internal` (Caddy local CA), so no shared cert volume
+    # is needed and no acme sidecar runs (see profiles below).
+    volumes: !override
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      STATIC_ORIGIN_URL: http://localhost
+      STATIC_ORIGIN_HOST: localhost
+    # Replace prod's :80/:443 host-binds with bound-to-localhost ports so
+    # `make dev` doesn't require root and won't conflict with other local
+    # services already on :80/:443.
+    ports: !override
+      - "127.0.0.1:8443:443"
+      - "127.0.0.1:8080:80"
+
+  # `make dev` doesn't start the acme sidecar — local Caddy uses `tls
+  # internal` so there's no cert to fetch. The compose `profiles` key
+  # gates the service behind an explicit opt-in: `docker compose
+  # --profile prod up acme`.
+  acme:
+    profiles: ["prod"]
 
   landing:
     build:
