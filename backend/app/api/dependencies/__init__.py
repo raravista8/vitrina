@@ -55,6 +55,21 @@ def _build_application_rate_limiter() -> RateLimiter:
 application_rate_limiter = _build_application_rate_limiter()
 
 
+def _build_feedback_rate_limiter() -> RateLimiter:
+    """Feedback endpoint: same 3/h/IP as applications. Feedback is an
+    abuse target too (free-text → searchable in admin), so we keep the
+    same budget rather than relaxing it."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_applications_per_ip_per_hour,
+        window_seconds=3600,
+        scope="feedback",
+    )
+
+
+feedback_rate_limiter = _build_feedback_rate_limiter()
+
+
 def get_captcha_verifier() -> CaptchaVerifier:
     """Module-singleton-ish factory. Tests override via
     ``app.dependency_overrides[get_captcha_verifier] = lambda: <fake>``."""

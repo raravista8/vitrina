@@ -3,13 +3,16 @@
 /**
  * Inline waitlist-capture for sources we don't parse in MVP (ADR-0009).
  *
- * Submits to /api/feedback with `type=source_request`, `source_name=<canonical>`
- * — endpoint lands in T1.7. For T1.4 we POST to the same path; on a 404 we
- * fall back to a "thanks" message regardless so QA can verify the UI flow.
+ * Submits to /api/feedback (live since T1.7) with type=source_request +
+ * source_name + source_url + email + captcha_token + consent_given=true.
+ * Consent is implicit-via-submission with a disclaimer line under the
+ * input (T1.8 turns this into a proper checkbox once the lawyer-reviewed
+ * privacy text lands).
  */
 
 import { useId, useState } from "react";
 
+import { requestCaptchaToken } from "@/lib/captcha";
 import { cn } from "@/lib/cn";
 import type { WaitlistSource } from "@/lib/source-detect";
 
@@ -42,6 +45,7 @@ export function WaitlistCapture({
         if (!email) return;
         setStatus("submitting");
         try {
+          const captchaToken = await requestCaptchaToken();
           const response = await fetch("/api/feedback", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -50,16 +54,16 @@ export function WaitlistCapture({
               source_name: sourceName,
               source_url: sourceUrl,
               email,
+              checkboxes: {},
               consent_given: true,
+              captcha_token: captchaToken,
             }),
           });
-          // T1.7 will own /api/feedback; until then we accept any non-5xx
-          // response (or a network error in dev) as "captured" for UX.
-          if (response.status >= 500) {
-            setStatus("error");
+          if (response.status === 202) {
+            setStatus("submitted");
             return;
           }
-          setStatus("submitted");
+          setStatus("error");
         } catch {
           setStatus("error");
         }
