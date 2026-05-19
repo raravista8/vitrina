@@ -28,9 +28,10 @@
  *   - No "за 2 минуты" as the main hook (it's a secondary detail at most).
  */
 
-import { useDeferredValue, useId, useState } from "react";
+import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
+import { type PreviewData, fetchPreview, formatCounts } from "@/lib/preview";
 import { type SourceDetection, detectSource, waitlistSourceLabel } from "@/lib/source-detect";
 import { SubmitModal } from "./SubmitModal";
 import { WaitlistCapture } from "./WaitlistCapture";
@@ -39,10 +40,17 @@ const PLACEHOLDER = "ссылка на соцсеть, Яндекс.Карты �
 const CTA_TEXT = "Собрать мою витрину →";
 const MICROCOPY = "Первый месяц бесплатно — без карты при регистрации.";
 
+type PreviewState =
+  | { phase: "idle" }
+  | { phase: "loading" }
+  | { phase: "ready"; data: PreviewData }
+  | { phase: "fallback" };
+
 export function Hero() {
   const inputId = useId();
   const [raw, setRaw] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [preview, setPreview] = useState<PreviewState>({ phase: "idle" });
   // useDeferredValue gives us a debounce-by-priority for the classifier
   // without scheduling explicit timers. Classification is cheap (regex) so
   // running it on every keystroke is fine; the deferred value just keeps
@@ -56,6 +64,32 @@ export function Hero() {
   const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : "";
   const modalSourceType: "ymaps" | "telegram" =
     detection.kind === "mvp" ? detection.type : "telegram";
+
+  // T1.4b live preview: fire when classifier settles on an MVP source.
+  // Effect re-runs on canonical change → previous in-flight call is aborted.
+  const canonical = detection.kind === "mvp" ? detection.canonical : "";
+  const previewType: "telegram" | "ymaps" | null = detection.kind === "mvp" ? detection.type : null;
+  // The async fetch+setState pattern below is the React-recommended way
+  // to fire a request on prop change and reflect its outcome — but the
+  // experimental `react-hooks/set-state-in-effect` rule still flags it.
+  // Disabling for this single block; outside this effect the rule stays
+  // active.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (previewType === null || canonical === "") {
+      setPreview({ phase: "idle" });
+      return;
+    }
+    setPreview({ phase: "loading" });
+    const controller = new AbortController();
+    void (async () => {
+      const data = await fetchPreview(previewType, canonical, controller.signal);
+      if (controller.signal.aborted) return;
+      setPreview(data !== null ? { phase: "ready", data } : { phase: "fallback" });
+    })();
+    return () => controller.abort();
+  }, [previewType, canonical]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <>
@@ -123,7 +157,7 @@ export function Hero() {
 
           <p className="mt-3 text-sm italic text-neutral-500">{MICROCOPY}</p>
 
-          <DetectionFeedback detection={detection} raw={raw} />
+          <DetectionFeedback detection={detection} raw={raw} preview={preview} />
 
           <div className="mt-10 flex flex-col items-center gap-2 text-sm text-neutral-600 sm:flex-row sm:justify-center sm:gap-6">
             <a className="hover:text-neutral-900 hover:underline" href="#photo-upload">
@@ -148,19 +182,35 @@ export function Hero() {
 function DetectionFeedback({
   detection,
   raw,
+  preview,
 }: {
   detection: SourceDetection;
   raw: string;
+  preview: PreviewState;
 }): React.ReactElement | null {
   // Empty input → no feedback at all (clean Hero on first paint).
   if (raw.trim().length === 0) return null;
 
   if (detection.kind === "mvp") {
     const label = detection.type === "telegram" ? "Telegram" : "Яндекс.Карты";
+
+    if (preview.phase === "loading") {
+      return (
+        <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-700">
+          <span aria-hidden>⏳</span>
+          <span>проверяем {label}…</span>
+        </p>
+      );
+    }
+
+    const countsText = preview.phase === "ready" ? formatCounts(preview.data.counts) : null;
     return (
       <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
         <span aria-hidden>✓</span>
-        <span>{label}</span>
+        <span>
+          {label}
+          {countsText ? ` — ${countsText}` : ""}
+        </span>
       </p>
     );
   }

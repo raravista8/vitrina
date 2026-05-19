@@ -18,6 +18,7 @@ from app.api.middleware import RateLimiter
 from app.config import get_settings
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
 from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.preview.service import PreviewService
 from app.infrastructure.postgres.engine import get_sessionmaker
 
 
@@ -70,6 +71,20 @@ def _build_feedback_rate_limiter() -> RateLimiter:
 feedback_rate_limiter = _build_feedback_rate_limiter()
 
 
+def _build_preview_rate_limiter() -> RateLimiter:
+    """FR-005a: 10 req/min/IP keeps the preview endpoint useless for
+    upstream-reconnaissance / harvesting attacks."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_preview_per_ip_per_min,
+        window_seconds=60,
+        scope="preview",
+    )
+
+
+preview_rate_limiter = _build_preview_rate_limiter()
+
+
 def get_captcha_verifier() -> CaptchaVerifier:
     """Module-singleton-ish factory. Tests override via
     ``app.dependency_overrides[get_captcha_verifier] = lambda: <fake>``."""
@@ -89,3 +104,12 @@ def get_notification_dispatcher(request: Request) -> NotificationDispatcher:
         msg = "notification_dispatcher not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return dispatcher
+
+
+def get_preview_service(request: Request) -> PreviewService:
+    """Per-app PreviewService initialised by the lifespan (T1.4b)."""
+    svc: PreviewService | None = getattr(request.app.state, "preview_service", None)
+    if svc is None:
+        msg = "preview_service not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return svc

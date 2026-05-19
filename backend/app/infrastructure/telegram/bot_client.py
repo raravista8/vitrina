@@ -1,16 +1,18 @@
-"""Thin async aiogram Bot wrapper for outbound messages.
+"""Thin async aiogram Bot wrapper for outbound messages + chat metadata.
 
 Lifespan-managed: the FastAPI app creates one ``TelegramBotClient`` on
-startup and tears it down on shutdown. Concrete API surface is small —
-the only outbound op for T1.6 is ``send_message`` — so the wrapper stays
-trivially testable.
+startup and tears it down on shutdown. Two outbound surfaces today:
+
+  - ``send_message`` (T1.6) — admin alerts to the founder
+  - ``get_chat``    (T1.4b) — read-only chat info for the Hero preview
 
 When ``TG_BOT_TOKEN`` is empty we keep the object alive but
-``is_available()`` returns False; channels that depend on it skip with a
-clean log line instead of raising.
+``is_available()`` returns False; consumers skip with a clean log line.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
@@ -53,3 +55,12 @@ class TelegramBotClient:
         if self._bot is None:
             raise RuntimeError("TelegramBotClient.send_message called before start()")
         await self._bot.send_message(chat_id=chat_id, text=text, parse_mode=parse_mode)
+
+    async def get_chat(self, *, chat_id: str) -> dict[str, Any]:
+        """Look up chat metadata. For public channels this works without the
+        bot being a member. Returns the aiogram ``ChatFullInfo`` dumped to a
+        plain dict so the preview adapter doesn't take an aiogram dep."""
+        if self._bot is None:
+            raise RuntimeError("TelegramBotClient.get_chat called before start()")
+        chat = await self._bot.get_chat(chat_id=chat_id)
+        return chat.model_dump()

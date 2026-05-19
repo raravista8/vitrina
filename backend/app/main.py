@@ -23,6 +23,7 @@ from app.api.middleware import (
 )
 from app.api.routers.applications import router as applications_router
 from app.api.routers.feedback import router as feedback_router
+from app.api.routers.preview import router as preview_router
 from app.config import get_settings
 from app.utils.logging import configure_logging, get_logger
 
@@ -86,6 +87,28 @@ async def _lifespan(app: FastAPI) -> Any:
         founder_chat_set=bool(settings.tg_admin_chat_id),
     )
 
+    # Preview (T1.4b) — same TG bot client is reused for get_chat;
+    # Geosearch gets its own httpx-based client.
+    from app.core.preview.adapters.tg import TelegramPreviewAdapter
+    from app.core.preview.adapters.ymaps import YMapsPreviewAdapter
+    from app.core.preview.ports import PreviewSourceType
+    from app.core.preview.service import PreviewService
+    from app.infrastructure.yandex.geosearch import YandexGeosearchClient
+
+    geosearch_client = YandexGeosearchClient(api_key=settings.yandex_geosearch_api_key)
+    preview_service = PreviewService(
+        adapters={
+            PreviewSourceType.telegram: TelegramPreviewAdapter(tg_client),
+            PreviewSourceType.ymaps: YMapsPreviewAdapter(geosearch_client),
+        }
+    )
+    app.state.preview_service = preview_service
+    log.info(
+        "preview_ready",
+        telegram=tg_client.is_available(),
+        ymaps=geosearch_client.is_available(),
+    )
+
     try:
         yield
     finally:
@@ -116,6 +139,7 @@ def create_app() -> FastAPI:
 
     app.include_router(applications_router)
     app.include_router(feedback_router)
+    app.include_router(preview_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:
