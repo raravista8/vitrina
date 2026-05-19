@@ -43,9 +43,28 @@ class YandexGeosearchClient:
         pass the source URL itself — Yandex parses the place identifier
         out of standard ``yandex.<tld>/maps/...`` links.
         """
-        if not self._api_key:
-            raise RuntimeError("YandexGeosearchClient.find_business_by_url without API key")
+        payload = await self._raw_search(source_url)
+        return _parse_first_feature(payload)
 
+    async def fetch_business_payload(self, source_url: str) -> dict[str, Any] | None:
+        """Return the full Geosearch ``features[0]`` payload for the URL.
+
+        Exposed so the T3.2 deep-parse adapter can pull the richer fields
+        (Phones, Hours, geometry, CategoriesText, url) without us having
+        to re-fetch. Returns ``None`` when the API reports no matches.
+        """
+        payload = await self._raw_search(source_url)
+        if not isinstance(payload, dict):
+            return None
+        features = payload.get("features")
+        if not isinstance(features, list) or not features:
+            return None
+        first = features[0]
+        return first if isinstance(first, dict) else None
+
+    async def _raw_search(self, source_url: str) -> Any:
+        if not self._api_key:
+            raise RuntimeError("YandexGeosearchClient called without API key")
         params = {
             "apikey": self._api_key,
             "text": source_url,
@@ -56,8 +75,7 @@ class YandexGeosearchClient:
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             response = await client.get(GEOSEARCH_URL, params=params)
         response.raise_for_status()
-        payload = response.json()
-        return _parse_first_feature(payload)
+        return response.json()
 
 
 def _parse_first_feature(payload: Any) -> GeosearchPlace | None:
