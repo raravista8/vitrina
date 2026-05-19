@@ -16,6 +16,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app import __version__
+from app.admin.routers.api import router as admin_api_router
 from app.admin.routers.auth import router as admin_auth_router
 from app.admin.routers.dashboard import router as admin_dashboard_router
 from app.admin.routers.leads import router as admin_leads_router
@@ -232,15 +233,20 @@ async def _lifespan(app: FastAPI) -> Any:
 
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
+    from app.core.auth.login_challenge import LoginChallengeStore
     from app.core.auth.sessions import AdminSessionStore
 
     if redis_client is not None:
         app.state.admin_session_store = AdminSessionStore(
             redis_client, secret_key=settings.session_secret_key
         )
+        # Two-step login challenge store (PR-E). Same lifespan gate as the
+        # session store — no Redis means no admin login at all.
+        app.state.login_challenge_store = LoginChallengeStore(redis_client)
         log.info("admin_session_store_ready")
     else:
         app.state.admin_session_store = None
+        app.state.login_challenge_store = None
         log.warning("admin_session_store_disabled", reason="redis_unavailable")
 
     try:
@@ -279,6 +285,7 @@ def create_app() -> FastAPI:
     app.include_router(preview_router)
     app.include_router(track_router)
     app.include_router(admin_auth_router)
+    app.include_router(admin_api_router)
     app.include_router(admin_dashboard_router)
     app.include_router(admin_leads_router)
     app.include_router(admin_sites_router)
