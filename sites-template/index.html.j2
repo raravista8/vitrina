@@ -1,16 +1,327 @@
-{# T0.1 placeholder. T2.5 will replace with the production template
-   (hero, gallery, about, services, contact + Schema.org JSON-LD, CSP,
-   sitemap link, OG tags). Jinja autoescape stays ON globally;
-   `{{ x | safe }}` is forbidden by lint. #}
+{#-
+   Customer site (T2.5).
+
+   Single universal template. Renders to static HTML, served from S3 via
+   CDN. Acceptance per docs/TASKS.md T2.5:
+     - Lighthouse ≥90 (Performance, SEO, A11y) on mobile
+     - Schema.org LocalBusiness JSON-LD
+     - sitemap.xml + robots.txt (rendered separately by the publisher)
+     - OG + Twitter cards
+     - Strict CSP via meta (no <script> from arbitrary origins)
+     - autoescape ON globally (CLAUDE.md: no `{{ x | safe }}`)
+
+   Context vars supplied by the publishing service:
+     site_url           — canonical https://{subdomain}.vitrina.site
+     site_title         — short name (master / business)
+     site_description   — 1-2 sentence summary
+     site_locale        — "ru_RU"
+     site_category      — "beauty.nails" / "barbershop" / etc. (free-form)
+     site_color         — primary accent (e.g. "#0f172a")
+     site_logo_url      — optional avatar/logo URL on S3
+     site_hero_photo    — optional hero image URL
+     organization.name, organization.phone, organization.email,
+                  organization.address, organization.geo (lat/lon dict),
+                  organization.opening_hours (list of dicts)
+     services           — list of {title, description, price_label}
+     gallery            — list of {url, alt}
+     reviews            — list of {author, text, rating}
+     contact_url        — POST URL for /api/leads (same origin, /api/leads)
+     captcha_client_key — Yandex SmartCaptcha sitekey
+-#}
 <!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ site.title | default("Vitrina") }}</title>
-  </head>
-  <body>
-    <h1>{{ site.title | default("Vitrina — sites-template placeholder") }}</h1>
-    <p>This template will be implemented in T2.5.</p>
-  </body>
+<html lang="{{ site_locale[:2] }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ site_color or '#0f172a' }}">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    {#- Strict CSP — no inline scripts; only self + Yandex Metrika + SmartCaptcha + S3 image origin. -#}
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   img-src 'self' https://storage.yandexcloud.net data:;
+                   style-src 'self' 'unsafe-inline';
+                   script-src 'self' https://mc.yandex.ru https://smartcaptcha.yandexcloud.net;
+                   frame-src https://smartcaptcha.yandexcloud.net;
+                   connect-src 'self' https://mc.yandex.ru https://smartcaptcha.yandexcloud.net;
+                   frame-ancestors 'none';
+                   base-uri 'self';
+                   form-action 'self'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <title>{{ site_title }}</title>
+    <meta name="description" content="{{ site_description }}">
+
+    <link rel="canonical" href="{{ site_url }}">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    {%- if site_logo_url %}
+    <link rel="apple-touch-icon" href="{{ site_logo_url }}">
+    {%- endif %}
+
+    {#- Open Graph + Twitter cards -#}
+    <meta property="og:site_name" content="{{ site_title }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="{{ site_locale }}">
+    <meta property="og:url" content="{{ site_url }}">
+    <meta property="og:title" content="{{ site_title }}">
+    <meta property="og:description" content="{{ site_description }}">
+    {%- if site_hero_photo %}
+    <meta property="og:image" content="{{ site_hero_photo }}">
+    {%- endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ site_title }}">
+    <meta name="twitter:description" content="{{ site_description }}">
+
+    {#- Schema.org LocalBusiness — autoescape keeps this safe; json_safe filter is unavailable, we rely on Jinja's default escaping for the values we interpolate. -#}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": {{ organization.name | tojson }},
+      "url": {{ site_url | tojson }},
+      "description": {{ site_description | tojson }}
+      {%- if organization.phone %},
+      "telephone": {{ organization.phone | tojson }}
+      {%- endif %}
+      {%- if organization.email %},
+      "email": {{ organization.email | tojson }}
+      {%- endif %}
+      {%- if organization.address %},
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": {{ organization.address | tojson }}
+      }
+      {%- endif %}
+      {%- if organization.geo %},
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": {{ organization.geo.lat | tojson }},
+        "longitude": {{ organization.geo.lon | tojson }}
+      }
+      {%- endif %}
+      {%- if organization.opening_hours %},
+      "openingHoursSpecification": [
+        {%- for slot in organization.opening_hours %}
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": {{ slot.day | tojson }},
+          "opens": {{ slot.opens | tojson }},
+          "closes": {{ slot.closes | tojson }}
+        }{% if not loop.last %},{% endif %}
+        {%- endfor %}
+      ]
+      {%- endif %}
+    }
+    </script>
+
+    <style>
+        :root {
+            --accent: {{ site_color or '#0f172a' }};
+            --bg: #ffffff;
+            --fg: #0f172a;
+            --muted: #475569;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg); color: var(--fg); line-height: 1.55;
+        }
+        .container { max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
+
+        header.hero {
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: clamp(1.75rem, 5vw, 3rem);
+            margin: 0 0 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .hero .tagline {
+            color: var(--muted); font-size: 1.05rem;
+            max-width: 32rem; margin: 0 auto 1.5rem;
+        }
+        .hero-photo {
+            max-width: 100%; height: auto; border-radius: 1rem;
+            margin: 1.25rem auto 0; display: block;
+            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .cta {
+            display: inline-block;
+            background: var(--accent); color: white;
+            padding: 0.85rem 1.5rem; border-radius: 999px;
+            text-decoration: none; font-weight: 600; font-size: 1rem;
+        }
+        .cta:hover { opacity: 0.92; }
+
+        section { padding: 2.5rem 0; }
+        section h2 {
+            font-size: 1.5rem; margin: 0 0 1.25rem;
+            letter-spacing: -0.01em;
+        }
+
+        .services { background: var(--surface); }
+        .service-list { display: grid; gap: 1rem; }
+        @media (min-width: 40rem) { .service-list { grid-template-columns: 1fr 1fr; } }
+        .service {
+            background: white; padding: 1.25rem; border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        .service h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+        .service .price { color: var(--accent); font-weight: 600; }
+        .service p { color: var(--muted); margin: 0.4rem 0 0; font-size: 0.95rem; }
+
+        .gallery-grid {
+            display: grid; gap: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+        }
+        .gallery-grid img {
+            width: 100%; height: 11rem; object-fit: cover;
+            border-radius: 0.5rem; background: var(--surface);
+        }
+
+        .reviews-list { display: grid; gap: 1rem; }
+        @media (min-width: 40rem) { .reviews-list { grid-template-columns: 1fr 1fr; } }
+        .review {
+            background: var(--surface); padding: 1.25rem; border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        .review .author { font-weight: 600; margin-bottom: 0.25rem; }
+        .review .rating { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .review p { margin: 0; color: var(--fg); font-size: 0.95rem; }
+
+        .contact { background: var(--surface); }
+        .contact form { max-width: 28rem; }
+        .contact label { display: block; font-size: 0.85rem; margin-top: 0.75rem; }
+        .contact input, .contact textarea {
+            width: 100%; padding: 0.65rem 0.85rem; margin-top: 0.25rem;
+            border: 1px solid var(--border); border-radius: 0.5rem;
+            font-family: inherit; font-size: 1rem; background: white;
+        }
+        .contact .honeypot { position: absolute; left: -9999px; }
+        .contact button {
+            margin-top: 1rem; width: 100%; padding: 0.85rem;
+            background: var(--accent); color: white; border: 0;
+            border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer;
+        }
+
+        footer {
+            padding: 2rem 0 3rem; text-align: center;
+            color: var(--muted); font-size: 0.85rem;
+        }
+        footer a { color: var(--muted); }
+    </style>
+</head>
+<body>
+    <a href="#contact" style="position: absolute; left: -9999px;">К форме записи</a>
+
+    <header class="hero">
+        <div class="container">
+            <h1>{{ site_title }}</h1>
+            <p class="tagline">{{ site_description }}</p>
+            <a class="cta" href="#contact">Записаться</a>
+            {%- if site_hero_photo %}
+            <img class="hero-photo" src="{{ site_hero_photo }}" alt="" loading="eager" decoding="async">
+            {%- endif %}
+        </div>
+    </header>
+
+    {%- if services %}
+    <section class="services">
+        <div class="container">
+            <h2>Услуги</h2>
+            <div class="service-list">
+                {%- for service in services %}
+                <article class="service">
+                    <h3>{{ service.title }}</h3>
+                    {%- if service.price_label %}
+                    <div class="price">{{ service.price_label }}</div>
+                    {%- endif %}
+                    {%- if service.description %}
+                    <p>{{ service.description }}</p>
+                    {%- endif %}
+                </article>
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {%- if gallery %}
+    <section>
+        <div class="container">
+            <h2>Работы</h2>
+            <div class="gallery-grid">
+                {%- for photo in gallery %}
+                <img src="{{ photo.url }}" alt="{{ photo.alt or '' }}" loading="lazy" decoding="async" width="320" height="176">
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {%- if reviews %}
+    <section>
+        <div class="container">
+            <h2>Отзывы</h2>
+            <div class="reviews-list">
+                {%- for review in reviews %}
+                <article class="review">
+                    <div class="author">{{ review.author }}</div>
+                    {%- if review.rating %}
+                    <div class="rating" aria-label="Рейтинг {{ review.rating }} из 5">
+                        {% for _ in range(review.rating) %}★{% endfor %}{% for _ in range(5 - review.rating) %}☆{% endfor %}
+                    </div>
+                    {%- endif %}
+                    <p>{{ review.text }}</p>
+                </article>
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Записаться</h2>
+            <p style="color: var(--muted); margin-top: -0.5rem;">
+                Оставьте заявку — свяжусь в течение дня.
+            </p>
+            <form method="post" action="{{ contact_url }}" autocomplete="on">
+                <label for="name">Имя
+                    <input id="name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name">
+                </label>
+                <label for="phone">Телефон
+                    <input id="phone" name="phone" type="tel" required minlength="6" maxlength="20" autocomplete="tel" inputmode="tel">
+                </label>
+                <label for="message">Сообщение (необязательно)
+                    <textarea id="message" name="message" rows="3" maxlength="500" autocomplete="off"></textarea>
+                </label>
+                <input class="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+                {%- if captcha_client_key %}
+                <div class="smart-captcha" data-sitekey="{{ captcha_client_key }}" data-invisible="true"></div>
+                {%- endif %}
+                <button type="submit">Записаться</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>
+                © {{ year or 2026 }} {{ organization.name or site_title }} ·
+                {% if organization.phone %}<a href="tel:{{ organization.phone }}">{{ organization.phone }}</a> · {% endif %}
+                <a href="https://vitrina.site" rel="noopener">Powered by Vitrina</a>
+            </p>
+        </div>
+    </footer>
+
+    {%- if captcha_client_key %}
+    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+    {%- endif %}
+</body>
 </html>
