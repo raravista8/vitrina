@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { FeedbackFloatingButton } from "@/components/FeedbackForm";
+
 import "./globals.css";
 
 const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://vitrina.site";
@@ -66,8 +68,9 @@ const JSON_LD = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body className="min-h-screen bg-white text-neutral-900 antialiased">
+      <body className="min-h-screen bg-paper text-ink antialiased">
         {children}
+        <FeedbackFloatingButton />
         <script
           type="application/ld+json"
           // Structured data must be a single literal JSON string; Next handles

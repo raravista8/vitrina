@@ -1,17 +1,27 @@
 "use client";
 
 /**
- * Public feedback form (T1.7). Two sections per ADR-0009 + ТЗ §6:
+ * Public feedback form (T1.7 / PR-D #9).
+ *
+ * Two sections per ADR-0009 + ТЗ §6:
  *
  *   - "Хочу источник" — 9 waitlist source checkboxes + open "другое" text
  *   - "Хочу фичу"    — 8 feature wishlist checkboxes + open notes
  *
- * The two sections share one submit. The backend type is decided
- * client-side: if any source box is ticked or `source_name` is filled in,
- * we send `source_request`; otherwise `feature_request`. Pure bug reports
- * use the dedicated link in Footer (T?.?).
+ * The two sections share one submit. The backend `type` is decided
+ * client-side: if any source box is ticked or `source_name` is filled
+ * in, we send `source_request`; otherwise `feature_request`. Pure bug
+ * reports use the dedicated link in Footer.
+ *
+ * Design source: `~/Downloads/vitrina ui/code/FeedbackForm.tsx` (Concept
+ * A canvas screen #9). Logic — T1.7 — is preserved verbatim from the
+ * backend wire-up; only Tailwind classes change to the Concept A
+ * palette tokens (`paper`, `ink`, `accent`, `line`, `success-soft`,
+ * `danger-soft`).
  */
 
+import { MessageCircle } from "lucide-react";
+import Link from "next/link";
 import { useId, useState } from "react";
 
 import { requestCaptchaToken } from "@/lib/captcha";
@@ -104,140 +114,162 @@ export function FeedbackForm() {
 
   if (status === "submitted") {
     return (
-      <p className="rounded-xl bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
-        ✓ Спасибо! Учтём в приоритизации. Если оставили email — напишем, когда добавим.
-      </p>
+      <div className="rounded-2xl border border-line bg-paper-soft p-8 text-center">
+        <h2 className="text-2xl font-bold tracking-tight text-ink">Спасибо — записали</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Соберём 10 голосов на источник — приоритизируем и напишем вам.
+        </p>
+      </div>
     );
   }
 
   return (
-    <form className="space-y-8" onSubmit={onSubmit}>
-      <section>
-        <h2 className="text-xl font-semibold text-neutral-900">Хочу источник</h2>
-        <p className="mt-1 text-sm text-neutral-600">
-          Что мы пока не парсим — поставьте галочку. Когда наберём 10 голосов на один пункт,
-          приоритизируем разработку.
-        </p>
-        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-          {WAITLIST_OPTIONS.map((opt) => (
-            <li key={opt.key}>
-              <Checkbox
-                checked={Boolean(checkboxes[opt.key])}
-                onChange={() => toggle(opt.key)}
-                label={opt.label}
-              />
-            </li>
-          ))}
-        </ul>
-        <div className="mt-3">
-          <label className="text-sm text-neutral-700" htmlFor={otherSourceId}>
-            Другое (укажите)
-          </label>
-          <input
-            id={otherSourceId}
-            type="text"
-            placeholder="Свой источник…"
-            value={otherSource}
-            onChange={(e) => setOtherSource(e.target.value)}
-            className={cn(
-              "mt-1 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm",
-              "placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/70",
-            )}
-          />
+    <form className="space-y-5" onSubmit={onSubmit}>
+      <div className="grid gap-5 md:grid-cols-2">
+        <Card>
+          <SectionHeader title="Хочу источник" hint="Когда соберём 10 голосов — добавим." />
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {WAITLIST_OPTIONS.map((opt) => (
+              <li key={opt.key}>
+                <CheckRow
+                  checked={Boolean(checkboxes[opt.key])}
+                  onChange={() => toggle(opt.key)}
+                  label={opt.label}
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="mt-4">
+            <label className="block text-xs font-medium text-ink-soft" htmlFor={otherSourceId}>
+              Своё
+            </label>
+            <input
+              id={otherSourceId}
+              type="text"
+              placeholder="название источника"
+              value={otherSource}
+              onChange={(event) => setOtherSource(event.target.value)}
+              className={cn(
+                "mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink",
+                "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
+              )}
+            />
+          </div>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Хочу фичу" hint="Отметьте всё, что нужно." />
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {FEATURE_OPTIONS.map((opt) => (
+              <li key={opt.key}>
+                <CheckRow
+                  checked={Boolean(checkboxes[opt.key])}
+                  onChange={() => toggle(opt.key)}
+                  label={opt.label}
+                />
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+
+      <Card>
+        <SectionHeader title="Контакт и сообщение" />
+        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_2fr]">
+          <div>
+            <label className="block text-xs font-medium text-ink-soft" htmlFor={emailId}>
+              Email или @telegram
+            </label>
+            <input
+              id={emailId}
+              type="text"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className={cn(
+                "mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink",
+                "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
+              )}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-ink-soft" htmlFor={messageId}>
+              Сообщение (опционально)
+            </label>
+            <textarea
+              id={messageId}
+              rows={3}
+              placeholder="Расскажите подробнее…"
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              className={cn(
+                "mt-1 w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink",
+                "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
+              )}
+            />
+          </div>
         </div>
-      </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-neutral-900">Хочу фичу</h2>
-        <p className="mt-1 text-sm text-neutral-600">
-          Что хочется видеть в продукте — отметьте всё, что нужно.
-        </p>
-        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-          {FEATURE_OPTIONS.map((opt) => (
-            <li key={opt.key}>
-              <Checkbox
-                checked={Boolean(checkboxes[opt.key])}
-                onChange={() => toggle(opt.key)}
-                label={opt.label}
-              />
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section>
-        <label className="text-sm font-medium text-neutral-800" htmlFor={messageId}>
-          Дополнительно
+        <label className="mt-4 flex cursor-pointer items-start gap-2 text-sm text-ink-soft">
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(event) => setConsent(event.target.checked)}
+            className="focus:ring-accent/40 mt-0.5 h-4 w-4 rounded border-line text-accent"
+          />
+          <span>
+            Согласен на обработку моих ПДн согласно{" "}
+            <Link
+              href="/privacy"
+              className="text-accent underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              политике конфиденциальности
+            </Link>
+            .
+          </span>
         </label>
-        <textarea
-          id={messageId}
-          rows={4}
-          placeholder="Расскажите подробнее…"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+
+        <button
+          type="submit"
+          disabled={!canSubmit}
           className={cn(
-            "mt-2 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm",
-            "placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/70",
+            "mt-5 inline-flex h-11 items-center justify-center rounded-lg bg-accent px-6 text-sm font-semibold text-white",
+            "hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50",
           )}
-        />
-      </section>
+        >
+          {status === "submitting" ? "Отправляем…" : "Отправить →"}
+        </button>
 
-      <section>
-        <label className="text-sm font-medium text-neutral-800" htmlFor={emailId}>
-          Email для ответа (опционально)
-        </label>
-        <input
-          id={emailId}
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={cn(
-            "mt-2 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm",
-            "placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/70",
-          )}
-        />
-      </section>
-
-      <label className="flex items-start gap-2 text-sm text-neutral-700">
-        <input
-          type="checkbox"
-          checked={consent}
-          onChange={(e) => setConsent(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-neutral-400"
-        />
-        <span>
-          Согласен на обработку моих ПДн согласно{" "}
-          <a className="underline" href="/privacy" target="_blank" rel="noopener noreferrer">
-            политике конфиденциальности
-          </a>
-          .
-        </span>
-      </label>
-
-      <button
-        type="submit"
-        disabled={!canSubmit}
-        className={cn(
-          "inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-medium",
-          canSubmit
-            ? "bg-neutral-900 text-white hover:bg-neutral-800"
-            : "cursor-not-allowed bg-neutral-200 text-neutral-500",
-        )}
-      >
-        {status === "submitting" ? "Отправляем…" : "Отправить →"}
-      </button>
-
-      {status === "error" ? (
-        <p className="rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-800">
-          Что-то пошло не так. Попробуйте ещё раз через минуту.
-        </p>
-      ) : null}
+        {status === "error" ? (
+          <p className="mt-4 rounded-lg bg-danger-soft px-4 py-3 text-sm text-danger">
+            Что-то пошло не так. Попробуйте ещё раз через минуту.
+          </p>
+        ) : null}
+      </Card>
     </form>
   );
 }
 
-function Checkbox({
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function Card({ children }: { children: React.ReactNode }) {
+  return <div className="rounded-2xl border border-line bg-white p-5 shadow-card">{children}</div>;
+}
+
+function SectionHeader({ title, hint }: { title: string; hint?: string }) {
+  return (
+    <div>
+      <h3 className="text-lg font-bold tracking-tight text-ink">{title}</h3>
+      {hint ? <p className="mt-1 text-xs text-ink-faint">{hint}</p> : null}
+    </div>
+  );
+}
+
+function CheckRow({
   checked,
   onChange,
   label,
@@ -247,14 +279,34 @@ function Checkbox({
   label: string;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm text-neutral-700">
+    <label className="flex cursor-pointer items-center gap-2 text-sm text-ink">
       <input
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 rounded border-neutral-400"
+        className="focus:ring-accent/40 h-4 w-4 rounded border-line text-accent"
       />
       <span>{label}</span>
     </label>
+  );
+}
+
+/**
+ * Floating "Что не хватает?" button. Mount once in `app/layout.tsx`
+ * to expose feedback access on every page — matches Design canvas
+ * screen #9's bottom-right global CTA.
+ */
+export function FeedbackFloatingButton() {
+  return (
+    <Link
+      href="/feedback"
+      className={cn(
+        "fixed bottom-6 right-6 z-30 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-3 text-sm font-medium text-paper shadow-pop",
+        "hover:bg-ink-soft",
+      )}
+    >
+      <MessageCircle className="h-4 w-4" />
+      Что не хватает?
+    </Link>
   );
 }
