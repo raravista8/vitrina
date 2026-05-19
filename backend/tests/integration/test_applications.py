@@ -26,9 +26,12 @@ from fastapi import FastAPI
 from app.api.dependencies import (
     application_rate_limiter,
     get_captcha_verifier,
+    get_notification_dispatcher,
     get_session,
 )
 from app.core.captcha.verifier import CaptchaResult, CaptchaVerifier
+from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.notify.ports import ChannelType, DeliveryResult
 from app.main import create_app
 
 # Frontend (lib/captcha.ts) emits this literal when no client key is set;
@@ -86,6 +89,18 @@ class _FakePipeline:
         return results
 
 
+class _RecordingDispatcher(NotificationDispatcher):
+    """No-op dispatcher that records founder-notify calls for assertion."""
+
+    def __init__(self) -> None:
+        super().__init__(channels={}, founder_telegram_chat_id=None)
+        self.founder_calls: list[tuple[str, str]] = []
+
+    async def notify_founder(self, kind, message):  # type: ignore[override,no-untyped-def]
+        self.founder_calls.append((kind.value, message.title))
+        return DeliveryResult(delivered=True, channel=ChannelType.telegram, recipient="test-chat")
+
+
 @pytest_asyncio.fixture
 async def app(_postgres_container: str, db_session) -> AsyncIterator[FastAPI]:  # type: ignore[no-untyped-def]
     """FastAPI instance with the test DB session + a fake Redis bound."""
@@ -94,7 +109,14 @@ async def app(_postgres_container: str, db_session) -> AsyncIterator[FastAPI]:  
     async def _override_session() -> AsyncIterator:
         yield db_session
 
+    # Lifespan isn't triggered by httpx.ASGITransport on its own, so we
+    # inject a recording dispatcher directly. Tests that care about the
+    # founder-notify side-effect access it via app.state.test_dispatcher.
+    test_dispatcher = _RecordingDispatcher()
+    fastapi_app.state.test_dispatcher = test_dispatcher
+
     fastapi_app.dependency_overrides[get_session] = _override_session
+    fastapi_app.dependency_overrides[get_notification_dispatcher] = lambda: test_dispatcher
     fastapi_app.state.redis = _FakeRedis()
     try:
         yield fastapi_app
@@ -300,6 +322,26 @@ async def test_rate_limit_returns_429_with_retry_after(
 # --------------------------------------------------------------------------- #
 # Persistence side-effects
 # --------------------------------------------------------------------------- #
+
+
+async def test_founder_notified_on_success(app: FastAPI, client: httpx.AsyncClient) -> None:
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "source_url": "https://t.me/some_channel",
+            "contact": "alice@example.com",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert resp.status_code == 202
+
+    test_dispatcher = app.state.test_dispatcher
+    assert len(test_dispatcher.founder_calls) == 1
+    kind, title = test_dispatcher.founder_calls[0]
+    assert kind == "application_received"
+    assert title.startswith("🆕 Заявка #")
 
 
 async def test_persistence_creates_user_consent_application(

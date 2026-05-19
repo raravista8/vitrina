@@ -68,6 +68,18 @@ class Settings(BaseSettings):
     # `build_captcha_verifier` refuses to start without it.
     yandex_smartcaptcha_server_key: str | None = None
 
+    # ---- Notifications (T1.6) ----------------------------------------------
+    # Founder's own TG chat — destination for admin alerts. When empty the
+    # NotificationDispatcher.notify_founder() logs a warning and no-ops.
+    tg_bot_token: str | None = None
+    tg_admin_chat_id: str | None = None
+
+    smtp_host: str | None = None
+    smtp_port: int = 587
+    smtp_user: str | None = None
+    smtp_password: str | None = None
+    smtp_from: str = "noreply@vitrina.site"
+
     # ---- Rate limits -------------------------------------------------------
     rate_limit_applications_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_hour: int = 3

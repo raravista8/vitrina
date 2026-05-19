@@ -51,11 +51,46 @@ async def _lifespan(app: FastAPI) -> Any:
 
     app.state.redis = redis_client
 
+    # Notifications (T1.6) — outbound TG bot client + SMTP client wired into
+    # a NotificationDispatcher. Both clients tolerate missing credentials in
+    # dev: `is_available()` returns False and channels are skipped.
+    from app.core.notify.channels.email import EmailChannel
+    from app.core.notify.channels.telegram import TelegramChannel
+    from app.core.notify.dispatcher import NotificationDispatcher
+    from app.core.notify.ports import ChannelType
+    from app.infrastructure.email.smtp_client import SmtpClient
+    from app.infrastructure.telegram.bot_client import TelegramBotClient
+
+    tg_client = TelegramBotClient(token=settings.tg_bot_token)
+    await tg_client.start()
+    smtp_client = SmtpClient(
+        host=settings.smtp_host,
+        port=settings.smtp_port,
+        user=settings.smtp_user,
+        password=settings.smtp_password,
+        sender=settings.smtp_from,
+    )
+    dispatcher = NotificationDispatcher(
+        channels={
+            ChannelType.telegram: TelegramChannel(tg_client),
+            ChannelType.email: EmailChannel(smtp_client),
+        },
+        founder_telegram_chat_id=settings.tg_admin_chat_id,
+    )
+    app.state.notification_dispatcher = dispatcher
+    log.info(
+        "notifications_ready",
+        telegram=tg_client.is_available(),
+        smtp=smtp_client.is_available(),
+        founder_chat_set=bool(settings.tg_admin_chat_id),
+    )
+
     try:
         yield
     finally:
         if redis_client is not None:
             await redis_client.close()
+        await tg_client.shutdown()
 
 
 def create_app() -> FastAPI:

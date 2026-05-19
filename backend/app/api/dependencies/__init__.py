@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.middleware import RateLimiter
 from app.config import get_settings
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
+from app.core.notify.dispatcher import NotificationDispatcher
 from app.infrastructure.postgres.engine import get_sessionmaker
 
 
@@ -58,3 +59,18 @@ def get_captcha_verifier() -> CaptchaVerifier:
     """Module-singleton-ish factory. Tests override via
     ``app.dependency_overrides[get_captcha_verifier] = lambda: <fake>``."""
     return build_captcha_verifier(get_settings())
+
+
+def get_notification_dispatcher(request: Request) -> NotificationDispatcher:
+    """Return the per-app NotificationDispatcher initialised in lifespan.
+
+    Tests override the dep directly to inject a fake dispatcher; here we
+    just look up the instance set on ``app.state``.
+    """
+    dispatcher: NotificationDispatcher | None = getattr(
+        request.app.state, "notification_dispatcher", None
+    )
+    if dispatcher is None:
+        msg = "notification_dispatcher not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return dispatcher

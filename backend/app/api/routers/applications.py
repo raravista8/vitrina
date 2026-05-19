@@ -19,6 +19,7 @@ from app.api.dependencies import (
     application_rate_limiter,
     get_captcha_verifier,
     get_client_ip,
+    get_notification_dispatcher,
     get_session,
 )
 from app.api.schemas.applications import (
@@ -28,6 +29,8 @@ from app.api.schemas.applications import (
 )
 from app.core.applications.service import submit_application
 from app.core.captcha.verifier import CaptchaVerifier
+from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.notify.ports import NotificationKind, NotificationMessage
 from app.utils.logging import get_logger
 
 router = APIRouter(prefix="/api", tags=["applications"])
@@ -43,6 +46,7 @@ async def post_submit_application(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
     captcha: Annotated[CaptchaVerifier, Depends(get_captcha_verifier)],
+    notifier: Annotated[NotificationDispatcher, Depends(get_notification_dispatcher)],
     _ratelimit: Annotated[None, Depends(application_rate_limiter)],
 ) -> SubmitApplicationResponse:
     log = get_logger("api.applications")
@@ -76,9 +80,22 @@ async def post_submit_application(
         source_type=application.source_type,
         contact_type=application.contact_type,
     )
-    # T1.6 wires the notifier dispatcher; for T1.3 we log so the founder can
-    # see new applications via `docker compose logs api`.
-    log.info("founder_notify_pending", application_id=str(application.id))
+
+    # Founder admin alert. Best-effort: NotificationDispatcher swallows
+    # delivery failures and logs them — the user has already received a
+    # 202 in any case (FR-002 "respond 202 within 1s").
+    await notifier.notify_founder(
+        kind=NotificationKind.application_received,
+        message=NotificationMessage(
+            title=f"🆕 Заявка #{str(application.id)[:8]}",
+            body=(
+                f"Источник: {application.source_type}"
+                f"\nКонтакт: {_mask_contact(application.contact_value, application.contact_type)} "
+                f"({application.contact_type})"
+                f"\nURL: {application.source_url or '—'}"
+            ),
+        ),
+    )
 
     return SubmitApplicationResponse(
         data=SubmitApplicationData(
@@ -86,3 +103,25 @@ async def post_submit_application(
             contact_type=application.contact_type,  # type: ignore[arg-type]
         )
     )
+
+
+def _mask_contact(value: str, contact_type: str) -> str:
+    """Mask PII for the founder-facing alert.
+
+    Same rule as app/utils/logging.py PIIRedactor but applied per
+    contact_type so the admin gets a useful hint without seeing the full
+    phone / email.
+    """
+    if contact_type == "email":
+        local, _, domain = value.partition("@")
+        return f"{local[:1]}***@{domain}" if local else "***"
+    if contact_type == "phone":
+        return f"+7***{value[-4:]}" if len(value) >= 4 else "***"
+    if contact_type in {"telegram", "max"}:
+        # Keep leading "@" / "max://", mask the body.
+        prefix, body = (value[:1], value[1:]) if value.startswith("@") else value.split("//", 1)
+        if isinstance(prefix, str) and isinstance(body, str):
+            if len(body) <= 4:
+                return f"{prefix}***"
+            return f"{prefix}{body[:2]}***{body[-2:]}"
+    return "***"
