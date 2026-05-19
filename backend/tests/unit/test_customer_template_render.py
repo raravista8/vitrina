@@ -119,3 +119,62 @@ def test_sitemap_renders_with_url_and_lastmod(env: Environment, payload: dict) -
 def test_robots_points_at_sitemap(env: Environment, payload: dict) -> None:
     txt = env.get_template("robots.txt.j2").render(**payload)
     assert "Sitemap: https://test-master.vitrina.site/sitemap.xml" in txt
+
+
+# --------------------------------------------------------------------------- #
+# Concept A visual refresh (PR-C #7)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.unit
+def test_default_scheme_renders_cream_palette(env: Environment, payload: dict) -> None:
+    """Without `site_scheme`, the template falls back to the cream palette
+    (the Concept A default that ships with the landing)."""
+    payload.pop("site_scheme", None)
+    html = env.get_template("index.html.j2").render(**payload)
+    # Cream-scheme background OKLCH lightness — distinct from slate/sage.
+    assert "oklch(0.972 0.012 80)" in html
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("scheme", "marker"),
+    [
+        ("slate", "oklch(0.96 0.005 250)"),
+        ("sage", "oklch(0.97 0.008 145)"),
+    ],
+)
+def test_alternate_schemes_swap_palette(
+    env: Environment, payload: dict, scheme: str, marker: str
+) -> None:
+    """`site_scheme` flips the palette tokens — backgrounds, accents and
+    soft tints. The publisher rotates these to avoid look-alike sites."""
+    payload["site_scheme"] = scheme
+    html = env.get_template("index.html.j2").render(**payload)
+    assert marker in html
+
+
+@pytest.mark.unit
+def test_site_color_override_wins_over_scheme_accent(env: Environment, payload: dict) -> None:
+    """A master-brand `site_color` (e.g. from LLM) takes precedence over
+    the scheme's default accent. Critical so the brand survives the
+    refresh."""
+    payload["site_scheme"] = "slate"
+    payload["site_color"] = "#FF0000"
+    html = env.get_template("index.html.j2").render(**payload)
+    # Override appears in the --accent declaration.
+    assert "--accent: #FF0000" in html
+
+
+@pytest.mark.unit
+def test_brand_appears_in_footer_as_cyrillic(env: Environment, payload: dict) -> None:
+    """Legal requirement (PRD §3): brand spelled in Cyrillic. The footer
+    uses the instrumental case «Витрине» («Сделано на Витрине»), still
+    cyrillic — Latin «Vitrina» is forbidden in user-facing text."""
+    html = env.get_template("index.html.j2").render(**payload)
+    # Cyrillic root «Витрин» covers both «Витрина» (nominative) and
+    # «Витрине» (instrumental) — both legal-acceptable spellings.
+    assert "Витрин" in html
+    # The footer must never use Latin "Vitrina" as the brand name.
+    footer = html.split("<footer")[1].split("</footer>")[0]
+    assert "Vitrina" not in footer
