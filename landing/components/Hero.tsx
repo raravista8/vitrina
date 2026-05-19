@@ -36,10 +36,10 @@ import { Link as LinkIcon, ShieldCheck } from "lucide-react";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
-import { type PreviewData, fetchPreview, formatCounts } from "@/lib/preview";
-import { type SourceDetection, detectSource, waitlistSourceLabel } from "@/lib/source-detect";
+import { type PreviewData, fetchPreview } from "@/lib/preview";
+import { type SourceDetection, detectSource } from "@/lib/source-detect";
+import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal } from "./SubmitModal";
-import { WaitlistCapture } from "./WaitlistCapture";
 
 const PLACEHOLDER = "ссылка на соцсеть, Яндекс.Карты или сайт";
 const CTA_TEXT = "Собрать мою витрину";
@@ -232,7 +232,7 @@ export function Hero() {
             {MICROCOPY}
           </div>
 
-          <DetectionFeedback detection={detection} raw={raw} preview={preview} />
+          <SourceDetectionBadge detection={detection} rawInput={raw} preview={preview} />
 
           {/* Fallback links */}
           <div className="mt-5 flex flex-col items-start gap-2.5 text-sm sm:mt-7 sm:flex-row sm:justify-center sm:gap-6">
@@ -284,93 +284,5 @@ export function Hero() {
         sourceType={modalSourceType}
       />
     </>
-  );
-}
-
-/**
- * Source-detection feedback strip — same five states as before
- * (loading / mvp-ready / waitlist / unknown-url / not-url) but
- * restyled in Concept A semantic colours (success / info / warn /
- * neutral) instead of the previous neutral / amber palette.
- */
-function DetectionFeedback({
-  detection,
-  raw,
-  preview,
-}: {
-  detection: SourceDetection;
-  raw: string;
-  preview: PreviewState;
-}): React.ReactElement | null {
-  // Empty input → no feedback at all (clean Hero on first paint).
-  if (raw.trim().length === 0) return null;
-
-  if (detection.kind === "mvp") {
-    const label = detection.type === "telegram" ? "Telegram" : "Яндекс.Карты";
-
-    if (preview.phase === "loading") {
-      return (
-        <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-paper-soft px-3 py-1 text-sm font-medium text-ink-soft">
-          <span aria-hidden>⏳</span>
-          <span>проверяем {label}…</span>
-        </p>
-      );
-    }
-
-    const countsText = preview.phase === "ready" ? formatCounts(preview.data.counts) : null;
-    return (
-      <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-sm font-medium text-success">
-        <span aria-hidden>✓</span>
-        <span>
-          {label}
-          {countsText ? ` — ${countsText}` : ""}
-        </span>
-      </p>
-    );
-  }
-
-  if (detection.kind === "waitlist") {
-    return (
-      <div className="mx-auto mt-6 max-w-xl text-left">
-        <p className="rounded-lg bg-info-soft px-4 py-3 text-sm text-info">
-          <span aria-hidden>ℹ️ </span>
-          {waitlistSourceLabel(detection.source)} скоро будет — оставьте email, напишем когда
-          добавим.
-        </p>
-        <WaitlistCapture sourceName={detection.source} sourceUrl={detection.canonical} />
-        <p className="mt-3 text-center text-sm text-ink-soft">
-          или{" "}
-          <a className="font-medium text-ink underline" href="#photo-upload">
-            создайте из фото сейчас →
-          </a>
-        </p>
-      </div>
-    );
-  }
-
-  if (detection.kind === "unknown_url") {
-    return (
-      <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-warn-soft px-4 py-3 text-left text-sm text-warn">
-        <span aria-hidden>⚠️</span>
-        <span>
-          Не узнали источник. Напишите в форме обратной связи — какой это источник? Мы добавим его в
-          список.
-        </span>
-      </p>
-    );
-  }
-
-  // not_url
-  return (
-    <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-paper-soft px-4 py-3 text-left text-sm text-ink-soft">
-      <span aria-hidden>⚠️</span>
-      <span>
-        Введите ссылку на Telegram-канал, Яндекс.Карты или{" "}
-        <a className="font-medium underline" href="#photo-upload">
-          загрузите фото
-        </a>
-        .
-      </span>
-    </p>
   );
 }

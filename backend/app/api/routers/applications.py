@@ -1,4 +1,5 @@
 """``POST /api/submit-application`` — first user-facing endpoint (T1.3).
+``GET  /api/applications/{id}/tg-bot-status`` — Step #4 polling (UI-PR-A).
 
 Validates input via Pydantic, runs the rate limiter, delegates to the
 ``core.applications.service`` for persistence, returns the canonical
@@ -6,13 +7,20 @@ success envelope ``{"ok": true, "data": {...}}``. Errors flow through the
 T1.2 exception handler chain — a ``DomainError`` from the service becomes
 HTTPException(400, detail=<code>) which the handler turns into the
 ``{"ok": false, "error": "<code>", "request_id": "..."}`` envelope.
+
+The tg-bot-status route is polled every 5s by the Submit modal while
+step=4. It returns ``{added: bool}`` — the SubmitModal advances to
+Step #5 (confirmation) the instant ``added`` flips to true.
 """
 
 from __future__ import annotations
 
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import (
@@ -103,6 +111,54 @@ async def post_submit_application(
             contact_type=application.contact_type,  # type: ignore[arg-type]
         )
     )
+
+
+# ---- tg-bot-status (UI Step #4 polling) ----------------------------------
+
+
+class _TgBotStatusData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    added: bool
+
+
+class _TgBotStatusResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    ok: bool = True
+    data: _TgBotStatusData
+
+
+@router.get(
+    "/applications/{application_id}/tg-bot-status",
+    response_model=_TgBotStatusResponse,
+)
+async def get_tg_bot_status(
+    application_id: UUID,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> _TgBotStatusResponse:
+    """Polled by the Submit modal's Step #4 every 5s.
+
+    Signal source: ``applications.status`` advances past ``pending``
+    once the parser-worker (T3.4) ingests the channel or the founder
+    approves manually. The UI receives ``added=true`` and jumps to
+    Step #5 (confirmation).
+
+    The endpoint is intentionally cheap — one SELECT, no auth (the
+    application_id is a UUIDv4, unguessable, and the only data it
+    leaks is a single boolean). 404 for unknown IDs is safe — there's
+    no enumeration value in a guess.
+    """
+    from app.infrastructure.postgres.models import Application
+
+    row = (
+        await session.execute(select(Application).where(Application.id == application_id))
+    ).scalar_one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="application_not_found")
+    # `status` moves off "pending" when the bot ingests or founder
+    # approves. Both flows are "we've got what we need" from the
+    # user's perspective.
+    added = row.status != "pending"
+    return _TgBotStatusResponse(data=_TgBotStatusData(added=added))
 
 
 def _mask_contact(value: str, contact_type: str) -> str:
