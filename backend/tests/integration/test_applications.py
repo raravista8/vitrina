@@ -387,3 +387,75 @@ async def test_persistence_creates_user_consent_application(
     assert apps[0].status == "pending"
     assert apps[0].user_id == users[0].id
     assert apps[0].consent_id == consents[0].id
+
+
+# ---- tg-bot-status polling (UI Step #4) ----------------------------------
+
+
+async def test_tg_bot_status_pending_before_processing(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """Newly-created application sits in `pending` until the parser-
+    worker (or the founder) advances it. UI polls every 5s and the
+    endpoint reports `added=False` until that happens."""
+    submit = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "source_url": "https://t.me/poll_test",
+            "contact": "anna@example.com",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert submit.status_code == 202
+    app_id = submit.json()["data"]["application_id"]
+
+    resp = await client.get(f"/api/applications/{app_id}/tg-bot-status")
+    assert resp.status_code == 200
+    assert resp.json() == {"ok": True, "data": {"added": False}}
+
+
+async def test_tg_bot_status_added_after_status_advances(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """Once the application's status moves off `pending` (parser-worker
+    ingested OR founder approved), the endpoint reports `added=True`
+    and the UI flips to the confirmation step."""
+    from sqlalchemy import select
+
+    from app.infrastructure.postgres.models import Application
+
+    submit = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "source_url": "https://t.me/poll_done",
+            "contact": "anna2@example.com",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    app_id = submit.json()["data"]["application_id"]
+
+    # Simulate worker / founder advancing the status.
+    row = (
+        await db_session.execute(select(Application).where(Application.id == app_id))
+    ).scalar_one()
+    row.status = "approved"
+    await db_session.commit()
+
+    resp = await client.get(f"/api/applications/{app_id}/tg-bot-status")
+    assert resp.status_code == 200
+    assert resp.json()["data"]["added"] is True
+
+
+async def test_tg_bot_status_404_for_unknown_id(client: httpx.AsyncClient) -> None:
+    """Unknown application id → 404. Safe because IDs are UUIDv4 —
+    no enumeration value in a successful guess."""
+    import uuid
+
+    resp = await client.get(f"/api/applications/{uuid.uuid4()}/tg-bot-status")
+    assert resp.status_code == 404
