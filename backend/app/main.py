@@ -17,6 +17,7 @@ from fastapi.responses import JSONResponse
 
 from app import __version__
 from app.admin.routers.auth import router as admin_auth_router
+from app.admin.routers.dashboard import router as admin_dashboard_router
 from app.api.middleware import (
     RequestIDMiddleware,
     SecurityHeadersMiddleware,
@@ -155,6 +156,7 @@ def create_app() -> FastAPI:
     app.include_router(feedback_router)
     app.include_router(preview_router)
     app.include_router(admin_auth_router)
+    app.include_router(admin_dashboard_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:

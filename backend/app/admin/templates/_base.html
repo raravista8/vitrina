@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Vitrina · {% block title %}Admin{% endblock %}</title>
+    <style>
+        :root { color-scheme: light dark; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            background: #f8fafc;
+            color: #111827;
+        }
+        header {
+            background: #111827;
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.03em; }
+        header nav a {
+            color: #d1d5db;
+            margin-left: 1.25rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        header nav a:hover { color: white; }
+        header form { margin: 0; }
+        header form button {
+            background: transparent;
+            color: #d1d5db;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-left: 1.25rem;
+        }
+        header form button:hover { background: #1f2937; color: white; }
+        main { max-width: 60rem; margin: 0 auto; padding: 2rem 1.5rem; }
+        h2 { margin: 0 0 1rem; font-size: 1.5rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        .card .label { font-size: 0.8rem; color: #6b7280; }
+        .card .value { font-size: 1.5rem; font-weight: 600; margin-top: 0.2rem; }
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        th, td {
+            padding: 0.6rem 0.9rem;
+            text-align: left;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th { background: #f3f4f6; font-weight: 600; }
+        tr:last-child td { border-bottom: 0; }
+        a.action {
+            color: #111827;
+            text-decoration: none;
+            border-bottom: 1px dashed #9ca3af;
+        }
+        a.action:hover { border-bottom-style: solid; }
+        .pill {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #e5e7eb;
+        }
+        .pill-pending { background: #fef3c7; color: #92400e; }
+        .pill-approved { background: #dbeafe; color: #1e40af; }
+        .pill-rejected { background: #fee2e2; color: #991b1b; }
+        .pill-fulfilled { background: #d1fae5; color: #065f46; }
+        .filters { margin-bottom: 1rem; }
+        .filters a {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            margin-right: 0.4rem;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            text-decoration: none;
+            font-size: 0.8rem;
+            color: #374151;
+        }
+        .filters a.active { background: #111827; color: white; border-color: #111827; }
+        .highlight { background: #fef9c3; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vitrina · Admin</h1>
+        <nav>
+            <a href="/admin/">Главная</a>
+            <a href="/admin/applications">Заявки</a>
+            <a href="/admin/waitlist">Waitlist</a>
+            <form method="post" action="/admin/logout">
+                <button type="submit">Выйти</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

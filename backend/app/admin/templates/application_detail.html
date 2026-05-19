@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+{% block title %}Заявка #{{ application.id }}{% endblock %}
+{% block content %}
+<h2>Заявка #{{ application.id }}</h2>
+
+<table style="margin-bottom: 2rem;">
+    <tbody>
+        <tr><th>Статус</th><td><span class="pill pill-{{ application.status }}">{{ application.status }}</span></td></tr>
+        <tr><th>Создана</th><td>{{ application.created_at.strftime("%Y-%m-%d %H:%M:%S UTC") }}</td></tr>
+        <tr><th>Источник</th><td>{{ application.source_type }}</td></tr>
+        <tr><th>URL</th><td>{% if application.source_url %}{{ application.source_url }}{% else %}—{% endif %}</td></tr>
+        <tr><th>Контакт</th><td>{{ application.contact_type }}: {{ application.contact_value }}</td></tr>
+        <tr><th>IP</th><td>{{ application.ip or "—" }}</td></tr>
+        <tr><th>User-Agent</th><td><code>{{ application.user_agent or "—" }}</code></td></tr>
+        {% if application.rejection_reason %}
+        <tr><th>Причина отказа</th><td>{{ application.rejection_reason }}</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<h3 style="font-size: 1rem;">Действия</h3>
+<p style="color: #6b7280; font-size: 0.875rem;">
+    Действия publish/reject лендят в T2.3 — пока заявка остаётся в статусе
+    {{ application.status }}, основатель связывается с пользователем
+    вручную (источник + контакт выше).
+</p>
+{% endblock %}
