@@ -127,6 +127,7 @@ class Settings(BaseSettings):
     rate_limit_leads_per_ip_per_day: int = 10
     rate_limit_preview_per_ip_per_min: int = 10
     rate_limit_admin_login_per_ip_per_15min: int = 5
+    rate_limit_track_per_ip_per_min: int = 100  # FR-? customer-site events (T5.1)
 
     # ---- Admin auth (T2.1) -------------------------------------------------
     # Signs the session cookie. Generate with `python -c "import secrets;

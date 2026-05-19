@@ -201,6 +201,21 @@ def _build_leads_daily_rate_limiter() -> RateLimiter:
 leads_daily_rate_limiter = _build_leads_daily_rate_limiter()
 
 
+def _build_track_rate_limiter() -> RateLimiter:
+    """T5.1 / FR-? : 100 req/min/IP keeps the customer-site analytics
+    endpoint useless as an amplifier while still allowing legitimate
+    page interactions (scroll, click_phone, etc)."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_track_per_ip_per_min,
+        window_seconds=60,
+        scope="track",
+    )
+
+
+track_rate_limiter = _build_track_rate_limiter()
+
+
 def get_lead_fernet(request: Request) -> MultiFernet:
     """Per-app MultiFernet initialised in lifespan (T5.2). The lifespan
     fails fast at startup if FERNET_KEYS isn't configured in
