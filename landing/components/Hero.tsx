@@ -64,10 +64,11 @@ export function Hero() {
   const deferred = useDeferredValue(raw);
   const detection: SourceDetection = detectSource(deferred);
 
-  const ctaEnabled = detection.kind === "mvp";
-  // Snapshot at the moment the modal opens so it stays stable even if
-  // the user edits the Hero input behind the (open) dialog.
-  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : "";
+  // CTA is ALWAYS clickable — never wait for the user to type something.
+  // If detection settled on an MVP source we pre-fill modal with the
+  // canonical URL + type; otherwise the modal opens with whatever the
+  // user typed (or empty) and they finish the submit inside.
+  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : raw.trim();
   const modalSourceType: "ymaps" | "telegram" =
     detection.kind === "mvp" ? detection.type : "telegram";
 
@@ -103,6 +104,25 @@ export function Hero() {
         aria-labelledby="hero-title"
         className="relative isolate overflow-hidden bg-paper px-5 pb-16 pt-7 sm:px-16 sm:pb-24 sm:pt-9"
       >
+        {/* Soft abstract gradient blobs — décor only (Concept A spec,
+            see concepts.jsx ConceptA_Inner lines 38-53). No master
+            photos per copy-anti-patterns rule. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-[120px] -top-[100px] -z-10 h-[380px] w-[380px] rounded-full opacity-85 sm:-right-[180px] sm:-top-[160px] sm:h-[720px] sm:w-[720px]"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 30%, oklch(0.92 0.045 40) 0%, transparent 65%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-[100px] bottom-[100px] -z-10 h-[280px] w-[280px] rounded-full opacity-70 sm:-left-[120px] sm:bottom-[60px] sm:h-[480px] sm:w-[480px]"
+          style={{
+            background: "radial-gradient(circle, oklch(0.94 0.020 90) 0%, transparent 70%)",
+          }}
+        />
+
         {/* Top nav — concept A spec. Login button is a quiet outlined
             pill on desktop, becomes a primary-tone pill on mobile (where
             the menu line is collapsed). */}
@@ -176,7 +196,6 @@ export function Hero() {
             )}
             onSubmit={(event) => {
               event.preventDefault();
-              if (!ctaEnabled) return;
               setModalOpen(true);
             }}
           >
@@ -198,13 +217,7 @@ export function Hero() {
             </div>
             <button
               type="submit"
-              disabled={!ctaEnabled}
-              className={cn(
-                "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] px-5 py-3.5 text-[16px] font-semibold sm:rounded-full sm:px-6 sm:py-3.5",
-                ctaEnabled
-                  ? "bg-accent text-white hover:bg-accent-hover"
-                  : "cursor-not-allowed bg-ink-muted text-white/80",
-              )}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-accent px-5 py-3.5 text-[16px] font-semibold text-white hover:bg-accent-hover sm:rounded-full sm:px-6 sm:py-3.5"
             >
               {CTA_TEXT}
               <span aria-hidden className="text-lg leading-none">

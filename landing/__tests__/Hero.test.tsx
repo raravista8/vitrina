@@ -84,13 +84,16 @@ describe("Hero — interaction", () => {
     vi.unstubAllGlobals();
   });
 
-  it("CTA is disabled until an MVP source is detected", () => {
+  it("CTA is always clickable — never wait for input", () => {
+    // UX rule: the primary CTA never goes disabled. Users with empty
+    // input still get the modal (where they finish the submission or
+    // jump to the photo path).
     render(<Hero />);
     const button = screen.getByRole("button", { name: /Собрать мою витрину/ });
-    expect(button).toBeDisabled();
+    expect(button).not.toBeDisabled();
   });
 
-  it("enables CTA when a Telegram URL is pasted", async () => {
+  it("CTA stays enabled after pasting a Telegram URL", async () => {
     render(<Hero />);
     const input = screen.getByPlaceholderText(/ссылка на соцсеть/i);
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
@@ -112,23 +115,23 @@ describe("Hero — interaction", () => {
     });
   });
 
-  it("for waitlist URLs, renders the email-capture panel instead of enabling CTA", () => {
+  it("for waitlist URLs, renders the email-capture panel; CTA stays clickable", () => {
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://instagram.com/anna_master" },
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
     // Parallel CTA per FR-093.
     expect(screen.getByRole("link", { name: /создайте из фото сейчас/i })).toBeInTheDocument();
   });
 
-  it("for a non-URL string, hints at supported sources without enabling CTA", () => {
+  it("for a non-URL string, hints at supported sources; CTA stays clickable", () => {
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "just some text" },
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
   });
 });
