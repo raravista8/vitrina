@@ -83,6 +83,11 @@ class Settings(BaseSettings):
     # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
     yandex_geosearch_api_key: str | None = None
 
+    # ---- SEO submitters (T2.6) ---------------------------------------------
+    yandex_webmaster_api_key: str | None = None
+    indexnow_site_key: str | None = None
+    gsc_service_account_json: str | None = None  # path to JSON keyfile
+
     # ---- Rate limits -------------------------------------------------------
     rate_limit_applications_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_hour: int = 3
