@@ -1,3 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Onest:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Paint the page with the design's "тёплая бумага" surface. Anchors
+   the eye even on the partial sections (footer, individual pages) so
+   the cream feels intentional and not stripey.
+
+   Per Concept A — see `tailwind.config.ts` for the token values. */
+html,
+body {
+  background-color: theme("colors.paper");
+  color: theme("colors.ink");
+  font-family: theme("fontFamily.sans");
+  letter-spacing: -0.012em;
+}
