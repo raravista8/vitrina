@@ -14,12 +14,15 @@ from sqlalchemy import select
 from app.api.dependencies import (
     get_captcha_verifier,
     get_lead_fernet,
+    get_notification_dispatcher,
     get_session,
     leads_daily_rate_limiter,
     leads_hourly_rate_limiter,
 )
 from app.core.captcha.verifier import CaptchaResult
 from app.core.leads.encryption import decrypt
+from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.notify.ports import DeliveryResult
 from app.infrastructure.postgres.models import Lead, Site, User
 from app.main import create_app
 
@@ -79,6 +82,23 @@ class _RejectingCaptcha:
         return CaptchaResult(is_valid=False, reason="test_rejection")
 
 
+class _RecordingDispatcher(NotificationDispatcher):
+    """Captures notify_user calls so tests can assert masked PII
+    landed on the right contact channel."""
+
+    def __init__(self) -> None:
+        super().__init__(channels={}, founder_telegram_chat_id=None)
+        self.user_sends: list[tuple[str, str, str, str]] = []
+
+    async def notify_user(self, contact, kind, message):  # type: ignore[override,no-untyped-def]
+        self.user_sends.append(
+            (contact.primary_type.value, contact.primary_value, message.title, message.body)
+        )
+        return DeliveryResult(
+            delivered=True, channel=contact.primary_type, recipient=contact.primary_value
+        )
+
+
 # --- fixtures -------------------------------------------------------------
 
 
@@ -112,9 +132,12 @@ async def app(db_session, fernet) -> AsyncIterator[FastAPI]:  # type: ignore[no-
 
     fastapi_app.state.lead_fernet = fernet
     fastapi_app.state.redis = _FakeRedis()
+    test_dispatcher = _RecordingDispatcher()
+    fastapi_app.state.test_dispatcher = test_dispatcher
     fastapi_app.dependency_overrides[get_session] = _override_session
     fastapi_app.dependency_overrides[get_captcha_verifier] = lambda: _AcceptingCaptcha()
     fastapi_app.dependency_overrides[get_lead_fernet] = lambda: fernet
+    fastapi_app.dependency_overrides[get_notification_dispatcher] = lambda: test_dispatcher
     # Default: rate limits disabled. Tests that exercise them re-attach.
     fastapi_app.dependency_overrides[leads_hourly_rate_limiter] = lambda: None
     fastapi_app.dependency_overrides[leads_daily_rate_limiter] = lambda: None
@@ -275,3 +298,32 @@ async def test_pydantic_field_caps_enforced(
         json=_payload(published_site.id, phone="1"),
     )
     assert resp.status_code == 422
+
+
+# --- owner notification (T5.4) -------------------------------------------
+
+
+async def test_owner_notified_with_masked_pii(
+    client: httpx.AsyncClient,
+    app: FastAPI,
+    published_site,  # type: ignore[no-untyped-def]
+) -> None:
+    """On a successful lead, the site owner gets a notification with
+    name/phone masked. The dispatcher never sees the cleartext that's
+    in the DB ciphertext, but does see masked text in the message
+    body (so the owner can recognise the lead in their inbox)."""
+    resp = await client.post("/api/leads", json=_payload(published_site.id))
+    assert resp.status_code == 202
+
+    dispatcher = app.state.test_dispatcher
+    assert len(dispatcher.user_sends) == 1
+    channel, recipient, title, body = dispatcher.user_sends[0]
+    assert channel == "email"  # seeded site owner uses email contact
+    assert recipient == "owner@example.com"
+    assert "Новая заявка" in title
+    # Full PII MUST NOT land in the dispatcher payload
+    assert "+7 921 123-45-67" not in body
+    assert "Иванова" not in body  # last name fully hidden
+    # Masked variants MUST be there for the owner to recognise the lead
+    assert "Анна И." in body
+    assert "45-67" in body  # last 4 digits exposed by mask_phone

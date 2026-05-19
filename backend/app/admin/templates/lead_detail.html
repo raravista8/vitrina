@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% block title %}Заявка {{ lead.id }}{% endblock %}
+{% block content %}
+<h2>Заявка <code>{{ lead.id }}</code></h2>
+<p style="color: #6b7280; font-size: 0.875rem;">
+    Открытие этой страницы зафиксировано в аудит-логе
+    (<code>admin_actions.action = "lead_decrypted"</code>).
+</p>
+
+<table style="margin-bottom: 2rem;">
+    <tbody>
+        <tr><th>Сайт</th><td><code>{{ site.subdomain }}.vitrina.site</code></td></tr>
+        <tr><th>Создана</th><td>{{ lead.created_at.strftime("%Y-%m-%d %H:%M:%S UTC") }}</td></tr>
+        <tr><th>Статус</th><td><span class="pill pill-{{ lead.status }}">{{ lead.status }}</span></td></tr>
+        <tr><th>IP</th><td>{{ lead.ip or "—" }}</td></tr>
+        <tr><th>User-Agent</th><td><code style="font-size: 0.75rem;">{{ lead.user_agent or "—" }}</code></td></tr>
+    </tbody>
+</table>
+
+<h3 style="font-size: 1rem;">Данные клиента</h3>
+<table>
+    <tbody>
+        <tr><th>Имя</th><td>{{ decrypted.name }} <span style="color: #6b7280; font-size: 0.75rem;">(маска: {{ masked.name }})</span></td></tr>
+        <tr><th>Телефон</th><td><a href="tel:{{ decrypted.phone }}">{{ decrypted.phone }}</a> <span style="color: #6b7280; font-size: 0.75rem;">(маска: {{ masked.phone }})</span></td></tr>
+        {% if decrypted.message %}
+        <tr><th>Сообщение</th><td>{{ decrypted.message }}</td></tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}
