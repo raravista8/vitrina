@@ -26,6 +26,7 @@ from app.api.middleware import (
 )
 from app.api.routers.applications import router as applications_router
 from app.api.routers.feedback import router as feedback_router
+from app.api.routers.me import router as me_router
 from app.api.routers.preview import router as preview_router
 from app.config import get_settings
 from app.utils.logging import configure_logging, get_logger
@@ -214,6 +215,7 @@ def create_app() -> FastAPI:
 
     app.include_router(applications_router)
     app.include_router(feedback_router)
+    app.include_router(me_router)
     app.include_router(preview_router)
     app.include_router(admin_auth_router)
     app.include_router(admin_dashboard_router)
