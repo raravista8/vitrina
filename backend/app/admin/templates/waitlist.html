@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+{% block title %}Waitlist{% endblock %}
+{% block content %}
+<h2>Waitlist (ADR-0009)</h2>
+
+<p style="color: #6b7280; font-size: 0.875rem;">
+    Жёлтый = ≥{{ threshold }} голосов — пора писать ADR на добавление источника.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Источник</th>
+            <th>Голосов</th>
+            <th>Уникальных email</th>
+            <th>Первый</th>
+            <th>Последний</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in rows %}
+        <tr class="{% if r.votes >= threshold %}highlight{% endif %}">
+            <td><strong>{{ r.source_name }}</strong></td>
+            <td>{{ r.votes }}</td>
+            <td>{{ r.distinct_emails }}</td>
+            <td>{{ r.first_seen.strftime("%Y-%m-%d") }}</td>
+            <td>{{ r.last_seen.strftime("%Y-%m-%d") }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align: center; color: #6b7280;">Пока нет waitlist-голосов.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
