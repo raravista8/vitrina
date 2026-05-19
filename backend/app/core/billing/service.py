@@ -44,7 +44,7 @@ from app.core.billing.state_machine import (
     apply_event,
     initial_state,
 )
-from app.infrastructure.postgres.models import BillingEvent, Subscription
+from app.infrastructure.postgres.models import BillingEvent, Subscription, User
 from app.utils.logging import get_logger
 
 _log = get_logger("core.billing.service")
@@ -91,6 +91,10 @@ async def ensure_subscription(
         if existing is not None:
             return existing
         raise
+
+    # FR-080 mirror — ``users.plan`` gates the recurring-charge worker.
+    await _sync_user_plan(session=session, sub=row, new_state=state)
+
     await session.commit()
     _log.info(
         "subscription_created",
@@ -153,6 +157,14 @@ async def start_checkout(
             description=f"Vitrina Pro — {sub.amount_kopeks // 100} ₽",
             idempotency_key=idempotency_key,
             save_payment_method=True,
+            # ЮKassa echoes this back on every webhook tied to this
+            # payment. Carrying both IDs lets the webhook handler find
+            # the subscription on the FIRST charge — before any saved
+            # card / payment_method_id exists.
+            metadata={
+                "user_id": str(user_id),
+                "subscription_id": str(sub.id),
+            },
         )
     except PaymentGatewayError as exc:
         raise BillingError(f"gateway_failed:{exc}") from exc
@@ -260,6 +272,8 @@ async def record_webhook_event(
     if payment_method_id and not sub.payment_method_id:
         sub.payment_method_id = payment_method_id
 
+    await _sync_user_plan(session=session, sub=sub, new_state=new_state)
+
     event.processed_at = now
     await session.commit()
 
@@ -302,6 +316,9 @@ async def cancel_subscription(
     sub.status = new_state.status.value
     sub.cancel_reason = new_state.cancel_reason
     sub.cancelled_at = new_state.cancelled_at
+
+    await _sync_user_plan(session=session, sub=sub, new_state=new_state)
+
     await session.commit()
     _log.info(
         "subscription_cancelled",
@@ -313,6 +330,51 @@ async def cancel_subscription(
 
 
 # --- helpers --------------------------------------------------------------
+
+
+async def _sync_user_plan(
+    *,
+    session: AsyncSession,
+    sub: Subscription,
+    new_state: SubscriptionState,
+) -> None:
+    """Mirror the subscription state onto ``users.plan`` / ``plan_until``.
+
+    The ``users.plan`` column is the cheap-to-read gate for FR-080
+    (recurring-charge worker checks ``plan == 'trial' AND plan_until
+    > now()`` before attempting any charge). Subscription state is
+    authoritative; ``users.plan`` is a derived mirror kept consistent
+    by every transition.
+
+    Mapping:
+      trial / active     → ``users.plan = 'pro'``, plan_until = period_end
+      past_due           → ``users.plan = 'pro'``, plan_until = period_end
+                           (Pro keeps working through the retry window)
+      cancelled          → ``users.plan = 'cancelled'``, plan_until
+                           unchanged (so the publish flow can still
+                           gate on "until when did they pay")
+      refunded           → ``users.plan = 'expired'``, plan_until = now
+
+    The model already constrains ``users.plan`` to the four-value
+    CHECK ``('trial','pro','expired','cancelled')`` — we never write
+    anything outside that set.
+    """
+    user = (await session.execute(select(User).where(User.id == sub.user_id))).scalar_one_or_none()
+    if user is None:  # subscription FK CASCADE makes this near-impossible
+        return
+
+    status = new_state.status
+    if status in {SubscriptionStatus.trial, SubscriptionStatus.active, SubscriptionStatus.past_due}:
+        user.plan = "pro" if status is not SubscriptionStatus.trial else "trial"
+        user.plan_until = new_state.current_period_end or sub.trial_ends_at
+    elif status is SubscriptionStatus.cancelled:
+        user.plan = "cancelled"
+        # Keep plan_until intact — user keeps Pro until period end
+        # (offer §2). If the worker reads `plan='cancelled'` it still
+        # honours plan_until.
+    elif status is SubscriptionStatus.refunded:
+        user.plan = "expired"
+        user.plan_until = datetime.now(UTC)
 
 
 async def _fetch_by_user(session: AsyncSession, user_id: uuid.UUID) -> Subscription | None:

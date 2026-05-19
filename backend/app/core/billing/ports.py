@@ -73,6 +73,7 @@ class PaymentGateway(Protocol):
         description: str,
         idempotency_key: str,
         save_payment_method: bool = True,
+        metadata: dict[str, str] | None = None,
     ) -> CreatedPayment: ...
 
     async def charge_recurring(

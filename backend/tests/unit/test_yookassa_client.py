@@ -109,6 +109,63 @@ async def test_create_payment_sends_expected_body(monkeypatch: pytest.MonkeyPatc
 
 
 @pytest.mark.unit
+async def test_metadata_is_passed_through(monkeypatch: pytest.MonkeyPatch) -> None:
+    """T9.1 polish: the first charge MUST carry metadata so the
+    webhook can locate the subscription before any saved card."""
+    captured: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["body"] = json.loads(request.content)
+        return httpx.Response(200, json=_success_payment())
+
+    _patch_transport(monkeypatch, httpx.MockTransport(handler))
+    client = YookassaClient(
+        shop_id="s",  # pragma: allowlist secret
+        secret_key="k",  # pragma: allowlist secret
+    )
+    await client.create_payment(
+        amount_kopeks=99000,
+        currency="RUB",
+        return_url="https://vitrina.site/back",
+        description="Pro",
+        idempotency_key="i-meta",
+        metadata={"user_id": "user-uuid-1", "subscription_id": "sub-uuid-1"},
+    )
+    body = captured["body"]
+    assert body["metadata"] == {  # type: ignore[index]
+        "user_id": "user-uuid-1",
+        "subscription_id": "sub-uuid-1",
+    }
+
+
+@pytest.mark.unit
+async def test_metadata_omitted_when_not_passed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Backwards-compat: callers that don't pass metadata get a body
+    without the metadata key (so we don't ship empty {} to the API)."""
+    captured: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["body"] = json.loads(request.content)
+        return httpx.Response(200, json=_success_payment())
+
+    _patch_transport(monkeypatch, httpx.MockTransport(handler))
+    client = YookassaClient(
+        shop_id="s",  # pragma: allowlist secret
+        secret_key="k",  # pragma: allowlist secret
+    )
+    await client.create_payment(
+        amount_kopeks=99000,
+        currency="RUB",
+        return_url="https://x",
+        description="x",
+        idempotency_key="i-nomet",
+    )
+    assert "metadata" not in captured["body"]  # type: ignore[operator]
+
+
+@pytest.mark.unit
 async def test_charge_recurring_uses_payment_method_id(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
