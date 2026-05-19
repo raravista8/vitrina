@@ -26,6 +26,7 @@ from app.api.middleware import (
 )
 from app.api.routers.applications import router as applications_router
 from app.api.routers.feedback import router as feedback_router
+from app.api.routers.leads import router as leads_router
 from app.api.routers.me import router as me_router
 from app.api.routers.preview import router as preview_router
 from app.config import get_settings
@@ -130,6 +131,30 @@ async def _lifespan(app: FastAPI) -> Any:
     app.state.content_llm = content_llm
     log.info("content_llm_ready", available=content_llm.is_available())
 
+    # Lead encryption (T5.2). Production envs MUST set FERNET_KEYS; in
+    # dev we mint an ephemeral key so `make dev` boots without 1Password
+    # access. The ephemeral key is in-memory only — restart loses
+    # historical ciphertext, which is the correct behaviour for dev.
+    from cryptography.fernet import Fernet
+
+    from app.core.leads.encryption import build_fernet
+
+    raw_keys = (settings.fernet_keys or "").strip()
+    if raw_keys:
+        key_list = [k.strip() for k in raw_keys.split(",") if k.strip()]
+    elif settings.environment.value == "production":
+        msg = "FERNET_KEYS must be set in production (SECURITY.md §A04)"
+        raise RuntimeError(msg)
+    else:
+        ephemeral = Fernet.generate_key().decode("ascii")
+        log.warning(
+            "fernet_key_ephemeral",
+            note="generated for dev; set FERNET_KEYS for persistent encryption",
+        )
+        key_list = [ephemeral]
+    app.state.lead_fernet = build_fernet(key_list)
+    log.info("lead_fernet_ready", key_count=len(key_list))
+
     # Publishing (T2.3) — Jinja2 renderer + S3 uploader + SEO + notifier
     # composed into a SitePublisher. The uploader falls back to the
     # in-memory implementation when S3 credentials are absent so the dev
@@ -232,6 +257,7 @@ def create_app() -> FastAPI:
 
     app.include_router(applications_router)
     app.include_router(feedback_router)
+    app.include_router(leads_router)
     app.include_router(me_router)
     app.include_router(preview_router)
     app.include_router(admin_auth_router)

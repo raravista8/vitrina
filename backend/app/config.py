@@ -83,6 +83,13 @@ class Settings(BaseSettings):
     # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
     yandex_geosearch_api_key: str | None = None
 
+    # ---- Lead encryption (T5.2, FR-050, SECURITY.md A04) ------------------
+    # Single key in MVP; comma-separated list for rotation (the FIRST key
+    # encrypts new writes, all keys decrypt). Empty in dev — the lifespan
+    # auto-generates an ephemeral key in that case so `make dev` works
+    # without 1Password access; production envs MUST set FERNET_KEYS.
+    fernet_keys: str | None = None
+
     # ---- YandexGPT (T4.1, ADR-0003) ----------------------------------------
     yandexgpt_api_key: str | None = None
     yandexgpt_folder_id: str | None = None
