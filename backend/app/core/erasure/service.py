@@ -1,4 +1,4 @@
-"""Data-erasure service (T6.2, FR-071).
+"""Data-erasure + self-service service (T6.2, T6.5 / FR-071).
 
 Two-step flow per SECURITY.md §9.3:
 
@@ -15,6 +15,12 @@ Two-step flow per SECURITY.md §9.3:
   2. ``confirm_erasure`` — looks up the row by token hash, validates
      the lifecycle (pending + not expired), then performs the erasure
      synchronously and writes an `admin_actions` audit row.
+
+T6.5 piggy-backs on the same token surface: ``inspect_my_data`` looks
+up a User by token (without consuming it) and returns a read-only
+summary the dashboard renders. Same 15-minute TTL applies. This is
+enough for the MVP "view-my-sites" page — full passwordless login
+(magic-link sessions) is a later ticket.
 
 The deletion itself touches:
 
@@ -239,6 +245,77 @@ async def confirm_erasure(
         deletion_request_id=row.id,
         user_id=user_id,
         sites_deleted=sites_deleted,
+    )
+
+
+# --- Read-only self-service inspection (T6.5) ------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class _SiteSummary:
+    """Minimal site card the dashboard shows. Kept module-private so
+    the API schema lives in `app.api.schemas.me`."""
+
+    subdomain: str
+    status: str
+    source_type: str
+
+
+@dataclass(frozen=True, slots=True)
+class MyDataView:
+    user_id: uuid.UUID
+    contact_type: str
+    contact_value: str
+    sites: list[_SiteSummary]
+
+
+async def inspect_my_data(
+    *,
+    session: AsyncSession,
+    raw_token: str,
+) -> MyDataView:
+    """Read-only counterpart to ``confirm_erasure``: validates the same
+    token (without consuming it) and returns a snapshot of the user's
+    sites for the dashboard.
+
+    Token has 15-min TTL; passing an expired token raises the same
+    ``ErasureTokenExpiredError`` so the router maps to the same 400.
+    """
+    token_hash = _hash_token(raw_token)
+    row = (
+        await session.execute(
+            select(DeletionRequest).where(DeletionRequest.token_hash == token_hash)
+        )
+    ).scalar_one_or_none()
+    if row is None:
+        raise ErasureTokenInvalidError("token_not_found")
+    if row.status not in {"pending", "confirmed"}:
+        raise ErasureTokenExpiredError(f"already:{row.status}")
+    if row.expires_at < datetime.now(UTC):
+        raise ErasureTokenExpiredError("link_expired")
+    if row.user_id is None:
+        # Shouldn't happen in practice — a pending row with NULL user_id
+        # would mean the user was already erased. Treat as invalid.
+        raise ErasureTokenInvalidError("user_missing")
+
+    from app.infrastructure.postgres.models import Site as _Site
+
+    sites_rows = (
+        await session.execute(
+            select(_Site.subdomain, _Site.status, _Site.source_type).where(
+                _Site.user_id == row.user_id
+            )
+        )
+    ).all()
+
+    return MyDataView(
+        user_id=row.user_id,
+        contact_type=row.contact_type,
+        contact_value=row.contact_value,
+        sites=[
+            _SiteSummary(subdomain=s.subdomain, status=s.status, source_type=s.source_type)
+            for s in sites_rows
+        ],
     )
 
 
