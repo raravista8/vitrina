@@ -19,6 +19,22 @@
 <p style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 0.5rem;">
     Не найден владелец сайта в БД — публикация заблокирована.
 </p>
+{% elif flash == "generated_success" %}
+<p style="background: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Контент сгенерирован, статус сайта → <code>review</code>. Можно публиковать.
+</p>
+{% elif flash == "generated_flagged" %}
+<p style="background: #fef3c7; color: #92400e; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Контент сгенерирован, но LLM добавил подозрительные элементы (см. safety_flags в admin_actions). Проверьте перед публикацией.
+</p>
+{% elif flash == "generated_failed" %}
+<p style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Генерация не удалась — подробности в admin_actions / логах.
+</p>
+{% elif flash == "no_snapshot" %}
+<p style="background: #fef3c7; color: #92400e; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Нет <code>source_snapshot</code> — сначала запустите парсер.
+</p>
 {% endif %}
 
 <table style="margin-bottom: 2rem;">
@@ -33,14 +49,31 @@
 </table>
 
 <h3 style="font-size: 1rem;">Действия</h3>
-{% if can_publish %}
-<form method="post" action="/admin/sites/{{ site.id }}/publish">
-    <button type="submit" style="background: #111827; color: white; border: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;">
-        {% if site.status == "published" %}Перепубликовать{% else %}Опубликовать{% endif %}
-    </button>
-</form>
-{% else %}
-<p style="color: #6b7280; font-size: 0.875rem;">
+
+<div style="display: flex; gap: 0.75rem; align-items: center;">
+    {% if site.source_snapshot %}
+    <form method="post" action="/admin/sites/{{ site.id }}/generate" style="margin: 0;">
+        <button type="submit" style="background: #2563eb; color: white; border: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;">
+            {% if site.generated_content %}Перегенерировать контент{% else %}Сгенерировать контент (LLM){% endif %}
+        </button>
+    </form>
+    {% endif %}
+
+    {% if can_publish %}
+    <form method="post" action="/admin/sites/{{ site.id }}/publish" style="margin: 0;">
+        <button type="submit" style="background: #111827; color: white; border: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;">
+            {% if site.status == "published" %}Перепубликовать{% else %}Опубликовать{% endif %}
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+{% if not site.source_snapshot %}
+<p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.75rem;">
+    Нет <code>source_snapshot</code> — сначала пропустите источник через парсер (T3).
+</p>
+{% elif not can_publish %}
+<p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.75rem;">
     Публикация недоступна: нужно <code>generated_content</code> и статус
     <code>review</code> или <code>published</code>.
 </p>

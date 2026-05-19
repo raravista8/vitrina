@@ -113,6 +113,23 @@ async def _lifespan(app: FastAPI) -> Any:
         ymaps=geosearch_client.is_available(),
     )
 
+    # YandexGPT client (T4.1). When credentials are absent the client's
+    # `is_available()` returns False and the content service short-
+    # circuits to a "failed" outcome — `make dev` keeps working
+    # without YC access. CLAUDE.md hard rule + ADR-0003: NO other LLM
+    # provider may be wired here.
+    from app.infrastructure.yandex.gpt import YandexGptClient
+
+    content_llm = YandexGptClient(
+        api_key=settings.yandexgpt_api_key,
+        folder_id=settings.yandexgpt_folder_id,
+        model_name=settings.yandexgpt_model_name,
+        model_version=settings.yandexgpt_model_version,
+        temperature=settings.yandexgpt_temperature,
+    )
+    app.state.content_llm = content_llm
+    log.info("content_llm_ready", available=content_llm.is_available())
+
     # Publishing (T2.3) — Jinja2 renderer + S3 uploader + SEO + notifier
     # composed into a SitePublisher. The uploader falls back to the
     # in-memory implementation when S3 credentials are absent so the dev

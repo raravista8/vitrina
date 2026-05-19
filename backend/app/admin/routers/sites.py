@@ -26,18 +26,30 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.admin import admin_templates
 from app.api.dependencies import (
     get_client_ip,
+    get_content_llm,
     get_session,
     require_admin,
 )
 from app.config import get_settings
 from app.core.auth.sessions import AdminSession
+from app.core.content.ports import LlmClient
+from app.core.content.service import generate_for_snapshot
 from app.core.notify.dispatcher import UserContact
 from app.core.notify.ports import ChannelType
+from app.core.parsing.ports import (
+    ContactRef,
+    PhotoRef,
+    ReviewRef,
+    ServiceItem,
+    SourceSnapshot,
+    SourceType,
+)
 from app.core.publishing.service import (
     PublishContext,
     PublishResult,
     SitePublisher,
 )
+from app.infrastructure.audit.generation import write_audit_row
 from app.infrastructure.postgres.models import AdminAction, Site, User
 from app.utils.logging import get_logger
 
@@ -97,6 +109,55 @@ async def admin_site_detail(
 
 
 # ---- publish action --------------------------------------------------------
+
+
+@router.post("/{site_id}/generate", include_in_schema=False)
+async def admin_site_generate(
+    site_id: UUID,
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    llm: Annotated[LlmClient, Depends(get_content_llm)],
+) -> RedirectResponse:
+    """T4.1 wire-up: take the site's stored snapshot and run it through
+    the LLM. Writes ``sites.generated_content`` on success + an audit
+    row either way."""
+    site = await _load_site_or_404(session, site_id)
+    if site.source_snapshot is None:
+        return _redirect_with_flash(site_id, "no_snapshot")
+
+    snapshot = _snapshot_from_json(site.source_snapshot)
+    outcome = await generate_for_snapshot(snapshot=snapshot, llm=llm)
+    await write_audit_row(session=session, site_id=site.id, outcome=outcome)
+
+    if (outcome.status == "success" and outcome.content is not None) or (
+        outcome.status == "flagged" and outcome.content is not None
+    ):
+        site.generated_content = outcome.content
+        site.status = "review"
+    # On "failed": keep snapshot, no generated_content, status unchanged
+    # so the founder can re-trigger after fixing the upstream cause.
+
+    session.add(
+        AdminAction(
+            admin_id=UUID(str(admin.admin_id)),
+            action="content_generated",
+            target_type="site",
+            target_id=str(site.id),
+            params={
+                "status": outcome.status,
+                "tokens_in": outcome.tokens_in,
+                "tokens_out": outcome.tokens_out,
+                "safety_flags": outcome.safety_flags,
+                "error_message": outcome.error_message,
+            },
+            ip=get_client_ip(request),
+        )
+    )
+    await session.commit()
+
+    flash = f"generated_{outcome.status}"
+    return _redirect_with_flash(site_id, flash)
 
 
 @router.post("/{site_id}/publish", include_in_schema=False)
@@ -244,4 +305,59 @@ def _redirect_with_flash(site_id: UUID, flash: str) -> RedirectResponse:
     return RedirectResponse(
         url=f"/admin/sites/{site_id}?flash={flash}",
         status_code=303,
+    )
+
+
+def _snapshot_from_json(payload: dict[str, Any]) -> SourceSnapshot:
+    """Rehydrate a SourceSnapshot from the JSONB column.
+
+    Inverse of ``snapshot_to_json``. Tolerant of partial / older
+    payloads: missing fields fall back to defaults so old snapshots
+    don't break the generation flow when the dataclass evolves.
+    """
+    source_type_raw = payload.get("source_type", "ymaps")
+    try:
+        source_type = SourceType(source_type_raw)
+    except ValueError:
+        source_type = SourceType.ymaps
+
+    return SourceSnapshot(
+        source_type=source_type,
+        source_ref=str(payload.get("source_ref", "")),
+        title=payload.get("title"),
+        description=payload.get("description"),
+        contacts=[
+            ContactRef(kind=str(c.get("kind", "")), value=str(c.get("value", "")))
+            for c in payload.get("contacts", [])
+            if isinstance(c, dict)
+        ],
+        photos=[
+            PhotoRef(
+                url=p.get("url"),
+                upload_key=p.get("upload_key"),
+                alt=p.get("alt"),
+                photo_type=p.get("photo_type", "work"),
+            )
+            for p in payload.get("photos", [])
+            if isinstance(p, dict)
+        ],
+        reviews=[
+            ReviewRef(
+                author=r.get("author"),
+                text=str(r.get("text", "")),
+                rating=r.get("rating") if isinstance(r.get("rating"), int) else None,
+            )
+            for r in payload.get("reviews", [])
+            if isinstance(r, dict)
+        ],
+        services=[
+            ServiceItem(
+                title=str(s.get("title", "")),
+                description=s.get("description"),
+                price_label=s.get("price_label"),
+            )
+            for s in payload.get("services", [])
+            if isinstance(s, dict)
+        ],
+        metadata=payload.get("metadata") or {},
     )
