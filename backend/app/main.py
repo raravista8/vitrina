@@ -18,6 +18,7 @@ from fastapi.responses import JSONResponse
 from app import __version__
 from app.admin.routers.auth import router as admin_auth_router
 from app.admin.routers.dashboard import router as admin_dashboard_router
+from app.admin.routers.leads import router as admin_leads_router
 from app.admin.routers.sites import router as admin_sites_router
 from app.api.middleware import (
     RequestIDMiddleware,
@@ -264,6 +265,7 @@ def create_app() -> FastAPI:
     app.include_router(track_router)
     app.include_router(admin_auth_router)
     app.include_router(admin_dashboard_router)
+    app.include_router(admin_leads_router)
     app.include_router(admin_sites_router)
 
     @app.get("/healthz", include_in_schema=False)

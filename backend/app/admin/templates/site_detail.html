@@ -68,6 +68,10 @@
     {% endif %}
 </div>
 
+<p style="margin-top: 1rem;">
+    <a class="action" href="/admin/sites/{{ site.id }}/leads">📨 Заявки этого сайта →</a>
+</p>
+
 {% if not site.source_snapshot %}
 <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.75rem;">
     Нет <code>source_snapshot</code> — сначала пропустите источник через парсер (T3).

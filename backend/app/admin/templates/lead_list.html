@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+{% block title %}Заявки · {{ site.subdomain }}{% endblock %}
+{% block content %}
+<h2>Заявки сайта <code>{{ site.subdomain }}.vitrina.site</code></h2>
+<p style="color: #6b7280; font-size: 0.875rem;">
+    Имена и телефоны замаскированы. Откройте конкретную заявку, чтобы увидеть полные данные —
+    каждое такое открытие пишется в аудит-лог <code>admin_actions</code>.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Создана</th>
+            <th>Статус</th>
+            <th>IP</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lead in leads %}
+        <tr>
+            <td>{{ lead.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td><span class="pill pill-{{ lead.status }}">{{ lead.status }}</span></td>
+            <td>{% if lead.ip %}{{ lead.ip }}{% else %}—{% endif %}</td>
+            <td><a class="action" href="/admin/leads/{{ lead.id }}">Открыть</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align: center; color: #6b7280;">Заявок пока нет.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
