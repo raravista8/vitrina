@@ -5,7 +5,8 @@
       "name": "Landing (Next.js dev)",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "landing", "run", "dev"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     },
     {
       "name": "Backend API (FastAPI / uvicorn --reload)",

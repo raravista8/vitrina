@@ -3,31 +3,36 @@
 /**
  * Hero — canonical messaging per docs/COPY.md §2.
  *
- * Anchors:
- *   - Category label "САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ"
+ * **Design source.** Markup mirrors Claude Design's Concept A "Тёплая
+ * бумага" canvas (see `~/Downloads/vitrina ui/concepts.jsx` :: ConceptA_Inner).
+ * Inline-styled canvas → Tailwind classes; tokens live in
+ * `tailwind.config.ts` (paper / ink / accent / line).
+ *
+ * Copy anchors (locked to COPY.md):
+ *   - Category eyebrow "САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ"
  *   - H1 "Сайт, который сам себя ведёт и приносит вам заявки"
- *   - Single input + one primary CTA (no source-picker tabs — see PRD §4
- *     "Product principle: zero-friction Hero").
- *   - Microcopy under CTA: "Первый месяц бесплатно — без карты при регистрации"
- *   - Below: two text links (📷 photo upload, 📨 closed TG export).
+ *   - Single input + one primary CTA — zero-friction Hero (PRD §4)
+ *   - Microcopy "Первый месяц бесплатно — без карты при регистрации"
+ *   - Below: two text links (📷 photo upload, 📨 closed TG export)
  *
- * Behaviour:
- *   - URL paste is debounced ~150 ms then classified via `detectSource`.
- *   - MVP source (TG / Я.Карты): badge "✓ Telegram" / "✓ Яндекс.Карты"
- *     + CTA enabled. CTA action lands in T1.5 (submit modal); for T1.4
- *     it's a no-op placeholder that logs the intent.
- *   - Waitlist source: badge "ℹ <Source> скоро будет" + inline
- *     WaitlistCapture component (email field) + parallel CTA «или
- *     создайте из фото сейчас».
- *   - Unknown URL: open input asking the user to name the source.
- *   - Not-URL: hint pointing to the supported sources or photo upload.
+ * Behaviour — owned by this component (NOT in the design canvas):
+ *   - URL paste is debounced via `useDeferredValue` then classified.
+ *   - MVP source (TG / Я.Карты): green badge + CTA enabled. Submit
+ *     opens the T1.5 SubmitModal pre-filled with `sourceUrl`/`sourceType`.
+ *   - Waitlist source: amber inline panel with WaitlistCapture + a
+ *     parallel "create from photo" CTA per FR-093.
+ *   - Unknown URL / not-URL: hint pointing the user at supported sources.
  *
- * Anti-patterns per COPY.md §7 deliberately avoided:
+ * Anti-patterns avoided (COPY.md §7):
  *   - No "AI-генератор" wording.
  *   - No Schema.org / sitemap jargon in user-facing copy.
- *   - No "за 2 минуты" as the main hook (it's a secondary detail at most).
+ *   - No "за 2 минуты" as the main hook.
+ *
+ * Brand: "Витрина" everywhere — Cyrillic, no Latin transliteration
+ * (legal requirement, see PRD §3).
  */
 
+import { Link as LinkIcon, ShieldCheck } from "lucide-react";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -37,7 +42,7 @@ import { SubmitModal } from "./SubmitModal";
 import { WaitlistCapture } from "./WaitlistCapture";
 
 const PLACEHOLDER = "ссылка на соцсеть, Яндекс.Карты или сайт";
-const CTA_TEXT = "Собрать мою витрину →";
+const CTA_TEXT = "Собрать мою витрину";
 const MICROCOPY = "Первый месяц бесплатно — без карты при регистрации.";
 
 type PreviewState =
@@ -51,27 +56,29 @@ export function Hero() {
   const [raw, setRaw] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [preview, setPreview] = useState<PreviewState>({ phase: "idle" });
-  // useDeferredValue gives us a debounce-by-priority for the classifier
-  // without scheduling explicit timers. Classification is cheap (regex) so
-  // running it on every keystroke is fine; the deferred value just keeps
-  // the badge rendering off the input's critical path.
+
+  // useDeferredValue gives us debounce-by-priority for the classifier
+  // without scheduling explicit timers. Classification is cheap (regex)
+  // so running on every keystroke is fine; the deferred value just
+  // keeps the badge render off the input's critical path.
   const deferred = useDeferredValue(raw);
   const detection: SourceDetection = detectSource(deferred);
 
-  const ctaEnabled = detection.kind === "mvp";
-  // Snapshot at the moment the modal opens so it stays stable even if the
-  // user edits the Hero input behind the (open) dialog.
-  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : "";
+  // CTA is ALWAYS clickable — never wait for the user to type something.
+  // If detection settled on an MVP source we pre-fill modal with the
+  // canonical URL + type; otherwise the modal opens with whatever the
+  // user typed (or empty) and they finish the submit inside.
+  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : raw.trim();
   const modalSourceType: "ymaps" | "telegram" =
     detection.kind === "mvp" ? detection.type : "telegram";
 
   // T1.4b live preview: fire when classifier settles on an MVP source.
-  // Effect re-runs on canonical change → previous in-flight call is aborted.
+  // Effect re-runs on canonical change → previous in-flight call aborts.
   const canonical = detection.kind === "mvp" ? detection.canonical : "";
   const previewType: "telegram" | "ymaps" | null = detection.kind === "mvp" ? detection.type : null;
-  // The async fetch+setState pattern below is the React-recommended way
-  // to fire a request on prop change and reflect its outcome — but the
-  // experimental `react-hooks/set-state-in-effect` rule still flags it.
+  // The async fetch+setState pattern is the React-recommended way to
+  // fire a request on prop change and reflect its outcome — but
+  // experimental `react-hooks/set-state-in-effect` still flags it.
   // Disabling for this single block; outside this effect the rule stays
   // active.
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -95,78 +102,179 @@ export function Hero() {
     <>
       <section
         aria-labelledby="hero-title"
-        className="relative isolate overflow-hidden bg-white px-6 pb-24 pt-20 sm:pt-28"
+        className="relative isolate overflow-hidden bg-paper px-5 pb-16 pt-7 sm:px-16 sm:pb-24 sm:pt-9"
       >
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-500">
-            САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ
-          </p>
+        {/* Soft abstract gradient blobs — décor only (Concept A spec,
+            see concepts.jsx ConceptA_Inner lines 38-53). No master
+            photos per copy-anti-patterns rule. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-[120px] -top-[100px] -z-10 h-[380px] w-[380px] rounded-full opacity-85 sm:-right-[180px] sm:-top-[160px] sm:h-[720px] sm:w-[720px]"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 30%, oklch(0.92 0.045 40) 0%, transparent 65%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-[100px] bottom-[100px] -z-10 h-[280px] w-[280px] rounded-full opacity-70 sm:-left-[120px] sm:bottom-[60px] sm:h-[480px] sm:w-[480px]"
+          style={{
+            background: "radial-gradient(circle, oklch(0.94 0.020 90) 0%, transparent 70%)",
+          }}
+        />
 
+        {/* Top nav — concept A spec. Login button is a quiet outlined
+            pill on desktop, becomes a primary-tone pill on mobile (where
+            the menu line is collapsed). */}
+        <nav className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-lg font-bold tracking-tight sm:text-xl">
+            <span className="inline-block h-[22px] w-[22px] rounded-[7px] bg-accent sm:h-[26px] sm:w-[26px]" />
+            Витрина
+          </div>
+          <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
+            <a className="hover:text-ink" href="#how-it-works">
+              Как это работает
+            </a>
+            <a className="hover:text-ink" href="#pricing">
+              Тарифы
+            </a>
+            <a className="hover:text-ink" href="/feedback">
+              Помощь
+            </a>
+            <a
+              className="rounded-full border border-line bg-white px-3.5 py-1.5 font-semibold text-ink hover:border-ink-faint"
+              href="/admin/login"
+            >
+              Войти
+            </a>
+          </div>
+          <a
+            className="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-semibold text-ink sm:hidden"
+            href="/admin/login"
+          >
+            Войти
+          </a>
+        </nav>
+
+        {/* Hero body */}
+        <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
+          {/* Category eyebrow */}
+          <div className="inline-flex items-center gap-2 rounded-md bg-accent-soft px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-accent sm:text-[12px]">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ
+          </div>
+
+          {/* H1 */}
           <h1
             id="hero-title"
-            className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl md:text-6xl"
+            className="mt-5 text-balance text-[42px] font-bold leading-[1.04] tracking-tightest sm:mt-7 sm:text-[88px]"
           >
-            Сайт, который{" "}
-            <mark className="bg-yellow-200/70 px-1 text-neutral-900">сам себя ведёт</mark>
-            <br />и приносит вам заявки.
+            Сайт, который <br className="hidden sm:inline" />
+            <span className="relative inline-block px-1 text-accent">
+              сам себя ведёт
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-1 bottom-1 -z-10 h-2 rounded-[3px] bg-accent-soft opacity-65 sm:bottom-2.5 sm:h-3.5"
+              />
+            </span>
+            <span className="hidden sm:inline">
+              <br />и приносит вам заявки.
+            </span>
+            <span className="sm:hidden"> и приносит вам заявки.</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base text-neutral-600 sm:text-lg">
+          {/* Sub */}
+          <p className="mt-4 max-w-full text-balance text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[720px] sm:text-[20px]">
             Покажите ссылку на ваше дело — соцсеть, карты или визитку. ИИ соберёт сайт за пару минут
             и сам будет держать его актуальным. Вам ничего не нужно делать.
           </p>
 
+          {/* Input + CTA — single pill on desktop, stacked card on mobile */}
           <form
-            className="mx-auto mt-10 flex max-w-xl flex-col gap-3 sm:flex-row"
+            className={cn(
+              "mt-6 flex flex-col items-stretch gap-2.5 rounded-[14px] border border-line bg-white p-2.5 shadow-card sm:mx-auto sm:mt-9 sm:max-w-[680px] sm:flex-row sm:items-center sm:gap-2 sm:rounded-full sm:p-2",
+            )}
             onSubmit={(event) => {
               event.preventDefault();
-              if (!ctaEnabled) return;
               setModalOpen(true);
             }}
           >
             <label className="sr-only" htmlFor={inputId}>
               ПОКАЖИТЕ ВАШЕ ДЕЛО
             </label>
-            <input
-              id={inputId}
-              type="text"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder={PLACEHOLDER}
-              value={raw}
-              onChange={(event) => setRaw(event.target.value)}
-              className={cn(
-                "flex-1 rounded-xl border border-neutral-300 bg-white px-5 py-3",
-                "text-base text-neutral-900 placeholder:text-neutral-400",
-                "focus:outline-none focus:ring-2 focus:ring-neutral-900/70",
-              )}
-            />
+            <div className="flex flex-1 items-center gap-2.5 px-3.5 py-3 sm:px-[18px] sm:py-0">
+              <LinkIcon aria-hidden strokeWidth={1.8} className="h-5 w-5 shrink-0 text-ink-faint" />
+              <input
+                id={inputId}
+                type="text"
+                autoComplete="off"
+                spellCheck={false}
+                placeholder={PLACEHOLDER}
+                value={raw}
+                onChange={(event) => setRaw(event.target.value)}
+                className="min-w-0 flex-1 bg-transparent text-[16px] text-ink placeholder:text-ink-faint focus:outline-none sm:text-[17px]"
+              />
+            </div>
             <button
               type="submit"
-              disabled={!ctaEnabled}
-              className={cn(
-                "inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-medium",
-                ctaEnabled
-                  ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                  : "cursor-not-allowed bg-neutral-200 text-neutral-500",
-              )}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] bg-accent px-5 py-3.5 text-[16px] font-semibold text-white hover:bg-accent-hover sm:rounded-full sm:px-6 sm:py-3.5"
             >
               {CTA_TEXT}
+              <span aria-hidden className="text-lg leading-none">
+                →
+              </span>
             </button>
           </form>
 
-          <p className="mt-3 text-sm italic text-neutral-500">{MICROCOPY}</p>
+          {/* Microcopy with checkmark */}
+          <div className="mt-3.5 flex items-center justify-start gap-1.5 text-[13px] text-ink-faint sm:justify-center">
+            <ShieldCheck aria-hidden className="h-[14px] w-[14px]" />
+            {MICROCOPY}
+          </div>
 
           <DetectionFeedback detection={detection} raw={raw} preview={preview} />
 
-          <div className="mt-10 flex flex-col items-center gap-2 text-sm text-neutral-600 sm:flex-row sm:justify-center sm:gap-6">
-            <a className="hover:text-neutral-900 hover:underline" href="#photo-upload">
+          {/* Fallback links */}
+          <div className="mt-5 flex flex-col items-start gap-2.5 text-sm sm:mt-7 sm:flex-row sm:justify-center sm:gap-6">
+            <a
+              className="inline-flex gap-2 text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
+              href="#photo-upload"
+            >
               📷 Загрузить фото работ, скриншот профиля или визитку
             </a>
-            <a className="hover:text-neutral-900 hover:underline" href="#tg-export">
+            <a
+              className="inline-flex gap-2 text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
+              href="#tg-export"
+            >
               📨 Закрытый TG-канал — загрузить экспорт
             </a>
           </div>
+        </div>
+
+        {/* Benefits stack — 4 cards from COPY.md §2. Lives inside Hero
+            section per Concept A composition (4-col on desktop, single
+            column on mobile). */}
+        <div className="relative z-[1] mx-auto mt-9 grid max-w-[1280px] grid-cols-1 gap-3.5 sm:mt-[72px] sm:grid-cols-4 sm:gap-5">
+          {[
+            ["🔄", "Сам обновляется", "раз в неделю забирает новые фото и отзывы из источника"],
+            ["📨", "Сам ловит заявки", "форма, кнопка записи и уведомления в Telegram из коробки"],
+            [
+              "🔎",
+              "Сам находится в поиске",
+              "подбирает ключевые слова и отправляет сайт в Яндекс и Google. Клиенты находят вас сами.",
+            ],
+            [
+              "🎁",
+              "Первый месяц бесплатно",
+              "попробуйте на своём деле, не продлевайте если не зайдёт",
+            ],
+          ].map(([emoji, title, body]) => (
+            <div key={title} className="rounded-[14px] border border-line bg-white p-4 sm:p-[18px]">
+              <div className="mb-2 text-[22px]">{emoji}</div>
+              <div className="mb-1 text-[15px] font-semibold text-ink">{title}</div>
+              <div className="text-[13.5px] leading-[1.5] text-ink-soft">{body}</div>
+            </div>
+          ))}
         </div>
       </section>
       <SubmitModal
@@ -179,6 +287,12 @@ export function Hero() {
   );
 }
 
+/**
+ * Source-detection feedback strip — same five states as before
+ * (loading / mvp-ready / waitlist / unknown-url / not-url) but
+ * restyled in Concept A semantic colours (success / info / warn /
+ * neutral) instead of the previous neutral / amber palette.
+ */
 function DetectionFeedback({
   detection,
   raw,
@@ -196,7 +310,7 @@ function DetectionFeedback({
 
     if (preview.phase === "loading") {
       return (
-        <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-700">
+        <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-paper-soft px-3 py-1 text-sm font-medium text-ink-soft">
           <span aria-hidden>⏳</span>
           <span>проверяем {label}…</span>
         </p>
@@ -205,7 +319,7 @@ function DetectionFeedback({
 
     const countsText = preview.phase === "ready" ? formatCounts(preview.data.counts) : null;
     return (
-      <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800">
+      <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-sm font-medium text-success">
         <span aria-hidden>✓</span>
         <span>
           {label}
@@ -218,15 +332,15 @@ function DetectionFeedback({
   if (detection.kind === "waitlist") {
     return (
       <div className="mx-auto mt-6 max-w-xl text-left">
-        <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="rounded-lg bg-info-soft px-4 py-3 text-sm text-info">
           <span aria-hidden>ℹ️ </span>
           {waitlistSourceLabel(detection.source)} скоро будет — оставьте email, напишем когда
           добавим.
         </p>
         <WaitlistCapture sourceName={detection.source} sourceUrl={detection.canonical} />
-        <p className="mt-3 text-center text-sm text-neutral-600">
+        <p className="mt-3 text-center text-sm text-ink-soft">
           или{" "}
-          <a className="font-medium text-neutral-900 underline" href="#photo-upload">
+          <a className="font-medium text-ink underline" href="#photo-upload">
             создайте из фото сейчас →
           </a>
         </p>
@@ -236,7 +350,7 @@ function DetectionFeedback({
 
   if (detection.kind === "unknown_url") {
     return (
-      <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-amber-50 px-4 py-3 text-left text-sm text-amber-900">
+      <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-warn-soft px-4 py-3 text-left text-sm text-warn">
         <span aria-hidden>⚠️</span>
         <span>
           Не узнали источник. Напишите в форме обратной связи — какой это источник? Мы добавим его в
@@ -248,7 +362,7 @@ function DetectionFeedback({
 
   // not_url
   return (
-    <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-neutral-100 px-4 py-3 text-left text-sm text-neutral-700">
+    <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-paper-soft px-4 py-3 text-left text-sm text-ink-soft">
       <span aria-hidden>⚠️</span>
       <span>
         Введите ссылку на Telegram-канал, Яндекс.Карты или{" "}
