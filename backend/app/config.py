@@ -83,6 +83,14 @@ class Settings(BaseSettings):
     # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
     yandex_geosearch_api_key: str | None = None
 
+    # ---- YandexGPT (T4.1, ADR-0003) ----------------------------------------
+    yandexgpt_api_key: str | None = None
+    yandexgpt_folder_id: str | None = None
+    yandexgpt_model_name: str = "yandexgpt"
+    yandexgpt_model_version: str = "rc"
+    yandexgpt_temperature: float = 0.3
+    yandexgpt_max_tokens: int = 2000
+
     # ---- SEO submitters (T2.6) ---------------------------------------------
     yandex_webmaster_api_key: str | None = None
     indexnow_site_key: str | None = None

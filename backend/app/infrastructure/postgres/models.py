@@ -374,6 +374,50 @@ class AdminCredentials(UUIDPrimaryKey, Timestamped, Base):
 
 
 # =============================================================================
+# generation_audits (T4.5 — full prompt+response for the first 100 sites)
+# =============================================================================
+
+GENERATION_AUDIT_STATUSES = ("success", "failed", "flagged")
+
+
+class GenerationAudit(UUIDPrimaryKey, Base):
+    """Audit log for LLM generation runs.
+
+    For the first 100 rows: ``system_prompt`` / ``user_prompt`` /
+    ``response_text`` carry the full strings. After row 100 the worker
+    switches to truncated logging (these columns are NULL) and only
+    token counts + flags survive — see SECURITY.md §B6.3.
+    """
+
+    site_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sites.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    prompt_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    model_name: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    system_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
+    user_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
+    response_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    tokens_in: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    tokens_out: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    pii_masked_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+
+    safety_flags: Mapped[list[Any]] = mapped_column(JSONB, nullable=False, server_default="[]")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="success")
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN {GENERATION_AUDIT_STATUSES!r}",
+            name="generation_audits_status_valid",
+        ),
+    )
+
+
+# =============================================================================
 # deletion_requests (T6.2 — ФЗ-152 right-to-erasure)
 # =============================================================================
 
@@ -433,6 +477,7 @@ __all__ = [
     "DeletionRequest",
     "Event",
     "Feedback",
+    "GenerationAudit",
     "Lead",
     "Site",
     "SyncRun",

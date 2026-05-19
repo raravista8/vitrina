@@ -18,6 +18,7 @@ from app.api.middleware import RateLimiter
 from app.config import get_settings
 from app.core.auth.sessions import AdminSession, AdminSessionStore
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
+from app.core.content.ports import LlmClient
 from app.core.notify.dispatcher import NotificationDispatcher
 from app.core.preview.service import PreviewService
 from app.infrastructure.postgres.engine import get_sessionmaker
@@ -171,3 +172,16 @@ def get_preview_service(request: Request) -> PreviewService:
         msg = "preview_service not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return svc
+
+
+def get_content_llm(request: Request) -> LlmClient:
+    """Per-app LlmClient initialised in lifespan (T4.1). Falls back to
+    a ``YandexGptClient`` constructed with empty credentials when the
+    env vars aren't set — that client's ``is_available()`` returns
+    False and the content service returns a failed outcome instead of
+    crashing the admin request."""
+    client: LlmClient | None = getattr(request.app.state, "content_llm", None)
+    if client is None:
+        msg = "content_llm not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return client
