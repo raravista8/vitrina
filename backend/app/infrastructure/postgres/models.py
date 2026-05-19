@@ -373,12 +373,64 @@ class AdminCredentials(UUIDPrimaryKey, Timestamped, Base):
     __table_args__ = (UniqueConstraint("username", name="admin_credentials_username_uq"),)
 
 
+# =============================================================================
+# deletion_requests (T6.2 — ФЗ-152 right-to-erasure)
+# =============================================================================
+
+DELETION_REQUEST_STATUSES = (
+    "pending",
+    "confirmed",
+    "completed",
+    "expired",
+    "rejected",
+)
+
+
+class DeletionRequest(UUIDPrimaryKey, Base):
+    """Lifecycle of an erasure request per FR-071 / SECURITY.md §9.3.
+
+    The row itself is retained 3 years after ``completed_at`` so the
+    operator can prove the request was honoured. Only the linked PII
+    (User + Sites + Leads + Feedback + Applications) gets purged.
+    """
+
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    contact_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    contact_value: Mapped[str] = mapped_column(Text, nullable=False)  # PII at-request-time
+    token_hash: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+
+    status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="pending")
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    ip: Mapped[str | None] = mapped_column(INET, nullable=True)
+    user_agent: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN {DELETION_REQUEST_STATUSES!r}",
+            name="deletion_requests_status_valid",
+        ),
+        CheckConstraint(
+            f"contact_type IN {CONTACT_TYPES!r}",
+            name="deletion_requests_contact_type_valid",
+        ),
+    )
+
+
 __all__ = [
     "AdminAction",
     "AdminCredentials",
     "Application",
     "Base",
     "Consent",
+    "DeletionRequest",
     "Event",
     "Feedback",
     "Lead",
