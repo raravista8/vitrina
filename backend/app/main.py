@@ -26,6 +26,7 @@ from app.api.middleware import (
     register_exception_handlers,
 )
 from app.api.routers.applications import router as applications_router
+from app.api.routers.billing import router as billing_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
 from app.api.routers.me import router as me_router
@@ -132,6 +133,19 @@ async def _lifespan(app: FastAPI) -> Any:
     )
     app.state.content_llm = content_llm
     log.info("content_llm_ready", available=content_llm.is_available())
+
+    # ЮKassa client (T9.1). Same pattern as YandexGPT: when shop_id /
+    # secret_key are absent, is_available() returns False and the
+    # billing router refuses checkout with a 503 — dev keeps working
+    # without ЮKassa creds.
+    from app.infrastructure.yookassa.client import YookassaClient
+
+    payment_gateway = YookassaClient(
+        shop_id=settings.yookassa_shop_id,
+        secret_key=settings.yookassa_secret_key,
+    )
+    app.state.payment_gateway = payment_gateway
+    log.info("payment_gateway_ready", available=payment_gateway.is_available())
 
     # Lead encryption (T5.2). Production envs MUST set FERNET_KEYS; in
     # dev we mint an ephemeral key so `make dev` boots without 1Password
@@ -259,6 +273,7 @@ def create_app() -> FastAPI:
 
     app.include_router(applications_router)
     app.include_router(feedback_router)
+    app.include_router(billing_router)
     app.include_router(leads_router)
     app.include_router(me_router)
     app.include_router(preview_router)
