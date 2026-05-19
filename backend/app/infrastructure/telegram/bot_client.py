@@ -64,3 +64,19 @@ class TelegramBotClient:
             raise RuntimeError("TelegramBotClient.get_chat called before start()")
         chat = await self._bot.get_chat(chat_id=chat_id)
         return chat.model_dump()
+
+    async def get_file_url(self, *, file_id: str) -> str | None:
+        """Resolve a Telegram ``file_id`` to a downloadable URL via the
+        Bot API ``getFile`` method. Returns ``None`` if the token isn't
+        set or the file cannot be resolved (e.g. file >20MB which the
+        Bot API rejects)."""
+        if self._bot is None or not self._token:
+            return None
+        try:
+            tg_file = await self._bot.get_file(file_id=file_id)
+        except Exception:
+            return None
+        path = tg_file.file_path
+        if not path:
+            return None
+        return f"https://api.telegram.org/file/bot{self._token}/{path}"
