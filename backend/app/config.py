@@ -88,6 +88,13 @@ class Settings(BaseSettings):
     rate_limit_leads_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_day: int = 10
     rate_limit_preview_per_ip_per_min: int = 10
+    rate_limit_admin_login_per_ip_per_15min: int = 5
+
+    # ---- Admin auth (T2.1) -------------------------------------------------
+    # Signs the session cookie. Generate with `python -c "import secrets;
+    # print(secrets.token_urlsafe(32))"`. Required in production — the
+    # validator below refuses to start without it.
+    session_secret_key: str = "dev-only-not-secure"  # noqa: S105 # pragma: allowlist secret
 
     # ---- Feature flags -----------------------------------------------------
     feature_max_bot: bool = False
@@ -100,6 +107,8 @@ class Settings(BaseSettings):
                 raise ValueError("DEBUG must be false in production")
             if self.log_level is LogLevel.DEBUG:
                 raise ValueError("LOG_LEVEL=DEBUG is forbidden in production")
+            if self.session_secret_key == "dev-only-not-secure":  # noqa: S105 # pragma: allowlist secret
+                raise ValueError("SESSION_SECRET_KEY must be set in production")
         return self
 
 
