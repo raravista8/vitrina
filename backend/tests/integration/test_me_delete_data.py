@@ -280,10 +280,49 @@ async def test_token_reuse_rejected_after_completion(
 ) -> None:
     await client.post("/api/me/delete-data", json={"contact": "alice@example.com"})
     dispatcher = app.state.test_dispatcher
-    token = dispatcher.user_sends[0][2].split("token=", 1)[1].split()[0].rstrip(")")
+    body = dispatcher.user_sends[0][2]
+    confirm_line = next(
+        line for line in body.splitlines() if "/api/me/delete-data/confirm?token=" in line
+    )
+    token = confirm_line.split("token=", 1)[1].split()[0]
 
     resp1 = await client.post(f"/api/me/delete-data/confirm?token={token}")
     assert resp1.status_code == 200
 
     resp2 = await client.post(f"/api/me/delete-data/confirm?token={token}")
     assert resp2.status_code == 400
+
+
+async def test_dashboard_renders_user_sites(
+    client: httpx.AsyncClient,
+    seeded_user_with_site,  # type: ignore[no-untyped-def]
+    app: FastAPI,
+) -> None:
+    """T6.5: same magic-link token also opens a read-only dashboard."""
+    await client.post("/api/me/delete-data", json={"contact": "alice@example.com"})
+    body = app.state.test_dispatcher.user_sends[0][2]
+    dashboard_line = next(line for line in body.splitlines() if "/api/me/dashboard?token=" in line)
+    token = dashboard_line.split("token=", 1)[1].split()[0]
+
+    resp = await client.get(f"/api/me/dashboard?token={token}")
+    assert resp.status_code == 200
+    html = resp.text
+    assert "alice.vitrina.site" in html
+    assert "Удалить безвозвратно" in html
+
+
+async def test_dashboard_with_expired_token_returns_400(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user_with_site,  # type: ignore[no-untyped-def]
+    app: FastAPI,
+) -> None:
+    await client.post("/api/me/delete-data", json={"contact": "alice@example.com"})
+    row = (await db_session.execute(select(DeletionRequest))).scalar_one()
+    row.expires_at = datetime.now(UTC) - timedelta(minutes=1)
+    await db_session.commit()
+    body = app.state.test_dispatcher.user_sends[0][2]
+    dashboard_line = next(line for line in body.splitlines() if "/api/me/dashboard?token=" in line)
+    token = dashboard_line.split("token=", 1)[1].split()[0]
+    resp = await client.get(f"/api/me/dashboard?token={token}")
+    assert resp.status_code == 400

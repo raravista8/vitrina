@@ -30,7 +30,9 @@ from app.config import get_settings
 from app.core.contact.auto_detect import detect_contact
 from app.core.erasure.service import (
     ErasureError,
+    MyDataView,
     confirm_erasure,
+    inspect_my_data,
     request_erasure,
 )
 from app.core.notify.dispatcher import NotificationDispatcher, UserContact
@@ -74,6 +76,7 @@ async def request_data_deletion(
 
     if outcome.user_existed and outcome.token is not None:
         confirm_url = _confirm_url(outcome.token)
+        dashboard_url = _dashboard_url(outcome.token)
         await notifier.notify_user(
             contact=UserContact(
                 primary_type=ChannelType(detected.contact_type.value),
@@ -81,14 +84,20 @@ async def request_data_deletion(
             ),
             kind=NotificationKind.magic_link,
             message=NotificationMessage(
-                title="Подтвердите удаление данных",
+                title="Vitrina: ссылка к вашим данным",
                 body=(
-                    "Чтобы окончательно удалить ваши данные с Vitrina, "
-                    "перейдите по ссылке (действует 15 минут):\n\n"
+                    "Откройте этот личный кабинет, чтобы посмотреть ваши "
+                    "сайты или удалить все данные (ссылка действует 15 "
+                    "минут):\n\n"
+                    f"{dashboard_url}\n\n"
+                    "Сразу удалить без захода в кабинет:\n"
                     f"{confirm_url}\n\n"
                     "Если вы не запрашивали удаление, проигнорируйте письмо."
                 ),
-                links=(("Подтвердить удаление", confirm_url),),
+                links=(
+                    ("Открыть мой кабинет", dashboard_url),
+                    ("Подтвердить удаление", confirm_url),
+                ),
             ),
         )
 
@@ -108,6 +117,32 @@ async def request_data_deletion(
             ),
         }
     )
+
+
+@router.get(
+    "/dashboard",
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
+async def my_dashboard(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> HTMLResponse:
+    """T6.5: minimal self-service dashboard. The user gets here from
+    the magic link emailed by `POST /api/me/delete-data`; the token in
+    the query string is the same one that would confirm deletion. We
+    don't consume it — just validate + render."""
+    token = request.query_params.get("token", "")
+    if not token:
+        raise HTTPException(status_code=400, detail="missing_token")
+    try:
+        view = await inspect_my_data(session=session, raw_token=token)
+    except ErasureError as exc:
+        return HTMLResponse(
+            _failure_page(reason=str(exc)),
+            status_code=400,
+        )
+    return HTMLResponse(_dashboard_page(token=token, view=view))
 
 
 @router.get(
@@ -174,6 +209,11 @@ def _confirm_url(token: str) -> str:
     return f"{base}/api/me/delete-data/confirm?token={token}"
 
 
+def _dashboard_url(token: str) -> str:
+    base = get_settings().app_base_url.rstrip("/")
+    return f"{base}/api/me/dashboard?token={token}"
+
+
 def _success_page(sites_deleted: int) -> str:
     return f"""<!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><title>Vitrina · удаление данных</title></head>
@@ -192,4 +232,54 @@ def _failure_page(reason: str) -> str:
 <h1>Ссылка недействительна</h1>
 <p>Ссылка устарела или уже была использована (<code>{reason}</code>).
 Запросите удаление повторно: <a href="/">vitrina.site</a></p>
+</body></html>"""
+
+
+def _dashboard_page(*, token: str, view: MyDataView) -> str:
+    """Minimal HTML view of the user's account. Plain HTML, inline
+    CSS, autoescape happens manually here because we render verbatim
+    Python strings instead of Jinja2."""
+    import html as _html
+
+    contact = _html.escape(f"{view.contact_type}: {view.contact_value}")
+    rows = (
+        "".join(
+            f"<tr><td><strong>{_html.escape(s.subdomain)}.vitrina.site</strong></td>"
+            f"<td>{_html.escape(s.source_type)}</td>"
+            f"<td>{_html.escape(s.status)}</td></tr>"
+            for s in view.sites
+        )
+        or "<tr><td colspan='3'>Сайтов пока нет.</td></tr>"
+    )
+    confirm_action = _confirm_url(token)
+    return f"""<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<title>Vitrina · мои данные</title>
+<style>
+body {{ font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; color: #111827; }}
+table {{ width: 100%; border-collapse: collapse; margin: 1rem 0; }}
+th, td {{ text-align: left; padding: 0.5rem; border-bottom: 1px solid #e5e7eb; font-size: 0.9rem; }}
+.danger {{ background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 0.5rem; margin-top: 2rem; }}
+.danger form {{ display: inline; margin-left: 1rem; }}
+.danger button {{ background: #991b1b; color: white; border: 0; padding: 0.4rem 0.8rem; border-radius: 0.4rem; cursor: pointer; }}
+</style>
+</head>
+<body>
+<h1>Мои данные на Vitrina</h1>
+<p>Контакт: <code>{contact}</code></p>
+<h2>Сайты</h2>
+<table>
+  <thead><tr><th>URL</th><th>Источник</th><th>Статус</th></tr></thead>
+  <tbody>{rows}</tbody>
+</table>
+<div class="danger">
+  <strong>Удалить все мои данные</strong> — действие необратимо.
+  <form method="post" action="{confirm_action}">
+    <button type="submit">Удалить безвозвратно</button>
+  </form>
+</div>
+<p style="font-size: 0.8rem; color: #6b7280; margin-top: 2rem;">
+Ссылка действует 15 минут с момента запроса.
+Согласие на обработку и лог удаления сохраняются 3 года (ФЗ-152 §9.3).
+</p>
 </body></html>"""
