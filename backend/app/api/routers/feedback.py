@@ -54,6 +54,7 @@ async def post_feedback(
         log.info("captcha_rejected", reason=captcha_result.reason)
         raise HTTPException(status_code=400, detail="invalid_captcha")
 
+    user_agent = request.headers.get("user-agent")
     result = await submit_feedback(
         session=session,
         type_=body.type,
@@ -63,6 +64,8 @@ async def post_feedback(
         message=body.message,
         checkboxes=body.checkboxes,
         consent_given=body.consent_given,
+        ip=ip,
+        user_agent=user_agent,
     )
 
     if result.is_err():

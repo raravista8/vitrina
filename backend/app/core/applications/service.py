@@ -21,21 +21,19 @@ from typing import Final
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.consent.ledger import (
+    CURRENT_POLICY_TEXT,
+    CURRENT_POLICY_VERSION,
+    record_consent,
+)
 from app.core.contact.auto_detect import detect_contact
-from app.infrastructure.postgres.models import Application, Consent, User
+from app.infrastructure.postgres.models import Application, User
 from app.utils.errors import DomainError, DomainResult, Err, Ok
 
-# Hard-coded for T1.3. T6.3 will load these from the versioned MDX in
-# `landing/content/privacy-v1.mdx` so the on-disk policy and the consent
-# ledger never drift.
-POLICY_VERSION: Final[int] = 1
-CONSENT_TEXT_V1: Final[str] = (
-    "Я согласен(а) на обработку моих персональных данных оператором "
-    "ИП «Vitrina» в соответствии с политикой конфиденциальности, "
-    "опубликованной на vitrina.site/privacy, в целях создания и "
-    "поддержания моего сайта на поддомене *.vitrina.site и передачи "
-    "мне заявок от посетителей сайта."
-)
+# Kept as re-exports for backwards compatibility with T1.3 tests + any
+# downstream import. The canonical source is ``core/consent/ledger.py``.
+POLICY_VERSION: Final[int] = CURRENT_POLICY_VERSION
+CONSENT_TEXT_V1: Final[str] = CURRENT_POLICY_TEXT
 
 SUPPORTED_SOURCE_TYPES: Final[frozenset[str]] = frozenset({"ymaps", "telegram", "photo"})
 
@@ -79,15 +77,12 @@ async def submit_application(
 
     user = await _get_or_create_user(session, detected.contact_type.value, detected.value)
 
-    consent = Consent(
+    consent = await record_consent(
+        session=session,
         user_id=user.id,
-        policy_version=POLICY_VERSION,
-        consent_text=CONSENT_TEXT_V1,
         ip=ip,
         user_agent=user_agent,
     )
-    session.add(consent)
-    await session.flush()  # populate consent.id before referencing
 
     application = Application(
         source_url=source_url,

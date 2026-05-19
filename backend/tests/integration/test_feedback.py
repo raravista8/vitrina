@@ -268,3 +268,38 @@ async def test_feedback_persistence_writes_row_and_notifies(
     kind, title = test_dispatcher.founder_calls[0]
     assert kind == "application_received"
     assert title.startswith("📋 Waitlist: instagram")
+
+
+async def test_feedback_records_anonymous_consent(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """T6.1: every PII-collecting form lands a Consent row, even when
+    the subject is anonymous (waitlist signup with no user account)."""
+    from sqlalchemy import select
+
+    from app.infrastructure.postgres.models import Consent
+
+    resp = await client.post(
+        "/api/feedback",
+        json={
+            "type": "feature_request",
+            "email": "alice@example.com",
+            "message": "Хочу blog module",
+            "checkboxes": {},
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert resp.status_code == 202
+
+    consents = (await db_session.execute(select(Consent))).scalars().all()
+    assert len(consents) == 1
+    row = consents[0]
+    assert row.user_id is None  # feedback is anonymous
+    assert row.policy_version == 1
+    assert "ИП «Vitrina»" in row.consent_text
+    # IP / user_agent are best-effort — the test client doesn't supply a
+    # `X-Forwarded-For`, but the user_agent header is set by httpx so
+    # we assert at least that landed.
+    assert row.user_agent is not None
