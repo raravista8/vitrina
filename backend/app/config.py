@@ -98,6 +98,15 @@ class Settings(BaseSettings):
     yandexgpt_temperature: float = 0.3
     yandexgpt_max_tokens: int = 2000
 
+    # ---- ЮKassa billing (T9.1) ---------------------------------------------
+    yookassa_shop_id: str | None = None
+    yookassa_secret_key: str | None = None
+    # Comma-separated CIDRs / IPs for the webhook gate. Production
+    # MUST set this from the ЮKassa-published egress range; dev /
+    # tests leave empty (open) so the integration suite works.
+    yookassa_webhook_ip_allowlist: str | None = None
+    yookassa_webhook_secret: str | None = None  # optional HMAC secret
+
     # ---- SEO submitters (T2.6) ---------------------------------------------
     yandex_webmaster_api_key: str | None = None
     indexnow_site_key: str | None = None

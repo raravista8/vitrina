@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.middleware import RateLimiter
 from app.config import get_settings
 from app.core.auth.sessions import AdminSession, AdminSessionStore
+from app.core.billing.ports import PaymentGateway
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
 from app.core.content.ports import LlmClient
 from app.core.notify.dispatcher import NotificationDispatcher
@@ -225,6 +226,17 @@ def get_lead_fernet(request: Request) -> MultiFernet:
         msg = "lead_fernet not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return fernet
+
+
+def get_payment_gateway(request: Request) -> PaymentGateway:
+    """Per-app PaymentGateway initialised in lifespan (T9.1). When
+    ЮKassa credentials are absent the gateway is still wired but
+    `is_available()` returns False — the router maps that to a 503."""
+    gateway: PaymentGateway | None = getattr(request.app.state, "payment_gateway", None)
+    if gateway is None:
+        msg = "payment_gateway not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return gateway
 
 
 def get_content_llm(request: Request) -> LlmClient:

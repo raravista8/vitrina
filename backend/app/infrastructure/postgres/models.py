@@ -468,11 +468,92 @@ class DeletionRequest(UUIDPrimaryKey, Base):
     )
 
 
+# =============================================================================
+# subscriptions + billing_events (T9.1 ЮKassa)
+# =============================================================================
+
+SUBSCRIPTION_STATUSES = ("trial", "active", "past_due", "cancelled", "refunded")
+
+
+class Subscription(UUIDPrimaryKey, Timestamped, Base):
+    """One row per user — `user_id` is unique. State machine: trial →
+    active → past_due → cancelled / refunded. ``trial_ends_at`` is set
+    at creation to ``now() + 30d``; the worker flips to ``active`` on
+    the first successful ``payment.succeeded`` webhook."""
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="trial")
+    plan_code: Mapped[str] = mapped_column(String(32), nullable=False, server_default="pro")
+    amount_kopeks: Mapped[int] = mapped_column(Integer, nullable=False, server_default="99000")
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, server_default="RUB")
+
+    # ЮKassa "saved card" id — needed to charge recurring payments without
+    # re-asking the user for card details. NULL until the first charge.
+    payment_method_id: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    trial_ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancel_reason: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    last_payment_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    failed_charge_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN {SUBSCRIPTION_STATUSES!r}",
+            name="subscriptions_status_valid",
+        ),
+        UniqueConstraint("user_id", name="subscriptions_user_uq"),
+    )
+
+
+BILLING_EVENT_PROVIDERS = ("yookassa",)
+
+
+class BillingEvent(UUIDPrimaryKey, Base):
+    """Append-only log of provider webhooks. Each event is processed
+    exactly once thanks to the ``provider_event_id`` unique index —
+    ЮKassa retries the same event with the same ID, so dup inserts
+    fail loudly instead of double-charging."""
+
+    subscription_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("subscriptions.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    provider: Mapped[str] = mapped_column(String(16), nullable=False, server_default="yookassa")
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    provider_event_id: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
+    amount_kopeks: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, server_default="{}")
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    processing_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        index=True,
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            f"provider IN {BILLING_EVENT_PROVIDERS!r}",
+            name="billing_events_provider_valid",
+        ),
+    )
+
+
 __all__ = [
     "AdminAction",
     "AdminCredentials",
     "Application",
     "Base",
+    "BillingEvent",
     "Consent",
     "DeletionRequest",
     "Event",
@@ -480,6 +561,7 @@ __all__ = [
     "GenerationAudit",
     "Lead",
     "Site",
+    "Subscription",
     "SyncRun",
     "User",
 ]
