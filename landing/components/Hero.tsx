@@ -38,6 +38,7 @@ import { useDeferredValue, useEffect, useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
+import { PhotoDrawer } from "./PhotoDrawer";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal } from "./SubmitModal";
 
@@ -55,6 +56,7 @@ export function Hero() {
   const inputId = useId();
   const [raw, setRaw] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
   const [preview, setPreview] = useState<PreviewState>({ phase: "idle" });
 
   // useDeferredValue gives us debounce-by-priority for the classifier
@@ -232,16 +234,22 @@ export function Hero() {
             {MICROCOPY}
           </div>
 
-          <SourceDetectionBadge detection={detection} rawInput={raw} preview={preview} />
+          <SourceDetectionBadge
+            detection={detection}
+            rawInput={raw}
+            preview={preview}
+            onOpenPhotoUpload={() => setPhotoOpen(true)}
+          />
 
           {/* Fallback links */}
           <div className="mt-5 flex flex-col items-start gap-2.5 text-sm sm:mt-7 sm:flex-row sm:justify-center sm:gap-6">
-            <a
-              className="inline-flex gap-2 text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
-              href="#photo-upload"
+            <button
+              type="button"
+              onClick={() => setPhotoOpen(true)}
+              className="inline-flex gap-2 text-left text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
             >
               📷 Загрузить фото работ, скриншот профиля или визитку
-            </a>
+            </button>
             <a
               className="inline-flex gap-2 text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
               href="#tg-export"
@@ -283,6 +291,7 @@ export function Hero() {
         sourceUrl={modalSourceUrl}
         sourceType={modalSourceType}
       />
+      <PhotoDrawer open={photoOpen} onOpenChange={setPhotoOpen} />
     </>
   );
 }

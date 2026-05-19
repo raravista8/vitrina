@@ -43,9 +43,17 @@ interface Props {
   detection: SourceDetection;
   rawInput: string;
   preview: PreviewPhase;
+  /**
+   * Optional handler for the "create from photo" CTA shown in the
+   * waitlist and not-URL states. When provided, the CTA opens the
+   * PhotoDrawer in Hero; when omitted (e.g. unit tests rendering the
+   * badge in isolation) we fall back to an `<a href="#photo-upload">`
+   * anchor so the markup stays accessible.
+   */
+  onOpenPhotoUpload?: () => void;
 }
 
-export function SourceDetectionBadge({ detection, rawInput, preview }: Props) {
+export function SourceDetectionBadge({ detection, rawInput, preview, onOpenPhotoUpload }: Props) {
   // Empty input → render nothing (clean Hero on first paint).
   if (rawInput.trim().length === 0) return null;
 
@@ -53,12 +61,18 @@ export function SourceDetectionBadge({ detection, rawInput, preview }: Props) {
     return <MvpBadge type={detection.type} preview={preview} />;
   }
   if (detection.kind === "waitlist") {
-    return <WaitlistPanel source={detection.source} canonical={detection.canonical} />;
+    return (
+      <WaitlistPanel
+        source={detection.source}
+        canonical={detection.canonical}
+        onOpenPhotoUpload={onOpenPhotoUpload}
+      />
+    );
   }
   if (detection.kind === "unknown_url") {
     return <UnknownUrlPanel url={detection.url} />;
   }
-  return <NotUrlHint />;
+  return <NotUrlHint onOpenPhotoUpload={onOpenPhotoUpload} />;
 }
 
 // -----------------------------------------------------------------------------
@@ -105,9 +119,11 @@ function formatCounts(data: PreviewData): string | null {
 function WaitlistPanel({
   source,
   canonical,
+  onOpenPhotoUpload,
 }: {
   source: ReturnType<typeof labelGetter>;
   canonical: string;
+  onOpenPhotoUpload?: () => void;
 }) {
   return (
     <div className="mx-auto mt-6 max-w-xl text-left">
@@ -118,9 +134,19 @@ function WaitlistPanel({
       <WaitlistCapture sourceName={source} sourceUrl={canonical} />
       <p className="mt-3 text-center text-sm text-ink-soft">
         или{" "}
-        <a className="font-medium text-ink underline" href="#photo-upload">
-          создайте из фото сейчас →
-        </a>
+        {onOpenPhotoUpload ? (
+          <button
+            type="button"
+            onClick={onOpenPhotoUpload}
+            className="font-medium text-ink underline"
+          >
+            создайте из фото сейчас →
+          </button>
+        ) : (
+          <a className="font-medium text-ink underline" href="#photo-upload">
+            создайте из фото сейчас →
+          </a>
+        )}
       </p>
     </div>
   );
@@ -213,15 +239,21 @@ function UnknownUrlPanel({ url }: { url: string }) {
 // State 7 — Not-URL hint
 // -----------------------------------------------------------------------------
 
-function NotUrlHint() {
+function NotUrlHint({ onOpenPhotoUpload }: { onOpenPhotoUpload?: () => void }) {
   return (
     <p className="mx-auto mt-4 inline-flex max-w-xl items-start gap-2 rounded-lg bg-paper-soft px-4 py-3 text-left text-sm text-ink-soft">
       <span aria-hidden>⚠️</span>
       <span>
         Введите ссылку на Telegram-канал, Яндекс.Карты или{" "}
-        <a className="font-medium underline" href="#photo-upload">
-          загрузите фото
-        </a>
+        {onOpenPhotoUpload ? (
+          <button type="button" onClick={onOpenPhotoUpload} className="font-medium underline">
+            загрузите фото
+          </button>
+        ) : (
+          <a className="font-medium underline" href="#photo-upload">
+            загрузите фото
+          </a>
+        )}
         .
       </span>
     </p>

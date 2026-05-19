@@ -112,6 +112,14 @@ class Settings(BaseSettings):
     indexnow_site_key: str | None = None
     gsc_service_account_json: str | None = None  # path to JSON keyfile
 
+    # ---- Photo uploads (PR-B #6) -------------------------------------------
+    # Disk location for /api/submit-application/photo file bytes. The
+    # founder admin reads from here when reviewing manually; the parser
+    # worker T3.3 will pick from here when wired. Default points at the
+    # OS tmpdir so `make dev` works out of the box; production overrides
+    # to a mounted volume.
+    uploads_dir: str | None = None
+
     # ---- Static publishing (T2.3) ------------------------------------------
     # Yandex Object Storage credentials. When the bucket is unset the
     # publisher uses an in-memory uploader so `make dev` works without

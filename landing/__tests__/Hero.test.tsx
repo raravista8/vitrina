@@ -122,8 +122,10 @@ describe("Hero — interaction", () => {
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
-    // Parallel CTA per FR-093.
-    expect(screen.getByRole("link", { name: /создайте из фото сейчас/i })).toBeInTheDocument();
+    // Parallel CTA per FR-093 — wired to open PhotoDrawer in Hero, so
+    // the markup is a <button> when used inside Hero (the standalone
+    // badge falls back to an <a href="#photo-upload"> for accessibility).
+    expect(screen.getByRole("button", { name: /создайте из фото сейчас/i })).toBeInTheDocument();
   });
 
   it("for a non-URL string, hints at supported sources; CTA stays clickable", () => {
@@ -133,5 +135,17 @@ describe("Hero — interaction", () => {
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
+  });
+
+  it("clicking the photo-upload fallback opens the PhotoDrawer (PR-B #6)", () => {
+    render(<Hero />);
+    // Drawer is closed initially — the heading lives inside it.
+    expect(screen.queryByRole("heading", { name: /Загрузите фото/i })).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Загрузить фото работ, скриншот профиля или визитку/i }),
+    );
+
+    expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
   });
 });

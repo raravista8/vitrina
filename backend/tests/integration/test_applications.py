@@ -459,3 +459,132 @@ async def test_tg_bot_status_404_for_unknown_id(client: httpx.AsyncClient) -> No
 
     resp = await client.get(f"/api/applications/{uuid.uuid4()}/tg-bot-status")
     assert resp.status_code == 404
+
+
+# --------------------------------------------------------------------------- #
+# POST /api/submit-application/photo (PR-B #6)
+# --------------------------------------------------------------------------- #
+
+
+def _make_jpeg_bytes() -> bytes:
+    """Tiny JPEG with valid magic bytes — reused for the photo endpoint
+    tests. Mirrors the helper in tests/security/test_photo_upload.py."""
+    import io as _io
+
+    from PIL import Image
+
+    buf = _io.BytesIO()
+    Image.new("RGB", (50, 50), color=(255, 0, 0)).save(buf, format="JPEG")
+    return buf.getvalue()
+
+
+def _photo_form_fields(contact: str = "alice@example.com") -> dict[str, str]:
+    return {
+        "contact": contact,
+        "consent_given": "true",
+        "captcha_token": DEV_TOKEN,
+        "business_name": "Студия Анны",
+        "category": "Маникюр",
+        "city": "Петрозаводск",
+    }
+
+
+def _photo_files_payload(
+    count: int = 5,
+    photo_types: list[str] | None = None,
+) -> list[tuple[str, tuple[str, bytes, str]]]:
+    """Build multipart `files` + parallel `photo_types[]` for httpx."""
+    jpeg = _make_jpeg_bytes()
+    files: list[tuple[str, tuple[str, bytes, str]]] = [
+        ("files", (f"photo-{i}.jpg", jpeg, "image/jpeg")) for i in range(count)
+    ]
+    if photo_types:
+        for ptype in photo_types:
+            files.append(("photo_types", (None, ptype.encode(), "text/plain")))  # type: ignore[arg-type]
+    return files
+
+
+async def test_photo_application_happy_path(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """5 JPEGs + form fields → 202, application + photos persisted."""
+    from sqlalchemy import select
+
+    from app.infrastructure.postgres.models import ApplicationPhoto
+
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=_photo_form_fields(),
+        files=_photo_files_payload(
+            count=5,
+            photo_types=["work", "work", "profile_screenshot", "business_card", "booklet"],
+        ),
+    )
+    assert resp.status_code == 202, resp.text
+    body = resp.json()
+    assert body["ok"] is True
+    app_id = body["data"]["application_id"]
+
+    rows = (
+        (
+            await db_session.execute(
+                select(ApplicationPhoto).where(ApplicationPhoto.application_id == app_id)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(rows) == 5
+    by_type = sorted([r.photo_type for r in rows])
+    assert by_type == ["booklet", "business_card", "profile_screenshot", "work", "work"]
+    # All rows reference an on-disk file the test process can read.
+    for row in rows:
+        assert row.size_bytes > 0
+        assert row.mime == "image/jpeg"
+
+
+async def test_photo_too_few_files_returns_413(client: httpx.AsyncClient) -> None:
+    """< 5 files → 413 too_few_files (design canvas screen #6 minimum)."""
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=_photo_form_fields(),
+        files=_photo_files_payload(count=3),
+    )
+    assert resp.status_code == 413
+    assert resp.json()["error"] == "too_few_files"
+
+
+async def test_photo_bad_magic_bytes_returns_400(client: httpx.AsyncClient) -> None:
+    """A .jpg-named file with non-image bytes → 400 bad_magic_bytes.
+
+    Magic-byte check rejects extension-based bypass (FR-015) — never
+    trust the filename or Content-Type header.
+    """
+    jpeg = _make_jpeg_bytes()
+    files: list[tuple[str, tuple[str, bytes, str]]] = [
+        ("files", (f"good-{i}.jpg", jpeg, "image/jpeg")) for i in range(4)
+    ]
+    files.append(("files", ("evil.jpg", b"<?php system($_GET['cmd']); ?>", "image/jpeg")))
+
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=_photo_form_fields(),
+        files=files,
+    )
+    assert resp.status_code == 400
+    assert resp.json()["error"] == "bad_magic_bytes"
+
+
+async def test_photo_consent_required(client: httpx.AsyncClient) -> None:
+    """consent_given=false → 400 consent_required (same rule as the
+    JSON endpoint; T6.1)."""
+    fields = _photo_form_fields()
+    fields["consent_given"] = "false"
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=fields,
+        files=_photo_files_payload(count=5),
+    )
+    assert resp.status_code == 400
+    assert resp.json()["error"] == "consent_required"
