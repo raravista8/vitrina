@@ -42,6 +42,14 @@ class SubmitApplicationRequest(BaseModel):
         bool,
         Field(description="Must be true; otherwise 400 consent_required"),
     ]
+    captcha_token: Annotated[
+        str,
+        Field(
+            min_length=1,
+            max_length=4096,
+            description="Yandex SmartCaptcha token (invisible mode); 'DEV_TOKEN' in dev",
+        ),
+    ]
 
 
 class SubmitApplicationData(BaseModel):

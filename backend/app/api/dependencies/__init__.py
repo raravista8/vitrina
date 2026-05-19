@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware import RateLimiter
 from app.config import get_settings
+from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
 from app.infrastructure.postgres.engine import get_sessionmaker
 
 
@@ -51,3 +52,9 @@ def _build_application_rate_limiter() -> RateLimiter:
 
 
 application_rate_limiter = _build_application_rate_limiter()
+
+
+def get_captcha_verifier() -> CaptchaVerifier:
+    """Module-singleton-ish factory. Tests override via
+    ``app.dependency_overrides[get_captcha_verifier] = lambda: <fake>``."""
+    return build_captcha_verifier(get_settings())
