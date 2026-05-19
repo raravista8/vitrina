@@ -1,19 +1,29 @@
 "use client";
 
 /**
- * /admin landing screen — Dashboard (#11). Wraps in AdminChrome which
- * enforces the auth-gate (redirects to /admin/login when the cookie
- * is missing/expired).
+ * Admin dashboard (#11 — full).
  *
- * PR-F lands the chrome + a stripped-back dashboard view (counters
- * only); the full chart + apps preview lands with PR-G alongside
- * the apps screens.
+ * Counters + 14-day applications-per-day area chart (recharts). The
+ * chart is the only piece pulling the recharts dependency; lazy-loaded
+ * via dynamic import so the rest of the admin route group stays light.
+ *
+ * Design source: `~/Downloads/vitrina ui/code/admin/Dashboard.tsx`.
+ * Markup ported to Concept A tokens; the canvas's 4-tile + chart
+ * layout maps directly onto the 5-counter grid we expose from the
+ * backend (we already track Feedback separately so 5 fits cleanly).
  */
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
 import { AdminChrome } from "@/components/admin/AdminChrome";
 import { adminRequest, type DashboardData } from "@/lib/admin-api";
+
+// Recharts is heavy; ship a tiny SSR-skipping stub until first mount.
+const ApplicationsAreaChart = dynamic(() => import("@/components/admin/ApplicationsAreaChart"), {
+  ssr: false,
+  loading: () => <ChartPlaceholder />,
+});
 
 export default function AdminHomePage() {
   return (
@@ -64,17 +74,36 @@ function DashboardScreen() {
       ) : null}
 
       {data !== null ? (
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Counter label="Все заявки" value={data.counters.apps_total} />
-          <Counter
-            label="Ждут модерации"
-            value={data.counters.apps_pending}
-            tone={data.counters.apps_pending > 0 ? "warn" : "default"}
-          />
-          <Counter label="Опубликованные сайты" value={data.counters.sites_published} />
-          <Counter label="Лиды (всего)" value={data.counters.leads_total} />
-          <Counter label="Feedback" value={data.counters.feedback_total} />
-        </section>
+        <>
+          <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            <Counter label="Все заявки" value={data.counters.apps_total} />
+            <Counter
+              label="Ждут модерации"
+              value={data.counters.apps_pending}
+              tone={data.counters.apps_pending > 0 ? "warn" : "default"}
+            />
+            <Counter label="Опубликованные сайты" value={data.counters.sites_published} />
+            <Counter label="Лиды (всего)" value={data.counters.leads_total} />
+            <Counter label="Feedback" value={data.counters.feedback_total} />
+          </section>
+
+          <section className="mt-6 rounded-2xl border border-line bg-white p-5 shadow-card">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+                ЗАЯВКИ · 14 ДНЕЙ
+              </p>
+              <p className="text-sm text-ink-soft">
+                Всего:{" "}
+                <b className="text-ink">
+                  {data.applications_series_14d
+                    .reduce((sum, point) => sum + point.count, 0)
+                    .toLocaleString("ru-RU")}
+                </b>
+              </p>
+            </div>
+            <ApplicationsAreaChart points={data.applications_series_14d} />
+          </section>
+        </>
       ) : null}
     </div>
   );
@@ -101,4 +130,8 @@ function Counter({
       </p>
     </div>
   );
+}
+
+function ChartPlaceholder() {
+  return <div className="h-[200px] animate-pulse rounded-md bg-paper-soft" />;
 }
