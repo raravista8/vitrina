@@ -27,10 +27,17 @@ include_external_packages = True
 ;   - `app.bot`            (aiogram bot handlers)
 
 [importlinter:contract:hexagonal-core]
-name = core must not depend on infrastructure / api / admin / workers / bot
+name = critical-path core modules must not depend on infrastructure / api / admin / workers / bot
 type = forbidden
+; ARCHITECTURE.md §9 names exactly four critical paths as hexagonal:
+; parsing, content, auth, leads. The rest of app.core (applications,
+; consent, billing, waitlist, ...) is layered MVC per the same doc and
+; may call SQLAlchemy directly via session dependencies.
 source_modules =
-    app.core
+    app.core.parsing
+    app.core.content
+    app.core.auth
+    app.core.leads
 forbidden_modules =
     app.infrastructure
     app.api

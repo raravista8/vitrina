@@ -21,6 +21,7 @@ from app.api.middleware import (
     SecurityHeadersMiddleware,
     register_exception_handlers,
 )
+from app.api.routers.applications import router as applications_router
 from app.config import get_settings
 from app.utils.logging import configure_logging, get_logger
 
@@ -76,6 +77,8 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestIDMiddleware)
 
     register_exception_handlers(app)
+
+    app.include_router(applications_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:
