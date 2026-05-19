@@ -76,6 +76,7 @@ class _FakeGateway:
         description: str,
         idempotency_key: str,
         save_payment_method: bool = True,
+        metadata: dict[str, str] | None = None,
     ) -> CreatedPayment:
         self.create_calls.append(
             {
@@ -85,6 +86,7 @@ class _FakeGateway:
                 "description": description,
                 "idempotency_key": idempotency_key,
                 "save_payment_method": save_payment_method,
+                "metadata": metadata,
             }
         )
         if self._raise is not None:
@@ -440,3 +442,170 @@ async def test_webhook_signature_required_when_secret_set(
         headers={"Content-Signature": expected},
     )
     assert resp_signed.status_code == 200
+
+
+# --- T9.1 polish: metadata + users.plan sync -----------------------------
+
+
+async def test_checkout_passes_user_and_subscription_id_in_metadata(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user,  # type: ignore[no-untyped-def]
+    app_with_gateway,  # type: ignore[no-untyped-def]
+) -> None:
+    """The first payment carries metadata so the FIRST webhook can
+    locate the subscription before any saved card / payment_method_id
+    exists. Without this, the trial→active promotion silently misses."""
+    _, gateway = app_with_gateway
+    await client.post(
+        "/api/billing/checkout",
+        json={"contact": "anna@example.com", "return_url": "https://x"},
+    )
+    sub = (await db_session.execute(select(Subscription))).scalar_one()
+    metadata = gateway.create_calls[0]["metadata"]
+    assert metadata is not None
+    assert metadata["user_id"] == str(seeded_user.id)
+    assert metadata["subscription_id"] == str(sub.id)
+
+
+async def test_first_webhook_locates_subscription_via_metadata(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user,  # type: ignore[no-untyped-def]
+) -> None:
+    """End-to-end: checkout → first payment.succeeded webhook with NO
+    saved card but with metadata.user_id → subscription gets promoted
+    to active. This is the path that breaks without the metadata fix."""
+    await client.post(
+        "/api/billing/checkout",
+        json={"contact": "anna@example.com", "return_url": "https://x"},
+    )
+    sub = (await db_session.execute(select(Subscription))).scalar_one()
+    assert sub.status == "trial"
+    assert sub.payment_method_id is None  # no saved card yet
+
+    # First webhook — no payment_method, only metadata.user_id
+    payload = {
+        "event": "payment.succeeded",
+        "object": {
+            "id": "evt-first-1",
+            "amount": {"value": "990.00", "currency": "RUB"},
+            "payment_method": {"id": "pm-just-saved"},
+            "metadata": {"user_id": str(seeded_user.id)},
+        },
+    }
+    resp = await client.post("/api/billing/webhook", json=payload)
+    assert resp.status_code == 200
+    assert resp.json()["data"]["new_status"] == "active"
+
+    await db_session.refresh(sub)
+    assert sub.status == "active"
+    assert sub.payment_method_id == "pm-just-saved"
+
+
+async def test_user_plan_synced_to_pro_on_activation(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user,  # type: ignore[no-untyped-def]
+) -> None:
+    """FR-080: users.plan mirrors subscription state. On
+    payment.succeeded the user's plan flips to 'pro' with plan_until
+    set to the period end. Without this the recurring-charge worker
+    can't gate correctly."""
+    await client.post(
+        "/api/billing/checkout",
+        json={"contact": "anna@example.com", "return_url": "https://x"},
+    )
+    # Initial state: trial — user.plan should already be "trial" with
+    # plan_until = trial_ends_at.
+    await db_session.refresh(seeded_user)
+    assert seeded_user.plan == "trial"
+    assert seeded_user.plan_until is not None
+
+    payload = {
+        "event": "payment.succeeded",
+        "object": {
+            "id": "evt-sync-1",
+            "amount": {"value": "990.00", "currency": "RUB"},
+            "payment_method": {"id": "pm-1"},
+            "metadata": {"user_id": str(seeded_user.id)},
+        },
+    }
+    await client.post("/api/billing/webhook", json=payload)
+
+    await db_session.refresh(seeded_user)
+    assert seeded_user.plan == "pro"
+    assert seeded_user.plan_until is not None
+
+
+async def test_user_plan_synced_to_cancelled_on_user_cancel(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user,  # type: ignore[no-untyped-def]
+) -> None:
+    """Cancel flips users.plan to 'cancelled' but leaves plan_until
+    untouched so the user keeps Pro through the paid-up period."""
+    await client.post(
+        "/api/billing/checkout",
+        json={"contact": "anna@example.com", "return_url": "https://x"},
+    )
+    await client.post(
+        "/api/billing/webhook",
+        json={
+            "event": "payment.succeeded",
+            "object": {
+                "id": "evt-cancel-1",
+                "amount": {"value": "990.00", "currency": "RUB"},
+                "payment_method": {"id": "pm-1"},
+                "metadata": {"user_id": str(seeded_user.id)},
+            },
+        },
+    )
+    await db_session.refresh(seeded_user)
+    plan_until_before = seeded_user.plan_until
+
+    await client.post("/api/billing/cancel", json={"contact": "anna@example.com"})
+    await db_session.refresh(seeded_user)
+    assert seeded_user.plan == "cancelled"
+    # plan_until preserved — paid period continues to honour
+    assert seeded_user.plan_until == plan_until_before
+
+
+async def test_user_plan_synced_to_expired_on_refund(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded_user,  # type: ignore[no-untyped-def]
+) -> None:
+    await client.post(
+        "/api/billing/checkout",
+        json={"contact": "anna@example.com", "return_url": "https://x"},
+    )
+    # Promote to active first
+    await client.post(
+        "/api/billing/webhook",
+        json={
+            "event": "payment.succeeded",
+            "object": {
+                "id": "evt-refund-pre",
+                "amount": {"value": "990.00", "currency": "RUB"},
+                "payment_method": {"id": "pm-1"},
+                "metadata": {"user_id": str(seeded_user.id)},
+            },
+        },
+    )
+    # Refund event
+    resp = await client.post(
+        "/api/billing/webhook",
+        json={
+            "event": "refund.succeeded",
+            "object": {
+                "id": "evt-refund-1",
+                "amount": {"value": "990.00", "currency": "RUB"},
+                "metadata": {"user_id": str(seeded_user.id)},
+            },
+        },
+    )
+    assert resp.status_code == 200
+
+    await db_session.refresh(seeded_user)
+    assert seeded_user.plan == "expired"

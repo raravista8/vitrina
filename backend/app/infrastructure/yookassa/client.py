@@ -64,10 +64,18 @@ class YookassaClient:
         description: str,
         idempotency_key: str,
         save_payment_method: bool = True,
+        metadata: dict[str, str] | None = None,
     ) -> CreatedPayment:
         """POST ``/v3/payments`` for the user's first charge (or one-off
         renewal where we don't have a saved card). Returns the
-        confirmation URL the user is redirected to."""
+        confirmation URL the user is redirected to.
+
+        ``metadata`` is an optional dict ЮKassa echoes back in webhook
+        payloads under ``object.metadata`` — we use it to carry the
+        ``user_id`` so the first ``payment.succeeded`` event can find
+        the matching ``subscriptions`` row before any saved card
+        exists.
+        """
         self._require_credentials()
         body: dict[str, Any] = {
             "amount": _to_decimal(amount_kopeks, currency),
@@ -79,6 +87,8 @@ class YookassaClient:
                 "return_url": return_url,
             },
         }
+        if metadata:
+            body["metadata"] = metadata
         payload = await self._post(body, idempotency_key=idempotency_key)
         confirmation = payload.get("confirmation") if isinstance(payload, dict) else None
         confirmation_url = (
