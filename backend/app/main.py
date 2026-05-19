@@ -22,6 +22,7 @@ from app.api.middleware import (
     register_exception_handlers,
 )
 from app.api.routers.applications import router as applications_router
+from app.api.routers.feedback import router as feedback_router
 from app.config import get_settings
 from app.utils.logging import configure_logging, get_logger
 
@@ -114,6 +115,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
 
     app.include_router(applications_router)
+    app.include_router(feedback_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:
