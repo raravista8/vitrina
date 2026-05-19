@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import (
     application_rate_limiter,
+    get_captcha_verifier,
     get_client_ip,
     get_session,
 )
@@ -26,6 +27,7 @@ from app.api.schemas.applications import (
     SubmitApplicationResponse,
 )
 from app.core.applications.service import submit_application
+from app.core.captcha.verifier import CaptchaVerifier
 from app.utils.logging import get_logger
 
 router = APIRouter(prefix="/api", tags=["applications"])
@@ -40,11 +42,17 @@ async def post_submit_application(
     body: SubmitApplicationRequest,
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
+    captcha: Annotated[CaptchaVerifier, Depends(get_captcha_verifier)],
     _ratelimit: Annotated[None, Depends(application_rate_limiter)],
 ) -> SubmitApplicationResponse:
     log = get_logger("api.applications")
     ip = get_client_ip(request)
     user_agent = request.headers.get("User-Agent")
+
+    captcha_result = await captcha.verify(body.captcha_token, ip=ip)
+    if not captcha_result.is_valid:
+        log.info("captcha_rejected", reason=captcha_result.reason)
+        raise HTTPException(status_code=400, detail="invalid_captcha")
 
     result = await submit_application(
         session=session,

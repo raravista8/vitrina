@@ -23,8 +23,17 @@ import pytest
 import pytest_asyncio
 from fastapi import FastAPI
 
-from app.api.dependencies import application_rate_limiter, get_session
+from app.api.dependencies import (
+    application_rate_limiter,
+    get_captcha_verifier,
+    get_session,
+)
+from app.core.captcha.verifier import CaptchaResult, CaptchaVerifier
 from app.main import create_app
+
+# Frontend (lib/captcha.ts) emits this literal when no client key is set;
+# the backend verifier accepts it in dev mode.
+DEV_TOKEN = "DEV_TOKEN"
 
 pytestmark = pytest.mark.integration
 
@@ -131,6 +140,7 @@ async def test_submit_application_happy_path(
             "source_url": "https://t.me/some_channel",
             "contact": contact,
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
         },
     )
     elapsed = time.monotonic() - start
@@ -155,6 +165,7 @@ async def test_consent_required(client: httpx.AsyncClient) -> None:
             "source_type": "telegram",
             "contact": "alice@example.com",
             "consent_given": False,
+            "captcha_token": DEV_TOKEN,
         },
     )
     assert resp.status_code == 400
@@ -169,6 +180,7 @@ async def test_invalid_contact_returns_400(client: httpx.AsyncClient) -> None:
             "source_type": "telegram",
             "contact": "not a contact at all",
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
         },
     )
     assert resp.status_code == 400
@@ -183,6 +195,7 @@ async def test_unsupported_source_type_returns_422(client: httpx.AsyncClient) ->
             "source_type": "vk",  # waitlist source, not in MVP
             "contact": "alice@example.com",
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
         },
     )
     assert resp.status_code == 422
@@ -197,6 +210,7 @@ async def test_extra_fields_rejected(client: httpx.AsyncClient) -> None:
             "source_type": "telegram",
             "contact": "alice@example.com",
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
             "evil_extra_field": "<script>",
         },
     )
@@ -210,9 +224,50 @@ async def test_missing_required_field(client: httpx.AsyncClient) -> None:
             "source_type": "telegram",
             # contact missing
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
         },
     )
     assert resp.status_code == 422
+
+
+async def test_missing_captcha_token_returns_422(client: httpx.AsyncClient) -> None:
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "contact": "alice@example.com",
+            "consent_given": True,
+            # captcha_token missing
+        },
+    )
+    assert resp.status_code == 422
+
+
+async def test_invalid_captcha_returns_400(app: FastAPI, client: httpx.AsyncClient) -> None:
+    """When the verifier rejects the token, the endpoint returns 400 invalid_captcha
+    BEFORE touching the DB — verified by the rejection happening before any
+    user/consent/application row is written."""
+
+    class _RejectingVerifier(CaptchaVerifier):
+        def __init__(self) -> None:
+            super().__init__(server_key=None, dev_mode=False)
+
+        async def verify(self, token: str, *, ip: str | None) -> CaptchaResult:
+            return CaptchaResult(is_valid=False, reason="forced_rejection")
+
+    app.dependency_overrides[get_captcha_verifier] = _RejectingVerifier
+
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "contact": "alice@example.com",
+            "consent_given": True,
+            "captcha_token": "any-token",
+        },
+    )
+    assert resp.status_code == 400
+    assert resp.json()["error"] == "invalid_captcha"
 
 
 # --------------------------------------------------------------------------- #
@@ -230,6 +285,7 @@ async def test_rate_limit_returns_429_with_retry_after(
         "source_type": "telegram",
         "contact": "alice@example.com",
         "consent_given": True,
+        "captcha_token": DEV_TOKEN,
     }
     for _ in range(application_rate_limiter.limit):
         ok = await client.post("/api/submit-application", json=payload)
@@ -267,6 +323,7 @@ async def test_persistence_creates_user_consent_application(
             "source_url": "https://t.me/some_channel",
             "contact": "+79261234567",
             "consent_given": True,
+            "captcha_token": DEV_TOKEN,
         },
     )
     assert resp.status_code == 202

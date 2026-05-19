@@ -61,6 +61,13 @@ class Settings(BaseSettings):
     sentry_environment: str = "development"
     sentry_traces_sample_rate: float = Field(default=0.1, ge=0.0, le=1.0)
 
+    # ---- Yandex SmartCaptcha (T1.5) ----------------------------------------
+    # The client_key is exposed to the browser via NEXT_PUBLIC_* on the
+    # landing side; here we keep only the server_key. Empty in dev — the
+    # verifier accepts the literal "DEV_TOKEN" then. Required in prod;
+    # `build_captcha_verifier` refuses to start without it.
+    yandex_smartcaptcha_server_key: str | None = None
+
     # ---- Rate limits -------------------------------------------------------
     rate_limit_applications_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_hour: int = 3
