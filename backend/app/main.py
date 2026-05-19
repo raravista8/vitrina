@@ -18,6 +18,7 @@ from fastapi.responses import JSONResponse
 from app import __version__
 from app.admin.routers.auth import router as admin_auth_router
 from app.admin.routers.dashboard import router as admin_dashboard_router
+from app.admin.routers.sites import router as admin_sites_router
 from app.api.middleware import (
     RequestIDMiddleware,
     SecurityHeadersMiddleware,
@@ -111,6 +112,65 @@ async def _lifespan(app: FastAPI) -> Any:
         ymaps=geosearch_client.is_available(),
     )
 
+    # Publishing (T2.3) — Jinja2 renderer + S3 uploader + SEO + notifier
+    # composed into a SitePublisher. The uploader falls back to the
+    # in-memory implementation when S3 credentials are absent so the dev
+    # loop and integration tests work without object-storage access.
+    from pathlib import Path
+
+    from app.core.publishing.service import SitePublisher
+    from app.core.seo.adapters.google_search_console import GoogleSearchConsoleSubmitter
+    from app.core.seo.adapters.indexnow import IndexNowSubmitter
+    from app.core.seo.adapters.yandex_webmaster import YandexWebmasterSubmitter
+    from app.core.seo.ports import SeoEngine
+    from app.core.seo.service import SeoSubmissionService
+    from app.infrastructure.s3.uploader import (
+        InMemoryStaticUploader,
+        S3StaticUploader,
+    )
+
+    uploader: InMemoryStaticUploader | S3StaticUploader
+    if settings.s3_bucket and settings.s3_access_key and settings.s3_secret_key:
+        uploader = S3StaticUploader(
+            bucket=settings.s3_bucket,
+            access_key=settings.s3_access_key,
+            secret_key=settings.s3_secret_key,
+            endpoint_url=settings.s3_endpoint_url,
+            region=settings.s3_region,
+            cdn_base_url=settings.cdn_base_url,
+        )
+        log.info("s3_uploader_ready", bucket=settings.s3_bucket)
+    else:
+        uploader = InMemoryStaticUploader()
+        log.warning("s3_uploader_disabled", reason="missing_credentials")
+
+    seo_service = SeoSubmissionService(
+        submitters={
+            SeoEngine.yandex_webmaster: YandexWebmasterSubmitter(
+                api_key=settings.yandex_webmaster_api_key
+            ),
+            SeoEngine.indexnow: IndexNowSubmitter(site_key=settings.indexnow_site_key),
+            SeoEngine.google_search_console: GoogleSearchConsoleSubmitter(
+                service_account_json_path=settings.gsc_service_account_json
+            ),
+        }
+    )
+    if settings.sites_template_dir:
+        sites_template_dir = Path(settings.sites_template_dir)
+    else:
+        # Two layouts work without env-config:
+        #   - dev / monorepo: backend/app/main.py → ../../sites-template
+        #   - Docker: /app/app/main.py + Dockerfile copies sites-template
+        #     to /app/sites-template (also ../../sites-template)
+        sites_template_dir = Path(__file__).resolve().parents[2] / "sites-template"
+    app.state.site_publisher = SitePublisher(
+        template_dir=sites_template_dir,
+        uploader=uploader,
+        seo=seo_service,
+        notifier=dispatcher,
+    )
+    log.info("site_publisher_ready", template_dir=str(sites_template_dir))
+
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
     from app.core.auth.sessions import AdminSessionStore
@@ -157,6 +217,7 @@ def create_app() -> FastAPI:
     app.include_router(preview_router)
     app.include_router(admin_auth_router)
     app.include_router(admin_dashboard_router)
+    app.include_router(admin_sites_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:

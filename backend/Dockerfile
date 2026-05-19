@@ -31,7 +31,7 @@ RUN pip install "poetry==${POETRY_VERSION}"
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock* ./
+COPY backend/pyproject.toml backend/poetry.lock* ./
 RUN poetry install --only main --no-root --no-ansi
 
 # ---- Stage 2: runtime --------------------------------------------------------
@@ -58,9 +58,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY --from=builder /app/.venv /app/.venv
-COPY --chown=vitrina:vitrina ./app ./app
-COPY --chown=vitrina:vitrina ./alembic ./alembic
-COPY --chown=vitrina:vitrina ./alembic.ini ./alembic.ini
+COPY --chown=vitrina:vitrina backend/app ./app
+COPY --chown=vitrina:vitrina backend/alembic ./alembic
+COPY --chown=vitrina:vitrina backend/alembic.ini ./alembic.ini
+# Customer-site Jinja2 templates (T2.3 publisher renders these). The
+# build context is the repo root (see infra/docker-compose.yml) so
+# `sites-template/` is available next to `backend/`.
+COPY --chown=vitrina:vitrina sites-template ./sites-template
 
 USER vitrina
 EXPOSE 8000

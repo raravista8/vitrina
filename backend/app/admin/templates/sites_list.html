@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+{% block title %}Сайты{% endblock %}
+{% block content %}
+<h2>Сайты</h2>
+
+<div class="filters">
+    <a href="/admin/sites" class="{% if not status_filter %}active{% endif %}">Все</a>
+    <a href="/admin/sites?status=review" class="{% if status_filter == 'review' %}active{% endif %}">На ревью</a>
+    <a href="/admin/sites?status=published" class="{% if status_filter == 'published' %}active{% endif %}">Опубликованы</a>
+    <a href="/admin/sites?status=pending" class="{% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+    <a href="/admin/sites?status=sync_paused" class="{% if status_filter == 'sync_paused' %}active{% endif %}">Sync paused</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Поддомен</th>
+            <th>Источник</th>
+            <th>Статус</th>
+            <th>Опубликован</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sites %}
+        <tr>
+            <td><strong>{{ s.subdomain }}</strong></td>
+            <td>{{ s.source_type }}</td>
+            <td><span class="pill pill-{{ s.status }}">{{ s.status }}</span></td>
+            <td>{% if s.published_at %}{{ s.published_at.strftime("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}</td>
+            <td><a class="action" href="/admin/sites/{{ s.id }}">открыть</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align: center; color: #6b7280;">Сайтов пока нет.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

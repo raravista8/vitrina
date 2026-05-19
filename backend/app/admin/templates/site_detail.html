@@ -1,0 +1,48 @@
+{% extends "_base.html" %}
+{% block title %}Сайт {{ site.subdomain }}{% endblock %}
+{% block content %}
+<h2>Сайт <code>{{ site.subdomain }}</code></h2>
+
+{% if flash == "published" %}
+<p style="background: #d1fae5; color: #065f46; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Сайт опубликован. SEO-пинги отправлены, владелец уведомлён.
+</p>
+{% elif flash == "publish_failed" %}
+<p style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Не удалось опубликовать сайт. Подробности в логах (см. <code>publish_failed</code>).
+</p>
+{% elif flash == "not_publishable" %}
+<p style="background: #fef3c7; color: #92400e; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Сайт ещё не готов: нет сгенерированного контента или статус не подходит для публикации.
+</p>
+{% elif flash == "owner_missing" %}
+<p style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 0.5rem;">
+    Не найден владелец сайта в БД — публикация заблокирована.
+</p>
+{% endif %}
+
+<table style="margin-bottom: 2rem;">
+    <tbody>
+        <tr><th>ID</th><td><code>{{ site.id }}</code></td></tr>
+        <tr><th>Статус</th><td><span class="pill pill-{{ site.status }}">{{ site.status }}</span></td></tr>
+        <tr><th>Источник</th><td>{{ site.source_type }}</td></tr>
+        <tr><th>URL источника</th><td>{% if site.source_url %}{{ site.source_url }}{% else %}—{% endif %}</td></tr>
+        <tr><th>Опубликован</th><td>{% if site.published_at %}{{ site.published_at.strftime("%Y-%m-%d %H:%M:%S UTC") }}{% else %}—{% endif %}</td></tr>
+        <tr><th>SEO лог</th><td><code>{{ site.seo_submission_log or "—" }}</code></td></tr>
+    </tbody>
+</table>
+
+<h3 style="font-size: 1rem;">Действия</h3>
+{% if can_publish %}
+<form method="post" action="/admin/sites/{{ site.id }}/publish">
+    <button type="submit" style="background: #111827; color: white; border: 0; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;">
+        {% if site.status == "published" %}Перепубликовать{% else %}Опубликовать{% endif %}
+    </button>
+</form>
+{% else %}
+<p style="color: #6b7280; font-size: 0.875rem;">
+    Публикация недоступна: нужно <code>generated_content</code> и статус
+    <code>review</code> или <code>published</code>.
+</p>
+{% endif %}
+{% endblock %}

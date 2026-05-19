@@ -1,0 +1,39 @@
+# Repo-root .dockerignore. Build context for the backend image is the
+# repo root (see infra/docker-compose.yml) so we exclude everything the
+# image doesn't need rather than relying on the per-service Dockerfile
+# to whitelist paths.
+
+# Caches and ephemeral build artefacts ---------------------------------------
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.coverage
+**/htmlcov
+**/*.egg-info
+**/.venv
+**/venv
+**/node_modules
+**/.next
+**/.turbo
+
+# Secrets --------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# Test code (not needed in runtime image) ------------------------------------
+backend/tests
+landing/__tests__
+
+# Docs (not needed in runtime image) -----------------------------------------
+docs
+*.md
+!README.md
+
+# Tooling .dirs --------------------------------------------------------------
+.git
+.github
+.claude

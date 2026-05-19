@@ -12,8 +12,11 @@
 # All container env comes from the repo-root `.env` (cp .env.example .env first).
 
 x-build: &backend-build
-  context: ../backend
-  dockerfile: Dockerfile
+  # Repo root as the build context so the backend image can `COPY ./sites-template`
+  # for the T2.3 publisher (the Jinja2 customer-site templates live next to
+  # backend/, not inside it). Dockerfile paths are `./backend/...` accordingly.
+  context: ..
+  dockerfile: backend/Dockerfile
 
 x-restart: &restart
   restart: unless-stopped

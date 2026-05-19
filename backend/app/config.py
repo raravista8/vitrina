@@ -88,6 +88,24 @@ class Settings(BaseSettings):
     indexnow_site_key: str | None = None
     gsc_service_account_json: str | None = None  # path to JSON keyfile
 
+    # ---- Static publishing (T2.3) ------------------------------------------
+    # Yandex Object Storage credentials. When the bucket is unset the
+    # publisher uses an in-memory uploader so `make dev` works without
+    # cloud credentials — the rendered HTML is held in app memory and
+    # served only to the admin preview (production deploys configure all
+    # four envs).
+    s3_bucket: str | None = None
+    s3_access_key: str | None = None
+    s3_secret_key: str | None = None
+    s3_endpoint_url: str = "https://storage.yandexcloud.net"
+    s3_region: str = "ru-central1"
+    cdn_base_url: str = "https://vitrina.site"
+    # Filesystem location of the Jinja2 customer-site templates. Default
+    # path is the repo-root sibling of ``backend/``; the Dockerfile copies
+    # ``sites-template/`` next to ``app/`` so the same code resolves the
+    # right path in production as long as SITES_TEMPLATE_DIR is unset.
+    sites_template_dir: str | None = None
+
     # ---- Rate limits -------------------------------------------------------
     rate_limit_applications_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_hour: int = 3
