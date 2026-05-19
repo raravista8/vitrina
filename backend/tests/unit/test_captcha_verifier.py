@@ -48,6 +48,8 @@ class TestProdFailSecure:
             debug=False,
             log_level="INFO",  # type: ignore[arg-type]
             yandex_smartcaptcha_server_key=None,
+            # Satisfy the T2.1 prod-validator so we isolate the captcha check.
+            session_secret_key="prod-test-secret-not-real",  # pragma: allowlist secret
         )
         with pytest.raises(RuntimeError, match="YANDEX_SMARTCAPTCHA_SERVER_KEY"):
             build_captcha_verifier(settings)

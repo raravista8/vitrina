@@ -160,6 +160,10 @@ makemigration:
 	@read -p "Migration name: " name; \
 	cd $(BACKEND) && poetry run alembic revision --autogenerate -m "$$name"
 
+.PHONY: seed-admin
+seed-admin: ## Interactive admin seeding (password + TOTP enrollment)
+	cd $(BACKEND) && poetry run python -m app.cli.seed_admin
+
 # ---- Deploy ------------------------------------------------------------------
 
 .PHONY: deploy

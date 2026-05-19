@@ -8,6 +8,7 @@ which is what `alembic/env.py` reads.
 from app.infrastructure.postgres.base import Base, Timestamped, UUIDPrimaryKey
 from app.infrastructure.postgres.models import (
     AdminAction,
+    AdminCredentials,
     Application,
     Consent,
     Event,
@@ -20,6 +21,7 @@ from app.infrastructure.postgres.models import (
 
 __all__ = [
     "AdminAction",
+    "AdminCredentials",
     "Application",
     "Base",
     "Consent",

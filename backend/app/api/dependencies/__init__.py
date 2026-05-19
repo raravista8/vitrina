@@ -11,11 +11,12 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from fastapi import Request
+from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware import RateLimiter
 from app.config import get_settings
+from app.core.auth.sessions import AdminSession, AdminSessionStore
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
 from app.core.notify.dispatcher import NotificationDispatcher
 from app.core.preview.service import PreviewService
@@ -83,6 +84,63 @@ def _build_preview_rate_limiter() -> RateLimiter:
 
 
 preview_rate_limiter = _build_preview_rate_limiter()
+
+
+def _build_admin_login_rate_limiter() -> RateLimiter:
+    """SECURITY.md T7.1: 5 attempts per IP per 15 min."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_admin_login_per_ip_per_15min,
+        window_seconds=15 * 60,
+        scope="admin_login",
+    )
+
+
+admin_login_rate_limiter = _build_admin_login_rate_limiter()
+
+
+def get_admin_session_store(request: Request) -> AdminSessionStore:
+    """Per-app AdminSessionStore. Lifespan attaches Redis + secret on startup."""
+    store: AdminSessionStore | None = getattr(request.app.state, "admin_session_store", None)
+    if store is None:
+        msg = "admin_session_store not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return store
+
+
+async def require_admin(
+    request: Request,
+    store: AdminSessionStore = Depends(get_admin_session_store),
+) -> AdminSession:
+    """Dependency for every /admin/* route except /admin/login.
+
+    Reads the signed cookie, looks the session up in Redis, refreshes its
+    last_seen_at, and returns the AdminSession. On any failure 303-redirects
+    to /admin/login. Per SECURITY.md A07.
+    """
+    raw = request.cookies.get("admin_session")
+    if raw is None:
+        raise _unauthorised_redirect()
+
+    session_id = store.unsign_cookie(raw)
+    if session_id is None:
+        raise _unauthorised_redirect()
+
+    record = await store.load(session_id)
+    if record is None:
+        raise _unauthorised_redirect()
+
+    return await store.touch(record)
+
+
+def _unauthorised_redirect() -> HTTPException:
+    # 303 forces a GET on /admin/login; the browser drops form data which is
+    # what we want for an expired session.
+    return HTTPException(
+        status_code=303,
+        detail="admin_login_required",
+        headers={"Location": "/admin/login"},
+    )
 
 
 def get_captcha_verifier() -> CaptchaVerifier:

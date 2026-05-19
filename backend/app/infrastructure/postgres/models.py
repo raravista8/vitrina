@@ -350,8 +350,32 @@ class Application(UUIDPrimaryKey, Timestamped, Base):
     )
 
 
+# =============================================================================
+# admin_credentials (single-row table — founder account; bcrypt + TOTP)
+# =============================================================================
+
+
+class AdminCredentials(UUIDPrimaryKey, Timestamped, Base):
+    """Admin login material. Single row in MVP (founder). SECURITY.md §A07,
+    T7.1: bcrypt cost=12 for password, base32 TOTP secret, eight bcrypt-
+    hashed backup codes for TOTP-device-loss recovery."""
+
+    __tablename__ = "admin_credentials"
+
+    username: Mapped[str] = mapped_column(String(64), nullable=False)
+    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    totp_secret: Mapped[str] = mapped_column(Text, nullable=False)  # base32
+    backup_codes_hashes: Mapped[list[str]] = mapped_column(
+        JSONB, nullable=False, server_default="[]"
+    )
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (UniqueConstraint("username", name="admin_credentials_username_uq"),)
+
+
 __all__ = [
     "AdminAction",
+    "AdminCredentials",
     "Application",
     "Base",
     "Consent",

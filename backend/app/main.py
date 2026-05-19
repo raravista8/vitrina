@@ -16,6 +16,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from app import __version__
+from app.admin.routers.auth import router as admin_auth_router
 from app.api.middleware import (
     RequestIDMiddleware,
     SecurityHeadersMiddleware,
@@ -109,6 +110,19 @@ async def _lifespan(app: FastAPI) -> Any:
         ymaps=geosearch_client.is_available(),
     )
 
+    # Admin session store (T2.1). Disabled when Redis is unavailable —
+    # /admin/login then 503s instead of letting users in without sessions.
+    from app.core.auth.sessions import AdminSessionStore
+
+    if redis_client is not None:
+        app.state.admin_session_store = AdminSessionStore(
+            redis_client, secret_key=settings.session_secret_key
+        )
+        log.info("admin_session_store_ready")
+    else:
+        app.state.admin_session_store = None
+        log.warning("admin_session_store_disabled", reason="redis_unavailable")
+
     try:
         yield
     finally:
@@ -140,6 +154,7 @@ def create_app() -> FastAPI:
     app.include_router(applications_router)
     app.include_router(feedback_router)
     app.include_router(preview_router)
+    app.include_router(admin_auth_router)
 
     @app.get("/healthz", include_in_schema=False)
     async def healthz() -> JSONResponse:

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Vitrina · Admin login</title>
+    <style>
+        :root { color-scheme: light dark; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+            color: #111827;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        main {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 22rem;
+        }
+        h1 { margin: 0 0 1.5rem; font-size: 1.5rem; }
+        label { display: block; font-size: 0.875rem; margin-bottom: 0.25rem; }
+        input {
+            width: 100%; box-sizing: border-box;
+            padding: 0.6rem 0.8rem; margin-bottom: 1rem;
+            border: 1px solid #d1d5db; border-radius: 0.5rem;
+            font-size: 1rem; font-family: inherit;
+        }
+        input:focus { outline: 2px solid #111827; outline-offset: 1px; }
+        button {
+            width: 100%; padding: 0.7rem;
+            background: #111827; color: white;
+            border: 0; border-radius: 0.5rem;
+            font-size: 1rem; font-weight: 500;
+            cursor: pointer;
+        }
+        button:hover { background: #1f2937; }
+        .error {
+            background: #fef2f2; color: #991b1b;
+            padding: 0.75rem 1rem; border-radius: 0.5rem;
+            margin-bottom: 1rem; font-size: 0.875rem;
+        }
+        .hint { font-size: 0.8rem; color: #6b7280; margin: -0.5rem 0 1rem; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Admin login</h1>
+        {% if error %}
+            <p class="error">
+                {% if error == "invalid_credentials" %}Неверный логин, пароль или код 2FA.
+                {% elif error == "rate_limited" %}Слишком много попыток. Попробуйте через 15 минут.
+                {% else %}Не удалось войти.
+                {% endif %}
+            </p>
+        {% endif %}
+        <form method="post" action="/admin/login" autocomplete="off">
+            <label for="username">Логин</label>
+            <input id="username" name="username" type="text" required autocomplete="username" autofocus>
+            <label for="password">Пароль</label>
+            <input id="password" name="password" type="password" required autocomplete="current-password">
+            <label for="totp">Код 2FA или backup-код</label>
+            <input id="totp" name="totp" type="text" required inputmode="numeric" minlength="6" maxlength="8" autocomplete="one-time-code">
+            <p class="hint">6 цифр из Yandex/Google Authenticator или 8-символьный backup.</p>
+            <button type="submit">Войти</button>
+        </form>
+    </main>
+</body>
+</html>
