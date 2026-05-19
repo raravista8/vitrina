@@ -80,6 +80,9 @@ class Settings(BaseSettings):
     smtp_password: str | None = None
     smtp_from: str = "noreply@vitrina.site"
 
+    # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
+    yandex_geosearch_api_key: str | None = None
+
     # ---- Rate limits -------------------------------------------------------
     rate_limit_applications_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_hour: int = 3
