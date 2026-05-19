@@ -10,7 +10,9 @@ Local-dev and production-shaped Docker Compose for Vitrina.
 | `docker-compose.dev.yml`      | Local-dev overrides — port exposes, code bind-mounts, hot reload              |
 | `postgres/init/`              | SQL run on first `docker volume create` (T1.1 fills with role setup)          |
 | `redis/redis.conf`            | Redis 7 config (appendonly, LRU)                                              |
-| `Caddyfile` / `Caddyfile.dev` | Placeholder. T2.4 wires production wildcard SSL via Selectel DNS-01           |
+| `Caddyfile`                   | Production: TLS termination, wildcard cert via Let's Encrypt DNS-01 + Selectel DNS, reverse-proxy to landing/api/Object-Storage |
+| `Caddyfile.dev`               | Dev: `tls internal` (local CA, no ACME), proxies `*.localhost` to landing+api |
+| `caddy/Dockerfile`            | Custom Caddy build via xcaddy with `caddy-dns/selectel` (the upstream image lacks the Selectel plugin) |
 
 ## Topology (T0.3)
 
@@ -82,8 +84,36 @@ docker compose --env-file .env -f infra/docker-compose.yml exec postgres \
 docker compose --env-file .env -f infra/docker-compose.yml exec redis redis-cli ping  # PONG
 ```
 
+## TLS / wildcard cert (T2.4)
+
+Production Caddy obtains a wildcard cert for `*.vitrina.site` via ACME
+DNS-01 against the Selectel DNS API. The upstream `caddy:2-alpine` image
+doesn't bundle that provider, so `infra/caddy/Dockerfile` rebuilds Caddy
+via xcaddy with `github.com/caddy-dns/selectel`.
+
+To deploy:
+
+1. Issue a Selectel DNS API token (my.selectel.ru → IAM → API keys,
+   scope `dns:zone:rw` for the `vitrina.site` zone).
+2. Populate `.env`:
+   ```
+   ACME_EMAIL=founder@vitrina.site
+   SELECTEL_DNS_API_TOKEN=<token>
+   ```
+3. `docker compose -f infra/docker-compose.yml up -d caddy`
+
+Caddy auto-renews the cert ~30 days before expiry — no cron job needed.
+Manual rotation: `docker compose exec caddy caddy reload`.
+
+Smoke check after deploy:
+
+```bash
+curl -sI https://www.vitrina.site | head -2          # 200 from landing
+curl -sI https://api.vitrina.site/healthz | head -2  # 200 from api
+curl -vI https://probe.vitrina.site 2>&1 | grep "subject:"
+#   ↑ subject CN must contain *.vitrina.site (wildcard delivered)
+```
+
 ## What lands later
 
-- **T1.1** populates `postgres/init/` with DB roles (`vitrina_app`, `vitrina_readonly`, `vitrina_audit_writer`) per SECURITY.md T4.2.
-- **T2.4** replaces both `Caddyfile`s with the real wildcard-SSL config and routes traffic via UNIX socket to api (mitigates threat T2.1).
 - **T8.1** adds `infra/scripts/backup-pg.sh` and cron for nightly gpg-encrypted pg_dumps.

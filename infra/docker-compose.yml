@@ -134,6 +134,58 @@ services:
     networks: [internal_net]
     <<: *restart
 
+  caddy:
+    build:
+      context: caddy
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    environment:
+      STATIC_ORIGIN_URL: ${STATIC_ORIGIN_URL:-https://storage.yandexcloud.net/vitrina-prod}
+      STATIC_ORIGIN_HOST: ${STATIC_ORIGIN_HOST:-storage.yandexcloud.net}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      # Wildcard cert files written by the acme sidecar.
+      - acme_certs:/etc/caddy/certs:ro
+    depends_on:
+      - api
+      - landing
+    networks: [internal_net]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    <<: *restart
+
+  acme:
+    # acme.sh sidecar that issues + renews the *.vitrina.site wildcard
+    # cert via Selectel DNS-01 (the caddy-dns/selectel Caddy plugin is
+    # currently broken against libdns 1.x — see infra/caddy/Dockerfile).
+    build:
+      context: acme
+      dockerfile: Dockerfile
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL required for Let's Encrypt}
+      ACME_DOMAIN: ${ACME_DOMAIN:-*.vitrina.site}
+      ACME_DOMAIN_ROOT: ${ACME_DOMAIN_ROOT:-vitrina.site}
+      # acme.sh's Selectel DNS provider reads SEL_TOKEN; we map our env
+      # var so the rest of the stack uses the same SELECTEL_DNS_API_TOKEN
+      # name as everything else (see .env.example).
+      SEL_TOKEN: ${SELECTEL_DNS_API_TOKEN:?SELECTEL_DNS_API_TOKEN required}
+    volumes:
+      - acme_state:/acme.sh
+      - acme_certs:/certs
+      - ./acme/issue.sh:/scripts/issue.sh:ro
+    # acme.sh's default CMD runs the renewal cron daemon (`crond`). One-
+    # time issuance: `docker compose run --rm acme /scripts/issue.sh`.
+    networks: [internal_net]
+    <<: *restart
+
 networks:
   internal_net:
     driver: bridge
@@ -146,3 +198,7 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  caddy_data:
+  caddy_config:
+  acme_state:
+  acme_certs:
