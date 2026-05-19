@@ -351,6 +351,62 @@ class Application(UUIDPrimaryKey, Timestamped, Base):
 
 
 # =============================================================================
+# application_photos (PR-B #6 — multipart upload manifest)
+# =============================================================================
+
+APPLICATION_PHOTO_TYPES = (
+    "work",
+    "profile_screenshot",
+    "business_card",
+    "booklet",
+    "unknown",
+)
+
+
+class ApplicationPhoto(UUIDPrimaryKey, Base):
+    """One uploaded photo for a `source_type='photo'` Application.
+
+    Bytes themselves live on disk under ``UPLOADS_DIR/<application_id>/``
+    so this table stays cheap — magic-byte validation + size limits are
+    enforced at the API boundary before any row lands here (FR-014/015).
+    """
+
+    __tablename__ = "application_photos"
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+    application_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("applications.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    index: Mapped[int] = mapped_column(Integer, nullable=False)
+    filename: Mapped[str] = mapped_column(Text, nullable=False)
+    photo_type: Mapped[str] = mapped_column(String(32), nullable=False, server_default="unknown")
+    mime: Mapped[str] = mapped_column(String(32), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    disk_path: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("index >= 0", name="application_photos_index_nonneg"),
+        CheckConstraint(
+            f"photo_type IN {APPLICATION_PHOTO_TYPES!r}",
+            name="application_photos_photo_type_enum",
+        ),
+        CheckConstraint("size_bytes > 0", name="application_photos_size_positive"),
+        UniqueConstraint(
+            "application_id",
+            "index",
+            name="uq_application_photos_app_index",
+        ),
+    )
+
+
+# =============================================================================
 # admin_credentials (single-row table — founder account; bcrypt + TOTP)
 # =============================================================================
 

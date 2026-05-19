@@ -253,7 +253,12 @@ def validate_batch(uploads: list[UploadedPhoto]) -> None:
 def _detect_mime(content: bytes) -> str | None:
     """Return one of ALLOWED_MIME_TYPES based on a magic-byte sniff, or
     ``None`` if no signature matches. Per FR-015 we never trust the
-    Content-Type header or filename extension."""
+    Content-Type header or filename extension.
+
+    A public alias ``detect_mime`` is exported at the bottom of the
+    module for callers (API routers, parser-worker) that need to sniff
+    bytes without owning the full adapter instance.
+    """
     if content.startswith(b"\xff\xd8\xff"):
         return "image/jpeg"
     if content.startswith(b"\x89PNG\r\n\x1a\n"):
@@ -274,6 +279,11 @@ def _detect_mime(content: bytes) -> str | None:
     ):
         return "image/heic"
     return None
+
+
+# Public re-export so API routers / parser workers can import without
+# reaching for the leading-underscore name. New code should use this.
+detect_mime = _detect_mime
 
 
 # --- Image processing -----------------------------------------------------
