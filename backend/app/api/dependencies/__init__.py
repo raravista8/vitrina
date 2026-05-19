@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
+from cryptography.fernet import MultiFernet
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -172,6 +173,43 @@ def get_preview_service(request: Request) -> PreviewService:
         msg = "preview_service not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return svc
+
+
+def _build_leads_hourly_rate_limiter() -> RateLimiter:
+    """FR-052: 3/h/IP on the customer-site lead form."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_leads_per_ip_per_hour,
+        window_seconds=3600,
+        scope="leads_hourly",
+    )
+
+
+leads_hourly_rate_limiter = _build_leads_hourly_rate_limiter()
+
+
+def _build_leads_daily_rate_limiter() -> RateLimiter:
+    """FR-052: 10/day/IP secondary cap on top of the hourly limit."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_leads_per_ip_per_day,
+        window_seconds=86_400,
+        scope="leads_daily",
+    )
+
+
+leads_daily_rate_limiter = _build_leads_daily_rate_limiter()
+
+
+def get_lead_fernet(request: Request) -> MultiFernet:
+    """Per-app MultiFernet initialised in lifespan (T5.2). The lifespan
+    fails fast at startup if FERNET_KEYS isn't configured in
+    production — see ``app/main.py``."""
+    fernet: MultiFernet | None = getattr(request.app.state, "lead_fernet", None)
+    if fernet is None:
+        msg = "lead_fernet not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return fernet
 
 
 def get_content_llm(request: Request) -> LlmClient:
