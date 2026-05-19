@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware import RateLimiter
 from app.config import get_settings
+from app.core.auth.login_challenge import LoginChallengeStore
 from app.core.auth.sessions import AdminSession, AdminSessionStore
 from app.core.billing.ports import PaymentGateway
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
@@ -107,6 +108,15 @@ def get_admin_session_store(request: Request) -> AdminSessionStore:
     store: AdminSessionStore | None = getattr(request.app.state, "admin_session_store", None)
     if store is None:
         msg = "admin_session_store not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return store
+
+
+def get_login_challenge_store(request: Request) -> LoginChallengeStore:
+    """Per-app LoginChallengeStore for the 2-step admin login (PR-E)."""
+    store: LoginChallengeStore | None = getattr(request.app.state, "login_challenge_store", None)
+    if store is None:
+        msg = "login_challenge_store not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return store
 
