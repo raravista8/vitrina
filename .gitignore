@@ -38,5 +38,13 @@ htmlcov/
 # Docker
 docker-compose.override.yml
 
+# Deploy artefacts that live on the production host only.
+# `backups/` holds gpg-encrypted nightly pg_dumps (infra/scripts/backup-db.sh);
+# `state-snapshot-*.json` is written post-deploy by infra/scripts/deploy.sh
+# for diffing the running stack. Both contain host-specific data and must
+# never enter the repo.
+backups/
+state-snapshot-*.json
+
 # Claude Code working files
 .claude-code/

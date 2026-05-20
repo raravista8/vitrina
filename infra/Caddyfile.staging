@@ -1,0 +1,109 @@
+# Vitrina / Самосайт — staging Caddyfile.
+#
+# This is the production overlay's Caddy config: it terminates TLS on the
+# apex + www with Let's Encrypt (tls-alpn-01, since port 443 is public)
+# and falls back to `tls internal` self-signed certs for the wildcard
+# `*.samosite.online` zone until `SELECTEL_DNS_API_TOKEN` is provided
+# (then the acme sidecar takes over DNS-01 issuance — see infra/acme/).
+#
+# Compose entrypoint: docker-compose.staging.yml mounts this file in
+# place of the default infra/Caddyfile and overrides the caddy service's
+# ports to bind on the host's public 80/443.
+#
+# Diff vs infra/Caddyfile:
+#   - `email` directive lives here (not env), populated at deploy time
+#   - no `acme_dns` / `caddy-dns` plugin block (plugin currently incompatible
+#     with libdns 1.x; see infra/caddy/Dockerfile)
+#   - wildcard host uses `tls internal` instead of the volume-mounted
+#     cert from the acme sidecar
+#
+# Once `SELECTEL_DNS_API_TOKEN` is set and the acme sidecar has issued the
+# wildcard cert, swap the `*.samosite.online` block to use the volume cert
+# (see infra/Caddyfile for the canonical syntax) and `docker compose up -d
+# caddy`. Do NOT prematurely flip this — Let's Encrypt's wildcard issuance
+# is rate-limited (5 duplicate certs / week), and unsuccessful runs count.
+
+{
+	email founder@samosite.online
+	storage file_system {
+		root /data/caddy
+	}
+}
+
+(security_headers) {
+	header {
+		# SECURITY.md §A02 — non-HTML responses still get the basics.
+		# HSTS is set per-site by `tls` automatically; we only need the
+		# rest here so that internal redirects / health endpoints
+		# don't strip it.
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+		# Hide server fingerprint.
+		-Server
+	}
+}
+
+samosite.online, www.samosite.online {
+	import security_headers
+
+	# Backend API — every `/api/*` lands in the FastAPI process.
+	@api path /api/*
+	handle @api {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Admin JSON API (mounted at /admin/api/* inside FastAPI per PR-E).
+	@admin_api path /admin/api/*
+	handle @admin_api {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Admin UI (Next.js section under /admin/*).
+	@admin path /admin*
+	handle @admin {
+		reverse_proxy landing:3000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Health / readiness — exposed for external uptime monitoring + CI smoke.
+	@healthz path /healthz /readyz
+	handle @healthz {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# Everything else — Next.js landing.
+	handle {
+		reverse_proxy landing:3000 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+}
+
+# Wildcard host for customer subdomains.
+# Until the DNS-01 cert is issued, this uses Caddy's self-signed CA so
+# users hitting a subdomain that doesn't yet exist get a TLS-warned 404
+# rather than a connection error. Browsers will show "Not Secure" — this
+# is by design (placeholder), and is replaced once `infra/acme/` issues
+# the real wildcard.
+*.samosite.online {
+	tls internal
+	respond "Site not yet published. Visit https://samosite.online to create one." 404
+}
