@@ -37,7 +37,25 @@ jobs:
       - uses: ./.github/actions/setup-backend
       - name: pip-audit --strict
         working-directory: backend
-        run: poetry run pip-audit --strict
+        # Ignored advisories — all three landed in the OSV / PYSEC feeds
+        # on 2026-05-20 and have empty "Fix Versions" (no upstream patch
+        # released). Re-evaluate when fixes ship:
+        #
+        #   PYSEC-2024-277  joblib    — transitive via safety (dev-only)
+        #   PYSEC-2026-97   nltk      — transitive via safety (dev-only)
+        #   PYSEC-2025-183  pyjwt     — transitive via redis-py (runtime);
+        #                               affected JWT path not exercised by
+        #                               our redis client usage
+        #
+        # Bandit + import-linter + npm audit + gitleaks continue to gate
+        # against other regressions; this only relaxes the "every advisory
+        # must be acknowledged" stance for advisories that currently have
+        # no upstream remedy.
+        run: |
+          poetry run pip-audit --strict \
+            --ignore-vuln PYSEC-2024-277 \
+            --ignore-vuln PYSEC-2026-97 \
+            --ignore-vuln PYSEC-2025-183
 
   # ---- Landing SCA ---------------------------------------------------------
 
