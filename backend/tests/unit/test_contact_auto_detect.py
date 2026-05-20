@@ -42,6 +42,13 @@ class TestPhone:
             ("89261234567", "+79261234567"),  # RU local form (leading 8)
             ("8 (926) 123-45-67", "+79261234567"),
             ("+7 (916) 555 12 34", "+79165551234"),
+            # User batch 1 — bare 10-digit RU mobile (no leading 8 / +7).
+            # phonenumbers parses this against `default_region="RU"` and
+            # produces canonical +7 E.164. Pinning the behaviour because
+            # the landing's `contact-detect.ts` accepts the bare form and
+            # the user-facing badge says "Телефон" — if the server ever
+            # diverged the badge would lie.
+            ("9167388689", "+79167388689"),
         ],
     )
     def test_phone_detection(self, raw: str, e164: str) -> None:

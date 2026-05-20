@@ -24,7 +24,7 @@
  */
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { ArrowRight, Check, Copy, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Copy, Loader2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
@@ -78,6 +78,7 @@ export function SubmitModal({ open, onOpenChange, sourceUrl, sourceType }: Submi
               sourceUrl={sourceUrl}
               sourceType={sourceType}
               onApplicationCreated={handleApplicationCreated}
+              onBack={() => handleOpenChange(false)}
             />
           )}
           {step.kind === "tg_bot" && (
@@ -113,9 +114,17 @@ interface Step1Props {
   sourceUrl: string;
   sourceType: "ymaps" | "telegram" | "photo";
   onApplicationCreated: (applicationId: string, contactType: ContactType) => void;
+  /**
+   * Closes the modal — surfaced as an explicit "← Назад" button in
+   * the step header. The ✕ in the corner does the same thing, but
+   * user batch 1 testing showed users don't recognise the close icon
+   * as "return to the Hero" (they reported "никак не могу вернуться
+   * на шаг 1"). The labelled chevron makes the back path obvious.
+   */
+  onBack: () => void;
 }
 
-function Step1Contact({ sourceUrl, sourceType, onApplicationCreated }: Step1Props) {
+function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: Step1Props) {
   const contactId = useId();
   const consentId = useId();
   const [contact, setContact] = useState("");
@@ -161,25 +170,25 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated }: Step1Prop
     }
   }
 
-  const sourceLabel =
-    sourceType === "telegram" ? "Telegram-канал" : sourceType === "ymaps" ? "Яндекс.Карты" : "Фото";
+  // Source-context banner intentionally removed (user batch 1 — U1).
+  // The Hero already shows the detected-source badge above the CTA;
+  // re-rendering it inside the modal both duplicated the signal and
+  // (when Hero passed a stale default for non-MVP URLs) actively
+  // mislabeled the user's input. The `sourceUrl` / `sourceType` props
+  // are still part of the submit payload — they just no longer leak
+  // into the UI here.
 
   return (
     <div>
-      <StepHeader step={2} total={3} title="Куда отправлять заявки и уведомления?" />
+      <StepHeader
+        step={2}
+        total={3}
+        title="Куда отправлять заявки и уведомления?"
+        onBack={onBack}
+      />
       <p className="mt-1 text-sm leading-relaxed text-ink-soft">
         Один контакт — туда придёт ссылка на ваш сайт и заявки клиентов.
       </p>
-
-      {sourceUrl ? (
-        <div className="mt-4 flex items-center gap-2 rounded-lg bg-success-soft px-3 py-2.5 text-sm text-success">
-          <Check className="h-3.5 w-3.5" strokeWidth={3} />
-          <span>
-            Источник: <b>{sourceLabel}</b>
-          </span>
-          <span className="ml-auto truncate font-mono text-[11px] opacity-75">{sourceUrl}</span>
-        </div>
-      ) : null}
 
       <form className="mt-5" onSubmit={onSubmit} noValidate>
         <label className="mb-1.5 block text-xs font-medium text-ink-soft" htmlFor={contactId}>
@@ -387,10 +396,37 @@ function Step3Confirmation({ contactType }: { contactType: ContactType }) {
 // Shared
 // -----------------------------------------------------------------------------
 
-function StepHeader({ step, total, title }: { step: number; total: number; title: string }) {
+function StepHeader({
+  step,
+  total,
+  title,
+  onBack,
+}: {
+  step: number;
+  total: number;
+  title: string;
+  /**
+   * Optional explicit back-affordance. When provided, renders a labelled
+   * "← Назад" button before the step counter so the user can return to
+   * the previous logical step (Hero, for step 2/3). The corner ✕ is
+   * kept as the destructive "cancel and lose state" action; this one
+   * is the "I want to fix my last input" action.
+   */
+  onBack?: () => void;
+}) {
   return (
     <>
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex items-center gap-3">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[12px] font-medium text-ink-soft hover:bg-paper-soft hover:text-ink"
+          >
+            <ArrowLeft aria-hidden className="h-3.5 w-3.5" />
+            Назад
+          </button>
+        ) : null}
         <span className="font-mono text-[11px] tracking-widest text-ink-faint">
           ШАГ {step}/{total}
         </span>
