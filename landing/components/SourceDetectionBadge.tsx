@@ -127,8 +127,13 @@ function WaitlistPanel({
 }) {
   return (
     <div className="mx-auto mt-6 max-w-xl text-left">
-      <p className="rounded-lg bg-info-soft px-4 py-3 text-sm text-info">
-        <span aria-hidden>ℹ️ </span>
+      {/* User batch 2 (B6): testers read the previous info-soft (blue)
+          tint as "all clear, proceed" because blue conveys neutral
+          info. Amber/warn-soft signals "this isn't yet supported" more
+          honestly without alarming people the way a red error block
+          would. Icon swapped to ⚠️ for the same reason. */}
+      <p className="rounded-lg bg-warn-soft px-4 py-3 text-sm text-warn">
+        <span aria-hidden>⚠️ </span>
         {waitlistSourceLabel(source)} скоро будет — оставьте email, напишем когда добавим.
       </p>
       <WaitlistCapture sourceName={source} sourceUrl={canonical} />

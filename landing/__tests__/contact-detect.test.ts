@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { badgeFor, detectContact, type ContactType } from "@/lib/contact-detect";
+import {
+  badgeFor,
+  detectContact,
+  formatPhoneProgressive,
+  type ContactType,
+} from "@/lib/contact-detect";
 
 function typeOf(input: string): ContactType | null {
   return detectContact(input)?.contactType ?? null;
@@ -106,5 +111,43 @@ describe("badgeFor", () => {
     const b = badgeFor(type);
     expect(b.icon).toBe(icon);
     expect(b.label).toBe(label);
+  });
+});
+
+describe("formatPhoneProgressive — UX batch 2 (B5)", () => {
+  it.each([
+    // raw → formatted
+    ["9167388689", "+7 (916) 738-86-89"], // bare 10-digit
+    ["89167388689", "+7 (916) 738-86-89"], // leading 8
+    ["+79167388689", "+7 (916) 738-86-89"], // already E.164
+    ["+7 916 738 86 89", "+7 (916) 738-86-89"], // space-separated
+    ["8 (916) 738-86-89", "+7 (916) 738-86-89"], // already formatted-ish
+    ["916", "+7 (916)"], // partial 3 digits
+    ["9167", "+7 (916) 7"], // partial 4 digits — closing paren in
+    ["91673", "+7 (916) 73"], // partial 5 — separator not yet
+    ["916738", "+7 (916) 738"], // exactly 6
+    ["9167388", "+7 (916) 738-8"], // 7 — hyphen separator appears
+  ] as const)("formats %s → %s", (raw, expected) => {
+    expect(formatPhoneProgressive(raw)).toBe(expected);
+  });
+
+  it.each([
+    "alice@example.com", // email — leave alone
+    "@master_barber", // TG handle — leave alone
+    "master_barber", // bare TG handle
+    "max://contact?id=abc123",
+    "https://t.me/anna",
+    "", // empty
+  ])("returns null for non-phone shape %s", (raw) => {
+    expect(formatPhoneProgressive(raw)).toBeNull();
+  });
+
+  it("is idempotent on its own output", () => {
+    // Formatting "+7 (916) 738-86-89" again should produce the same
+    // string — important because we re-format on every keystroke,
+    // including when the value didn't change.
+    const out = formatPhoneProgressive("9167388689");
+    expect(out).not.toBeNull();
+    expect(formatPhoneProgressive(out!)).toBe(out);
   });
 });
