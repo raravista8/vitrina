@@ -99,7 +99,7 @@ External:
 | Errors | Sentry SaaS RU region [verify availability] OR self-hosted GlitchTip | external OR VPS |
 | Uptime | UptimeRobot или Better Stack (free tier) | external, multi-region pings |
 | Metrics (basic) | Custom `/metrics` endpoint (Prometheus format), scraped by self-hosted Prometheus в M3+ | n/a in MVP |
-| Alerts | TG @VitrinaOpsBot bot | bot deployed alongside |
+| Alerts | TG @SamositeOpsBot bot | bot deployed alongside |
 
 ---
 
@@ -169,7 +169,7 @@ Slight over the 5000 cap из NFR — main variable: SMS volume и YandexGPT spe
 - [ ] Alembic migrations: dry-run on staging passed
 - [ ] Image SHA confirmed in `infra/.last-deploy.next`
 - [ ] Backup of production DB taken (timestamped) in last 24h
-- [ ] No active incidents in @VitrinaOpsBot
+- [ ] No active incidents in @SamositeOpsBot
 - [ ] Founder has 30 minutes uninterrupted
 
 ---

@@ -78,7 +78,9 @@ class Settings(BaseSettings):
     smtp_port: int = 587
     smtp_user: str | None = None
     smtp_password: str | None = None
-    smtp_from: str = "noreply@samosite.online"
+    # RFC 5322 mailbox with Cyrillic display name; `EmailMessage` encodes
+    # non-ASCII display-names via RFC 2047 before sending.
+    smtp_from: str = "Самосайт <noreply@samosite.online>"
 
     # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
     yandex_geosearch_api_key: str | None = None

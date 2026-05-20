@@ -127,6 +127,6 @@ grep -rE "twilio|sendgrid|postmark|mailgun" backend/poetry.lock && exit 1 || exi
 
 - **OQ-8.1**: VK Business Suite — верифицирует ли ИП, или требует ООО? [verify по support VK]
 - **OQ-8.2**: MAX deep-link для ввода контакта — `max.ru/u/<name>` или иной формат? [verify через dev.max.ru]
-- **OQ-8.3**: TG-bot не может инициировать DM без user `/start`. Как UX-решение для «сайт готов, мы напишем в TG» если юзер не нажал `/start`? Решение: в confirmation screen после submit — QR-код или deep-link `t.me/VitrinaBot?start=ack_<token>`, юзер нажимает один раз. Включить как часть T1.6.
+- **OQ-8.3**: TG-bot не может инициировать DM без user `/start`. Как UX-решение для «сайт готов, мы напишем в TG» если юзер не нажал `/start`? Решение: в confirmation screen после submit — QR-код или deep-link `t.me/SamositeBot?start=ack_<token>`, юзер нажимает один раз. Включить как часть T1.6.
 - **OQ-8.4**: MAX bot — аналогичная проблема с `/start`? [verify]
 - **OQ-8.5**: SMS-провайдер finalize: SMS.ru vs Yandex Cloud Notify — pricing per SMS, reliability, договор для ИП.

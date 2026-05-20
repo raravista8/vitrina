@@ -16,7 +16,7 @@
  *                            else: step=confirmation
  *   step=tg_bot          → polls GET /api/applications/{id}/tg-bot-status
  *                          every 5s; when {data.added:true} → step=confirmation
- *   step=confirmation    → success + (for TG-contact) QR for @VitrinaBot /start
+ *   step=confirmation    → success + (for TG-contact) QR for @SamositeBot /start
  *
  * Polling is best-effort: closing the modal mid-step-2 aborts the
  * interval; the founder still ingests in the background. Re-opening
@@ -292,7 +292,7 @@ function Step2TgBot({ applicationId, onReady }: { applicationId: string; onReady
   }, [applicationId, onReady]);
 
   function copyHandle() {
-    void navigator.clipboard.writeText("@VitrinaIntakeBot");
+    void navigator.clipboard.writeText("@SamositeIntakeBot");
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
@@ -301,8 +301,8 @@ function Step2TgBot({ applicationId, onReady }: { applicationId: string; onReady
     <div>
       <StepHeader step={3} total={3} title="Добавьте бота в канал на 5 минут" />
       <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-        Чтобы достать посты канала — добавьте <code>@VitrinaIntakeBot</code> админом. Как только всё
-        прочитаем — сразу выйдем.
+        Чтобы достать посты канала — добавьте <code>@SamositeIntakeBot</code> админом. Как только
+        всё прочитаем — сразу выйдем.
       </p>
 
       <div className="mt-4 flex items-center gap-3 rounded-lg border border-line bg-white p-3">
@@ -310,7 +310,7 @@ function Step2TgBot({ applicationId, onReady }: { applicationId: string; onReady
           🤖
         </span>
         <div className="flex-1">
-          <div className="font-mono text-sm">@VitrinaIntakeBot</div>
+          <div className="font-mono text-sm">@SamositeIntakeBot</div>
           <div className="text-xs text-ink-faint">админом → «Управление сообщениями»</div>
         </div>
         <button
@@ -366,7 +366,7 @@ function Step3Confirmation({ contactType }: { contactType: ContactType }) {
             </div>
             <div className="font-semibold text-ink">Чтобы получать сообщения от «Витрины»</div>
             <p className="mt-1 text-sm text-ink-soft">
-              Откройте бот <code>@VitrinaBot</code> и нажмите «Старт» — иначе не сможем написать в
+              Откройте бот <code>@SamositeBot</code> и нажмите «Старт» — иначе не сможем написать в
               Telegram.
             </p>
           </div>

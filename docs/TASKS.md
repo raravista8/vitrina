@@ -164,7 +164,7 @@
 ### T1.6d [P1] Telegram `/start` acknowledgement deep-link
 - **Files**: `landing/components/ConfirmationScreen.tsx`, `backend/app/bot/handlers/start.py`
 - **Acceptance**:
-  - When confirmation screen shows for a user with `contact_type=telegram`, the screen shall display a deep-link button `t.me/VitrinaBot?start=ack_<token>` and QR-code
+  - When confirmation screen shows for a user with `contact_type=telegram`, the screen shall display a deep-link button `t.me/SamositeBot?start=ack_<token>` and QR-code
   - When user clicks the deep-link and presses `/start`, the bot shall persist `user.contact_verified_at=now()` allowing future DMs
 - **Verification**: Manual e2e
 - **References**: ADR-0008 OQ-8.3
@@ -288,7 +288,7 @@
 ### T3.4 [P0] Telegram Bot API adapter (Tier 1)
 - **Files**: `backend/app/core/parsing/adapters/tg_bot_api.py`, `backend/app/infrastructure/telegram/bot_client.py`
 - **Acceptance**:
-  - When user invites `@VitrinaIntakeBot` as admin, the worker shall fetch chat info, last 100 posts, media via `getFile`
+  - When user invites `@SamositeIntakeBot` as admin, the worker shall fetch chat info, last 100 posts, media via `getFile`
   - After collection, the bot shall auto-leave (delete itself from admins)
 - **Verification**: `pytest tests/integration/parsers/test_tg_bot.py` against test channel; manual e2e
 - **References**: ADR-0005, FR-012
@@ -499,7 +499,7 @@
 - **Files**: `infra/sentry/`, `backend/app/utils/sentry_init.py`, bot alert handlers
 - **Acceptance**:
   - Sentry (or self-hosted GlitchTip) captures all exceptions
-  - Alerts to TG @VitrinaOpsBot for: 5xx >5/min, failed admin logins >10/h, leads spam >50/h global, sync worker down >1h, disk >80%
+  - Alerts to TG @SamositeOpsBot for: 5xx >5/min, failed admin logins >10/h, leads spam >50/h global, sync worker down >1h, disk >80%
 - **Verification**: Synthetic incident drill
 - **References**: SECURITY.md §7
 

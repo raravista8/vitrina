@@ -1,7 +1,7 @@
 """Telegram bot entrypoint (aiogram 3.x).
 
 T0.1: heartbeat placeholder. T1.6 wires the admin notifier; T3.4 wires the
-parser intake bot (`@VitrinaIntakeBot`); T5.4 wires lead notifications to
+parser intake bot (`@SamositeIntakeBot`); T5.4 wires lead notifications to
 end-users.
 """
 

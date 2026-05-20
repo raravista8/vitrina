@@ -254,7 +254,7 @@ Boundaries (every crossing = STRIDE applies):
 - **What IS logged**: auth events (login success/fail, 2FA enable, logout), permission changes, data exports, admin actions, all 5xx, all 4xx, request_id correlation, rate-limit hits
 - **What is NEVER logged**: passwords, TOTP secrets, magic link tokens, raw PII (phones/emails/names — masked), session tokens, API keys, Fernet keys, prompts containing PII (logged with PII masked)
 - **Retention**: 30 days INFO logs, 1 year admin_actions audit log
-- **Alerting** (TG bot @VitrinaOpsBot to founder):
+- **Alerting** (TG bot @SamositeOpsBot to founder):
   - >5 errors/min sustained → page
   - >10 failed admin logins/hour → page
   - >50 failed `/leads` POSTs/hour from single IP → notice
@@ -507,7 +507,7 @@ Authorization model: **RBAC with ownership-based ABAC overlay** (end-user can do
 - [ ] `/api/me/delete-data` endpoint работает end-to-end
 - [ ] Admin за паролем+TOTP; rate-limit логина; backup TOTP-коды сгенерированы
 - [ ] SSH по ключу, password auth disabled, firewall (ufw) разрешает только 22/80/443; fail2ban активен
-- [ ] Sentry/GlitchTip подключён, TG-алерты в @VitrinaOpsBot
+- [ ] Sentry/GlitchTip подключён, TG-алерты в @SamositeOpsBot
 - [ ] Logs без PII — grep audit `\+7[0-9]{10}` returns 0
 - [ ] CT-monitoring для samosite.online включён
 - [ ] Synthetic incident drill пройден (fake brute-force → алерт в TG <60s)
