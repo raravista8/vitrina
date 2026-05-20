@@ -28,7 +28,11 @@ class SmtpClient:
         port: int = 587,
         user: str | None = None,
         password: str | None = None,
-        sender: str = "noreply@samosite.online",
+        # RFC 5322 mailbox: `Самосайт <noreply@samosite.online>`. The
+        # display-name (Cyrillic) is RFC-2047-encoded by `EmailMessage`
+        # when set via `msg["From"]`, so it shows up correctly even in
+        # mail clients that don't natively render UTF-8 headers.
+        sender: str = "Самосайт <noreply@samosite.online>",
         use_starttls: bool = True,
         timeout_seconds: float = 10.0,
     ) -> None:

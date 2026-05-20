@@ -1,6 +1,6 @@
 """Telegram Bot API parsing adapter (T3.4 — Tier 1 of ADR-0005).
 
-The user adds ``@VitrinaIntakeBot`` as an admin to their channel. The
+The user adds ``@SamositeIntakeBot`` as an admin to their channel. The
 adapter reads what the Bot API exposes for the chat:
 
   - title, username, description

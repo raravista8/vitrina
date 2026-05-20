@@ -25,8 +25,8 @@ We will implement a **three-tier Telegram parsing strategy** in priority order:
 
 ### Tier 1 (default, P0): TG Bot API after adding bot to channel
 - Юзер вводит `@channel`, нажимает «Подключить канал»
-- Vitrina даёт инструкцию: «Добавьте бота `@VitrinaIntakeBot` в админы канала на 5 минут — мы возьмём данные и автоматически выйдем»
-- Через deep link (`t.me/VitrinaIntakeBot?startchannel=<channel>&admin=post_messages`) запускается стандартный TG-flow присоединения
+- Vitrina даёт инструкцию: «Добавьте бота `@SamositeIntakeBot` в админы канала на 5 минут — мы возьмём данные и автоматически выйдем»
+- Через deep link (`t.me/SamositeIntakeBot?startchannel=<channel>&admin=post_messages`) запускается стандартный TG-flow присоединения
 - Бот получает доступ через Bot API: `getChat`, `getChatMembersCount`, `getChatHistory`, скачивает media через `getFile`
 - После завершения сбора — бот автоматически удаляет себя из админов
 
@@ -66,7 +66,7 @@ We will implement a **three-tier Telegram parsing strategy** in priority order:
 - Каналы с join-by-request или приватные — только Tier 3 (manual export)
 
 **Neutral:**
-- Bot username `@VitrinaIntakeBot` нужно зарегистрировать заранее.
+- Bot username `@SamositeIntakeBot` нужно зарегистрировать заранее.
 
 ## Verification
 
