@@ -69,7 +69,32 @@ export default function PrivacyPage() {
             Татарстан) и Selectel (Санкт-Петербург / Москва). Трансграничная передача отсутствует.
           </p>
 
-          <h2 className="text-xl font-semibold text-neutral-900">6. Удаление данных</h2>
+          <h2 className="text-xl font-semibold text-neutral-900">6. Сторонние обработчики</h2>
+          <p>
+            Для повышения качества интерфейса Самосайт использует Я.Метрику (ООО «Яндекс», РФ).
+            Я.Метрика собирает обезличенные сведения о сессии: устройство, браузер, время и адрес
+            страниц, действия с элементами (клики, перемещения, прокрутка), а также фрагменты
+            записей сессии (Вебвизор) — без сопоставления с введёнными контактами или иной
+            идентифицирующей информацией. Обработчик действует по поручению оператора в рамках{" "}
+            <a
+              className="underline"
+              href="https://yandex.ru/legal/confidential/"
+              rel="noreferrer noopener"
+            >
+              политики Я.Метрики
+            </a>
+            ; вы можете отказаться от сбора, установив{" "}
+            <a
+              className="underline"
+              href="https://yandex.ru/support/metrica/general/opt-out.html"
+              rel="noreferrer noopener"
+            >
+              блокировку Я.Метрики
+            </a>
+            .
+          </p>
+
+          <h2 className="text-xl font-semibold text-neutral-900">7. Удаление данных</h2>
           <p>
             Запрос на удаление подаётся через <code>POST /api/me/delete-data</code> с указанием
             контакта (email / телефон / Telegram / MAX). Самосайт отправляет одноразовую ссылку (15
@@ -77,7 +102,7 @@ export default function PrivacyPage() {
             Согласия и аудит-лог операции удаления сохраняются 3 года.
           </p>
 
-          <h2 className="text-xl font-semibold text-neutral-900">7. Безопасность</h2>
+          <h2 className="text-xl font-semibold text-neutral-900">8. Безопасность</h2>
           <p>
             Передача данных — только по HTTPS (TLS 1.3). Заявки от посетителей сайтов шифруются на
             уровне приложения алгоритмом Fernet (AES-128-CBC + HMAC-SHA256) до записи в базу данных.
@@ -85,7 +110,7 @@ export default function PrivacyPage() {
             операция расшифровки фиксируется в незаменяемом аудит-логе.
           </p>
 
-          <h2 className="text-xl font-semibold text-neutral-900">8. Контакты оператора</h2>
+          <h2 className="text-xl font-semibold text-neutral-900">9. Контакты оператора</h2>
           <p>
             По вопросам обработки персональных данных: <code>privacy@samosite.online</code>. В
             течение 10 рабочих дней оператор предоставит подтверждение факта обработки или
