@@ -1,5 +1,5 @@
 # acme.sh sidecar for issuing + renewing the wildcard cert for
-# *.vitrina.site via Selectel DNS-01.
+# *.samosite.online via Selectel DNS-01.
 #
 # Why a sidecar instead of Caddy's built-in ACME: the caddy-dns/selectel
 # Caddy plugin is broken against modern libdns (see infra/caddy/Dockerfile).
@@ -21,8 +21,8 @@ FROM neilpang/acme.sh:${ACME_SH_VERSION}
 # entrypoint runs acme.sh; the renewal cron is provided by the upstream
 # image.
 
-ENV ACME_DOMAIN="*.vitrina.site" \
-    ACME_DOMAIN_ROOT="vitrina.site" \
+ENV ACME_DOMAIN="*.samosite.online" \
+    ACME_DOMAIN_ROOT="samosite.online" \
     ACME_KEYLENGTH="ec-256" \
     DEPLOY_PATH="/certs"
 

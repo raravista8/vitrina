@@ -109,7 +109,7 @@ async def client(app) -> AsyncIterator[httpx.AsyncClient]:  # type: ignore[no-un
 
 @pytest_asyncio.fixture
 async def user(db_session):  # type: ignore[no-untyped-def]
-    u = User(contact_type="email", contact_value="founder@vitrina.site")
+    u = User(contact_type="email", contact_value="founder@samosite.online")
     db_session.add(u)
     await db_session.commit()
     return u
@@ -133,8 +133,8 @@ async def test_full_pro_lifecycle_smoke(
     r = await client.post(
         "/api/billing/checkout",
         json={
-            "contact": "founder@vitrina.site",
-            "return_url": "https://vitrina.site/back",
+            "contact": "founder@samosite.online",
+            "return_url": "https://samosite.online/back",
         },
     )
     assert r.status_code == 200
@@ -199,7 +199,7 @@ async def test_full_pro_lifecycle_smoke(
     # 4) User clicks Cancel
     r = await client.post(
         "/api/billing/cancel",
-        json={"contact": "founder@vitrina.site", "reason": "saving_up"},
+        json={"contact": "founder@samosite.online", "reason": "saving_up"},
     )
     assert r.status_code == 200
 
@@ -226,7 +226,7 @@ async def test_three_strikes_smoke(
     canonical 'failed_charge_limit' reason."""
     await client.post(
         "/api/billing/checkout",
-        json={"contact": "founder@vitrina.site", "return_url": "https://x"},
+        json={"contact": "founder@samosite.online", "return_url": "https://x"},
     )
     # Activate first so the failures count against an active sub.
     await client.post(

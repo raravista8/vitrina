@@ -307,7 +307,7 @@ async def test_dashboard_renders_user_sites(
     resp = await client.get(f"/api/me/dashboard?token={token}")
     assert resp.status_code == 200
     html = resp.text
-    assert "alice.vitrina.site" in html
+    assert "alice.samosite.online" in html
     assert "Удалить безвозвратно" in html
 
 

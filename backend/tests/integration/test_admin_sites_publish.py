@@ -212,7 +212,7 @@ async def test_publish_flips_site_to_published(
     assert len(channel.sends) == 1
     recipient, message = channel.sends[0]
     assert recipient == "123456789"
-    assert "anna-test.vitrina.site" in message.body
+    assert "anna-test.samosite.online" in message.body
 
 
 async def test_publish_writes_audit_log(
@@ -238,7 +238,7 @@ async def test_publish_writes_audit_log(
     )
     assert len(actions) == 1
     assert actions[0].target_type == "site"
-    assert "anna-test.vitrina.site" in actions[0].params["site_url"]
+    assert "anna-test.samosite.online" in actions[0].params["site_url"]
     assert "indexnow" in actions[0].params["seo_succeeded"]
 
 

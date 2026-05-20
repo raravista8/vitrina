@@ -12,7 +12,7 @@
 | Env | Purpose | Where | Data |
 |---|---|---|---|
 | `local` | Developer machine | Founder laptop | Synthetic only |
-| `staging` | Pre-release smoke + pen-test target | Same VPS, separate Docker network, separate domain `staging.vitrina.site` | Synthetic only |
+| `staging` | Pre-release smoke + pen-test target | Same VPS, separate Docker network, separate domain `staging.samosite.online` | Synthetic only |
 | `production` | Live traffic | Selectel VPS Moscow region | Real PII (encrypted) |
 
 ---
@@ -77,7 +77,7 @@ Selectel VPS (Moscow, 4 vCPU, 8 GB RAM, 80 GB SSD, ~1500₽/mo)
 External:
 ├─ Yandex Object Storage (vitrina-prod bucket) — static sites, photos
 ├─ Selectel Cold Storage — encrypted DB backups (cross-region)
-└─ Selectel CDN — caches *.vitrina.site
+└─ Selectel CDN — caches *.samosite.online
 ```
 
 ---

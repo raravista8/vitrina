@@ -58,7 +58,7 @@ async def test_create_payment_raises_disabled_without_creds() -> None:
         await client.create_payment(
             amount_kopeks=99000,
             currency="RUB",
-            return_url="https://vitrina.site/back",
+            return_url="https://samosite.online/back",
             description="Pro",
             idempotency_key="i-1",
         )
@@ -84,7 +84,7 @@ async def test_create_payment_sends_expected_body(monkeypatch: pytest.MonkeyPatc
     result = await client.create_payment(
         amount_kopeks=99000,
         currency="RUB",
-        return_url="https://vitrina.site/back",
+        return_url="https://samosite.online/back",
         description="Vitrina Pro",
         idempotency_key="i-2",
     )
@@ -97,7 +97,7 @@ async def test_create_payment_sends_expected_body(monkeypatch: pytest.MonkeyPatc
     assert body["amount"] == {"value": "990.00", "currency": "RUB"}  # type: ignore[index]
     assert body["save_payment_method"] is True  # type: ignore[index]
     assert body["capture"] is True  # type: ignore[index]
-    assert body["confirmation"]["return_url"] == "https://vitrina.site/back"  # type: ignore[index]
+    assert body["confirmation"]["return_url"] == "https://samosite.online/back"  # type: ignore[index]
 
     headers = captured["headers"]
     assert headers["idempotence-key"] == "i-2"  # type: ignore[index]
@@ -126,7 +126,7 @@ async def test_metadata_is_passed_through(monkeypatch: pytest.MonkeyPatch) -> No
     await client.create_payment(
         amount_kopeks=99000,
         currency="RUB",
-        return_url="https://vitrina.site/back",
+        return_url="https://samosite.online/back",
         description="Pro",
         idempotency_key="i-meta",
         metadata={"user_id": "user-uuid-1", "subscription_id": "sub-uuid-1"},
@@ -213,7 +213,7 @@ async def test_amount_with_fractional_kopeks(monkeypatch: pytest.MonkeyPatch) ->
     await client.create_payment(
         amount_kopeks=99050,  # 990 ₽ 50 коп
         currency="RUB",
-        return_url="https://vitrina.site/back",
+        return_url="https://samosite.online/back",
         description="X",
         idempotency_key="i-4",
     )

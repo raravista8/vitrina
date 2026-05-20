@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           <p>
             Оператор персональных данных — ИП «Vitrina», сайт{" "}
             <Link className="underline" href="/">
-              vitrina.site
+              samosite.online
             </Link>
             . Уведомление подано в реестр операторов Роскомнадзора через{" "}
             <a className="underline" href="https://pd.rkn.gov.ru" rel="noreferrer noopener">
@@ -87,9 +87,9 @@ export default function PrivacyPage() {
 
           <h2 className="text-xl font-semibold text-neutral-900">8. Контакты оператора</h2>
           <p>
-            По вопросам обработки персональных данных: <code>privacy@vitrina.site</code>. В течение
-            10 рабочих дней оператор предоставит подтверждение факта обработки или обоснованный
-            отказ согласно ст. 14 ФЗ-152.
+            По вопросам обработки персональных данных: <code>privacy@samosite.online</code>. В
+            течение 10 рабочих дней оператор предоставит подтверждение факта обработки или
+            обоснованный отказ согласно ст. 14 ФЗ-152.
           </p>
         </section>
       </main>

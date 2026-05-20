@@ -71,7 +71,7 @@ class _StubSeoSubmitter:
 def render_context() -> dict[str, object]:
     """Minimal payload sufficient to render the canonical T2.5 template."""
     return {
-        "site_url": "https://anna.vitrina.site",
+        "site_url": "https://anna.samosite.online",
         "site_title": "Студия маникюра Анны",
         "site_description": "Маникюр в Петрозаводске.",
         "site_locale": "ru_RU",
@@ -125,7 +125,7 @@ def _make_context(render_context: dict[str, object]) -> PublishContext:
     return PublishContext(
         site_id="00000000-0000-0000-0000-000000000001",
         subdomain="anna",
-        site_url="https://anna.vitrina.site",
+        site_url="https://anna.samosite.online",
         render_context=render_context,
         owner_contact=UserContact(
             primary_type=ChannelType.telegram,
@@ -215,7 +215,7 @@ async def test_publish_notifies_owner_on_success(render_context: dict) -> None:
     assert len(channel.sends) == 1
     recipient, message = channel.sends[0]
     assert recipient == "123456789"
-    assert "anna.vitrina.site" in message.body
+    assert "anna.samosite.online" in message.body
 
 
 @pytest.mark.unit

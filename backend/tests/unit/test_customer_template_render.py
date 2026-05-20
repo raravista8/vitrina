@@ -28,7 +28,7 @@ def env() -> Environment:
 @pytest.fixture
 def payload() -> dict[str, object]:
     return {
-        "site_url": "https://test-master.vitrina.site",
+        "site_url": "https://test-master.samosite.online",
         "site_title": "Студия маникюра Анны",
         "site_description": "Маникюр в Петрозаводске. Запись онлайн.",
         "site_locale": "ru_RU",
@@ -111,14 +111,14 @@ def test_lead_form_action_points_at_api_leads(env: Environment, payload: dict) -
 def test_sitemap_renders_with_url_and_lastmod(env: Environment, payload: dict) -> None:
     payload["last_modified"] = "2026-05-19"
     xml = env.get_template("sitemap.xml.j2").render(**payload)
-    assert "<loc>https://test-master.vitrina.site</loc>" in xml
+    assert "<loc>https://test-master.samosite.online</loc>" in xml
     assert "<lastmod>2026-05-19</lastmod>" in xml
 
 
 @pytest.mark.unit
 def test_robots_points_at_sitemap(env: Environment, payload: dict) -> None:
     txt = env.get_template("robots.txt.j2").render(**payload)
-    assert "Sitemap: https://test-master.vitrina.site/sitemap.xml" in txt
+    assert "Sitemap: https://test-master.samosite.online/sitemap.xml" in txt
 
 
 # --------------------------------------------------------------------------- #

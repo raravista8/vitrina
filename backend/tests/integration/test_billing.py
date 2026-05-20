@@ -163,7 +163,7 @@ async def test_checkout_creates_trial_and_returns_confirmation_url(
         "/api/billing/checkout",
         json={
             "contact": "anna@example.com",
-            "return_url": "https://vitrina.site/billing/done",
+            "return_url": "https://samosite.online/billing/done",
         },
     )
     assert resp.status_code == 200, resp.text
@@ -177,7 +177,7 @@ async def test_checkout_creates_trial_and_returns_confirmation_url(
     assert subs[0].amount_kopeks == 99_000
 
     assert len(gateway.create_calls) == 1
-    assert gateway.create_calls[0]["return_url"] == "https://vitrina.site/billing/done"
+    assert gateway.create_calls[0]["return_url"] == "https://samosite.online/billing/done"
 
 
 async def test_checkout_for_unknown_contact_returns_404(client: httpx.AsyncClient) -> None:

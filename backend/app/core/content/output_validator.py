@@ -17,7 +17,7 @@ The pipeline:
      The customer-site template has autoescape ON, but the LLM should
      never even emit ``<script>`` in the first place (defence in depth).
   4. **URL allowlist check.** Every URL anywhere in the payload must
-     match the per-site allowlist (``vitrina.site``, ``yandex.\\w+``,
+     match the per-site allowlist (``samosite.online``, ``yandex.\\w+``,
      ``storage.yandexcloud.net``, ``t.me``) OR be an empty string. URLs
      outside the allowlist + any ``javascript:`` / ``data:`` /
      ``vbscript:`` schemes raise the safety flag — the orchestrator
@@ -45,8 +45,8 @@ import bleach
 # Allowed URL hosts in the output. Empty string is also allowed (for
 # fields where we don't have a value to fill yet).
 _HOST_ALLOWLIST: tuple[re.Pattern[str], ...] = (
-    re.compile(r"vitrina\.site"),
-    re.compile(r"[a-z0-9-]+\.vitrina\.site"),
+    re.compile(r"samosite\.online"),
+    re.compile(r"[a-z0-9-]+\.samosite\.online"),
     re.compile(r"yandex\.[a-z]+"),
     re.compile(r"maps\.yandex\.[a-z]+"),
     re.compile(r"storage\.yandexcloud\.net"),

@@ -26,8 +26,8 @@ def test_policy_v1_mentions_oferta_anchor_points() -> None:
     and the new row stays paired with that version."""
     text = POLICY_TEXTS[1]
     assert "ИП «Vitrina»" in text
-    assert "vitrina.site/privacy" in text
-    assert "*.vitrina.site" in text
+    assert "samosite.online/privacy" in text
+    assert "*.samosite.online" in text
     assert "заявок" in text
 
 

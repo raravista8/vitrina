@@ -1,10 +1,10 @@
 # Vitrina production Caddyfile (T2.4).
 #
 # Topology:
-#   - Caddy terminates TLS for vitrina.site + *.vitrina.site
-#   - vitrina.site / www.vitrina.site   → landing container (Next.js SSR)
-#   - <anything>.vitrina.site /api/*    → api container
-#   - <anything>.vitrina.site /*        → CDN-fronted Object Storage
+#   - Caddy terminates TLS for samosite.online + *.samosite.online
+#   - samosite.online / www.samosite.online   → landing container (Next.js SSR)
+#   - <anything>.samosite.online /api/*    → api container
+#   - <anything>.samosite.online /*        → CDN-fronted Object Storage
 #                                         (customer static sites)
 #
 # Wildcard cert is issued out-of-band by the acme.sh sidecar (see
@@ -41,9 +41,9 @@
 	tls /etc/caddy/certs/fullchain.pem /etc/caddy/certs/key.pem
 }
 
-# ---- Landing (vitrina.site root) ------------------------------------------
+# ---- Landing (samosite.online root) ------------------------------------------
 
-vitrina.site, www.vitrina.site {
+samosite.online, www.samosite.online {
 	import wildcard_tls
 	import security_headers
 
@@ -55,9 +55,9 @@ vitrina.site, www.vitrina.site {
 	}
 }
 
-# ---- Wildcard *.vitrina.site ----------------------------------------------
+# ---- Wildcard *.samosite.online ----------------------------------------------
 
-*.vitrina.site {
+*.samosite.online {
 	import wildcard_tls
 	import security_headers
 

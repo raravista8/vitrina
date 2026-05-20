@@ -13,7 +13,7 @@ from app.core.seo.adapters.yandex_webmaster import YandexWebmasterSubmitter
 from app.core.seo.ports import SeoEngine, SubmissionResult
 from app.core.seo.service import SeoSubmissionService
 
-SITE_URL = "https://test-master.vitrina.site"
+SITE_URL = "https://test-master.samosite.online"
 
 
 # --- adapters: gating + HTTP roundtrip --------------------------------------
@@ -75,7 +75,7 @@ async def test_indexnow_success_uses_host_from_url(monkeypatch: pytest.MonkeyPat
     s = IndexNowSubmitter(site_key="indexnow-key")  # pragma: allowlist secret
     result = await s.submit(SITE_URL)
     assert result.submitted is True
-    assert "test-master.vitrina.site" in captured["payload"]
+    assert "test-master.samosite.online" in captured["payload"]
     assert "indexnow-key" in captured["payload"]
 
 

@@ -21,7 +21,7 @@
 ### Technical
 - Все данные хранятся в РФ; провайдеры: Yandex Cloud, Selectel, VK Cloud (no AWS/GCP/Azure)
 - LLM — только YandexGPT (запрет на отправку ПДн в OpenAI/Anthropic API per ст. 272.1 УК РФ [verify: точная формулировка статьи])
-- Wildcard SSL для `*.vitrina.site` через Let's Encrypt DNS-01
+- Wildcard SSL для `*.samosite.online` через Let's Encrypt DNS-01
 
 ### Organizational
 - Solo founder, 4-6 часов кодинга/день, остальное — customer development
@@ -77,8 +77,8 @@ graph TD
 ```mermaid
 graph TB
     subgraph CDN[Selectel CDN]
-        Landing[Landing<br/>Next.js SSG<br/>vitrina.site]
-        Sites[Customer Sites<br/>Static HTML<br/>*.vitrina.site]
+        Landing[Landing<br/>Next.js SSG<br/>samosite.online]
+        Sites[Customer Sites<br/>Static HTML<br/>*.samosite.online]
     end
 
     subgraph Backend[Backend VPS — Docker Compose]
@@ -258,7 +258,7 @@ sequenceDiagram
     participant S3 as Object Storage
     participant TG as TG Bot
 
-    U->>L: открывает vitrina.site, жмёт CTA
+    U->>L: открывает samosite.online, жмёт CTA
     L->>API: POST /api/submit-application {url, email, consent}
     API->>API: pydantic-валидация, SSRF-проверка URL
     API->>PG: INSERT applications + consents
@@ -468,7 +468,7 @@ graph LR
 
 ## 13. Open questions
 
-- **OQ-A1**: Selectel CDN поддерживает кэширование при HTTPS wildcard на `*.vitrina.site` без отдельной настройки на каждый поддомен? [verify: Selectel CDN docs]
+- **OQ-A1**: Selectel CDN поддерживает кэширование при HTTPS wildcard на `*.samosite.online` без отдельной настройки на каждый поддомен? [verify: Selectel CDN docs]
 - **OQ-A2**: YandexGPT 5 Pro лимиты per-folder — 100 req/sec? Достаточно для 100 сайтов/день? [verify: Yandex Cloud quotas]
 - **OQ-A3**: Альтернатива Telethon-аккаунту с виртуальным номером — насколько стабильно? Acceptable risk?
 - **OQ-A4**: Где хранить Fernet master key для backup decryption если все сервисы упали? Yandex Cloud KMS [verify: KMS pricing] или manual в 1Password/паре бумажных копий в сейфе?

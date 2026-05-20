@@ -163,7 +163,7 @@ services:
     <<: *restart
 
   acme:
-    # acme.sh sidecar that issues + renews the *.vitrina.site wildcard
+    # acme.sh sidecar that issues + renews the *.samosite.online wildcard
     # cert via Selectel DNS-01 (the caddy-dns/selectel Caddy plugin is
     # currently broken against libdns 1.x — see infra/caddy/Dockerfile).
     build:
@@ -171,8 +171,8 @@ services:
       dockerfile: Dockerfile
     environment:
       ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL required for Let's Encrypt}
-      ACME_DOMAIN: ${ACME_DOMAIN:-*.vitrina.site}
-      ACME_DOMAIN_ROOT: ${ACME_DOMAIN_ROOT:-vitrina.site}
+      ACME_DOMAIN: ${ACME_DOMAIN:-*.samosite.online}
+      ACME_DOMAIN_ROOT: ${ACME_DOMAIN_ROOT:-samosite.online}
       # acme.sh's Selectel DNS provider reads SEL_TOKEN; we map our env
       # var so the rest of the stack uses the same SELECTEL_DNS_API_TOKEN
       # name as everything else (see .env.example).
