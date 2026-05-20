@@ -364,7 +364,7 @@ function Step3Confirmation({ contactType }: { contactType: ContactType }) {
             <div className="mb-1.5 font-mono text-[11px] tracking-widest text-accent">
               НАЖМИТЕ /START
             </div>
-            <div className="font-semibold text-ink">Чтобы получать сообщения от «Витрины»</div>
+            <div className="font-semibold text-ink">Чтобы получать сообщения от «Самосайта»</div>
             <p className="mt-1 text-sm text-ink-soft">
               Откройте бот <code>@SamositeBot</code> и нажмите «Старт» — иначе не сможем написать в
               Telegram.

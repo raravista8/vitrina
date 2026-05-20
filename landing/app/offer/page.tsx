@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Оферта",
   description:
-    "Условия использования сервиса Vitrina — публичная оферта на оказание услуг по созданию и поддержанию сайта.",
+    "Условия использования сервиса Самосайт — публичная оферта на оказание услуг по созданию и поддержанию сайта.",
   alternates: { canonical: "/offer" },
 };
 
@@ -22,7 +22,7 @@ export default function OfferPage() {
         <section className="mt-10 space-y-4">
           <h2 className="text-xl font-semibold text-neutral-900">1. Предмет договора</h2>
           <p>
-            ИП «Vitrina» (далее — «Исполнитель») оказывает услуги по автоматическому созданию и
+            ИП «Самосайт» (далее — «Исполнитель») оказывает услуги по автоматическому созданию и
             поддержанию интернет-сайта на поддомене <code>*.samosite.online</code> из публикуемых
             пользователем источников (Telegram-канал, Яндекс.Карты, фотографии).
           </p>
@@ -61,7 +61,7 @@ export default function OfferPage() {
 
           <h2 className="text-xl font-semibold text-neutral-900">6. Реквизиты Исполнителя</h2>
           <p>
-            ИП Vitrina, ИНН: ххххххххххх (публикуется до публичного запуска), адрес для
+            ИП Самосайт, ИНН: ххххххххххх (публикуется до публичного запуска), адрес для
             корреспонденции: <code>legal@samosite.online</code>.
           </p>
         </section>

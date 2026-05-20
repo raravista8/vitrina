@@ -169,12 +169,17 @@ def test_site_color_override_wins_over_scheme_accent(env: Environment, payload: 
 @pytest.mark.unit
 def test_brand_appears_in_footer_as_cyrillic(env: Environment, payload: dict) -> None:
     """Legal requirement (PRD §3): brand spelled in Cyrillic. The footer
-    uses the instrumental case «Витрине» («Сделано на Витрине»), still
-    cyrillic — Latin «Vitrina» is forbidden in user-facing text."""
+    uses the prepositional case «Самосайте» («Сделано на Самосайте»),
+    still cyrillic — Latin «Samosite» / «Vitrina» is forbidden in
+    user-facing text."""
     html = env.get_template("index.html.j2").render(**payload)
-    # Cyrillic root «Витрин» covers both «Витрина» (nominative) and
-    # «Витрине» (instrumental) — both legal-acceptable spellings.
-    assert "Витрин" in html
-    # The footer must never use Latin "Vitrina" as the brand name.
+    # Cyrillic root «Самосайт» covers nominative («Самосайт»),
+    # genitive («Самосайта»), prepositional («Самосайте») — all
+    # legal-acceptable spellings.
+    assert "Самосайт" in html
+    # The footer must never use Latin «Samosite» / «Vitrina» as the
+    # brand name (engineering code-name `vitrina` shouldn't leak into
+    # customer-facing output either).
     footer = html.split("<footer")[1].split("</footer>")[0]
+    assert "Samosite" not in footer
     assert "Vitrina" not in footer

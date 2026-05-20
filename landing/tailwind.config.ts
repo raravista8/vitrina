@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Витрина — design tokens (Concept A · Тёплая бумага).
+ * Самосайт — design tokens (Concept A · Тёплая бумага).
  *
  * Single source of truth for all 19 screens. Values mirror Claude
  * Design's `tokens.jsx` — colour, type, radii. OKLCH chosen for

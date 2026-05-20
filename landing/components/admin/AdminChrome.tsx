@@ -149,7 +149,7 @@ export function AdminChrome({ children }: AdminChromeProps) {
       <aside className="flex flex-col gap-1 border-r border-line bg-paper p-4">
         <div className="mb-5 flex items-center gap-2 px-2">
           <span className="inline-block h-[22px] w-[22px] rounded-md bg-accent" />
-          <span className="font-bold text-ink">Витрина</span>
+          <span className="font-bold text-ink">Самосайт</span>
           <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
             ADMIN
           </span>

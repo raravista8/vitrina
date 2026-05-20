@@ -10,34 +10,34 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   // Copy from docs/COPY.md §1 — single source of truth.
   title: {
-    default: "Vitrina — сайт, который сам себя ведёт и приносит вам заявки",
-    template: "%s · Vitrina",
+    default: "Самосайт — сайт, который сам себя ведёт и приносит вам заявки",
+    template: "%s · Самосайт",
   },
   description:
-    "Сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram-канал, Яндекс.Карты или фото) и сам обновляет его каждую неделю.",
-  applicationName: "Vitrina",
-  authors: [{ name: "Vitrina" }],
+    "Самосайт — сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram-канал, Яндекс.Карты или фото) и сам обновляет его каждую неделю.",
+  applicationName: "Самосайт",
+  authors: [{ name: "Самосайт" }],
   keywords: [
     "сайт для мастера",
     "сайт для барбершопа",
     "сайт для психолога",
     "сайт из Telegram",
     "сайт из Яндекс.Карт",
-    "Vitrina",
+    "Самосайт",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ru_RU",
     url: SITE_URL,
-    siteName: "Vitrina",
+    siteName: "Самосайт",
     title: "Сайт, который сам себя ведёт и приносит вам заявки",
     description:
-      "Vitrina собирает сайт из вашего Telegram-канала, Яндекс.Карт или фото — и сам обновляет его каждую неделю.",
+      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт или фото — и сам обновляет его каждую неделю.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vitrina — сайт, который сам себя ведёт",
+    title: "Самосайт — сайт, который сам себя ведёт",
     description:
       "ИИ собирает сайт за пару минут и сам ловит заявки. Первый месяц бесплатно без карты.",
   },
@@ -50,13 +50,14 @@ const JSON_LD = {
     {
       "@type": "Organization",
       "@id": `${SITE_URL}/#org`,
-      name: "Vitrina",
+      name: "Самосайт",
       url: SITE_URL,
-      description: "AI-сборщик сайтов-канал заявок для частных мастеров и малых услуг в РФ.",
+      description:
+        "Самосайт — AI-сборщик сайтов-каналов заявок для частных мастеров и малых услуг в РФ.",
     },
     {
       "@type": "SoftwareApplication",
-      name: "Vitrina",
+      name: "Самосайт",
       operatingSystem: "Web",
       applicationCategory: "BusinessApplication",
       offers: { "@type": "Offer", price: "990", priceCurrency: "RUB" },

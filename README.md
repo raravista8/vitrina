@@ -1,5 +1,10 @@
 # Vitrina
 
+> **Публичный бренд — [Самосайт](https://samosite.online).** В коде, имени
+> репо, package paths, env vars, Docker image tags оставлено инженерное
+> имя `vitrina` — это code-name, не product name. Customer-facing copy
+> и публичные домены — `Самосайт` / `samosite.online`.
+
 AI-сайт-канал заявок для микробизнеса в РФ. Источник (Telegram-канал,
 Яндекс.Карты, фото) → сайт за 2 минуты; auto-sync еженедельно. Подробности
 в [`docs/PRD.md`](./docs/PRD.md).

@@ -124,7 +124,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm rounded-2xl border border-line bg-white p-7 shadow-card">
         <div className="mb-5 flex items-center gap-2">
           <span className="inline-block h-[22px] w-[22px] rounded-md bg-accent" />
-          <span className="font-bold text-ink">Витрина</span>
+          <span className="font-bold text-ink">Самосайт</span>
           <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
             ADMIN
           </span>
