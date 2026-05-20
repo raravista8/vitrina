@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 import { FeedbackFloatingButton } from "@/components/FeedbackForm";
 
@@ -120,9 +119,53 @@ const JSON_LD = {
   ],
 };
 
+// Yandex.Метрика snippet rendered as raw HTML (not via `next/script`).
+//
+// Why a raw <script> instead of `next/script`:
+//
+// `next/script strategy="afterInteractive"` defers injection until
+// React hydrates on the client, which means the *initial* server-
+// rendered HTML response contains the snippet only inside the RSC
+// streaming payload (`["$L5", …, "dangerouslySetInnerHTML": …]`), not
+// as a parseable <script> tag. Я.Метрика's "Проверить" validator is a
+// plain HTTP bot — it fetches the URL, greps the raw HTML for the tag,
+// and never executes JS. Without a real <script> in the response body
+// the verifier reports "код счётчика не найден" even though end-user
+// browsers (which DO hydrate) eventually fire the beacon.
+//
+// Rendering the same payload via plain JSX `<script
+// dangerouslySetInnerHTML>` keeps the tag in the static HTML for
+// crawlers/verifiers, and the browser still parses + executes it
+// during the initial document load. It runs synchronously in <head>,
+// but the snippet itself only schedules an async load of tag.js, so
+// FCP/LCP impact is < 1 ms.
+const metrikaSnippet = (
+  id: string,
+) => `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+m[i].l=1*new Date();
+for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=${id}", "ym");
+
+ym(${id}, "init", {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
+      <head>
+        {/* Yandex.Метрика — first thing in <head> so it counts the hit
+            even if the user bails before hydration. Init params match
+            metrika.yandex.ru's emitted snippet verbatim:
+              - ssr:true              — page is server-rendered (Next SSG)
+              - webvisor:true         — session replay (early UX work)
+              - clickmap:true         — heatmap of clicks
+              - ecommerce:"dataLayer" — opt-in for future commerce events
+              - referrer / url        — explicit values for SPA routing
+              - accurateTrackBounce   — register a hit only after 15s
+              - trackLinks            — register outbound link clicks
+            mc.yandex.ru is in the landing CSP allowlist (infra/Caddyfile
+            script-src / img-src / connect-src — SECURITY.md §A02). */}
+        {YM_ID ? <script dangerouslySetInnerHTML={{ __html: metrikaSnippet(YM_ID) }} /> : null}
+      </head>
       <body className="min-h-screen bg-paper text-ink antialiased">
         {children}
         <FeedbackFloatingButton />
@@ -133,63 +176,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // content itself contains no user input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
-        {/* Yandex.Метрика — only loaded when an ID is provided. Snippet
-            mirrors metrika.yandex.ru → "Code for the site" verbatim so
-            that operators can diff their counter-page-issued code
-            against this and find them identical. Init params:
-              - ssr:true              — page is server-rendered (Next SSG)
-              - webvisor:true         — session replay (early UX work)
-              - clickmap:true         — heatmap of clicks
-              - ecommerce:"dataLayer" — opt-in for future commerce events
-              - referrer / url        — explicit values for SPA-style routing
-              - accurateTrackBounce   — register a hit only after 15 s on page
-              - trackLinks            — register outbound link clicks
-            Loaded `afterInteractive` so it doesn't block FCP/LCP —
-            Lighthouse Performance stays ≥90 (PRD §6 NFR). mc.yandex.ru
-            is in the landing CSP allowlist (infra/Caddyfile script-src
-            / img-src / connect-src — SECURITY.md §A02). */}
         {YM_ID ? (
-          <>
-            <Script
-              id="yandex-metrika"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                  m[i].l=1*new Date();
-                  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-                  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-                  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}", "ym");
-
-                  ym(${YM_ID}, "init", {
-                       ssr:true,
-                       webvisor:true,
-                       clickmap:true,
-                       ecommerce:"dataLayer",
-                       referrer: document.referrer,
-                       url: location.href,
-                       accurateTrackBounce:true,
-                       trackLinks:true
-                  });
-                `,
-              }}
-            />
-            {/* <noscript> beacon — covers users who disabled JS, per
-                Я.Метрика's standard install. The beacon is a 1×1
-                tracking pixel from mc.yandex.ru, not a content image,
-                so next/image would be wrong (no lazy-loading, no
-                width/height optimisation, no need for blur). */}
-            <noscript>
-              <div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://mc.yandex.ru/watch/${YM_ID}`}
-                  style={{ position: "absolute", left: "-9999px" }}
-                  alt=""
-                />
-              </div>
-            </noscript>
-          </>
+          /* <noscript> beacon — covers users who disabled JS, per
+             Я.Метрика's standard install. The beacon is a 1×1 tracking
+             pixel from mc.yandex.ru, not a content image, so next/image
+             would be wrong here. */
+          <noscript>
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://mc.yandex.ru/watch/${YM_ID}`}
+                style={{ position: "absolute", left: "-9999px" }}
+                alt=""
+              />
+            </div>
+          </noscript>
         ) : null}
       </body>
     </html>
