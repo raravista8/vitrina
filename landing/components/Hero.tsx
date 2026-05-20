@@ -28,8 +28,10 @@
  *   - No Schema.org / sitemap jargon in user-facing copy.
  *   - No "за 2 минуты" as the main hook.
  *
- * Brand: "Витрина" everywhere — Cyrillic, no Latin transliteration
- * (legal requirement, see PRD §3).
+ * Brand: "Самосайт" everywhere — Cyrillic, no Latin transliteration
+ * (legal requirement, see PRD §3). Code-name `vitrina` in the repo
+ * (package paths, env vars) is engineering-only; customer copy uses
+ * the public brand strictly.
  */
 
 import { Link as LinkIcon, ShieldCheck } from "lucide-react";
@@ -43,7 +45,7 @@ import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal } from "./SubmitModal";
 
 const PLACEHOLDER = "ссылка на соцсеть, Яндекс.Карты или сайт";
-const CTA_TEXT = "Собрать мою витрину";
+const CTA_TEXT = "Собрать мой Самосайт";
 const MICROCOPY = "Первый месяц бесплатно — без карты при регистрации.";
 
 type PreviewState =
@@ -131,7 +133,7 @@ export function Hero() {
         <nav className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 text-lg font-bold tracking-tight sm:text-xl">
             <span className="inline-block h-[22px] w-[22px] rounded-[7px] bg-accent sm:h-[26px] sm:w-[26px]" />
-            Витрина
+            Самосайт
           </div>
           <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
             <a className="hover:text-ink" href="#how-it-works">

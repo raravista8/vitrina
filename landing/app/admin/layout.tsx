@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Админка · Витрина",
+  title: "Админка · Самосайт",
   description: "Внутренний интерфейс. Доступ только для founder.",
   robots: { index: false, follow: false },
 };

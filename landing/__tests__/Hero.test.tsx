@@ -41,11 +41,11 @@ describe("Hero — copy lock (Concept A canonical)", () => {
     expect(screen.getByText(/Покажите ссылку на ваше дело/i)).toBeInTheDocument();
 
     // Brand — Cyrillic only (legal requirement, PRD §3).
-    const brand = screen.getAllByText("Витрина");
+    const brand = screen.getAllByText("Самосайт");
     expect(brand.length).toBeGreaterThan(0);
 
     // CTA + microcopy.
-    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).toBeInTheDocument();
     expect(
       screen.getByText(/Первый месяц бесплатно — без карты при регистрации/i),
     ).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("Hero — interaction", () => {
     // input still get the modal (where they finish the submission or
     // jump to the photo path).
     render(<Hero />);
-    const button = screen.getByRole("button", { name: /Собрать мою витрину/ });
+    const button = screen.getByRole("button", { name: /Собрать мой Самосайт/ });
     expect(button).not.toBeDisabled();
   });
 
@@ -98,7 +98,7 @@ describe("Hero — interaction", () => {
     const input = screen.getByPlaceholderText(/ссылка на соцсеть/i);
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
 
-    const button = screen.getByRole("button", { name: /Собрать мою витрину/ });
+    const button = screen.getByRole("button", { name: /Собрать мой Самосайт/ });
     await waitFor(() => expect(button).not.toBeDisabled());
   });
 
@@ -121,7 +121,7 @@ describe("Hero — interaction", () => {
       target: { value: "https://instagram.com/anna_master" },
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).not.toBeDisabled();
     // Parallel CTA per FR-093 — wired to open PhotoDrawer in Hero, so
     // the markup is a <button> when used inside Hero (the standalone
     // badge falls back to an <a href="#photo-upload"> for accessibility).
@@ -134,7 +134,7 @@ describe("Hero — interaction", () => {
       target: { value: "just some text" },
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мою витрину/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).not.toBeDisabled();
   });
 
   it("clicking the photo-upload fallback opens the PhotoDrawer (PR-B #6)", () => {
