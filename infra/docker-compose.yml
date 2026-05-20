@@ -130,6 +130,15 @@ services:
     build:
       context: ../landing
       dockerfile: Dockerfile
+      # Public Next env vars are baked into the static bundle at build
+      # time — see landing/Dockerfile for the why. Each ARG declared
+      # there must be forwarded here so `docker compose build` pulls
+      # the value from the project's .env. Empty values are valid.
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://samosite.online}
+        NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID:-}
+        NEXT_PUBLIC_YANDEX_VERIFICATION: ${NEXT_PUBLIC_YANDEX_VERIFICATION:-}
+        NEXT_PUBLIC_YANDEX_SMARTCAPTCHA_CLIENT_KEY: ${NEXT_PUBLIC_YANDEX_SMARTCAPTCHA_CLIENT_KEY:-}
     env_file: [../.env]
     networks: [internal_net]
     <<: *restart
