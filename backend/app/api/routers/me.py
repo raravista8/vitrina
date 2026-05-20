@@ -231,7 +231,7 @@ def _failure_page(reason: str) -> str:
 <body style="font-family: system-ui; max-width: 32rem; margin: 4rem auto; padding: 0 1rem;">
 <h1>Ссылка недействительна</h1>
 <p>Ссылка устарела или уже была использована (<code>{reason}</code>).
-Запросите удаление повторно: <a href="/">vitrina.site</a></p>
+Запросите удаление повторно: <a href="/">samosite.online</a></p>
 </body></html>"""
 
 
@@ -244,7 +244,7 @@ def _dashboard_page(*, token: str, view: MyDataView) -> str:
     contact = _html.escape(f"{view.contact_type}: {view.contact_value}")
     rows = (
         "".join(
-            f"<tr><td><strong>{_html.escape(s.subdomain)}.vitrina.site</strong></td>"
+            f"<tr><td><strong>{_html.escape(s.subdomain)}.samosite.online</strong></td>"
             f"<td>{_html.escape(s.source_type)}</td>"
             f"<td>{_html.escape(s.status)}</td></tr>"
             for s in view.sites

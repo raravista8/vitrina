@@ -69,7 +69,7 @@ function SiteDetailScreen() {
   const { site, leads_count } = data;
   const publicUrl = site.custom_domain
     ? `https://${site.custom_domain}`
-    : `https://${site.subdomain}.vitrina.site`;
+    : `https://${site.subdomain}.samosite.online`;
 
   return (
     <div className="p-6 sm:p-10">
@@ -83,7 +83,7 @@ function SiteDetailScreen() {
       <header className="mt-3 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            {site.subdomain}.vitrina.site
+            {site.subdomain}.samosite.online
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
             <a

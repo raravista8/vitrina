@@ -3,7 +3,7 @@
 > **TL;DR — что строим за 2-3 месяца**
 > - **Публичный бренд:** **Самосайт** (домен `samosite.online`). Внутренний code-name в репо — `vitrina` (имена пакетов, env vars, Docker image tags не меняются).
 > - **Сайт-канал заявок для микробизнеса**: Самосайт — это сайт, который ИИ собирает из источника (**Telegram-канал, Я.Карты или фото**) и сам обновляет раз в неделю, сам ловит заявки, сам отправляет в Яндекс и Google
-> - ICP: мастера маникюра, барбершопы, психологи, фитнес-тренеры; поддомен `name.vitrina.site`, всё в РФ (ФЗ-152)
+> - ICP: мастера маникюра, барбершопы, психологи, фитнес-тренеры; поддомен `name.samosite.online`, всё в РФ (ФЗ-152)
 > - Первый месяц free **без карты** → Pro 990 ₽/мес; viral PLG через watermark на Free; цель MVP — 3+ платящих юзера к концу 1-го месяца после запуска
 > - **Canonical messaging**: см. [`docs/COPY.md`](./COPY.md) — обновления copy идут через COPY.md как single source of truth
 > - **Расширенный фото-флоу**: юзер загружает фото **работ + скриншот шапки профиля (Instagram/любой соцсети) + визитку + буклет**. Vision-capable LLM извлекает контекст из каждого типа. Это закрывает Instagram-юзеров без обращения к серверам Meta — юзер фотографирует свой экран
@@ -58,18 +58,18 @@
 
 ## 4. User scenarios
 
-> **Product principle: zero-friction Hero.** Главная страница `vitrina.site` имеет **один input** для ссылки на источник. Без таб-навигации, без выбора «откуда», без отдельного «выберите источник» экрана. Source type определяется **client-side regex** мгновенно (<100ms) после paste. Fallback-пути (фото, TG-экспорт, VK) — текстовые ссылки под input, не вкладки.
+> **Product principle: zero-friction Hero.** Главная страница `samosite.online` имеет **один input** для ссылки на источник. Без таб-навигации, без выбора «откуда», без отдельного «выберите источник» экрана. Source type определяется **client-side regex** мгновенно (<100ms) после paste. Fallback-пути (фото, TG-экспорт, VK) — текстовые ссылки под input, не вкладки.
 
 > **Instagram, VK, MAX, 2GIS, Avito, WhatsApp Catalog, YouTube, Дзен, собственный сайт** — все в **waitlist через feedback-form** (см. ADR-0009). При попытке вставить ссылку с одного из этих ресурсов на Hero — юзер видит inline-сообщение «Этот источник скоро будет, оставьте email» (это и есть waitlist). **Параллельно** юзеру предлагается S4 (фото-флоу) который **принимает скриншоты** профилей соцсетей — это закрывает 80% IG/VK-потребности без обращения к серверам соответствующих платформ.
 
 ### S1. Создание сайта из ссылки (Telegram-канал / Яндекс.Карты) — основной флоу
-1. Юзер открывает `vitrina.site` — видит Hero с одним input-полем и CTA «Создать сайт»
+1. Юзер открывает `samosite.online` — видит Hero с одним input-полем и CTA «Создать сайт»
 2. Вставляет ссылку (`yandex.ru/maps/...`, `t.me/channel`, `@channel`)
 3. Client-side regex определяет источник за <100ms и показывает бейдж под полем: `✓ Яндекс.Карты` / `✓ Telegram`
 4. Жмёт «Создать сайт» → открывается **modal step 2 с одним полем контакта** + чекбокс согласия на ПДн (не предзаполнен). Placeholder: «Email, телефон, @telegram или MAX». Frontend auto-detect определяет тип контакта по regex.
 5. Submit → confirmation screen «Готовим ваш сайт, напишем когда будет готов через 2-24 часа» (MVP — ручная модерация фаундером)
 6. Бэкенд: парсер достаёт данные источника → LLM генерит контент → sanitization → founder в админке жмёт «Опубликовать»
-7. Юзер получает уведомление в указанный канал со ссылкой `studia-anna.vitrina.site`
+7. Юзер получает уведомление в указанный канал со ссылкой `studia-anna.samosite.online`
 
 **Contact auto-detect regex** (client-side, в порядке проверки):
 
@@ -126,7 +126,7 @@
 **Этот флоу обслуживает IG- и VK-юзеров** без обращения к серверам Meta/VK: юзер фотографирует **свой собственный экран** = собственная фотография = легально полностью.
 
 ### S5. Получение заявки на готовом клиентском сайте
-1. Конечный посетитель приходит на `studia-anna.vitrina.site`, скроллит галерею, жмёт «Записаться»
+1. Конечный посетитель приходит на `studia-anna.samosite.online`, скроллит галерею, жмёт «Записаться»
 2. Открывается inline-форма (не отдельная страница): имя, телефон, сообщение опционально
 3. Yandex SmartCaptcha invisible + honeypot + rate limit отсеивают ботов
 4. Поля `name / phone / message` шифруются Fernet перед записью в `leads`
@@ -139,7 +139,7 @@
 
 ### Landing & Application Intake
 
-- **FR-001** *(Ubiquitous)* The system shall expose a public landing page at `vitrina.site` rendered server-side for SEO.
+- **FR-001** *(Ubiquitous)* The system shall expose a public landing page at `samosite.online` rendered server-side for SEO.
 - **FR-002** *(Event-driven)* When a visitor submits the application form, the system shall persist the application, send a notification to the founder, and respond within 1s with a confirmation page.
 - **FR-002a** *(Event-driven)* When a contact value is entered in the application form, the system shall server-side detect contact type (email / phone / telegram / max) via the same regex used client-side, normalize the value, and persist both `contact_type` and `contact_value` on `users`.
 - **FR-002b** *(Event-driven)* When the system needs to notify a user (site ready, lead arrived, system message), the system shall route via the user's `contact_type` with fallback chain: telegram → max → email → SMS. If primary channel delivery fails (e.g. TG user hasn't started conversation with our bot), the system shall try next channel if alternate contact exists.
@@ -292,7 +292,7 @@
 - **ASSUMPTION-A2**: Бюджет на инфру ≤5000 ₽/мес при 100 сайтах; на юриста ≤10k ₽ единоразово; на pen-test ≤50k ₽ перед публичным запуском
 - **ASSUMPTION-A3**: YandexGPT 5 Pro доступен и стабилен в РФ; квоты позволяют 100 сайтов × ~5 запросов/сайт = 500 запросов/мес в первый месяц [verify: квоты Yandex Cloud Foundation Models]
 - **ASSUMPTION-A4**: Целевая аудитория готова дать ссылку на Я.Карты/TG и подождать 2-24 часа (не 2 минуты на MVP — мануальная модерация)
-- **ASSUMPTION-A5**: Wildcard SSL для `*.vitrina.site` решается через Let's Encrypt DNS-01 challenge с Cloudflare/Selectel DNS API [verify: Selectel DNS поддерживает API для acme.sh]
+- **ASSUMPTION-A5**: Wildcard SSL для `*.samosite.online` решается через Let's Encrypt DNS-01 challenge с Cloudflare/Selectel DNS API [verify: Selectel DNS поддерживает API для acme.sh]
 - **ASSUMPTION-A6**: 990 ₽/мес — приемлемая цена для ICP. Гипотеза, проверяется на 5+ юзерах после триала
 - **ASSUMPTION-A7**: VK как альтернатива IG источнику покроет ~30% аудитории, у которой нет архива IG, но есть VK-страница
 

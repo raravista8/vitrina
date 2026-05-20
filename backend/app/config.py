@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     log_level: LogLevel = LogLevel.INFO
     app_base_url: str = "http://localhost:8000"
     landing_base_url: str = "http://localhost:3000"
-    sites_base_domain: str = "vitrina.site"
+    sites_base_domain: str = "samosite.online"
 
     # ---- Datastores --------------------------------------------------------
     # Defaults assume a local Postgres with peer/trust auth (no password) —
@@ -78,7 +78,7 @@ class Settings(BaseSettings):
     smtp_port: int = 587
     smtp_user: str | None = None
     smtp_password: str | None = None
-    smtp_from: str = "noreply@vitrina.site"
+    smtp_from: str = "noreply@samosite.online"
 
     # ---- Yandex Geosearch (T1.4b preview adapter) --------------------------
     yandex_geosearch_api_key: str | None = None
@@ -131,7 +131,7 @@ class Settings(BaseSettings):
     s3_secret_key: str | None = None
     s3_endpoint_url: str = "https://storage.yandexcloud.net"
     s3_region: str = "ru-central1"
-    cdn_base_url: str = "https://vitrina.site"
+    cdn_base_url: str = "https://samosite.online"
     # Filesystem location of the Jinja2 customer-site templates. Default
     # path is the repo-root sibling of ``backend/``; the Dockerfile copies
     # ``sites-template/`` next to ``app/`` so the same code resolves the

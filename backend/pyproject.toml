@@ -2,7 +2,7 @@
 name = "vitrina-backend"
 version = "0.1.0"
 description = "Vitrina — AI-generated sites for micro-business (RU). Backend monolith."
-authors = ["Vitrina Founder <founder@vitrina.site>"]
+authors = ["Vitrina Founder <founder@samosite.online>"]
 license = "UNLICENSED"
 readme = "README.md"
 package-mode = false

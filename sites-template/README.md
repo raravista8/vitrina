@@ -1,6 +1,6 @@
 # sites-template — Jinja2 + Tailwind
 
-Single universal template for customer sites (`<subdomain>.vitrina.site`).
+Single universal template for customer sites (`<subdomain>.samosite.online`).
 Rendered to static HTML and uploaded to Yandex Object Storage; served via
 Selectel CDN.
 

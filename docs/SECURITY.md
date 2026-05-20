@@ -82,8 +82,8 @@ Boundaries (every crossing = STRIDE applies):
 
 | ID | STRIDE | Threat | L | I | Mitigation | Verifying control |
 |---|---|---|---|---|---|---|
-| T1.1 | S | Attacker with valid mTLS cert from CA mis-issuance spoofs vitrina.site to victim | L | H | HSTS preload + CT-monitoring (crt.sh weekly check + alert on unexpected certs) | Cron job в `infra/ct-monitor.py`, алерт в TG |
-| T1.2 | T | MITM attempts TLS downgrade | L | M | TLS 1.3 only в Caddy config; no SSLv3/TLS 1.0/1.1; HSTS `max-age=63072000; includeSubDomains; preload` | `testssl.sh vitrina.site` в CI |
+| T1.1 | S | Attacker with valid mTLS cert from CA mis-issuance spoofs samosite.online to victim | L | H | HSTS preload + CT-monitoring (crt.sh weekly check + alert on unexpected certs) | Cron job в `infra/ct-monitor.py`, алерт в TG |
+| T1.2 | T | MITM attempts TLS downgrade | L | M | TLS 1.3 only в Caddy config; no SSLv3/TLS 1.0/1.1; HSTS `max-age=63072000; includeSubDomains; preload` | `testssl.sh samosite.online` в CI |
 | T1.3 | D | DDoS on landing/API → exhausted bandwidth or CPU | M | M | Selectel anti-DDoS basic (включается на тарифе) + Caddy rate-limit per-IP; CDN absorbs landing traffic | k6 load test before launch; alert on >1000 RPS sustained |
 | T1.4 | I | TLS cipher disclosure via downgrade | L | L | TLS 1.3 only | testssl.sh |
 
@@ -163,15 +163,15 @@ Boundaries (every crossing = STRIDE applies):
 **Applies: Y.**
 - **Mitigation**:
   - Caddy config с security headers globally: `Strict-Transport-Security`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: geolocation=(), microphone=(), camera=()`
-  - CSP на customer sites: `default-src 'self'; script-src 'self' https://mc.yandex.ru; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.vitrina.site data:; frame-ancestors 'none'`
+  - CSP на customer sites: `default-src 'self'; script-src 'self' https://mc.yandex.ru; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.samosite.online data:; frame-ancestors 'none'`
   - CSP на landing: тот же + Next.js nonce-based для inline стилей
   - Postgres: `listen_addresses = 'localhost'`, no public 5432
   - Redis: `bind 127.0.0.1`, `protected-mode yes`, requirepass set
   - `DEBUG=false` в prod, enforced via `Settings` Pydantic validator
 - **Owner**: `infra/Caddyfile`, `infra/docker-compose.yml`, `app.config.Settings`
 - **Verification**:
-  - `testssl.sh vitrina.site` → A+
-  - `https://securityheaders.com/?q=vitrina.site` → A or A+
+  - `testssl.sh samosite.online` → A+
+  - `https://securityheaders.com/?q=samosite.online` → A or A+
   - `https://csp-evaluator.withgoogle.com/?csp=...` → no high-severity findings
   - CI step `make security-headers-check`
 
@@ -480,8 +480,8 @@ Authorization model: **RBAC with ownership-based ABAC overlay** (end-user can do
 
 ### 9.7 Договорные документы (надо разработать с юристом РФ за ~10-20k ₽)
 
-- **Политика конфиденциальности** (vitrina.site/privacy) — public, версионируется
-- **Оферта** (vitrina.site/offer) — public, версионируется
+- **Политика конфиденциальности** (samosite.online/privacy) — public, версионируется
+- **Оферта** (samosite.online/offer) — public, версионируется
 - **Согласие на ПДн** — текст чекбокса + раскрытие в политике
 - **Договор обработки данных с владельцем сайта** (мастер — оператор/обработчик в отношении лидов своих посетителей; Vitrina — обработчик от его имени). [verify: точная конструкция отношений с юристом — оператор vs обработчик]
 - **Соглашение о cookie/трекинге** (cookie banner на лендинге, на клиентских сайтах — отключаем, не ставим тяжёлые трекеры по умолчанию)
@@ -509,9 +509,9 @@ Authorization model: **RBAC with ownership-based ABAC overlay** (end-user can do
 - [ ] SSH по ключу, password auth disabled, firewall (ufw) разрешает только 22/80/443; fail2ban активен
 - [ ] Sentry/GlitchTip подключён, TG-алерты в @VitrinaOpsBot
 - [ ] Logs без PII — grep audit `\+7[0-9]{10}` returns 0
-- [ ] CT-monitoring для vitrina.site включён
+- [ ] CT-monitoring для samosite.online включён
 - [ ] Synthetic incident drill пройден (fake brute-force → алерт в TG <60s)
-- [ ] `nuclei -t cves/ -u https://staging.vitrina.site` — нет критичных находок
+- [ ] `nuclei -t cves/ -u https://staging.samosite.online` — нет критичных находок
 - [ ] Pen-test от российского фрилансера (Habr/FL.ru/SecurityLab.ru), бюджет 30-50k ₽, результаты адресованы
 - [ ] Docker images digest-pinned в prod compose
 - [ ] Все параметрические тесты (authz matrix, SSRF, prompt injection, XSS) — green в CI

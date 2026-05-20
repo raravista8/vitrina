@@ -42,7 +42,7 @@ class PublishContext:
 
     site_id: str
     subdomain: str
-    site_url: str  # canonical https://<subdomain>.vitrina.site
+    site_url: str  # canonical https://<subdomain>.samosite.online
     render_context: dict[str, Any]  # passes through to the Jinja2 template
     owner_contact: UserContact
 

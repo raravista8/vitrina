@@ -188,8 +188,8 @@ def test_off_allowlist_url_flagged(bad_url: str) -> None:
 @pytest.mark.parametrize(
     "ok_url",
     [
-        "https://vitrina.site",
-        "https://anna.vitrina.site",
+        "https://samosite.online",
+        "https://anna.samosite.online",
         "https://yandex.ru/maps/org/123",
         "https://maps.yandex.com/foo",
         "https://storage.yandexcloud.net/vitrina-prod/anna/hero.jpg",

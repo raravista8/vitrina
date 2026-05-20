@@ -7,7 +7,7 @@
  */
 
 const HIGHLIGHTS: ReadonlyArray<string> = [
-  "Сайт на поддомене name.vitrina.site",
+  "Сайт на поддомене name.samosite.online",
   "Авто-обновление каждую неделю",
   "Форма заявок + уведомления в Telegram",
   "Регистрация в Яндекс.Вебмастере и Google Search Console",

@@ -4,7 +4,7 @@ import { FeedbackFloatingButton } from "@/components/FeedbackForm";
 
 import "./globals.css";
 
-const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://vitrina.site";
+const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://samosite.online";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

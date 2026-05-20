@@ -28,7 +28,7 @@ class InMemoryStaticUploader:
     ``mem://`` scheme so tests asserting on the URL shape have something
     deterministic to match against."""
 
-    def __init__(self, *, base_url: str = "https://test.vitrina.site") -> None:
+    def __init__(self, *, base_url: str = "https://test.samosite.online") -> None:
         self.objects: dict[str, tuple[str, str]] = {}
         self.invalidations: list[list[str]] = []
         self._base_url = base_url
@@ -47,7 +47,7 @@ class S3StaticUploader:
     Uses ``aiobotocore`` (already a project dependency for parser-worker
     photo uploads) so we don't add a new runtime dep. Public URLs are
     derived from the CDN base URL, NOT the raw S3 endpoint — visitors
-    hit ``https://<subdomain>.vitrina.site/index.html``, never the
+    hit ``https://<subdomain>.samosite.online/index.html``, never the
     storage.yandexcloud.net hostname.
     """
 
@@ -59,7 +59,7 @@ class S3StaticUploader:
         secret_key: str,
         endpoint_url: str = "https://storage.yandexcloud.net",
         region: str = "ru-central1",
-        cdn_base_url: str = "https://vitrina.site",
+        cdn_base_url: str = "https://samosite.online",
     ) -> None:
         self._bucket = bucket
         self._access_key = access_key

@@ -23,7 +23,7 @@ export default function OfferPage() {
           <h2 className="text-xl font-semibold text-neutral-900">1. Предмет договора</h2>
           <p>
             ИП «Vitrina» (далее — «Исполнитель») оказывает услуги по автоматическому созданию и
-            поддержанию интернет-сайта на поддомене <code>*.vitrina.site</code> из публикуемых
+            поддержанию интернет-сайта на поддомене <code>*.samosite.online</code> из публикуемых
             пользователем источников (Telegram-канал, Яндекс.Карты, фотографии).
           </p>
 
@@ -48,8 +48,8 @@ export default function OfferPage() {
           <p>
             Если владелец оригинального источника (например, Telegram-канала) считает, что сайт
             нарушает его права, он может направить запрос на удаление через футер любого
-            размещённого сайта или на <code>takedown@vitrina.site</code>. Исполнитель удаляет сайт в
-            течение 24 часов с момента получения запроса.
+            размещённого сайта или на <code>takedown@samosite.online</code>. Исполнитель удаляет
+            сайт в течение 24 часов с момента получения запроса.
           </p>
 
           <h2 className="text-xl font-semibold text-neutral-900">5. Ответственность</h2>
@@ -62,7 +62,7 @@ export default function OfferPage() {
           <h2 className="text-xl font-semibold text-neutral-900">6. Реквизиты Исполнителя</h2>
           <p>
             ИП Vitrina, ИНН: ххххххххххх (публикуется до публичного запуска), адрес для
-            корреспонденции: <code>legal@vitrina.site</code>.
+            корреспонденции: <code>legal@samosite.online</code>.
           </p>
         </section>
       </main>

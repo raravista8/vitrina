@@ -1,5 +1,5 @@
 #!/bin/sh
-# Issue or renew the wildcard cert for *.vitrina.site via Selectel DNS-01.
+# Issue or renew the wildcard cert for *.samosite.online via Selectel DNS-01.
 #
 # Run via `docker compose run --rm acme /scripts/issue.sh`.
 # The cron daemon (`docker compose up -d acme`) calls `acme.sh --cron`

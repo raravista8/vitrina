@@ -28,7 +28,7 @@ class SmtpClient:
         port: int = 587,
         user: str | None = None,
         password: str | None = None,
-        sender: str = "noreply@vitrina.site",
+        sender: str = "noreply@samosite.online",
         use_starttls: bool = True,
         timeout_seconds: float = 10.0,
     ) -> None:

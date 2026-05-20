@@ -120,7 +120,7 @@ vim .env
 ```
 
 For the staging host shipped today, `.env` already exists with sane
-defaults (`ENVIRONMENT=staging`, URLs pointing at `staging.vitrina.site`,
+defaults (`ENVIRONMENT=staging`, URLs pointing at `staging.samosite.online`,
 `DEBUG=false`, `UPLOADS_DIR=/var/lib/vitrina/uploads`). See the diff in
 `/opt/vitrina/.env` versus `.env.example`.
 
@@ -199,7 +199,7 @@ exit.
 
 | Item | Owner | Notes |
 |---|---|---|
-| DNS records for `vitrina.site` + `*.vitrina.site` | founder | A → 135.106.137.30 |
+| DNS records for `samosite.online` + `*.samosite.online` | founder | A → 135.106.137.30 |
 | Selectel DNS API token | founder | Caddy's `acme` profile needs `SELECTEL_DNS_API_TOKEN` for DNS-01 challenge — generate in Selectel panel, store in 1Password, populate `.env` |
 | `ACME_EMAIL` | founder | For Let's Encrypt account; populate `.env` |
 | YandexGPT, Geosearch, SmartCaptcha keys | founder | Yandex Cloud console → put in `.env` |

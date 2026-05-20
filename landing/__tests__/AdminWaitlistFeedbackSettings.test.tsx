@@ -186,9 +186,9 @@ describe("AdminSettingsPage", () => {
       data: {
         environment: "production",
         log_level: "INFO",
-        app_base_url: "https://api.vitrina.site",
-        landing_base_url: "https://vitrina.site",
-        sites_base_domain: "vitrina.site",
+        app_base_url: "https://api.samosite.online",
+        landing_base_url: "https://samosite.online",
+        sites_base_domain: "samosite.online",
         feature_max_bot: false,
         feature_auto_sync: true,
         captcha_configured: true,

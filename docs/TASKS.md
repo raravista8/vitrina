@@ -220,12 +220,12 @@
 - **Verification**: Manual e2e against staging S3; `pytest tests/integration/test_publish.py`
 - **References**: FR-030
 
-### T2.4 [P0] Wildcard SSL для `*.vitrina.site`
+### T2.4 [P0] Wildcard SSL для `*.samosite.online`
 - **Files**: `infra/Caddyfile`, `infra/scripts/cert-renew.sh`
 - **Acceptance**:
   - Caddy shall obtain wildcard cert via Let's Encrypt DNS-01 challenge using Selectel DNS API
   - The cert shall auto-renew 30 days before expiry
-- **Verification**: `curl -vI https://test-subdomain.vitrina.site 2>&1 | grep "subject:"` shows wildcard
+- **Verification**: `curl -vI https://test-subdomain.samosite.online 2>&1 | grep "subject:"` shows wildcard
 - **References**: ARCHITECTURE.md §10, ASSUMPTION-A5
 
 ### T2.5 [P0] Customer site Jinja2 template (single universal)
@@ -358,7 +358,7 @@
 - **Files**: `backend/app/core/content/output_validator.py`
 - **Acceptance** (EARS):
   - Every LLM-generated string shall pass through `bleach.clean(allowed_tags=['p','br','strong','em'])`
-  - If output contains URLs not in allowlist (vitrina.site, yandex.\*, t.me) OR `javascript:` OR `data:` scheme, the system shall flag for manual review (FR-024)
+  - If output contains URLs not in allowlist (samosite.online, yandex.\*, t.me) OR `javascript:` OR `data:` scheme, the system shall flag for manual review (FR-024)
 - **Verification**: `pytest tests/security/test_prompt_injection.py` — 50+ injection payloads
 - **References**: FR-022, FR-024, T6.1
 

@@ -1,6 +1,6 @@
 """``POST /api/leads`` — customer-site lead intake (T5.2, FR-050).
 
-Cross-site CORS surface: any ``<subdomain>.vitrina.site`` page posts
+Cross-site CORS surface: any ``<subdomain>.samosite.online`` page posts
 here. Caddy strips CORS at the edge (same origin via wildcard cert);
 no `Origin` checks in the handler.
 

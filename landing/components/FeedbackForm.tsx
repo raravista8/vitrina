@@ -44,7 +44,7 @@ const WAITLIST_OPTIONS: ReadonlyArray<{ key: string; label: string }> = [
 const FEATURE_OPTIONS: ReadonlyArray<{ key: string; label: string }> = [
   { key: "yclients", label: "Интеграция с YCLIENTS" },
   { key: "amocrm", label: "Интеграция с amoCRM" },
-  { key: "custom-domain", label: "Свой домен (не *.vitrina.site)" },
+  { key: "custom-domain", label: "Свой домен (не *.samosite.online)" },
   { key: "watermark-removal", label: "Убрать водяной знак Free" },
   { key: "multilang", label: "Мультиязычный сайт" },
   { key: "online-payment", label: "Онлайн-оплата на сайте" },

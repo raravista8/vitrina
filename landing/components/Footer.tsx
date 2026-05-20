@@ -10,7 +10,7 @@ export function Footer() {
   return (
     <footer className="border-t border-neutral-200 bg-white px-6 py-10 text-sm text-neutral-600">
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
-        <p>© {year} Vitrina · ИП «Vitrina» · vitrina.site</p>
+        <p>© {year} Vitrina · ИП «Vitrina» · samosite.online</p>
         <nav aria-label="Legal" className="flex flex-wrap justify-center gap-4 sm:gap-6">
           <Link className="hover:text-neutral-900 hover:underline" href="/privacy">
             Политика конфиденциальности

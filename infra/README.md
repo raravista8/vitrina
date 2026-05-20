@@ -86,7 +86,7 @@ docker compose --env-file .env -f infra/docker-compose.yml exec redis redis-cli 
 
 ## TLS / wildcard cert (T2.4)
 
-Production Caddy obtains a wildcard cert for `*.vitrina.site` via ACME
+Production Caddy obtains a wildcard cert for `*.samosite.online` via ACME
 DNS-01 against the Selectel DNS API. The upstream `caddy:2-alpine` image
 doesn't bundle that provider, so `infra/caddy/Dockerfile` rebuilds Caddy
 via xcaddy with `github.com/caddy-dns/selectel`.
@@ -94,10 +94,10 @@ via xcaddy with `github.com/caddy-dns/selectel`.
 To deploy:
 
 1. Issue a Selectel DNS API token (my.selectel.ru → IAM → API keys,
-   scope `dns:zone:rw` for the `vitrina.site` zone).
+   scope `dns:zone:rw` for the `samosite.online` zone).
 2. Populate `.env`:
    ```
-   ACME_EMAIL=founder@vitrina.site
+   ACME_EMAIL=founder@samosite.online
    SELECTEL_DNS_API_TOKEN=<token>
    ```
 3. `docker compose -f infra/docker-compose.yml up -d caddy`
@@ -108,10 +108,10 @@ Manual rotation: `docker compose exec caddy caddy reload`.
 Smoke check after deploy:
 
 ```bash
-curl -sI https://www.vitrina.site | head -2          # 200 from landing
-curl -sI https://api.vitrina.site/healthz | head -2  # 200 from api
-curl -vI https://probe.vitrina.site 2>&1 | grep "subject:"
-#   ↑ subject CN must contain *.vitrina.site (wildcard delivered)
+curl -sI https://www.samosite.online | head -2          # 200 from landing
+curl -sI https://api.samosite.online/healthz | head -2  # 200 from api
+curl -vI https://probe.samosite.online 2>&1 | grep "subject:"
+#   ↑ subject CN must contain *.samosite.online (wildcard delivered)
 ```
 
 ## What lands later
