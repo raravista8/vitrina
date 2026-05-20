@@ -133,13 +133,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // content itself contains no user input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
         />
-        {/* Yandex.Метрика — only loaded when an ID is provided. The
-            canonical snippet from metrika.yandex.ru → "Code for the
-            site"; the `webvisor:true` flag enables session replay for
-            UX debugging. Loaded `afterInteractive` so it doesn't block
-            FCP/LCP — Lighthouse Performance stays ≥90 (PRD §6 NFR).
-            mc.yandex.ru is already in our CSP allowlist
-            (SECURITY.md §A02). */}
+        {/* Yandex.Метрика — only loaded when an ID is provided. Snippet
+            mirrors metrika.yandex.ru → "Code for the site" verbatim so
+            that operators can diff their counter-page-issued code
+            against this and find them identical. Init params:
+              - ssr:true              — page is server-rendered (Next SSG)
+              - webvisor:true         — session replay (early UX work)
+              - clickmap:true         — heatmap of clicks
+              - ecommerce:"dataLayer" — opt-in for future commerce events
+              - referrer / url        — explicit values for SPA-style routing
+              - accurateTrackBounce   — register a hit only after 15 s on page
+              - trackLinks            — register outbound link clicks
+            Loaded `afterInteractive` so it doesn't block FCP/LCP —
+            Lighthouse Performance stays ≥90 (PRD §6 NFR). mc.yandex.ru
+            is in the landing CSP allowlist (infra/Caddyfile script-src
+            / img-src / connect-src — SECURITY.md §A02). */}
         {YM_ID ? (
           <>
             <Script
@@ -151,13 +159,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   m[i].l=1*new Date();
                   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
                   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-                  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+                  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}", "ym");
 
                   ym(${YM_ID}, "init", {
+                       ssr:true,
+                       webvisor:true,
                        clickmap:true,
-                       trackLinks:true,
+                       ecommerce:"dataLayer",
+                       referrer: document.referrer,
+                       url: location.href,
                        accurateTrackBounce:true,
-                       webvisor:true
+                       trackLinks:true
                   });
                 `,
               }}

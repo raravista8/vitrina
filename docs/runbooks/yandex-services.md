@@ -87,7 +87,21 @@ submit) and watch session replays of the first 100 testers. Wired to
 the landing only — customer sites can opt in later (per-site setting,
 out of scope here).
 
-### Steps
+### Current production counter
+
+| | |
+|---|---|
+| Counter ID | **`109331571`** |
+| Site | `samosite.online` |
+| Owner account | founder (see 1Password «Vitrina · Yandex services») |
+| Webvisor / Clickmap / Accurate-bounce | enabled |
+| ecommerce | enabled (`dataLayer`) — opt-in for future commerce events |
+
+Snippet in `landing/app/layout.tsx` matches metrika.yandex.ru's
+generated code verbatim; diff your console-emitted snippet against the
+file to confirm parity after any Я.Метрика settings change.
+
+### First-time setup (only if creating a brand-new counter)
 
 1. Log in to `https://metrika.yandex.ru` with the same account as
    step 1 above.
@@ -98,13 +112,14 @@ out of scope here).
    - ☑ **Вебвизор** (session replay) — we want this for early UX work
    - ☑ **Карта кликов**
    - ☑ **Тщательное отслеживание отказов**
+   - ☑ **Электронная коммерция** (источник: `dataLayer`)
    - Согласие на обработку — submit
-3. Copy the **numeric counter ID** (something like `99887766`) from the
-   counter list. Save in 1Password.
+3. Copy the **numeric counter ID** from the counter list. Save in
+   1Password under «Vitrina · Yandex services».
 4. On the VPS:
 
    ```bash
-   sudoedit /opt/vitrina/.env   # set NEXT_PUBLIC_YANDEX_METRIKA_ID=99887766
+   sudoedit /opt/vitrina/.env   # set NEXT_PUBLIC_YANDEX_METRIKA_ID=<numeric>
    sudo -u deploy /opt/vitrina/infra/scripts/deploy.sh --staging
    ```
 
