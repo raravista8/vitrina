@@ -222,6 +222,57 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     expect(screen.queryByText(/Источник:/)).not.toBeInTheDocument();
   });
 
+  it("waitlist panel uses warn (amber) styling, not info (blue)", () => {
+    // User batch 2 (B6): testers read the previous info-soft blue
+    // tint as "all clear, proceed". Amber/warn signals "this isn't
+    // yet supported" more honestly. The classNames carry the colour
+    // tokens so we assert on those rather than computed CSS.
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://www.instagram.com/anna_master" },
+    });
+    const banner = screen.getByText(/скоро будет — оставьте email/i);
+    // The text node lives inside the styled <p>. Walk up one level.
+    const styledParent = banner.closest("p");
+    expect(styledParent).not.toBeNull();
+    expect(styledParent!.className).toMatch(/bg-warn-soft/);
+    expect(styledParent!.className).not.toMatch(/bg-info-soft/);
+  });
+
+  it("contact field placeholder is email-first (no 4-option overload)", () => {
+    // User batch 2 (B5): the previous "Email, телефон, @telegram или
+    // MAX" placeholder presented four equal options; testers
+    // reflexively defaulted to email and asked for an implicit
+    // priority. The new copy keeps Telegram/MAX in a separate helper
+    // line.
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://t.me/barbershop_samara" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+
+    const contactInput = screen.getByPlaceholderText("Email или телефон");
+    expect(contactInput).toBeInTheDocument();
+    expect(screen.getByText(/Или @имя в Telegram \/ MAX/i)).toBeInTheDocument();
+  });
+
+  it("contact field auto-formats a bare 10-digit phone into +7 (XXX) XXX-XX-XX", () => {
+    // User batch 2 (B5): progressive formatter — server still does
+    // canonical E.164 normalisation, the formatter just makes the
+    // value readable as the user types.
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://t.me/barbershop_samara" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+
+    const contactInput = screen.getByPlaceholderText("Email или телефон") as HTMLInputElement;
+    fireEvent.change(contactInput, { target: { value: "9167388689" } });
+    expect(contactInput.value).toBe("+7 (916) 738-86-89");
+    // Detection badge picks up "phone".
+    expect(screen.getByText("Телефон")).toBeInTheDocument();
+  });
+
   it("«← Назад» on SubmitModal step 1 closes the modal and preserves the Hero input", () => {
     // B2 root-cause fix: testers reported "никак не могу вернуться на
     // шаг 1" — the ✕ in the corner wasn't recognised as a back path.

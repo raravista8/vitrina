@@ -87,3 +87,64 @@ const BADGES: Record<ContactType, { icon: string; label: string }> = {
 export function badgeFor(contactType: ContactType): { icon: string; label: string } {
   return BADGES[contactType];
 }
+
+// ----------------------------------------------------------------------------
+// Phone progressive formatter
+// ----------------------------------------------------------------------------
+
+/**
+ * Visually format an in-progress RU phone number as the user types.
+ *
+ * The server normalises to E.164 (`+7XXXXXXXXXX`) via `phonenumbers`, so
+ * we don't need full validation here — we just paint pretty separators
+ * so users can read what they've typed. Triggered ONLY when the input
+ * already looks phone-shaped (digits/+/spaces/parens/dashes); other
+ * shapes (email, @handle, max URL) are left alone.
+ *
+ * Output examples (10 → 11-digit RU mobile cases users actually paste):
+ *
+ *   raw                       → output
+ *   "9167388689"             → "+7 (916) 738-86-89"
+ *   "89167388689"            → "+7 (916) 738-86-89"
+ *   "+79167388689"           → "+7 (916) 738-86-89"
+ *   "8 916 738 86 89"        → "+7 (916) 738-86-89"
+ *
+ * Partial inputs format as far as they can — e.g. "+7 91" → "+7 (91".
+ * Non-phone-shaped inputs return `null` (caller leaves the input
+ * untouched so emails / handles don't get mangled mid-typing).
+ */
+export function formatPhoneProgressive(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  // Bail early on shapes that are clearly NOT phones — avoids
+  // formatting `+a@b.c` into `+a@…` or similar.
+  if (trimmed.includes("@")) return null;
+  if (/^max:\/\//i.test(trimmed)) return null;
+  if (!/^[+0-9\s()\-]+$/.test(trimmed)) return null;
+
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length === 0) return null;
+
+  // Normalise to "national 10-digit" form: strip a leading 7/8 country
+  // code so the layout logic below has a single shape to work with.
+  let core = digits;
+  if (core.length === 11 && (core.startsWith("7") || core.startsWith("8"))) {
+    core = core.slice(1);
+  } else if (core.length > 10 && core.startsWith("7")) {
+    core = core.slice(1);
+  }
+
+  // Pieces: AAA, BBB, CC, DD — emit only what we have.
+  const aaa = core.slice(0, 3);
+  const bbb = core.slice(3, 6);
+  const cc = core.slice(6, 8);
+  const dd = core.slice(8, 10);
+
+  let out = "+7";
+  if (aaa) out += ` (${aaa}`;
+  if (aaa.length === 3) out += ")";
+  if (bbb) out += ` ${bbb}`;
+  if (cc) out += `-${cc}`;
+  if (dd) out += `-${dd}`;
+  return out;
+}

@@ -30,7 +30,12 @@ import { useEffect, useId, useState } from "react";
 
 import { requestCaptchaToken } from "@/lib/captcha";
 import { cn } from "@/lib/cn";
-import { type ContactType, badgeFor, detectContact } from "@/lib/contact-detect";
+import {
+  type ContactType,
+  badgeFor,
+  detectContact,
+  formatPhoneProgressive,
+} from "@/lib/contact-detect";
 
 interface SubmitModalProps {
   open: boolean;
@@ -108,7 +113,15 @@ export function SubmitModal({ open, onOpenChange, sourceUrl, sourceType }: Submi
 // Step 1 — contact + consent + captcha
 // -----------------------------------------------------------------------------
 
-const CONTACT_PLACEHOLDER = "Email, телефон, @telegram или MAX";
+// User batch 2 (B5): testers reported they reflexively typed email
+// when shown the previous "Email, телефон, @telegram или MAX" —
+// presenting four options with equal weight forced a choice. Email is
+// listed first as the implicit primary (mirrors observed behaviour,
+// and email has the most reliable delivery). Telegram + MAX remain
+// supported via auto-detect; the helper text below the input names
+// them explicitly so users with a TG-only contact aren't left wondering.
+const CONTACT_PLACEHOLDER = "Email или телефон";
+const CONTACT_HELP_TEXT = "Или @имя в Telegram / MAX";
 
 interface Step1Props {
   sourceUrl: string;
@@ -200,9 +213,19 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: S
             type="text"
             autoComplete="off"
             spellCheck={false}
+            inputMode="email"
             placeholder={CONTACT_PLACEHOLDER}
             value={contact}
-            onChange={(event) => setContact(event.target.value)}
+            onChange={(event) => {
+              // User batch 2 (B5): progressive RU-phone formatting as
+              // the user types. Only applied when the raw value already
+              // looks phone-shaped (digits + separators) — emails and
+              // @handles pass through untouched. Server still does the
+              // canonical E.164 normalisation via phonenumbers.
+              const next = event.target.value;
+              const formatted = formatPhoneProgressive(next);
+              setContact(formatted ?? next);
+            }}
             className={cn(
               "h-12 w-full rounded-lg border bg-white pl-3 pr-28 text-[15px] text-ink",
               "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
@@ -219,6 +242,12 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: S
             </span>
           ) : null}
         </div>
+        {/* Default helper line — visible until the user starts typing.
+            Once detection settles or an error appears, this hides so
+            we don't stack three lines under the input. */}
+        {contact.length === 0 ? (
+          <p className="mt-1.5 text-xs text-ink-faint">{CONTACT_HELP_TEXT}</p>
+        ) : null}
         {!detected && contact.length > 0 ? (
           <p className="mt-2 text-sm text-danger">
             Введите email, телефон, @имя в Telegram или MAX
