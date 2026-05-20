@@ -34,7 +34,7 @@
  * the public brand strictly.
  */
 
-import { Link as LinkIcon, ShieldCheck } from "lucide-react";
+import { Link as LinkIcon, ShieldCheck, X } from "lucide-react";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -44,9 +44,18 @@ import { PhotoDrawer } from "./PhotoDrawer";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal } from "./SubmitModal";
 
-const PLACEHOLDER = "ссылка на соцсеть, Яндекс.Карты или сайт";
+// Placeholder — user batch 1 testing flagged that the original copy
+// ("ссылка на соцсеть, Яндекс.Карты или сайт") truncated mid-word on
+// 320–390 px iPhone viewports. We swap to a shorter string everywhere
+// (avoids a hydration flicker we'd get from a window-width hook) and
+// move the full source list into a separate microcopy line below.
+const PLACEHOLDER = "ссылка на соцсеть или Я.Карты";
 const CTA_TEXT = "Собрать мой Самосайт";
 const MICROCOPY = "Первый месяц бесплатно — без карты при регистрации.";
+// One canonical, scannable list of what we accept today (UX batch 1
+// "U2" — testers asked for an explicit list, not just placeholder
+// hints). Lives directly under the input.
+const SUPPORTED_SOURCES = "Поддерживаем: Telegram-канал · Яндекс.Карты · фото";
 
 type PreviewState =
   | { phase: "idle" }
@@ -68,13 +77,39 @@ export function Hero() {
   const deferred = useDeferredValue(raw);
   const detection: SourceDetection = detectSource(deferred);
 
-  // CTA is ALWAYS clickable — never wait for the user to type something.
-  // If detection settled on an MVP source we pre-fill modal with the
-  // canonical URL + type; otherwise the modal opens with whatever the
-  // user typed (or empty) and they finish the submit inside.
-  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : raw.trim();
-  const modalSourceType: "ymaps" | "telegram" =
-    detection.kind === "mvp" ? detection.type : "telegram";
+  // CTA is ALWAYS clickable — never wait for the user to type something
+  // (Hero contract: see __tests__/Hero.test.tsx "stays clickable…").
+  // The action it dispatches depends on classification:
+  //   - mvp        → SubmitModal pre-filled with canonical URL + type
+  //   - waitlist   → PhotoDrawer (symmetric with the inline "создайте
+  //                  из фото сейчас" CTA in WaitlistPanel; user batch 1
+  //                  flagged that the main CTA opened a modal with a
+  //                  bogus "Telegram-канал" badge — Hero used to fall
+  //                  back to `sourceType="telegram"` for everything
+  //                  non-MVP, including IG/VK paste).
+  //   - unknown    → SubmitModal with empty source (user proceeds by
+  //                  contact only; ops follows up)
+  //   - not_url    → SubmitModal with empty source (same path)
+  // The inline waitlist email-capture below the form covers the
+  // "notify me when this source ships" intent separately.
+  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : "";
+  // When detection didn't settle on an MVP source, we land in the
+  // SubmitModal with an empty `sourceUrl`. Picking "photo" as the
+  // fallback type is deliberate: SubmitModal routes ONLY `telegram`
+  // submissions to the bot-invite step (Step2TgBot), and that step
+  // is meaningless without a real TG channel. "photo" skips the
+  // bot step and goes straight to confirmation — which is the
+  // right outcome for {unknown_url, not_url, empty} flows.
+  const modalSourceType: "ymaps" | "telegram" | "photo" =
+    detection.kind === "mvp" ? detection.type : "photo";
+
+  function handlePrimaryCta() {
+    if (detection.kind === "waitlist") {
+      setPhotoOpen(true);
+    } else {
+      setModalOpen(true);
+    }
+  }
 
   // T1.4b live preview: fire when classifier settles on an MVP source.
   // Effect re-runs on canonical change → previous in-flight call aborts.
@@ -200,7 +235,7 @@ export function Hero() {
             )}
             onSubmit={(event) => {
               event.preventDefault();
-              setModalOpen(true);
+              handlePrimaryCta();
             }}
           >
             <label className="sr-only" htmlFor={inputId}>
@@ -208,6 +243,10 @@ export function Hero() {
             </label>
             <div className="flex flex-1 items-center gap-2.5 px-3.5 py-3 sm:px-[18px] sm:py-0">
               <LinkIcon aria-hidden strokeWidth={1.8} className="h-5 w-5 shrink-0 text-ink-faint" />
+              {/* Shorter placeholder that fits a 320 px iPhone viewport;
+                  the longer "ссылка на соцсеть, Яндекс.Карты или сайт"
+                  truncated mid-word during user testing. The supported-
+                  source microcopy under the form covers the detail. */}
               <input
                 id={inputId}
                 type="text"
@@ -218,6 +257,24 @@ export function Hero() {
                 onChange={(event) => setRaw(event.target.value)}
                 className="min-w-0 flex-1 bg-transparent text-[16px] text-ink placeholder:text-ink-faint focus:outline-none sm:text-[17px]"
               />
+              {/* Clear (×) — only when there's something to clear.
+                  User batch 1 flagged the lack of an obvious way to
+                  reset after pasting an unsupported URL. Keyboard
+                  focus moves back to the input so the user can retry
+                  immediately. */}
+              {raw.length > 0 ? (
+                <button
+                  type="button"
+                  aria-label="Очистить"
+                  onClick={() => {
+                    setRaw("");
+                    document.getElementById(inputId)?.focus();
+                  }}
+                  className="-mr-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink-faint hover:bg-paper-soft hover:text-ink"
+                >
+                  <X aria-hidden className="h-4 w-4" strokeWidth={2} />
+                </button>
+              ) : null}
             </div>
             <button
               type="submit"
@@ -235,6 +292,13 @@ export function Hero() {
             <ShieldCheck aria-hidden className="h-[14px] w-[14px]" />
             {MICROCOPY}
           </div>
+
+          {/* Supported-source list — only visible when input is empty,
+              so it doesn't compete with the live detection badge below
+              (which takes over once the user pastes something). */}
+          {raw.trim().length === 0 ? (
+            <p className="mt-2 text-[13px] text-ink-faint sm:text-center">{SUPPORTED_SOURCES}</p>
+          ) : null}
 
           <SourceDetectionBadge
             detection={detection}

@@ -149,3 +149,96 @@ describe("Hero — interaction", () => {
     expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
   });
 });
+
+describe("Hero — UX batch 1 (first user testing)", () => {
+  beforeEach(() => {
+    mockPreviewFetch(PREVIEW_OK);
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("shows the supported-source list when input is empty", () => {
+    render(<Hero />);
+    // Microcopy line, only visible before the user pastes anything.
+    expect(
+      screen.getByText(/Поддерживаем:.*Telegram-канал.*Яндекс\.Карты.*фото/i),
+    ).toBeInTheDocument();
+  });
+
+  it("hides the supported-source list once the user types", () => {
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://t.me/some_channel" },
+    });
+    expect(screen.queryByText(/Поддерживаем:/i)).not.toBeInTheDocument();
+  });
+
+  it("renders an × clear-button when input is non-empty; clears on click", () => {
+    render(<Hero />);
+    const input = screen.getByPlaceholderText(/ссылка на соцсеть/i) as HTMLInputElement;
+    // No × initially.
+    expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: "https://t.me/whatever" } });
+    const clearBtn = screen.getByRole("button", { name: /Очистить/i });
+    expect(clearBtn).toBeInTheDocument();
+
+    fireEvent.click(clearBtn);
+    expect(input.value).toBe("");
+    expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
+  });
+
+  it("main CTA with a waitlist URL opens the PhotoDrawer, not the SubmitModal", () => {
+    // B1 root-cause fix: previously, clicking «Собрать мой Самосайт»
+    // with an IG/VK/2GIS URL pasted opened the modal with a bogus
+    // sourceType="telegram" fallback, mislabelling the source in
+    // step 2. Now it opens the photo flow — symmetric with the
+    // parallel «создайте из фото сейчас» CTA.
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://www.instagram.com/marusya" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+
+    // PhotoDrawer is open — its heading is the unique marker.
+    expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
+    // SubmitModal is NOT open — no «Куда отправлять заявки» heading.
+    expect(
+      screen.queryByRole("heading", { name: /Куда отправлять заявки/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("main CTA with an MVP URL opens the SubmitModal (no regression)", () => {
+    render(<Hero />);
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+      target: { value: "https://t.me/barbershop_samara" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+
+    expect(screen.getByRole("heading", { name: /Куда отправлять заявки/i })).toBeInTheDocument();
+    // And critically — no green source banner inside the modal (U1).
+    expect(screen.queryByText(/Источник:/)).not.toBeInTheDocument();
+  });
+
+  it("«← Назад» on SubmitModal step 1 closes the modal and preserves the Hero input", () => {
+    // B2 root-cause fix: testers reported "никак не могу вернуться на
+    // шаг 1" — the ✕ in the corner wasn't recognised as a back path.
+    // The labelled chevron makes it obvious and survives Hero state.
+    render(<Hero />);
+    const input = screen.getByPlaceholderText(/ссылка на соцсеть/i) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
+    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+
+    // Modal is open with the back button labelled.
+    const backBtn = screen.getByRole("button", { name: /^Назад$/ });
+    fireEvent.click(backBtn);
+
+    // Modal gone, Hero input preserved.
+    expect(
+      screen.queryByRole("heading", { name: /Куда отправлять заявки/i }),
+    ).not.toBeInTheDocument();
+    expect(input.value).toBe("https://t.me/barbershop_samara");
+  });
+});
