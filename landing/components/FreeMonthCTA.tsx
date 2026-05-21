@@ -17,6 +17,8 @@
 
 import { ArrowRight, Check, Gift } from "lucide-react";
 
+import { ClickGoalTracker } from "./ClickGoalTracker";
+
 const BULLETS = [
   "Сайт на адресе ваш-сайт.samosite.online",
   "Кнопка «Записаться» и приём заявок в Telegram",
@@ -80,14 +82,20 @@ export function FreeMonthCTA() {
           </ul>
         </div>
 
-        {/* CTA */}
+        {/* CTA. `data-cta` атрибут — anchor для <ClickGoalTracker>
+            ниже, который fires `free_month_cta_click` goal в Я.Метрику.
+            Note: ведёт на `#top` (Hero input), не открывает SubmitModal
+            напрямую — финальный dojim рассматривается как «вернуть
+            пользователя ко вводу ссылки». */}
         <a
           href="#top"
+          data-cta="free-month-cta"
           className="mt-9 inline-flex items-center gap-2 rounded-full bg-accent px-7 py-4 text-[16px] font-semibold text-white shadow-pop hover:bg-accent-hover sm:mt-12 sm:px-9 sm:py-5 sm:text-[18px]"
         >
           Собрать мой Самосайт
           <ArrowRight className="h-5 w-5" />
         </a>
+        <ClickGoalTracker selector='[data-cta="free-month-cta"]' goal="free_month_cta_click" />
 
         <p className="mt-4 text-[14px] sm:text-[15px]" style={{ color: "oklch(0.70 0.014 60)" }}>
           Первый месяц — бесплатно. Самосайт сам напомнит, когда подойдёт срок.

@@ -39,6 +39,7 @@ import { Link as LinkIcon, ShieldCheck, X } from "lucide-react";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
+import { reachGoal } from "@/lib/metrika";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
 import { BrandMark } from "./BrandMark";
@@ -111,6 +112,20 @@ export function Hero() {
     detection.kind === "mvp" ? detection.type : "photo";
 
   function handlePrimaryCta() {
+    // Я.Метрика goal — fires on every CTA click regardless of detection
+    // state. This is the "intent to submit" event, before any modal /
+    // photo-drawer opens. The backend success goal (`hero_submit_success`)
+    // fires later from SubmitModal when API returns 200.
+    reachGoal("hero_submit_attempt", {
+      detection: detection.kind,
+      // Discriminated union narrowing: `mvp` has `type`, `waitlist` has
+      // `source` — flatten both into a single analytics field.
+      ...(detection.kind === "mvp"
+        ? { source: detection.type }
+        : detection.kind === "waitlist"
+          ? { source: detection.source }
+          : {}),
+    });
     if (detection.kind === "waitlist") {
       setPhotoOpen(true);
     } else {
@@ -268,6 +283,14 @@ export function Hero() {
                 placeholder={PLACEHOLDER}
                 value={raw}
                 onChange={(event) => setRaw(event.target.value)}
+                onPaste={() => {
+                  // Я.Метрика goal — fires on first paste event regardless
+                  // of what was pasted (URL / text / mess). Tracks
+                  // «пользователь вообще что-то вставил в Hero», early
+                  // proxy of intent before classification settles.
+                  // No PII sent — Yandex doesn't get the pasted content.
+                  reachGoal("hero_paste");
+                }}
                 className="min-w-0 flex-1 bg-transparent text-[16px] text-ink placeholder:text-ink-faint focus:outline-none sm:text-[17px]"
               />
               {/* Clear (×) — only when there's something to clear.

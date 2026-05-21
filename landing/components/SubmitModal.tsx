@@ -35,6 +35,7 @@ import { useEffect, useId, useState } from "react";
 
 import { requestCaptchaToken } from "@/lib/captcha";
 import { cn } from "@/lib/cn";
+import { reachGoal } from "@/lib/metrika";
 import {
   type ContactType,
   formatPhoneProgressive,
@@ -209,6 +210,11 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: S
         const body = (await response.json()) as {
           data: { application_id: string; contact_type: ContactType };
         };
+        // Я.Метрика goal — backend подтвердил приём заявки. Это
+        // конверсионный «золотой» сигнал воронки. Channel передаём как
+        // dimension для cohort-анализа (какой канал реально доходит до
+        // 202). Никакой PII (telegram/phone/email значений) не уходит.
+        reachGoal("hero_submit_success", { channel });
         onApplicationCreated(body.data.application_id, body.data.contact_type);
         return;
       }
