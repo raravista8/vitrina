@@ -30,12 +30,14 @@ function mockPreviewFetch(payload: unknown, opts: { ok?: boolean; status?: numbe
 
 // ---- tests ---------------------------------------------------------------
 
-describe("Hero — copy lock (Concept A canonical)", () => {
-  it("anchors COPY.md §2 strings verbatim", () => {
+describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
+  it("anchors COPY.md §2.2 strings verbatim", () => {
     render(<Hero />);
 
-    // Eyebrow + H1 + sub — locked to COPY.md.
-    expect(screen.getByText("САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ")).toBeInTheDocument();
+    // Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. COPY.md §11.1.
+    expect(screen.queryByText("САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ")).toBeNull();
+
+    // H1 + sub.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/сам себя ведёт/i);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/приносит вам заявки/i);
     expect(screen.getByText(/Покажите ссылку на ваше дело/i)).toBeInTheDocument();
@@ -50,11 +52,11 @@ describe("Hero — copy lock (Concept A canonical)", () => {
       screen.getByText(/Первый месяц бесплатно — без карты при регистрации/i),
     ).toBeInTheDocument();
 
-    // Benefits stack — 4 cards from COPY.md §2.
-    expect(screen.getByText("Сам обновляется")).toBeInTheDocument();
-    expect(screen.getByText("Сам ловит заявки")).toBeInTheDocument();
-    expect(screen.getByText("Сам находится в поиске")).toBeInTheDocument();
-    expect(screen.getByText("Первый месяц бесплатно")).toBeInTheDocument();
+    // Benefits stack удалён из Hero в v2 — теперь живёт в <BigFeatures />
+    // секцией ниже. Здесь убеждаемся что в Hero его нет.
+    expect(screen.queryByText(/^Сам обновляется$/)).toBeNull();
+    expect(screen.queryByText(/^Сам ловит заявки$/)).toBeNull();
+    expect(screen.queryByText(/^Сам находится в поиске$/)).toBeNull();
   });
 
   it("ships fallback links for photo + closed-TG", () => {
