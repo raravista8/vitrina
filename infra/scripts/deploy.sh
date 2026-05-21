@@ -140,7 +140,16 @@ log "build stamp: BUILD_VERSION=$BUILD_VERSION BUILD_TIME=$BUILD_TIME"
 
 if [[ "$DO_BUILD" == "1" ]]; then
     log "docker compose build (parallel, BuildKit)"
+    # `--env-file .env` (in the COMPOSE array) intentionally seals shell env
+    # from compose-level interpolation — protects against accidental leaks
+    # of operator's env into docker-compose.yml. Side effect: shell exports
+    # like BUILD_VERSION don't propagate into `args:` blocks via
+    # `${BUILD_VERSION}` interpolation. Solution: pass them as explicit
+    # `--build-arg` flags. Docker treats `--build-arg` as an override
+    # source — it bypasses the env-file isolation.
     DOCKER_BUILDKIT=1 "${COMPOSE[@]}" build --pull \
+        --build-arg BUILD_VERSION="$BUILD_VERSION" \
+        --build-arg BUILD_TIME="$BUILD_TIME" \
         || fatal "build failed" 3
 else
     log "skipping build (--no-build)"
