@@ -1,0 +1,38 @@
+# Vitrina / Самосайт — staging compose overlay.
+#
+# Layered on top of infra/docker-compose.yml for the production VPS at
+# samosite.online. Differences from the base file:
+#
+#   - Caddy mounts Caddyfile.staging (Let's Encrypt + tls-alpn-01, no
+#     DNS-01 plugin until SELECTEL_DNS_API_TOKEN is wired up).
+#   - Caddy keeps its public 80/443 binds explicit (the base file does
+#     too, but we re-declare them with `!override` so this overlay is
+#     self-documenting for ops).
+#   - Caddy healthcheck disabled. The base healthcheck probes
+#     `http://localhost/healthz`, which Caddy 308s to https; BusyBox wget
+#     then opens a TLS connection with SNI=localhost, for which no cert
+#     exists (only samosite.online + the `tls internal` wildcard). The
+#     internal probe fails even when the service is healthy externally.
+#     We rely on `curl https://samosite.online/healthz` from outside as
+#     the real readiness signal — see deploy.sh's post-deploy probe.
+#
+# Run with:
+#   docker compose --env-file .env -f infra/docker-compose.yml \
+#                                  -f infra/docker-compose.staging.yml up -d
+# (or via infra/scripts/deploy.sh --staging)
+
+services:
+  caddy:
+    volumes: !override
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      STATIC_ORIGIN_URL: ${STATIC_ORIGIN_URL:-https://storage.yandexcloud.net/vitrina-prod}
+      STATIC_ORIGIN_HOST: ${STATIC_ORIGIN_HOST:-storage.yandexcloud.net}
+    ports: !override
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    healthcheck:
+      disable: true

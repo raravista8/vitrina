@@ -14,8 +14,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_VIRTUALENVS_CREATE=true \
     POETRY_VIRTUALENVS_IN_PROJECT=true
 
-# System packages required to build native deps (lxml, cryptography, pillow, python-magic, asyncpg)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# System packages required to build native deps (lxml, cryptography, pillow, python-magic, asyncpg).
+# `ForceIPv4=true`: Docker's build network namespace prefers AAAA records when present, but the host
+# (and a number of Debian mirrors) lack stable IPv6 routing — this strands `apt-get update` on long
+# TCP timeouts. Forcing IPv4 makes the build deterministic across hosts. See
+# docs/runbooks/troubleshooting-deploy.md §"Docker build apt timeouts".
+RUN apt-get -o Acquire::ForceIPv4=true update \
+    && apt-get -o Acquire::ForceIPv4=true install -y --no-install-recommends \
         build-essential \
         libffi-dev \
         libssl-dev \
@@ -41,8 +46,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/app/.venv/bin:${PATH}"
 
-# Runtime libs only (no -dev packages)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Runtime libs only (no -dev packages). IPv4 forced for the same reason as the builder stage.
+RUN apt-get -o Acquire::ForceIPv4=true update \
+    && apt-get -o Acquire::ForceIPv4=true install -y --no-install-recommends \
         libxml2 \
         libxslt1.1 \
         libjpeg62-turbo \
