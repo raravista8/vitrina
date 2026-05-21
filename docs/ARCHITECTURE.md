@@ -7,6 +7,12 @@
 
 ---
 
+> **Status as of v2.1 (May 2026):** 9 PR серии A→H + hotfix #71 смержены в main.
+> Production живёт на `samosite.online` (Selectel VPS `135.106.137.30`).
+> 10-секционный landing-v2.1, customer-site v2, AI review curation backend,
+> brand-mark, deploy-runbook — все на проде. См. `docs/TASKS.md` §«v2.1
+> implementation log».
+
 ## 1. Quality goals (ranked)
 
 1. **Security & compliance** — ПДн юр.лиц и физ.лиц обрабатываются согласно ФЗ-152/ФЗ-420; нулевые утечки приоритетнее скорости

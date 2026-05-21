@@ -753,4 +753,30 @@
 
 E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 → E8 → E9 (legacy MVP path)
 
-**v2 overlay** (after #56 «UX batch 2» merge): A (docs v2 — THIS PR) → B (E10 brand) → C (E11 landing) → D (E12 intake+bots) → E (E13 reviews) → F (E14 customer-site). Sequential, см. COPY.md §10.
+**v2 overlay** (after #56 «UX batch 2» merge): A (docs v2) → B (E10 brand) → C (E11 landing) → D (E12 intake+bots) → E (E13 reviews) → F (E14 customer-site). Sequential, см. COPY.md §10.
+
+---
+
+## ✅ v2.1 implementation log (as-shipped state)
+
+All 8 PR серии A→H + hotfix #71 — **merged в main + deployed on samosite.online**.
+
+| PR | Эпик | Что сделано | Commit |
+|---|---|---|---|
+| #59 PR-A | docs canon v2 | COPY/PRD/ARCH/TASKS обновлены; ADR-0010 (AI review curation) + ADR-0011 (two-bot architecture) добавлены | f37a3d6 |
+| #61 PR-B | E10 brand | `<BrandMark>` (Onest 800 «С» на терракотовой плашке), favicon, og-image, customer-site footer watermark | 1a8569d |
+| #63 PR-C | E11 landing v2 | 8 секций: Nav/Hero/Examples/Story/Platforms/BigFeatures/FreeMonthCTA/Footer, eyebrow + benefits-stack удалены | b740e3f |
+| #67 PR-D | E12 intake v2 | Explicit channel radio (TG/Phone/Email/MAX) + backend schema v2 + 400 on contact-channel mismatch. **Bot split** (T12.6) defer until BotFather operator setup | 5ed7e8c |
+| #65 PR-E | E13 reviews | DB migration `site_reviews_curated`, hexagonal `core/reviews/` (curator/pii_filter/prompts), 16 unit tests, edge cases per ADR-0010 | d026b58 |
+| #66 PR-F | E14 customer-site | Trust-row, gallery 4-col mosaic, новая «Что говорят клиенты» секция (reviews_curated), About bullets, services mono-formatting, watermark v2 | 889c074 |
+| #68 PR-G | **v2.1 copy rewrite** | Hero H1 «три сам», BigFeatures 4→8 + closer, FreeMonthCTA полный Dojim-блок, Hero cleanup, customer-site services CSS fix | 36948b5 |
+| #70 PR-H | **v2.1 sections** | SocialProof (counter + 4 testimonials), Pricing 299₽/мес, FAQ (10 Q через «Самосайт сам…») | 27af234 |
+| #71 hotfix | H1 punctuation | Comma внутри первого span, trailing period убран, `whitespace-nowrap` фразы | (next merge) |
+
+### Deferred (operator action required)
+
+- **`@SamositeBot` BotFather registration** — T12.3 / T12.4 / T12.6 ждут токена
+- **`YANDEXGPT_API_KEY`** — для активации AI-curation (фолбэк top-N работает)
+- **`SELECTEL_DNS_API_TOKEN`** — для wildcard TLS на `*.samosite.online`
+- **`NEXT_PUBLIC_YANDEX_VERIFICATION`** — Я.Вебмастер ownership token
+- **Real customer-site photos** — T14.7 `/render` proxy через Yandex Object Storage
