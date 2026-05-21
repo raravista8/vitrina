@@ -35,6 +35,7 @@ import { useEffect, useState } from "react";
 
 import { adminRequest, type AdminMeData, type DashboardData } from "@/lib/admin-api";
 import { cn } from "@/lib/cn";
+import { BrandMark } from "@/components/BrandMark";
 
 interface NavItem {
   href: string;
@@ -148,8 +149,9 @@ export function AdminChrome({ children }: AdminChromeProps) {
     <div className="grid min-h-screen grid-cols-1 bg-paper-soft md:grid-cols-[240px_1fr]">
       <aside className="flex flex-col gap-1 border-r border-line bg-paper p-4">
         <div className="mb-5 flex items-center gap-2 px-2">
-          <span className="inline-block h-[22px] w-[22px] rounded-md bg-accent" />
-          <span className="font-bold text-ink">Самосайт</span>
+          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Заменили
+              анонимный квадратик без буквы на терракотовый «С» из канона. */}
+          <BrandMark size={22} fontSize={15} />
           <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
             ADMIN
           </span>

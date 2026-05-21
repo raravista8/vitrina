@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!--
+    Самосайт — favicon. Per docs/COPY.md §«Бренд» (v2) — canonical brand-mark:
+    terracotta square (border-radius 27%) with bold cyrillic «С» (Onest 800).
+
+    Picked up automatically by Next.js 14 App Router from `app/icon.svg`.
+    No `layout.tsx` change needed — Next emits `<link rel="icon" href="/icon">`
+    in <head>.
+  -->
+  <rect x="0" y="0" width="64" height="64" rx="17.28" fill="oklch(0.605 0.155 35)"/>
+  <text
+    x="32"
+    y="48"
+    text-anchor="middle"
+    font-family="Onest, Inter, system-ui, sans-serif"
+    font-weight="800"
+    font-size="42"
+    letter-spacing="-1.68"
+    fill="#ffffff"
+  >С</text>
+</svg>
