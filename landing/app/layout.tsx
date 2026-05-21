@@ -7,6 +7,8 @@ import type { Metadata } from "next";
 // сайдбар как «Обратная связь» в follow-up.
 import "./globals.css";
 
+import { BUILD_TAG } from "@/lib/build-info";
+
 const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://samosite.online";
 
 // Yandex.Метрика counter ID. Empty → no script injected (safe default
@@ -159,6 +161,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <head>
+        {/* Build version stamp — позволяет внешним аудиторам / QA / founder
+            за секунду понять «вижу ли я свежее или браузерный/CDN кэш» без
+            чтения git log. Резолвится в `next build` из ENV `BUILD_VERSION`
+            + `BUILD_TIME` (см. `lib/build-info.ts`). Тот же tag доступен
+            JSON-endpoint'ом `GET /version`. */}
+        <meta name="x-build-version" content={BUILD_TAG} />
+
         {/* Yandex.Метрика — first thing in <head> so it counts the hit
             even if the user bails before hydration. Init params match
             metrika.yandex.ru's emitted snippet verbatim:

@@ -124,6 +124,20 @@ fi
 
 # ---- build ------------------------------------------------------------------
 
+# Build-version stamps for landing — `<meta x-build-version>` and
+# `GET /version`. Resolved here (not at npm-build time inside container)
+# because:
+#   • git is available on host, not inside the build container.
+#   • Same value must propagate to BOTH BUILD_VERSION (file Dockerfile ARG)
+#     AND any future BUILD_TIME consumers.
+# Compose interpolates ${BUILD_VERSION} / ${BUILD_TIME} from this shell
+# scope into `landing.build.args` (see docker-compose.yml).
+export BUILD_VERSION
+BUILD_VERSION="$(git rev-parse --short HEAD)"
+export BUILD_TIME
+BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+log "build stamp: BUILD_VERSION=$BUILD_VERSION BUILD_TIME=$BUILD_TIME"
+
 if [[ "$DO_BUILD" == "1" ]]; then
     log "docker compose build (parallel, BuildKit)"
     DOCKER_BUILDKIT=1 "${COMPOSE[@]}" build --pull \
