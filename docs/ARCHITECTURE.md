@@ -333,20 +333,24 @@ backend/
     api/              # FastAPI routers, request/response schemas (layered)
     admin/            # admin views, htmx templates
     core/             # domain logic — НЕТ зависимостей от framework
-      parsing/        # hexagonal: ports.py + adapters/{ymaps,tg,photos}.py (VK/IG dropped per ADR-0009)
-      preview/        # light preview adapters — counts only, <3s budget, fallback to static badge (TG + YMaps)
+      parsing/        # hexagonal: ports.py + adapters/{ymaps,tg,photos,twogis,avito,website}.py
+                      #            9 source detection tiers (v2): ok / soon / unknown — ADR-0009
+      preview/        # `/api/preview` light preview — counts + tier + override_options, <3s budget
       content/        # LLM generation, sanitization, hexagonal; vision routing per photo_type
+      reviews/        # AI-curation (v2): YandexGPT-driven «★ ЛУЧШИЕ» отбор по published-сайтам — ADR-0010
+                      # ports.py + curator.py + prompts/curate.j2 + pii_filter.py
       publishing/     # template rendering, S3 upload
       seo/            # multi-engine submission: Яндекс.Вебмастер + IndexNow + GSC API
       auth/           # бизнес-логика логина/2FA
       consent/        # PII consent ledger
       leads/          # encryption, decryption, rate limit logic; core promise «сам ловит заявки»
       waitlist/       # source_request aggregation (ADR-0009); thresholds + admin alerts
-      notify/         # dispatcher + channels (telegram/max/email/sms) — ADR-0008
+      notify/         # dispatcher + channels (telegram/max/email/sms) — ADR-0008 v2 (explicit channel)
+      contact/        # validator-only auto-detect (v2 — radio takes priority) — ADR-0008 v2
       billing/        # tariffs, subscriptions
     infrastructure/   # adapters concrete: postgres repos, redis client, s3 client, ygpt client
-    workers/          # rq worker entrypoints
-    bot/              # aiogram handlers
+    workers/          # rq worker entrypoints (parser, content, sync, reviews-curation)
+    bot/              # aiogram handlers — `intake.py` + `personal.py` (separate per ADR-0011)
     utils/            # logging, errors, security helpers
   alembic/
   tests/
@@ -357,7 +361,7 @@ backend/
 ```
 
 **Dependency rule (хексагональное ядро для critical paths):**
-- `core/parsing/`, `core/content/`, `core/auth/`, `core/leads/` — никогда не импортируют из `infrastructure/` или `api/`
+- `core/parsing/`, `core/content/`, `core/reviews/`, `core/auth/`, `core/leads/` — никогда не импортируют из `infrastructure/` или `api/`
 - Зависимости идут только внутрь: `api/` → `core/`, `infrastructure/` → `core/`
 - Линтер: `import-linter` с правилами в `.importlinter`
 

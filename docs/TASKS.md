@@ -543,12 +543,214 @@
 
 ---
 
-## Priority summary
+## Epic E10: Brand mark & visuals (v2 — PR-B)
 
-- **P0 tasks** (MVP-blocking): T0.1-0.5, T1.1-1.7, T1.4b (live preview), T2.1-2.6, T3.1-3.4, T3.9, T4.1-4.4, T5.1-5.4, T6.1-6.4, T8.1-8.3, T8.5, T1.6b (SMS)
-- **P1 tasks** (MVP, can ship without if needed): T1.6c (MAX behind flag), T1.6d (TG /start deep-link), T1.8, T3.5, T3.6, T4.5, T6.5, T7.1, T7.2, T8.4
-- **P2 tasks** (post-MVP): T9.1
-- **P3 tasks**: — (none currently)
-- **Removed**: T3.7 (VK adapter — ADR-0009), T3.8 (Instagram archive adapter — ADR-0004)
+> Goal: Терракотовый логотип `<С>` (Onest 800) везде вместо текущей оранжевой плашки без буквы
+> Definition of Done: Логотип в админке, customer-site footer, favicon, og-image, email-шаблонах, TG-bot welcome messages
+> Depends on: E0
 
-Recommended execution order = epic order (E0 → E1 → ... → E9), with E6 starting in parallel with E5 (lawyer/RKN have async cycle times). MAX-adapter (T1.6c) ждёт VK Business Suite verification — параллельный track к основной разработке.
+### T10.1 [P0] `<Logo>` + `<BrandMark>` React-components
+- **Files**: `landing/components/Logo.tsx`, `landing/components/BrandMark.tsx`
+- **Acceptance**: Per `tokens.jsx` canon — терракотовый квадрат `radius: 0.27 × size`, Onest 800, размер пропорционален prop `size`, кириллическая «С» с optical centering paddingBottom 4% от size
+
+### T10.2 [P0] Применить `<BrandMark>` в admin chrome
+- **Files**: `landing/components/admin/AdminChrome.tsx`, `landing/components/admin/Login.tsx`
+- Заменить текущий `<span className="bg-orange-700">` без буквы
+
+### T10.3 [P0] Customer-site footer watermark (plan=free)
+- **Files**: `sites-template/components/footer.html.j2`
+- Терракотовый mini-logo + «Сделано на Самосайте →» (вместо «Сделано на Витрине»). Link на `samosite.online?ref=<subdomain>` для PLG-метрики
+
+### T10.4 [P0] Favicon + og-image
+- **Files**: `landing/public/favicon.{ico,svg}`, `landing/public/og-image.png`
+- Генерировать из `<Logo size=512>` через скрипт `infra/scripts/generate-brand-assets.sh`
+
+### T10.5 [P1] Email & TG-bot brand strings
+- **Files**: `backend/app/templates/emails/*.html.j2`, `backend/app/bot/handlers/*.py`
+- Все строки welcome / notification / reminder используют «Самосайт» (не «Витрина»), bot-sender = `@SamositeBot` (не `@VitrinaBot`)
+
+---
+
+## Epic E11: Landing v2 (PR-C)
+
+> Goal: Перенести landing-канон `landing-samosite.jsx` → `landing/`
+> Definition of Done: Все 8 секций живут на проде, Lighthouse ≥ 90 mobile, COPY.md §2 — single source of truth
+> Depends on: E10
+
+### T11.1 [P0] Hero без eyebrow и без benefits-stack
+- **Files**: `landing/components/Hero.tsx`
+- Удалить eyebrow `<div className="category-eyebrow">САЙТ ДЛЯ ЗАЯВОК...</div>` и benefits-stack `<BenefitsStack />`
+- H1 «Сайт, который сам себя ведёт и приносит вам заявки», microcopy «Первый месяц…» оставить
+- Удалить inline supported-source list (теперь в Platforms-секции)
+
+### T11.2 [P0] Examples-section (3 кейса с mobile carousel)
+- **Files**: `landing/components/Examples.tsx`, `landing/content/examples.ts`
+- 3 fixture-кейса (Студия маникюра Анны / Барбершоп Brest / Лена-психолог); каждая карточка с photo + услуги + 1-2 отзыва + mini-gallery + CTA
+- Mobile: `scroll-snap-type: x mandatory; scroll-snap-align: start; min-width: 86vw` + индикатор «← листайте →»
+
+### T11.3 [P0] Story-section (6 шагов зигзаг)
+- **Files**: `landing/components/Story.tsx`
+- 6 steps с per-step палитрой (peach/butter/sky/sage/rose/lavender), 2px чёрная рамка + 6px hard-shadow, стикер «ШАГ N» rotate(-12deg), dashed-connectors между
+- Копи из COPY.md §2.4
+
+### T11.4 [P0] Platforms-section (2 явных списка)
+- **Files**: `landing/components/Platforms.tsx`
+- «ДОСТУПНО СЕЙЧАС» (зелёные чипы) + «СКОРО ПОДКЛЮЧИМ» (амбер-серые с «СКОРО»)
+- Под списком: «Не нашли свою площадку? [Загрузить фото →]»
+
+### T11.5 [P0] Big features (4 новых карточки)
+- **Files**: `landing/components/BigFeatures.tsx`
+- 4 карточки из COPY.md §2.6: САМ ОБНОВЛЯЕТСЯ / САМ ВЫБИРАЕТ ОТЗЫВЫ / САМ ЛОВИТ ЗАЯВКИ / ВЫ — ХОЗЯИН
+- Каждая = kicker (mono uppercase) + glyph + h3 + body
+
+### T11.6 [P0] Free-month CTA (тёмный блок)
+- **Files**: `landing/components/FreeMonthCTA.tsx`
+- Тёмный фон `oklch(0.20 0.020 60)`, gift-glyph, H2 «Первый месяц — бесплатно», вторичный CTA
+
+### T11.7 [P0] Nav + Footer
+- **Files**: `landing/components/Nav.tsx`, `landing/components/Footer.tsx`
+- Nav: лого + 4 ссылки (desktop) / только «Войти» (mobile)
+- Footer: лого + «© Самосайт · samosite.online · все данные хранятся в РФ»
+
+### T11.8 [P0] Lighthouse ≥ 90 после перепаковки
+- **Verification**: CI step проверяет Performance/SEO/Accessibility ≥ 90 mobile
+
+---
+
+## Epic E12: Intake 3-step + two-bot (PR-D)
+
+> Goal: 3-шаговая модалка с explicit channel radio + два разведённых TG-бота
+> Definition of Done: Старая single-step модалка удалена; новые endpoints живут; tests E2E зелёные
+> Depends on: E10 (logo в модалке)
+
+### T12.1 [P0] Update `POST /api/submit-application` schema
+- **Files**: `backend/app/api/routers/applications.py`, `backend/app/api/schemas/applications.py`
+- Принять `{source_url, source, source_override, channel, contact, consent_v, captcha_token}` per FR-002a v2
+- 400 `invalid_contact_for_channel` если mismatch
+
+### T12.2 [P0] New endpoint `GET /api/preview` v2
+- **Files**: `backend/app/api/routers/preview.py`, `backend/app/core/preview/service.py`
+- Per FR-005 v2 — вернуть `{source, tier, counts, override_options}` для 9 платформ
+- Adapters: расширить detection с 5 → 9 (добавить `vk`, `whatsapp`, `youtube` детекторы в `tier=soon`)
+
+### T12.3 [P0] New endpoint `GET /api/tg-bot-personal-status`
+- **Files**: `backend/app/api/routers/applications.py`, `backend/app/bot/personal.py`
+- Per FR-002d — polling-friendly, returns `{started: bool}`, rate-limited 60 req/min per IP
+
+### T12.4 [P0] New endpoint `POST /api/submit-application/finalize-via-email`
+- **Files**: `backend/app/api/routers/applications.py`
+- Per FR-002e — конвертирует stuck `channel=telegram` → `channel=email`, сохраняя link + другие fields
+- Audit log: `admin_actions` entry
+
+### T12.5 [P0] Frontend 3-step wizard
+- **Files**: `landing/components/SubmitModal.tsx`, `landing/components/intake/Step1Link.tsx`, `Step2Channel.tsx`, `Step3BotInvite.tsx`
+- Step 1: live preview, override popover, fallback-photo link
+- Step 2: **explicit radio** (TG/Phone/Email/MAX), под-канал-specific input, checkbox ОПД
+- Step 3: deep-link `tg://resolve?domain=SamositeBot`, polling, «получить ссылку на почту» fallback
+- Back-button на шагах 2 и 3 (pill слева от прогресса)
+
+### T12.6 [P0] Register `@SamositeBot` in BotFather + wire personal-bot
+- **Files**: `backend/app/bot/personal.py`, `backend/app/bot/main.py` (split into intake+personal), `infra/docker-compose.yml`
+- Per ADR-0011 — `TG_PERSONAL_BOT_TOKEN` env, отдельный Dispatcher
+- `core/notify/channels/telegram.py` использует `TG_PERSONAL_BOT_TOKEN` (не intake-token)
+
+### T12.7 [P0] Remove old auto-detect contact UX
+- **Files**: `landing/components/SubmitModal.tsx`, `landing/lib/contact-detect.ts` (refactor → validator-only)
+- `lib/contact-detect.ts` остаётся как валидатор (не detector flow-control). Удалить B5 progressive phone autoformat.
+
+### T12.8 [P0] E2E tests для 3-шагового флоу
+- **Files**: `landing/__tests__/SubmitModal.test.tsx`, `backend/tests/integration/intake/`
+- Тесты: каждый канал × {happy, mismatch, back-button, fallback-email}
+
+---
+
+## Epic E13: AI review curation (PR-E, per ADR-0010)
+
+> Goal: Реализовать backend для feature «САМ ВЫБИРАЕТ ОТЗЫВЫ»
+> Definition of Done: Cron работает, customer-сайты рендерят curated отзывы, edge cases покрыты
+> Depends on: — (можно параллельно с C/D)
+
+### T13.1 [P0] DB migration `site_reviews_curated`
+- **Files**: `backend/alembic/versions/0007_reviews_curation.py`
+- Поля: `id, site_id, picked_at, model_version, prompt_version, curated_review_ids (int[]), reasoning, audit_payload (jsonb)`
+
+### T13.2 [P0] `core/reviews/` module (ports + service + adapters)
+- **Files**: `backend/app/core/reviews/{ports.py,service.py,curator.py,prompts/curate.j2,pii_filter.py}`
+- `curator.py::curate(reviews, category) -> CurationResult`
+- `pii_filter.py` — strict regex post-LLM (защита second-line per FR-100e)
+
+### T13.3 [P0] Cron `weekly_curate_reviews`
+- **Files**: `backend/app/workers/sync.py` (extend) ИЛИ `backend/app/workers/reviews.py` (new)
+- Per ADR-0010 — каждый вторник 04:00 MSK, по `sites.status=published`
+
+### T13.4 [P0] Jinja2 рендер `is_top_pick` badge
+- **Files**: `sites-template/components/reviews.html.j2`
+- Per COPY.md §4.3 — 2×N grid + badge `★ ЛУЧШИЙ` на топ-1/2 + строка «N отзывов на <source-name>»
+
+### T13.5 [P0] Edge cases (per FR-100b/c)
+- **Verification**: pytest fixtures `tests/integration/reviews/test_edge_cases.py`
+- Кейсы: <4 reviews, all ≤3★, LLM garbage, malformed JSON, URL outside allowlist
+
+### T13.6 [P1] Admin view `/admin/sites/{id}/reviews-curation`
+- **Files**: `landing/app/admin/sites/[id]/reviews/page.tsx`, `backend/app/api/routers/admin/reviews.py`
+- Посмотреть последний reasoning, manual override curated_ids
+
+### T13.7 [P1] Feedback alert founder'у когда все отзывы ≤3★
+- **Files**: `backend/app/core/reviews/curator.py`, integrates with `core/notify/dispatcher.py`
+
+---
+
+## Epic E14: Customer-site v2 (PR-F)
+
+> Goal: Перенос customer-канона `screens-customer.jsx` → `sites-template/`
+> Definition of Done: Trust-row, gallery mosaic, reviews-секция, services mono-formatting, watermark v2
+> Depends on: E10 (logo), E13 (reviews data contract)
+
+### T14.1 [P0] Hero с trust-row + photo caption
+- **Files**: `sites-template/components/hero.html.j2`
+- `<N> лет опыта · <M>+ клиентов · <rating> ★` под H1
+- Caption на hero-фото: `ИЗ ИСТОЧНИКА · <photos_count> ФОТО`
+
+### T14.2 [P0] Gallery 4-col mosaic с первой 2×2 плиткой
+- **Files**: `sites-template/components/gallery.html.j2`
+- CSS-grid 4-col, `first-child { grid-column: span 2; grid-row: span 2 }`
+- Заголовок mono-подпись: «обновляется из источника еженедельно»
+
+### T14.3 [P0] Reviews-секция «Что говорят клиенты»
+- **Files**: `sites-template/components/reviews.html.j2`
+- Per T13.4 — рендерит `reviews_curated`, badge на топ-1/2, строка «N отзывов на <source>»
+
+### T14.4 [P0] About — 4 буллета «что включено»
+- **Files**: `sites-template/components/about.html.j2`
+- Контент per мастер: стерильные материалы / гарантия / парковка / детям-friendly
+
+### T14.5 [P0] Services с mono price+duration
+- **Files**: `sites-template/components/services.html.j2`
+- `<name> · <duration_mono>` слева · `<price_mono>` справа
+- Шрифт JetBrains Mono для цены/длительности
+
+### T14.6 [P0] Footer watermark v2
+- **Files**: `sites-template/components/footer.html.j2`
+- Per T10.3 — «Сделано на Самосайте →» с ref-param
+
+### T14.7 [P0] Real photos через `/render` proxy (без Unsplash)
+- **Files**: `backend/app/core/publishing/render.py`
+- Customer-сайты используют Yandex Object Storage URL (не Unsplash placeholders из канона)
+
+---
+
+## Priority summary (v2)
+
+- **P0 tasks (MVP-blocking) v2**: T0.1-0.5, T1.1-1.7, T1.4b (live preview), T2.1-2.6, T3.1-3.4, T3.9, T4.1-4.4, T5.1-5.4, T6.1-6.4, T8.1-8.3, T8.5, T1.6b (SMS), **+T10.1-10.4 (brand), T11.1-11.8 (landing v2), T12.1-12.8 (intake v2), T13.1-13.5 (reviews curation), T14.1-14.7 (customer-site v2)**
+- **P1 tasks (MVP, ship without if needed)**: T1.6c (MAX), T1.6d (TG /start), T1.8, T3.5, T3.6, T4.5, T6.5, T7.1, T7.2, T8.4, **T10.5 (email/bot brand), T13.6-13.7 (admin reviews UI + alert)**
+- **P2 tasks (post-MVP)**: T9.1
+- **Removed**: T3.7 (VK adapter — ADR-0009), T3.8 (Instagram archive — ADR-0004)
+- **Superseded by v2** (do NOT execute as-written, see new tasks):
+  - T1.5 (old single-step modal with auto-detect) → **T12.5** (3-step + radio)
+  - T2.5 (customer-site Jinja2 single universal) → **T14.1-14.7** (v2 layout)
+
+### Execution order
+
+E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 → E8 → E9 (legacy MVP path)
+
+**v2 overlay** (after #56 «UX batch 2» merge): A (docs v2 — THIS PR) → B (E10 brand) → C (E11 landing) → D (E12 intake+bots) → E (E13 reviews) → F (E14 customer-site). Sequential, см. COPY.md §10.
