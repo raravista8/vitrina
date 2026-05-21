@@ -63,5 +63,5 @@ Python 3.12 + FastAPI + SQLAlchemy 2.0 + Postgres 16 + Redis (RQ) + Jinja2 (site
 - @docs/ARCHITECTURE.md — how it fits together
 - @docs/SECURITY.md — threat model + ФЗ-152 controls (READ before auth/crypto/parser/leads changes)
 - @docs/TASKS.md — current backlog with stable IDs
-- @docs/adr/ — locked-in decisions; ADR-0004/0005 = IG/TG legal strategy; ADR-0008 = multi-channel contact
+- @docs/adr/ — locked-in decisions; ADR-0004/0005 = IG/TG legal strategy; ADR-0008 = multi-channel contact (v2: explicit radio, not auto-detect); ADR-0010 = AI review curation (NEW v2); ADR-0011 = two-bot architecture (@SamositeIntakeBot for source parsing vs @SamositeBot for user notifications — NEVER confuse the two)
 - @CONTRIBUTING.md — PR checklist

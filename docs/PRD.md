@@ -56,82 +56,66 @@
 
 ---
 
-## 4. User scenarios
+## 4. User scenarios (v2)
 
-> **Product principle: zero-friction Hero.** Главная страница `samosite.online` имеет **один input** для ссылки на источник. Без таб-навигации, без выбора «откуда», без отдельного «выберите источник» экрана. Source type определяется **client-side regex** мгновенно (<100ms) после paste. Fallback-пути (фото, TG-экспорт, VK) — текстовые ссылки под input, не вкладки.
+> **Product principle (v2).** Главная страница `samosite.online` имеет **один input** для ссылки на источник и **3-шаговую модалку** (link → channel+contact → bot-start или confirmation). Source type определяется backend-вызовом `/api/preview` (≤300ms debounce, 3s upstream timeout). Fallback-пути (фото, TG-экспорт) — текстовые ссылки под input. См. COPY.md §3 для canonical UX.
 
-> **Instagram, VK, MAX, 2GIS, Avito, WhatsApp Catalog, YouTube, Дзен, собственный сайт** — все в **waitlist через feedback-form** (см. ADR-0009). При попытке вставить ссылку с одного из этих ресурсов на Hero — юзер видит inline-сообщение «Этот источник скоро будет, оставьте email» (это и есть waitlist). **Параллельно** юзеру предлагается S4 (фото-флоу) который **принимает скриншоты** профилей соцсетей — это закрывает 80% IG/VK-потребности без обращения к серверам соответствующих платформ.
+> **9 платформ в детекторе** (FR-005):
+> - `tier=ok` (MVP, парсер работает): `yandex_maps`, `telegram`, `twogis`, `avito`, `website`
+> - `tier=soon` (waitlist, парсер пока нет): `vk`, `instagram`, `whatsapp`, `youtube`
+> - `tier=unknown` (любая другая http(s) ссылка): open input «Какой это источник?»
 
-### S1. Создание сайта из ссылки (Telegram-канал / Яндекс.Карты) — основной флоу
-1. Юзер открывает `samosite.online` — видит Hero с одним input-полем и CTA «Создать сайт»
-2. Вставляет ссылку (`yandex.ru/maps/...`, `t.me/channel`, `@channel`)
-3. Client-side regex определяет источник за <100ms и показывает бейдж под полем: `✓ Яндекс.Карты` / `✓ Telegram`
-4. Жмёт «Создать сайт» → открывается **modal step 2 с одним полем контакта** + чекбокс согласия на ПДн (не предзаполнен). Placeholder: «Email, телефон, @telegram или MAX». Frontend auto-detect определяет тип контакта по regex.
-5. Submit → confirmation screen «Готовим ваш сайт, напишем когда будет готов через 2-24 часа» (MVP — ручная модерация фаундером)
-6. Бэкенд: парсер достаёт данные источника → LLM генерит контент → sanitization → founder в админке жмёт «Опубликовать»
-7. Юзер получает уведомление в указанный канал со ссылкой `studia-anna.samosite.online`
+### S1. Создание сайта из ссылки (любой `tier=ok` источник) — основной 3-шаговый флоу
+1. Юзер открывает `samosite.online` — видит Hero (без eyebrow, без benefits stack) с одним input-полем и CTA «Собрать мой Самосайт»
+2. Вставляет ссылку. Debounce 300ms → `GET /api/preview?url=...` → зелёная плашка `✓ Распознали: Telegram-канал — нашли 47 постов и 12 фото` под полем
+3. (Опционально) если распознано не то — кликает «не то?» → popover со списком `override_options` → выбирает правильный → бейдж обновляется
+4. Жмёт «Собрать мой Самосайт» → открывается **3-шаговая модалка**, шаг 1 уже завершён
+5. **Шаг 2 — «Куда вам писать?»**: явный radio TG / Phone / Email / MAX, поле под выбранный канал с specific placeholder, checkbox согласия на ПДн (не предзаполнен). Submit → `POST /api/submit-application` с `{source_url, source, source_override, channel, contact, consent_v, captcha_token}`. 201 → `{app_id, status: 'pending'}`
+6. **Шаг 3 (только если `channel=telegram`)** — «Откройте бота на 1 минуту»: deep-link `tg://resolve?domain=SamositeBot`, polling `GET /api/tg-bot-personal-status?app_id=<id>` каждые 5 сек. Когда `{started:true}` — confirmation screen. **Fallback всегда виден:** «Нет Telegram или не получается? Получить ссылку на почту →» → `POST /api/submit-application/finalize-via-email` `{app_id, email}`
+7. **Для остальных каналов** (phone/email/max) шаг 3 пропускается — сразу confirmation: «Готовим ваш сайт, напишем на <маска>. Через 2–24 часа»
+8. Бэкенд: парсер достаёт данные источника → LLM генерит контент → sanitization → founder в админке жмёт «Опубликовать»
+9. Юзер получает уведомление в указанный канал со ссылкой `studia-anna.samosite.online`
 
-**Contact auto-detect regex** (client-side, в порядке проверки):
+**Кнопка «Назад»** появляется на шагах 2 и 3 как pill слева от прогресс-бара. Сохраняет введённые данные предыдущих шагов.
 
-| Pattern | Type | Validation |
-|---|---|---|
-| `^@?[a-z0-9_]{5,32}$` (only letters/digits/_) | Telegram username | min 5 chars per TG rules; normalize to `@name` |
-| `t\.me/<name>` | Telegram | extract name, normalize |
-| `max\.ru/[a-z0-9_]+` или `max://...` | MAX | extract identifier [verify: точный формат MAX deeplink] |
-| `^\+?[0-9 ()\-]{10,15}$` | Phone | `phonenumbers` library server-side, normalize to E.164 |
-| `^[^@\s]+@[^@\s]+\.[a-z]{2,}$` | Email | RFC-light |
-| Иначе | Error inline: «Введите email, телефон, @имя в Telegram или MAX» |
+**Bot distinction (важно).** В шаге 3 — `@SamositeBot` (personal). В экране #4 для приватных TG-каналов (см. S2 ниже) — `@SamositeIntakeBot` (intake). Это разные боты с разными ролями. См. ADR-0011.
 
-**Auto-detect regex источника** (Hero input, отдельно от контакта):
+### S2. Telegram — variant с TG-источником
 
-| Pattern | Source / Action |
-|---|---|
-| `yandex\.[a-z]+/maps/` | ✓ Яндекс.Карты (MVP) |
-| `t\.me/` или `^@[a-z0-9_]+$` | ✓ Telegram (MVP) |
-| `instagram\.com/`, `instagr\.am/` | **Waitlist + photo CTA**: «Instagram скоро будет. Пока — сделайте скриншот вашего профиля + фото работ и загрузите → [Создать из фото]» |
-| `vk\.com/`, `vkontakte\.ru/` | **Waitlist + photo CTA**: «ВКонтакте скоро. Пока — скриншот страницы + фото работ → [Создать из фото]» |
-| `2gis\.ru/`, `avito\.ru/`, `ozon\.ru/`, `wildberries\.ru/`, `wa.me/`, `youtube\.com/`, `dzen\.ru/`, `wb\.ru/` | **Waitlist only**: «`<источник>` скоро будет, оставьте email» |
-| Любая `http(s)://` ссылка не из списка | **Waitlist + open field**: «Не узнали источник. Какой это? [open input] — мы напишем когда добавим» |
-| Не URL | Error: «Поддерживаем Telegram, Яндекс.Карты. Или [📷 загрузите фото]» |
+Если URL шага 1 = `t.me/<channel>` (`source=telegram`, `tier=ok`):
+1. Шаги 1+2 как в S1
+2. После шага 3 (юзер `/start`-нул `@SamositeBot`) и captcha — модалка показывает экран #4: «Канал приватный — пустите бота на 5 минут»
+3. Юзер добавляет `@SamositeIntakeBot` админом своего канала, polling каждые 5 сек на admin-status
+4. Когда бот стал админом → парсинг через Bot API → bot auto-leaves → confirmation screen
+5. Если бот не может стать админом → fallback: парсинг публичного `t.me/s/<channel>` (Tier 2 ADR-0005)
+6. Если канал приватный и owner не хочет пускать бота → ссылка «загрузить HTML-экспорт канала» (Tier 3)
 
-### S2. Telegram — variant внутри S1 с бот-flow
-1. Юзер вставил `t.me/channel` или `@channel` на Hero → S1 step 3-4
-2. После submit в **той же модалке** появляется блок: «Чтобы взять посты канала — добавьте `@SamositeIntakeBot` админом на 5 минут, мы автоматически выйдем»
-3. Видео-гайд 20 сек + статус «жду пока добавите бота» с polling каждые 5 сек
-4. Когда бот стал админом → парсинг через Bot API → confirmation screen
-5. Если бот не может стать админом (`channels with attachable bots disabled`) → fallback на парсинг публичного `t.me/s/<channel>` (Tier 2 из ADR-0005)
-6. Если канал приватный → **отдельный entry-point** под Hero: ссылка «📨 У меня закрытый канал — загрузить экспорт» → загрузка HTML-экспорта (Tier 3)
+### S3. Источник в waitlist (`tier=soon` — VK / Instagram / WhatsApp / YouTube)
+1. Юзер вставил ссылку, `/api/preview` вернул `tier=soon, source=instagram`
+2. Hero показывает inline warn-soft (амбер) панель: «⚠️ Instagram скоро будет — оставьте email, напишем когда добавим»
+3. Параллельная CTA «или создайте из фото сейчас» → S4 с `photo_type=profile_screenshot`
+4. Main CTA «Собрать мой Самосайт» — открывает PhotoDrawer (UX batch 1 fix, #54), а не модалку с stuck-source-type
+5. Email submit → запись в `feedback` с `type=source_request, source_name=instagram`, для аналитики
+6. Когда `source_name` набирает ≥10 голосов → founder приоритизирует ADR + спринт; всем waitlist'нувшимся уходит email
 
-### S3. Источник в waitlist (VK / Instagram / 2GIS / другое) — захват email
-1. Юзер вставил ссылку, которая auto-detect определил как «known but not MVP» (VK, IG, 2GIS, etc) OR любую другую ссылку из waitlist-белого списка
-2. Hero показывает inline-сообщение: «`<источник>` скоро будет. Оставьте email — напишем когда будет готово»
-3. Если источник = IG или VK → дополнительная CTA «Или сделайте скриншоты профиля + фото работ — сайт будет готов сейчас [Создать из фото]» → редирект на S4 с pre-selected `photo_type=profile_screenshot`
-4. Email submit → запись в `feedback` с `type=source_request`, `source_name=<detected>`, `source_url_raw=<original>` для аналитики
-5. Когда `source_name` набирает ≥10 голосов в feedback → founder приорит ADR + спринт реализации, всем waitlist'нувшимся уходит email-уведомление
+### S4. Фото — fallback flow (без изменений)
+1. Под Hero — линк `📷 Загрузить фото работ, скриншот профиля или визитку →`
+2. Click → PhotoDrawer выезжает снизу (mobile-first) / модалка (desktop)
+3. Drag & drop 5–30 файлов (JPEG/PNG/WebP/HEIC, max 10MB/file, max 100MB total)
+4. Per-файл authoclassify vision-LLM (`work` / `profile_screenshot` / `business_card` / `booklet`)
+5. Форма: название бизнеса, категория (12 ICP), город, контакты + checkbox ОПД
+6. LLM-pipeline по `photo_type` (без изменений vs v1)
+7. Confirmation screen
 
-### S4. Фото — fallback flow + способ обслужить IG/VK-юзеров через скриншоты
-1. Под Hero — текстовая ссылка `📷 Нет ссылки? Загрузить фото — работы, скриншот профиля, визитка →`
-2. Клик → drawer выезжает снизу (mobile-first) или модалка (desktop)
-3. Drag & drop 5-30 файлов (JPEG/PNG/WebP/HEIC, max 10MB/file, max 100MB total)
-4. **Для каждого файла** — авто-категория от vision-LLM ИЛИ юзер вручную выбирает из dropdown: `work` (работа/портфолио), `profile_screenshot` (шапка профиля соцсети), `business_card` (визитка), `booklet` (буклет/меню/прайс)
-5. Форма: название бизнеса, категория (dropdown из 12 ICP — маникюр, барбер, тату-мастер, фитнес-тренер, психолог, фотограф, кондитер, кулинар, репетитор, мастер ресниц, бровист, прочее), город, контакты (телефон/TG/WhatsApp), email + чекбокс согласия на ПДн
-6. LLM-pipeline обрабатывает каждый `photo_type` по-разному:
-   - `work` → галерея работ + alt-теги
-   - `profile_screenshot` → vision-LLM извлекает bio, имя, кол-во подписчиков/постов как social proof + услуги если перечислены
-   - `business_card` → vision-LLM извлекает контакты, имя бренда
-   - `booklet` → vision-LLM извлекает услуги, цены
-   - Все типы → vision-LLM подтверждает соответствие категории, отбрасывает шум
-7. Confirmation screen — далее как S1
+**Этот флоу обслуживает IG/VK/WhatsApp/YouTube юзеров** через скриншоты — без обращения к серверам Meta/VK/Google.
 
-**Этот флоу обслуживает IG- и VK-юзеров** без обращения к серверам Meta/VK: юзер фотографирует **свой собственный экран** = собственная фотография = легально полностью.
-
-### S5. Получение заявки на готовом клиентском сайте
+### S5. Получение заявки на готовом customer-сайте (без изменений)
 1. Конечный посетитель приходит на `studia-anna.samosite.online`, скроллит галерею, жмёт «Записаться»
-2. Открывается inline-форма (не отдельная страница): имя, телефон, сообщение опционально
-3. Yandex SmartCaptcha invisible + honeypot + rate limit отсеивают ботов
-4. Поля `name / phone / message` шифруются Fernet перед записью в `leads`
-5. Аня (владелица сайта) получает TG-уведомление от бота Самосайта с маскированными данными (`Анна П***, +7***1234`) и ссылкой в личный кабинет для расшифровки
-6. Аня тапает ссылку → попадает в свой кабинет → видит полные данные за magic-link auth
+2. Inline-форма: имя, телефон, сообщение опц.
+3. Yandex SmartCaptcha + honeypot + rate limit
+4. Шифрование `name/phone/message` через Fernet перед записью в `leads`
+5. Аня получает TG-уведомление от **`@SamositeBot`** (не intake!) с маской `Анна П***, +7***1234` + ссылка
+6. Magic-link auth → полные данные в admin
 
 ---
 
@@ -140,15 +124,18 @@
 ### Landing & Application Intake
 
 - **FR-001** *(Ubiquitous)* The system shall expose a public landing page at `samosite.online` rendered server-side for SEO.
-- **FR-002** *(Event-driven)* When a visitor submits the application form, the system shall persist the application, send a notification to the founder, and respond within 1s with a confirmation page.
-- **FR-002a** *(Event-driven)* When a contact value is entered in the application form, the system shall server-side detect contact type (email / phone / telegram / max) via the same regex used client-side, normalize the value, and persist both `contact_type` and `contact_value` on `users`.
-- **FR-002b** *(Event-driven)* When the system needs to notify a user (site ready, lead arrived, system message), the system shall route via the user's `contact_type` with fallback chain: telegram → max → email → SMS. If primary channel delivery fails (e.g. TG user hasn't started conversation with our bot), the system shall try next channel if alternate contact exists.
+- **FR-002** *(Event-driven)* When a visitor submits the 3-step application flow (link → channel+contact → optional bot-start), the system shall persist the application, send a notification to the founder, and respond within 1s with a confirmation screen. See COPY.md §3 for the canonical UX.
+- **FR-002a** *(Event-driven, v2)* The `POST /api/submit-application` endpoint shall require an explicit `channel` enum field (`telegram` / `phone` / `email` / `max`) AND a `contact` field. The system shall validate that `contact` matches the shape of `channel` (E.164 for phone, `@name` for telegram, `name@host` for email, MAX canonical for max). If `contact` ↔ `channel` mismatch — HTTP 400 `invalid_contact_for_channel`. See ADR-0008 v2.
+- **FR-002b** *(Event-driven)* When the system needs to notify a user (site ready, lead arrived, system message), the system shall route via the user's `contact_type` with fallback chain: telegram → max → email → SMS. If primary channel delivery fails (e.g. TG user hasn't started conversation with `@SamositeBot`), the system shall try next channel if alternate contact exists.
 - **FR-002c** *(Ubiquitous)* SMS notifications shall be sent ONLY after successful site publication (post manual review), not on initial application submission, to prevent SMS-cost abuse from spam.
+- **FR-002d** *(Event-driven, new v2)* When step 3 of the 3-step flow is reached AND `channel=telegram`, the frontend shall poll `GET /api/tg-bot-personal-status?app_id=<id>` every 5 seconds with `application_id` from step 2. The endpoint shall return `{started: true}` once the user has invoked `/start` in `@SamositeBot`. Polling stops on 200+`started=true` or when the user dismisses the modal. Max polling window 5 minutes.
+- **FR-002e** *(Event-driven, new v2)* The `POST /api/submit-application/finalize-via-email` endpoint shall accept `{app_id, email}` and convert a stuck `channel=telegram` application to `channel=email` without losing previously-entered link or other state. Used as the always-visible "Нет Telegram или не получается?" escape hatch on step 3.
 - **FR-003** *(Unwanted)* If the application form is submitted without the PII consent checkbox checked, then the system shall reject the request with HTTP 400 and a human-readable error.
 - **FR-004** *(State-driven)* While the rate limit for an IP exceeds 3 applications per hour, the system shall return HTTP 429 with a `Retry-After` header.
-- **FR-005** *(Event-driven)* When a URL is pasted into the Hero input, the system shall auto-detect source type via client-side regex within 100ms and display a confirmation badge (`✓ Яндекс.Карты`, `✓ Telegram`, `✓ ВКонтакте`) or an error with fallback options (photo upload, TG export).
-- **FR-005a** *(Event-driven)* After auto-detect succeeds, the system shall fetch a lightweight preview from the source within 3 seconds and display content counts in the badge (e.g. `✓ Telegram — нашли 47 постов и 12 фото`). If the preview request times out >3s OR fails, the system shall display the static badge without counts and proceed normally. Preview is **light** (single API call per source, no full parse).
-- **FR-006** *(Unwanted)* If a pasted URL matches Instagram patterns (`instagram\.com/`, `instagr\.am/`), then the system shall display a redirect message proposing the photo-upload flow and shall NOT attempt to fetch the URL.
+- **FR-005** *(Event-driven, v2)* When a URL is pasted into the Hero input, the system shall debounce ≤300ms and call `GET /api/preview?url=<encoded>`. Response: `{source, tier, counts, override_options}` where `source ∈ {yandex_maps, telegram, twogis, avito, website, vk, instagram, whatsapp, youtube, unknown}` (9 platforms), `tier ∈ {ok, soon, unknown}`, `counts` is a localised string for the badge or `null`, `override_options` is `SourceId[]` for the "не то?" popover.
+- **FR-005a** *(Event-driven, v2)* `/api/preview` enforces a hard 3-second timeout per upstream call. On timeout OR upstream error, `tier=ok` sources degrade to a static badge without `counts`. `tier=soon` always returns immediately (no upstream call). The preview endpoint is rate-limited 10 req/min per IP to prevent reconnaissance.
+- **FR-005b** *(Event-driven, new v2)* When `tier=ok` badge is shown, the user can click "не то?" → popover with `override_options`. Selecting an override re-submits the URL with `source_override=true` to `POST /api/submit-application` so the parser uses the user-chosen source even if it doesn't match the URL pattern.
+- **FR-006** *(Unwanted)* If a pasted URL matches a `tier=soon` source pattern (VK, Instagram, WhatsApp-каталог, YouTube), the frontend shall show inline waitlist-capture (warn-soft amber panel + email field + auto-submit to `feedback type=source_request`) AND a parallel CTA «или создайте из фото сейчас» linking to S4. The main CTA opens PhotoDrawer (per UX batch 1 fix, #54).
 
 ### Source parsers
 
@@ -203,6 +190,15 @@
 
 - **FR-080** *(State-driven)* While a user's `plan` is `trial` AND `plan_until > now()`, no charges shall be attempted.
 - **FR-081** *(Event-driven)* When a user upgrades to Pro, the system shall create a ЮKassa recurring subscription with auto-renew opt-out available in one click.
+
+### AI review curation (per ADR-0010, new v2) — core product promise: «сам выбирает отзывы»
+
+- **FR-100** *(State-driven)* While a site's `status = published` AND `last_curated_at < now() - 7 days`, the `weekly_curate_reviews` cron worker shall re-fetch reviews from the source, call YandexGPT 5 Pro with the curation prompt, persist the result to `site_reviews_curated`, and re-render the customer-site template.
+- **FR-100a** *(Ubiquitous)* The curation prompt shall include the canonical filter criteria from ADR-0010 (rating ≥ 4, length ≥ 30 chars, no template "norm/ok", no competitor mentions, no PII beyond first-name+first-letter-of-surname, no toxicity). Reviews wrapping in `<user_content>` tags per FR-020.
+- **FR-100b** *(Unwanted)* If YandexGPT returns malformed JSON, contains URLs outside the allowlist, or fails 3 consecutive times with retry, the system shall fall back to `ORDER BY rating DESC, length(text) DESC LIMIT 6` from the source — same data, no `is_top_pick` badge.
+- **FR-100c** *(Event-driven)* When all reviews in source have rating ≤ 3 (or there are zero reviews), the system shall not render the reviews section at all and shall enqueue a feedback alert to the founder (the site benefits from missing this section more than from showing weak ones).
+- **FR-100d** *(Ubiquitous)* Every curation run shall log to `generation_audits` (audit table per FR-T4.5 / ADR-0006): `site_id, run_id, model_version, prompt_version, input_review_count, output_curated_ids, reasoning, tokens_in, tokens_out, latency_ms`. Retention 90 days.
+- **FR-100e** *(Ubiquitous)* Output from the curator shall pass through `core/reviews/pii_filter.py` — hard regex check that no full surnames, phone numbers, addresses, or other PII slipped through (defensive, layered on top of the prompt instructions). Reviews failing PII-filter are dropped from the curated set.
 
 ### Feedback & waitlist (per ADR-0009)
 
