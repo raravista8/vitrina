@@ -33,6 +33,26 @@ import { Pricing } from "@/components/Pricing";
 import { SocialProof } from "@/components/SocialProof";
 import { Story } from "@/components/Story";
 
+/**
+ * ISR revalidation — Next.js регенерит prerender каждые 60 секунд.
+ *
+ * Это меняет default response header c `cache-control: s-maxage=31536000`
+ * (год) на `cache-control: s-maxage=60, stale-while-revalidate=...`. Цель —
+ * через минуту после deploy любой fetch видит свежее, без необходимости
+ * руками рестартовать контейнер. Аудиторам и QA это критично — иначе
+ * любой кэш (browser / ISP-proxy / CDN) может год показывать старую
+ * версию.
+ *
+ * 60 секунд — баланс: достаточно коротко чтобы аудит-итерации шли быстро,
+ * достаточно длинно чтобы не нагружать сервер при пике трафика (один
+ * regen-cycle на минуту = ≤60 builds/час).
+ *
+ * Static assets (`/_next/static/*`, `/examples/*.jpg`) этим НЕ затрагиваются
+ * — у них content-hash в имени, могут кэшироваться год без риска
+ * расхождения.
+ */
+export const revalidate = 60;
+
 export default function HomePage() {
   return (
     <main id="top">
