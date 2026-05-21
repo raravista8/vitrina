@@ -375,6 +375,30 @@
         }
         footer a { color: var(--sub); }
         footer .brand { color: var(--ink); font-weight: 600; }
+        /* Watermark badge — canonical brand-mark per docs/COPY.md §«Бренд» (v2).
+           Терракотовый квадрат с буквой «С» (Onest 800, optical-centered). */
+        footer .watermark {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        footer .watermark-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background: var(--accent);
+            color: #ffffff;
+            font-family: 'Onest', 'Inter', system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            padding-bottom: 1px;
+        }
         .skip {
             position: absolute;
             left: -9999px;
@@ -492,7 +516,13 @@
     <footer>
         <div class="container">
             <span>© {{ year or 2026 }} {{ organization.name or site_title }} · {{ organization.address or '' }}</span>
-            <a href="https://samosite.online" rel="noopener">
+            {#- Watermark — brand mark «С» + «Сделано на Самосайте». Только для plan=free (см. T10.3 / FR-090 ref).
+                ref-param ведёт виральный PLG-метрику. -#}
+            <a href="https://samosite.online?ref={{ site_subdomain or 'unknown' }}"
+               rel="noopener"
+               class="watermark"
+               aria-label="Сделано на Самосайте">
+                <span class="watermark-logo" aria-hidden="true">С</span>
                 Сделано на <span class="brand">Самосайте</span> →
             </a>
         </div>

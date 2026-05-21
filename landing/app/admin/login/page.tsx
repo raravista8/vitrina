@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 
 import { adminRequest } from "@/lib/admin-api";
 import { cn } from "@/lib/cn";
+import { BrandMark } from "@/components/BrandMark";
 
 type Mode = "totp" | "backup";
 
@@ -123,8 +124,8 @@ export default function AdminLoginPage() {
     <main className="grid min-h-screen place-items-center bg-paper-soft p-6">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-white p-7 shadow-card">
         <div className="mb-5 flex items-center gap-2">
-          <span className="inline-block h-[22px] w-[22px] rounded-md bg-accent" />
-          <span className="font-bold text-ink">Самосайт</span>
+          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). */}
+          <BrandMark size={22} fontSize={15} />
           <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
             ADMIN
           </span>
