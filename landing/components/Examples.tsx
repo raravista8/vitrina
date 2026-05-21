@@ -97,8 +97,17 @@ function ExampleCard({ ex }: { ex: Example }) {
           </blockquote>
         ) : null}
 
-        {/* Mini-gallery — real JPEGs from /public/examples/, palette
-            background as fallback if file is missing. */}
+        {/* Mini-gallery — plain <img> к /examples/<slug>-N.jpg.
+            Намеренно НЕ next/image:
+              • Thumbnails уже маленькие (20-70 KB original) — оптимизация
+                через /_next/image proxy не даёт ощутимого выигрыша.
+              • `/_next/image?url=...` pattern попадает в некоторые EasyList
+                adblocker-правила (видели регрессию: gallery с next/image
+                рендерилась только как palette-gradient placeholder, hero
+                с тем же markup работал — отличие именно adblock-фильтры).
+              • Plain <img loading="lazy"> работает идентично везде.
+            Hero photo остался на next/image — там responsive sizes
+            (33vw/50vw/86vw) реально полезны. */}
         <div className="mt-1 grid grid-cols-4 gap-1.5">
           {ex.gallery.slice(0, 4).map((src) => (
             <div
@@ -106,7 +115,14 @@ function ExampleCard({ ex }: { ex: Example }) {
               className="relative aspect-square overflow-hidden rounded-md"
               style={{ background: PALETTE_GRADIENT[ex.palette] }}
             >
-              <Image src={src} alt="" fill sizes="120px" className="object-cover" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
           ))}
         </div>
