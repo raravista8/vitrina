@@ -1,26 +1,31 @@
 "use client";
 
 /**
- * Submit modal — covers UI Screens #3 (contact step), #4 (TG bot-invite
- * polling), and #5 (confirmation). One Dialog, three internal step
- * states; the user never has to manually advance.
+ * Submit modal v2 — 3-шаговый wizard per docs/COPY.md §3 + canon
+ * `/tmp/samosite-canon/screens-intake.jsx`.
  *
- * Design source: `~/Downloads/vitrina ui/code/SubmitModal.tsx`. The
- * existing T1.5 ApplicationForm contact-detect/consent/captcha logic
- * is inlined into Step 1 here so all three steps share state.
+ * Conceptually 3 шага:
+ *   - **Шаг 1 — Дайте ссылку** живёт на Hero-странице (URL input + paste).
+ *     Модалка открывается УЖЕ с заполненной ссылкой; шаг 1 показан в
+ *     прогресс-индикаторе но без UI («Назад» на шаге 2 закрывает модалку
+ *     и возвращает юзера на Hero к шагу 1).
+ *   - **Шаг 2 — Куда вам писать?** Explicit radio на 4 канала
+ *     (TG / Phone / Email / MAX) — НЕТ auto-detect. Validate против
+ *     выбранного канала. См. ADR-0008 v2 — UX-batch-2 testing fix.
+ *   - **Шаг 3 — Бот-flow** (только если контакт-`channel=telegram`):
+ *     юзер `/start`-ит `@SamositeBot` (personal-бот per ADR-0011);
+ *     polling `/api/tg-bot-personal-status`. Иначе сразу confirmation.
  *
- * Flow:
+ * Legacy `Step2TgBot` (для add-intake-bot-to-source-channel) сохраняется
+ * как **`Step4IntakeChannelBot`** для будущей интеграции — когда source
+ * URL = `t.me/<private_channel>` нужен отдельный экран добавления
+ * `@SamositeIntakeBot` админом в этот канал. На текущей итерации
+ * (PR-D / E12) — frontend channel radio + minimum bot-flow shape;
+ * personal-bot endpoint реализуется в PR-D's backend follow-up
+ * (`/api/tg-bot-personal-status` — см. FR-002d).
  *
- *   step=contact         → POST /api/submit-application → got application_id
- *                          → if sourceType=telegram: step=tg_bot;
- *                            else: step=confirmation
- *   step=tg_bot          → polls GET /api/applications/{id}/tg-bot-status
- *                          every 5s; when {data.added:true} → step=confirmation
- *   step=confirmation    → success + (for TG-contact) QR for @SamositeBot /start
- *
- * Polling is best-effort: closing the modal mid-step-2 aborts the
- * interval; the founder still ingests in the background. Re-opening
- * the modal starts fresh from step=contact.
+ * Polling is best-effort: closing the modal aborts the interval;
+ * the founder still ingests in the background. Re-opening starts fresh.
  */
 
 import * as Dialog from "@radix-ui/react-dialog";
@@ -32,9 +37,8 @@ import { requestCaptchaToken } from "@/lib/captcha";
 import { cn } from "@/lib/cn";
 import {
   type ContactType,
-  badgeFor,
-  detectContact,
   formatPhoneProgressive,
+  validateContactForChannel,
 } from "@/lib/contact-detect";
 
 interface SubmitModalProps {
@@ -113,15 +117,37 @@ export function SubmitModal({ open, onOpenChange, sourceUrl, sourceType }: Submi
 // Step 1 — contact + consent + captcha
 // -----------------------------------------------------------------------------
 
-// User batch 2 (B5): testers reported they reflexively typed email
-// when shown the previous "Email, телефон, @telegram или MAX" —
-// presenting four options with equal weight forced a choice. Email is
-// listed first as the implicit primary (mirrors observed behaviour,
-// and email has the most reliable delivery). Telegram + MAX remain
-// supported via auto-detect; the helper text below the input names
-// them explicitly so users with a TG-only contact aren't left wondering.
-const CONTACT_PLACEHOLDER = "Email или телефон";
-const CONTACT_HELP_TEXT = "Или @имя в Telegram / MAX";
+// v2 (PR-D / E12): explicit channel radio per ADR-0008 v2 + canon
+// screens-intake.jsx. Юзер выбирает канал явно — потом вводит значение
+// под канал-specific placeholder.
+
+interface ChannelOption {
+  value: ContactType;
+  icon: string;
+  label: string;
+  placeholder: string;
+  inputMode: "email" | "tel" | "text";
+}
+
+const CHANNELS: ChannelOption[] = [
+  {
+    value: "telegram",
+    icon: "✈️",
+    label: "Telegram",
+    placeholder: "@your_handle",
+    inputMode: "text",
+  },
+  { value: "phone", icon: "📱", label: "Телефон", placeholder: "+7 ...", inputMode: "tel" },
+  { value: "email", icon: "📧", label: "Email", placeholder: "you@example.ru", inputMode: "email" },
+  { value: "max", icon: "💬", label: "MAX", placeholder: "@your_max_handle", inputMode: "text" },
+];
+
+const CHANNEL_LABEL_INPUT: Record<ContactType, string> = {
+  telegram: "Логин в Telegram",
+  phone: "Номер телефона",
+  email: "Email",
+  max: "Логин в MAX",
+};
 
 interface Step1Props {
   sourceUrl: string;
@@ -140,17 +166,27 @@ interface Step1Props {
 function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: Step1Props) {
   const contactId = useId();
   const consentId = useId();
+  // v2: explicit channel selection — defaults to email (most universal).
+  // Юзер всегда видит radio первым, не «угадывает» что мы примем.
+  const [channel, setChannel] = useState<ContactType>("email");
   const [contact, setContact] = useState("");
   const [consent, setConsent] = useState(false);
   const [pending, setPending] = useState(false);
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
-  const detected = detectContact(contact);
-  const canSubmit = detected !== null && consent && !pending;
+  const isValid = validateContactForChannel(channel, contact);
+  const canSubmit = isValid && consent && !pending;
+
+  function handleChannelChange(next: ContactType) {
+    setChannel(next);
+    // Не очищаем contact при смене канала — если юзер уже ввёл что-то,
+    // оставляем для редактирования. Validation просто перепроверится.
+    setErrorCode(null);
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit || !detected) return;
+    if (!canSubmit) return;
     setPending(true);
     setErrorCode(null);
     try {
@@ -161,6 +197,8 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: S
         body: JSON.stringify({
           source_url: sourceUrl || null,
           source_type: sourceType,
+          // v2 explicit fields — see FR-002a v2 / ADR-0008 v2.
+          channel,
           contact,
           consent_given: consent,
           captcha_token: captchaToken,
@@ -183,74 +221,79 @@ function Step1Contact({ sourceUrl, sourceType, onApplicationCreated, onBack }: S
     }
   }
 
-  // Source-context banner intentionally removed (user batch 1 — U1).
-  // The Hero already shows the detected-source badge above the CTA;
-  // re-rendering it inside the modal both duplicated the signal and
-  // (when Hero passed a stale default for non-MVP URLs) actively
-  // mislabeled the user's input. The `sourceUrl` / `sourceType` props
-  // are still part of the submit payload — they just no longer leak
-  // into the UI here.
-
   return (
     <div>
-      <StepHeader
-        step={2}
-        total={3}
-        title="Куда отправлять заявки и уведомления?"
-        onBack={onBack}
-      />
+      <StepHeader step={2} total={3} title="Куда вам писать?" onBack={onBack} />
       <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-        Один контакт — туда придёт ссылка на ваш сайт и заявки клиентов.
+        Туда придёт ссылка на готовый сайт и заявки клиентов.
       </p>
 
       <form className="mt-5" onSubmit={onSubmit} noValidate>
+        {/* Channel radio — explicit selection, no auto-detect (ADR-0008 v2) */}
+        <fieldset className="mb-4">
+          <legend className="mb-2 text-xs font-medium text-ink-soft">Выберите канал</legend>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {CHANNELS.map((c) => {
+              const checked = c.value === channel;
+              return (
+                <label
+                  key={c.value}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border p-2.5 text-[13px] font-medium transition",
+                    checked
+                      ? "border-accent bg-accent-soft text-accent-ink"
+                      : "border-line bg-white text-ink-soft hover:border-ink-faint",
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="contact-channel"
+                    value={c.value}
+                    checked={checked}
+                    onChange={() => handleChannelChange(c.value)}
+                    className="sr-only"
+                  />
+                  <span aria-hidden>{c.icon}</span>
+                  <span>{c.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        {/* Per-channel input */}
         <label className="mb-1.5 block text-xs font-medium text-ink-soft" htmlFor={contactId}>
-          Ваш контакт
+          {CHANNEL_LABEL_INPUT[channel]}
         </label>
-        <div className="relative">
-          <input
-            id={contactId}
-            type="text"
-            autoComplete="off"
-            spellCheck={false}
-            inputMode="email"
-            placeholder={CONTACT_PLACEHOLDER}
-            value={contact}
-            onChange={(event) => {
-              // User batch 2 (B5): progressive RU-phone formatting as
-              // the user types. Only applied when the raw value already
-              // looks phone-shaped (digits + separators) — emails and
-              // @handles pass through untouched. Server still does the
-              // canonical E.164 normalisation via phonenumbers.
-              const next = event.target.value;
+        <input
+          id={contactId}
+          type="text"
+          autoComplete="off"
+          spellCheck={false}
+          inputMode={CHANNELS.find((c) => c.value === channel)?.inputMode}
+          placeholder={CHANNELS.find((c) => c.value === channel)?.placeholder}
+          value={contact}
+          onChange={(event) => {
+            const next = event.target.value;
+            // Прогрессивный phone format ТОЛЬКО когда channel=phone.
+            // Для других каналов оставляем raw как есть.
+            if (channel === "phone") {
               const formatted = formatPhoneProgressive(next);
               setContact(formatted ?? next);
-            }}
-            className={cn(
-              "h-12 w-full rounded-lg border bg-white pl-3 pr-28 text-[15px] text-ink",
-              "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
-              detected ? "border-line" : contact ? "border-danger" : "border-line",
-            )}
-          />
-          {detected ? (
-            <span
-              aria-live="polite"
-              className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-full bg-accent-soft px-2 py-1 text-[11px] font-medium text-accent-ink"
-            >
-              <span aria-hidden>{badgeFor(detected.contactType).icon}</span>{" "}
-              {badgeFor(detected.contactType).label}
-            </span>
-          ) : null}
-        </div>
-        {/* Default helper line — visible until the user starts typing.
-            Once detection settles or an error appears, this hides so
-            we don't stack three lines under the input. */}
-        {contact.length === 0 ? (
-          <p className="mt-1.5 text-xs text-ink-faint">{CONTACT_HELP_TEXT}</p>
-        ) : null}
-        {!detected && contact.length > 0 ? (
+            } else {
+              setContact(next);
+            }
+          }}
+          className={cn(
+            "h-12 w-full rounded-lg border bg-white px-3 text-[15px] text-ink",
+            "focus:ring-accent/40 placeholder:text-ink-faint focus:outline-none focus:ring-2",
+            !contact || isValid ? "border-line" : "border-danger",
+          )}
+        />
+        {!isValid && contact.length > 0 ? (
           <p className="mt-2 text-sm text-danger">
-            Введите email, телефон, @имя в Telegram или MAX
+            Это не похоже на {CHANNEL_LABEL_INPUT[channel].toLowerCase()}. Проверьте формат или
+            выберите другой канал выше.
           </p>
         ) : null}
 

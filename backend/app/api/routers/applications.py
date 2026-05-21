@@ -101,6 +101,20 @@ async def post_submit_application(
         log.info("application_rejected", code=err.code)
         raise HTTPException(status_code=400, detail=err.code)
 
+    # v2 (FR-002a / ADR-0008 v2): if frontend supplied an explicit
+    # `channel`, validate that it matches the server-detected
+    # contact_type. Mismatch → 400 invalid_contact_for_channel.
+    # When `channel` is None (v1 callers), this branch is skipped and
+    # auto-detect alone governs (compat layer).
+    if body.channel is not None and result.unwrap().contact_type != body.channel:
+        log.info(
+            "application_rejected",
+            code="invalid_contact_for_channel",
+            requested=body.channel,
+            detected=result.unwrap().contact_type,
+        )
+        raise HTTPException(status_code=400, detail="invalid_contact_for_channel")
+
     application = result.unwrap()
     log.info(
         "application_accepted",

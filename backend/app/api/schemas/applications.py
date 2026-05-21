@@ -30,12 +30,30 @@ class SubmitApplicationRequest(BaseModel):
         Literal["ymaps", "telegram", "photo"],
         Field(description="MVP source classes per ADR-0009"),
     ]
+    # v2 (PR-D / E12 / ADR-0008 v2): explicit `channel` plus `contact`. Old
+    # v1 callers (sans `channel`) still work — when omitted, server falls
+    # back to auto-detect on `contact` (compat layer). Once все frontend'ы
+    # обновятся, можно убрать optional и сделать обязательным.
+    channel: Annotated[
+        Literal["email", "phone", "telegram", "max"] | None,
+        Field(
+            default=None,
+            description=(
+                "Explicit channel picked by the user via radio (v2). Server validates "
+                "`contact` matches the shape of this channel; 400 invalid_contact_for_channel "
+                "if not. When None, falls back to auto-detect on `contact` (v1 compat)."
+            ),
+        ),
+    ] = None
     contact: Annotated[
         str,
         Field(
             min_length=2,
             max_length=320,  # max email length per RFC
-            description="Free-form contact; type is auto-detected server-side",
+            description=(
+                "Contact value. Validated against `channel` shape when `channel` is set "
+                "(v2); otherwise auto-detected via core/contact/auto_detect.py (v1 compat)."
+            ),
         ),
     ]
     consent_given: Annotated[
