@@ -89,6 +89,47 @@ export function badgeFor(contactType: ContactType): { icon: string; label: strin
 }
 
 // ----------------------------------------------------------------------------
+// Channel-specific validation (v2 explicit-radio era, per ADR-0008 v2)
+// ----------------------------------------------------------------------------
+
+/**
+ * Validate that `raw` matches the shape of the user-picked `channel`.
+ *
+ * v1 had auto-detect deciding both type AND value; v2 has the user
+ * pick the channel via radio, and this function only checks consistency.
+ *
+ *   - email:    must contain `@` and pass RFC-light email regex
+ *   - phone:    must pass `PHONE_SHAPE_RE` + digit count 10-15
+ *   - telegram: must pass `TG_HANDLE_RE` (bare or `@`-prefixed) OR
+ *               TG URL
+ *   - max:      must pass MAX URL/deep-link OR bare handle
+ *
+ * Returns `true` if `raw` is plausibly for `channel`, `false` otherwise.
+ * Server re-validates more strictly with `phonenumbers` etc.
+ */
+export function validateContactForChannel(channel: ContactType, raw: string): boolean {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return false;
+
+  switch (channel) {
+    case "email":
+      return EMAIL_RE.test(trimmed);
+    case "phone": {
+      if (!PHONE_SHAPE_RE.test(trimmed)) return false;
+      const digitCount = (trimmed.match(/\d/g) ?? []).length;
+      return digitCount >= PHONE_MIN_DIGITS && digitCount <= PHONE_MAX_DIGITS;
+    }
+    case "telegram":
+      return TG_HANDLE_RE.test(trimmed) || TG_URL_RE.test(trimmed);
+    case "max": {
+      if (MAX_URL_RE.test(trimmed)) return true;
+      // bare MAX handle (3-32 alnum) — мягче чем для TG (min 5 для TG)
+      return /^@?[a-z0-9_]{3,32}$/i.test(trimmed);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
 // Phone progressive formatter
 // ----------------------------------------------------------------------------
 
