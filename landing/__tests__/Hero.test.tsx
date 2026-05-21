@@ -207,9 +207,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // PhotoDrawer is open — its heading is the unique marker.
     expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
     // SubmitModal is NOT open — no «Куда отправлять заявки» heading.
-    expect(
-      screen.queryByRole("heading", { name: /Куда отправлять заявки/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Куда вам писать/i })).not.toBeInTheDocument();
   });
 
   it("main CTA with an MVP URL opens the SubmitModal (no regression)", () => {
@@ -219,7 +217,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
 
-    expect(screen.getByRole("heading", { name: /Куда отправлять заявки/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Куда вам писать/i })).toBeInTheDocument();
     // And critically — no green source banner inside the modal (U1).
     expect(screen.queryByText(/Источник:/)).not.toBeInTheDocument();
   });
@@ -241,38 +239,53 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     expect(styledParent!.className).not.toMatch(/bg-info-soft/);
   });
 
-  it("contact field placeholder is email-first (no 4-option overload)", () => {
-    // User batch 2 (B5): the previous "Email, телефон, @telegram или
-    // MAX" placeholder presented four equal options; testers
-    // reflexively defaulted to email and asked for an implicit
-    // priority. The new copy keeps Telegram/MAX in a separate helper
-    // line.
+  it("modal step 2 shows explicit channel radio (4 options) — no auto-detect (v2)", () => {
+    // PR-D (E12) — explicit radio replaces v1's single auto-detect input.
+    // Tester feedback from batch 2 (B5): «машинально начала вводить email,
+    // не понимая что система принимает все 4 канала». Radio = явный выбор.
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
 
-    const contactInput = screen.getByPlaceholderText("Email или телефон");
-    expect(contactInput).toBeInTheDocument();
-    expect(screen.getByText(/Или @имя в Telegram \/ MAX/i)).toBeInTheDocument();
+    // All 4 channels rendered as radio
+    const radios = screen.getAllByRole("radio");
+    expect(radios).toHaveLength(4);
+    expect(radios.map((r) => (r as HTMLInputElement).value).sort()).toEqual([
+      "email",
+      "max",
+      "phone",
+      "telegram",
+    ]);
+    // Default = email (most universal)
+    const emailRadio = radios.find((r) => (r as HTMLInputElement).value === "email")!;
+    expect((emailRadio as HTMLInputElement).checked).toBe(true);
+    // Input под выбранный канал (email by default)
+    expect(screen.getByPlaceholderText("you@example.ru")).toBeInTheDocument();
   });
 
-  it("contact field auto-formats a bare 10-digit phone into +7 (XXX) XXX-XX-XX", () => {
-    // User batch 2 (B5): progressive formatter — server still does
-    // canonical E.164 normalisation, the formatter just makes the
-    // value readable as the user types.
+  it("switching to phone radio swaps placeholder and enables phone autoformat (v2)", () => {
+    // Прогрессивное phone-форматирование теперь живёт ТОЛЬКО когда
+    // channel=phone (для других каналов оставляем raw). Server делает
+    // canonical E.164 normalisation через phonenumbers.
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
 
-    const contactInput = screen.getByPlaceholderText("Email или телефон") as HTMLInputElement;
-    fireEvent.change(contactInput, { target: { value: "9167388689" } });
-    expect(contactInput.value).toBe("+7 (916) 738-86-89");
-    // Detection badge picks up "phone".
-    expect(screen.getByText("Телефон")).toBeInTheDocument();
+    // Click phone radio
+    const phoneRadio = screen
+      .getAllByRole("radio")
+      .find((r) => (r as HTMLInputElement).value === "phone")!;
+    fireEvent.click(phoneRadio);
+    const phoneInput = screen.getByPlaceholderText("+7 ...") as HTMLInputElement;
+    expect(phoneInput).toBeInTheDocument();
+
+    // Phone format kicks in
+    fireEvent.change(phoneInput, { target: { value: "9167388689" } });
+    expect(phoneInput.value).toBe("+7 (916) 738-86-89");
   });
 
   it("«← Назад» on SubmitModal step 1 closes the modal and preserves the Hero input", () => {
@@ -289,9 +302,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     fireEvent.click(backBtn);
 
     // Modal gone, Hero input preserved.
-    expect(
-      screen.queryByRole("heading", { name: /Куда отправлять заявки/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Куда вам писать/i })).not.toBeInTheDocument();
     expect(input.value).toBe("https://t.me/barbershop_samara");
   });
 });
