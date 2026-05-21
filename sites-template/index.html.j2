@@ -447,7 +447,14 @@
             font-weight: 700;
         }
 
-        /* Services v2 — duration sits next to name (smaller, sub colour). */
+        /* Services v2 — duration sits next to name (smaller, sub colour).
+           `gap: 0.75rem` on the flex `li` was added because user
+           testing reported «слипшиеся мин и от» — duration ending in
+           «мин» visually ran into price starting with «от» when the
+           flex line-wrapped at narrow widths. The gap guarantees a
+           minimum buffer in every layout state. */
+        .services-list-v2 { }
+        .services-list-v2 li { gap: 0.75rem; }
         .services-list-v2 .service-name { display: inline; }
         .services-list-v2 .duration {
             font-family: 'JetBrains Mono', ui-monospace, monospace;

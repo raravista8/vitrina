@@ -121,15 +121,17 @@ export function Examples() {
     >
       <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>
+        {/* Title turns «Самосайт» into a self-referential verb («собрались
+            сами») — reinforces the name as a promise rather than a label. */}
         <h2
           id="examples-title"
           className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
         >
-          Так это выглядит на деле
+          Три Самосайта, которые собрались сами
         </h2>
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Три реальных Самосайта, собранных из источников мастеров. Никто из них не написал ни
-          строчки текста — всё подобрал ИИ.
+          Реальные сайты мастеров. Ни одной строчки текста они не писали — Самосайт сам взял
+          источник, сам разложил услуги, сам выбрал отзывы. Посмотрите, что получилось.
         </p>
       </header>
 

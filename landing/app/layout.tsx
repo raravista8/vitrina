@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
-import { FeedbackFloatingButton } from "@/components/FeedbackForm";
-
+// `FeedbackFloatingButton` («Что не хватает?») удалён с публичного
+// лендинга в PR-G — для платного сервиса «висящая» feedback-кнопка на
+// главной создавала ощущение «ребята ещё пилят». Сам feedback-form
+// доступен по `/feedback` (см. nav-link) + будет переехать в admin
+// сайдбар как «Обратная связь» в follow-up.
 import "./globals.css";
 
 const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://samosite.online";
@@ -168,7 +171,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-paper text-ink antialiased">
         {children}
-        <FeedbackFloatingButton />
         <script
           type="application/ld+json"
           // Structured data must be a single literal JSON string; Next handles
