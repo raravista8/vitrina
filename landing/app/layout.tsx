@@ -67,13 +67,17 @@ const SEO_KEYWORDS = [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  // Copy from docs/COPY.md §1 — single source of truth.
+  // Copy from docs/COPY.md §2.2 (v2.1 «три сам» H1) — single source of truth.
+  // Когда обновляешь visible H1 в `Hero.tsx`, синхронизируй ВСЕ четыре копии
+  // ниже: SEO `title`, `description`, OG `title/description`, Twitter
+  // `title/description`. Иначе расхождение между SERP-snippet'ом и
+  // landing-страницей даёт «not what I expected» bounce.
   title: {
-    default: "Самосайт — сайт, который сам себя ведёт и приносит вам заявки",
+    default: "Самосайт — сайт, который сам себя соберёт и приведёт клиентов",
     template: "%s · Самосайт",
   },
   description:
-    "Самосайт — сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram-канал, Яндекс.Карты или фото) и сам обновляет его каждую неделю.",
+    "Самосайт — сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram-канал, Яндекс.Карты, фото визитки) за пару минут и сам обновляет его каждую неделю.",
   applicationName: "Самосайт",
   authors: [{ name: "Самосайт" }],
   keywords: SEO_KEYWORDS,
@@ -83,13 +87,13 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: SITE_URL,
     siteName: "Самосайт",
-    title: "Сайт, который сам себя ведёт и приносит вам заявки",
+    title: "Сайт, который сам себя соберёт, сам обновит и сам приведёт клиентов",
     description:
-      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт или фото — и сам обновляет его каждую неделю.",
+      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт или фото визитки за пару минут — и сам обновляет его каждую неделю.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Самосайт — сайт, который сам себя ведёт",
+    title: "Самосайт — сайт, который сам себя соберёт",
     description:
       "ИИ собирает сайт за пару минут и сам ловит заявки. Первый месяц бесплатно без карты.",
   },

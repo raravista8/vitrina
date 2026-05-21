@@ -43,6 +43,16 @@ interface LogoProps {
   bgClassName?: string;
   /** Цвет буквы. По умолчанию белый. */
   letterClassName?: string;
+  /**
+   * Decorative — пометить логотип `aria-hidden="true"` (без `aria-label`/
+   * `role="img"`). Использовать когда рядом ЕСТЬ текстовый «Самосайт» в
+   * `<BrandMark>` wordmark — иначе screen reader произносит «Самосайт»
+   * дважды. См. fix/copy-meta-a11y.
+   *
+   * По умолчанию `false` — Logo standalone (favicon-cell / og-image)
+   * остаётся accessible с aria-label.
+   */
+  decorative?: boolean;
 }
 
 export function Logo({
@@ -50,6 +60,7 @@ export function Logo({
   className,
   bgClassName = "bg-accent",
   letterClassName = "text-white",
+  decorative = false,
 }: LogoProps) {
   // Все рассчитанные пиксели проксируем через inline-style, потому что
   // конкретные числа зависят от run-time size — статичных Tailwind-классов
@@ -58,10 +69,16 @@ export function Logo({
   const fontSize = Math.round(size * 0.66);
   const paddingBottom = Math.max(1, Math.round(size * 0.04));
 
+  // A11y: standalone Logo выступает как picture-of-brand → aria-label.
+  // Decorative Logo (внутри BrandMark с word-mark «Самосайт» рядом) →
+  // aria-hidden, чтобы AT не озвучивал «Самосайт. Самосайт».
+  const a11yProps = decorative
+    ? { "aria-hidden": true as const }
+    : { "aria-label": "Самосайт", role: "img" };
+
   return (
     <span
-      aria-label="Самосайт"
-      role="img"
+      {...a11yProps}
       className={cn(
         "inline-flex shrink-0 items-center justify-center font-bold leading-none",
         bgClassName,
@@ -113,12 +130,21 @@ export function BrandMark({
   logoLetterClassName,
 }: BrandMarkProps) {
   const wordSize = fontSize ?? Math.max(14, Math.round(size * 0.77));
+  // When wordmark «Самосайт» is rendered next to Logo, the Logo becomes
+  // decorative for AT (aria-hidden) — иначе screen reader произносит
+  // «Самосайт. Самосайт». logoOnly=true → нет wordmark → Logo
+  // accessible с aria-label.
   return (
     <span
       className={cn("inline-flex items-center gap-2 font-bold tracking-[-0.02em]", className)}
       style={{ fontSize: wordSize }}
     >
-      <Logo size={size} bgClassName={logoBgClassName} letterClassName={logoLetterClassName} />
+      <Logo
+        size={size}
+        bgClassName={logoBgClassName}
+        letterClassName={logoLetterClassName}
+        decorative={!logoOnly}
+      />
       {!logoOnly && <span className={textClassName}>Самосайт</span>}
     </span>
   );
