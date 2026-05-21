@@ -18,6 +18,7 @@
 import { Star } from "lucide-react";
 
 import { STATS, TESTIMONIALS, type Testimonial } from "@/content/social-proof";
+import { SectionViewTracker } from "./SectionViewTracker";
 
 const PALETTE_GRADIENT: Record<Testimonial["palette"], string> = {
   peach: "linear-gradient(135deg, oklch(0.84 0.07 50) 0%, oklch(0.62 0.09 35) 100%)",
@@ -68,6 +69,7 @@ export function SocialProof() {
       aria-labelledby="social-proof-title"
       className="bg-paper px-5 py-14 sm:px-16 sm:py-20"
     >
+      <SectionViewTracker goal="socialproof_view" />
       <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Уже работает</p>
         <h2

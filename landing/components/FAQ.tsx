@@ -14,6 +14,8 @@
 
 import { ChevronDown } from "lucide-react";
 
+import { FAQGoalTracker } from "./FAQGoalTracker";
+
 interface Item {
   q: string;
   a: string;
@@ -65,6 +67,7 @@ const FAQ_ITEMS: ReadonlyArray<Item> = [
 export function FAQ() {
   return (
     <section id="faq" aria-labelledby="faq-title" className="bg-paper px-5 py-14 sm:px-16 sm:py-24">
+      <FAQGoalTracker />
       <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
           Частые вопросы
@@ -79,10 +82,15 @@ export function FAQ() {
 
       <div className="mx-auto max-w-[820px]">
         <dl className="divide-y divide-line">
-          {FAQ_ITEMS.map((item) => (
+          {FAQ_ITEMS.map((item, idx) => (
             <details
               key={item.q}
               className="group py-1"
+              // `data-faq-id` — стабильный slug-like ID для Я.Метрика
+              // analytics (FAQGoalTracker читает его). Берём первые 40
+              // chars вопроса + index — достаточно уникально без
+              // тяжёлого slugify.
+              data-faq-id={`q${idx + 1}`}
               // Disclosure widgets — native <details> для SEO (поисковики
               // индексируют ответы как rich-snippets) и нулевого JS.
             >

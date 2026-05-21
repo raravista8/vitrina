@@ -19,6 +19,8 @@
 
 import { ArrowRight, Check } from "lucide-react";
 
+import { SectionViewTracker } from "./SectionViewTracker";
+
 const INCLUDED = [
   "Сам собирает сайт за пару минут",
   "Сам обновляет 4 раза в месяц из источника",
@@ -36,6 +38,7 @@ export function Pricing() {
       aria-labelledby="pricing-title"
       className="bg-paper-soft px-5 py-14 sm:px-16 sm:py-24"
     >
+      <SectionViewTracker goal="pricing_view" />
       <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Сколько стоит</p>
         <h2
