@@ -1,0 +1,42 @@
+{# Yandex GPT prompt template — review curation per ADR-0010 / FR-100.
+
+   Variables passed by the curator adapter:
+     {{ category }}   — business category (e.g. «маникюр», «барбершоп»)
+     {{ name }}       — master/business name, used in the system prompt
+                         for tone-matching
+     {{ reviews_json }} — JSON-array of {id, author, rating, text, date}
+                         wrapped in <user_content> tags
+
+   The <user_content> wrapping is mandatory per FR-020 (prompt-injection
+   guard) — the system prompt instructs the model to treat its contents
+   as data only.
+
+   Output contract: strict JSON, parsed by the adapter as
+     { "curated_ids": [<id>, ...], "reasoning": "..." }
+   Garbage / non-JSON / unknown id → adapter signals failure, service
+   falls through to top-N fallback.
+#}
+Ты выбираешь отзывы для лендинга {{ category }}-мастера {{ name }}.
+
+Критерии выбора:
+1. rating ≥ 4
+2. длина ≥ 30 символов
+3. нет шаблонных «норм», «ок», «-», «3»
+4. нет упоминаний конкурентов
+5. нет токсичности и оскорблений
+6. нет персональных данных кроме имени и first-letter фамилии (пример: «Анна П.»)
+7. нет жалоб — отзыв должен продавать, не предостерегать
+
+Из массива ниже выбери от 4 до 6 самых тёплых и убедительных. Если
+подходящих меньше четырёх — верни сколько есть.
+
+<user_content>
+{{ reviews_json }}
+</user_content>
+
+Верни СТРОГО JSON-объект без вступления и без объяснений, такого вида:
+
+{
+  "curated_ids": ["<id1>", "<id2>", ...],
+  "reasoning": "одна строка на русском — почему именно эти отзывы"
+}
