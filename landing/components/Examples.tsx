@@ -14,13 +14,16 @@
  *
  * Spec: docs/COPY.md §2.3 + `/tmp/samosite-canon/landing-samosite.jsx`.
  *
- * Image URLs в `EXAMPLES` — placeholders сейчас (нет файлов в `public/`).
- * В production T14.7 заменяет их на CDN-URLs через `/render` proxy.
- * До тех пор — палитра-tinted CSS-плашки (gradient placeholders),
- * чтобы card visual был непустым в dev и в CI.
+ * Photos: лежат локально в `landing/public/examples/{slug}-hero.jpg` и
+ * `{slug}-{1..4}.jpg`. Скачаны из Unsplash и закоммичены в repo — works со
+ * строгим CSP `img-src 'self'` без exception на зарубежный CDN. В production
+ * T14.7 заменит этот flow на customer-specific фото из Yandex Object Storage
+ * через `/render` proxy. До тех пор палитро-tinted градиент остаётся как
+ * fallback (если файл отсутствует — `<img>` падает на background-стиле).
  */
 
 import { ArrowRight, Star } from "lucide-react";
+import Image from "next/image";
 
 import { EXAMPLES, type Example, sourceLabel } from "@/content/examples";
 
@@ -36,13 +39,19 @@ const PALETTE_GRADIENT: Record<Example["palette"], string> = {
 function ExampleCard({ ex }: { ex: Example }) {
   return (
     <article className="flex w-full shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-card sm:w-auto sm:snap-none">
-      {/* Hero photo (placeholder gradient → CDN URL T14.7) */}
+      {/* Hero photo (real local JPEG; palette gradient as fallback background) */}
       <div
-        aria-hidden="true"
-        className="relative h-[180px] w-full sm:h-[220px]"
+        className="relative h-[180px] w-full overflow-hidden sm:h-[220px]"
         style={{ background: PALETTE_GRADIENT[ex.palette] }}
       >
-        <span className="absolute bottom-3 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
+        <Image
+          src={ex.heroPhoto}
+          alt={`${ex.name} — ${ex.category}`}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 86vw"
+          className="object-cover"
+        />
+        <span className="absolute bottom-3 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-soft shadow-sm">
           {sourceLabel(ex.source)}
         </span>
       </div>
@@ -88,15 +97,17 @@ function ExampleCard({ ex }: { ex: Example }) {
           </blockquote>
         ) : null}
 
-        {/* Mini-gallery */}
+        {/* Mini-gallery — real JPEGs from /public/examples/, palette
+            background as fallback if file is missing. */}
         <div className="mt-1 grid grid-cols-4 gap-1.5">
-          {ex.gallery.slice(0, 4).map((_, i) => (
+          {ex.gallery.slice(0, 4).map((src) => (
             <div
-              key={i}
-              aria-hidden="true"
-              className="aspect-square rounded-md"
-              style={{ background: PALETTE_GRADIENT[ex.palette], opacity: 0.7 - i * 0.1 }}
-            />
+              key={src}
+              className="relative aspect-square overflow-hidden rounded-md"
+              style={{ background: PALETTE_GRADIENT[ex.palette] }}
+            >
+              <Image src={src} alt="" fill sizes="120px" className="object-cover" />
+            </div>
           ))}
         </div>
 
