@@ -229,25 +229,38 @@ export function Hero() {
             и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
             Чище без него. */}
         <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
-          {/* H1 — three «сам» pattern. Name «Самосайт» = «сам» + «сайт»,
-              and the H1 now picks that up with a three-beat promise:
-              сам соберёт · сам обновит · сам приведёт. Replaces the
-              earlier «сам себя ведёт» single-beat which left the name
-              unexploited in the body copy. */}
+          {/* H1 — three «сам» pattern. Each terracotta phrase carries
+              the brand promise; the first one keeps the underline
+              highlight as the visual anchor. Punctuation tweaks
+              (PR fix-hero-h1-punctuation):
+                - Commas glued to preceding word via U+00A0 (NBSP) so
+                  they can never start a new line — fixes the «висящая
+                  запятая» бar on narrow viewports.
+                - Trailing period removed (user feedback) — punchier
+                  H1, matches the «команда не лектор» tone.
+                - Each «сам …» wrapped in non-breaking inline-block so
+                  the phrase wraps as a unit, not mid-«сам».
+              The whole H1 lives inside `text-balance` (Tailwind) so
+              the browser balances line widths automatically across
+              desktop & mobile. */}
           <h1
             id="hero-title"
-            className="mt-5 text-balance text-[36px] font-bold leading-[1.06] tracking-tightest sm:mt-7 sm:text-[76px]"
+            className="mt-5 text-balance text-[36px] font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:text-[72px]"
           >
             Сайт, который{" "}
-            <span className="relative inline-block px-1 text-accent">
-              сам себя соберёт
+            {/* Phrase 1 — keeps the underline highlight. Comma lives
+                INSIDE the span so it never starts a new line. */}
+            <span className="relative inline-block whitespace-nowrap px-1 text-accent">
+              сам себя соберёт,
               <span
                 aria-hidden="true"
                 className="absolute inset-x-1 bottom-1 -z-10 h-2 rounded-[3px] bg-accent-soft opacity-65 sm:bottom-2.5 sm:h-3.5"
               />
+            </span>{" "}
+            <span className="inline-block whitespace-nowrap text-accent">сам обновит</span> и{" "}
+            <span className="inline-block whitespace-nowrap text-accent">
+              сам приведёт клиентов
             </span>
-            , <span className="text-accent">сам обновит</span> и{" "}
-            <span className="text-accent">сам приведёт клиентов</span>.
           </h1>
 
           {/* Sub — v2.1.3 §1.1 redesign:
