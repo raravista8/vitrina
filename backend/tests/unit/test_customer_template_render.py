@@ -183,3 +183,125 @@ def test_brand_appears_in_footer_as_cyrillic(env: Environment, payload: dict) ->
     footer = html.split("<footer")[1].split("</footer>")[0]
     assert "Samosite" not in footer
     assert "Vitrina" not in footer
+
+
+# --------------------------------------------------------------------------- #
+# v2 — Customer-site v2 (PR-F / E14)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.unit
+def test_trust_row_renders_when_provided(env: Environment, payload: dict) -> None:
+    """v2 trust-row под H1 — «N лет опыта · M+ клиентов · 4.9 ★»."""
+    payload["years_experience"] = 8
+    payload["clients_served"] = 1200
+    payload["average_rating"] = 4.9
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "8 лет опыта" in html
+    assert "1200+ клиентов" in html
+    assert "4.9" in html
+    assert 'class="rating"' in html
+
+
+@pytest.mark.unit
+def test_trust_row_hidden_when_no_fields(env: Environment, payload: dict) -> None:
+    """No trust-row data → no «0 лет опыта»-style ugly render."""
+    payload.pop("years_experience", None)
+    payload.pop("clients_served", None)
+    payload.pop("average_rating", None)
+    html = env.get_template("index.html.j2").render(**payload)
+    assert '<p class="trust-row"' not in html
+    # The rendered <p> tag is only emitted when at least one trust field set.
+
+
+@pytest.mark.unit
+def test_hero_photo_caption_renders_when_photos_count(env: Environment, payload: dict) -> None:
+    """v2 hero-photo caption «ИЗ ИСТОЧНИКА · N ФОТО»."""
+    payload["photos_count"] = 12
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "ИЗ ИСТОЧНИКА · 12 ФОТО" in html
+
+
+@pytest.mark.unit
+def test_reviews_curated_renders_with_top_pick_badge(env: Environment, payload: dict) -> None:
+    """v2 reviews-curated секция per ADR-0010 / FR-100. Top-pick получает badge."""
+    payload["reviews_curated"] = [
+        {
+            "id": "r1",
+            "author": "Мария К.",
+            "text": "Анна — настоящий мастер.",
+            "rating": 5,
+            "date_iso": "2026-04-12",
+            "source": "yandex_maps",
+            "is_top_pick": True,
+        },
+        {
+            "id": "r2",
+            "author": "Елена П.",
+            "text": "Хожу к Анне уже год.",
+            "rating": 5,
+            "date_iso": "2026-05-02",
+            "source": "yandex_maps",
+            "is_top_pick": False,
+        },
+    ]
+    payload["total_reviews_count"] = 38
+    payload["average_rating"] = 4.9
+    payload["review_source_name"] = "Яндекс.Карты"
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "Что говорят клиенты" in html
+    assert "ЛУЧШИЕ — выбрал ИИ" in html
+    assert "38 отзывов на Яндекс.Карты" in html
+    assert "★ ЛУЧШИЙ" in html
+    assert "Мария К." in html
+    assert "Хожу к Анне уже год" in html
+
+
+@pytest.mark.unit
+def test_reviews_curated_section_hidden_when_empty(env: Environment, payload: dict) -> None:
+    """FR-100c — empty reviews_curated → секция вообще не рендерится."""
+    payload["reviews_curated"] = []
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "Что говорят клиенты" not in html
+
+
+@pytest.mark.unit
+def test_included_bullets_render_as_checked_list(env: Environment, payload: dict) -> None:
+    """v2 «Что включено» — 4 буллета per COPY.md §4.4."""
+    payload["included_bullets"] = [
+        "Стерильные материалы и одноразовый инструмент",
+        "Гарантия на покрытие — 14 дней",
+        "Парковка во дворе",
+        "Можно с детьми (есть зона с мультиками)",
+    ]
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "Что включено" in html
+    assert "Стерильные материалы" in html
+    for bullet in payload["included_bullets"]:
+        assert bullet in html
+
+
+@pytest.mark.unit
+def test_services_render_mono_duration(env: Environment, payload: dict) -> None:
+    """v2 services с mono duration справа от названия per COPY.md §4.5."""
+    payload["services"] = [
+        {
+            "title": "Маникюр классический",
+            "description": "",
+            "duration_label": "30 мин",
+            "price_label": "от 1500 ₽",
+        },
+    ]
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "30 мин" in html
+    assert 'class="duration"' in html
+
+
+@pytest.mark.unit
+def test_gallery_uses_mosaic_class(env: Environment, payload: dict) -> None:
+    """v2 gallery-mosaic class hooks the CSS 4-col first-tile 2×2 grid."""
+    html = env.get_template("index.html.j2").render(**payload)
+    assert "gallery-mosaic" in html
+    # Section header «обновляется из источника еженедельно» — продаёт
+    # автономность customer'у мастера.
+    assert "обновляется из источника еженедельно" in html

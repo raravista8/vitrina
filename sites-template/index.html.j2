@@ -35,12 +35,31 @@
      organization.name, organization.phone, organization.email,
                   organization.address, organization.geo (lat/lon dict),
                   organization.opening_hours (list of dicts)
-     services           — list of {title, description, price_label}
+     services           — list of {title, description, price_label,
+                          duration_label?}
      gallery            — list of {url, alt}
-     reviews            — list of {author, text, rating}
+     reviews            — list of {author, text, rating}  (legacy v1)
      contact_url        — POST URL for /api/leads (same origin)
      captcha_client_key — Yandex SmartCaptcha sitekey
      year               — footer copyright year
+     site_subdomain     — for footer watermark ref-param (PLG)
+
+   ── v2 additions (PR-F / E14 / COPY.md §4) ────────────────────────
+     years_experience   — int, displayed in trust-row («N лет опыта»)
+     clients_served     — int, displayed in trust-row («M+ клиентов»)
+     average_rating     — float 1-5, displayed in trust-row («4.9 ★»)
+     photos_count       — int, displayed as photo caption «ИЗ ИСТОЧНИКА · N ФОТО»
+
+     reviews_curated    — list of {id, author, text, rating, date_iso,
+                          source, is_top_pick} (output of E13 cron
+                          per ADR-0010). Если пусто/нет — секция не
+                          рендерится. Заменяет legacy `reviews`.
+     total_reviews_count — int (display string «38 отзывов на …»)
+     review_source_name  — str (e.g. «Яндекс.Карты») для строки
+                           total в reviews-секции
+
+     included_bullets   — list[str] (4-6 bullets), что включено в услугу
+                          (стерильные материалы / гарантия / парковка / …)
 -#}
 {%- set scheme = site_scheme or 'cream' -%}
 <!doctype html>
@@ -284,6 +303,159 @@
             color: var(--sub);
         }
 
+        /* ── v2 (PR-F / E14) ──────────────────────────────────────── */
+
+        /* Trust row under H1 — «N лет опыта · M+ клиентов · 4.9 ★» */
+        .trust-row {
+            font-size: 0.9rem;
+            color: var(--sub);
+            margin: 0.75rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.75rem;
+        }
+        .trust-row .rating {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Hero photo caption «ИЗ ИСТОЧНИКА · 12 ФОТО» — absolutely
+           positioned at bottom-left of the photo wrapper. */
+        .hero-photo-wrap {
+            position: relative;
+        }
+        .hero-photo-caption {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--sub);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            padding: 0.35rem 0.65rem;
+            border-radius: 999px;
+        }
+
+        /* Section header with title + monospace meta — used by Gallery
+           and Reviews to advertise the «обновляется еженедельно» promise. */
+        .section-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .section-header h2 { margin: 0; }
+        .section-meta {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.7rem;
+            color: var(--sub);
+            letter-spacing: 0.04em;
+        }
+
+        /* Gallery mosaic — 4-col grid, first tile spans 2×2.
+           Falls back gracefully when <5 photos (first tile just spans
+           what it can). */
+        @media (min-width: 48rem) {
+            .gallery-mosaic {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            .gallery-mosaic > :first-child {
+                grid-column: span 2;
+                grid-row: span 2;
+                aspect-ratio: 1;
+            }
+        }
+
+        /* Reviews section (v2 — populated from `reviews_curated`).
+           2-col grid on desktop, 1-col on mobile. */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        @media (min-width: 48rem) {
+            .reviews-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .review-card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            font-size: 0.95rem;
+        }
+        .review-card.top-pick {
+            border-color: var(--accent);
+            background: oklch(0.97 0.020 35);
+        }
+        .top-pick-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: 1rem;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+        }
+        .review-card .stars {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+        .review-card blockquote {
+            margin: 0 0 0.75rem;
+            font-style: italic;
+            color: var(--ink);
+        }
+        .review-card .review-meta {
+            font-size: 0.8rem;
+            color: var(--sub);
+        }
+        .reviews-meta {
+            color: var(--sub);
+            margin: 0 0 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Included bullets «Что включено» — clean 2-col on desktop. */
+        .included-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.65rem;
+        }
+        @media (min-width: 48rem) {
+            .included-list { grid-template-columns: 1fr 1fr; }
+        }
+        .included-list li {
+            display: flex;
+            gap: 0.5rem;
+            align-items: baseline;
+        }
+        .included-list .check {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Services v2 — duration sits next to name (smaller, sub colour). */
+        .services-list-v2 .service-name { display: inline; }
+        .services-list-v2 .duration {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.8rem;
+            color: var(--sub);
+            margin-left: 0.25rem;
+        }
+
         .gallery-grid {
             display: grid;
             gap: 0.5rem;
@@ -415,6 +587,26 @@
                 <p class="eyebrow">{{ site_category or organization.name }} · {{ organization.address or 'онлайн' }}</p>
                 <h1>{{ site_title }}</h1>
                 <p class="tagline">{{ site_description }}</p>
+
+                {#- v2 trust-row — per COPY.md §4.1. Только показываем те поля,
+                    которые publisher проставил; пустые/нулевые не рендерим
+                    чтобы не было «0 лет опыта». -#}
+                {%- if years_experience or clients_served or average_rating -%}
+                <p class="trust-row">
+                    {%- if years_experience %}
+                    <span>{{ years_experience }} лет опыта</span>
+                    {%- endif %}
+                    {%- if clients_served %}
+                    {%- if years_experience %} · {% endif %}
+                    <span>{{ clients_served }}+ клиентов</span>
+                    {%- endif %}
+                    {%- if average_rating %}
+                    {%- if years_experience or clients_served %} · {% endif %}
+                    <span class="rating">{{ "%.1f"|format(average_rating) }} ★</span>
+                    {%- endif %}
+                </p>
+                {%- endif %}
+
                 <div class="hero-ctas">
                     <a class="cta" href="#contact">Записаться →</a>
                     {%- if organization.phone %}
@@ -422,23 +614,88 @@
                     {%- endif %}
                 </div>
             </div>
-            {%- if site_hero_photo %}
-            <img class="hero-photo" src="{{ site_hero_photo }}" alt="" loading="eager" decoding="async">
-            {%- else %}
-            <div class="hero-photo-placeholder" aria-hidden="true"></div>
-            {%- endif %}
+            {#- v2 photo wrapper — добавляет caption «ИЗ ИСТОЧНИКА · N ФОТО»
+                per COPY.md §4.1 если есть photos_count. -#}
+            <div class="hero-photo-wrap">
+                {%- if site_hero_photo %}
+                <img class="hero-photo" src="{{ site_hero_photo }}" alt="" loading="eager" decoding="async">
+                {%- else %}
+                <div class="hero-photo-placeholder" aria-hidden="true"></div>
+                {%- endif %}
+                {%- if photos_count %}
+                <span class="hero-photo-caption">ИЗ ИСТОЧНИКА · {{ photos_count }} ФОТО</span>
+                {%- endif %}
+            </div>
         </div>
     </header>
 
     {%- if gallery %}
     <section>
         <div class="container">
-            <h2>Работы</h2>
-            <div class="gallery-grid">
+            {#- v2 gallery header — title + monospace «обновляется из источника
+                еженедельно» per COPY.md §4.2 — рекламирует автономность
+                продукта прямо в customer-сайте. -#}
+            <div class="section-header">
+                <h2>Наши работы</h2>
+                <span class="section-meta">обновляется из источника еженедельно</span>
+            </div>
+            {#- v2 mosaic: 4-col grid, first tile spans 2×2 (per COPY.md §4.2).
+                Класс `.gallery-grid` подхватывает CSS, добавленный в style-блок выше. -#}
+            <div class="gallery-grid gallery-mosaic">
                 {%- for photo in gallery %}
                 <img src="{{ photo.url }}" alt="{{ photo.alt or '' }}" loading="lazy" decoding="async" width="320" height="320">
                 {%- endfor %}
             </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {#- v2 NEW reviews section «Что говорят клиенты» (PR-F / E14 / ADR-0010).
+        Только когда `reviews_curated` непустой (cron уже отработал И не fall-back
+        empty per FR-100c). 2×N grid, badge «★ ЛУЧШИЙ» на топ-1/2 если
+        is_top_pick=true. -#}
+    {%- if reviews_curated %}
+    <section id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <h2>Что говорят клиенты</h2>
+                <span class="section-meta">★ ЛУЧШИЕ — выбрал ИИ · обновляется каждую неделю</span>
+            </div>
+            {%- if total_reviews_count and review_source_name %}
+            <p class="reviews-meta">{{ "%.1f"|format(average_rating or 0) }} из 5 · {{ total_reviews_count }} отзывов на {{ review_source_name }}</p>
+            {%- endif %}
+            <div class="reviews-grid">
+                {%- for r in reviews_curated %}
+                <article class="review-card{% if r.is_top_pick %} top-pick{% endif %}">
+                    {%- if r.is_top_pick %}
+                    <span class="top-pick-badge" aria-label="Лучший отзыв">★ ЛУЧШИЙ</span>
+                    {%- endif %}
+                    <div class="stars" aria-label="{{ r.rating }} из 5">
+                        {%- for _ in range(r.rating) -%}★{%- endfor -%}
+                    </div>
+                    <blockquote>«{{ r.text }}»</blockquote>
+                    <footer class="review-meta">
+                        <strong>{{ r.author }}</strong> · {{ review_source_name or 'источник' }}{% if r.date_iso %} · {{ r.date_iso }}{% endif %}
+                    </footer>
+                </article>
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {#- v2 NEW About bullets «что включено» (PR-F / E14 / COPY.md §4.4).
+        Опциональная секция — рендерится только если publisher проставил
+        `included_bullets`. -#}
+    {%- if included_bullets %}
+    <section id="included">
+        <div class="container">
+            <h2>Что включено</h2>
+            <ul class="included-list">
+                {%- for bullet in included_bullets %}
+                <li><span aria-hidden="true" class="check">✓</span> {{ bullet }}</li>
+                {%- endfor %}
+            </ul>
         </div>
     </section>
     {%- endif %}
@@ -453,10 +710,18 @@
             {%- if services %}
             <div>
                 <h2>Услуги</h2>
-                <ul class="services-list">
+                {#- v2 services list — mono price + optional duration per
+                    COPY.md §4.5. Layout: `<title> · <duration_mono>` left,
+                    dashed-separator filler middle, `<price_mono>` right.
+                    -#}
+                <ul class="services-list services-list-v2">
                     {%- for service in services %}
                     <li>
-                        <span>{{ service.title }}</span>
+                        <span class="service-name">
+                            {{ service.title }}{% if service.duration_label %}
+                            <span class="duration">· {{ service.duration_label }}</span>
+                            {%- endif %}
+                        </span>
                         {%- if service.price_label %}
                         <span class="price">{{ service.price_label }}</span>
                         {%- endif %}
