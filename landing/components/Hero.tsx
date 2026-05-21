@@ -8,12 +8,13 @@
  * Inline-styled canvas → Tailwind classes; tokens live in
  * `tailwind.config.ts` (paper / ink / accent / line).
  *
- * Copy anchors (locked to COPY.md):
- *   - Category eyebrow "САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ"
- *   - H1 "Сайт, который сам себя ведёт и приносит вам заявки"
+ * Copy anchors (locked to COPY.md v2):
+ *   - H1 "Сайт, который сам себя ведёт и приносит вам заявки" (без eyebrow)
  *   - Single input + one primary CTA — zero-friction Hero (PRD §4)
  *   - Microcopy "Первый месяц бесплатно — без карты при регистрации"
  *   - Below: two text links (📷 photo upload, 📨 closed TG export)
+ *   - Benefits stack удалён из Hero в v2 — теперь живёт ниже как
+ *     самостоятельная <BigFeatures /> секция
  *
  * Behaviour — owned by this component (NOT in the design canvas):
  *   - URL paste is debounced via `useDeferredValue` then classified.
@@ -201,13 +202,10 @@ export function Hero() {
         </nav>
 
         {/* Hero body */}
+        {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
+            и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
+            Чище без него. */}
         <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
-          {/* Category eyebrow */}
-          <div className="inline-flex items-center gap-2 rounded-md bg-accent-soft px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-accent sm:text-[12px]">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ
-          </div>
-
           {/* H1 */}
           <h1
             id="hero-title"
@@ -330,31 +328,11 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Benefits stack — 4 cards from COPY.md §2. Lives inside Hero
-            section per Concept A composition (4-col on desktop, single
-            column on mobile). */}
-        <div className="relative z-[1] mx-auto mt-9 grid max-w-[1280px] grid-cols-1 gap-3.5 sm:mt-[72px] sm:grid-cols-4 sm:gap-5">
-          {[
-            ["🔄", "Сам обновляется", "раз в неделю забирает новые фото и отзывы из источника"],
-            ["📨", "Сам ловит заявки", "форма, кнопка записи и уведомления в Telegram из коробки"],
-            [
-              "🔎",
-              "Сам находится в поиске",
-              "подбирает ключевые слова и отправляет сайт в Яндекс и Google. Клиенты находят вас сами.",
-            ],
-            [
-              "🎁",
-              "Первый месяц бесплатно",
-              "попробуйте на своём деле, не продлевайте если не зайдёт",
-            ],
-          ].map(([emoji, title, body]) => (
-            <div key={title} className="rounded-[14px] border border-line bg-white p-4 sm:p-[18px]">
-              <div className="mb-2 text-[22px]">{emoji}</div>
-              <div className="mb-1 text-[15px] font-semibold text-ink">{title}</div>
-              <div className="text-[13.5px] leading-[1.5] text-ink-soft">{body}</div>
-            </div>
-          ))}
-        </div>
+        {/* Benefits stack удалён в v2 — см. docs/COPY.md §2.2 + self-critique
+            §11.2: на скриншотах он визуально конкурировал с input+CTA, глаз
+            метался. Перенесено в отдельную <BigFeatures /> секцию ниже по
+            странице с новым составом (4 новых карточки, включая «Сам
+            выбирает отзывы»). */}
       </section>
       <SubmitModal
         open={modalOpen}
