@@ -40,6 +40,7 @@ import { useDeferredValue, useEffect, useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
+import { BrandMark } from "./BrandMark";
 import { PhotoDrawer } from "./PhotoDrawer";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal } from "./SubmitModal";
@@ -166,9 +167,13 @@ export function Hero() {
             pill on desktop, becomes a primary-tone pill on mobile (where
             the menu line is collapsed). */}
         <nav className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-lg font-bold tracking-tight sm:text-xl">
-            <span className="inline-block h-[22px] w-[22px] rounded-[7px] bg-accent sm:h-[26px] sm:w-[26px]" />
-            Самосайт
+          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Размер scales
+              up на desktop. Wordmark «Самосайт» уже включён в компонент. */}
+          <div className="hidden sm:block">
+            <BrandMark size={26} fontSize={20} />
+          </div>
+          <div className="sm:hidden">
+            <BrandMark size={22} fontSize={18} />
           </div>
           <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
             <a className="hover:text-ink" href="#how-it-works">
