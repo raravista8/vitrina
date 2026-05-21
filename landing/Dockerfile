@@ -53,9 +53,20 @@ RUN npm run build
 # ---- Stage 3: runtime --------------------------------------------------------
 FROM node:20-bookworm-slim AS runtime
 WORKDIR /app
+
+# Build-version stamps are needed at RUNTIME too (not just build) so
+# dynamic route handlers like `app/version/route.ts` (force-dynamic) can
+# read them via `process.env`. Builder-stage ENV is sealed in the static
+# bundle for prerender, but dynamic routes execute in this runtime
+# container — they need the same values re-declared here.
+ARG BUILD_VERSION=dev
+ARG BUILD_TIME=
+
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000
+    PORT=3000 \
+    BUILD_VERSION=$BUILD_VERSION \
+    BUILD_TIME=$BUILD_TIME
 
 RUN groupadd --system --gid 1001 nodejs \
     && useradd  --system --uid 1001 --gid nodejs --create-home nextjs
