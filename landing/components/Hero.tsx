@@ -53,7 +53,12 @@ import { SubmitModal } from "./SubmitModal";
 // move the full source list into a separate microcopy line below.
 const PLACEHOLDER = "ссылка на соцсеть или Я.Карты";
 const CTA_TEXT = "Собрать мой Самосайт";
-const MICROCOPY = "Первый месяц бесплатно — без карты при регистрации.";
+// Microcopy under CTA — addresses the implicit «забуду отменить и
+// спишут деньги» fear that «без карты» alone leaves open. Adding
+// «Самосайт сам напомнит» turns the silent risk-reversal into an
+// explicit promise.
+const MICROCOPY =
+  "Первый месяц — бесплатно. Самосайт сам напомнит, если решите продолжить. Карта не нужна.";
 // One canonical, scannable list of what we accept today (UX batch 1
 // "U2" — testers asked for an explicit list, not just placeholder
 // hints). Lives directly under the input.
@@ -206,29 +211,34 @@ export function Hero() {
             и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
             Чище без него. */}
         <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
-          {/* H1 */}
+          {/* H1 — three «сам» pattern. Name «Самосайт» = «сам» + «сайт»,
+              and the H1 now picks that up with a three-beat promise:
+              сам соберёт · сам обновит · сам приведёт. Replaces the
+              earlier «сам себя ведёт» single-beat which left the name
+              unexploited in the body copy. */}
           <h1
             id="hero-title"
-            className="mt-5 text-balance text-[42px] font-bold leading-[1.04] tracking-tightest sm:mt-7 sm:text-[88px]"
+            className="mt-5 text-balance text-[36px] font-bold leading-[1.06] tracking-tightest sm:mt-7 sm:text-[76px]"
           >
-            Сайт, который <br className="hidden sm:inline" />
+            Сайт, который{" "}
             <span className="relative inline-block px-1 text-accent">
-              сам себя ведёт
+              сам себя соберёт
               <span
                 aria-hidden="true"
                 className="absolute inset-x-1 bottom-1 -z-10 h-2 rounded-[3px] bg-accent-soft opacity-65 sm:bottom-2.5 sm:h-3.5"
               />
             </span>
-            <span className="hidden sm:inline">
-              <br />и приносит вам заявки.
-            </span>
-            <span className="sm:hidden"> и приносит вам заявки.</span>
+            , <span className="text-accent">сам обновит</span> и{" "}
+            <span className="text-accent">сам приведёт клиентов</span>.
           </h1>
 
-          {/* Sub */}
+          {/* Sub — turns the brand «Самосайт» into a verb («соберётся»),
+              echoes three «сам» (обновлять / ловить / отбирать), and
+              ends with the «вы — только работаете» contract. */}
           <p className="mt-4 max-w-full text-balance text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[720px] sm:text-[20px]">
-            Покажите ссылку на ваше дело — соцсеть, карты или визитку. ИИ соберёт сайт за пару минут
-            и сам будет держать его актуальным. Вам ничего не нужно делать.
+            Покажите ссылку на ваше дело — карты, Telegram или визитку. Самосайт соберётся за две
+            минуты и дальше будет всё делать сам: обновлять цены, ловить заявки, отбирать отзывы.
+            Вам остаётся только работать с клиентами.
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
@@ -310,7 +320,10 @@ export function Hero() {
             onOpenPhotoUpload={() => setPhotoOpen(true)}
           />
 
-          {/* Fallback links */}
+          {/* Fallback link — photo path. The «закрытый TG-канал»
+              option moved to FAQ (PR-H) because it's a narrow scenario
+              that confused mainstream visitors when shown next to the
+              primary CTA. */}
           <div className="mt-5 flex flex-col items-start gap-2.5 text-sm sm:mt-7 sm:flex-row sm:justify-center sm:gap-6">
             <button
               type="button"
@@ -319,12 +332,6 @@ export function Hero() {
             >
               📷 Загрузить фото работ, скриншот профиля или визитку
             </button>
-            <a
-              className="inline-flex gap-2 text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
-              href="#tg-export"
-            >
-              📨 Закрытый TG-канал — загрузить экспорт
-            </a>
           </div>
         </div>
 

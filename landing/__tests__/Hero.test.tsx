@@ -37,9 +37,11 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. COPY.md §11.1.
     expect(screen.queryByText("САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ")).toBeNull();
 
-    // H1 + sub.
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/сам себя ведёт/i);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/приносит вам заявки/i);
+    // H1 + sub (v2 / PR-G — three «сам» pattern).
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1).toHaveTextContent(/сам себя соберёт/i);
+    expect(h1).toHaveTextContent(/сам обновит/i);
+    expect(h1).toHaveTextContent(/сам приведёт клиентов/i);
     expect(screen.getByText(/Покажите ссылку на ваше дело/i)).toBeInTheDocument();
 
     // Brand — Cyrillic only (legal requirement, PRD §3).
@@ -49,7 +51,7 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // CTA + microcopy.
     expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).toBeInTheDocument();
     expect(
-      screen.getByText(/Первый месяц бесплатно — без карты при регистрации/i),
+      screen.getByText(/Первый месяц — бесплатно\. Самосайт сам напомнит/i),
     ).toBeInTheDocument();
 
     // Benefits stack удалён из Hero в v2 — теперь живёт в <BigFeatures />
@@ -59,12 +61,15 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     expect(screen.queryByText(/^Сам находится в поиске$/)).toBeNull();
   });
 
-  it("ships fallback links for photo + closed-TG", () => {
+  it("ships fallback link for photo (closed-TG moved to FAQ in PR-G)", () => {
     render(<Hero />);
     expect(
       screen.getByText(/Загрузить фото работ, скриншот профиля или визитку/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Закрытый TG-канал — загрузить экспорт/i)).toBeInTheDocument();
+    // «Закрытый TG-канал — загрузить экспорт» удалён из Hero в PR-G:
+    // user testing flagged that это редкий сценарий который путал
+    // mainstream-юзеров на самом видном месте. Переехал в FAQ.
+    expect(screen.queryByText(/Закрытый TG-канал/i)).toBeNull();
   });
 
   it("anti-pattern guard — never uses banned wording", () => {
