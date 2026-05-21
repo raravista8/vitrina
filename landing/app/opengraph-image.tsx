@@ -18,7 +18,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Самосайт — сайт, который сам себя ведёт и приносит вам заявки";
+export const alt = "Самосайт — сайт, который сам себя соберёт, сам обновит и сам приведёт клиентов";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,23 +61,30 @@ export default async function Image() {
         <span style={{ fontSize: 40, fontWeight: 700, color: "#2d1b14" }}>Самосайт</span>
       </div>
 
-      {/* H1 */}
+      {/* H1 — v2.1 «три сам» pattern, synced with Hero.tsx visible H1.
+          Без trailing period (visible H1 тоже без точки), терракотовая
+          фраза = visual anchor. */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          fontSize: 88,
+          fontSize: 76,
           fontWeight: 700,
-          lineHeight: 1.05,
+          lineHeight: 1.06,
           letterSpacing: -3,
           color: "#2d1b14",
         }}
       >
         <span>Сайт, который</span>
         <span>
-          <span style={{ color: "#c66333" }}>сам себя ведёт</span>
+          <span style={{ color: "#c66333" }}>сам себя соберёт,</span>
         </span>
-        <span>и приносит вам заявки.</span>
+        <span>
+          <span style={{ color: "#c66333" }}>сам обновит</span> и
+        </span>
+        <span>
+          <span style={{ color: "#c66333" }}>сам приведёт клиентов</span>
+        </span>
       </div>
 
       {/* Bottom microcopy */}
@@ -91,7 +98,7 @@ export default async function Image() {
         }}
       >
         <span>samosite.online</span>
-        <span>Первый месяц бесплатно — без карты</span>
+        <span>Первый месяц бесплатно — карта не нужна</span>
       </div>
     </div>,
     {
