@@ -178,6 +178,7 @@ export function BigFeatures() {
   return (
     <section
       id="features"
+      data-section="big-features"
       aria-labelledby="big-features-title"
       className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >

@@ -299,7 +299,23 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
     // Flush on pagehide and unmount so a reload within the 200ms debounce
     // window doesn't drop the last pan/zoom.
     window.addEventListener('pagehide', flush);
-    return () => { window.removeEventListener('pagehide', flush); flush(); };
+
+    // Global reset hook — used by `tests/visual/generate-*` Playwright
+    // scripts before screenshotting an artboard. Without this, the test
+    // would inherit whatever pan/zoom the dev last left in localStorage,
+    // making baseline regeneration non-deterministic. Clears persisted
+    // state too so a follow-up reload starts fresh.
+    window.__dc_reset = () => {
+      try { localStorage.removeItem(tfKey); } catch {}
+      tf.current = { x: 0, y: 0, scale: 1 };
+      apply();
+    };
+
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      try { delete window.__dc_reset; } catch {}
+      flush();
+    };
   }, []);
 
   React.useEffect(() => {

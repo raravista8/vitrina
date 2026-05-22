@@ -144,6 +144,7 @@ export function Examples() {
   return (
     <section
       id="examples"
+      data-section="examples"
       aria-labelledby="examples-title"
       className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >
