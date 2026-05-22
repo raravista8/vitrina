@@ -46,6 +46,15 @@ export interface DiffOptions {
   diffDir?: string;
   /** Label used for the diff filename + thrown error messages. */
   label?: string;
+  /**
+   * Vertical tolerance (in px) for "prod has more content than canon".
+   * When set and `actual.height > baseline.height + tolerance`, this throws.
+   * When `actual.height >= baseline.height` and within tolerance, the actual
+   * is clipped to baseline.height (top region) before pixelmatch — useful
+   * for sections where prod added a few px of padding without restructuring.
+   * Default `0` (strict dimension match required).
+   */
+  heightTolerance?: number;
 }
 
 export function compareToBaseline(
@@ -61,20 +70,50 @@ export function compareToBaseline(
   }
   const baseline = PNG.sync.read(fs.readFileSync(baselinePath));
   const actual = PNG.sync.read(actualBuf);
+  const tolerance = opts.heightTolerance ?? 0;
 
-  // Refuse comparison if dimensions diverge — see file header rationale.
-  if (baseline.width !== actual.width || baseline.height !== actual.height) {
+  // Width MUST match — there's no sensible way to compare images of
+  // different widths (a horizontal layout shift means content fundamentally
+  // moved). Height MAY drift up to `heightTolerance` when prod is taller —
+  // we clip prod to baseline.height (top region) and diff over the overlap.
+  // This handles the common case where prod adds small spacing without
+  // restructuring the section.
+  if (baseline.width !== actual.width) {
     throw new Error(
-      `[visual] dimension mismatch for ${opts.label ?? baselinePath}:\n` +
+      `[visual] width mismatch for ${opts.label ?? baselinePath}:\n` +
         `  baseline ${baseline.width}x${baseline.height}\n` +
         `  actual   ${actual.width}x${actual.height}\n` +
-        `Section layout changed structurally — regen the baseline if intentional.`,
+        `Section width changed — fix layout or regen baseline.`,
+    );
+  }
+  if (actual.height < baseline.height) {
+    throw new Error(
+      `[visual] prod is SHORTER than canon for ${opts.label ?? baselinePath}:\n` +
+        `  baseline ${baseline.width}x${baseline.height}\n` +
+        `  actual   ${actual.width}x${actual.height}\n` +
+        `Canon expects more content — section may have lost an element.`,
+    );
+  }
+  if (actual.height > baseline.height + tolerance) {
+    throw new Error(
+      `[visual] prod is too tall for ${opts.label ?? baselinePath}:\n` +
+        `  baseline ${baseline.width}x${baseline.height}\n` +
+        `  actual   ${actual.width}x${actual.height} (over tolerance ${tolerance}px)\n` +
+        `Pass a larger \`heightTolerance\` or trim prod padding.`,
     );
   }
 
+  // Use baseline dimensions for the diff window. Clip prod's PNG buffer
+  // to the top `baseline.height` rows. PNG row stride = width * 4 bytes
+  // (RGBA), so the first `baseline.height * width * 4` bytes of actual.data
+  // are the top region we want to compare.
   const { width, height } = baseline;
+  const rowBytes = width * 4;
+  const clippedActual =
+    actual.height === height ? actual.data : actual.data.subarray(0, height * rowBytes);
+
   const diffPng = new PNG({ width, height });
-  const diff = pixelmatch(baseline.data, actual.data, diffPng.data, width, height, {
+  const diff = pixelmatch(baseline.data, clippedActual, diffPng.data, width, height, {
     threshold: opts.threshold ?? 0.1,
     /* `includeAA: true` would gate antialiasing artefacts BUT it costs ~3×
        runtime and our 2% budget already absorbs them at threshold 0.1. */
