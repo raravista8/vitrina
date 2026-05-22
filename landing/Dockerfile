@@ -1,11 +1,29 @@
 # syntax=docker/dockerfile:1.7
-# Vitrina landing — Next.js 14 (App Router).
+# Vitrina landing — Next.js 16 (App Router) + @samosite/canon workspace dep.
+#
+# Build context = repo root (per docker-compose's `context: ..`). Dockerfile
+# paths therefore prefix with `landing/` for the app itself, and pull
+# `packages/canon/` alongside as a `file:` workspace dep.
 
 # ---- Stage 1: deps -----------------------------------------------------------
 FROM node:20-bookworm-slim AS deps
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN --mount=type=cache,target=/root/.npm npm ci
+# Copy landing's package files PLUS the vendored canon package (`file:`
+# dep target). The canon copy is required at install time — without it
+# `npm ci` cannot resolve `@samosite/canon`. `dist/` ships committed in
+# the canon package (see `packages/canon/.gitignore` `!dist/`), so no
+# build step needed.
+COPY landing/package.json landing/package-lock.json* ./
+COPY packages/canon /packages/canon
+# Hack for `file:../packages/canon` to resolve from /app: package-lock.json
+# records the path as `../packages/canon` relative to the package, which
+# resolves to `/packages/canon` from `/app/../packages/canon` ✓.
+#
+# --install-links materialises `file:` deps as copies (not symlinks).
+# Turbopack's peer-dep resolver doesn't follow symlinks — it looks for
+# `react` from the canon package's PHYSICAL path. Without --install-links
+# the next-stage build fails with `Cannot find package 'react'`.
+RUN --mount=type=cache,target=/root/.npm npm ci --install-links
 
 # ---- Stage 2: builder --------------------------------------------------------
 FROM node:20-bookworm-slim AS builder
@@ -47,7 +65,9 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     BUILD_TIME=$BUILD_TIME
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Source for landing only — canon is already inside node_modules/@samosite/canon
+# from the deps stage's --install-links copy.
+COPY landing/ .
 RUN npm run build
 
 # ---- Stage 3: runtime --------------------------------------------------------

@@ -77,7 +77,11 @@ jobs:
           cache-dependency-path: landing/package-lock.json
 
       - name: install deps
-        run: npm ci
+        # --install-links materialises `file:` deps as copies (not
+        # symlinks). `@samosite/canon` is a workspace dep; turbopack's
+        # peer-dep resolver doesn't follow symlinks. Same flag also
+        # used in .github/actions/setup-landing/action.yml.
+        run: npm ci --install-links
 
       # Playwright's browser binaries are downloaded out-of-band — `npm ci`
       # alone won't pull them. `--with-deps` installs the apt-level libs
