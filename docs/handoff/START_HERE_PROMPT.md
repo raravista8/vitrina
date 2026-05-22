@@ -14,11 +14,16 @@
 1. `design_handoff_samosite/README.md` — карта пакета, приоритет источников, acceptance criteria.
 2. `design_handoff_samosite/TOKENS.md` — все дизайн-токены (цвета oklch, шрифты, радиусы, тени).
 3. `design_handoff_samosite/SCREEN_INDEX.md` — карта 19 экранов: канон → прод-файл.
-4. `design_handoff_samosite/specs/04_typography.md` — обязательные русские типографские правила (применяются ВСЕГДА).
-5. `design_handoff_samosite/specs/03_session_v2.1.3.md` — последние правки копирайта/тарифа (перекрывают всё ниже).
-6. `design_handoff_samosite/specs/01_landing_v2.1.md` — финальный лендинг + клиентский ЛК.
-7. `design_handoff_samosite/specs/02_customer_v2.1.md` — booking-page customer-сайтов.
-8. `design_handoff_samosite/specs/00_CLAUDE_CODE_TZ_base.md` — базовый ТЗ для admin-экранов (раздел 1 перекрыт 01, раздел 3 — 02).
+4. `design_handoff_samosite/VISUAL_COVERAGE.md` — трекер pixel-coverage. Сейчас 1 / 122 — это главный gap.
+5. `design_handoff_samosite/PIXEL_PERFECT_SETUP.md` — Playwright+pixelmatch инфраструктура с готовым кодом.
+6. `design_handoff_samosite/BASELINES_PLAN.md` — Tier 1/2/3 план закрытия gap, ~16 дней.
+7. `design_handoff_samosite/specs/04_typography.md` — обязательные русские типографские правила (применяются ВСЕГДА).
+8. `design_handoff_samosite/specs/03_session_v2.1.3.md` — последние правки копирайта/тарифа (перекрывают всё ниже).
+9. `design_handoff_samosite/specs/01_landing_v2.1.md` — финальный лендинг + клиентский ЛК.
+10. `design_handoff_samosite/specs/02_customer_v2.1.md` — booking-page customer-сайтов.
+11. `design_handoff_samosite/specs/05_admin_screens.md` — детальные ТЗ для pixel-аудита admin 10–19.
+12. `design_handoff_samosite/specs/06_public_screens_2_9.md` — детальные ТЗ для pixel-аудита public 2–9.
+13. `design_handoff_samosite/specs/00_CLAUDE_CODE_TZ_base.md` — базовый ТЗ (разделы 1/3 перекрыты 01/02).
 
 **Правило приоритета при конфликтах:**
 typography (04) → session (03) → landing (01) / customer (02) → base (00) → канон в `canon/*.jsx` (источник истины по пикселям).
@@ -46,7 +51,10 @@ typography (04) → session (03) → landing (01) / customer (02) → base (00) 
 
 1. Покажи мне **диффы**, которые ты собираешься сделать на верхнем уровне: какие файлы создашь, какие изменишь, в каком порядке. Без кода — только список.
 2. Покажи план миграции брейкинг-имён (`Витрина → Самосайт`, домены, боты) — какие файлы трогаем.
-3. Покажи план pixel-perfect verification: Playwright + pixelmatch, threshold 0.02, viewports 1440/768/390 — какие эталонные скриншоты будем генерировать из канона.
+3. Покажи план pixel-perfect verification согласно `PIXEL_PERFECT_SETUP.md` и `BASELINES_PLAN.md`:
+   - Сначала снимаем 5 блокеров из `PIXEL_PERFECT_SETUP.md §11`.
+   - Затем идём по тирам из `BASELINES_PLAN.md` (Tier 1 → 2a → 2b → 2c → 3 → 4).
+   - После каждого тира — обновляем `VISUAL_COVERAGE.md` (🔴 → 🟡 → 🟢).
 4. **Жди моего апрува** перед тем, как писать код.
 
 ## Шаг 5 — реализация (после апрува)
