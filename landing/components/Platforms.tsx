@@ -21,70 +21,7 @@
 
 import type { ReactNode } from "react";
 
-/** SVG glyph для Яндекс.Карт — красный пин-капля #FC3F1D с белым кругом. */
-function YandexMapsGlyph() {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      width="20"
-      height="20"
-      aria-hidden="true"
-      role="presentation"
-      // -mr-0.5 чтобы glyph чуть «прижался» влево, как обычный pin-логотип.
-      className="-mr-0.5"
-    >
-      {/* Pin-drop shape (top half-circle + bottom triangle point). */}
-      <path
-        d="M10 1.5c-3.6 0-6.5 2.9-6.5 6.5 0 4.4 6.5 10.5 6.5 10.5s6.5-6.1 6.5-10.5c0-3.6-2.9-6.5-6.5-6.5z"
-        fill="#FC3F1D"
-      />
-      {/* Inner white circle. */}
-      <circle cx="10" cy="8" r="2.6" fill="#FFFFFF" />
-    </svg>
-  );
-}
-
-/** SVG glyph для 2ГИС — зелёный rounded-square #19BB4F с белой «2». */
-function TwoGisGlyph() {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" role="presentation">
-      <rect x="0" y="0" width="20" height="20" rx="4.5" fill="#19BB4F" />
-      <text
-        x="10"
-        y="15"
-        textAnchor="middle"
-        fontFamily='"Onest", "Inter", system-ui, sans-serif'
-        fontWeight="900"
-        fontSize="14"
-        fill="#FFFFFF"
-      >
-        2
-      </text>
-    </svg>
-  );
-}
-
-/** SVG glyph для Avito — голубой #0AF с оранжевым кругом #FF9C00 и белой «A». */
-function AvitoGlyph() {
-  return (
-    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" role="presentation">
-      <rect x="0" y="0" width="20" height="20" rx="4.5" fill="#00AAFF" />
-      {/* Brand-accent orange circle справа сверху. */}
-      <circle cx="14.5" cy="5.5" r="3.2" fill="#FF9C00" />
-      <text
-        x="10"
-        y="17"
-        textAnchor="middle"
-        fontFamily='"Onest", "Inter", system-ui, sans-serif'
-        fontWeight="900"
-        fontSize="15"
-        fill="#FFFFFF"
-      >
-        A
-      </text>
-    </svg>
-  );
-}
+import { AvitoGlyph, TwoGisGlyph, YandexMapsGlyph } from "./brand-glyphs";
 
 interface Platform {
   name: string;

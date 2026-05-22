@@ -167,20 +167,28 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     vi.unstubAllGlobals();
   });
 
-  it("shows the supported-source list when input is empty", () => {
+  it("shows the compact platform list under the form", () => {
     render(<Hero />);
-    // Microcopy line, only visible before the user pastes anything.
-    expect(
-      screen.getByText(/Поддерживаем:.*Telegram-канал.*Яндекс\.Карты.*фото/i),
-    ).toBeInTheDocument();
+    // v2.1.3 §1.3 — старая «Поддерживаем: …» микрокопия заменена на
+    // compact-list block с kicker «ИЗ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ»
+    // + chips с brand glyphs. Список всегда виден (не зависит от input).
+    expect(screen.getByText(/из чего мы можем сделать вам сайт/i)).toBeInTheDocument();
+    // Use exact match to scope to compact-list items (avoid matching
+    // «Telegram или визитку» в Hero subtitle).
+    expect(screen.getByText("Я.Карты")).toBeInTheDocument();
+    expect(screen.getByText("Telegram")).toBeInTheDocument();
+    expect(screen.getByText("Avito")).toBeInTheDocument();
   });
 
-  it("hides the supported-source list once the user types", () => {
+  it("keeps the compact platform list visible after the user types", () => {
     render(<Hero />);
+    // v2.1.3 §1.3 — compact list постоянно виден (раньше скрывался при
+    // paste). Reason: brand-recognition value высокий, badge внизу
+    // (SourceDetectionBadge) для recognized source не конфликтует.
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/some_channel" },
     });
-    expect(screen.queryByText(/Поддерживаем:/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/из чего мы можем сделать вам сайт/i)).toBeInTheDocument();
   });
 
   it("renders an × clear-button when input is non-empty; clears on click", () => {
