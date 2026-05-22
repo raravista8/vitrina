@@ -176,13 +176,10 @@ export function Examples() {
         ))}
       </div>
 
-      {/* Mobile-only carousel hint */}
-      <p
-        aria-hidden="true"
-        className="mt-4 text-center font-mono text-[11px] uppercase tracking-widest text-ink-faint sm:hidden"
-      >
-        ← листайте вправо →
-      </p>
+      {/* v2.1.3 §1.2 — mobile carousel hint «← листайте вправо →» удалён.
+          scroll-snap-type: x mandatory + видимая «обрезка» правой карточки
+          даёт достаточный affordance — explicit подсказка избыточна и
+          выглядит как «инструкция для слабых». */}
     </section>
   );
 }

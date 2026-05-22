@@ -1,25 +1,27 @@
 /**
- * Landing root page (v2 — PR-H final structure).
+ * Landing root page (v2.1.3 final structure).
  *
- * Sections per docs/COPY.md §2 + user feedback batch 3:
+ * Sections per docs/COPY.md §2 + CLAUDE_CODE_TZ_session_v2.1.3.md §1.5:
  *
  *   1. Nav         — inside Hero
  *   2. Hero        — H1 «три сам» + input + CTA
- *   3. SocialProof — counter «N сайтов работает» + 4 testimonials (NEW, PR-H)
- *   4. Examples    — 3 demo cases (carousel on mobile)
- *   5. Story       — 6 steps zigzag, все начинаются с «Сам…»
- *   6. Platforms   — 2 list of supported / coming-soon sources
- *   7. BigFeatures — 8 «сам» cards + closer «А вы — хозяин»
- *   8. Pricing     — 299 ₽/мес single tariff (NEW, PR-H)
- *   9. FAQ         — 10 questions through «Самосайт сам…» framing (NEW, PR-H)
- *   10. FreeMonthCTA — full Dojim block
- *   11. Footer
+ *   3. Examples    — 3 demo cases (carousel on mobile)
+ *   4. Story       — 6 steps zigzag, все начинаются с «Сам…»
+ *   5. Platforms   — 7 active / 3 coming-soon sources
+ *   6. BigFeatures — 8 «сам» cards + closer «А вы — хозяин»
+ *   7. Pricing     — 990 ₽/мес single tariff
+ *   8. FAQ         — 10 questions through «Самосайт сам…» framing
+ *   9. FreeMonthCTA — Dojim final CTA «Дайте Самосайту собрать себя»
+ *   10. Footer
  *
- * Order rationale (user feedback batch 3):
- *   - SocialProof EARLY (before Examples) because «работает ли это вообще»
- *     beats «как будет выглядеть мой сайт» as a fear.
+ * Removed in v2.1.3:
+ *   - SocialProof (47/1284/4.9★ + testimonials) — pilot test показал
+ *     путаницу «продаём сайт или отзывы». См. v2.1.3 §1.2 + Phase 36.
+ *
+ * Order rationale:
  *   - Pricing AFTER BigFeatures so visitor sees value before price.
  *   - FAQ BEFORE FreeMonthCTA — answers concerns before final dojim.
+ *   - Future: AnalyticsSection between BigFeatures и Pricing (Phase 7/9).
  */
 
 import { BigFeatures } from "@/components/BigFeatures";
@@ -30,8 +32,12 @@ import { FreeMonthCTA } from "@/components/FreeMonthCTA";
 import { Hero } from "@/components/Hero";
 import { Platforms } from "@/components/Platforms";
 import { Pricing } from "@/components/Pricing";
-import { SocialProof } from "@/components/SocialProof";
 import { Story } from "@/components/Story";
+
+// v2.1.3 §1.2 — SocialProof секция (47 сайтов / 1284 заявок / 4.9★ +
+// 4 testimonials) удалена целиком: для пилота на 47 мастерах с
+// reviews-генерацией ИИ создавала путаницу «продаём ли мы Самосайт
+// или отзывы». Возможный revert — restore из git history (PR-H #70).
 
 /**
  * ISR revalidation — Next.js регенерит prerender каждые 60 секунд.
@@ -57,7 +63,6 @@ export default function HomePage() {
   return (
     <main id="top">
       <Hero />
-      <SocialProof />
       <Examples />
       <Story />
       <Platforms />

@@ -163,15 +163,18 @@ export function BigFeatures() {
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
           Что делает Самосайт
         </p>
+        {/* v2.1.3 §3.1 — H2 без точек в обоих частях, тире вместо точки
+            между fragment'ами. Typography: H2 из 1-2 ёмких фраз — без
+            trailing periods. */}
         <h2
           id="big-features-title"
           className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
         >
-          Восемь «сам». Поэтому он Самосайт.
+          Восемь «сам» — поэтому он Самосайт
         </h2>
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
           Каждая функция начинается с «сам» — потому что мастер не должен ничего настраивать,
-          поддерживать или вспоминать. Самосайт всё делает за вас.
+          поддерживать или вспоминать. Самосайт всё делает за вас
         </p>
       </header>
 
