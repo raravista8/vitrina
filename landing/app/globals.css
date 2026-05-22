@@ -1,4 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Onest:wght@400;500;600;700&display=swap");
+/* Font weights per `docs/handoff/TOKENS.md §Типографика`:
+ *   • Onest 400, 500, 600, 700, 800 — sans, used everywhere
+ *   • JetBrains Mono 400, 500 — mono, used for numbers / URLs / eyebrows
+ *
+ * Weight 800 (Onest) feeds the Cyrillic «С» logo + occasional H1 accents
+ * (see `canon/tokens.jsx::Logo`). JetBrains Mono 400 covers regular-weight
+ * mono blocks like `+7 ***1234` lead-preview captions; the bolder 500 is
+ * for emphasised numbers (prices, deltas).
+ *
+ * `display=swap` — fall back to system stack while WOFF is downloading;
+ * Cyrillic glyphs in the system font are close enough to Onest that the
+ * FOUT isn't jarring. Without `display=swap` we'd get FOIT (invisible
+ * text), which is worse for LCP. */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;

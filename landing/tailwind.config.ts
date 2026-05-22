@@ -4,14 +4,28 @@ import type { Config } from "tailwindcss";
  * Самосайт — design tokens (Concept A · Тёплая бумага).
  *
  * Single source of truth for all 19 screens. Values mirror Claude
- * Design's `tokens.jsx` — colour, type, radii. OKLCH chosen for
- * perceptual uniformity: warm hues need it to read evenly across
- * surfaces.
+ * Design's `canon/tokens.jsx` (mirrored in repo at
+ * `landing/tests/visual/canon-source/tokens.jsx`) and the human-readable
+ * spec at `docs/handoff/TOKENS.md`. OKLCH chosen for perceptual
+ * uniformity: warm hues need it to read evenly across surfaces.
  *
  * Production rule: never hardcode a hex/oklch in component markup —
  * refer to `bg-paper`, `text-ink`, `border-line`, `bg-accent`, etc.
  * The design canvas uses inline styles for demo purposes; production
  * is fully Tailwind.
+ *
+ * Naming note: TOKENS.md uses `terracotta` for the accent colour; we
+ * keep the prod alias `accent` because every component file references
+ * it that way and renaming is a sweeping no-visual-change refactor for
+ * a separate PR. Same goes for `cream` (canon) vs `paper` (prod).
+ *
+ * What's INTENTIONALLY missing from this file (vs TOKENS.md):
+ *   • `borderRadius` scale (`sm:6, md:10, lg:14, xl:18` per TOKENS.md
+ *     §Радиусы). Overriding Tailwind's defaults here would shift every
+ *     existing `rounded-{sm|md|lg|xl}` site-wide without per-component
+ *     review. Phase C introduces canon radii per-section via arbitrary
+ *     values (`rounded-[14px]`) and the visual-regression gate catches
+ *     drift. Revisit globally when all 10 sections are `audited: true`.
  */
 const config: Config = {
   content: [
