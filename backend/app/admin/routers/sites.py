@@ -31,6 +31,7 @@ from app.api.dependencies import (
     require_admin,
 )
 from app.config import get_settings
+from app.core.analytics.service import build_dashboard_payload
 from app.core.auth.sessions import AdminSession
 from app.core.content.ports import LlmClient
 from app.core.content.service import generate_for_snapshot
@@ -158,6 +159,44 @@ async def admin_site_generate(
 
     flash = f"generated_{outcome.status}"
     return _redirect_with_flash(site_id, flash)
+
+
+@router.get("/{site_id}/analytics", include_in_schema=False)
+async def admin_site_analytics(
+    site_id: UUID,
+    range: Annotated[int, "Day count, default 30, max 365"] = 30,
+    session: Annotated[AsyncSession, Depends(get_session)] = ...,  # type: ignore[assignment]
+    _admin: Annotated[AdminSession, Depends(require_admin)] = ...,  # type: ignore[assignment]
+) -> dict[str, Any]:
+    """JSON analytics payload for the dashboard widget.
+
+    Phase 7b — v2.1.3 §2.2 endpoint. Returns the structure consumed by
+    landing `<AnalyticsSection>` demo and (future) customer ЛК real-time
+    widget. Founder-only auth для MVP — customer ЛК gets parallel route
+    when magic-link auth (FR-062) lands.
+
+    Range bounds: 7-365 days. Default 30. Out-of-range → 400.
+    """
+    if range < 7 or range > 365:
+        raise HTTPException(status_code=400, detail="range_out_of_bounds")
+
+    site = await _load_site_or_404(session, site_id)
+
+    # Rating — лежит в site.generated_content (LLM populates from
+    # parsed reviews) OR в site_reviews_curated.avg. Для MVP — читаем
+    # из generated_content; previous-period rating history добавим
+    # когда reviews-curation накопит >2 weekly runs.
+    content = site.generated_content or {}
+    rating_raw = content.get("average_rating") or content.get("site_rating") or 0.0
+    rating = float(rating_raw)
+    payload = await build_dashboard_payload(
+        session=session,
+        site_id=site.id,
+        range_days=range,
+        rating=rating,
+        rating_prev=rating,  # delta = 0 stub до history table
+    )
+    return payload.to_dict()
 
 
 @router.post("/{site_id}/publish", include_in_schema=False)

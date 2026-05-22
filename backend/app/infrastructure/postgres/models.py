@@ -19,13 +19,15 @@ Cascade strategy (ФЗ-152 right-to-erasure compatible):
 from __future__ import annotations
 
 import uuid
+from datetime import date as date_type
 from datetime import datetime
-from typing import Any
+from typing import Any, Final
 
 from sqlalchemy import (
     BigInteger,
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -35,6 +37,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import INET, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -604,6 +607,74 @@ class BillingEvent(UUIDPrimaryKey, Base):
     )
 
 
+# --- Phase 7b — Analytics aggregation -------------------------------------
+
+
+# Channels через которые отправляется weekly digest. Source of truth — это
+# `users.contact_type` enum (`telegram`/`max`/`email` plus `sms` fallback).
+ANALYTICS_DIGEST_CHANNELS: Final[tuple[str, ...]] = ("telegram", "max", "email", "sms")
+
+
+class SiteAnalytics(Base):
+    """Daily aggregated counts per site — нагрузка query'ев аналитики
+    из `events` table становится unbounded когда site накапливает млн
+    pageview's. Pre-aggregation в nightly job + индексированный
+    range-scan для `GET /api/admin/analytics?range=30d`.
+
+    Idempotency: composite PK (site_id, date) — повторный run aggregation
+    job over the same day генерит `INSERT ... ON CONFLICT DO UPDATE`.
+    """
+
+    __tablename__ = "site_analytics"
+
+    site_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sites.id", ondelete="CASCADE"),
+        primary_key=True,
+        nullable=False,
+    )
+    date: Mapped[date_type] = mapped_column(Date, primary_key=True, nullable=False)
+    visits: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    unique_visitors: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    leads: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    source_breakdown: Mapped[dict[str, Any]] = mapped_column(
+        JSONB,
+        nullable=False,
+        server_default=text("'{}'::jsonb"),
+    )
+
+
+class SiteAnalyticsDigestLog(Base):
+    """Append-only delivery log для cron `weekly_analytics_digest`.
+
+    Используется чтобы избежать double-send при cron-overlap или
+    manual re-trigger из admin UI. Cron job делает
+    `WHERE NOT EXISTS (... sent_at > now() - interval '6 days')`
+    перед каждым delivery.
+    """
+
+    __tablename__ = "site_analytics_digest_log"
+
+    site_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sites.id", ondelete="CASCADE"),
+        primary_key=True,
+        nullable=False,
+    )
+    sent_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        primary_key=True,
+        nullable=False,
+        server_default=func.now(),
+    )
+    channel: Mapped[str] = mapped_column(String(16), nullable=False)
+
+    __table_args__ = (
+        CheckConstraint(
+            f"channel IN {ANALYTICS_DIGEST_CHANNELS!r}",
+            name="site_analytics_digest_log_channel_valid",
+        ),
+    )
+
+
 __all__ = [
     "AdminAction",
     "AdminCredentials",
@@ -617,6 +688,8 @@ __all__ = [
     "GenerationAudit",
     "Lead",
     "Site",
+    "SiteAnalytics",
+    "SiteAnalyticsDigestLog",
     "Subscription",
     "SyncRun",
     "User",
