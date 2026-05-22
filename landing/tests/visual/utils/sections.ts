@@ -99,89 +99,83 @@ export const LANDING_SECTIONS: VisualSection[] = [
        platform-list block enough to need its own tuning pass. */
     auditedViewports: ["1440"],
   },
-  /* Sections 2-10 — refactored in PR-Tier-1 to use a content-only
-     `[data-section-body=<id>]` wrapper inside each <section>. The outer
-     section keeps vertical padding for inter-section rhythm; the
-     wrapper carries `px-5 sm:px-16` so its width matches the viewport
-     (canon's edge-to-edge 1440 baselines) and its height is
-     content-only (no top-padding offset). Same pattern Hero uses.
+  /* Sections 2-10 — replaced by `@samosite/canon/landing` imports in
+     `landing/app/page.tsx::HomePage`. Each canon component is wrapped
+     in `<div data-section="<id>">` (see `ResponsiveCanonSection`) so
+     the visual spec selector `[data-section='<id>']` still resolves
+     on the canon-using prod.
 
-     Why all entries stay `auditedViewports: []` after the refactor:
-     a local sweep showed the wrapper resolves the padding-offset
-     issue but exposes underlying prod-vs-canon content drift —
-     real differences in section heights driven by extra inner
-     paragraphs, different card vertical padding, mobile reflow
-     gaps. Per-viewport diffs after refactor (macOS local):
+     Why all entries are smoke-only after the canon swap:
+     baselines in `tests/visual/baselines/*-*.png` were generated from
+     hand-rolled prod sections (pre-canon-package). Switching prod to
+     canon means the baselines are now STALE — they describe a layout
+     no longer rendered. Re-running pixel-diff would be a meaningless
+     comparison of canon dimensions vs old hand-rolled dimensions.
 
-       Section     | 1440      | 768       | 390
-       ------------|-----------|-----------|-----
-       examples    | -348 px   | -350 px   | -314 px   (prod shorter)
-       story       | -9 px     | +179 px   | +791 px   (mobile tall)
-       platforms   | 3.62 %    | +124 px   | +218 px
-       big-features| +73 px    | +583 px   | +1739 px  (mobile balloon)
-       ownership   | (pass)    | +118 px   | +430 px
-       analytics   | (pass)    | +93 px    | +433 px
-       pricing     | +36 px    | +172 px   | +495 px
-       faq         | 2.96 %    | +172 px   | +228 px
-       free-month  | (pass)    | -98 px    | -228 px
+     Two correct unlock paths (separate follow-up PR):
+       1. Regenerate baselines from the canon-using prod build itself
+          — pixel-diff becomes a regression gate ("did we accidentally
+          break our canon import?"). Loses ability to detect drift
+          between canon-source and what we render.
+       2. Regenerate baselines from canon-source directly via the
+          canon-host iframe, render prod-side, diff. This keeps the
+          "canon = truth" semantic and catches our consumption bugs.
 
-     Each section needs an individual investigation + tuning pass
-     (Examples needs canon-aligned content count; mobile-heavy
-     sections need vertical-density audits). Until then, smoke-only
-     keeps structural-regression coverage without false-positive
-     CI churn. Foundation work (this PR) makes those follow-ups
-     a one-line `auditedViewports` flip rather than a refactor. */
+     Path 2 is the design intent (see `docs/handoff/PIXEL_PERFECT_SETUP.md`)
+     but requires updating `generate-baselines.ts` to render canon
+     components inside the consumer's React context rather than the
+     Babel-standalone canvas. Tracked as canon-integration follow-up. */
   {
     id: "examples",
-    selector: "[data-section-body='examples']",
+    selector: "[data-section='examples']",
     label: "Examples (#2)",
     auditedViewports: [],
   },
   {
     id: "story",
-    selector: "[data-section-body='story']",
+    selector: "[data-section='story']",
     label: "Story (#3)",
     auditedViewports: [],
   },
   {
     id: "platforms",
-    selector: "[data-section-body='platforms']",
+    selector: "[data-section='platforms']",
     label: "Platforms (#4)",
-    auditedViewports: ["1440"],
+    auditedViewports: [],
   },
   {
     id: "big-features",
-    selector: "[data-section-body='big-features']",
+    selector: "[data-section='big-features']",
     label: "BigFeatures (#5)",
     auditedViewports: [],
   },
   {
     id: "ownership",
-    selector: "[data-section-body='ownership']",
+    selector: "[data-section='ownership']",
     label: "Ownership (#6)",
     auditedViewports: [],
   },
   {
     id: "analytics",
-    selector: "[data-section-body='analytics']",
+    selector: "[data-section='analytics']",
     label: "Analytics (#7)",
     auditedViewports: [],
   },
   {
     id: "pricing",
-    selector: "[data-section-body='pricing']",
+    selector: "[data-section='pricing']",
     label: "Pricing (#8)",
     auditedViewports: [],
   },
   {
     id: "faq",
-    selector: "[data-section-body='faq']",
+    selector: "[data-section='faq']",
     label: "FAQ (#9)",
-    auditedViewports: ["1440"],
+    auditedViewports: [],
   },
   {
     id: "free-month",
-    selector: "[data-section-body='free-month']",
+    selector: "[data-section='free-month']",
     label: "FreeMonth CTA (#10)",
     auditedViewports: [],
   },

@@ -2,6 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // `@samosite/canon` is a workspace-vendored package (../packages/canon),
+  // installed via `file:` which creates a symlink in node_modules. Turbopack
+  // (Next 16 default bundler) doesn't follow symlinks for peer-dep resolution
+  // out-of-the-box — its module loader looks for `react` from the canon
+  // package's PHYSICAL location, where landing's node_modules isn't visible.
+  // `transpilePackages` forces Next to inline-bundle the package the same
+  // way it bundles local source, so peer deps (React 19) resolve from
+  // landing's node_modules naturally. Same flag covers webpack fallback if
+  // we ever drop turbopack.
+  transpilePackages: ["@samosite/canon"],
   // Security headers applied at the edge in production (Caddy); also set here
   // so `next dev` and `next start` are consistent. CSP is intentionally
   // duplicated client-side via meta-tag in app/layout.tsx for static export

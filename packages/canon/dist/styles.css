@@ -1,0 +1,48 @@
+/* @samosite/canon · interactive styles (CANON_PACKAGE_TZ §2.4) */
+
+:root {
+  --accent:      oklch(0.605 0.155 35);
+  --accent-soft: oklch(0.92  0.045 40);
+  --accent-ink:  oklch(0.42  0.14  35);
+  --ink:         oklch(0.215 0.018 60);
+  --bg:          oklch(0.972 0.012 80);
+  --bg-soft:     oklch(0.945 0.014 75);
+}
+
+@keyframes vt-spin { to { transform: rotate(360deg); } }
+@keyframes vt-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
+.vt-pulse { animation: vt-pulse 2s ease-in-out infinite; }
+
+html { scroll-behavior: smooth; }
+
+.ss-card-lift { transition: transform .2s ease-out, box-shadow .2s ease-out; will-change: transform; }
+.ss-card-lift:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -14px rgba(120,60,30,0.18); }
+
+.ss-story-card { transition: transform .2s ease-out; will-change: transform; }
+.ss-story-card:hover { transform: translateY(-1px); }
+
+.ss-pricing-card { transition: transform .2s ease-out, box-shadow .2s ease-out; will-change: transform; }
+.ss-pricing-card:hover { transform: translateY(-1px); box-shadow: 0 14px 24px -16px rgba(120,60,30,0.22); }
+
+button[data-ss-cta],
+a[href="#hero"], a[href="#book"], a[href="/admin-demo"], a[href="/login"] {
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease, background-color .15s ease;
+}
+button[data-ss-cta]:hover:not(:disabled),
+a[href="#hero"]:hover, a[href="#book"]:hover,
+a[href="/admin-demo"]:hover, a[href="/login"]:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+  box-shadow: 0 16px 32px -14px rgba(120,60,30,0.45);
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+details summary { transition: background-color .15s ease; cursor: pointer; }
+details summary:hover { background-color: var(--bg-soft); }
+
+.ss-hero-pill { transition: border-color .15s ease, box-shadow .15s ease; }
+.ss-hero-pill:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 32px -16px rgba(120,60,30,0.25);
+}

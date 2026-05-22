@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 // сайдбар как «Обратная связь» в follow-up.
 import "./globals.css";
 
+import { CanonStyles } from "@samosite/canon";
 import { BUILD_TAG } from "@/lib/build-info";
 
 const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://samosite.online";
@@ -182,6 +183,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {YM_ID ? <script dangerouslySetInnerHTML={{ __html: metrikaSnippet(YM_ID) }} /> : null}
       </head>
       <body className="min-h-screen bg-paper text-ink antialiased">
+        {/* @samosite/canon interactive styles — hover-lift, focus-rings,
+            pulse keyframes, smooth-scroll. Per `packages/canon/README.md`
+            this must be mounted ONCE at the root. Alternative:
+            `import '@samosite/canon/styles.css'` in globals.css. */}
+        <CanonStyles />
         {children}
         <script
           type="application/ld+json"
