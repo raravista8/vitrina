@@ -41,8 +41,8 @@ import {
 import type { ReactNode } from "react";
 
 interface Feature {
-  kicker: string;
-  title: string;
+  heading: string;
+  subtitle: string;
   body: string;
   glyph: ReactNode;
   /** Чередуем default / accent для визуальной ритмики 4×2 grid. */
@@ -52,69 +52,58 @@ interface Feature {
 // Eight «сам» cards — see top-of-file rationale for naming.
 const FEATURES: Feature[] = [
   {
-    kicker: "САМ СОБЕРЁТСЯ",
-    title: "Дайте ссылку — соберётся за 2 часа",
+    heading: "Сам соберётся",
+    subtitle: "Дайте ссылку — соберётся за 2 часа",
     body: "Дайте ссылку на Яндекс.Карты, Telegram-канал или фото буклета или меню — Самосайт за 2 часа найдёт услуги, цены, отзывы и фото. Сам напишет тексты и подберёт оформление.",
     glyph: <Sparkles className="h-12 w-12" strokeWidth={1.5} />,
   },
   {
-    kicker: "САМ ОБНОВИТСЯ",
-    title: "Каждую неделю — свежие посты, фото и цены",
+    heading: "Сам обновится",
+    subtitle: "Каждую неделю — свежие посты, фото и цены",
     body: "Каждую неделю забирает свежие посты, новые цены и фото из источника. Поменяли прайс в Яндекс.Картах — на сайте уже новый.",
     glyph: <RefreshCw className="h-12 w-12" strokeWidth={1.5} />,
     bg: "accent",
   },
   {
-    kicker: "САМ ОТБЕРЁТ ОТЗЫВЫ",
-    title: "На сайте — только лучшие отзывы",
+    heading: "Сам отберёт отзывы",
+    subtitle: "На сайте — только лучшие отзывы",
     body: "Прочитает все отзывы клиентов, отсеет «норм», тройки и троллей. Поставит на сайт 4–6 самых тёплых и убедительных. Появился отзыв сильнее — заменит.",
     glyph: <Star className="h-12 w-12" strokeWidth={1.5} />,
     bg: "accent",
   },
   {
-    kicker: "САМ ПОЙМАЕТ ЗАЯВКУ",
-    title: "Заявка падает в Telegram, MAX или почту",
+    heading: "Сам поймает заявку",
+    subtitle: "Заявка падает в Telegram, MAX или почту",
     body: "Клиент жмёт «Записаться» — уведомление падает вам в Telegram, MAX или на почту. Без CRM, без личных кабинетов клиентов, без забытых заявок.",
     glyph: <Inbox className="h-12 w-12" strokeWidth={1.5} />,
   },
   {
-    kicker: "САМ ПОСЧИТАЕТ АНАЛИТИКУ",
-    title: "Короткая сводка раз в неделю",
+    heading: "Сам посчитает",
+    subtitle: "Короткая сводка раз в неделю",
     body: "Сколько людей зашли, откуда пришли, сколько оставили заявок. Раз в неделю присылает короткую сводку — без графиков, на человеческом языке.",
     glyph: <BarChart3 className="h-12 w-12" strokeWidth={1.5} />,
   },
   {
-    kicker: "САМ ПОПАДЁТ В ПОИСК",
-    title: "Клиенты найдут вас в Яндексе и Google",
+    heading: "Сам попадёт в поиск",
+    subtitle: "Клиенты найдут вас в Яндексе и Google",
     body: "Сам отправляет сайт в Яндекс и Google, чтобы вас находили в поиске. Защищённый https и разметка для карт — из коробки. Ничего настраивать не нужно.",
     glyph: <Search className="h-12 w-12" strokeWidth={1.5} />,
     bg: "accent",
   },
   {
-    kicker: "САМ ПОДСТРОИТСЯ ПОД ТЕЛЕФОН",
-    title: "80% клиентов зайдут с мобильного — и всё сработает",
+    heading: "Сам подстроится под телефон",
+    subtitle: "80% клиентов зайдут с мобильного — и всё сработает",
     body: "Самосайт сразу собирается так, чтобы на телефоне всё было удобно. Никаких отдельных мобильных версий, никаких «настройте под смартфон».",
     glyph: <Smartphone className="h-12 w-12" strokeWidth={1.5} />,
     bg: "accent",
   },
   {
-    kicker: "САМ ЗАЩИТИТСЯ ОТ СПАМА",
-    title: "Только живые заявки — без ботов",
+    heading: "Сам защитится от спама",
+    subtitle: "Только живые заявки — без ботов",
     body: "Форма с антибот-проверкой, которую настоящий клиент даже не замечает. Боты получают тишину, вам приходят только заявки от людей.",
     glyph: <ShieldCheck className="h-12 w-12" strokeWidth={1.5} />,
   },
 ];
-
-// Closer — flips the rhythm. After eight «сам»-cards in 4×2 grid,
-// one full-width card reframes from «product does it» to «what stays
-// with you»: ownership, control, ability to leave. Visually distinct
-// (full width, darker accent treatment) so it reads as a section
-// closer, not as a 9th feature.
-const CLOSER = {
-  kicker: "А ВЫ — ХОЗЯИН",
-  title: "Можно поправить, поставить на паузу или удалить — за секунду",
-  body: "В личном кабинете видна аналитика посещений и заявок. Самосайт принадлежит вам — заберёте файлы или унесёте на другой домен в любой момент.",
-};
 
 /**
  * Carded feature item. v2.1.3 §1.4 added decorative numbers 01-08 — 96px
@@ -123,8 +112,8 @@ const CLOSER = {
  * implicitly without taking visual real estate from kicker/title/body.
  */
 function BigFeatureCard({
-  kicker,
-  title,
+  heading,
+  subtitle,
   body,
   glyph,
   bg = "default",
@@ -165,11 +154,13 @@ function BigFeatureCard({
         {glyph}
       </div>
 
-      <p className="relative z-10 font-mono text-[11px] uppercase tracking-widest text-accent">
-        {kicker}
-      </p>
+      <h3 className="relative z-10 mt-1.5 text-[24px] font-extrabold leading-[1.05] tracking-[-0.032em] text-ink sm:text-[28px]">
+        {heading}
+      </h3>
 
-      <h3 className="relative z-10 text-[20px] font-bold leading-tight sm:text-[24px]">{title}</h3>
+      <p className="relative z-10 text-[14.5px] font-bold leading-snug tracking-tight text-accent sm:text-[15.5px]">
+        {subtitle}
+      </p>
 
       <p
         className={[
@@ -213,7 +204,7 @@ export function BigFeatures() {
       <div className="mx-auto grid max-w-[1280px] gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
         {FEATURES.map((f, idx) => (
           <BigFeatureCard
-            key={f.kicker}
+            key={f.heading}
             {...f}
             // v2.1.3 §1.4 decorative numbers — zero-padded 01..08 в углу
             // карточки. Padding до 2 цифр чтобы «01» и «08» имели одинаковую
@@ -222,21 +213,6 @@ export function BigFeatures() {
           />
         ))}
       </div>
-
-      {/* Closer — full-width card reframing the rhythm */}
-      <article className="mx-auto mt-6 flex max-w-[1280px] flex-col items-start gap-4 rounded-3xl border-2 border-ink bg-ink p-7 text-white sm:mt-8 sm:flex-row sm:items-center sm:gap-8 sm:p-10">
-        <div className="flex-1">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent-soft">
-            {CLOSER.kicker}
-          </p>
-          <h3 className="mt-2 text-[22px] font-bold leading-tight sm:text-[28px]">
-            {CLOSER.title}
-          </h3>
-          <p className="mt-3 text-[15px] leading-relaxed text-white/80 sm:text-[17px]">
-            {CLOSER.body}
-          </p>
-        </div>
-      </article>
     </section>
   );
 }
