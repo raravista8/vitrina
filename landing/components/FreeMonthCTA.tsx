@@ -45,14 +45,12 @@ export function FreeMonthCTA() {
         <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-white sm:h-20 sm:w-20">
           <Gift className="h-9 w-9 sm:h-11 sm:w-11" strokeWidth={1.6} />
         </div>
-
         <h2
           id="free-month-title"
           className="mt-6 text-[34px] font-bold leading-[1.05] tracking-tight sm:mt-8 sm:text-[56px]"
         >
           Дайте Самосайту собрать себя
         </h2>
-
         {/* v2.1.3 §1.1 — Footer/dojim para укорочен. «Через две минуты»
             → «через 2 часа» (единый SLA), второе предложение про сайт
             убрано (избыточно после Hero + 8 BigFeatures). Остался один
@@ -63,29 +61,37 @@ export function FreeMonthCTA() {
         >
           Через неделю — первые заявки в Telegram
         </p>
-
         {/* What you get — 4 bullets */}
-        <div className="mt-8 sm:mt-10">
-          <p
-            className="mb-3 font-mono text-[11px] uppercase tracking-widest sm:mb-4"
-            style={{ color: "oklch(0.75 0.05 35)" }}
-          >
-            Что получите сразу
-          </p>
-          <ul className="mx-auto max-w-[540px] space-y-2.5 text-left sm:space-y-3">
-            {BULLETS.map((b) => (
-              <li
-                key={b}
-                className="flex items-baseline gap-3 text-[15px] sm:text-[17px]"
-                style={{ color: "oklch(0.9 0.012 60)" }}
+        {/* 4 bullets — 2×2 grid of dark cards per canon FreeMonthSection
+            line 2353. Each card: subtle white/5 bg + soft border +
+            circular terracotta check + white text. Eyebrow "Получите сразу"
+            dropped: canon doesn't have it, the 2-col grid alone is
+            visually self-contained. */}
+        <ul className="mx-auto mt-6 grid max-w-[680px] list-none grid-cols-1 gap-2.5 p-0 text-left sm:mt-9 sm:grid-cols-2 sm:gap-3.5">
+          {BULLETS.map((b) => (
+            <li
+              key={b}
+              className="flex items-start gap-2.5 rounded-[12px] border px-3.5 py-3"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderColor: "rgba(255,255,255,0.08)",
+              }}
+            >
+              <span
+                aria-hidden
+                className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-white"
               >
-                <Check className="h-4 w-4 shrink-0 translate-y-0.5 text-accent" strokeWidth={2.5} />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
+                <Check className="h-2.5 w-2.5" strokeWidth={3} />
+              </span>
+              <span
+                className="text-[14px] leading-[1.4] sm:text-[15px]"
+                style={{ color: "oklch(0.92 0.012 60)" }}
+              >
+                {b}
+              </span>
+            </li>
+          ))}
+        </ul>
         {/* CTA. `data-cta` атрибут — anchor для <ClickGoalTracker>
             ниже, который fires `free_month_cta_click` goal в Я.Метрику.
             Note: ведёт на `#top` (Hero input), не открывает SubmitModal
@@ -100,11 +106,9 @@ export function FreeMonthCTA() {
           <ArrowRight className="h-5 w-5" />
         </a>
         <ClickGoalTracker selector='[data-cta="free-month-cta"]' goal="free_month_cta_click" />
-
         <p className="mt-4 text-[14px] sm:text-[15px]" style={{ color: "oklch(0.70 0.014 60)" }}>
           Первый месяц — бесплатно. Самосайт сам напомнит, когда подойдёт срок
         </p>
-
         {/* v2.1.3 §1.2 — last-mile assurances удалены. См. ASSURANCES
             const выше + rationale (Pricing card теперь держит risk-
             reversal). Блок остаётся в коде защитой на случай возврата
@@ -122,27 +126,33 @@ export function FreeMonthCTA() {
             ))}
           </ul>
         ) : null}
-
-        {/* Alternative — for the undecided */}
-        <p
-          className="mt-8 text-[14px] sm:mt-10 sm:text-[15px]"
-          style={{ color: "oklch(0.75 0.014 60)" }}
+        {/* Footer alt-path per canon FreeMonthSection line 2398. Soft
+            border-top divider above a centered inline group:
+              Есть вопросы?  [Посмотрите ответы ↓]  или  [напишите нам →]
+            Last-mile alternative for visitors who scrolled this far
+            without clicking the CTA. */}
+        <div
+          className="mt-7 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 border-t pt-5 text-[13.5px] sm:mt-10 sm:gap-x-2 sm:pt-6 sm:text-[14.5px]"
+          style={{
+            borderColor: "rgba(255,255,255,0.10)",
+            color: "oklch(0.82 0.014 60)",
+          }}
         >
-          Есть вопросы?{" "}
+          <span>Есть вопросы?</span>
           <a
             href="#faq"
-            className="decoration-accent/50 font-medium text-accent underline underline-offset-4 hover:decoration-accent"
+            className="text-accent-soft underline decoration-1 underline-offset-[3px] hover:decoration-2"
           >
             Посмотрите ответы ↓
-          </a>{" "}
-          или{" "}
+          </a>
+          <span>или</span>
           <a
             href="/feedback"
-            className="decoration-accent/50 font-medium text-accent underline underline-offset-4 hover:decoration-accent"
+            className="text-accent-soft underline decoration-1 underline-offset-[3px] hover:decoration-2"
           >
             напишите нам →
           </a>
-        </p>
+        </div>
       </div>
     </section>
   );
