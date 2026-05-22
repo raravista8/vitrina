@@ -145,7 +145,7 @@ export function Examples() {
     <section
       id="examples"
       aria-labelledby="examples-title"
-      className="bg-paper-soft px-5 py-14 sm:px-16 sm:py-24"
+      className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >
       <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>

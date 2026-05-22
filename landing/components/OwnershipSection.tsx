@@ -185,7 +185,7 @@ export function OwnershipSection() {
     <section
       id="ownership"
       aria-labelledby="ownership-title"
-      className="px-5 py-14 sm:px-16 sm:py-20"
+      className="px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-20"
     >
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-7 overflow-hidden rounded-[22px] border border-line bg-white p-7 sm:grid-cols-[1fr_1.1fr] sm:gap-14 sm:rounded-[28px] sm:p-14">
         {/* decorative bg */}

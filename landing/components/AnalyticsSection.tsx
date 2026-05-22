@@ -307,7 +307,7 @@ export function AnalyticsSection() {
     <section
       id="analytics"
       aria-labelledby="analytics-title"
-      className="bg-paper px-5 py-14 sm:px-16 sm:py-24"
+      className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >
       <header className="mx-auto mb-7 max-w-[760px] sm:mb-12 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Аналитика</p>
