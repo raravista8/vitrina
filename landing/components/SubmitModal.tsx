@@ -42,25 +42,69 @@ import {
   validateContactForChannel,
 } from "@/lib/contact-detect";
 
+export type SubmitModalStep =
+  | { kind: "contact" }
+  | { kind: "tg_bot"; applicationId: string }
+  | { kind: "confirmation"; contactType: ContactType };
+
+// Re-exported under the original local name so the spec's union check
+// stays terse.
+type Step = SubmitModalStep;
+
 interface SubmitModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sourceUrl: string;
   sourceType: "ymaps" | "telegram" | "photo";
+  /**
+   * E2E-only override for the initial step. When set, the modal mounts
+   * directly on this step instead of the default `{kind: "contact"}` —
+   * lets `intake.spec.ts` screenshot step 2 / step 3 without
+   * round-tripping through `Step1Contact`'s API call (which needs
+   * captcha + a real `/api/submit-application` response).
+   *
+   * Gated upstream by Hero — only passed through when
+   * `NEXT_PUBLIC_E2E === '1'` at build time. Production bundles never
+   * see a non-undefined value.
+   */
+  e2eInitialStep?: Step;
 }
 
-type Step =
-  | { kind: "contact" }
-  | { kind: "tg_bot"; applicationId: string }
-  | { kind: "confirmation"; contactType: ContactType };
+export function SubmitModal({
+  open,
+  onOpenChange,
+  sourceUrl,
+  sourceType,
+  e2eInitialStep,
+}: SubmitModalProps) {
+  const [step, setStep] = useState<Step>(e2eInitialStep ?? { kind: "contact" });
 
-export function SubmitModal({ open, onOpenChange, sourceUrl, sourceType }: SubmitModalProps) {
-  const [step, setStep] = useState<Step>({ kind: "contact" });
+  /* If the spec changes `e2eInitialStep` between renders (e.g. test #2
+     after test #1 with a different requested step), re-sync state. The
+     guard on `e2eInitialStep !== undefined` keeps prod behaviour
+     pristine — prod never enters this branch because the prop is
+     stripped at the Hero pass-through.
+
+     The eslint `react-hooks/set-state-in-effect` rule fires here
+     because syncing prop→state in an effect normally indicates a
+     missing derived-state pattern. The E2E case is the legitimate
+     exception (per React docs: "calling setState in a callback
+     function when external state changes"): the prop is an external
+     test-only signal, not a derivable value. Disabling for this
+     single hook. */
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (e2eInitialStep !== undefined) {
+      setStep(e2eInitialStep);
+    }
+  }, [e2eInitialStep]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function handleOpenChange(next: boolean) {
     onOpenChange(next);
-    // Reset on close — the next open starts from contact.
-    if (!next) setStep({ kind: "contact" });
+    // Reset on close — the next open starts from contact (or the
+    // E2E-injected initial step, if any).
+    if (!next) setStep(e2eInitialStep ?? { kind: "contact" });
   }
 
   function handleApplicationCreated(applicationId: string, contactType: ContactType) {

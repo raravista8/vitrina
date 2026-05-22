@@ -3,23 +3,38 @@
  *
  * Covers 15 screens across 4 families:
  *   • 9 SourceDetectionBadge states (via `/dev/source-badge` grid)
- *   • 3 SubmitModal steps (opened via `window.__open_submit_modal`)
+ *   • 3 SubmitModal steps (opened via `window.__open_submit_modal`,
+ *     mounted directly on the requested step via the `e2eInitialStep`
+ *     prop added in the per-step follow-up)
  *   • PhotoDrawer (opened via `window.__open_photo_drawer`)
  *   • LeadForm + FeedbackForm (full-page routes / customer fixture)
  *
- * Scope (PR-E / Tier 2b-2 — smoke-only):
- *   All screens run with `auditedViewports: []`. Selectors resolve =
- *   structural regression is caught. Pixel-diff path is a stub for
- *   the follow-up after canon `screens-intake.jsx` gets matching
- *   `data-state` / `data-modal` attrs so the baseline generator can
- *   crop per-screen.
+ * SubmitModal per-step assertion strategy:
+ *   Each step entry passes `{step: {kind, ...}}` to the window hook;
+ *   the modal mounts directly on that step (skips Step1Contact's
+ *   POST /api/submit-application which needs captcha + a backend
+ *   response). Step 2 polls /api/tg-bot-personal-status, so the spec
+ *   intercepts the route with `{started: false}` to keep the modal on
+ *   step 2 throughout the screenshot window. The compound selector
+ *   `[data-modal="submit-modal"][data-step="<kind>"]` re-fires
+ *   Playwright's visibility wait on step transitions.
  *
- * Requires `NEXT_PUBLIC_E2E=1` build for two reasons:
+ * Scope (still smoke-only in this PR):
+ *   All screens have `auditedViewports: []`. Selectors resolve = no
+ *   structural regression. Pixel-diff path is a stub — comes in the
+ *   Linux baseline regenerator PR that lifts customer + intake out of
+ *   smoke-only together.
+ *
+ * Requires `NEXT_PUBLIC_E2E=1` build for three reasons:
  *   1. `/dev/source-badge` page is gated by this env (otherwise
  *      returns "Not available" stub — see PR #112).
  *   2. `window.__open_submit_modal` / `__open_photo_drawer` hooks in
  *      Hero are gated by this env (otherwise undefined). Spec fails
  *      fast with a clear message if hook is missing.
+ *   3. `SubmitModal::e2eInitialStep` prop pass-through in Hero is
+ *      gated — without the env, the prop is always undefined and the
+ *      modal mounts at the default `contact` step regardless of the
+ *      hook call.
  *
  * CI workflow runs `NEXT_PUBLIC_E2E=1 npm run build` before this spec.
  * Local: `NEXT_PUBLIC_E2E=1 npm run build && PORT=4310 npm run start`.
@@ -141,26 +156,59 @@ test.describe("intake visual regression", () => {
         await page.evaluate(() => document.fonts.ready);
         locator = page.locator(`[data-state="${screen.setup.state}"]`);
       } else if (screen.setup.family === "submit-modal") {
+        /* Per-step assertion path: hand the desired Step to
+           `__open_submit_modal` via the `step` field added in the
+           per-step follow-up. SubmitModal's `e2eInitialStep` prop
+           mounts the wizard directly on that step — bypasses
+           Step1Contact's POST /api/submit-application (which needs
+           captcha + a seeded backend response).
+
+           Step 2 (tg_bot) renders Step2TgBot which IMMEDIATELY
+           starts polling GET /api/tg-bot-personal-status. Intercept
+           that route with `{started: false}` so the modal stays on
+           step 2 throughout the screenshot window — without the
+           intercept, the polling either 404s (and silently stops)
+           or, worse, intermittently 200s + advances to step 3
+           mid-screenshot. */
+        if (screen.setup.step === "tg_bot") {
+          await page.route("**/api/tg-bot-personal-status*", async (route) => {
+            await route.fulfill({
+              status: 200,
+              contentType: "application/json",
+              body: JSON.stringify({ ok: true, data: { started: false } }),
+            });
+          });
+        }
         await page.goto("/", { waitUntil: "networkidle" });
         await page.evaluate(() => document.fonts.ready);
         await ensureE2EHooksLoaded(page);
+        const stepKind = screen.setup.step;
         const url = screen.setup.url;
+        /* Build the Step value the modal expects per its
+           discriminated union. Step 2 needs an applicationId; step 3
+           needs a contactType. Both are throwaway for smoke purposes —
+           Step2TgBot logs the id, Step3Confirmation only branches on
+           contactType for copy. */
+        const stepValue =
+          stepKind === "tg_bot"
+            ? { kind: "tg_bot" as const, applicationId: "e2e-mock-app-id" }
+            : stepKind === "confirmation"
+              ? { kind: "confirmation" as const, contactType: "telegram" as const }
+              : { kind: "contact" as const };
         await page.evaluate(
           (opts) => {
             const w = window as unknown as {
-              __open_submit_modal?: (o?: { url?: string; type?: string }) => void;
+              __open_submit_modal?: (o?: { url?: string; step?: typeof opts.step }) => void;
             };
             w.__open_submit_modal?.(opts);
           },
-          url !== undefined ? { url } : undefined,
+          { url, step: stepValue },
         );
-        /* The wizard auto-advances based on Step1Contact's API call.
-           In smoke-only mode we can only reliably assert that the
-           modal is visible on the FIRST step (`data-step=contact`).
-           Steps 2/3 require fetch interception and seeded API
-           responses — Tier 2b-2 follow-up. Until then, assert only
-           the modal frame is visible for all 3 entries. */
-        locator = page.locator('[data-modal="submit-modal"]');
+        /* Compound selector — `data-step` re-renders when the step
+           transitions, so Playwright's visibility wait correctly
+           gates on the screenshot-target step (not just "any modal
+           is open"). */
+        locator = page.locator(`[data-modal="submit-modal"][data-step="${stepKind}"]`);
       } else if (screen.setup.family === "photo-drawer") {
         await page.goto("/", { waitUntil: "networkidle" });
         await page.evaluate(() => document.fonts.ready);

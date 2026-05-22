@@ -47,7 +47,7 @@ import { type SourceDetection, detectSource } from "@/lib/source-detect";
 import { BrandMark } from "./BrandMark";
 import { PhotoDrawer } from "./PhotoDrawer";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
-import { SubmitModal } from "./SubmitModal";
+import { SubmitModal, type SubmitModalStep } from "./SubmitModal";
 
 // Placeholder — user batch 1 testing flagged that the original copy
 // ("ссылка на соцсеть, Яндекс.Карты или сайт") truncated mid-word on
@@ -162,8 +162,16 @@ export function Hero() {
   }, [previewType, canonical]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  /* Visual-regression debug hooks (Tier 2b-2). Exposes
-       window.__open_submit_modal({ url?, type? })
+  /* E2E-only state — initial step override for SubmitModal. Lets the
+     intake spec mount the modal on step 2/3 directly via the
+     `window.__open_submit_modal({step})` hook. Production never sets
+     this (the hook is gated and `setE2EInitialStep` is a no-op without
+     the env). */
+  const [e2eInitialStep, setE2EInitialStep] = useState<SubmitModalStep | undefined>(undefined);
+
+  /* Visual-regression debug hooks (Tier 2b-2 + per-step follow-up).
+     Exposes:
+       window.__open_submit_modal({ url?, type?, step? })
        window.__open_photo_drawer()
        window.__close_intake_modals()
      so `tests/visual/intake.spec.ts` can programmatically open the
@@ -173,7 +181,15 @@ export function Hero() {
      bundles. The env var is baked at build time. */
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_E2E !== "1" || typeof window === "undefined") return;
-    type SubmitOpts = { url?: string; type?: "ymaps" | "telegram" | "photo" };
+    type SubmitOpts = {
+      url?: string;
+      type?: "ymaps" | "telegram" | "photo";
+      /* Forces SubmitModal to mount on this step instead of the
+         default `{kind:"contact"}`. Used by intake.spec.ts to
+         screenshot step 2 (tg_bot, needs an applicationId) and step 3
+         (confirmation, needs a contactType). */
+      step?: SubmitModalStep;
+    };
     type WindowWithE2E = Window & {
       __open_submit_modal?: (opts?: SubmitOpts) => void;
       __open_photo_drawer?: () => void;
@@ -182,12 +198,14 @@ export function Hero() {
     const w = window as WindowWithE2E;
     w.__open_submit_modal = (opts?: SubmitOpts) => {
       if (opts?.url !== undefined) setRaw(opts.url);
+      setE2EInitialStep(opts?.step);
       setModalOpen(true);
     };
     w.__open_photo_drawer = () => setPhotoOpen(true);
     w.__close_intake_modals = () => {
       setModalOpen(false);
       setPhotoOpen(false);
+      setE2EInitialStep(undefined);
     };
     return () => {
       delete w.__open_submit_modal;
@@ -536,6 +554,10 @@ export function Hero() {
         onOpenChange={setModalOpen}
         sourceUrl={modalSourceUrl}
         sourceType={modalSourceType}
+        /* Production builds (no NEXT_PUBLIC_E2E) always pass undefined
+           because `setE2EInitialStep` is only wired up in the gated
+           useEffect above — prod state stays at the default value. */
+        e2eInitialStep={e2eInitialStep}
       />
       <PhotoDrawer open={photoOpen} onOpenChange={setPhotoOpen} />
     </>
