@@ -91,7 +91,7 @@ export function Story() {
           return (
             <li
               key={s.n}
-              className={`relative w-full sm:w-[78%] ${isRight ? "sm:self-end" : "sm:self-start"}`}
+              className={`relative w-full sm:max-w-[760px] ${isRight ? "sm:self-end" : "sm:self-start"}`}
             >
               <div
                 className="ss-story-card relative rounded-[24px] border-[2px] border-ink p-6 sm:p-8"
