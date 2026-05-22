@@ -37,6 +37,7 @@ class NotificationKind(StrEnum):
     lead_received = "lead_received"  # site owner ← visitor submitted lead
     subscription_expiring = "subscription_expiring"  # user ← billing
     magic_link = "magic_link"  # user ← auth flow (email only)
+    weekly_digest = "weekly_digest"  # site owner ← weekly_analytics_digest cron (Phase 7b)
 
 
 class ChannelType(StrEnum):
@@ -102,6 +103,16 @@ ALLOWED_CHANNELS_FOR_KIND: dict[NotificationKind, frozenset[ChannelType]] = {
         }
     ),
     NotificationKind.magic_link: frozenset({ChannelType.email}),
+    # Phase 7b weekly analytics digest — все каналы, SMS включён для
+    # short text variant («За неделю — 47 посещений, 3 заявки»).
+    NotificationKind.weekly_digest: frozenset(
+        {
+            ChannelType.telegram,
+            ChannelType.max,
+            ChannelType.email,
+            ChannelType.sms,
+        }
+    ),
 }
 
 
