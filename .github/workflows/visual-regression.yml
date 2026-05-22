@@ -1,0 +1,115 @@
+# Visual regression — compare every landing PR against committed canon
+# baselines at 1440 / 768 / 390 viewports.
+#
+# Triggers only on changes that could affect landing visuals to avoid
+# burning CI minutes on backend-only PRs. The baseline PNGs are committed
+# (~4.6 MB total, see `landing/tests/visual/baselines/`) so a fork with
+# no access to the canon source still gets a meaningful diff.
+#
+# On failure, the diff PNGs (from `tests/visual/__diff/`) and the full
+# Playwright HTML report are uploaded as workflow artifacts. Reviewers
+# download `visual-diff-<sha>` to eyeball pixel deltas without re-running
+# locally.
+#
+# What this CI does NOT cover:
+#   • Regenerating baselines — that's a manual op via
+#     `npm run test:visual:update` (runs the canon server + Playwright).
+#     CI would need access to the same `canon-source/` we ship in repo
+#     anyway, plus a static-server side car — kept out of CI on purpose
+#     so baselines change only with a deliberate human-reviewed commit.
+#   • Cross-browser matrices — single Chromium project. Adding Firefox
+#     would double baseline storage; revisit when we ship a Safari bug.
+
+name: visual-regression
+
+on:
+  pull_request:
+    paths:
+      - "landing/**"
+      - "infra/scripts/generate-canon-baselines.sh"
+      - ".github/workflows/visual-regression.yml"
+  push:
+    branches: [main]
+    paths:
+      - "landing/**"
+      - "infra/scripts/generate-canon-baselines.sh"
+      - ".github/workflows/visual-regression.yml"
+
+jobs:
+  visual:
+    name: landing / visual regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Public Next env vars baked into the build. Empty defaults match
+      # local-dev behavior — anything that needs a real value should be
+      # surfaced via repository secrets, not hardcoded here.
+      NEXT_PUBLIC_SITE_URL: https://samosite.online
+      NEXT_PUBLIC_YANDEX_METRIKA_ID: ""
+      NEXT_PUBLIC_YANDEX_VERIFICATION: ""
+      NEXT_PUBLIC_YANDEX_SMARTCAPTCHA_CLIENT_KEY: ""
+    defaults:
+      run:
+        working-directory: landing
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: landing/package-lock.json
+
+      - name: install deps
+        run: npm ci
+
+      # Playwright's browser binaries are downloaded out-of-band — `npm ci`
+      # alone won't pull them. `--with-deps` installs the apt-level libs
+      # (libnss3, libatk-bridge, …) the headless Chromium needs.
+      - name: install playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: build
+        run: npm run build
+
+      # `next start` is the production server. Background it, wait for
+      # readiness via curl, then run tests. 15s wait covers a cold-cache
+      # first-request hydration; we abort if it's not up after that.
+      - name: start prod server
+        run: |
+          npm run start > /tmp/next-start.log 2>&1 &
+          echo $! > /tmp/next.pid
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/ -o /dev/null; then
+              echo "next started after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "next failed to start" >&2
+          cat /tmp/next-start.log
+          exit 1
+
+      - name: run visual regression
+        run: npm run test:visual
+
+      - name: stop server
+        if: always()
+        run: |
+          if [ -f /tmp/next.pid ]; then
+            kill "$(cat /tmp/next.pid)" 2>/dev/null || true
+          fi
+
+      # Diff PNGs + Playwright HTML report — only emitted on failure, but
+      # `if: failure()` skips uploads on cancellation. Use `if: always()`
+      # so an aborted-but-otherwise-useful run still surfaces artifacts.
+      - name: upload diff artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-${{ github.sha }}
+          path: |
+            landing/tests/visual/__diff/
+            landing/playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore

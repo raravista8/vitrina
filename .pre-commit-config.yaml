@@ -18,10 +18,16 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      # Canon JSX prototypes are mirrored byte-identical from the handoff
+      # archive (`docs/handoff/specs/04_typography.md §9.1` requires it).
+      # Trailing-whitespace / EOF-newline normalization would drift them
+      # from the upstream reference, so we exempt the dir from the
+      # whitespace hooks. Same dir is also opted out of eslint/prettier
+      # for the same reason (see landing/eslint.config.mjs).
       - id: trailing-whitespace
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/
       - id: end-of-file-fixer
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/
       - id: check-yaml
         args: [--unsafe]
       - id: check-json
@@ -30,7 +36,12 @@ repos:
       - id: check-added-large-files
         args: [--maxkb=500]
         # Generated lockfiles are large but tracked intentionally.
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$
+        # Visual regression baselines (PNG screenshots @ desktop 1440) can
+        # exceed 500 KB when a section is content-heavy (Examples, Story).
+        # Regen is a deliberate `npm run test:visual:update` op and PRs
+        # touching the dir get human review — the size limit guards against
+        # accidental commits of build artefacts / binaries, not these.
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/baselines/.*\.png$
       - id: check-case-conflict
       - id: detect-private-key
       - id: mixed-line-ending
@@ -47,7 +58,11 @@ repos:
     hooks:
       - id: detect-secrets
         args: [--baseline, .secrets.baseline]
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|\.secrets\.baseline$
+        # `tests/visual/canon-source/` hosts the design handoff prototypes
+        # which include `<script integrity="sha384-…">` SRI hashes. Those
+        # are public CDN integrity attestations, not secrets — detect-secrets
+        # flags them as Base64 high-entropy strings.
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|\.secrets\.baseline$|^landing/tests/visual/canon-source/
 
   # ---- Conventional commits (commit-msg stage) -----------------------------
   - repo: https://github.com/compilerla/conventional-pre-commit

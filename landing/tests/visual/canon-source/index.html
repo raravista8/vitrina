@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Самосайт — UI · все экраны</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body { font-family: 'Onest', system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tokens.jsx"></script>
+<script type="text/babel" src="concepts.jsx"></script>
+<script type="text/babel" src="landing-samosite.jsx"></script>
+<script type="text/babel" src="screen-02-source.jsx"></script>
+<script type="text/babel" src="screens-intake.jsx"></script>
+<script type="text/babel" src="screens-customer.jsx"></script>
+<script type="text/babel" src="screens-client-admin-demo.jsx"></script>
+<script type="text/babel" src="screens-admin-core.jsx"></script>
+<script type="text/babel" src="screens-admin-ops.jsx"></script>
+<script type="text/babel" data-presets="react">
+const { DesignCanvas, DCSection, DCArtboard, DCPostIt } = window;
+const W = window;
+
+function App() {
+  return (
+    <DesignCanvas>
+      {/* ── System ───────────────────────────────────── */}
+      <DCSection id="system" title="Самосайт · UI · 19 экранов" subtitle="Концепт A «Тёплая бумага» — выбран как канон. Бренд переименован: Витрина → Самосайт.">
+        <DCPostIt width={300}>
+          <b>Системные токены</b><br/>
+          • bg <code>cream</code> · ink <code>warm near-black</code> · accent <code>terracotta</code><br/>
+          • Шрифт <b>Onest</b> · моно <b>JetBrains Mono</b><br/>
+          • Радиусы 6 / 10 / 14 / 18 / pill<br/>
+          • Бренд <b>«Самосайт»</b> кириллицей (требование закона) · домен <code>samosite.online</code>
+        </DCPostIt>
+        <DCPostIt width={300}>
+          <b>Структура</b><br/>
+          <b>P0 Landing</b> (#1-9): Hero · source detection · submit modal · TG bot · confirmation · photo drawer · customer template · lead form · feedback<br/>
+          <b>P0 Admin</b> (#10-19): login · dashboard · apps list/detail · sites list/detail · leads · waitlist · feedback inbox · settings
+        </DCPostIt>
+        <DCPostIt width={280}>
+          <b>Код</b><br/>
+          .tsx-компоненты в <code>/code</code> — Next.js 16 App Router · React 19 · TS · Tailwind · shadcn/ui · lucide-react · recharts.<br/>
+          Customer site (#7) — Jinja2 + Tailwind CDN, отдельный <code>/code/customer-site.html</code>.
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #1 Landing Hero ──────────────────────────── */}
+      <DCSection id="s1" title="#1 · Landing v2.1" subtitle="samosite.online · 9 секций: Nav / Hero (три «сам») / Examples / Story / Platforms / BigFeatures / Ownership / Pricing / FAQ / Dojim CTA / Footer.">
+        <DCArtboard id="s1-d" label="Desktop · 1440 · полный лендинг v2.1" width={1440} height={10300}><W.SamosaytLanding_Desktop /></DCArtboard>
+        <DCArtboard id="s1-m" label="Mobile · 390 · полный лендинг v2.1" width={390} height={13000}><W.SamosaytLanding_Mobile /></DCArtboard>
+        <DCPostIt width={260}>
+          <b>API</b><br/>
+          • <code>POST /api/submit-application</code><br/>
+          • <code>GET /api/preview?url=</code><br/>
+          <b>Edge</b><br/>
+          • Loading: spinner в input<br/>
+          • Error: badge ⚠️, CTA disabled<br/>
+          • Empty: placeholder
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #2 Source detection ──────────────────────── */}
+      <DCSection id="s2" title="#2 · Source detection states" subtitle="9 состояний бейджа (FR-005, FR-005a, ADR-0009).">
+        <DCArtboard id="s2-d" label="Desktop · catalog" width={1440} height={2400}><W.S2_Desktop /></DCArtboard>
+        <DCArtboard id="s2-m" label="Mobile · 390" width={390} height={1800}><W.S2_Mobile /></DCArtboard>
+        <DCPostIt width={280}>
+          <b>API</b><br/>
+          • <code>GET /api/preview?url=</code> → <code>{`{source, counts, status}`}</code><br/>
+          • <code>POST /api/feedback</code> (waitlist + unknown)<br/>
+          <b>Edge</b><br/>
+          • Timeout 3s → static ✓ без чисел<br/>
+          • Network err → то же<br/>
+          • Private IP → FR-011 (бэк)
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #3 Submit modal · 3 шага ────────────────── */}
+      <DCSection id="s3" title="#3 · Submit modal · 3 шага" subtitle="Новый флоу: 1) Ссылка + распознавание, 2) Канал контакта (radio), 3) Открыть личного бота. «Назад» на всех шагах.">
+        <DCArtboard id="s3-step1" label="Шаг 1 · Ссылка · TG распознали" width={840} height={620}><W.S3_SubmitModal step={1} source="telegram" sourceUrl="https://t.me/studia_anna" counts="нашли 47 постов и 12 фото" /></DCArtboard>
+        <DCArtboard id="s3-step1-ig" label="Шаг 1 · Instagram — скоро" width={840} height={620}><W.S3_SubmitModal step={1} source="instagram" sourceUrl="https://instagram.com/studia_anna" counts="" /></DCArtboard>
+        <DCArtboard id="s3-step2-tg" label="Шаг 2 · Канал = Telegram" width={840} height={720}><W.S3_SubmitModal step={2} channel="telegram" contact="@studia_anna" /></DCArtboard>
+        <DCArtboard id="s3-step2-phone" label="Шаг 2 · Канал = Телефон" width={840} height={720}><W.S3_SubmitModal step={2} channel="phone" contact="+7 921 234-56-78" /></DCArtboard>
+        <DCPostIt width={300}>
+          <b>Что поменялось vs прошлой версии</b><br/>
+          • Зелёная плашка «Источник» — теперь на шаге 1, не на шаге 2.<br/>
+          • Кнопка «Назад» на каждом шаге.<br/>
+          • На плашке источника — линк «не то?» если auto-detect ошибся (IG vs TG).<br/>
+          • Шаг 2: явный radio-выбор канала (TG/телефон/email/MAX), не auto-detect.<br/>
+          • Шаг 3 = ОТКРЫТЬ личного бота, не ДОБАВИТЬ его в канал.<br/>
+          • Fallback «Получить на почту» виден всегда — пользователь не застрянет.<br/>
+          • Список поддерживаемых платформ прямо на шаге 1.
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #5 Confirmation ─────────────────────────── */}
+      <DCSection id="s5" title="#5 · Confirmation" subtitle="2-24 часа ручной модерации. Напишем когда сайт готов.">
+        <DCArtboard id="s5-em" label="Confirmation" width={840} height={560}><W.S5_Confirmation contactType="email" /></DCArtboard>
+      </DCSection>
+
+      {/* ── #6 Photo drawer ─────────────────────────── */}
+      <DCSection id="s6" title="#6 · Photo drawer" subtitle="Mobile — bottom-sheet, desktop — centered modal.">
+        <DCArtboard id="s6-d" label="Desktop · 620" width={900} height={1000}><W.S6_PhotoDrawer variant="desktop" /></DCArtboard>
+        <DCPostIt width={280}>
+          <b>API</b><br/>
+          • <code>POST /api/submit-application</code> с multipart files[]<br/>
+          <b>Edge</b><br/>
+          • &gt;30 файлов / &gt;10MB / &gt;100MB → HTTP 413 (FR-014)<br/>
+          • Magic-bytes mismatch → reject (FR-015)<br/>
+          • HEIC браузер не показывает thumb → серый плейсхолдер с именем файла
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #7 Customer site ────────────────────────── */}
+      <DCSection id="s7" title="#7 · Customer site v2.1" subtitle="*.samosite.online — Jinja2 + Tailwind CDN. Полный booking-page: sticky header · hero+trust · services · process · gallery · reviews · about · FAQ · booking-form+map · footer.">
+        <DCArtboard id="s7-cream" label="Cream (default)" width={1180} height={4900}><W.S7_CustomerSite scheme="cream" plan="free" /></DCArtboard>
+        <DCArtboard id="s7-slate" label="Slate" width={1180} height={4900}><W.S7_CustomerSite scheme="slate" plan="free" /></DCArtboard>
+        <DCArtboard id="s7-sage" label="Sage · Pro (без watermark)" width={1180} height={4900}><W.S7_CustomerSite scheme="sage" plan="pro" /></DCArtboard>
+        <DCArtboard id="s7-sw" label="Палитры" width={680} height={220}><W.S7_SchemeSwatches /></DCArtboard>
+        <DCPostIt width={280}>
+          <b>Стек</b><br/>
+          • Jinja2 + Tailwind CDN (НЕ Next.js)<br/>
+          • Pure semantic HTML5<br/>
+          • Schema.org LocalBusiness JSON-LD<br/>
+          • sitemap.xml, robots.txt, OG, TW Card<br/>
+          • CSP/HSTS headers<br/>
+          • Lighthouse ≥90 (FR-032)<br/>
+          • Watermark «Сделано на Самосайте» на Free
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #7b Client admin demo (интерактивный) ───────────── */}
+      <DCSection id="s7b" title="#7b · Демо личного кабинета" subtitle="Интерактивная демка — лежит на client-admin-demo.html. Открывается по кнопке «Посмотреть демо ЛК» в OwnershipSection лендинга. 6 табов: Аналитика / Сайт / Заявки / Отзывы / Услуги / Настройки.">
+        <DCArtboard id="s7b-d" label="Desktop · 1440 · Аналитика (default tab)" width={1440} height={1100}><W.ClientAdminDemo /></DCArtboard>
+        <DCPostIt width={300}>
+          <b>Поведение</b><br/>
+          • Смена табов через sidebar<br/>
+          • Все поля редактируемы (textarea, color, toggle)<br/>
+          • Заявки: кнопки «Записать» / «Отказ» меняют статус<br/>
+          • Отзывы: toggle «Показывать на сайте»<br/>
+          • Сайт: изменения в превью видны в реал-тайм<br/>
+          • Данные mock, не API
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #8 Lead form ────────────────────────────── */}
+      <DCSection id="s8" title="#8 · Lead form" subtitle="Inline в секции «Записаться» на customer site. Confirmation без редиректа.">
+        <DCArtboard id="s8-conf" label="Confirmation inline" width={840} height={420}><W.S8_LeadFormConfirm /></DCArtboard>
+        <DCPostIt width={280}>
+          <b>API</b><br/>
+          • <code>POST /api/leads</code> · фронт submodain<br/>
+          <b>Edge</b><br/>
+          • &gt;3 leads / 1ч / IP → 429 (FR-052)<br/>
+          • SmartCaptcha fail → 400<br/>
+          • Honeypot заполнен → silently drop + alert founder
+        </DCPostIt>
+      </DCSection>
+
+      {/* ── #9 Feedback ─────────────────────────────── */}
+      <DCSection id="s9" title="#9 · Feedback form" subtitle="Страница /feedback + плавающая кнопка справа внизу. ADR-0009.">
+        <DCArtboard id="s9-d" label="Desktop · /feedback" width={1280} height={1000}><W.S9_FeedbackPage /></DCArtboard>
+      </DCSection>
+
+      {/* ── #10 Login ───────────────────────────────── */}
+      <DCSection id="s10" title="#10 · Admin login" subtitle="Password → TOTP. Rate limit visible. Magic-link auth для конечных юзеров — отдельно.">
+        <DCArtboard id="s10-1" label="Step 1 · password" width={560} height={520}><W.S10_AdminLogin step={1} /></DCArtboard>
+        <DCArtboard id="s10-2" label="Step 2 · TOTP" width={560} height={520}><W.S10_AdminLogin step={2} /></DCArtboard>
+        <DCArtboard id="s10-rl" label="Rate-limited" width={560} height={520}><W.S10_AdminLogin step={1} rateLimited /></DCArtboard>
+      </DCSection>
+
+      {/* ── #11 Dashboard ───────────────────────────── */}
+      <DCSection id="s11" title="#11 · Admin dashboard" subtitle="Заменяет временный htmx-дашборд. Топ-5 pending заявок, тренд recharts.">
+        <DCArtboard id="s11-d" label="Desktop · 1440" width={1440} height={840}><W.S11_Dashboard /></DCArtboard>
+      </DCSection>
+
+      {/* ── #12 Apps list ───────────────────────────── */}
+      <DCSection id="s12" title="#12 · Applications list" subtitle="Filterable table · search · pagination 50/page.">
+        <DCArtboard id="s12-d" label="Desktop · 1440" width={1440} height={1000}><W.S12_AppsList /></DCArtboard>
+      </DCSection>
+
+      {/* ── #13 App detail ──────────────────────────── */}
+      <DCSection id="s13" title="#13 · Application detail" subtitle="Source snapshot · generated content · publish/reject/redo · audit log.">
+        <DCArtboard id="s13-d" label="Desktop · 1440" width={1440} height={1080}><W.S13_AppDetail /></DCArtboard>
+      </DCSection>
+
+      {/* ── #14 Sites list ──────────────────────────── */}
+      <DCSection id="s14" title="#14 · Sites list" subtitle="Все опубликованные · sync статус · лиды 7д.">
+        <DCArtboard id="s14-d" label="Desktop · 1440" width={1440} height={920}><W.S14_SitesList /></DCArtboard>
+      </DCSection>
+
+      {/* ── #15 Site detail ─────────────────────────── */}
+      <DCSection id="s15" title="#15 · Site detail" subtitle="Iframe preview · re-publish / pause sync / archive · leads + sync history.">
+        <DCArtboard id="s15-d" label="Desktop · 1440" width={1440} height={920}><W.S15_SiteDetail /></DCArtboard>
+      </DCSection>
+
+      {/* ── #16 Leads ──────────────────────────────── */}
+      <DCSection id="s16" title="#16 · Leads (cross-site)" subtitle="Masked preview (Fernet AES). Decrypt по клику + TOTP для bulk export.">
+        <DCArtboard id="s16-d" label="Desktop · 1440" width={1440} height={760}><W.S16_Leads /></DCArtboard>
+        <DCArtboard id="s16-totp" label="Bulk decrypt · TOTP modal" width={1440} height={760}><W.S16_Leads decryptModal /></DCArtboard>
+      </DCSection>
+
+      {/* ── #17 Waitlist ────────────────────────────── */}
+      <DCSection id="s17" title="#17 · Waitlist aggregation" subtitle="Group by source_name × distinct contact × first_seen. ≥10 → подсветка + Notify.">
+        <DCArtboard id="s17-d" label="Desktop · 1440" width={1440} height={820}><W.S17_Waitlist /></DCArtboard>
+      </DCSection>
+
+      {/* ── #18 Feedback inbox ──────────────────────── */}
+      <DCSection id="s18" title="#18 · Feedback inbox" subtitle="List + detail. Filter по type. JSONB checkboxes pretty-printed.">
+        <DCArtboard id="s18-d" label="Desktop · 1440" width={1440} height={900}><W.S18_FeedbackInbox /></DCArtboard>
+      </DCSection>
+
+      {/* ── #19 Settings ────────────────────────────── */}
+      <DCSection id="s19" title="#19 · Settings / system" subtitle="Health checks · последние 20 admin_actions · rotation status секретов.">
+        <DCArtboard id="s19-d" label="Desktop · 1440" width={1440} height={1000}><W.S19_Settings /></DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

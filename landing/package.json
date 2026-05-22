@@ -14,6 +14,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:visual": "playwright test",
+    "test:visual:update": "bash ../infra/scripts/generate-canon-baselines.sh",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -35,20 +37,27 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^22.10.5",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
     "eslint-config-next": "^16.2.6",
+    "http-server": "^14.1.1",
     "jsdom": "^25.0.1",
+    "pixelmatch": "^7.2.0",
+    "pngjs": "^7.0.0",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.22.3",
     "typescript": "^5.7.2",
     "vitest": "^4.0.0"
   }
