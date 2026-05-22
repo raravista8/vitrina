@@ -80,6 +80,24 @@ SYSTEM_PROMPT: Final[str] = (
     '  "site_category": "<категория из данных или \\"general\\">",\n'
     '  "site_color": "<hex-цвет, например #0f172a>",\n'
     '  "site_hero_photo": "<URL первого фото или \\"\\">",\n'
+    # v2.1 (Phase 9c) — booking-page fields. Все optional: если данных
+    # в snapshot недостаточно — оставляй пустыми значениями. Шаблон
+    # `index.html.j2` рендерит секции conditionally — пустая секция не
+    # ломает страницу.
+    '  "hero_h1": "<формульный H1: услуга в городе — главная выгода>",\n'
+    '  "hero_sub": "<1-2 предложения с подробностями услуги>",\n'
+    '  "process": [\n'
+    '    {"icon": "calendar", "title": "Записываетесь", "body": "<один абзац>"},\n'
+    '    {"icon": "pin",      "title": "Приходите",      "body": "<один абзац>"},\n'
+    '    {"icon": "coffee",   "title": "Делаем услугу",  "body": "<один абзац>"},\n'
+    '    {"icon": "sparkles", "title": "Уходите",        "body": "<один абзац>"}\n'
+    "  ],\n"
+    '  "faq": [\n'
+    '    {"question": "<вопрос>", "answer": "<ответ>"}\n'
+    "  ],\n"
+    '  "about_creds": ["<достижение или сертификат>", "..."],\n'
+    '  "about_guarantees": ["<гарантия или политика возврата>", "..."],\n'
+    "  // Конец v2.1 fields\n"
     '  "services": [\n'
     '    {"title": "<услуга>", "description": "<описание>", "price_label": "<цена или \\"\\">"}\n'
     "  ],\n"

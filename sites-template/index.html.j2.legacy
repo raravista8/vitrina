@@ -1,0 +1,807 @@
+{#-
+   Customer site (T2.5) — Concept A visual refresh (PR-C #7).
+
+   Single universal template; renders to static HTML, served from S3
+   via CDN. Acceptance per docs/TASKS.md T2.5:
+
+     - Lighthouse ≥90 (Performance, SEO, A11y) on mobile
+     - Schema.org LocalBusiness JSON-LD
+     - sitemap.xml + robots.txt (rendered separately)
+     - OG + Twitter cards
+     - Strict CSP via meta (no script from arbitrary origins)
+     - autoescape ON globally (CLAUDE.md: no `{{ x | safe }}`)
+
+   The visual refresh wraps the existing T2.5 data contract in the
+   Concept A "Тёплая бумага" palette (Onest font, terracotta accent,
+   three rotatable color schemes cream / slate / sage). All publisher
+   context vars from T2.3 are preserved 1:1 — only the rendered CSS
+   and section layouts change. Older Sites rendered with the previous
+   palette continue to function; the LLM-generated `site_color` field
+   (when set) overrides the scheme accent so a master's brand colour
+   still shows through.
+
+   Context vars supplied by the publishing service:
+     site_url           — canonical https://{subdomain}.samosite.online
+     site_title         — short name (master / business)
+     site_description   — 1-2 sentence summary
+     site_locale        — "ru_RU"
+     site_category      — "beauty.nails" / "barbershop" / etc.
+     site_color         — primary accent override (e.g. "#0f172a")
+     site_scheme        — optional {"cream","slate","sage"}; defaults
+                          to "cream" so the publisher can lean on the
+                          default without setting anything new
+     site_logo_url      — optional avatar/logo URL on S3
+     site_hero_photo    — optional hero image URL
+     organization.name, organization.phone, organization.email,
+                  organization.address, organization.geo (lat/lon dict),
+                  organization.opening_hours (list of dicts)
+     services           — list of {title, description, price_label,
+                          duration_label?}
+     gallery            — list of {url, alt}
+     reviews            — list of {author, text, rating}  (legacy v1)
+     contact_url        — POST URL for /api/leads (same origin)
+     captcha_client_key — Yandex SmartCaptcha sitekey
+     year               — footer copyright year
+     site_subdomain     — for footer watermark ref-param (PLG)
+
+   ── v2 additions (PR-F / E14 / COPY.md §4) ────────────────────────
+     years_experience   — int, displayed in trust-row («N лет опыта»)
+     clients_served     — int, displayed in trust-row («M+ клиентов»)
+     average_rating     — float 1-5, displayed in trust-row («4.9 ★»)
+     photos_count       — int, displayed as photo caption «ИЗ ИСТОЧНИКА · N ФОТО»
+
+     reviews_curated    — list of {id, author, text, rating, date_iso,
+                          source, is_top_pick} (output of E13 cron
+                          per ADR-0010). Если пусто/нет — секция не
+                          рендерится. Заменяет legacy `reviews`.
+     total_reviews_count — int (display string «38 отзывов на …»)
+     review_source_name  — str (e.g. «Яндекс.Карты») для строки
+                           total в reviews-секции
+
+     included_bullets   — list[str] (4-6 bullets), что включено в услугу
+                          (стерильные материалы / гарантия / парковка / …)
+-#}
+{%- set scheme = site_scheme or 'cream' -%}
+<!doctype html>
+<html lang="{{ site_locale[:2] }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ site_color or '#9F4F2E' }}">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    {#- Strict CSP — only self + Yandex Metrika + SmartCaptcha + S3 image origin + Google Fonts. -#}
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   img-src 'self' https://storage.yandexcloud.net data:;
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                   font-src 'self' https://fonts.gstatic.com;
+                   script-src 'self' https://mc.yandex.ru https://smartcaptcha.yandexcloud.net;
+                   frame-src https://smartcaptcha.yandexcloud.net;
+                   connect-src 'self' https://mc.yandex.ru https://smartcaptcha.yandexcloud.net;
+                   frame-ancestors 'none';
+                   base-uri 'self';
+                   form-action 'self'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+    <title>{{ site_title }}</title>
+    <meta name="description" content="{{ site_description }}">
+
+    <link rel="canonical" href="{{ site_url }}">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    {%- if site_logo_url %}
+    <link rel="apple-touch-icon" href="{{ site_logo_url }}">
+    {%- endif %}
+
+    {#- Open Graph + Twitter cards -#}
+    <meta property="og:site_name" content="{{ site_title }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="{{ site_locale }}">
+    <meta property="og:url" content="{{ site_url }}">
+    <meta property="og:title" content="{{ site_title }}">
+    <meta property="og:description" content="{{ site_description }}">
+    {%- if site_hero_photo %}
+    <meta property="og:image" content="{{ site_hero_photo }}">
+    {%- endif %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ site_title }}">
+    <meta name="twitter:description" content="{{ site_description }}">
+
+    {#- Schema.org LocalBusiness — autoescape keeps interpolation safe;
+        |tojson is the canonical Jinja escape for JSON contexts. -#}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": {{ organization.name | tojson }},
+      "url": {{ site_url | tojson }},
+      "description": {{ site_description | tojson }}
+      {%- if organization.phone %},
+      "telephone": {{ organization.phone | tojson }}
+      {%- endif %}
+      {%- if organization.email %},
+      "email": {{ organization.email | tojson }}
+      {%- endif %}
+      {%- if organization.address %},
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": {{ organization.address | tojson }}
+      }
+      {%- endif %}
+      {%- if organization.geo %},
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": {{ organization.geo.lat | tojson }},
+        "longitude": {{ organization.geo.lon | tojson }}
+      }
+      {%- endif %}
+      {%- if organization.opening_hours %},
+      "openingHoursSpecification": [
+        {%- for slot in organization.opening_hours %}
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": {{ slot.day | tojson }},
+          "opens": {{ slot.opens | tojson }},
+          "closes": {{ slot.closes | tojson }}
+        }{% if not loop.last %},{% endif %}
+        {%- endfor %}
+      ]
+      {%- endif %}
+    }
+    </script>
+
+    {#- Onest is Cyrillic-native (Concept A canon — see landing/app/globals.css). -#}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    {#- Color scheme tokens — driven by `scheme`. The `site_color` override
+        wins when the LLM provides one (e.g. brand-matched site). -#}
+    <style>
+        :root {
+            {%- if scheme == 'slate' %}
+            --bg: oklch(0.96 0.005 250);
+            --ink: oklch(0.20 0.012 250);
+            --sub: oklch(0.42 0.014 250);
+            --line: oklch(0.88 0.006 250);
+            --accent: {{ site_color or 'oklch(0.55 0.13 250)' }};
+            --accent-soft: oklch(0.93 0.04 250);
+            {%- elif scheme == 'sage' %}
+            --bg: oklch(0.97 0.008 145);
+            --ink: oklch(0.20 0.012 145);
+            --sub: oklch(0.42 0.014 145);
+            --line: oklch(0.88 0.008 145);
+            --accent: {{ site_color or 'oklch(0.50 0.12 145)' }};
+            --accent-soft: oklch(0.92 0.04 145);
+            {%- else %}
+            --bg: oklch(0.972 0.012 80);
+            --ink: oklch(0.215 0.018 60);
+            --sub: oklch(0.42 0.020 60);
+            --line: oklch(0.88 0.012 70);
+            --accent: {{ site_color or 'oklch(0.605 0.155 35)' }};
+            --accent-soft: oklch(0.92 0.045 40);
+            {%- endif %}
+            --paper-soft: color-mix(in oklch, var(--bg), var(--line) 30%);
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: 'Onest', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            font-feature-settings: "ss01" on;
+            letter-spacing: -0.005em;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.55;
+        }
+        a { color: inherit; }
+        .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.16em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        header.hero {
+            padding: 2.75rem 0 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+        .hero-grid {
+            display: grid;
+            gap: 2rem;
+            align-items: center;
+        }
+        @media (min-width: 48rem) {
+            .hero-grid { grid-template-columns: 1.1fr 0.9fr; }
+        }
+        .hero h1 {
+            font-size: clamp(2.25rem, 6vw, 4rem);
+            margin: 0.75rem 0 0;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            font-weight: 700;
+        }
+        .hero .tagline {
+            color: var(--sub);
+            font-size: 1.05rem;
+            margin: 1rem 0 0;
+            max-width: 36rem;
+        }
+        .hero-photo {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            border-radius: 1.25rem;
+            border: 1px solid var(--line);
+        }
+        .hero-photo-placeholder {
+            aspect-ratio: 4 / 5;
+            border-radius: 1.25rem;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+        }
+        .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.8rem 1.4rem;
+            border-radius: 999px;
+            font-size: 1rem;
+        }
+        .cta:hover { filter: brightness(1.05); }
+        .cta-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.8rem 1.4rem;
+            border-radius: 999px;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+        }
+        .cta-outline:hover { border-color: var(--ink); }
+
+        section { padding: 2.5rem 0; }
+        section + section { border-top: 1px solid var(--line); }
+        section h2 {
+            font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+            margin: 0 0 1.25rem;
+            letter-spacing: -0.01em;
+            font-weight: 700;
+        }
+
+        .about-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        @media (min-width: 48rem) {
+            .about-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .about p { color: var(--sub); margin: 0; }
+        .services-list { margin: 0; padding: 0; list-style: none; }
+        .services-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.65rem 0;
+            border-bottom: 1px dashed var(--line);
+            font-size: 1rem;
+        }
+        .services-list .price {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            color: var(--sub);
+        }
+
+        /* ── v2 (PR-F / E14) ──────────────────────────────────────── */
+
+        /* Trust row under H1 — «N лет опыта · M+ клиентов · 4.9 ★» */
+        .trust-row {
+            font-size: 0.9rem;
+            color: var(--sub);
+            margin: 0.75rem 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.75rem;
+        }
+        .trust-row .rating {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Hero photo caption «ИЗ ИСТОЧНИКА · 12 ФОТО» — absolutely
+           positioned at bottom-left of the photo wrapper. */
+        .hero-photo-wrap {
+            position: relative;
+        }
+        .hero-photo-caption {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--sub);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            padding: 0.35rem 0.65rem;
+            border-radius: 999px;
+        }
+
+        /* Section header with title + monospace meta — used by Gallery
+           and Reviews to advertise the «обновляется еженедельно» promise. */
+        .section-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .section-header h2 { margin: 0; }
+        .section-meta {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.7rem;
+            color: var(--sub);
+            letter-spacing: 0.04em;
+        }
+
+        /* Gallery mosaic — 4-col grid, first tile spans 2×2.
+           Falls back gracefully when <5 photos (first tile just spans
+           what it can). */
+        @media (min-width: 48rem) {
+            .gallery-mosaic {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            .gallery-mosaic > :first-child {
+                grid-column: span 2;
+                grid-row: span 2;
+                aspect-ratio: 1;
+            }
+        }
+
+        /* Reviews section (v2 — populated from `reviews_curated`).
+           2-col grid on desktop, 1-col on mobile. */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        @media (min-width: 48rem) {
+            .reviews-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .review-card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            font-size: 0.95rem;
+        }
+        .review-card.top-pick {
+            border-color: var(--accent);
+            background: oklch(0.97 0.020 35);
+        }
+        .top-pick-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: 1rem;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+        }
+        .review-card .stars {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+        .review-card blockquote {
+            margin: 0 0 0.75rem;
+            font-style: italic;
+            color: var(--ink);
+        }
+        .review-card .review-meta {
+            font-size: 0.8rem;
+            color: var(--sub);
+        }
+        .reviews-meta {
+            color: var(--sub);
+            margin: 0 0 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Included bullets «Что включено» — clean 2-col on desktop. */
+        .included-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.65rem;
+        }
+        @media (min-width: 48rem) {
+            .included-list { grid-template-columns: 1fr 1fr; }
+        }
+        .included-list li {
+            display: flex;
+            gap: 0.5rem;
+            align-items: baseline;
+        }
+        .included-list .check {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Services v2 — duration sits next to name (smaller, sub colour).
+           `gap: 0.75rem` on the flex `li` was added because user
+           testing reported «слипшиеся мин и от» — duration ending in
+           «мин» visually ran into price starting with «от» when the
+           flex line-wrapped at narrow widths. The gap guarantees a
+           minimum buffer in every layout state. */
+        .services-list-v2 { }
+        .services-list-v2 li { gap: 0.75rem; }
+        .services-list-v2 .service-name { display: inline; }
+        .services-list-v2 .duration {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.8rem;
+            color: var(--sub);
+            margin-left: 0.25rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            gap: 0.5rem;
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (min-width: 48rem) {
+            .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+        }
+        .gallery-grid img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            border: 1px solid var(--line);
+            background: var(--accent-soft);
+        }
+
+        .reviews-list { display: grid; gap: 1rem; }
+        @media (min-width: 48rem) { .reviews-list { grid-template-columns: 1fr 1fr; } }
+        .review {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 0.875rem;
+            border: 1px solid var(--line);
+        }
+        .review .author { font-weight: 600; margin-bottom: 0.25rem; }
+        .review .rating { color: var(--accent); font-size: 0.9rem; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+        .review p { margin: 0; color: var(--ink); font-size: 0.95rem; }
+
+        .contact { background: var(--accent-soft); }
+        .contact .container > p { color: var(--sub); margin: -0.5rem 0 1.25rem; }
+        .contact form {
+            max-width: 32rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+        .contact input,
+        .contact textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--line);
+            border-radius: 0.625rem;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+            color: var(--ink);
+        }
+        .contact label.consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--sub);
+            margin-top: 0.25rem;
+        }
+        .contact label.consent a { color: var(--accent); text-decoration: underline; }
+        .contact .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+        .contact button {
+            margin-top: 0.5rem;
+            padding: 0.95rem 1rem;
+            background: var(--accent);
+            color: white;
+            border: 0;
+            border-radius: 0.625rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .contact button:hover { filter: brightness(1.05); }
+        .contact .captcha-note {
+            margin: 0.5rem 0 0;
+            color: var(--sub);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.7rem;
+        }
+
+        footer {
+            padding: 2rem 0 3rem;
+            color: var(--sub);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--line);
+        }
+        footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        footer a { color: var(--sub); }
+        footer .brand { color: var(--ink); font-weight: 600; }
+        /* Watermark badge — canonical brand-mark per docs/COPY.md §«Бренд» (v2).
+           Терракотовый квадрат с буквой «С» (Onest 800, optical-centered). */
+        footer .watermark {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        footer .watermark-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background: var(--accent);
+            color: #ffffff;
+            font-family: 'Onest', 'Inter', system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            padding-bottom: 1px;
+        }
+        .skip {
+            position: absolute;
+            left: -9999px;
+            top: auto;
+        }
+    </style>
+</head>
+<body>
+    <a class="skip" href="#contact">К форме записи</a>
+
+    <header class="hero">
+        <div class="container hero-grid">
+            <div>
+                <p class="eyebrow">{{ site_category or organization.name }} · {{ organization.address or 'онлайн' }}</p>
+                <h1>{{ site_title }}</h1>
+                <p class="tagline">{{ site_description }}</p>
+
+                {#- v2 trust-row — per COPY.md §4.1. Только показываем те поля,
+                    которые publisher проставил; пустые/нулевые не рендерим
+                    чтобы не было «0 лет опыта». -#}
+                {%- if years_experience or clients_served or average_rating -%}
+                <p class="trust-row">
+                    {%- if years_experience %}
+                    <span>{{ years_experience }} лет опыта</span>
+                    {%- endif %}
+                    {%- if clients_served %}
+                    {%- if years_experience %} · {% endif %}
+                    <span>{{ clients_served }}+ клиентов</span>
+                    {%- endif %}
+                    {%- if average_rating %}
+                    {%- if years_experience or clients_served %} · {% endif %}
+                    <span class="rating">{{ "%.1f"|format(average_rating) }} ★</span>
+                    {%- endif %}
+                </p>
+                {%- endif %}
+
+                <div class="hero-ctas">
+                    <a class="cta" href="#contact">Записаться →</a>
+                    {%- if organization.phone %}
+                    <a class="cta-outline" href="tel:{{ organization.phone }}">📱 {{ organization.phone }}</a>
+                    {%- endif %}
+                </div>
+            </div>
+            {#- v2 photo wrapper — добавляет caption «ИЗ ИСТОЧНИКА · N ФОТО»
+                per COPY.md §4.1 если есть photos_count. -#}
+            <div class="hero-photo-wrap">
+                {%- if site_hero_photo %}
+                <img class="hero-photo" src="{{ site_hero_photo }}" alt="" loading="eager" decoding="async">
+                {%- else %}
+                <div class="hero-photo-placeholder" aria-hidden="true"></div>
+                {%- endif %}
+                {%- if photos_count %}
+                <span class="hero-photo-caption">ИЗ ИСТОЧНИКА · {{ photos_count }} ФОТО</span>
+                {%- endif %}
+            </div>
+        </div>
+    </header>
+
+    {%- if gallery %}
+    <section>
+        <div class="container">
+            {#- v2 gallery header — title + monospace «обновляется из источника
+                еженедельно» per COPY.md §4.2 — рекламирует автономность
+                продукта прямо в customer-сайте. -#}
+            <div class="section-header">
+                <h2>Наши работы</h2>
+                <span class="section-meta">обновляется из источника еженедельно</span>
+            </div>
+            {#- v2 mosaic: 4-col grid, first tile spans 2×2 (per COPY.md §4.2).
+                Класс `.gallery-grid` подхватывает CSS, добавленный в style-блок выше. -#}
+            <div class="gallery-grid gallery-mosaic">
+                {%- for photo in gallery %}
+                <img src="{{ photo.url }}" alt="{{ photo.alt or '' }}" loading="lazy" decoding="async" width="320" height="320">
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {#- v2 NEW reviews section «Что говорят клиенты» (PR-F / E14 / ADR-0010).
+        Только когда `reviews_curated` непустой (cron уже отработал И не fall-back
+        empty per FR-100c). 2×N grid, badge «★ ЛУЧШИЙ» на топ-1/2 если
+        is_top_pick=true. -#}
+    {%- if reviews_curated %}
+    <section id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <h2>Что говорят клиенты</h2>
+                <span class="section-meta">★ ЛУЧШИЕ — выбрал ИИ · обновляется каждую неделю</span>
+            </div>
+            {%- if total_reviews_count and review_source_name %}
+            <p class="reviews-meta">{{ "%.1f"|format(average_rating or 0) }} из 5 · {{ total_reviews_count }} отзывов на {{ review_source_name }}</p>
+            {%- endif %}
+            <div class="reviews-grid">
+                {%- for r in reviews_curated %}
+                <article class="review-card{% if r.is_top_pick %} top-pick{% endif %}">
+                    {%- if r.is_top_pick %}
+                    <span class="top-pick-badge" aria-label="Лучший отзыв">★ ЛУЧШИЙ</span>
+                    {%- endif %}
+                    <div class="stars" aria-label="{{ r.rating }} из 5">
+                        {%- for _ in range(r.rating) -%}★{%- endfor -%}
+                    </div>
+                    <blockquote>«{{ r.text }}»</blockquote>
+                    <footer class="review-meta">
+                        <strong>{{ r.author }}</strong> · {{ review_source_name or 'источник' }}{% if r.date_iso %} · {{ r.date_iso }}{% endif %}
+                    </footer>
+                </article>
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    {#- v2 NEW About bullets «что включено» (PR-F / E14 / COPY.md §4.4).
+        Опциональная секция — рендерится только если publisher проставил
+        `included_bullets`. -#}
+    {%- if included_bullets %}
+    <section id="included">
+        <div class="container">
+            <h2>Что включено</h2>
+            <ul class="included-list">
+                {%- for bullet in included_bullets %}
+                <li><span aria-hidden="true" class="check">✓</span> {{ bullet }}</li>
+                {%- endfor %}
+            </ul>
+        </div>
+    </section>
+    {%- endif %}
+
+    {%- if services or site_description %}
+    <section>
+        <div class="container about-grid">
+            <div class="about">
+                <h2>О мастере</h2>
+                <p>{{ site_description }}</p>
+            </div>
+            {%- if services %}
+            <div>
+                <h2>Услуги</h2>
+                {#- v2 services list — mono price + optional duration per
+                    COPY.md §4.5. Layout: `<title> · <duration_mono>` left,
+                    dashed-separator filler middle, `<price_mono>` right.
+                    -#}
+                <ul class="services-list services-list-v2">
+                    {%- for service in services %}
+                    <li>
+                        <span class="service-name">
+                            {{ service.title }}{% if service.duration_label %}
+                            <span class="duration">· {{ service.duration_label }}</span>
+                            {%- endif %}
+                        </span>
+                        {%- if service.price_label %}
+                        <span class="price">{{ service.price_label }}</span>
+                        {%- endif %}
+                    </li>
+                    {%- endfor %}
+                </ul>
+            </div>
+            {%- endif %}
+        </div>
+    </section>
+    {%- endif %}
+
+    {%- if reviews %}
+    <section>
+        <div class="container">
+            <h2>Отзывы</h2>
+            <div class="reviews-list">
+                {%- for review in reviews %}
+                <article class="review">
+                    <div class="author">{{ review.author }}</div>
+                    {%- if review.rating %}
+                    <div class="rating" aria-label="Рейтинг {{ review.rating }} из 5">
+                        {% for _ in range(review.rating) %}★{% endfor %}{% for _ in range(5 - review.rating) %}☆{% endfor %}
+                    </div>
+                    {%- endif %}
+                    <p>{{ review.text }}</p>
+                </article>
+                {%- endfor %}
+            </div>
+        </div>
+    </section>
+    {%- endif %}
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Записаться</h2>
+            <p>Оставьте имя и контакт — отвечу в течение часа.</p>
+            <form method="post" action="{{ contact_url }}" autocomplete="on">
+                <input id="name" name="name" type="text" required minlength="2" maxlength="80" autocomplete="name" placeholder="Как вас зовут" aria-label="Имя">
+                <input id="phone" name="phone" type="tel" required minlength="6" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="Телефон или @telegram" aria-label="Контакт">
+                <textarea id="message" name="message" rows="3" maxlength="500" autocomplete="off" placeholder="Что хотите — необязательно" aria-label="Сообщение"></textarea>
+                {#- Honeypot — FR-051 bot filter. -#}
+                <input class="honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <label class="consent">
+                    <input type="checkbox" name="consent_v" value="v1" required>
+                    <span>Согласен на обработку персональных данных согласно <a href="/privacy">политике</a></span>
+                </label>
+                {%- if captcha_client_key %}
+                <div class="smart-captcha" data-sitekey="{{ captcha_client_key }}" data-invisible="true"></div>
+                {%- endif %}
+                <button type="submit">Отправить заявку →</button>
+                <p class="captcha-note">🛡 Защищено Yandex SmartCaptcha · невидимо</p>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <span>© {{ year or 2026 }} {{ organization.name or site_title }} · {{ organization.address or '' }}</span>
+            {#- Watermark — brand mark «С» + «Сделано на Самосайте». Только для plan=free (см. T10.3 / FR-090 ref).
+                ref-param ведёт виральный PLG-метрику. -#}
+            <a href="https://samosite.online?ref={{ site_subdomain or 'unknown' }}"
+               rel="noopener"
+               class="watermark"
+               aria-label="Сделано на Самосайте">
+                <span class="watermark-logo" aria-hidden="true">С</span>
+                Сделано на <span class="brand">Самосайте</span> →
+            </a>
+        </div>
+    </footer>
+
+    {%- if captcha_client_key %}
+    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+    {%- endif %}
+</body>
+</html>
