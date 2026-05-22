@@ -37,6 +37,7 @@ export function FreeMonthCTA() {
   return (
     <section
       id="free-month"
+      data-section="free-month"
       aria-labelledby="free-month-title"
       className="px-5 py-16 text-white sm:px-16 sm:py-24"
       style={{ background: "oklch(0.20 0.020 60)" }}

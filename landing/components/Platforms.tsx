@@ -261,6 +261,7 @@ export function Platforms() {
   return (
     <section
       id="platforms"
+      data-section="platforms"
       aria-labelledby="platforms-title"
       className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >

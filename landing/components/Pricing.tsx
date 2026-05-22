@@ -47,6 +47,7 @@ export function Pricing() {
   return (
     <section
       id="pricing"
+      data-section="pricing"
       aria-labelledby="pricing-title"
       className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >

@@ -80,6 +80,7 @@ export function FAQ() {
   return (
     <section
       id="faq"
+      data-section="faq"
       aria-labelledby="faq-title"
       className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >

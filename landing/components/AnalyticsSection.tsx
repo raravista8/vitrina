@@ -306,6 +306,7 @@ export function AnalyticsSection() {
   return (
     <section
       id="analytics"
+      data-section="analytics"
       aria-labelledby="analytics-title"
       className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
     >

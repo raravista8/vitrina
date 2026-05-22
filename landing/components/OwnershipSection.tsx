@@ -184,6 +184,7 @@ export function OwnershipSection() {
   return (
     <section
       id="ownership"
+      data-section="ownership"
       aria-labelledby="ownership-title"
       className="px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-20"
     >
