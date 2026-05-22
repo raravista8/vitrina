@@ -153,11 +153,16 @@ export function AnalyticsSection() {
           id="analytics-title"
           className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
         >
-          Видно, как сайт работает на вас
+          {/* v2.2 canon (финал 2) — «Видно, как…» (third-person, abstract)
+              → «Видите всё, что…» (second-person address, dashboard framing).
+              Subhead extended to surface the delivery channel promise
+              («сводку куда скажете — TG/MAX/почта»). */}
+          Видите всё,
+          <br className="hidden sm:block" /> что происходит с сайтом
         </h2>
-        <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          В личном кабинете — посещения, заявки, источники трафика и рейтинг. Без графиков для
-          специалистов — только то, что вам нужно
+        <p className="mt-3 max-w-[760px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+          Сколько людей зашли, откуда пришли и сколько оставили заявок — в одном экране. Самосайт
+          ещё пришлёт сводку куда скажете — в Telegram, MAX или на почту
         </p>
       </header>
 
