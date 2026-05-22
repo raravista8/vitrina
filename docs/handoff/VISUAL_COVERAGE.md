@@ -1,10 +1,10 @@
 # Visual Coverage Tracker — Самосайт
 
 > **Цель:** pixel-perfect 1:1 канона на 3 viewports (1440 / 768 / 390) для всех 19 экранов.
-> **Сейчас:** 1 из 57 (экран × viewport) = **1.75% pixel-сверено**, остальное либо smoke-only, либо нет baseline.
+> **Сейчас:** landing секции 2-10 импортированы из `@samosite/canon/landing` напрямую (PR #119) — drift = 0 by construction, pixel-diff vs canon стал избыточен для этих 9 секций. Hero остаётся ручной (canon's HeroBlock read-only). Остальные категории (intake / customer / admin) — без изменений.
 > Обновляй этот файл при каждом изменении coverage — это единственный трекер прогресса.
 
-Легенда: 🟢 pixel-audited (diff ≤ 2%) · 🟡 baseline есть, smoke-only · 🔴 нет baseline · ⚫ компонент не построен
+Легенда: 🟢 pixel-audited (diff ≤ 2%) · 🔵 canon-import (drift=0 by construction) · 🟡 baseline есть, smoke-only · 🔴 нет baseline · ⚫ компонент не построен
 
 ---
 
@@ -13,17 +13,19 @@
 | # | Section | 1440 | 768 | 390 | Spec |
 |---|---|---|---|---|---|
 | L1 | Hero | 🟢 | 🟡 | 🟡 | `specs/01 §3` |
-| L2 | Examples | 🟡 | 🟡 | 🟡 | `specs/01 §5` |
-| L3 | Story | 🟡 | 🟡 | 🟡 | `specs/01 §6` |
-| L4 | Platforms | 🟡 | 🟡 | 🟡 | `specs/01 §7` |
-| L5 | BigFeatures | 🟡 | 🟡 | 🟡 | `specs/01 §8` |
-| L6 | Ownership | 🟡 | 🟡 | 🟡 | `specs/01 §9` |
-| L7 | Analytics | 🟡 | 🟡 | 🟡 | `specs/01 §9` |
-| L8 | Pricing | 🟡 | 🟡 | 🟡 | `specs/01 §10` |
-| L9 | FAQ | 🟡 | 🟡 | 🟡 | `specs/01 §11` |
-| L10 | FreeMonth | 🟡 | 🟡 | 🟡 | `specs/01 §11` |
+| L2 | Examples | 🔵 | 🔵 | 🔵 | `specs/01 §5` |
+| L3 | Story | 🔵 | 🔵 | 🔵 | `specs/01 §6` |
+| L4 | Platforms | 🔵 | 🔵 | 🔵 | `specs/01 §7` |
+| L5 | BigFeatures | 🔵 | 🔵 | 🔵 | `specs/01 §8` |
+| L6 | Ownership | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
+| L7 | Analytics | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
+| L8 | Pricing | 🔵 | 🔵 | 🔵 | `specs/01 §10` |
+| L9 | FAQ | 🔵 | 🔵 | 🔵 | `specs/01 §11` |
+| L10 | FreeMonth | 🔵 | 🔵 | 🔵 | `specs/01 §11` |
 
-**Landing итого:** 1 / 30 pixel-audited · 30 / 30 baseline · 10 / 10 spec.
+**Landing итого:** 1 pixel-audited (Hero@1440) + 27 canon-import drift=0 (sections 2-10 × 3vp) + 2 smoke (Hero@768/390) = **30 / 30 covered**.
+
+Hero — рендерится через `landing/components/Hero.tsx` (наш hand-rolled, с интерактивным input + SubmitModal flow). Canon's `HeroBlock` ship'нут в `@samosite/canon/landing` но read-only — заменим когда canon добавит interactive variant (см. canon 0.2.x в README package).
 
 ---
 
@@ -112,23 +114,27 @@ Admin — desktop-first (founder-side). Mobile только для login (founde
 
 ## Сводка
 
-| Категория | Pixel-сверено | Baseline есть | Spec есть | Прод-страница есть |
-|---|---|---|---|---|
-| Landing | 1 / 30 | 30 / 30 | 10 / 10 | 10 / 10 |
-| Public intake (2–9) | 0 / 24 | 0 / 24 | 8 / 8 | 8 / 8 |
-| Customer site (#7) | 0 / 34 | 0 / 34 | 12 / 12 | 12 / 12 (старая v2) |
-| Admin demo (#7b) | 0 / 18 | 0 / 18 | 6 / 6 | **0 / 6** |
-| Admin (10–19) | 0 / 16 | 0 / 16 | 10 / 10 | 10 / 10 |
-| **Итого** | **1 / 122 (0.8 %)** | **30 / 122 (25 %)** | **46 / 46 (100 %)** | **40 / 46 (87 %)** |
+| Категория | Coverage | Note |
+|---|---|---|
+| Landing — Hero | 1 audited @ 1440 + 2 smoke | hand-rolled (interactive) |
+| Landing — sections 2-10 | **27 / 27 canon-import drift=0** | via `@samosite/canon/landing` (PR #119) |
+| Public intake (2–9) | 0 / 24 | hand-rolled, no baselines |
+| Customer site (#7) | 0 / 34 | hand-rolled (sites-template Jinja), no baselines |
+| Admin demo (#7b) | 0 / 18 | **page not built yet** (canon ships `ClientAdminDemo`) |
+| Admin (10–19) | 0 / 16 | hand-rolled, no baselines |
+| **Итого** | **28 / 122 covered** | 27 of them via canon drift=0 |
 
 ---
 
-## Что делать
+## Что делать дальше
 
-См. `BASELINES_PLAN.md` — конкретный roadmap по тирам. Кратко:
+PR #119 закрыл Landing sections 2-10 одним махом (canon import = drift=0).
+Дальше — по той же модели:
 
-- **Tier 1** (1–2 дня): включить pixel-assert для 27 landing-секций × viewport, у которых уже есть baselines.
-- **Tier 2** (3–5 дней): сгенерировать baselines для customer-site, intake, admin из `canon/index.html`.
-- **Tier 3** (5–7 дней): построить `/admin-demo` и сверить.
+1. **Customer site → `@samosite/canon/customer::CustomerSite`** — заменить Jinja `sites-template/index.html.j2` рендер на React-canon. Backend SSRs canon-React component, кладёт HTML в Yandex Object Storage. Cовместимость: canon-импорт = ровно canon. Hand-rolled drift = 0.
+2. **Admin core → `@samosite/canon/admin-core`** — `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail` в качестве drop-in для `landing/app/admin/*`. Founder-side UI, не критичен для конверсии.
+3. **Admin ops → `@samosite/canon/admin-ops`** — `SitesList`, `SiteDetail`, `Leads`, `Waitlist`, `FeedbackInbox`, `Settings`. Same.
+4. **`/admin-demo` (#7b) → `@samosite/canon/admin-demo::ClientAdminDemo`** — новая страница, drop-in import. 5 дней по `BASELINES_PLAN §Tier 3` schedule → теперь 1 день (canon-import = тот же React-рендер).
+5. **Intake → `@samosite/canon/intake`** — `SubmitModal`, `Confirmation`, `PhotoDrawer`, `LeadForm`, `FeedbackPage`. Но **большинство interactive** — потребуется тот же compromise, что с Hero (canon read-only). Defer до canon 0.2.x с hook-варианты.
 
-Pipeline и команды — в `PIXEL_PERFECT_SETUP.md`.
+Pipeline и команды для оставшихся (если решим всё-таки делать pixel-diff): в `PIXEL_PERFECT_SETUP.md`. Но честное замечание: если canon-import = drift=0, pixel-diff избыточен. Тесты остаются только как smoke (проверка что DOM селекторы резолвятся).
