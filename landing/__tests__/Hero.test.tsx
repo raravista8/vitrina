@@ -66,7 +66,7 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
   it("ships fallback link for photo (closed-TG moved to FAQ in PR-G)", () => {
     render(<Hero />);
     expect(
-      screen.getByText(/Загрузить фото работ, скриншот профиля или визитку/i),
+      screen.getByText(/Загрузить фото работ, скриншот профиля или\sвизитку/i),
     ).toBeInTheDocument();
     // «Закрытый TG-канал — загрузить экспорт» удалён из Hero в PR-G:
     // user testing flagged that это редкий сценарий который путал
@@ -152,7 +152,7 @@ describe("Hero — interaction", () => {
     expect(screen.queryByRole("heading", { name: /Загрузите фото/i })).not.toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Загрузить фото работ, скриншот профиля или визитку/i }),
+      screen.getByRole("button", { name: /Загрузить фото работ, скриншот профиля или\sвизитку/i }),
     );
 
     expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();

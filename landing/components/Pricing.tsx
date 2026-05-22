@@ -25,13 +25,13 @@ import { ArrowRight, Check } from "lucide-react";
 import { SectionViewTracker } from "./SectionViewTracker";
 
 const INCLUDED = [
-  "Сам собирает сайт за 2 часа",
-  "Сам обновляет 4 раза в месяц из источника",
-  "Сам ловит заявки в Telegram / MAX / Email",
+  "Сам собирает сайт за 2 часа",
+  "Сам обновляет 4 раза в месяц из источника",
+  "Сам ловит заявки в Telegram / MAX / Email",
   "Сам отбирает лучшие отзывы каждую неделю",
-  "Сам индексирует в Яндексе и Google",
-  "Личный кабинет с аналитикой и контролем",
-  "Защищённый https + данные хранятся в РФ",
+  "Сам индексирует в Яндексе и Google",
+  "Личный кабинет с аналитикой и контролем",
+  "Защищённый https + данные хранятся в РФ",
 ];
 
 export function Pricing() {
@@ -44,21 +44,21 @@ export function Pricing() {
       <SectionViewTracker goal="pricing_view" />
       <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Сколько стоит</p>
-        {/* v2.1.3 §1.1 — H2 переписана: «Один тариф — без сюрпризов»
+        {/* v2.1.3 §1.1 — H2 переписана: «Один тариф — без сюрпризов»
             короче, прямее, держит обещание простоты. */}
         <h2
           id="pricing-title"
           className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
         >
-          Один тариф — без сюрпризов
+          Один тариф — без сюрпризов
         </h2>
       </header>
 
       <div className="mx-auto max-w-[640px]">
-        <div className="rounded-3xl border-2 border-accent bg-white p-7 shadow-card sm:p-10">
+        <div className="ss-pricing-card rounded-3xl border-2 border-accent bg-white p-7 shadow-card sm:p-10">
           {/* Free-month chip над ценой — v2.1.3 §1.1: phyciacally moved
-              risk-reversal внутрь pricing card. Зелёная плашка с галочкой
-              «Первый месяц — бесплатно» отвечает за «не страшно начать»;
+              risk-reversal внутрь pricing card. Зелёная плашка с галочкой
+              «Первый месяц — бесплатно» отвечает за «не страшно начать»;
               сама цена «потом 990 ₽» уже воспринимается спокойно. */}
           <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-[12px] font-semibold text-accent-ink">
             <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -67,11 +67,11 @@ export function Pricing() {
 
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-[44px] font-bold text-ink sm:text-[64px]">990</span>
-            <span className="text-[18px] text-ink-soft sm:text-[22px]">₽ в месяц</span>
+            <span className="text-[18px] text-ink-soft sm:text-[22px]">₽ в месяц</span>
           </div>
 
           <p className="mt-2 text-[14px] text-ink-soft sm:text-[16px]">
-            Не надо выбирать пакеты, считать апселы и читать «звёздочки»
+            Не надо выбирать пакеты, считать апселы и читать «звёздочки»
           </p>
 
           <ul className="mt-6 space-y-2.5">
@@ -100,8 +100,8 @@ export function Pricing() {
         </div>
 
         <p className="mx-auto mt-8 max-w-[480px] text-center text-[14px] leading-relaxed text-ink-soft sm:mt-10 sm:text-[15px]">
-          Час работы SMM-щика стоит дороже. Час маркетолога — в разы. Самосайт делает то, что им
-          пришлось бы делать каждую неделю — но автоматически.
+          Час работы SMM-щика стоит дороже. Час маркетолога — в разы. Самосайт делает то, что им
+          пришлось бы делать каждую неделю — но автоматически.
         </p>
       </div>
     </section>

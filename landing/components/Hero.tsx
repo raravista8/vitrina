@@ -192,7 +192,7 @@ export function Hero() {
             the menu line is collapsed). */}
         <nav className="relative z-10 flex items-center justify-between">
           {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Размер scales
-              up на desktop. Wordmark «Самосайт» уже включён в компонент. */}
+              up на desktop. Wordmark «Самосайт» уже включён в компонент. */}
           <div className="hidden sm:block">
             <BrandMark size={26} fontSize={20} />
           </div>
@@ -201,7 +201,7 @@ export function Hero() {
           </div>
           <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
             <a className="hover:text-ink" href="#how-it-works">
-              Как это работает
+              Как это работает
             </a>
             <a className="hover:text-ink" href="#pricing">
               Тарифы
@@ -225,9 +225,9 @@ export function Hero() {
         </nav>
 
         {/* Hero body */}
-        {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
-            и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
-            Чище без него. */}
+        {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
+            и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
+            Чище без него. */}
         <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
           {/* H1 — three «сам» pattern. Name «Самосайт» = «сам» + «сайт»,
               and the H1 now picks that up with a three-beat promise:
@@ -251,19 +251,19 @@ export function Hero() {
           </h1>
 
           {/* Sub — v2.1.3 §1.1 redesign:
-              • «за пару/две минуты» → «за 2 часа» (реальный SLA — мануальная
+              • «за пару/две минуты» → «за 2 часа» (реальный SLA — мануальная
                 модерация первых 20 сайтов; обещание «2 минуты» порождало
-                разочарование). Везде в копи лендинга — единый timing.
-              • Bold-акценты на «Самосайт на базе ИИ соберёт сайт за 2 часа»
-                (раскрытие что под капотом — AI, не magic) и «делает всё сам»
-                (повторение трёх «сам» рефреном на body level).
-              • Финал «Вам остаётся только работать с клиентами» удалён —
+                разочарование). Везде в копи лендинга — единый timing.
+              • Bold-акценты на «Самосайт на базе ИИ соберёт сайт за 2 часа»
+                (раскрытие что под капотом — AI, не magic) и «делает всё сам»
+                (повторение трёх «сам» рефреном на body level).
+              • Финал «Вам остаётся только работать с клиентами» удалён —
                 достаточно главного обещания. */}
           <p className="mt-4 max-w-full text-balance text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[720px] sm:text-[20px]">
-            Покажите ссылку — карты, Telegram или визитку.{" "}
-            <b className="font-semibold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
+            Покажите ссылку — карты, Telegram или визитку.{" "}
+            <b className="font-semibold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
             дальше <b className="font-semibold text-ink">делает всё сам</b>: обновляет цены, ловит
-            заявки, ведёт аналитику и публикует лучшие отзывы
+            заявки, ведёт аналитику и публикует лучшие отзывы
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
@@ -282,7 +282,7 @@ export function Hero() {
             <div className="flex flex-1 items-center gap-2.5 px-3.5 py-3 sm:px-[18px] sm:py-0">
               <LinkIcon aria-hidden strokeWidth={1.8} className="h-5 w-5 shrink-0 text-ink-faint" />
               {/* Shorter placeholder that fits a 320 px iPhone viewport;
-                  the longer "ссылка на соцсеть, Яндекс.Карты или сайт"
+                  the longer "ссылка на соцсеть, Яндекс.Карты или сайт"
                   truncated mid-word during user testing. The supported-
                   source microcopy under the form covers the detail. */}
               <input
@@ -350,15 +350,15 @@ export function Hero() {
           </div>
 
           {/* Compact platform list (v2.1.3 §1.3). Под free-month плашкой —
-              маленький kicker + inline-chips с micro brand glyphs.
-              Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
+              маленький kicker + inline-chips с micro brand glyphs.
+              Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
               чего» — юзер видит supported pool сразу под input, без
-              scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
-              2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
+              scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
+              2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
               shared `./brand-glyphs`. */}
           <div className="mt-6 sm:mt-8">
             <p className="font-mono text-[10px] uppercase tracking-widest text-accent sm:text-[11px]">
-              Из чего мы можем сделать вам сайт
+              Из чего мы можем сделать вам сайт
             </p>
             <ul className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft sm:gap-2 sm:text-[13px]">
               <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
@@ -395,7 +395,7 @@ export function Hero() {
                 <span aria-hidden className="text-[12px]">
                   🪪
                 </span>
-                Фото буклета или меню
+                Фото буклета или меню
               </li>
             </ul>
           </div>
@@ -429,15 +429,15 @@ export function Hero() {
               onClick={() => setPhotoOpen(true)}
               className="inline-flex gap-2 text-left text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
             >
-              📷 Загрузить фото работ, скриншот профиля или визитку
+              📷 Загрузить фото работ, скриншот профиля или визитку
             </button>
           </div>
         </div>
 
-        {/* Benefits stack удалён в v2 — см. docs/COPY.md §2.2 + self-critique
-            §11.2: на скриншотах он визуально конкурировал с input+CTA, глаз
-            метался. Перенесено в отдельную <BigFeatures /> секцию ниже по
-            странице с новым составом (4 новых карточки, включая «Сам
+        {/* Benefits stack удалён в v2 — см. docs/COPY.md §2.2 + self-critique
+            §11.2: на скриншотах он визуально конкурировал с input+CTA, глаз
+            метался. Перенесено в отдельную <BigFeatures /> секцию ниже по
+            странице с новым составом (4 новых карточки, включая «Сам
             выбирает отзывы»). */}
       </section>
       <SubmitModal

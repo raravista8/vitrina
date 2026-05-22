@@ -56,7 +56,7 @@ const PLATFORMS: Platform[] = [
   { name: "2ГИС", glyph: <TwoGisGlyph />, status: "ok" },
   { name: "Avito", glyph: <AvitoGlyph />, status: "ok" },
   { name: "Ваш старый сайт", glyph: "🌐", status: "ok" },
-  { name: "Фото буклета или меню", glyph: "🪪", status: "ok" },
+  { name: "Фото буклета или меню", glyph: "🪪", status: "ok" },
   // tier=soon — waitlist (ADR-0009)
   { name: "VK-страница", glyph: "V", status: "soon" },
   { name: "Ozon", glyph: "🛒", status: "soon" },
@@ -113,7 +113,7 @@ export function Platforms() {
           id="platforms-title"
           className="mt-2 text-[28px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
         >
-          Работает с тем, что у вас уже есть
+          Работает с тем, что у вас уже есть
         </h2>
       </header>
 
@@ -142,7 +142,7 @@ export function Platforms() {
       </div>
 
       <p className="mx-auto mt-10 max-w-[680px] text-center text-[14px] text-ink-soft sm:mt-12 sm:text-[15px]">
-        Не нашли свою площадку?{" "}
+        Не нашли свою площадку?{" "}
         <a
           href="#top"
           className="decoration-accent/50 font-medium text-accent underline underline-offset-4 hover:decoration-accent"
