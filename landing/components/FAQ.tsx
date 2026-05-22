@@ -82,51 +82,53 @@ export function FAQ() {
       id="faq"
       data-section="faq"
       aria-labelledby="faq-title"
-      className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+      className="bg-paper pb-0 pt-14 sm:pb-0 sm:pt-24"
     >
-      <FAQGoalTracker />
-      <header className="mx-auto mb-7 max-w-[1100px] sm:mb-12 sm:text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Частые вопросы
-        </p>
-        <h2
-          id="faq-title"
-          className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
-        >
-          Что чаще всего
-          <br className="hidden sm:block" /> спрашивают
-        </h2>
-      </header>
-
-      {/* Stack of cards per canon (line 2295). Gap 10 px = gap-2.5.
-          maxWidth 820 px desktop matches canon. */}
-      <div className="mx-auto flex max-w-[820px] flex-col gap-2.5">
-        {FAQ_ITEMS.map((item, idx) => (
-          <details
-            key={item.q}
-            // Native <details> для SEO (rich snippets) + zero-JS toggle.
-            data-faq-id={`q${idx + 1}`}
-            open={idx === 0}
-            // group-open utility used below for the «+» rotation.
-            className="group overflow-hidden rounded-[14px] border border-line bg-white"
+      <div data-section-body="faq" className="px-5 sm:px-16">
+        <FAQGoalTracker />
+        <header className="mx-auto mb-7 max-w-[1100px] sm:mb-12 sm:text-center">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
+            Частые вопросы
+          </p>
+          <h2
+            id="faq-title"
+            className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
           >
-            <summary className="hover:bg-paper-soft/50 flex cursor-pointer list-none items-center gap-3.5 px-[18px] py-4 text-[15.5px] font-semibold leading-[1.35] text-ink sm:px-[22px] sm:py-[18px] sm:text-[16.5px] [&::-webkit-details-marker]:hidden">
-              <span className="flex-1">{item.q}</span>
-              {/* Toggle glyph — 28 px paper-soft circle with terracotta «+».
+            Что чаще всего
+            <br className="hidden sm:block" /> спрашивают
+          </h2>
+        </header>
+
+        {/* Stack of cards per canon (line 2295). Gap 10 px = gap-2.5.
+          maxWidth 820 px desktop matches canon. */}
+        <div className="mx-auto flex max-w-[820px] flex-col gap-2.5">
+          {FAQ_ITEMS.map((item, idx) => (
+            <details
+              key={item.q}
+              // Native <details> для SEO (rich snippets) + zero-JS toggle.
+              data-faq-id={`q${idx + 1}`}
+              open={idx === 0}
+              // group-open utility used below for the «+» rotation.
+              className="group overflow-hidden rounded-[14px] border border-line bg-white"
+            >
+              <summary className="hover:bg-paper-soft/50 flex cursor-pointer list-none items-center gap-3.5 px-[18px] py-4 text-[15.5px] font-semibold leading-[1.35] text-ink sm:px-[22px] sm:py-[18px] sm:text-[16.5px] [&::-webkit-details-marker]:hidden">
+                <span className="flex-1">{item.q}</span>
+                {/* Toggle glyph — 28 px paper-soft circle with terracotta «+».
                   Rotates 45° → becomes ✕ when the disclosure is open.
                   Native rotation tied to <details open> via group-open. */}
-              <span
-                aria-hidden
-                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-soft text-[18px] font-bold leading-none text-accent transition-transform group-open:rotate-45"
-              >
-                +
-              </span>
-            </summary>
-            <div className="px-[18px] pb-4 pt-0 text-[14.5px] leading-[1.55] text-ink-soft sm:px-[22px] sm:pb-5 sm:text-[15.5px]">
-              {item.a}
-            </div>
-          </details>
-        ))}
+                <span
+                  aria-hidden
+                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-soft text-[18px] font-bold leading-none text-accent transition-transform group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              <div className="px-[18px] pb-4 pt-0 text-[14.5px] leading-[1.55] text-ink-soft sm:px-[22px] sm:pb-5 sm:text-[15.5px]">
+                {item.a}
+              </div>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   );

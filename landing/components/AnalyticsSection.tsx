@@ -308,96 +308,98 @@ export function AnalyticsSection() {
       id="analytics"
       data-section="analytics"
       aria-labelledby="analytics-title"
-      className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+      className="bg-paper pb-0 pt-14 sm:pb-0 sm:pt-24"
     >
-      <header className="mx-auto mb-7 max-w-[760px] sm:mb-12 sm:text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Аналитика</p>
-        <h2
-          id="analytics-title"
-          className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
-        >
-          {/* v2.2 canon (финал 2) — «Видно, как…» (third-person, abstract)
+      <div data-section-body="analytics" className="px-5 sm:px-16">
+        <header className="mx-auto mb-7 max-w-[760px] sm:mb-12 sm:text-center">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Аналитика</p>
+          <h2
+            id="analytics-title"
+            className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
+          >
+            {/* v2.2 canon (финал 2) — «Видно, как…» (third-person, abstract)
               → «Видите всё, что…» (second-person address, dashboard framing).
               Subhead extended to surface the delivery channel promise
               («сводку куда скажете — TG/MAX/почта»). */}
-          Видите всё,
-          <br className="hidden sm:block" /> что происходит с сайтом
-        </h2>
-        <p className="mt-3 max-w-[760px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Сколько людей зашли, откуда пришли и сколько оставили заявок — в одном экране. Самосайт
-          ещё пришлёт сводку куда скажете — в Telegram, MAX или на почту
-        </p>
-      </header>
+            Видите всё,
+            <br className="hidden sm:block" /> что происходит с сайтом
+          </h2>
+          <p className="mt-3 max-w-[760px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+            Сколько людей зашли, откуда пришли и сколько оставили заявок — в одном экране. Самосайт
+            ещё пришлёт сводку куда скажете — в Telegram, MAX или на почту
+          </p>
+        </header>
 
-      {/* Single "dashboard window" wrapper card per canon line 1672. White
+        {/* Single "dashboard window" wrapper card per canon line 1672. White
           bg + warm shadow + faux chrome header. Holds the 4 stat tiles +
           the chart/sources grid. */}
-      <div
-        className="ss-card-lift mx-auto max-w-[1200px] rounded-[22px] border border-line bg-white p-5 sm:p-7"
-        style={{ boxShadow: "0 24px 48px -24px rgba(120,60,30,0.18)" }}
-      >
-        {/* Faux window chrome — 3 traffic lights + path-style label */}
-        <div className="-mx-1 mb-[18px] flex items-center gap-1.5 border-b border-line-soft pb-3.5">
-          <span
-            aria-hidden
-            className="h-[9px] w-[9px] rounded-full"
-            style={{ background: "oklch(0.74 0.13 25)" }}
-          />
-          <span
-            aria-hidden
-            className="h-[9px] w-[9px] rounded-full"
-            style={{ background: "oklch(0.82 0.13 85)" }}
-          />
-          <span
-            aria-hidden
-            className="h-[9px] w-[9px] rounded-full"
-            style={{ background: "oklch(0.78 0.13 145)" }}
-          />
-          <span className="ml-2.5 font-mono text-[11.5px] text-ink-faint">
-            Личный кабинет · аналитика
-          </span>
-        </div>
-
-        {/* 4 stat tiles — 2-col mobile, 4-col desktop */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {STATS.map((s) => (
-            <StatTileView key={s.label} tile={s} />
-          ))}
-        </div>
-
-        {/* Big chart + source breakdown — 1.6fr/1fr grid on desktop, stacked on mobile */}
-        <div className="mt-[18px] grid gap-4 sm:grid-cols-[1.6fr_1fr]">
-          <TrafficChart />
-          <SourceBreakdown />
-        </div>
-      </div>
-
-      {/* Delivery note pill — OUTSIDE the dashboard window card, centered,
-          accent-soft bg, paper-plane icon. Canon line 1769. */}
-      <div className="mx-auto mt-[18px] flex max-w-[760px] flex-col items-start gap-2.5 rounded-[14px] bg-accent-soft px-4 py-3.5 sm:mt-6 sm:flex-row sm:items-center sm:gap-3.5 sm:px-5">
-        <span
-          aria-hidden
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-accent text-white"
+        <div
+          className="ss-card-lift mx-auto max-w-[1200px] rounded-[22px] border border-line bg-white p-5 sm:p-7"
+          style={{ boxShadow: "0 24px 48px -24px rgba(120,60,30,0.18)" }}
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* Faux window chrome — 3 traffic lights + path-style label */}
+          <div className="-mx-1 mb-[18px] flex items-center gap-1.5 border-b border-line-soft pb-3.5">
+            <span
+              aria-hidden
+              className="h-[9px] w-[9px] rounded-full"
+              style={{ background: "oklch(0.74 0.13 25)" }}
+            />
+            <span
+              aria-hidden
+              className="h-[9px] w-[9px] rounded-full"
+              style={{ background: "oklch(0.82 0.13 85)" }}
+            />
+            <span
+              aria-hidden
+              className="h-[9px] w-[9px] rounded-full"
+              style={{ background: "oklch(0.78 0.13 145)" }}
+            />
+            <span className="ml-2.5 font-mono text-[11.5px] text-ink-faint">
+              Личный кабинет · аналитика
+            </span>
+          </div>
+
+          {/* 4 stat tiles — 2-col mobile, 4-col desktop */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {STATS.map((s) => (
+              <StatTileView key={s.label} tile={s} />
+            ))}
+          </div>
+
+          {/* Big chart + source breakdown — 1.6fr/1fr grid on desktop, stacked on mobile */}
+          <div className="mt-[18px] grid gap-4 sm:grid-cols-[1.6fr_1fr]">
+            <TrafficChart />
+            <SourceBreakdown />
+          </div>
+        </div>
+
+        {/* Delivery note pill — OUTSIDE the dashboard window card, centered,
+          accent-soft bg, paper-plane icon. Canon line 1769. */}
+        <div className="mx-auto mt-[18px] flex max-w-[760px] flex-col items-start gap-2.5 rounded-[14px] bg-accent-soft px-4 py-3.5 sm:mt-6 sm:flex-row sm:items-center sm:gap-3.5 sm:px-5">
+          <span
+            aria-hidden
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-accent text-white"
           >
-            <path d="M22 2 L11 13" />
-            <path d="M22 2 L15 22 L11 13 L2 9 L22 2 Z" />
-          </svg>
-        </span>
-        <p className="flex-1 text-[13.5px] leading-[1.45] text-accent-ink sm:text-[14.5px]">
-          <b className="font-semibold text-accent-ink">Кратко и регулярно</b> — Самосайт пришлёт
-          сводку аналитики, куда скажете: в Telegram, MAX или на почту. Не нужно заходить в кабинет,
-          чтобы знать как идут дела
-        </p>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M22 2 L11 13" />
+              <path d="M22 2 L15 22 L11 13 L2 9 L22 2 Z" />
+            </svg>
+          </span>
+          <p className="flex-1 text-[13.5px] leading-[1.45] text-accent-ink sm:text-[14.5px]">
+            <b className="font-semibold text-accent-ink">Кратко и регулярно</b> — Самосайт пришлёт
+            сводку аналитики, куда скажете: в Telegram, MAX или на почту. Не нужно заходить в
+            кабинет, чтобы знать как идут дела
+          </p>
+        </div>
       </div>
     </section>
   );

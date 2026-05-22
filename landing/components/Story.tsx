@@ -68,70 +68,75 @@ export function Story() {
       id="how-it-works"
       data-section="story"
       aria-labelledby="story-title"
-      className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+      className="bg-paper pb-0 pt-14 sm:pb-0 sm:pt-24"
     >
-      <header className="mx-auto mb-10 max-w-[1100px] sm:mb-16 sm:text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-          Как это работает
-        </p>
-        <h2
-          id="story-title"
-          className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
-        >
-          {/* v2.2 canon (финал 2) — pivot from steps-count framing
+      <div data-section-body="story" className="px-5 sm:px-16">
+        <header className="mx-auto mb-10 max-w-[1100px] sm:mb-16 sm:text-center">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
+            Как это работает
+          </p>
+          <h2
+            id="story-title"
+            className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
+          >
+            {/* v2.2 canon (финал 2) — pivot from steps-count framing
               («шесть шагов») to user-action framing («от вас — одно действие»).
               Promise: minimal user effort, maximum product autonomy. */}
-          От вас — одно действие,
-          <br className="hidden sm:block" /> всё остальное Самосайт сделает сам
-        </h2>
-      </header>
+            От вас — одно действие,
+            <br className="hidden sm:block" /> всё остальное Самосайт сделает сам
+          </h2>
+        </header>
 
-      <ol className="mx-auto flex max-w-[1100px] flex-col gap-7 sm:gap-12">
-        {STEPS.map((s, idx) => {
-          const isRight = idx % 2 === 1;
-          return (
-            <li
-              key={s.n}
-              className={`relative w-full sm:max-w-[760px] ${isRight ? "sm:self-end" : "sm:self-start"}`}
-            >
-              <div
-                className="ss-story-card relative rounded-[24px] border-[2px] border-ink p-6 sm:p-8"
-                style={{ background: s.bg, boxShadow: "6px 6px 0 0 var(--tw-color-ink, #1c1a17)" }}
+        <ol className="mx-auto flex max-w-[1100px] flex-col gap-7 sm:gap-12">
+          {STEPS.map((s, idx) => {
+            const isRight = idx % 2 === 1;
+            return (
+              <li
+                key={s.n}
+                className={`relative w-full sm:max-w-[760px] ${isRight ? "sm:self-end" : "sm:self-start"}`}
               >
-                {/* Step sticker — rotated -12deg in top-right corner */}
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-2 -top-3 inline-flex h-9 items-center justify-center rounded-md border-[2px] border-ink bg-white px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-ink sm:h-10 sm:text-[12px]"
-                  style={{ transform: "rotate(-12deg)" }}
+                <div
+                  className="ss-story-card relative rounded-[24px] border-[2px] border-ink p-6 sm:p-8"
+                  style={{
+                    background: s.bg,
+                    boxShadow: "6px 6px 0 0 var(--tw-color-ink, #1c1a17)",
+                  }}
                 >
-                  ШАГ {s.n}
-                </span>
+                  {/* Step sticker — rotated -12deg in top-right corner */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute -right-2 -top-3 inline-flex h-9 items-center justify-center rounded-md border-[2px] border-ink bg-white px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-ink sm:h-10 sm:text-[12px]"
+                    style={{ transform: "rotate(-12deg)" }}
+                  >
+                    ШАГ {s.n}
+                  </span>
 
-                <h3
-                  className="mt-2 text-[22px] font-bold leading-tight sm:text-[28px]"
-                  style={{ color: s.ink }}
-                >
-                  {s.title}
-                </h3>
-                <p
-                  className="mt-3 text-[15px] leading-relaxed sm:text-[17px]"
-                  style={{ color: s.ink, opacity: 0.85 }}
-                >
-                  {s.body}
-                </p>
-              </div>
+                  <h3
+                    className="mt-2 text-[22px] font-bold leading-tight sm:text-[28px]"
+                    style={{ color: s.ink }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p
+                    className="mt-3 text-[15px] leading-relaxed sm:text-[17px]"
+                    style={{ color: s.ink, opacity: 0.85 }}
+                  >
+                    {s.body}
+                  </p>
+                </div>
 
-              {/* Dashed connector between steps (hidden on last) */}
-              {idx < STEPS.length - 1 ? (
-                <span
-                  aria-hidden="true"
-                  className="absolute bottom-[-30px] left-1/2 hidden h-[24px] w-px -translate-x-1/2 border-l-2 border-dashed border-ink-faint sm:block"
-                />
-              ) : null}
-            </li>
-          );
-        })}
-      </ol>
+                {/* Dashed connector between steps (hidden on last) */}
+                {idx < STEPS.length - 1 ? (
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-[-30px] left-1/2 hidden h-[24px] w-px -translate-x-1/2 border-l-2 border-dashed border-ink-faint sm:block"
+                  />
+                ) : null}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </section>
   );
 }
