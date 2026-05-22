@@ -56,6 +56,14 @@ jobs:
       NEXT_PUBLIC_YANDEX_METRIKA_ID: ""
       NEXT_PUBLIC_YANDEX_VERIFICATION: ""
       NEXT_PUBLIC_YANDEX_SMARTCAPTCHA_CLIENT_KEY: ""
+      # Tier 2b-2 — Hero exposes `window.__open_submit_modal` /
+      # `__open_photo_drawer` debug hooks, and `/dev/source-badge`
+      # renders the 9-state grid, only when this flag is "1". The
+      # intake.spec.ts visual spec is unable to reach 4 of its 15
+      # screens without it. Safe to leave on for ALL CI runs because
+      # the gated bits are never shipped to prod (this is the CI's
+      # own ephemeral build, never deployed).
+      NEXT_PUBLIC_E2E: "1"
     defaults:
       run:
         working-directory: landing

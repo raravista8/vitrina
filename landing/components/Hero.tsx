@@ -162,6 +162,40 @@ export function Hero() {
   }, [previewType, canonical]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  /* Visual-regression debug hooks (Tier 2b-2). Exposes
+       window.__open_submit_modal({ url?, type? })
+       window.__open_photo_drawer()
+       window.__close_intake_modals()
+     so `tests/visual/intake.spec.ts` can programmatically open the
+     submit-flow + photo-drawer screens without typing a URL into the
+     Hero input or clicking through the CTA. Gated by
+     `NEXT_PUBLIC_E2E === '1'` so the hooks never exist in normal prod
+     bundles. The env var is baked at build time. */
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_E2E !== "1" || typeof window === "undefined") return;
+    type SubmitOpts = { url?: string; type?: "ymaps" | "telegram" | "photo" };
+    type WindowWithE2E = Window & {
+      __open_submit_modal?: (opts?: SubmitOpts) => void;
+      __open_photo_drawer?: () => void;
+      __close_intake_modals?: () => void;
+    };
+    const w = window as WindowWithE2E;
+    w.__open_submit_modal = (opts?: SubmitOpts) => {
+      if (opts?.url !== undefined) setRaw(opts.url);
+      setModalOpen(true);
+    };
+    w.__open_photo_drawer = () => setPhotoOpen(true);
+    w.__close_intake_modals = () => {
+      setModalOpen(false);
+      setPhotoOpen(false);
+    };
+    return () => {
+      delete w.__open_submit_modal;
+      delete w.__open_photo_drawer;
+      delete w.__close_intake_modals;
+    };
+  }, []);
+
   return (
     <>
       <section
