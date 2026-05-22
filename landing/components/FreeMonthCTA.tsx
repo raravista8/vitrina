@@ -20,10 +20,10 @@ import { ArrowRight, Check, Gift } from "lucide-react";
 import { ClickGoalTracker } from "./ClickGoalTracker";
 
 const BULLETS = [
-  "Сайт на адресе ваш-сайт.samosite.online",
-  "Кнопка «Записаться» и приём заявок в Telegram",
-  "Свежие отзывы и фото каждую неделю",
-  "Аналитика посещений и заявок в личном кабинете",
+  "Сайт на адресе ваш-сайт.samosite.online",
+  "Кнопка «Записаться» и приём заявок в Telegram",
+  "Свежие отзывы и фото каждую неделю",
+  "Аналитика посещений и заявок в личном кабинете",
 ];
 
 // v2.1.3 §1.2 — last-mile assurances удалены целиком: «Карта не нужна»
@@ -56,12 +56,12 @@ export function FreeMonthCTA() {
         {/* v2.1.3 §1.1 — Footer/dojim para укорочен. «Через две минуты»
             → «через 2 часа» (единый SLA), второе предложение про сайт
             убрано (избыточно после Hero + 8 BigFeatures). Остался один
-            тёплый punchline про «первые заявки в Telegram». */}
+            тёплый punchline про «первые заявки в Telegram». */}
         <p
           className="mt-4 text-[16px] leading-relaxed sm:mx-auto sm:mt-6 sm:max-w-[640px] sm:text-[19px]"
           style={{ color: "oklch(0.85 0.014 60)" }}
         >
-          Через неделю — первые заявки в Telegram
+          Через неделю — первые заявки в Telegram
         </p>
 
         {/* What you get — 4 bullets */}
@@ -70,7 +70,7 @@ export function FreeMonthCTA() {
             className="mb-3 font-mono text-[11px] uppercase tracking-widest sm:mb-4"
             style={{ color: "oklch(0.75 0.05 35)" }}
           >
-            Что получите сразу
+            Что получите сразу
           </p>
           <ul className="mx-auto max-w-[540px] space-y-2.5 text-left sm:space-y-3">
             {BULLETS.map((b) => (
@@ -86,11 +86,11 @@ export function FreeMonthCTA() {
           </ul>
         </div>
 
-        {/* CTA. `data-cta` атрибут — anchor для <ClickGoalTracker>
-            ниже, который fires `free_month_cta_click` goal в Я.Метрику.
-            Note: ведёт на `#top` (Hero input), не открывает SubmitModal
-            напрямую — финальный dojim рассматривается как «вернуть
-            пользователя ко вводу ссылки». */}
+        {/* CTA. `data-cta` атрибут — anchor для <ClickGoalTracker>
+            ниже, который fires `free_month_cta_click` goal в Я.Метрику.
+            Note: ведёт на `#top` (Hero input), не открывает SubmitModal
+            напрямую — финальный dojim рассматривается как «вернуть
+            пользователя ко вводу ссылки». */}
         <a
           href="#top"
           data-cta="free-month-cta"
@@ -107,8 +107,8 @@ export function FreeMonthCTA() {
 
         {/* v2.1.3 §1.2 — last-mile assurances удалены. См. ASSURANCES
             const выше + rationale (Pricing card теперь держит risk-
-            reversal). Блок остаётся в коде защитой на случай возврата
-            assurances в будущей итерации. */}
+            reversal). Блок остаётся в коде защитой на случай возврата
+            assurances в будущей итерации. */}
         {ASSURANCES.length > 0 ? (
           <ul
             className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-widest sm:mt-10"

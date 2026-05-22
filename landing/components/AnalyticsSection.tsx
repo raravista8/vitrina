@@ -112,7 +112,7 @@ function StatCard({ label, value, delta, deltaPositive, spark, color }: StatCard
         </span>
       </div>
       {/* Sparkline — full-width inside card, фиксированная высота 36px.
-          Skip axes/grid/tooltip — sparkline это «общий тренд», не «точные числа». */}
+          Skip axes/grid/tooltip — sparkline это «общий тренд», не «точные числа». */}
       <div className="h-[36px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={[...spark]} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
@@ -153,11 +153,11 @@ export function AnalyticsSection() {
           id="analytics-title"
           className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
         >
-          Видно, как сайт работает на вас
+          Видно, как сайт работает на вас
         </h2>
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          В личном кабинете — посещения, заявки, источники трафика и рейтинг. Без графиков для
-          специалистов — только то, что вам нужно
+          В личном кабинете — посещения, заявки, источники трафика и рейтинг. Без графиков для
+          специалистов — только то, что вам нужно
         </p>
       </header>
 
@@ -201,7 +201,7 @@ export function AnalyticsSection() {
         {/* Big composed chart — area visits + bars leads */}
         <div className="mt-6 rounded-2xl border border-line bg-white p-5 shadow-card sm:mt-8 sm:p-7">
           <div className="mb-4 flex items-baseline justify-between gap-4 sm:mb-5">
-            <h3 className="text-[16px] font-semibold text-ink sm:text-[18px]">Трафик за 30 дней</h3>
+            <h3 className="text-[16px] font-semibold text-ink sm:text-[18px]">Трафик за 30 дней</h3>
             <div className="flex items-center gap-4 text-[12px] text-ink-soft">
               <span className="inline-flex items-center gap-1.5">
                 <span
@@ -304,8 +304,8 @@ export function AnalyticsSection() {
 
         {/* Delivery note — single pill */}
         <p className="mx-auto mt-8 max-w-[720px] rounded-2xl bg-accent-soft px-5 py-4 text-center text-[14px] leading-relaxed text-accent-ink sm:mt-10 sm:text-[15.5px]">
-          <b className="font-semibold">Кратко и регулярно.</b> Самосайт пришлёт сводку аналитики
-          куда скажете — в Telegram, MAX или на почту
+          <b className="font-semibold">Кратко и регулярно.</b> Самосайт пришлёт сводку аналитики
+          куда скажете — в Telegram, MAX или на почту
         </p>
       </div>
     </section>

@@ -38,7 +38,7 @@ const PALETTE_GRADIENT: Record<Example["palette"], string> = {
 
 function ExampleCard({ ex }: { ex: Example }) {
   return (
-    <article className="flex w-full shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-card sm:w-auto sm:snap-none">
+    <article className="ss-card-lift flex w-full shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-card sm:w-auto sm:snap-none">
       {/* Hero photo (real local JPEG; palette gradient as fallback background) */}
       <div
         className="relative h-[180px] w-full overflow-hidden sm:h-[220px]"
@@ -87,10 +87,10 @@ function ExampleCard({ ex }: { ex: Example }) {
         </ul>
 
         {/* Curated review. v2.1.3 §1.2 — badge «★ ЛУЧШИЙ — выбрал ИИ»
-            убран. Pilot test показал что в карточках-превью эта плашка
-            создавала эффект «вот они продают AI-отзывы», а не «вот сайт».
+            убран. Pilot test показал что в карточках-превью эта плашка
+            создавала эффект «вот они продают AI-отзывы», а не «вот сайт».
             ИИ-кураторство остаётся фоновой механикой (см. ADR-0010),
-            метка просто не выводится в preview. На реальных customer-
+            метка просто не выводится в preview. На реальных customer-
             сайтах badge может появляться отдельно. */}
         {ex.reviews[0] ? (
           <blockquote className="mt-1 rounded-xl bg-accent-soft px-3 py-2.5 text-[12.5px] leading-snug text-accent-ink">
@@ -98,16 +98,16 @@ function ExampleCard({ ex }: { ex: Example }) {
           </blockquote>
         ) : null}
 
-        {/* Mini-gallery — plain <img> к /examples/<slug>-N.jpg.
-            Намеренно НЕ next/image:
+        {/* Mini-gallery — plain <img> к /examples/<slug>-N.jpg.
+            Намеренно НЕ next/image:
               • Thumbnails уже маленькие (20-70 KB original) — оптимизация
-                через /_next/image proxy не даёт ощутимого выигрыша.
-              • `/_next/image?url=...` pattern попадает в некоторые EasyList
-                adblocker-правила (видели регрессию: gallery с next/image
-                рендерилась только как palette-gradient placeholder, hero
-                с тем же markup работал — отличие именно adblock-фильтры).
+                через /_next/image proxy не даёт ощутимого выигрыша.
+              • `/_next/image?url=...` pattern попадает в некоторые EasyList
+                adblocker-правила (видели регрессию: gallery с next/image
+                рендерилась только как palette-gradient placeholder, hero
+                с тем же markup работал — отличие именно adblock-фильтры).
               • Plain <img loading="lazy"> работает идентично везде.
-            Hero photo остался на next/image — там responsive sizes
+            Hero photo остался на next/image — там responsive sizes
             (33vw/50vw/86vw) реально полезны. */}
         <div className="mt-1 grid grid-cols-4 gap-1.5">
           {ex.gallery.slice(0, 4).map((src) => (
@@ -157,13 +157,13 @@ export function Examples() {
         >
           Три Самосайта, которые собрались сами
         </h2>
-        {/* v2.1.3 §1.1 — «и кураторской подборкой лучших отзывов» →
-            «и лучшими отзывами». Простее, без жаргона «куратор», тот же
-            смысл. Глагол «взял» расширили до полного действия «выбрал»,
-            чтобы фраза грамматически согласовалась с «лучшие отзывы». */}
+        {/* v2.1.3 §1.1 — «и кураторской подборкой лучших отзывов» →
+            «и лучшими отзывами». Простее, без жаргона «куратор», тот же
+            смысл. Глагол «взял» расширили до полного действия «выбрал»,
+            чтобы фраза грамматически согласовалась с «лучшие отзывы». */}
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Реальные сайты мастеров. Ни одной строчки текста они не писали — Самосайт сам взял
-          источник, разложил услуги и выбрал лучшие отзывы. Посмотрите, что получилось
+          Реальные сайты мастеров. Ни одной строчки текста они не писали — Самосайт сам взял
+          источник, разложил услуги и выбрал лучшие отзывы. Посмотрите, что получилось
         </p>
       </header>
 
@@ -179,7 +179,7 @@ export function Examples() {
       {/* v2.1.3 §1.2 — mobile carousel hint «← листайте вправо →» удалён.
           scroll-snap-type: x mandatory + видимая «обрезка» правой карточки
           даёт достаточный affordance — explicit подсказка избыточна и
-          выглядит как «инструкция для слабых». */}
+          выглядит как «инструкция для слабых». */}
     </section>
   );
 }
