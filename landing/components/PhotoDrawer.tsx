@@ -181,6 +181,14 @@ export function PhotoDrawer({ open, onOpenChange }: PhotoDrawerProps) {
             // Desktop centered modal — overrides mobile positioning at ≥sm
             "sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[92vw] sm:max-w-[640px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:p-8",
           )}
+          /* Visual-regression selector per Tier 2b. The desktop +
+             mobile variants share the same DOM (Tailwind switches
+             positioning via sm: utilities) — spec distinguishes by
+             viewport size, not by selector. `data-stage` tracks the
+             upload pipeline state (idle / uploading / done) so a test
+             can assert on the right baseline. */
+          data-modal="photo-drawer"
+          data-stage={stage.kind}
         >
           <Dialog.Title className="sr-only">Загрузка фото</Dialog.Title>
 
