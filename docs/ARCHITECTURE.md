@@ -7,6 +7,17 @@
 
 ---
 
+> **Status as of v2.1.3 (May 2026):** 9 PR серии A→H + 13 PR серии #79-#91 (v2.1.3
+> roadmap) + hotfix #71 — merged в main. Production живёт на `samosite.online`
+> (Selectel VPS `135.106.137.30`). На проде: 10-секционный landing-v2.1.3 (Hero +
+> Examples + Story + Platforms + BigFeatures-8 + AnalyticsSection + Pricing 990 ₽ +
+> FAQ + Free-month CTA), customer-site v2.1 booking-page (atomic switchover Phase
+> 9c), AI review curation backend, analytics aggregation + weekly digest cron
+> (Phase 7b), brand-mark, deploy-runbook. См. `docs/TASKS.md` §«v2.1.3 implementation
+> log» для полного маппинга PR → commit. Canon TZ docs preserved в `docs/canon/`.
+
+---
+
 ## 1. Quality goals (ranked)
 
 1. **Security & compliance** — ПДн юр.лиц и физ.лиц обрабатываются согласно ФЗ-152/ФЗ-420; нулевые утечки приоритетнее скорости
