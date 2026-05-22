@@ -69,30 +69,61 @@ class _StubSeoSubmitter:
 
 @pytest.fixture
 def render_context() -> dict[str, object]:
-    """Minimal payload sufficient to render the canonical T2.5 template."""
+    """Minimal payload sufficient to render the v2.1 booking-page template.
+
+    Phase 9c switchover changed the template namespace from flat keys
+    (``site_title``, ``site_description``) to nested ``site.*`` namespace
+    matching `CLAUDE_CODE_TZ_customer_v2.1.md` §2-§13. The adapter
+    `admin/routers/sites.py::_adapt_to_v21_shape` builds this from legacy
+    generated_content; this fixture skips that path and feeds the new
+    shape directly to render_site (unit-level isolation).
+    """
     return {
         "site_url": "https://anna.samosite.online",
-        "site_title": "Студия маникюра Анны",
-        "site_description": "Маникюр в Петрозаводске.",
         "site_locale": "ru_RU",
-        "site_category": "beauty.nails",
-        "site_color": "#0f172a",
-        "site_logo_url": None,
-        "site_hero_photo": None,
-        "organization": {
-            "name": "ИП Анна Иванова",
-            "phone": "+7 921 123-45-67",
-            "email": "anna@example.com",
+        "site": {
+            "name": "Студия маникюра Анны",
+            "category": "Маникюр",
+            "city": "Петрозаводск",
             "address": "Петрозаводск, ул. Ленина 1",
+            "phone": "+7 921 123-45-67",
+            "phone_e164": "+79211234567",
+            "rating": 4.9,
+            "reviews_count": 38,
+            "review_source": "Яндекс.Картах",
+            "years_experience": 8,
+            "clients_served": 1200,
             "geo": {"lat": 61.7849, "lon": 34.3469},
-            "opening_hours": [{"day": "Mo,Tu,We,Th,Fr", "opens": "10:00", "closes": "20:00"}],
+            "opening_hours": [{"day": "Пн-Пт", "hours": "10:00–20:00"}],
+            "social_badges": [],
+            "telegram_username": "",
+            "whatsapp_phone": "",
+            "hero": {
+                "h1": "Маникюр в Петрозаводске — без боли, держится 3 недели",
+                "sub": "Аппаратный маникюр и стойкое покрытие.",
+                "photo_url": "",
+                "caption": "Студия в центре Петрозаводска",
+            },
         },
-        "services": [{"title": "Маникюр", "description": "30 мин.", "price_label": "от 1500 ₽"}],
+        "services": [
+            {
+                "name": "Маникюр",
+                "desc": "Аппаратный, без воды",
+                "duration": "60 мин",
+                "price": "1500 ₽",
+                "price_hint": "",
+            }
+        ],
+        "services_last_updated": "12 мая 2026",
+        "process": [],
         "gallery": [],
-        "reviews": [],
+        "reviews_curated": [],
+        "about": None,
+        "faq": [],
         "contact_url": "/api/leads",
         "captcha_client_key": "test-key",  # pragma: allowlist secret
         "year": 2026,
+        "site_subdomain": "anna",
     }
 
 
