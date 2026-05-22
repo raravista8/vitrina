@@ -78,7 +78,11 @@ const FAQ_ITEMS: ReadonlyArray<Item> = [
 
 export function FAQ() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="bg-paper px-5 py-14 sm:px-16 sm:py-24">
+    <section
+      id="faq"
+      aria-labelledby="faq-title"
+      className="bg-paper px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+    >
       <FAQGoalTracker />
       <header className="mx-auto mb-7 max-w-[1100px] sm:mb-12 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
