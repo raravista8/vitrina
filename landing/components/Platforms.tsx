@@ -18,18 +18,27 @@ interface Platform {
   status: "ok" | "soon";
 }
 
+// v2.1.3 §1.4 — PLATFORMS_OK расширены до 7: добавлен Instagram (через
+// photo-upload screenshot flow, не auto-parse) + переименования:
+//   • «Avito-профиль» → «Avito» (короче, чистый бренд)
+//   • «Свой сайт» → «Ваш старый сайт» (контекст: «дайте старый, мы
+//     заменим лучшим»)
+//   • «Фото визитки или буклета» → «Фото буклета или меню» (визитка —
+//     слишком мало контента для AI; меню/буклет даёт услуги + цены)
+// PLATFORMS_SOON свёрнуты до 3: WhatsApp удалён (нет публичного каталога
+// API в РФ), VK + Ozon (new) + YouTube остались.
 const PLATFORMS: Platform[] = [
-  // tier=ok — parser работает
+  // tier=ok — parser работает (либо через screenshot-flow для IG)
   { name: "Яндекс.Карты", glyph: "🗺️", status: "ok" },
   { name: "Telegram-канал", glyph: "✈️", status: "ok" },
+  { name: "Instagram", glyph: "📷", status: "ok" },
   { name: "2ГИС", glyph: "📍", status: "ok" },
-  { name: "Avito-профиль", glyph: "🅰️", status: "ok" },
-  { name: "Свой сайт", glyph: "🌐", status: "ok" },
-  { name: "Фото визитки или буклета", glyph: "🪪", status: "ok" },
+  { name: "Avito", glyph: "🅰️", status: "ok" },
+  { name: "Ваш старый сайт", glyph: "🌐", status: "ok" },
+  { name: "Фото буклета или меню", glyph: "🪪", status: "ok" },
   // tier=soon — waitlist (ADR-0009)
   { name: "VK-страница", glyph: "V", status: "soon" },
-  { name: "Instagram", glyph: "📷", status: "soon" },
-  { name: "WhatsApp-каталог", glyph: "🟢", status: "soon" },
+  { name: "Ozon", glyph: "🛒", status: "soon" },
   { name: "YouTube-канал", glyph: "▶️", status: "soon" },
 ];
 

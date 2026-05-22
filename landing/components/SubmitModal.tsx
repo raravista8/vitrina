@@ -438,7 +438,10 @@ function Step3Confirmation({ contactType }: { contactType: ContactType }) {
         <Check className="h-8 w-8" strokeWidth={3} />
       </div>
       <h2 className="mt-5 text-3xl font-bold tracking-tight text-ink">Готовим ваш сайт</h2>
-      <p className="mt-2 text-ink-soft">Напишем когда будет готово — через 2–24 часа.</p>
+      {/* v2.1.3 §1.1 — confirmation sub укорочен и согласован с единым
+          SLA «2 часа» из Hero/Pricing/BigFeatures. Длинная «2–24 часа»
+          раньше создавала уныние («может, целый день?»). */}
+      <p className="mt-2 text-ink-soft">Свяжемся с вами и пришлём ссылку в течение 2 часов</p>
 
       {isTg ? (
         <div className="mt-5 flex gap-4 rounded-2xl border border-line bg-white p-5">

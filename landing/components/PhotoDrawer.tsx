@@ -443,7 +443,7 @@ function DoneScreen() {
       </div>
       <h2 className="mt-4 text-2xl font-bold tracking-tight text-ink">Фото получили</h2>
       <p className="mt-2 text-sm text-ink-soft">
-        Готовим ваш сайт. Напишем вам когда будет готов — обычно за 2–24 часа.
+        Готовим ваш сайт. Свяжемся с вами и пришлём ссылку в течение 2 часов
       </p>
       <Link
         href="/"

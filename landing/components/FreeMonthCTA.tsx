@@ -26,11 +26,12 @@ const BULLETS = [
   "Аналитика посещений и заявок в личном кабинете",
 ];
 
-const ASSURANCES = [
-  "Карта не нужна",
-  "Удалить за секунду в личном кабинете",
-  "Данные хранятся в РФ",
-];
+// v2.1.3 §1.2 — last-mile assurances удалены целиком: «Карта не нужна»
+// дублировалась 4× по странице, «Удалить за секунду · Данные хранятся в
+// РФ» перекатились на customer-site (где они в контексте более полезны).
+// Pricing card теперь несёт основной risk-reversal; Hero — micro-version;
+// Dojim — только финальный CTA без шумовых assurance-плашек.
+const ASSURANCES: readonly string[] = [];
 
 export function FreeMonthCTA() {
   return (
@@ -52,12 +53,15 @@ export function FreeMonthCTA() {
           Дайте Самосайту собрать себя
         </h2>
 
+        {/* v2.1.3 §1.1 — Footer/dojim para укорочен. «Через две минуты»
+            → «через 2 часа» (единый SLA), второе предложение про сайт
+            убрано (избыточно после Hero + 8 BigFeatures). Остался один
+            тёплый punchline про «первые заявки в Telegram». */}
         <p
           className="mt-4 text-[16px] leading-relaxed sm:mx-auto sm:mt-6 sm:max-w-[640px] sm:text-[19px]"
           style={{ color: "oklch(0.85 0.014 60)" }}
         >
-          Через две минуты у вас будет работающий сайт с услугами, ценами и отзывами. Через неделю —
-          первые заявки в Telegram.
+          Через неделю — первые заявки в Telegram
         </p>
 
         {/* What you get — 4 bullets */}
@@ -92,27 +96,32 @@ export function FreeMonthCTA() {
           data-cta="free-month-cta"
           className="mt-9 inline-flex items-center gap-2 rounded-full bg-accent px-7 py-4 text-[16px] font-semibold text-white shadow-pop hover:bg-accent-hover sm:mt-12 sm:px-9 sm:py-5 sm:text-[18px]"
         >
-          Собрать мой Самосайт
+          Сделать Самосайт
           <ArrowRight className="h-5 w-5" />
         </a>
         <ClickGoalTracker selector='[data-cta="free-month-cta"]' goal="free_month_cta_click" />
 
         <p className="mt-4 text-[14px] sm:text-[15px]" style={{ color: "oklch(0.70 0.014 60)" }}>
-          Первый месяц — бесплатно. Самосайт сам напомнит, когда подойдёт срок.
+          Первый месяц — бесплатно. Самосайт сам напомнит, когда подойдёт срок
         </p>
 
-        {/* Last-mile assurances */}
-        <ul
-          className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-widest sm:mt-10"
-          style={{ color: "oklch(0.65 0.014 60)" }}
-        >
-          {ASSURANCES.map((a, i) => (
-            <li key={a} className="flex items-center gap-1.5">
-              {i > 0 ? <span aria-hidden>·</span> : null}
-              <span>{a}</span>
-            </li>
-          ))}
-        </ul>
+        {/* v2.1.3 §1.2 — last-mile assurances удалены. См. ASSURANCES
+            const выше + rationale (Pricing card теперь держит risk-
+            reversal). Блок остаётся в коде защитой на случай возврата
+            assurances в будущей итерации. */}
+        {ASSURANCES.length > 0 ? (
+          <ul
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[11px] uppercase tracking-widest sm:mt-10"
+            style={{ color: "oklch(0.65 0.014 60)" }}
+          >
+            {ASSURANCES.map((a, i) => (
+              <li key={a} className="flex items-center gap-1.5">
+                {i > 0 ? <span aria-hidden>·</span> : null}
+                <span>{a}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         {/* Alternative — for the undecided */}
         <p

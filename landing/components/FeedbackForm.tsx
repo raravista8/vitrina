@@ -292,9 +292,12 @@ function CheckRow({
 }
 
 /**
- * Floating "Что не хватает?" button. Mount once in `app/layout.tsx`
+ * Floating «Чего не хватает?» button. Mount once in `app/layout.tsx`
  * to expose feedback access on every page — matches Design canvas
  * screen #9's bottom-right global CTA.
+ *
+ * v2.1.3 §1.1 — grammar fix: «Что» → «Чего» (родительный падеж после
+ * «не хватает» — единственный канонически правильный вариант в РЯ).
  */
 export function FeedbackFloatingButton() {
   return (
@@ -306,7 +309,7 @@ export function FeedbackFloatingButton() {
       )}
     >
       <MessageCircle className="h-4 w-4" />
-      Что не хватает?
+      Чего не хватает?
     </Link>
   );
 }
