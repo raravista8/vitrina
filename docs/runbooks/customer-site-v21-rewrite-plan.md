@@ -49,24 +49,37 @@ content. Original `index.html.j2` **не трогается** — продолж
 - Backend AI prompt updates для нового data shape — Phase 9c
 - Switchover активного template — Phase 9c
 
-## Phase 9b — CSS refinement + polish
+## Phase 9b — CSS refinement + polish ✅ DONE
 
-**Файл:** `sites-template/components/booking.css` (extract inline styles).
+**Файл:** `sites-template/components/booking.css` (926 lines).
 
-- Extract все inline `<style>` блоки из `index.html.j2.v21` в отдельный
-  `.css` файл, link через `<link rel="stylesheet">`.
-- Process icons — inline SVG для 4 fixed icon types (calendar, pin,
-  coffee, sparkles). Source: `screens-customer.jsx :: ProcessIcon`.
-- Process connectors — `::after` pseudo-element с dashed background
-  (only desktop, hidden mobile).
-- Gallery mobile fallback — если `gallery|length < 10`, carousel mode
-  (horizontal scroll-snap) вместо masonry.
-- Reviews avatar — `border-radius: 50%`; fallback initials styling.
-- Service cards — featured-tile span 2×1 для нечётного count.
-- Sticky mobile CTA — proper safe-area-inset-bottom для iPhone X+.
-- Hover micro-interactions (`.ss-card-lift` если уместно).
-- Accessibility — `prefers-reduced-motion: reduce` поддержка.
-- Lighthouse target — ≥90 mobile (Performance, SEO, Accessibility).
+- [x] Extract все inline `<style>` блоки из `index.html.j2.v21` →
+  `<link rel="stylesheet" href="/static/booking.css">`.
+- [x] Process icons partial — `sites-template/components/process-icons.html.j2`
+  с macro `process_icon(kind)` для 4 SVG glyphs (calendar/pin/coffee/sparkles).
+  Source: `screens-customer.jsx :: ProcessIcon`.
+- [x] Process connectors — `.ss-process-step:not(:last-child)::after`
+  с dashed `repeating-linear-gradient`, только desktop (`min-width:
+  768px`), hidden mobile.
+- [x] Gallery mobile fallback — `.ss-gallery--carousel` class
+  применяется через Jinja `{% if gallery | length < 8 %}` — horizontal
+  scroll-snap на mobile, masonry на desktop.
+- [x] Reviews avatar — `border-radius: 50%`, fallback `.ss-avatar--initials`
+  с accent-soft bg + первой буквой имени.
+- [x] Service cards — `.ss-service-card--featured { grid-column: 1 / -1 }`
+  для нечётного count (apply через Jinja loop.first + odd check).
+- [x] Sticky mobile CTA — `padding-bottom: calc(10px + env(safe-area-inset-bottom))`
+  для iPhone X+ home-indicator clearance + extra footer-bottom для
+  no-overlap.
+- [x] Hover micro-interactions — service-cards lift, gallery-image
+  scale 1.02, btn-primary lift + shadow.
+- [x] `prefers-reduced-motion: reduce` — global disable transitions/
+  transforms.
+- [x] Webfonts — Onest + JetBrains Mono via Google Fonts (same subset
+  как landing/app/globals.css).
+- [ ] Lighthouse ≥90 mobile — verification отложен до Phase 9c когда
+  template станет active production (нужен real Y.Object Storage URL
+  + real fixture, не staging file).
 
 ## Phase 9c — AI prompts + active switchover
 
