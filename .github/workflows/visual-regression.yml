@@ -26,13 +26,21 @@ on:
   pull_request:
     paths:
       - "landing/**"
+      # Customer-site template feeds the Tier 2a visual spec via the
+      # fixture renderer below. A template-only edit should re-trigger
+      # the visual job so a structural regression (missing data-section)
+      # surfaces in CI.
+      - "sites-template/**"
       - "infra/scripts/generate-canon-baselines.sh"
+      - "infra/scripts/render-customer-fixture.py"
       - ".github/workflows/visual-regression.yml"
   push:
     branches: [main]
     paths:
       - "landing/**"
+      - "sites-template/**"
       - "infra/scripts/generate-canon-baselines.sh"
+      - "infra/scripts/render-customer-fixture.py"
       - ".github/workflows/visual-regression.yml"
 
 jobs:
@@ -68,6 +76,18 @@ jobs:
       # (libnss3, libatk-bridge, …) the headless Chromium needs.
       - name: install playwright chromium
         run: npx playwright install --with-deps chromium
+
+      # Customer-site spec (Tier 2a) loads a pre-rendered Jinja fixture
+      # served via a local Node HTTP server (no FastAPI dependency at
+      # test time). The fixture is gitignored — we re-render it on every
+      # CI run from `sites-template/index.html.j2` + the fixture data
+      # baked into the render script. Only `jinja2` is needed; using
+      # the system `pip` keeps this step ~3 s vs ~30 s of `poetry install`.
+      - name: render customer-site fixture
+        working-directory: ${{ github.workspace }}
+        run: |
+          python3 -m pip install --quiet --user jinja2
+          python3 infra/scripts/render-customer-fixture.py
 
       - name: build
         run: npm run build

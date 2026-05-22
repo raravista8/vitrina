@@ -48,3 +48,10 @@ state-snapshot-*.json
 
 # Claude Code working files
 .claude-code/
+
+# Visual regression artefacts that are regenerated on demand —
+# fixtures are rendered by `infra/scripts/render-customer-fixture.py`
+# (Tier 2a), diff PNGs by Playwright on failure (Tier 1 + others).
+landing/tests/visual/__fixtures__/
+landing/tests/visual/__diff/
+landing/test-results/

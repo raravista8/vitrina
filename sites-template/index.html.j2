@@ -85,7 +85,7 @@
 <body>
 
 {# ─── §2 Sticky header ─────────────────────────────────────────────── #}
-<header class="ss-header">
+<header class="ss-header" data-section="sticky-header">
   <div class="ss-header__brand"><b>{{ site.name }}</b></div>
   <nav>
     <a href="#services">Услуги</a>
@@ -100,7 +100,7 @@
 </header>
 
 {# ─── §3 Hero ──────────────────────────────────────────────────────── #}
-<section id="hero" class="ss-hero">
+<section id="hero" class="ss-hero" data-section="hero">
   <div>
     <div class="ss-eyebrow">{{ site.category | upper }} · {{ site.city | upper }}</div>
     <h1>{{ site.hero.h1 }}</h1>
@@ -125,7 +125,7 @@
 </section>
 
 {# ─── §4 Social proof bar ──────────────────────────────────────────── #}
-<section class="ss-social-bar">
+<section class="ss-social-bar" data-section="social-bar">
   <div class="ss-mono">
     НАС ВЫБРАЛИ <b>{{ site.clients_served }}+</b> ЧЕЛОВЕК ЗА {{ site.years_experience }} ЛЕТ
   </div>
@@ -141,7 +141,7 @@
 </section>
 
 {# ─── §5 Services cards ────────────────────────────────────────────── #}
-<section id="services">
+<section id="services" data-section="services">
   <header>
     <div class="ss-eyebrow">УСЛУГИ И ЦЕНЫ</div>
     <h2>Что я делаю</h2>
@@ -170,7 +170,7 @@
 </section>
 
 {# ─── §6 Process ──────────────────────────────────────────────────── #}
-<section class="ss-process">
+<section class="ss-process" data-section="process">
   <header style="text-align:center;">
     <div class="ss-eyebrow">КАК БУДЕТ</div>
     <h2>От записи до результата — четыре шага</h2>
@@ -192,7 +192,7 @@
    ячейками выглядит хуже horizontal-scroll carousel'я). Desktop всегда
    masonry; mobile carousel включается через `.ss-gallery--carousel` class. #}
 {% if gallery and gallery | length >= 4 %}
-<section class="ss-gallery-wrap">
+<section class="ss-gallery-wrap" data-section="gallery">
   <header style="display:flex;justify-content:space-between;align-items:baseline;">
     <h2>Наши работы</h2>
     <span class="ss-mono ss-faint">обновляется из источника еженедельно</span>
@@ -208,7 +208,7 @@
 
 {# ─── §8 Reviews ──────────────────────────────────────────────────── #}
 {% if reviews_curated %}
-<section id="reviews">
+<section id="reviews" data-section="reviews">
   <header style="display:flex;justify-content:space-between;align-items:baseline;">
     <h2>Что говорят клиенты</h2>
     <span class="ss-mono ss-faint">
@@ -242,7 +242,7 @@
 
 {# ─── §9 About / specialist ───────────────────────────────────────── #}
 {% if about %}
-<section id="about">
+<section id="about" data-section="about">
   <div class="ss-about">
     {% if about.photo_url %}
       <img src="{{ about.photo_url }}" alt="{{ site.name }}" width="320" height="400" loading="lazy">
@@ -271,7 +271,7 @@
 
 {# ─── §10 FAQ ─────────────────────────────────────────────────────── #}
 {% if faq %}
-<section class="ss-faq">
+<section class="ss-faq" data-section="faq">
   <header>
     <div class="ss-eyebrow">ВОПРОСЫ</div>
     <h2>Часто спрашивают</h2>
@@ -286,7 +286,7 @@
 {% endif %}
 
 {# ─── §11 Final booking — form + map + contact ────────────────────── #}
-<section id="book" class="ss-book">
+<section id="book" class="ss-book" data-section="book">
   <div class="ss-book__form">
     <div class="ss-eyebrow">ЗАПИСЬ</div>
     <h2>Запишитесь</h2>
@@ -346,7 +346,7 @@
 </section>
 
 {# ─── §12 Footer ──────────────────────────────────────────────────── #}
-<footer>
+<footer data-section="footer">
   <div>© {{ year }} {{ site.name }} · {{ site.city }}</div>
   <div class="ss-mono ss-faint">
     Сделано на <a href="https://samosite.online?ref={{ site_subdomain }}">Самосайте</a>
@@ -354,7 +354,7 @@
 </footer>
 
 {# ─── §13 Sticky mobile CTA ───────────────────────────────────────── #}
-<div class="ss-sticky-mobile">
+<div class="ss-sticky-mobile" data-section="sticky-mobile">
   <a class="ss-btn ss-btn--primary" href="#book" style="width:100%;text-align:center;">
     Записаться · {{ site.phone }}
   </a>
