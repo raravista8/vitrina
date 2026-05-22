@@ -9,21 +9,23 @@
  *   4. Story       — 6 steps zigzag, все начинаются с «Сам…»
  *   5. Platforms   — 7 active / 3 coming-soon sources
  *   6. BigFeatures — 8 «сам» cards + closer «А вы — хозяин»
- *   7. Pricing     — 990 ₽/мес single tariff
- *   8. FAQ         — 10 questions through «Самосайт сам…» framing
- *   9. FreeMonthCTA — Dojim final CTA «Дайте Самосайту собрать себя»
- *   10. Footer
+ *   7. Analytics   — demo панели аналитики (Phase 7/9, NEW v2.1.3)
+ *   8. Pricing     — 990 ₽/мес single tariff
+ *   9. FAQ         — 10 questions through «Самосайт сам…» framing
+ *   10. FreeMonthCTA — Dojim final CTA «Дайте Самосайту собрать себя»
+ *   11. Footer
  *
  * Removed in v2.1.3:
  *   - SocialProof (47/1284/4.9★ + testimonials) — pilot test показал
  *     путаницу «продаём сайт или отзывы». См. v2.1.3 §1.2 + Phase 36.
  *
  * Order rationale:
- *   - Pricing AFTER BigFeatures so visitor sees value before price.
+ *   - Analytics AFTER BigFeatures, BEFORE Pricing — «вижу что получу»
+ *     создаёт ценность перед тем как назвать цену.
  *   - FAQ BEFORE FreeMonthCTA — answers concerns before final dojim.
- *   - Future: AnalyticsSection between BigFeatures и Pricing (Phase 7/9).
  */
 
+import { AnalyticsSection } from "@/components/AnalyticsSection";
 import { BigFeatures } from "@/components/BigFeatures";
 import { Examples } from "@/components/Examples";
 import { FAQ } from "@/components/FAQ";
@@ -67,6 +69,7 @@ export default function HomePage() {
       <Story />
       <Platforms />
       <BigFeatures />
+      <AnalyticsSection />
       <Pricing />
       <FAQ />
       <FreeMonthCTA />
