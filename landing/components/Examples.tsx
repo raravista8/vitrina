@@ -150,7 +150,6 @@ export function Examples() {
     >
       <div data-section-body="examples" className="px-5 sm:px-16">
         <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>
           {/* v2.2 canon (финал 2) — title shifted from product-self-reference
             («собрались сами») to user-outcome timing («через несколько минут»).
             User-test feedback: «получите ... через несколько минут» reads as
@@ -158,12 +157,12 @@ export function Examples() {
             self-referential verb. */}
           <h2
             id="examples-title"
-            className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
+            className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
           >
             Вот какой сайт вы получите
             <br className="hidden sm:block" /> через несколько минут
           </h2>
-          <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+          <p className="mt-3.5 max-w-[680px] text-[16px] leading-[1.45] text-ink-soft sm:mx-auto sm:text-[19px]">
             Реальные сайты, которые Самосайт собрал из разных источников — с вашими фото, услугами и
             лучшими отзывами
           </p>

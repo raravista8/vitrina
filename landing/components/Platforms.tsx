@@ -267,10 +267,9 @@ export function Platforms() {
     >
       <div data-section-body="platforms" className="px-5 sm:px-16">
         <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Площадки</p>
           <h2
             id="platforms-title"
-            className="mt-2 text-[28px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
+            className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
           >
             {/* v2.2 canon (финал 2) — shift from «работает с тем» (passive
               capability) to «что подойдёт для создания Самосайта» (user-

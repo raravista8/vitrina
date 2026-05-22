@@ -93,10 +93,10 @@ export const LANDING_SECTIONS: VisualSection[] = [
     id: "hero",
     selector: "[data-section-body='hero']",
     label: "Hero (#1)",
-    /* Hero @ 1440 stayed audited from before the wrapper refactor —
-       it was the first section to use the inner-body pattern. 768
-       and 390 still smoke-only: Hero's mobile layout reflows
-       H1+CTA+input substantially, needs separate tuning pass. */
+    /* Hero @ 1440 audited (passes <2 % on Linux CI; ~2.44 % locally
+       due to macOS-vs-Linux AA drift — documented). 768/390 still
+       smoke-only: Hero's mobile reflow rearranges H1+free-month+
+       platform-list block enough to need its own tuning pass. */
     auditedViewports: ["1440"],
   },
   /* Sections 2-10 — refactored in PR-Tier-1 to use a content-only
@@ -147,7 +147,7 @@ export const LANDING_SECTIONS: VisualSection[] = [
     id: "platforms",
     selector: "[data-section-body='platforms']",
     label: "Platforms (#4)",
-    auditedViewports: [],
+    auditedViewports: ["1440"],
   },
   {
     id: "big-features",
@@ -177,7 +177,7 @@ export const LANDING_SECTIONS: VisualSection[] = [
     id: "faq",
     selector: "[data-section-body='faq']",
     label: "FAQ (#9)",
-    auditedViewports: [],
+    auditedViewports: ["1440"],
   },
   {
     id: "free-month",
