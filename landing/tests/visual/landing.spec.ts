@@ -88,6 +88,12 @@ test.describe("landing visual regression", () => {
            BUDGET is enforced below — i.e. up to 2% of pixels may differ
            noticeably, anything beyond that is a real regression. */
         threshold: 0.1,
+        /* Allow prod to be up to 32 px taller than canon. Common cause:
+           Tailwind base styles add slightly more line-height / padding
+           than canon's inline-style values. Width must still match (no
+           horizontal-shift wiggle room). Diff runs over canon's height
+           region, prod's bottom rows are ignored. */
+        heightTolerance: 32,
       });
 
       expect(

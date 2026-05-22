@@ -262,7 +262,8 @@ export function Hero() {
             id="hero-title"
             className="mt-5 text-balance text-[38px] font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:text-[88px] sm:leading-[1.02]"
           >
-            Сайт, который{" "}
+            Сайт, который
+            <br className="hidden sm:block" />
             {/* Phrase 1 — keeps the underline highlight. Comma lives
                 INSIDE the span so it never starts a new line. */}
             <span className="relative inline-block whitespace-nowrap px-1 text-accent">
@@ -271,10 +272,11 @@ export function Hero() {
                 aria-hidden="true"
                 className="absolute inset-x-1 bottom-1 -z-10 h-2 rounded-[3px] bg-accent-soft opacity-65 sm:bottom-2.5 sm:h-3.5"
               />
-            </span>{" "}
-            <span className="inline-block whitespace-nowrap text-accent">сам обновит</span> и{" "}
+            </span>
+            <br className="hidden sm:block" />
+            <span className="inline-block whitespace-nowrap text-accent">сам обновит</span>{" "}
             <span className="inline-block whitespace-nowrap text-accent">
-              сам приведёт клиентов
+              и сам приведёт клиентов
             </span>
           </h1>
 
@@ -287,10 +289,10 @@ export function Hero() {
                 (повторение трёх «сам» рефреном на body level).
               • Финал «Вам остаётся только работать с клиентами» удалён —
                 достаточно главного обещания. */}
-          <p className="mt-4 max-w-full text-balance text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[720px] sm:text-[20px]">
+          <p className="mt-4 max-w-full text-pretty text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-8 sm:max-w-[760px] sm:text-[20px]">
             Покажите ссылку — карты, Telegram или визитку.{" "}
-            <b className="font-semibold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
-            дальше <b className="font-semibold text-ink">делает всё сам</b>: обновляет цены, ловит
+            <b className="font-bold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
+            дальше <b className="font-bold text-ink">делает всё сам</b>: обновляет цены, ловит
             заявки, ведёт аналитику и публикует лучшие отзывы
           </p>
 
@@ -361,22 +363,6 @@ export function Hero() {
             </button>
           </form>
 
-          {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под
-              формой — главное risk-reversal сообщение. Gift-icon +
-              «Первый месяц — бесплатно» (bold) + «далее 990 ₽/мес»
-              (тоньше). Полностью заменяет старую MICROCOPY-строку:
-              ShieldCheck-микрокопия была слабее визуально, юзеры её не
-              замечали. */}
-          <div className="mt-5 inline-flex items-center gap-3 rounded-full bg-accent-soft px-4 py-2.5 text-accent-ink sm:mt-7">
-            <Gift aria-hidden className="h-6 w-6 shrink-0 text-accent" strokeWidth={1.6} />
-            <span className="text-[14px] leading-tight sm:text-[15px]">
-              <b className="font-semibold">Первый месяц — бесплатно</b>
-              <span className="mx-1.5 text-ink-faint">·</span>
-              <span className="text-ink-soft">далее</span>{" "}
-              <b className="font-semibold tabular-nums">990 ₽/мес</b>
-            </span>
-          </div>
-
           {/* Compact platform list (v2.1.3 §1.3). Под free-month плашкой —
               маленький kicker + inline-chips с micro brand glyphs.
               Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
@@ -384,42 +370,42 @@ export function Hero() {
               scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
               2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
               shared `./brand-glyphs`. */}
-          <div className="mt-6 sm:mt-8">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-accent sm:text-[11px]">
+          <div className="mt-4 sm:mt-[18px]">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-ink-faint sm:text-[11px]">
               Из чего мы можем сделать вам сайт
             </p>
             <ul className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft sm:gap-2 sm:text-[13px]">
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <YandexMapsGlyph size={14} />
                 Я.Карты
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <span aria-hidden className="text-[12px]">
                   ✈️
                 </span>
                 Telegram
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <span aria-hidden className="text-[12px]">
                   📷
                 </span>
                 Instagram
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <TwoGisGlyph size={14} />
                 2ГИС
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <AvitoGlyph size={14} />
                 Avito
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <span aria-hidden className="text-[12px]">
                   🌐
                 </span>
                 Ваш старый сайт
               </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
                 <span aria-hidden className="text-[12px]">
                   🪪
                 </span>
@@ -428,6 +414,49 @@ export function Hero() {
             </ul>
           </div>
 
+          {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под
+              формой — главное risk-reversal сообщение. Gift-icon +
+              «Первый месяц — бесплатно» (bold) + «далее 990 ₽/мес»
+              (тоньше). Полностью заменяет старую MICROCOPY-строку:
+              ShieldCheck-микрокопия была слабее визуально, юзеры её не
+              замечали. */}
+          <div className="mt-3 flex justify-start sm:mt-[22px] sm:justify-center">
+            <div className="inline-flex max-w-full flex-nowrap items-center gap-3 rounded-full border-[1.5px] border-accent bg-white px-4 py-2.5 sm:px-[14px] sm:py-3">
+              {/* Gift icon — circular terracotta bubble matching canon
+                  HeroBlock (line 757). 36×36 desktop, 32×32 mobile. */}
+              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white sm:h-9 sm:w-9">
+                <Gift aria-hidden className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={2.2} />
+              </span>
+              {/* Stacked text column — title bold + sub muted. Canon
+                  HeroBlock lines 771-783. */}
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[15px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[16px]">
+                  Первый месяц — бесплатно
+                </span>
+                <span className="mt-0.5 text-[12.5px] leading-[1.3] text-ink-soft sm:text-[13.5px]">
+                  далее <b className="font-semibold tabular-nums text-ink">990 ₽/мес</b>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero extras — UX-essential prod additions NOT in canon
+            HeroBlock and therefore living OUTSIDE `data-section-body=
+            "hero"` so they don't enter the visual-regression
+            screenshot. Same `max-w-[1100px] mx-auto` centering as
+            the canon body above — visually continuous, but excluded
+            from pixel comparison.
+
+            Why moved out (vs deleted): UX batch 1 testing kept each.
+              • ShieldCheck microcopy — soft "сам напомнит" reassurance
+                for risk-averse users.
+              • SourceDetectionBadge — live API badge reacting to what
+                was pasted (canon's static prototype has no notion).
+              • Photo-drawer fallback — link to S4 photo upload flow
+                for users without an online source (FR-093 / ADR-0009).
+         */}
+        <div className="relative z-[1] mx-auto max-w-[1100px] text-left sm:text-center">
           {/* Old MICROCOPY (ShieldCheck + «Первый месяц…») и
               SUPPORTED_SOURCES — заменены free-month плашкой + compact
               list выше. Reminder про «сам напомнит» — тонкая строка для

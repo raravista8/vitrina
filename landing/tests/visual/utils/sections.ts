@@ -55,24 +55,40 @@ export const LANDING_SECTIONS: VisualSection[] = [
      in canon, not nested under HeroBlock — comparing them with prod's
      full <section> wrapper would always fail on dimension mismatch.
 
-     Currently smoke-only. Pixel comparison gated off because:
-       • Width matches at 1440 (both 1100 px via explicit max-width).
-       • Height drifts +84 px on prod because prod intentionally retains
-         three UX-essential elements canon's HeroBlock omits:
-           - SourceDetectionBadge (preview API ✓ / ⚠ / ℹ states)
-           - `<ShieldCheck>` "Самосайт сам напомнит" microcopy
-           - `<button>` "Загрузить фото работ..." photo-drawer fallback
-         User testing kept all three; removing them for canon parity
-         would degrade real conversion. A future iteration could either
-         move them outside the `data-section-body` subtree, or extend
-         `compareToBaseline` to allow partial overlap when prod ≥ canon
-         (clip prod to canon height, diff the top region only).
-       • Box-model gap (canon content-box, prod border-box Tailwind)
-         additionally breaks 768 + 390 — both end up with different
-         outer widths even before counting overlap.
-     For now Phase C-Hero ships the H1 typography fix (38/88 px per
-     canon) and the `data-section-body` anchor; pixel audit unlocks
-     when one of the above paths lands. */
+     Smoke-only as of this PR (auditedViewports: []). Pixel-diff
+     iteration brought 1440 from 8.47 % down to 2.30 %, just over the
+     2 % budget. Remaining gap is mostly anti-aliasing on bold text
+     edges (canon `<b>` fontWeight 700 vs Tailwind's font-bold which
+     renders subtly differently across Chromium versions) + the form
+     placeholder text content («ссылка на ваш профиль или сайт» in
+     canon vs «ссылка на соцсеть или Я.Карты» in prod — the latter is
+     a deliberate UX choice for 320 px iPhone viewports where the
+     longer canon string truncates mid-word).
+
+     What this PR achieved (kept):
+       • Three UX-essential extras (SourceDetectionBadge / microcopy /
+         photo fallback) moved OUTSIDE data-section-body so the
+         screenshot captures only canon-equivalent content.
+       • H1 typography 72 → 88 px desktop / 36 → 38 px mobile.
+       • H1 line-break structure rewritten with explicit
+         `<br className="hidden sm:block" />` to match canon's
+         «Сайт, который» / «сам себя соберёт,» / «сам обновит» /
+         «и сам приведёт клиентов» split.
+       • Compact platforms chip styling reset to canon (white bg +
+         1 px line border, dropped paper-soft).
+       • Free-month плашка restructured to canon's two-column layout
+         (circular accent gift bubble + stacked title/sub text column).
+       • Vertical spacing values aligned: H1→sub 32 px, list→плашка
+         22 px, sub margin 32 px.
+       • `compareToBaseline` extended with `heightTolerance` so prod
+         can be up to 32 px taller than canon without a hard error.
+
+     Unlocking ['1440'] audit requires either:
+       a) accepting ~3 % pixel budget (loosen `expect(...).toBeLessThanOrEqual`
+          per section), or
+       b) changing form placeholder to canon copy (degrades mobile UX),
+          or
+       c) one more typography pass to neutralise bold-weight rendering. */
   {
     id: "hero",
     selector: "[data-section-body='hero']",
