@@ -128,8 +128,12 @@ services:
 
   landing:
     build:
-      context: ../landing
-      dockerfile: Dockerfile
+      # Repo root as context so the build can `COPY packages/canon/`
+      # alongside `landing/`. The `@samosite/canon` workspace dep is
+      # `file:../packages/canon` and must be COPYable into the deps
+      # stage. Dockerfile paths therefore prefix with `landing/`.
+      context: ..
+      dockerfile: landing/Dockerfile
       # Public Next env vars are baked into the static bundle at build
       # time — see landing/Dockerfile for the why. Each ARG declared
       # there must be forwarded here so `docker compose build` pulls

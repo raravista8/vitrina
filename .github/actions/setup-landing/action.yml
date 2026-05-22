@@ -14,4 +14,10 @@ runs:
     - name: Install landing dependencies
       shell: bash
       working-directory: landing
-      run: npm ci --no-audit --no-fund
+      # --install-links materialises `file:` deps as copies (not symlinks).
+      # `@samosite/canon` is a workspace `file:../packages/canon` dep;
+      # turbopack's peer-dep resolver doesn't follow symlinks (it looks
+      # for `react` from the canon package's PHYSICAL path), so without
+      # --install-links the Next build fails with `Cannot find package
+      # 'react'`. Same flag also lets Vitest resolve canon's dist properly.
+      run: npm ci --install-links --no-audit --no-fund
