@@ -754,3 +754,63 @@
 E0 → E1 → E2 → E3 → E4 → E5 → E6 → E7 → E8 → E9 (legacy MVP path)
 
 **v2 overlay** (after #56 «UX batch 2» merge): A (docs v2 — THIS PR) → B (E10 brand) → C (E11 landing) → D (E12 intake+bots) → E (E13 reviews) → F (E14 customer-site). Sequential, см. COPY.md §10.
+
+---
+
+## ✅ v2.1 implementation log (PR серии A→H + hotfix #71)
+
+All 8 PR серии A→H + hotfix #71 — **merged в main + deployed on samosite.online**.
+
+| PR | Эпик | Что сделано | Commit |
+|---|---|---|---|
+| #59 PR-A | docs canon v2 | COPY/PRD/ARCH/TASKS обновлены; ADR-0010 (AI review curation) + ADR-0011 (two-bot architecture) добавлены | f37a3d6 |
+| #61 PR-B | E10 brand | `<BrandMark>` (Onest 800 «С» на терракотовой плашке), favicon, og-image, customer-site footer watermark | 1a8569d |
+| #63 PR-C | E11 landing v2 | 8 секций: Nav/Hero/Examples/Story/Platforms/BigFeatures/FreeMonthCTA/Footer, eyebrow + benefits-stack удалены | b740e3f |
+| #67 PR-D | E12 intake v2 | Explicit channel radio (TG/Phone/Email/MAX) + backend schema v2 + 400 on contact-channel mismatch | 5ed7e8c |
+| #65 PR-E | E13 reviews | DB migration `site_reviews_curated`, hexagonal `core/reviews/` (curator/pii_filter/prompts), 16 unit tests | d026b58 |
+| #66 PR-F | E14 customer-site v2 | Trust-row, gallery 4-col mosaic, новая «Что говорят клиенты» секция, About bullets, services mono-formatting | 889c074 |
+| #68 PR-G | v2.1 copy rewrite | Hero H1 «три сам», BigFeatures 4→8 + closer, FreeMonthCTA полный Dojim-блок | 36948b5 |
+| #70 PR-H | v2.1 sections | SocialProof, Pricing 299₽/мес (later 990), FAQ (10 Q через «Самосайт сам…») | 27af234 |
+| #71 hotfix | H1 punctuation | Comma внутри первого span, trailing period убран, `whitespace-nowrap` | (см. v2.1.3 log) |
+
+---
+
+## ✅ v2.1.3 implementation log (PR серии #79-#91 + hotfix integration)
+
+Финальная итерация перед launch — driver `docs/canon/CLAUDE_CODE_TZ_session_v2.1.3.md`.
+Все merged в main + deployed (landing/customer-site/backend на проде).
+
+| PR | Phase | Что сделано | Commit |
+|---|---|---|---|
+| #79 | 1 — Copy/CTA | «Сделать Самосайт», «за 2 часа», 990 ₽, «Карта не нужна» удалена, «Чего не хватает?», free-month chip в Pricing | c7f61cf |
+| #80 | 2 — Pricing docs | `docs/runbooks/yookassa-pricing-update.md` runbook 299→990 | 7a2b00f |
+| #81 | 3 — Structural cleanup | SocialProof секция удалена, mobile «← листайте» hint убран, BigFeatures H2 без точек | f6b07c7 |
+| #82 | 4 — Brand SVG + numbers | Я.Карты pin / 2ГИС / Avito inline SVG + decorative numbers 01-08 в BigFeatures | fb7d6bf |
+| #83 | 5 — Hero refactor | Compact platform list (7 chips) + free-month плашка (gift-icon + 990 ₽/мес) под Hero input | f493a32 |
+| #84 | 7a — Analytics demo | `<AnalyticsSection>` на лендинге (Recharts sparklines + chart + sources) с fixture data | c968f23 |
+| #85 | 8 — Hover + typography | `.ss-card-lift` hover effects + 486 NBSP insertion в landing copy | ce8d87f |
+| #86 | 9a — Customer skeleton | `index.html.j2.v21` staging file (10 секций) | 8b06898 |
+| #87 | 9b — Customer CSS | `components/booking.css` (926 lines) + process-icons.html.j2 macro | ff9233d |
+| #88 | 9c — Customer switchover | Atomic rename `.v21` → `.j2` (legacy → `.legacy`) + SYSTEM_PROMPT v2.1 fields + `_adapt_to_v21_shape` bridge | 1f0c8d4 |
+| #71 | Hero hotfix | Rebased + merged after v2.1.3 — comma в span + nowrap + no trailing period | (resolves stash) |
+| #89 | 7b — Analytics backend | `core/analytics/service.py` (aggregation + dashboard payload) + `/admin/sites/<id>/analytics` endpoint + cron worker stub + migration 0008 (site_analytics + digest_log) | b33fe9a |
+| #90 | Canon docs | `docs/canon/` preserved 5 TZ markdowns + README с mapping canon→PR'ы | 0e5518f |
+| #91 | starlette CVE | `starlette 1.0.0 → 1.0.1` (PYSEC-2026-161) — security patch | a1018ff |
+
+### v2.1.3 deferred per user decision
+
+- **Phase 6** — Intake 3→2 шага + удаление 3 backend endpoints (`/api/tg-bot-personal-status`,
+  `/api/submit-application/finalize-via-email`, `/api/tg-bot-status`). RISKY:
+  затрагивает live customer flows. Откладывается до подготовленного downtime.
+
+### Operator action required (post-merge)
+
+- **ЮKassa price update** 29900→99000 копеек по `docs/runbooks/yookassa-pricing-update.md`
+- **Backfill analytics** — one-time `aggregate_day_for_site` loop по published sites × last 30 days
+- **RQ-scheduler glue** для `weekly_analytics_digest` cron (вторник 09:00 МСК)
+- **Re-publish 1-2 customer-sites** через `/admin/sites/<id>/publish` для verify v2.1 booking-page layout
+- **`@SamositeBot` BotFather registration** (Phase 6 prep)
+- **`YANDEXGPT_API_KEY`** — для активации AI-curation (fallback на top-N работает)
+- **`SELECTEL_DNS_API_TOKEN`** — для wildcard TLS на `*.samosite.online`
+- **`NEXT_PUBLIC_YANDEX_VERIFICATION`** — Я.Вебмастер ownership token
+- **Real customer-site photos** — T14.7 `/render` proxy через Yandex Object Storage
