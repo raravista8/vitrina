@@ -35,7 +35,9 @@
  * the public brand strictly.
  */
 
-import { Link as LinkIcon, ShieldCheck, X } from "lucide-react";
+import { Gift, Link as LinkIcon, ShieldCheck, X } from "lucide-react";
+
+import { AvitoGlyph, TwoGisGlyph, YandexMapsGlyph } from "./brand-glyphs";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -331,18 +333,84 @@ export function Hero() {
             </button>
           </form>
 
-          {/* Microcopy with checkmark */}
-          <div className="mt-3.5 flex items-center justify-start gap-1.5 text-[13px] text-ink-faint sm:justify-center">
-            <ShieldCheck aria-hidden className="h-[14px] w-[14px]" />
-            {MICROCOPY}
+          {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под
+              формой — главное risk-reversal сообщение. Gift-icon +
+              «Первый месяц — бесплатно» (bold) + «далее 990 ₽/мес»
+              (тоньше). Полностью заменяет старую MICROCOPY-строку:
+              ShieldCheck-микрокопия была слабее визуально, юзеры её не
+              замечали. */}
+          <div className="mt-5 inline-flex items-center gap-3 rounded-full bg-accent-soft px-4 py-2.5 text-accent-ink sm:mt-7">
+            <Gift aria-hidden className="h-6 w-6 shrink-0 text-accent" strokeWidth={1.6} />
+            <span className="text-[14px] leading-tight sm:text-[15px]">
+              <b className="font-semibold">Первый месяц — бесплатно</b>
+              <span className="mx-1.5 text-ink-faint">·</span>
+              <span className="text-ink-soft">далее</span>{" "}
+              <b className="font-semibold tabular-nums">990 ₽/мес</b>
+            </span>
           </div>
 
-          {/* Supported-source list — only visible when input is empty,
-              so it doesn't compete with the live detection badge below
-              (which takes over once the user pastes something). */}
-          {raw.trim().length === 0 ? (
-            <p className="mt-2 text-[13px] text-ink-faint sm:text-center">{SUPPORTED_SOURCES}</p>
-          ) : null}
+          {/* Compact platform list (v2.1.3 §1.3). Под free-month плашкой —
+              маленький kicker + inline-chips с micro brand glyphs.
+              Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
+              чего» — юзер видит supported pool сразу под input, без
+              scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
+              2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
+              shared `./brand-glyphs`. */}
+          <div className="mt-6 sm:mt-8">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-accent sm:text-[11px]">
+              Из чего мы можем сделать вам сайт
+            </p>
+            <ul className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft sm:gap-2 sm:text-[13px]">
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <YandexMapsGlyph size={14} />
+                Я.Карты
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <span aria-hidden className="text-[12px]">
+                  ✈️
+                </span>
+                Telegram
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <span aria-hidden className="text-[12px]">
+                  📷
+                </span>
+                Instagram
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <TwoGisGlyph size={14} />
+                2ГИС
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <AvitoGlyph size={14} />
+                Avito
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <span aria-hidden className="text-[12px]">
+                  🌐
+                </span>
+                Ваш старый сайт
+              </li>
+              <li className="inline-flex items-center gap-1.5 rounded-full bg-paper-soft px-2.5 py-1">
+                <span aria-hidden className="text-[12px]">
+                  🪪
+                </span>
+                Фото буклета или меню
+              </li>
+            </ul>
+          </div>
+
+          {/* Old MICROCOPY (ShieldCheck + «Первый месяц…») и
+              SUPPORTED_SOURCES — заменены free-month плашкой + compact
+              list выше. Reminder про «сам напомнит» — тонкая строка для
+              risk-averse юзеров. */}
+          <p className="mt-3 text-[12px] text-ink-faint sm:mt-4 sm:text-[13px]">
+            <ShieldCheck
+              aria-hidden
+              className="mr-1 inline-block h-[12px] w-[12px] -translate-y-px"
+            />
+            {MICROCOPY}
+          </p>
 
           <SourceDetectionBadge
             detection={detection}
