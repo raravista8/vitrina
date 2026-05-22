@@ -122,7 +122,85 @@ export const tokens = {
 export type Tokens = typeof tokens;
 ```
 
-### 2.4 Tailwind preset (опционально, но крайне желательно)
+### 2.4 Hover-эффекты + анимации
+
+В каноне (`landing-samosite.jsx::SamosaytLanding` line 2425+) живёт inline `<style>` блок с интерактивными состояниями. Это **часть дизайн-спека** — нужно включить в пакет.
+
+Что должно работать в импортированных компонентах из коробки:
+
+```css
+/* ── Card lift — Examples, BigFeatures, Platforms (.ss-card-lift) ── */
+transition: transform .2s ease-out, box-shadow .2s ease-out;
+:hover { transform: translateY(-1px);
+         box-shadow: 0 10px 20px -14px rgba(120,60,30,0.18); }
+
+/* ── Story step card (.ss-story-card) ── */
+transition: transform .2s ease-out;
+:hover { transform: translateY(-1px); }
+
+/* ── Pricing card (.ss-pricing-card) — сильнее ── */
+transition: transform .2s ease-out, box-shadow .2s ease-out;
+:hover { transform: translateY(-1px);
+         box-shadow: 0 14px 24px -16px rgba(120,60,30,0.22); }
+
+/* ── CTA buttons (Btn, a[href="#hero|#book|/admin-demo|/login"]) ── */
+transition: transform .15s ease, box-shadow .15s ease, filter .15s ease, background-color .15s ease;
+:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+  box-shadow: 0 16px 32px -14px rgba(120,60,30,0.45);
+}
+
+/* ── Focus rings (a11y) ── */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+/* ── FAQ details (FaqSection) ── */
+details summary { transition: background-color .15s ease; }
+details summary:hover { background-color: var(--bg-soft); }
+
+/* ── Hero input pill focus ── */
+.ss-hero-pill:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 32px -16px rgba(120,60,30,0.25);
+}
+
+/* ── Live indicators (Analytics, ControlPanelMock) ── */
+@keyframes vt-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
+.vt-pulse { animation: vt-pulse 2s ease-in-out infinite; }
+
+/* ── Smooth scroll for anchor nav ── */
+html { scroll-behavior: smooth; }
+```
+
+**Реализация на выбор Claude Design** (рекомендуем 1-й вариант):
+
+1. **`<CanonStyles />` provider компонент** — consumer оборачивает root один раз; компонент инжектит этот `<style>` блок в `<head>`:
+   ```tsx
+   // landing/app/layout.tsx
+   import { CanonStyles } from '@samosite/canon';
+   export default function RootLayout({ children }) {
+     return (
+       <html>
+         <body>
+           <CanonStyles />
+           {children}
+         </body>
+       </html>
+     );
+   }
+   ```
+
+2. **CSS-файл** — consumer импортирует `import '@samosite/canon/styles.css'` один раз в `globals.css` или `layout.tsx`.
+
+3. **Auto-inject на mount** — каждый компонент-секция при первом рендере добавляет `<style>` в head через `useEffect`. Меньше работы consumer'у, но тяжелее в SSR (FOUC риск).
+
+**Что НЕ нужно:**
+- Параллакс / scroll-triggered анимации (канон без них)
+- Animated route transitions
+- Framer Motion / любые dep'ы для анимаций (всё purely CSS)
+- Dark-mode переменные (свет only)
+
+### 2.5 Tailwind preset (опционально, но крайне желательно)
 
 ```ts
 // @samosite/canon/tailwind-preset
@@ -167,8 +245,10 @@ export default { presets: [canonPreset], /* ... */ };
 ├── README.md
 ├── tsconfig.json
 ├── src/
-│   ├── index.ts                    ← re-export всего
+│   ├── index.ts                    ← re-export всего (+ CanonStyles)
 │   ├── tokens.ts
+│   ├── styles.css                  ← hover-эффекты + анимации из §2.4 (для варианта 2)
+│   ├── CanonStyles.tsx             ← provider, инжектит styles.css (для варианта 1)
 │   ├── primitives/
 │   │   ├── index.ts
 │   │   ├── SectionTitle.tsx
@@ -255,7 +335,8 @@ export default { presets: [canonPreset], /* ... */ };
     "./intake": { "import": "./dist/intake/index.js", "types": "./dist/intake/index.d.ts" },
     "./customer": { "import": "./dist/customer/index.js", "types": "./dist/customer/index.d.ts" },
     "./admin": { "import": "./dist/admin/index.js", "types": "./dist/admin/index.d.ts" },
-    "./tailwind-preset": { "import": "./dist/tailwind-preset.js" }
+    "./tailwind-preset": { "import": "./dist/tailwind-preset.js" },
+    "./styles.css": "./dist/styles.css"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -309,6 +390,10 @@ import { Hero } from '@/components/Hero';
 import { Examples } from '@/components/Examples';
 // ...
 
+// landing/app/layout.tsx — добавить ОДИН раз
+import { CanonStyles } from '@samosite/canon';
+//   …внутри <body>: <CanonStyles /> { children }
+
 // landing/app/page.tsx — стало
 import {
   HeroSection,
@@ -345,7 +430,7 @@ export default function Page() {
 }
 ```
 
-**Результат:** прод выглядит **байт-в-байт как canon/index.html**. Никакой моей транскрипции. Никакого drift.
+**Результат:** прод выглядит **байт-в-байт как canon/index.html** — со всеми hover-эффектами, card-lift, focus-rings и pulse-анимациями (per §2.4). Никакой моей транскрипции. Никакого drift.
 
 ### Сценарий 2 — Постепенный swap (недели 2-4)
 
@@ -385,18 +470,27 @@ import { ExamplesSection as ProdExamples } from '@/components/Examples';
 - [ ] README документирует подключение шрифтов
 - [ ] CHANGELOG ведётся с первого релиза
 - [ ] Pixel-diff на проде против импортированного канон-компонента = **0 %** при первом drop-in (потому что это **тот же** React-рендер)
+- [ ] После подключения `<CanonStyles />` (или `import '@samosite/canon/styles.css'`) hover-эффекты работают: card-lift, CTA translateY, FAQ summary, Hero input focus-ring, vt-pulse keyframes (см. §2.4 чек-лист)
+- [ ] `:focus-visible` outline видим при keyboard-навигации Tab
 
 ---
 
 ## 8. Out of scope (НЕ нужно делать)
 
 - ❌ Storybook, Ladle, docs site (мы используем `canon/index.html` для preview как сейчас)
-- ❌ Анимации (канон сейчас без них, прод тоже)
 - ❌ Темизация (свет/тёмная) — позже
 - ❌ i18n — все строки на русском, single locale
 - ❌ a11y-аудит (это уже моя задача после интеграции)
 - ❌ Скрипты для миграции с inline-styles на Tailwind (это **я делаю** в vitrina, см. сценарий 2)
 - ❌ Поддержка React < 19
+- ❌ Параллакс / scroll-triggered анимации / Framer Motion (канон purely-CSS hover, см. §2.4)
+
+**Что НЕ out-of-scope (часто путают):**
+
+- ✅ Hover-эффекты, CTA-translateY, card-lift, focus rings, FAQ summary hover — см. §2.4
+- ✅ `vt-pulse` keyframes для live-индикаторов
+- ✅ `scroll-behavior: smooth` на html
+- ✅ `:focus-visible` outlines для a11y
 
 ---
 
@@ -423,6 +517,6 @@ import { ExamplesSection as ProdExamples } from '@/components/Examples';
 
 ---
 
-**TL;DR для дизайн-команды:** упакуйте текущий канон как нормальный React+TS npm-пакет (peer-dep React 19, ESM-only, inline-styles как есть, экспорты по экранам + примитивам + токенам). Это полностью убирает мой ручной transcription-layer и даёт реальный single source of truth.
+**TL;DR для дизайн-команды:** упакуйте текущий канон как нормальный React+TS npm-пакет (peer-dep React 19, ESM-only, inline-styles как есть, экспорты по экранам + примитивам + токенам + `<CanonStyles />` с hover/анимациями из §2.4). Это полностью убирает мой ручной transcription-layer и даёт реальный single source of truth.
 
 Если ОК — стартуйте с `landing/` секций как MVP, остальное (intake, customer, admin) могут идти второй итерацией.
