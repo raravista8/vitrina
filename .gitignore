@@ -55,3 +55,6 @@ state-snapshot-*.json
 landing/tests/visual/__fixtures__/
 landing/tests/visual/__diff/
 landing/test-results/
+
+# Playwright artefacts (also locally at repo root when CWD shifts)
+/test-results/

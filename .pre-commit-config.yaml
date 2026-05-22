@@ -25,9 +25,9 @@ repos:
       # whitespace hooks. Same dir is also opted out of eslint/prettier
       # for the same reason (see landing/eslint.config.mjs).
       - id: trailing-whitespace
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: end-of-file-fixer
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: check-yaml
         args: [--unsafe]
       - id: check-json
@@ -41,7 +41,7 @@ repos:
         # Regen is a deliberate `npm run test:visual:update` op and PRs
         # touching the dir get human review — the size limit guards against
         # accidental commits of build artefacts / binaries, not these.
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/baselines/.*\.png$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/baselines/.*\.png$|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: check-case-conflict
       - id: detect-private-key
       - id: mixed-line-ending
