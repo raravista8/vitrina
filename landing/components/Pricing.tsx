@@ -12,9 +12,12 @@
  *
  * Композиция:
  *   1. Section title with «сам» framing
- *   2. Single tariff card — 299 ₽/мес с разбивкой «за что платите»
+ *   2. Single tariff card — 990 ₽/мес (v2.1.3 §1.1: цена поднята с 299
+ *      после user-testing на пилотной группе; включает full-stack:
+ *      аналитика, AI-отзывы, weekly digest)
  *   3. Сравнение «час SMM-щика» / «час маркетолога» — anchor
- *   4. Risk-reversal note: первый месяц бесплатно без карты
+ *   4. Risk-reversal note: первый месяц бесплатно (без упоминания карты —
+ *      см. v2.1.3 §1.1)
  */
 
 import { ArrowRight, Check } from "lucide-react";
@@ -22,7 +25,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { SectionViewTracker } from "./SectionViewTracker";
 
 const INCLUDED = [
-  "Сам собирает сайт за пару минут",
+  "Сам собирает сайт за 2 часа",
   "Сам обновляет 4 раза в месяц из источника",
   "Сам ловит заявки в Telegram / MAX / Email",
   "Сам отбирает лучшие отзывы каждую неделю",
@@ -41,23 +44,34 @@ export function Pricing() {
       <SectionViewTracker goal="pricing_view" />
       <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Сколько стоит</p>
+        {/* v2.1.3 §1.1 — H2 переписана: «Один тариф — без сюрпризов»
+            короче, прямее, держит обещание простоты. */}
         <h2
           id="pricing-title"
           className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
         >
-          Сколько стоит, чтобы Самосайт работал на вас
+          Один тариф — без сюрпризов
         </h2>
       </header>
 
       <div className="mx-auto max-w-[640px]">
         <div className="rounded-3xl border-2 border-accent bg-white p-7 shadow-card sm:p-10">
-          <div className="flex items-baseline gap-2">
-            <span className="text-[44px] font-bold text-ink sm:text-[64px]">299</span>
+          {/* Free-month chip над ценой — v2.1.3 §1.1: phyciacally moved
+              risk-reversal внутрь pricing card. Зелёная плашка с галочкой
+              «Первый месяц — бесплатно» отвечает за «не страшно начать»;
+              сама цена «потом 990 ₽» уже воспринимается спокойно. */}
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-[12px] font-semibold text-accent-ink">
+            <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+            Первый месяц — бесплатно
+          </div>
+
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-[44px] font-bold text-ink sm:text-[64px]">990</span>
             <span className="text-[18px] text-ink-soft sm:text-[22px]">₽ в месяц</span>
           </div>
 
           <p className="mt-2 text-[14px] text-ink-soft sm:text-[16px]">
-            Один тариф — без сложных матриц, без апселов, без «звёздочек».
+            Не надо выбирать пакеты, считать апселы и читать «звёздочки»
           </p>
 
           <ul className="mt-6 space-y-2.5">
@@ -76,12 +90,12 @@ export function Pricing() {
             href="#top"
             className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-white hover:bg-accent-hover sm:text-[16px]"
           >
-            Собрать мой Самосайт
+            Сделать Самосайт
             <ArrowRight className="h-4 w-4" />
           </a>
 
           <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-widest text-ink-faint">
-            Первый месяц бесплатно · Карта не нужна
+            Первый месяц бесплатно
           </p>
         </div>
 

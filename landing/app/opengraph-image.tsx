@@ -98,7 +98,7 @@ export default async function Image() {
         }}
       >
         <span>samosite.online</span>
-        <span>Первый месяц бесплатно — карта не нужна</span>
+        <span>Первый месяц бесплатно</span>
       </div>
     </div>,
     {

@@ -42,14 +42,16 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     expect(h1).toHaveTextContent(/сам себя соберёт/i);
     expect(h1).toHaveTextContent(/сам обновит/i);
     expect(h1).toHaveTextContent(/сам приведёт клиентов/i);
-    expect(screen.getByText(/Покажите ссылку на ваше дело/i)).toBeInTheDocument();
+    // v2.1.3 §1.1 — Hero subtitle переписан: «Покажите ссылку на ваше
+    // дело» → «Покажите ссылку» (короче) + `<b>` болды.
+    expect(screen.getByText(/Покажите ссылку — карты/i)).toBeInTheDocument();
 
     // Brand — Cyrillic only (legal requirement, PRD §3).
     const brand = screen.getAllByText("Самосайт");
     expect(brand.length).toBeGreaterThan(0);
 
     // CTA + microcopy.
-    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).toBeInTheDocument();
     expect(
       screen.getByText(/Первый месяц — бесплатно\. Самосайт сам напомнит/i),
     ).toBeInTheDocument();
@@ -96,7 +98,7 @@ describe("Hero — interaction", () => {
     // input still get the modal (where they finish the submission or
     // jump to the photo path).
     render(<Hero />);
-    const button = screen.getByRole("button", { name: /Собрать мой Самосайт/ });
+    const button = screen.getByRole("button", { name: /Сделать Самосайт/ });
     expect(button).not.toBeDisabled();
   });
 
@@ -105,7 +107,7 @@ describe("Hero — interaction", () => {
     const input = screen.getByPlaceholderText(/ссылка на соцсеть/i);
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
 
-    const button = screen.getByRole("button", { name: /Собрать мой Самосайт/ });
+    const button = screen.getByRole("button", { name: /Сделать Самосайт/ });
     await waitFor(() => expect(button).not.toBeDisabled());
   });
 
@@ -128,7 +130,7 @@ describe("Hero — interaction", () => {
       target: { value: "https://instagram.com/anna_master" },
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).not.toBeDisabled();
     // Parallel CTA per FR-093 — wired to open PhotoDrawer in Hero, so
     // the markup is a <button> when used inside Hero (the standalone
     // badge falls back to an <a href="#photo-upload"> for accessibility).
@@ -141,7 +143,7 @@ describe("Hero — interaction", () => {
       target: { value: "just some text" },
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Собрать мой Самосайт/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).not.toBeDisabled();
   });
 
   it("clicking the photo-upload fallback opens the PhotoDrawer (PR-B #6)", () => {
@@ -197,7 +199,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
   });
 
   it("main CTA with a waitlist URL opens the PhotoDrawer, not the SubmitModal", () => {
-    // B1 root-cause fix: previously, clicking «Собрать мой Самосайт»
+    // B1 root-cause fix: previously, clicking «Сделать Самосайт»
     // with an IG/VK/2GIS URL pasted opened the modal with a bogus
     // sourceType="telegram" fallback, mislabelling the source in
     // step 2. Now it opens the photo flow — symmetric with the
@@ -207,7 +209,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
       target: { value: "https://www.instagram.com/marusya" },
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
     // PhotoDrawer is open — its heading is the unique marker.
     expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
@@ -220,7 +222,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
     expect(screen.getByRole("heading", { name: /Куда вам писать/i })).toBeInTheDocument();
     // And critically — no green source banner inside the modal (U1).
@@ -252,7 +254,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
     // All 4 channels rendered as radio
     const radios = screen.getAllByRole("radio");
@@ -278,7 +280,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
     // Click phone radio
     const phoneRadio = screen
@@ -300,7 +302,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     render(<Hero />);
     const input = screen.getByPlaceholderText(/ссылка на соцсеть/i) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
-    fireEvent.click(screen.getByRole("button", { name: /Собрать мой Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
     // Modal is open with the back button labelled.
     const backBtn = screen.getByRole("button", { name: /^Назад$/ });

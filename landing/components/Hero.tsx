@@ -53,13 +53,14 @@ import { SubmitModal } from "./SubmitModal";
 // (avoids a hydration flicker we'd get from a window-width hook) and
 // move the full source list into a separate microcopy line below.
 const PLACEHOLDER = "ссылка на соцсеть или Я.Карты";
-const CTA_TEXT = "Собрать мой Самосайт";
-// Microcopy under CTA — addresses the implicit «забуду отменить и
-// спишут деньги» fear that «без карты» alone leaves open. Adding
-// «Самосайт сам напомнит» turns the silent risk-reversal into an
-// explicit promise.
-const MICROCOPY =
-  "Первый месяц — бесплатно. Самосайт сам напомнит, если решите продолжить. Карта не нужна.";
+// v2.1.3 §1.1 — «Собрать мой Самосайт» переименован в «Сделать Самосайт».
+// Глагол «сделать» проще, прямее и короче в mobile-CTA («Сделать →»).
+const CTA_TEXT = "Сделать Самосайт";
+// Microcopy under CTA — v2.1.3 §1.1 убрал «Карта не нужна» (повторяется
+// 4× на разных секциях, выглядело тревожно — Pricing card теперь несёт
+// этот pacification). Hero оставляет risk-reversal «Самосайт сам
+// напомнит» как достаточный sigh of relief.
+const MICROCOPY = "Первый месяц — бесплатно. Самосайт сам напомнит, если решите продолжить";
 // One canonical, scannable list of what we accept today (UX batch 1
 // "U2" — testers asked for an explicit list, not just placeholder
 // hints). Lives directly under the input.
@@ -247,13 +248,20 @@ export function Hero() {
             <span className="text-accent">сам приведёт клиентов</span>.
           </h1>
 
-          {/* Sub — turns the brand «Самосайт» into a verb («соберётся»),
-              echoes three «сам» (обновлять / ловить / отбирать), and
-              ends with the «вы — только работаете» contract. */}
+          {/* Sub — v2.1.3 §1.1 redesign:
+              • «за пару/две минуты» → «за 2 часа» (реальный SLA — мануальная
+                модерация первых 20 сайтов; обещание «2 минуты» порождало
+                разочарование). Везде в копи лендинга — единый timing.
+              • Bold-акценты на «Самосайт на базе ИИ соберёт сайт за 2 часа»
+                (раскрытие что под капотом — AI, не magic) и «делает всё сам»
+                (повторение трёх «сам» рефреном на body level).
+              • Финал «Вам остаётся только работать с клиентами» удалён —
+                достаточно главного обещания. */}
           <p className="mt-4 max-w-full text-balance text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[720px] sm:text-[20px]">
-            Покажите ссылку на ваше дело — карты, Telegram или визитку. Самосайт соберётся за две
-            минуты и дальше будет всё делать сам: обновлять цены, ловить заявки, отбирать отзывы.
-            Вам остаётся только работать с клиентами.
+            Покажите ссылку — карты, Telegram или визитку.{" "}
+            <b className="font-semibold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
+            дальше <b className="font-semibold text-ink">делает всё сам</b>: обновляет цены, ловит
+            заявки, ведёт аналитику и публикует лучшие отзывы
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}

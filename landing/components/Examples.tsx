@@ -86,13 +86,14 @@ function ExampleCard({ ex }: { ex: Example }) {
           ))}
         </ul>
 
-        {/* One curated review (badge ★ = ИИ-выбор per ADR-0010) */}
+        {/* Curated review. v2.1.3 §1.2 — badge «★ ЛУЧШИЙ — выбрал ИИ»
+            убран. Pilot test показал что в карточках-превью эта плашка
+            создавала эффект «вот они продают AI-отзывы», а не «вот сайт».
+            ИИ-кураторство остаётся фоновой механикой (см. ADR-0010),
+            метка просто не выводится в preview. На реальных customer-
+            сайтах badge может появляться отдельно. */}
         {ex.reviews[0] ? (
           <blockquote className="mt-1 rounded-xl bg-accent-soft px-3 py-2.5 text-[12.5px] leading-snug text-accent-ink">
-            <div className="mb-1 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider">
-              <Star className="h-2.5 w-2.5" fill="currentColor" stroke="none" />
-              ЛУЧШИЙ — выбрал ИИ
-            </div>
             «{ex.reviews[0].text}» — <span className="font-medium">{ex.reviews[0].author}</span>
           </blockquote>
         ) : null}
@@ -156,9 +157,13 @@ export function Examples() {
         >
           Три Самосайта, которые собрались сами
         </h2>
+        {/* v2.1.3 §1.1 — «и кураторской подборкой лучших отзывов» →
+            «и лучшими отзывами». Простее, без жаргона «куратор», тот же
+            смысл. Глагол «взял» расширили до полного действия «выбрал»,
+            чтобы фраза грамматически согласовалась с «лучшие отзывы». */}
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
           Реальные сайты мастеров. Ни одной строчки текста они не писали — Самосайт сам взял
-          источник, сам разложил услуги, сам выбрал отзывы. Посмотрите, что получилось.
+          источник, разложил услуги и выбрал лучшие отзывы. Посмотрите, что получилось
         </p>
       </header>
 

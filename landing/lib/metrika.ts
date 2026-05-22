@@ -15,7 +15,7 @@
  * yandex-metrika-goals.md` ссылается на эти имена):
  *
  *   hero_paste            — юзер paste'ил что-то в Hero input
- *   hero_submit_attempt   — клик по «Собрать мой Самосайт» (frontend pre-API)
+ *   hero_submit_attempt   — клик по «Сделать Самосайт» (frontend pre-API)
  *   hero_submit_success   — backend ответил 200 на submit (post-modal flow)
  *   socialproof_view      — SocialProof секция попала во viewport
  *   pricing_view          — Pricing секция попала во viewport
