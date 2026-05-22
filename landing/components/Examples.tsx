@@ -149,21 +149,21 @@ export function Examples() {
     >
       <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
         <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>
-        {/* Title turns «Самосайт» into a self-referential verb («собрались
-            сами») — reinforces the name as a promise rather than a label. */}
+        {/* v2.2 canon (финал 2) — title shifted from product-self-reference
+            («собрались сами») to user-outcome timing («через несколько минут»).
+            User-test feedback: «получите ... через несколько минут» reads as
+            promise + speed in one beat, lower cognitive load than the
+            self-referential verb. */}
         <h2
           id="examples-title"
           className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
         >
-          Три Самосайта, которые собрались сами
+          Вот какой сайт вы получите
+          <br className="hidden sm:block" /> через несколько минут
         </h2>
-        {/* v2.1.3 §1.1 — «и кураторской подборкой лучших отзывов» →
-            «и лучшими отзывами». Простее, без жаргона «куратор», тот же
-            смысл. Глагол «взял» расширили до полного действия «выбрал»,
-            чтобы фраза грамматически согласовалась с «лучшие отзывы». */}
         <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Реальные сайты мастеров. Ни одной строчки текста они не писали — Самосайт сам взял
-          источник, разложил услуги и выбрал лучшие отзывы. Посмотрите, что получилось
+          Реальные сайты, которые Самосайт собрал из разных источников — с вашими фото, услугами и
+          лучшими отзывами
         </p>
       </header>
 

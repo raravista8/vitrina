@@ -77,7 +77,11 @@ export function Story() {
           id="story-title"
           className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
         >
-          Шесть шагов — и Самосайт работает сам
+          {/* v2.2 canon (финал 2) — pivot from steps-count framing
+              («шесть шагов») to user-action framing («от вас — одно действие»).
+              Promise: minimal user effort, maximum product autonomy. */}
+          От вас — одно действие,
+          <br className="hidden sm:block" /> всё остальное Самосайт сделает сам
         </h2>
       </header>
 

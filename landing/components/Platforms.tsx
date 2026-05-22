@@ -113,8 +113,15 @@ export function Platforms() {
           id="platforms-title"
           className="mt-2 text-[28px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
         >
-          Работает с тем, что у вас уже есть
+          {/* v2.2 canon (финал 2) — shift from «работает с тем» (passive
+              capability) to «что подойдёт для создания Самосайта» (user-
+              directed selection). Subhead added to soften the criterion list. */}
+          Что подойдёт
+          <br className="hidden sm:block" /> для создания Самосайта
         </h2>
+        <p className="mt-3 max-w-[640px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+          Подойдёт любая ссылка, где про вас уже что-то написано или показано
+        </p>
       </header>
 
       <div className="mx-auto grid max-w-[1200px] gap-10 sm:grid-cols-2 sm:gap-16">
