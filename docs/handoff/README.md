@@ -26,12 +26,17 @@ design_handoff_samosite/
 ├── START_HERE_PROMPT.md           ← скопируй в Claude Code как первое сообщение
 ├── TOKENS.md                      ← дизайн-токены в чистом виде (hex/oklch/px)
 ├── SCREEN_INDEX.md                ← карта 19 экранов: канон → прод-файл
+├── VISUAL_COVERAGE.md             ← трекер pixel-coverage (1/122 сейчас → 122/122)
+├── PIXEL_PERFECT_SETUP.md         ← Playwright+pixelmatch infra с готовыми сниппетами
+├── BASELINES_PLAN.md              ← Tier 1/2/3 план закрытия gap, ~16 дней до 100%
 ├── specs/                         ← ТЗ, читать по порядку
 │   ├── 00_CLAUDE_CODE_TZ_base.md       (v2 — базовый, частично перекрыт)
 │   ├── 01_landing_v2.1.md              (финальный лендинг + клиентский ЛК)
 │   ├── 02_customer_v2.1.md             (booking-page customer-сайтов)
 │   ├── 03_session_v2.1.3.md            (последние правки копирайта/тарифа)
-│   └── 04_typography.md                (русские типографские правила — обязательно)
+│   ├── 04_typography.md                (русские типографские правила — обязательно)
+│   ├── 05_admin_screens.md             (детальные ТЗ admin 10–19 для pixel-аудита)
+│   └── 06_public_screens_2_9.md        (детальные ТЗ public 2–9 для pixel-аудита)
 ├── canon/                         ← визуальный канон (JSX prototype)
 │   ├── index.html                      ← открой это первым в браузере
 │   ├── landing.html                    ← standalone лендинг
@@ -137,13 +142,11 @@ Find-and-replace по всему репо — внимательно, не в `n
 
 ## 6. Pixel-perfect verification (обязательный этап)
 
-После реализации каждого экрана — визуальное сравнение с каноном:
+**Текущее состояние: 1 / 122 экран×viewport pixel-сверено (0.8 %).** Это главный gap пакета — см. `VISUAL_COVERAGE.md` (трекер) и `BASELINES_PLAN.md` (план закрытия по тирам, ~16 дней до 100 %).
 
-```bash
-npm install -D playwright pixelmatch pngjs
-```
+Полная инфраструктура (Playwright config, `stabilize()`, `pixelmatch` wrapper с threshold 0.02, генерация baselines из канона, CI workflow) — в **`PIXEL_PERFECT_SETUP.md`**. Там же — 5 блокеров, которые нужно снять **до** старта тиров (data-атрибуты, self-host шрифтов, `__dc_reset`, seed-фикстуры, `/admin-demo`).
 
-Screenshot per-viewport на 1440 / 768 / 390 vs эталоны из `canon/index.html`. Threshold 0.02 (2% diff per pixel). Детали — `specs/01_landing_v2.1.md §18` и `specs/03_session_v2.1.3.md §3`.
+Screenshot per-viewport на 1440 / 768 / 390 vs эталоны из `canon/index.html`. Threshold 0.02 (2 % diff per pixel).
 
 ---
 

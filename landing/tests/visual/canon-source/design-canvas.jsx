@@ -305,6 +305,10 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
     // would inherit whatever pan/zoom the dev last left in localStorage,
     // making baseline regeneration non-deterministic. Clears persisted
     // state too so a follow-up reload starts fresh.
+    //
+    // NB: this hook is the ONLY divergence from the upstream handoff's
+    // canon `design-canvas.jsx`. Re-apply if the file is ever refreshed
+    // from a new handoff drop (see PR #110 + #116 commits).
     window.__dc_reset = () => {
       try { localStorage.removeItem(tfKey); } catch {}
       tf.current = { x: 0, y: 0, scale: 1 };
