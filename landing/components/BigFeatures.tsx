@@ -116,33 +116,64 @@ const CLOSER = {
   body: "В личном кабинете видна аналитика посещений и заявок. Самосайт принадлежит вам — заберёте файлы или унесёте на другой домен в любой момент.",
 };
 
-function BigFeatureCard({ kicker, title, body, glyph, bg = "default" }: Feature) {
+/**
+ * Carded feature item. v2.1.3 §1.4 added decorative numbers 01-08 — 96px
+ * JetBrains Mono weight 800, opacity 0.22, absolute-positioned top-right
+ * as background watermark. Numbers reinforce «восемь сам» counting
+ * implicitly without taking visual real estate from kicker/title/body.
+ */
+function BigFeatureCard({
+  kicker,
+  title,
+  body,
+  glyph,
+  bg = "default",
+  decorativeIndex,
+}: Feature & { decorativeIndex: string }) {
   const isAccent = bg === "accent";
   return (
     <article
       className={[
-        "flex flex-col gap-4 rounded-3xl border p-6 sm:p-8",
+        "relative flex flex-col gap-4 overflow-hidden rounded-3xl border p-6 sm:p-8",
         isAccent
           ? "border-accent-soft bg-accent-soft text-accent-ink"
           : "border-line bg-white text-ink",
       ].join(" ")}
     >
+      {/* Decorative number 01-08 — fontFamily JetBrains Mono via tailwind
+          font-mono token, weight 800. Opacity 0.22 на accent / 0.10 на
+          default чтобы numerals не конкурировали с body text но всё-таки
+          читались как watermark counting. pointer-events-none + aria-hidden
+          — accessibility-tree игнорирует. */}
+      <span
+        aria-hidden="true"
+        className={[
+          "pointer-events-none absolute right-4 top-2 select-none font-mono leading-none tracking-tight",
+          isAccent ? "text-accent/30" : "text-ink-faint/40",
+        ].join(" ")}
+        style={{ fontWeight: 800, fontSize: 80 }}
+      >
+        {decorativeIndex}
+      </span>
+
       <div
         className={[
-          "inline-flex h-14 w-14 items-center justify-center rounded-2xl",
+          "relative z-10 inline-flex h-14 w-14 items-center justify-center rounded-2xl",
           isAccent ? "bg-white/60 text-accent" : "bg-accent-soft text-accent",
         ].join(" ")}
       >
         {glyph}
       </div>
 
-      <p className="font-mono text-[11px] uppercase tracking-widest text-accent">{kicker}</p>
+      <p className="relative z-10 font-mono text-[11px] uppercase tracking-widest text-accent">
+        {kicker}
+      </p>
 
-      <h3 className="text-[20px] font-bold leading-tight sm:text-[24px]">{title}</h3>
+      <h3 className="relative z-10 text-[20px] font-bold leading-tight sm:text-[24px]">{title}</h3>
 
       <p
         className={[
-          "text-[15px] leading-relaxed",
+          "relative z-10 text-[15px] leading-relaxed",
           isAccent ? "text-accent-ink/85" : "text-ink-soft",
         ].join(" ")}
       >
@@ -180,8 +211,15 @@ export function BigFeatures() {
 
       {/* 4×2 grid of «сам» cards */}
       <div className="mx-auto grid max-w-[1280px] gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {FEATURES.map((f) => (
-          <BigFeatureCard key={f.kicker} {...f} />
+        {FEATURES.map((f, idx) => (
+          <BigFeatureCard
+            key={f.kicker}
+            {...f}
+            // v2.1.3 §1.4 decorative numbers — zero-padded 01..08 в углу
+            // карточки. Padding до 2 цифр чтобы «01» и «08» имели одинаковую
+            // ширину для visual rhythm.
+            decorativeIndex={String(idx + 1).padStart(2, "0")}
+          />
         ))}
       </div>
 
