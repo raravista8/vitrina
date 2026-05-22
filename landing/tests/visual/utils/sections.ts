@@ -93,7 +93,7 @@ export const LANDING_SECTIONS: VisualSection[] = [
     id: "hero",
     selector: "[data-section-body='hero']",
     label: "Hero (#1)",
-    auditedViewports: [],
+    auditedViewports: ["1440"],
   },
   {
     id: "examples",
