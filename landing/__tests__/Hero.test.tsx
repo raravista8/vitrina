@@ -104,7 +104,7 @@ describe("Hero — interaction", () => {
 
   it("CTA stays enabled after pasting a Telegram URL", async () => {
     render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на соцсеть/i);
+    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i);
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
 
     const button = screen.getByRole("button", { name: /Сделать Самосайт/ });
@@ -113,7 +113,7 @@ describe("Hero — interaction", () => {
 
   it("renders the ✓ badge with preview counts once the live preview lands", async () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     // Loading badge first
@@ -126,7 +126,7 @@ describe("Hero — interaction", () => {
 
   it("for waitlist URLs, renders the email-capture panel; CTA stays clickable", () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://instagram.com/anna_master" },
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe("Hero — interaction", () => {
 
   it("for a non-URL string, hints at supported sources; CTA stays clickable", () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "just some text" },
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
@@ -185,7 +185,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // v2.1.3 §1.3 — compact list постоянно виден (раньше скрывался при
     // paste). Reason: brand-recognition value высокий, badge внизу
     // (SourceDetectionBadge) для recognized source не конфликтует.
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/some_channel" },
     });
     expect(screen.getByText(/из чего мы можем сделать вам сайт/i)).toBeInTheDocument();
@@ -193,7 +193,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
 
   it("renders an × clear-button when input is non-empty; clears on click", () => {
     render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на соцсеть/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i) as HTMLInputElement;
     // No × initially.
     expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
 
@@ -213,7 +213,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // step 2. Now it opens the photo flow — symmetric with the
     // parallel «создайте из фото сейчас» CTA.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://www.instagram.com/marusya" },
     });
 
@@ -227,7 +227,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
 
   it("main CTA with an MVP URL opens the SubmitModal (no regression)", () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
@@ -243,7 +243,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // yet supported" more honestly. The classNames carry the colour
     // tokens so we assert on those rather than computed CSS.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://www.instagram.com/anna_master" },
     });
     const banner = screen.getByText(/скоро будет — оставьте email/i);
@@ -259,7 +259,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // Tester feedback from batch 2 (B5): «машинально начала вводить email,
     // не понимая что система принимает все 4 канала». Radio = явный выбор.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
@@ -285,7 +285,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // channel=phone (для других каналов оставляем raw). Server делает
     // canonical E.164 normalisation через phonenumbers.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на соцсеть/i), {
+    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
@@ -308,7 +308,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // шаг 1" — the ✕ in the corner wasn't recognised as a back path.
     // The labelled chevron makes it obvious and survives Hero state.
     render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на соцсеть/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 

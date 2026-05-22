@@ -54,7 +54,7 @@ import { SubmitModal } from "./SubmitModal";
 // 320–390 px iPhone viewports. We swap to a shorter string everywhere
 // (avoids a hydration flicker we'd get from a window-width hook) and
 // move the full source list into a separate microcopy line below.
-const PLACEHOLDER = "ссылка на соцсеть или Я.Карты";
+const PLACEHOLDER = "ссылка на ваш профиль или сайт";
 // v2.1.3 §1.1 — «Собрать мой Самосайт» переименован в «Сделать Самосайт».
 // Глагол «сделать» проще, прямее и короче в mobile-CTA («Сделать →»).
 const CTA_TEXT = "Сделать Самосайт";
