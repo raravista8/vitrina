@@ -312,10 +312,9 @@ export function AnalyticsSection() {
     >
       <div data-section-body="analytics" className="px-5 sm:px-16">
         <header className="mx-auto mb-7 max-w-[760px] sm:mb-12 sm:text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Аналитика</p>
           <h2
             id="analytics-title"
-            className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
+            className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
           >
             {/* v2.2 canon (финал 2) — «Видно, как…» (third-person, abstract)
               → «Видите всё, что…» (second-person address, dashboard framing).

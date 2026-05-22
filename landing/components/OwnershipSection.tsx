@@ -202,12 +202,9 @@ export function OwnershipSection() {
 
           {/* copy side */}
           <div className="relative">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-              Личный кабинет
-            </p>
             <h2
               id="ownership-title"
-              className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
+              className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
             >
               Восемь «сам» —
               <br className="hidden sm:block" /> но кнопка всегда у&nbsp;вас

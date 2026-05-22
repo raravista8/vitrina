@@ -54,14 +54,11 @@ export function Pricing() {
       <div data-section-body="pricing" className="px-5 sm:px-16">
         <SectionViewTracker goal="pricing_view" />
         <header className="mx-auto mb-10 max-w-[1100px] sm:mb-12 sm:text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-            Сколько стоит
-          </p>
           {/* v2.1.3 §1.1 — H2 переписана: «Один тариф — без сюрпризов»
             короче, прямее, держит обещание простоты. */}
           <h2
             id="pricing-title"
-            className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[48px]"
+            className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
           >
             Один тариф —
             <br className="hidden sm:block" /> без сюрпризов
@@ -69,7 +66,7 @@ export function Pricing() {
           {/* Sub paragraph per canon line 2096 — moved from inside the card
             into the section header so the price card itself reads
             cleaner (just price + bullets + CTA). */}
-          <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+          <p className="mt-3.5 max-w-[680px] text-[16px] leading-[1.45] text-ink-soft sm:mx-auto sm:text-[19px]">
             Не надо выбирать пакеты, считать апселы и читать «звёздочки». 990&nbsp;₽ в месяц — и
             весь Самосайт в вашем распоряжении
           </p>

@@ -72,12 +72,9 @@ export function Story() {
     >
       <div data-section-body="story" className="px-5 sm:px-16">
         <header className="mx-auto mb-10 max-w-[1100px] sm:mb-16 sm:text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-            Как это работает
-          </p>
           <h2
             id="story-title"
-            className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
+            className="mt-3.5 text-[30px] font-bold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[52px] sm:leading-[1.05]"
           >
             {/* v2.2 canon (финал 2) — pivot from steps-count framing
               («шесть шагов») to user-action framing («от вас — одно действие»).
