@@ -9,11 +9,13 @@
  *   4. Story       — 6 steps zigzag, все начинаются с «Сам…»
  *   5. Platforms   — 7 active / 3 coming-soon sources
  *   6. BigFeatures — 8 «сам» cards + closer «А вы — хозяин»
- *   7. Analytics   — demo панели аналитики (Phase 7/9, NEW v2.1.3)
- *   8. Pricing     — 990 ₽/мес single tariff
- *   9. FAQ         — 10 questions through «Самосайт сам…» framing
- *   10. FreeMonthCTA — Dojim final CTA «Дайте Самосайту собрать себя»
- *   11. Footer
+ *   7. Ownership   — «Восемь «сам» — но кнопка всегда у вас» + admin
+ *                    dashboard mock (Phase X2, canon финал 2)
+ *   8. Analytics   — demo панели аналитики (Phase 7/9, NEW v2.1.3)
+ *   9. Pricing     — 990 ₽/мес single tariff
+ *   10. FAQ         — 10 questions through «Самосайт сам…» framing
+ *   11. FreeMonthCTA — Dojim final CTA «Дайте Самосайту собрать себя»
+ *   12. Footer
  *
  * Removed in v2.1.3:
  *   - SocialProof (47/1284/4.9★ + testimonials) — pilot test показал
@@ -32,6 +34,7 @@ import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 import { FreeMonthCTA } from "@/components/FreeMonthCTA";
 import { Hero } from "@/components/Hero";
+import { OwnershipSection } from "@/components/OwnershipSection";
 import { Platforms } from "@/components/Platforms";
 import { Pricing } from "@/components/Pricing";
 import { Story } from "@/components/Story";
@@ -69,6 +72,7 @@ export default function HomePage() {
       <Story />
       <Platforms />
       <BigFeatures />
+      <OwnershipSection />
       <AnalyticsSection />
       <Pricing />
       <FAQ />
