@@ -100,18 +100,20 @@ test.describe("landing visual regression", () => {
       });
 
       /* Pixel budget — fraction of the canon-window pixels that may
-         differ. 4 % is the cross-OS budget: locally Hero @ 1440 sits at
-         ~1.6 % with threshold 0.20; on Ubuntu CI the same screenshot
-         hits ~3.2 % because of platform-level font rendering. Budget
-         covers the worse case + ~0.8 pp headroom. Tighten this back to
-         0.02 once baselines are regenerated on Linux (out-of-scope of
-         this PR). */
+         differ. 2 % budget is now feasible because baselines are
+         regenerated on the SAME OS (Linux / Ubuntu) that CI runs on —
+         see `infra/scripts/generate-canon-baselines-linux.sh`. The
+         macOS-vs-Ubuntu font-AA gap from the earlier 4 % budget no
+         longer applies because both sides of the comparison render in
+         identical conditions. Local dev runs on macOS will see ~1 pp
+         higher diff than CI — that's the cross-OS gap surfacing
+         locally now, not in CI. */
       expect(
         result.pct,
         `Section "${section.label}" @ ${viewport}: ${result.diff}/${result.total} px differ ` +
-          `(${(result.pct * 100).toFixed(2)}% > 4.00% budget). ` +
+          `(${(result.pct * 100).toFixed(2)}% > 2.00% budget). ` +
           (result.diffPath ? `Diff PNG: ${path.relative(REPO_LANDING, result.diffPath)}` : ""),
-      ).toBeLessThanOrEqual(0.04);
+      ).toBeLessThanOrEqual(0.02);
     });
   }
 });
