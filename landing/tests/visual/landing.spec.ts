@@ -62,17 +62,18 @@ test.describe("landing visual regression", () => {
         `selector "${section.selector}" missing on prod — did a section get renamed/removed?`,
       ).toBeVisible({ timeout: 10_000 });
 
-      /* Smoke-only mode for un-audited sections: we verify the selector
-         resolves (= structure didn't break) but skip pixel comparison
-         until Phase C ports the section to match canon dimensions.
-         The corresponding baseline PNG still exists in
-         `tests/visual/baselines/` — it's the target that Phase C aims
-         for. Once the prod section lands at canon dimensions, flip
-         `audited: true` in `utils/sections.ts` in the SAME PR. */
-      if (!section.audited) {
+      /* Smoke-only mode when this (section, viewport) pair isn't in
+         `auditedViewports`. Selector still resolves (= structure didn't
+         break) but pixel comparison is skipped until Phase C ports the
+         section to match canon dimensions at this viewport. The
+         baseline PNG still exists in `tests/visual/baselines/` — it's
+         the target. To opt in, add the viewport name to the section's
+         `auditedViewports` array in `utils/sections.ts` in the SAME PR
+         that ports the section. */
+      if (!section.auditedViewports.includes(viewport)) {
         testInfo.annotations.push({
           type: "pending-audit",
-          description: `${section.label}: smoke-only — flip 'audited: true' when porting in Phase C`,
+          description: `${section.label} @ ${viewport}: smoke-only — add to auditedViewports in Phase C`,
         });
         return;
       }

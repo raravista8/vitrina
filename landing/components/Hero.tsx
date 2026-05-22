@@ -228,7 +228,17 @@ export function Hero() {
         {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
             и self-critique §11.1: тестер «бросает в глаза, перегружает H1».
             Чище без него. */}
-        <div className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center">
+
+        {/* `data-section-body="hero"` — anchor for the visual-regression
+            spec (`landing/tests/visual/landing.spec.ts`). Canon's
+            `HeroBlock` exports only this inner constrained block; the
+            outer section + nav are siblings in canon `SamosaytLanding`.
+            Matching the selector keeps prod and baseline measuring the
+            same DOM subtree (1100 × ~738 px on desktop). */}
+        <div
+          data-section-body="hero"
+          className="relative z-[1] mx-auto mt-8 max-w-[1100px] text-left sm:mt-16 sm:text-center"
+        >
           {/* H1 — three «сам» pattern. Each terracotta phrase carries
               the brand promise; the first one keeps the underline
               highlight as the visual anchor. Punctuation tweaks
@@ -243,9 +253,14 @@ export function Hero() {
               The whole H1 lives inside `text-balance` (Tailwind) so
               the browser balances line widths automatically across
               desktop & mobile. */}
+          {/* H1 sizes per `canon/landing-samosite.jsx::HeroBlock` line
+              650 — desktop 88 px / mobile 38 px, leading 1.02 / 1.08.
+              Prod had been at 72 / 36 (Phase pre-A scale); bumping to
+              canon values is what closes the visual gap that the user
+              flagged in «дизайн на проде сильно отличается от этого». */}
           <h1
             id="hero-title"
-            className="mt-5 text-balance text-[36px] font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:text-[72px]"
+            className="mt-5 text-balance text-[38px] font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:text-[88px] sm:leading-[1.02]"
           >
             Сайт, который{" "}
             {/* Phrase 1 — keeps the underline highlight. Comma lives
