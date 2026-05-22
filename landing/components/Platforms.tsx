@@ -263,63 +263,65 @@ export function Platforms() {
       id="platforms"
       data-section="platforms"
       aria-labelledby="platforms-title"
-      className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+      className="bg-paper-soft pb-0 pt-14 sm:pb-0 sm:pt-24"
     >
-      <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Площадки</p>
-        <h2
-          id="platforms-title"
-          className="mt-2 text-[28px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
-        >
-          {/* v2.2 canon (финал 2) — shift from «работает с тем» (passive
+      <div data-section-body="platforms" className="px-5 sm:px-16">
+        <header className="mx-auto mb-10 max-w-[1100px] sm:mb-14 sm:text-center">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Площадки</p>
+          <h2
+            id="platforms-title"
+            className="mt-2 text-[28px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
+          >
+            {/* v2.2 canon (финал 2) — shift from «работает с тем» (passive
               capability) to «что подойдёт для создания Самосайта» (user-
               directed selection). Subhead added to soften the criterion list. */}
-          Что подойдёт
-          <br className="hidden sm:block" /> для создания Самосайта
-        </h2>
-        <p className="mt-3 max-w-[640px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Подойдёт любая ссылка, где про вас уже что-то написано или показано
-        </p>
-      </header>
+            Что подойдёт
+            <br className="hidden sm:block" /> для создания Самосайта
+          </h2>
+          <p className="mt-3 max-w-[640px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+            Подойдёт любая ссылка, где про вас уже что-то написано или показано
+          </p>
+        </header>
 
-      <div className="mx-auto mt-7 max-w-[1080px] sm:mt-14">
-        {/* Featured platform — Я.Карты full-width */}
-        <PlatformCard platform={FEATURED} featured />
+        <div className="mx-auto mt-7 max-w-[1080px] sm:mt-14">
+          {/* Featured platform — Я.Карты full-width */}
+          <PlatformCard platform={FEATURED} featured />
 
-        {/* Secondary row — Telegram / Instagram / 2ГИС */}
-        <div className="mt-2.5 grid gap-2.5 sm:mt-[14px] sm:grid-cols-3 sm:gap-[14px]">
-          {SECONDARY.map((p) => (
-            <PlatformCard key={p.id} platform={p} />
-          ))}
-        </div>
+          {/* Secondary row — Telegram / Instagram / 2ГИС */}
+          <div className="mt-2.5 grid gap-2.5 sm:mt-[14px] sm:grid-cols-3 sm:gap-[14px]">
+            {SECONDARY.map((p) => (
+              <PlatformCard key={p.id} platform={p} />
+            ))}
+          </div>
 
-        {/* Tertiary row — Avito / Ваш старый сайт / Фото буклета или меню.
+          {/* Tertiary row — Avito / Ваш старый сайт / Фото буклета или меню.
             2-col grid with 3 items: row 1 has Avito + Ваш старый сайт,
             row 2 has Фото буклета или меню spanning one column. */}
-        <div className="mt-2.5 grid gap-2.5 sm:mt-[14px] sm:grid-cols-2 sm:gap-[14px]">
-          {TERTIARY.map((p) => (
-            <PlatformCard key={p.id} platform={p} />
-          ))}
-        </div>
-
-        {/* СКОРО ПОДКЛЮЧИМ — dashed-border card with 3 soon-pills and a
-            small «Нет вашей? Напишите →» CTA to /feedback. */}
-        <div className="mt-7 rounded-[18px] border border-dashed border-line bg-paper-soft px-[18px] py-5 sm:mt-9 sm:px-6 sm:py-[22px]">
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:flex-wrap sm:items-center">
-            <div className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
-              Скоро подключим
-            </div>
-            <a
-              href="/feedback"
-              className="text-[13px] text-accent underline decoration-1 underline-offset-[3px] hover:decoration-2"
-            >
-              Нет вашей? Напишите →
-            </a>
-          </div>
-          <div className="mt-3.5 flex flex-wrap gap-2">
-            {SOON.map((p) => (
-              <PlatformSoonPill key={p.id} platform={p} />
+          <div className="mt-2.5 grid gap-2.5 sm:mt-[14px] sm:grid-cols-2 sm:gap-[14px]">
+            {TERTIARY.map((p) => (
+              <PlatformCard key={p.id} platform={p} />
             ))}
+          </div>
+
+          {/* СКОРО ПОДКЛЮЧИМ — dashed-border card with 3 soon-pills and a
+            small «Нет вашей? Напишите →» CTA to /feedback. */}
+          <div className="mt-7 rounded-[18px] border border-dashed border-line bg-paper-soft px-[18px] py-5 sm:mt-9 sm:px-6 sm:py-[22px]">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="font-mono text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                Скоро подключим
+              </div>
+              <a
+                href="/feedback"
+                className="text-[13px] text-accent underline decoration-1 underline-offset-[3px] hover:decoration-2"
+              >
+                Нет вашей? Напишите →
+              </a>
+            </div>
+            <div className="mt-3.5 flex flex-wrap gap-2">
+              {SOON.map((p) => (
+                <PlatformSoonPill key={p.id} platform={p} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -186,76 +186,78 @@ export function OwnershipSection() {
       id="ownership"
       data-section="ownership"
       aria-labelledby="ownership-title"
-      className="px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-20"
+      className="pb-0 pt-14 sm:pb-0 sm:pt-20"
     >
-      <div className="relative mx-auto grid max-w-[1200px] items-center gap-7 overflow-hidden rounded-[22px] border border-line bg-white p-7 sm:grid-cols-[1fr_1.1fr] sm:gap-14 sm:rounded-[28px] sm:p-14">
-        {/* decorative bg */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-[120px] -top-[100px] h-[360px] w-[360px] rounded-full opacity-50"
-          style={{
-            background:
-              "radial-gradient(circle, var(--tw-color-accent-soft, oklch(0.92 0.045 40)) 0%, transparent 65%)",
-          }}
-        />
+      <div data-section-body="ownership" className="px-5 sm:px-16">
+        <div className="relative mx-auto grid max-w-[1200px] items-center gap-7 overflow-hidden rounded-[22px] border border-line bg-white p-7 sm:grid-cols-[1fr_1.1fr] sm:gap-14 sm:rounded-[28px] sm:p-14">
+          {/* decorative bg */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-[120px] -top-[100px] h-[360px] w-[360px] rounded-full opacity-50"
+            style={{
+              background:
+                "radial-gradient(circle, var(--tw-color-accent-soft, oklch(0.92 0.045 40)) 0%, transparent 65%)",
+            }}
+          />
 
-        {/* copy side */}
-        <div className="relative">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
-            Личный кабинет
-          </p>
-          <h2
-            id="ownership-title"
-            className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
-          >
-            Восемь «сам» —
-            <br className="hidden sm:block" /> но кнопка всегда у&nbsp;вас
-          </h2>
-          <p className="mt-3.5 max-w-[480px] text-[16px] leading-relaxed text-ink-soft sm:text-[18px]">
-            Самосайт делает рутину, но решения — за вами. В личном кабинете видна аналитика и
-            доступны все действия с сайтом.
-          </p>
+          {/* copy side */}
+          <div className="relative">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-accent">
+              Личный кабинет
+            </p>
+            <h2
+              id="ownership-title"
+              className="mt-2 text-[30px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[44px]"
+            >
+              Восемь «сам» —
+              <br className="hidden sm:block" /> но кнопка всегда у&nbsp;вас
+            </h2>
+            <p className="mt-3.5 max-w-[480px] text-[16px] leading-relaxed text-ink-soft sm:text-[18px]">
+              Самосайт делает рутину, но решения — за вами. В личном кабинете видна аналитика и
+              доступны все действия с сайтом.
+            </p>
 
-          <ul className="mt-6 flex list-none flex-col gap-3.5 p-0">
-            {BULLETS.map((b) => (
-              <li key={b.title} className="flex items-start gap-3">
-                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-white">
-                  <Check className="h-3 w-3" strokeWidth={3} />
-                </span>
-                <div>
-                  <div className="text-[15.5px] font-bold tracking-tight text-ink sm:text-[17px]">
-                    {b.title}
+            <ul className="mt-6 flex list-none flex-col gap-3.5 p-0">
+              {BULLETS.map((b) => (
+                <li key={b.title} className="flex items-start gap-3">
+                  <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-white">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  <div>
+                    <div className="text-[15.5px] font-bold tracking-tight text-ink sm:text-[17px]">
+                      {b.title}
+                    </div>
+                    <div className="mt-0.5 text-[14px] leading-relaxed text-ink-soft sm:text-[14.5px]">
+                      {b.body}
+                    </div>
                   </div>
-                  <div className="mt-0.5 text-[14px] leading-relaxed text-ink-soft sm:text-[14.5px]">
-                    {b.body}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
 
-          {/*
-           * CTA to client-admin-demo (interactive sandbox). Per canon (line 1870)
-           * it links to `client-admin-demo.html` — a separate prototype page
-           * from the design archive. На проде demo пока не хостится — линк
-           * пока ведёт на якорь Analytics секции как ближайший visual proof.
-           * После Phase 7c (порт client-admin-demo) подставить /admin/demo.
-           */}
-          <a
-            href="#analytics"
-            className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-[14px] font-semibold text-white no-underline shadow-[0_14px_28px_-14px_rgba(0,0,0,0.4)] sm:px-6 sm:py-3.5 sm:text-[15px]"
-          >
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white">
-              <Play className="h-3 w-3 fill-current" strokeWidth={0} />
-            </span>
-            Посмотреть аналитику ниже
-            <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-          </a>
-        </div>
+            {/*
+             * CTA to client-admin-demo (interactive sandbox). Per canon (line 1870)
+             * it links to `client-admin-demo.html` — a separate prototype page
+             * from the design archive. На проде demo пока не хостится — линк
+             * пока ведёт на якорь Analytics секции как ближайший visual proof.
+             * После Phase 7c (порт client-admin-demo) подставить /admin/demo.
+             */}
+            <a
+              href="#analytics"
+              className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-ink px-5 py-3 text-[14px] font-semibold text-white no-underline shadow-[0_14px_28px_-14px_rgba(0,0,0,0.4)] sm:px-6 sm:py-3.5 sm:text-[15px]"
+            >
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white">
+                <Play className="h-3 w-3 fill-current" strokeWidth={0} />
+              </span>
+              Посмотреть аналитику ниже
+              <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            </a>
+          </div>
 
-        {/* visual side — admin dashboard mock */}
-        <div className="relative">
-          <ControlPanelMock />
+          {/* visual side — admin dashboard mock */}
+          <div className="relative">
+            <ControlPanelMock />
+          </div>
         </div>
       </div>
     </section>

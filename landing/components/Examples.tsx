@@ -146,58 +146,63 @@ export function Examples() {
       id="examples"
       data-section="examples"
       aria-labelledby="examples-title"
-      className="bg-paper-soft px-5 pb-0 pt-14 sm:px-16 sm:pb-0 sm:pt-24"
+      className="bg-paper-soft pb-0 pt-14 sm:pb-0 sm:pt-24"
     >
-      <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>
-        {/* v2.2 canon (финал 2) — title shifted from product-self-reference
+      <div data-section-body="examples" className="px-5 sm:px-16">
+        <header className="mx-auto mb-8 max-w-[1100px] sm:mb-12 sm:text-center">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-accent">Примеры</p>
+          {/* v2.2 canon (финал 2) — title shifted from product-self-reference
             («собрались сами») to user-outcome timing («через несколько минут»).
             User-test feedback: «получите ... через несколько минут» reads as
             promise + speed in one beat, lower cognitive load than the
             self-referential verb. */}
-        <h2
-          id="examples-title"
-          className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
-        >
-          Вот какой сайт вы получите
-          <br className="hidden sm:block" /> через несколько минут
-        </h2>
-        <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
-          Реальные сайты, которые Самосайт собрал из разных источников — с вашими фото, услугами и
-          лучшими отзывами
-        </p>
-      </header>
+          <h2
+            id="examples-title"
+            className="mt-2 text-[32px] font-bold leading-[1.05] tracking-tight text-ink sm:text-[56px]"
+          >
+            Вот какой сайт вы получите
+            <br className="hidden sm:block" /> через несколько минут
+          </h2>
+          <p className="mt-3 max-w-[680px] text-[16px] leading-relaxed text-ink-soft sm:mx-auto sm:mt-4 sm:text-[18px]">
+            Реальные сайты, которые Самосайт собрал из разных источников — с вашими фото, услугами и
+            лучшими отзывами
+          </p>
+        </header>
 
-      {/* Cards — carousel on mobile, grid on desktop. Each card now has
+        {/* Cards — carousel on mobile, grid on desktop. Each card now has
           a caption ABOVE it per canon ExamplesSection (line 901-912 in
           landing-samosite.jsx): bullet dot + «Собран из {source}» so
           the user immediately sees what kind of input produced the demo. */}
-      <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:mx-auto sm:grid sm:max-w-[1280px] sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0">
-        {EXAMPLES.map((ex) => (
-          <div key={ex.id} className="flex w-[86vw] shrink-0 flex-col sm:w-auto">
-            <div className="mb-3.5 flex items-center gap-2.5">
-              <span aria-hidden className="inline-block h-2 w-2 shrink-0 rounded-full bg-accent" />
-              <span className="text-[14.5px] font-semibold tracking-tight text-ink sm:text-[16px]">
-                Собран из {sourceCaption(ex.source)}
-              </span>
+        <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:mx-auto sm:grid sm:max-w-[1280px] sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0">
+          {EXAMPLES.map((ex) => (
+            <div key={ex.id} className="flex w-[86vw] shrink-0 flex-col sm:w-auto">
+              <div className="mb-3.5 flex items-center gap-2.5">
+                <span
+                  aria-hidden
+                  className="inline-block h-2 w-2 shrink-0 rounded-full bg-accent"
+                />
+                <span className="text-[14.5px] font-semibold tracking-tight text-ink sm:text-[16px]">
+                  Собран из {sourceCaption(ex.source)}
+                </span>
+              </div>
+              <ExampleCard ex={ex} />
             </div>
-            <ExampleCard ex={ex} />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Bottom CTA — closes the section with a second conversion hook
+        {/* Bottom CTA — closes the section with a second conversion hook
           per canon ExamplesSection end (line 977 in landing-samosite.jsx).
           Reuses the Hero CTA pill style for recall; jumps back to the
           input via the #top anchor so the user can act immediately. */}
-      <div className="mt-10 flex justify-center sm:mt-14">
-        <a
-          href="#top"
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-white hover:bg-accent-hover sm:text-[16px]"
-        >
-          Сделать себе такой Самосайт
-          <ArrowRight className="h-4 w-4" />
-        </a>
+        <div className="mt-10 flex justify-center sm:mt-14">
+          <a
+            href="#top"
+            className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-white hover:bg-accent-hover sm:text-[16px]"
+          >
+            Сделать себе такой Самосайт
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
       </div>
     </section>
   );
