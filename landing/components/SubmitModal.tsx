@@ -80,6 +80,13 @@ export function SubmitModal({ open, onOpenChange, sourceUrl, sourceType }: Submi
         <Dialog.Content
           className="fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-paper p-7 shadow-pop focus:outline-none sm:p-8"
           aria-describedby={undefined}
+          /* Visual-regression selectors per Tier 2b (intake harness PR).
+             Spec resolves `[data-modal=submit-modal][data-step=<kind>]`
+             after programmatically opening the modal via window hook;
+             both attrs needed so a `data-step` change re-fires the
+             Playwright `await expect(...).toBeVisible()` wait. */
+          data-modal="submit-modal"
+          data-step={step.kind}
         >
           <Dialog.Title className="sr-only">Подключение</Dialog.Title>
 
