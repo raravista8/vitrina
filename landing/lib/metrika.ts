@@ -17,10 +17,14 @@
  *   hero_paste            — юзер paste'ил что-то в Hero input
  *   hero_submit_attempt   — клик по «Сделать Самосайт» (frontend pre-API)
  *   hero_submit_success   — backend ответил 200 на submit (post-modal flow)
- *   socialproof_view      — SocialProof секция попала во viewport
  *   pricing_view          — Pricing секция попала во viewport
  *   faq_open              — юзер открыл любой <details> в FAQ
  *   free_month_cta_click  — клик по CTA в финальном Dojim-блоке
+ *
+ * Removed in v2.1.3 §1.2:
+ *   socialproof_view      — SocialProof секция удалена из лендинга. Goal
+ *                           НЕ удалять в metrika.yandex.ru (исторические
+ *                           метрики остаются), но больше не fires.
  *
  * Каждое имя нужно завести руками на metrika.yandex.ru → «Цели». См. runbook.
  *
