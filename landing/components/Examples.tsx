@@ -25,7 +25,7 @@
 import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 
-import { EXAMPLES, type Example, sourceLabel } from "@/content/examples";
+import { EXAMPLES, type Example, sourceCaption, sourceLabel } from "@/content/examples";
 
 const PALETTE_GRADIENT: Record<Example["palette"], string> = {
   peach: "linear-gradient(135deg, oklch(0.84 0.07 50) 0%, oklch(0.62 0.09 35) 100%)",
@@ -167,19 +167,37 @@ export function Examples() {
         </p>
       </header>
 
-      {/* Cards — carousel on mobile, grid on desktop */}
+      {/* Cards — carousel on mobile, grid on desktop. Each card now has
+          a caption ABOVE it per canon ExamplesSection (line 901-912 in
+          landing-samosite.jsx): bullet dot + «Собран из {source}» so
+          the user immediately sees what kind of input produced the demo. */}
       <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:mx-auto sm:grid sm:max-w-[1280px] sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0">
         {EXAMPLES.map((ex) => (
-          <div key={ex.id} className="w-[86vw] shrink-0 sm:w-auto">
+          <div key={ex.id} className="flex w-[86vw] shrink-0 flex-col sm:w-auto">
+            <div className="mb-3.5 flex items-center gap-2.5">
+              <span aria-hidden className="inline-block h-2 w-2 shrink-0 rounded-full bg-accent" />
+              <span className="text-[14.5px] font-semibold tracking-tight text-ink sm:text-[16px]">
+                Собран из {sourceCaption(ex.source)}
+              </span>
+            </div>
             <ExampleCard ex={ex} />
           </div>
         ))}
       </div>
 
-      {/* v2.1.3 §1.2 — mobile carousel hint «← листайте вправо →» удалён.
-          scroll-snap-type: x mandatory + видимая «обрезка» правой карточки
-          даёт достаточный affordance — explicit подсказка избыточна и
-          выглядит как «инструкция для слабых». */}
+      {/* Bottom CTA — closes the section with a second conversion hook
+          per canon ExamplesSection end (line 977 in landing-samosite.jsx).
+          Reuses the Hero CTA pill style for recall; jumps back to the
+          input via the #top anchor so the user can act immediately. */}
+      <div className="mt-10 flex justify-center sm:mt-14">
+        <a
+          href="#top"
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-[15px] font-semibold text-white hover:bg-accent-hover sm:text-[16px]"
+        >
+          Сделать себе такой Самосайт
+          <ArrowRight className="h-4 w-4" />
+        </a>
+      </div>
     </section>
   );
 }

@@ -59,6 +59,24 @@ export function sourceLabel(s: ExampleSource): string {
   return SOURCE_LABEL[s];
 }
 
+/**
+ * Caption shown ABOVE each example card (canon `ExamplesSection`,
+ * `landing-samosite.jsx` line 911). Strings differ from `sourceLabel`
+ * because canon's caption reads «Собран из ___» (genitive case);
+ * `sourceLabel` is the «нашли N постов в ___» badge variant. Keep
+ * both maps — they're used in different UI locations.
+ */
+const SOURCE_CAPTION: Record<ExampleSource, string> = {
+  telegram: "Telegram-канала",
+  yandex_maps: "Яндекс.Карт",
+  twogis: "2ГИС",
+  avito: "Avito-профиля",
+};
+
+export function sourceCaption(s: ExampleSource): string {
+  return SOURCE_CAPTION[s];
+}
+
 export const EXAMPLES: Example[] = [
   {
     id: "studia-anna",
