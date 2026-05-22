@@ -1,0 +1,8 @@
+# Per-test mismatch diffs — emitted by landing.spec.ts on failure.
+# These are pure ephemera; CI uploads them as artifacts, locally you
+# regenerate by re-running the failing test. Never commit them.
+__diff/
+
+# Playwright's HTML report — large and regenerated on every run.
+playwright-report/
+test-results/

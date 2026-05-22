@@ -1,5 +1,15 @@
-.next
-out
+# Standard ignores
 node_modules
-public
-package-lock.json
+.next
+dist
+out
+coverage
+
+# Canon prototypes — kept byte-identical to design handoff
+tests/visual/canon-source/
+
+# Playwright artefacts
+playwright-report/
+test-results/
+tests/visual/__diff/
+tests/visual/baselines/

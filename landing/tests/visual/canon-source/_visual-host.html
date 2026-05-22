@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+  Visual baseline host — wrapper around the canon SamosaytLanding component.
+
+  Why this file exists: the original `landing.html` only renders
+  `<SamosaytLanding_Desktop />` — fine for a one-off canvas, no good for
+  per-viewport baseline generation. This wrapper reads a `?variant=` query
+  string and renders the matching variant, so the same URL drives all three
+  viewport baselines from one Playwright pass.
+
+  Variants:
+    • `?variant=desktop`  → `<SamosaytLanding mobile={false} />`  (1440, 768)
+    • `?variant=mobile`   → `<SamosaytLanding mobile={true} />`   (390)
+
+  Sections inside the canon don't have stable HTML ids — the prototype was
+  hand-written before we settled on `id="examples"`, `id="how-it-works"`,
+  etc. After mount, this wrapper walks the render tree and tags each
+  top-level `<section>` (or top-level inline-block container, since some
+  sections are <div>-based) with the matching id from `LANDING_SECTIONS` —
+  same id list as `tests/visual/utils/sections.ts`. The baseline generator
+  then screenshots `[data-vh-section="<id>"]` for each section.
+
+  IMPORTANT: keep the `SECTION_IDS` array in sync with
+  `tests/visual/utils/sections.ts` — drift = mismatched baselines.
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Самосайт · Visual Baseline Host</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<style>
+  html, body, #root { margin: 0; }
+  body { font-family: 'Onest', system-ui, sans-serif; background: oklch(0.972 0.012 80); }
+  /* Hide hover lift transitions during baseline capture — they fire on first
+     paint (no user interaction yet) and would flip a few hundred pixels
+     between consecutive screenshots. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tokens.jsx"></script>
+<script type="text/babel" src="landing-samosite.jsx"></script>
+<script type="text/babel" data-presets="react">
+  const params = new URLSearchParams(window.location.search);
+  const isMobile = params.get('variant') === 'mobile';
+  const { SamosaytLanding } = window;
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<SamosaytLanding mobile={isMobile} />);
+
+  /* Tag each top-level section after mount so Playwright can target them by
+     stable id. The canon's render tree puts sections as direct children of
+     the outermost wrapper div, in order. Mapping by index keeps this robust
+     against future canon edits as long as the section ORDER is preserved. */
+  const SECTION_IDS = [
+    'hero',
+    'examples',
+    'story',
+    'platforms',
+    'big-features',
+    'ownership',
+    'analytics',
+    'pricing',
+    'faq',
+    'free-month',
+  ];
+
+  /* Wait two RAFs — first commits the tree, second lets fonts settle. */
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const wrapper = document.querySelector('#root > div');
+    if (!wrapper) return;
+    /* Direct children of the wrapper, filtered to actual sections (skip
+       decorative absolute-positioned background blobs that the canon places
+       at top of the tree). A section is recognised by having visible height
+       and non-empty text content. */
+    const candidates = Array.from(wrapper.children).filter(
+      (el) => el.offsetHeight > 80 && (el.textContent || '').trim().length > 10
+    );
+    candidates.forEach((el, i) => {
+      if (i < SECTION_IDS.length) {
+        el.setAttribute('data-vh-section', SECTION_IDS[i]);
+      }
+    });
+    /* Expose a marker so the generator can wait for tagging to complete. */
+    document.body.setAttribute('data-vh-ready', '1');
+  }));
+</script>
+</body>
+</html>
