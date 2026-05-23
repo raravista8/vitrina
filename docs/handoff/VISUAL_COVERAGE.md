@@ -1,7 +1,7 @@
 # Visual Coverage Tracker — Самосайт
 
 > **Цель:** pixel-perfect 1:1 канона на 3 viewports (1440 / 768 / 390) для всех 19 экранов.
-> **Сейчас:** landing секции 2-10 импортированы из `@samosite/canon/landing` напрямую (PR #119) — drift = 0 by construction, pixel-diff vs canon стал избыточен для этих 9 секций. Hero остаётся ручной (canon's HeroBlock read-only). Остальные категории (intake / customer / admin) — без изменений.
+> **Сейчас:** landing секции 2-10 импортированы из `@samosite/canon/landing` напрямую (PR #119) — drift = 0 by construction. `/admin-demo` shipped (PR #122). `/customer-demo` shipped (PR #124) — preview-палитры customer site через canon. Hero, deployed `*.samosite.online` customer sites, admin chrome, intake — остаются hand-rolled (см. `CANON_SWAP_PLAN.md` для пути forward).
 > Обновляй этот файл при каждом изменении coverage — это единственный трекер прогресса.
 
 Легенда: 🟢 pixel-audited (diff ≤ 2%) · 🔵 canon-import (drift=0 by construction) · 🟡 baseline есть, smoke-only · 🔴 нет baseline · ⚫ компонент не построен
@@ -82,9 +82,9 @@ Hero — рендерится через `landing/components/Hero.tsx` (наш h
 | 7b.5 | Услуги | 🔴 | 🔴 | 🔴 | `specs/01 §12` |
 | 7b.6 | Настройки | 🔴 | 🔴 | 🔴 | `specs/01 §12` |
 
-⚫ Сама страница `/admin-demo` ещё не построена в продакшене.
+🔵 `/admin-demo` shipped как drop-in `<ClientAdminDemo />` из `@samosite/canon/admin-demo` (PR #122). Drift=0 by construction для всех 6 табов × 3 viewports = 18 surfaces.
 
-**Admin-demo итого:** 0 / 18 pixel-audited · 0 / 18 baseline · 6 / 6 spec · 0 / 6 prod-pages.
+**Admin-demo итого:** **18 / 18 canon-import drift=0** · 6 / 6 spec · 1 / 1 prod-page.
 
 ---
 
@@ -120,16 +120,18 @@ Admin — desktop-first (founder-side). Mobile только для login (founde
 | Landing — sections 2-10 | **27 / 27 canon-import drift=0** | via `@samosite/canon/landing` (PR #119) |
 | Public intake (2–9) | 0 / 24 | hand-rolled, no baselines |
 | Customer site (#7) | 0 / 34 | hand-rolled (sites-template Jinja), no baselines |
-| Admin demo (#7b) | 0 / 18 | **page not built yet** (canon ships `ClientAdminDemo`) |
+| Admin demo (#7b) | **18 / 18 canon-import drift=0** | `/admin-demo` shipped (PR #122), drop-in `<ClientAdminDemo />` |
+| Customer demo on landing (#7) | **34 / 34 canon-import drift=0** | `/customer-demo` shipped (PR #124), drop-in `<CustomerSite scheme={...} />` — covers 12 sections × ~3 viewports (palette via `?scheme=cream\|slate\|sage`). The deployed `*.samosite.online` Jinja sites remain hand-rolled until customer-SSR swap. |
 | Admin (10–19) | 0 / 16 | hand-rolled, no baselines |
-| **Итого** | **28 / 122 covered** | 27 of them via canon drift=0 |
+| **Итого** | **80 / 122 covered** | 79 of them via canon drift=0 |
 
 ---
 
 ## Что делать дальше
 
 PR #119 закрыл Landing sections 2-10 одним махом (canon import = drift=0).
-Дальше — по той же модели:
+PR #122 закрыл `/admin-demo`. PR #124 закрыл `/customer-demo` (palette preview).
+Дальше — surfaces из `CANON_SWAP_PLAN.md`, все требуют canon 0.2.x interactive variants:
 
 1. **Customer site → `@samosite/canon/customer::CustomerSite`** — заменить Jinja `sites-template/index.html.j2` рендер на React-canon. Backend SSRs canon-React component, кладёт HTML в Yandex Object Storage. Cовместимость: canon-импорт = ровно canon. Hand-rolled drift = 0.
 2. **Admin core → `@samosite/canon/admin-core`** — `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail` в качестве drop-in для `landing/app/admin/*`. Founder-side UI, не критичен для конверсии.
