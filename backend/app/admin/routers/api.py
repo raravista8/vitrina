@@ -47,7 +47,7 @@ from typing import Annotated, Any, Literal
 from cryptography.fernet import MultiFernet
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import (
@@ -511,6 +511,121 @@ async def admin_api_site_detail(
 
 
 # ---------------------------------------------------------------------------
+# Site lifecycle actions (PR #129) — pause_sync / resume_sync / archive / unarchive
+#
+# Canon's `<SiteDetail>` ships a 6-action toolbar (publish / republish /
+# pause_sync / resume_sync / archive / unarchive). publish + republish
+# already live on the legacy Jinja route `POST /admin/sites/{id}/publish`;
+# the four below close the gap so the founder can manage site state from
+# the JSON UI without hitting the Jinja form-handler.
+#
+# Transition matrix:
+#
+#   ┌────────────┬───────────────────────────────────┬───────────────────┐
+#   │ action     │ allowed from (Site.status)        │ → new status       │
+#   ├────────────┼───────────────────────────────────┼───────────────────┤
+#   │ pause_sync │ published                          │ sync_paused        │
+#   │ resume_sync│ sync_paused                        │ published          │
+#   │ archive    │ ANY except archived                │ archived           │
+#   │ unarchive  │ archived                           │ published          │
+#   └────────────┴───────────────────────────────────┴───────────────────┘
+#
+# unarchive → published (not back to «whatever was before») because we
+# don't track the prior status, and `published` is the most useful
+# default — founder can always pause/archive again if needed.
+# ---------------------------------------------------------------------------
+
+
+_SITE_ACTION_TRANSITIONS: dict[str, tuple[set[str], str]] = {
+    # action_name → (allowed_from_set, new_status). Empty allowed_from set
+    # means «any status except the new one» (used for archive).
+    "pause_sync": ({"published"}, "sync_paused"),
+    "resume_sync": ({"sync_paused"}, "published"),
+    "archive": (set(), "archived"),
+    "unarchive": ({"archived"}, "published"),
+}
+
+
+async def _advance_site_status(
+    site_id: uuid.UUID,
+    action: str,
+    admin: AdminSession,
+    session: AsyncSession,
+) -> dict[str, Any]:
+    """Apply a single site lifecycle action with transition validation.
+
+    Returns the envelope `{site_id, status, action}` on success. Raises
+    HTTPException 404 if the site doesn't exist, 409 if the requested
+    action is not legal from the site's current status.
+    """
+    log = get_logger("admin.api.sites")
+    transition = _SITE_ACTION_TRANSITIONS[action]
+    allowed_from, new_status = transition
+
+    row = (await session.execute(select(Site).where(Site.id == site_id))).scalar_one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="site_not_found")
+
+    # archive is "any → archived" but never «archived → archived» (no-op).
+    if not allowed_from:
+        if row.status == new_status:
+            raise HTTPException(status_code=409, detail=f"already_{new_status}")
+    else:
+        if row.status not in allowed_from:
+            raise HTTPException(
+                status_code=409,
+                detail=f"cannot_{action}_from_{row.status}",
+            )
+
+    row.status = new_status
+    await session.commit()
+    log.info(
+        "site_status_advanced",
+        admin_id=str(admin.admin_id),
+        site_id=str(site_id),
+        action=action,
+        new_status=new_status,
+    )
+    return _envelope_ok({"site_id": str(site_id), "status": new_status, "action": action})
+
+
+@router.post("/sites/{site_id}/pause_sync", status_code=200)
+async def admin_api_site_pause_sync(
+    site_id: uuid.UUID,
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    return await _advance_site_status(site_id, "pause_sync", admin, session)
+
+
+@router.post("/sites/{site_id}/resume_sync", status_code=200)
+async def admin_api_site_resume_sync(
+    site_id: uuid.UUID,
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    return await _advance_site_status(site_id, "resume_sync", admin, session)
+
+
+@router.post("/sites/{site_id}/archive", status_code=200)
+async def admin_api_site_archive(
+    site_id: uuid.UUID,
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    return await _advance_site_status(site_id, "archive", admin, session)
+
+
+@router.post("/sites/{site_id}/unarchive", status_code=200)
+async def admin_api_site_unarchive(
+    site_id: uuid.UUID,
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    return await _advance_site_status(site_id, "unarchive", admin, session)
+
+
+# ---------------------------------------------------------------------------
 # Leads list + bulk decrypt (PR-H)
 # ---------------------------------------------------------------------------
 
@@ -629,7 +744,13 @@ async def admin_api_waitlist(
 ) -> dict[str, Any]:
     """Aggregate `feedback.source_name` counts (FR-092). Rows with ≥10
     distinct emails are flagged ``ready=true`` so the founder sees
-    what's actionable at a glance."""
+    what's actionable at a glance.
+
+    Rows where the source has been marked «in development» (by
+    `POST /admin/api/waitlist/{source}/mark-in-development`) are filtered
+    out of the aggregation — they're soft-archived but kept in the
+    feedback table for audit.
+    """
     rows = (
         await session.execute(
             select(
@@ -640,6 +761,7 @@ async def admin_api_waitlist(
             )
             .where(Feedback.type == "source_request")
             .where(Feedback.source_name.is_not(None))
+            .where(Feedback.marked_in_development_at.is_(None))
             .group_by(Feedback.source_name)
             .order_by(func.count(func.distinct(Feedback.email)).desc())
         )
@@ -655,6 +777,81 @@ async def admin_api_waitlist(
         for r in rows
     ]
     return _envelope_ok({"items": items, "threshold": 10})
+
+
+@router.post(
+    "/waitlist/{source_name}/mark-in-development",
+    status_code=200,
+)
+async def admin_api_waitlist_mark_in_development(
+    source_name: str,
+    admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """Soft-archive every `feedback` row of type='source_request' with
+    this `source_name` so the row stops appearing in the waitlist
+    aggregation. The underlying rows are kept (audit trail) — only the
+    `marked_in_development_at` timestamp is set.
+
+    Idempotent: rows already marked are not re-updated (WHERE clause
+    filters NULL). The 404 is for «no votes ever recorded for this
+    source» so the founder gets feedback instead of a silent 200.
+    """
+    log = get_logger("admin.api.waitlist")
+    # Path arg `source_name` arrives URL-decoded by FastAPI. Backend's
+    # `feedback.source_name` is at most 64 chars (column type String(64));
+    # reject anything that wouldn't match for a useful error.
+    if not source_name or len(source_name) > 64:
+        raise HTTPException(status_code=400, detail="invalid_source_name")
+
+    # Count candidates first so we can return a meaningful response on 0
+    # without an UPDATE-with-no-rows being indistinguishable from a real
+    # idempotent re-call.
+    pending_count = (
+        await session.execute(
+            select(func.count())
+            .select_from(Feedback)
+            .where(Feedback.type == "source_request")
+            .where(Feedback.source_name == source_name)
+            .where(Feedback.marked_in_development_at.is_(None))
+        )
+    ).scalar_one()
+    if pending_count == 0:
+        # Either no votes ever (404), or all already marked (200 idempotent).
+        any_count = (
+            await session.execute(
+                select(func.count())
+                .select_from(Feedback)
+                .where(Feedback.type == "source_request")
+                .where(Feedback.source_name == source_name)
+            )
+        ).scalar_one()
+        if any_count == 0:
+            raise HTTPException(status_code=404, detail="source_not_found")
+        # All already marked — return idempotently with marked=0 so the
+        # client can show a sensible toast.
+        return _envelope_ok({"source_name": source_name, "marked": 0, "idempotent": True})
+
+    now = datetime.now(UTC)
+    # Bulk update without going through ORM-state per row. `pending_count`
+    # already captured the exact row count above, so we use it instead of
+    # `result.rowcount` (typed as Result[Any].rowcount which mypy strict
+    # doesn't allow — same pattern as `core/erasure/service.py`).
+    await session.execute(
+        update(Feedback)
+        .where(Feedback.type == "source_request")
+        .where(Feedback.source_name == source_name)
+        .where(Feedback.marked_in_development_at.is_(None))
+        .values(marked_in_development_at=now)
+    )
+    await session.commit()
+    log.info(
+        "waitlist_marked_in_development",
+        admin_id=str(admin.admin_id),
+        source_name=source_name,
+        marked=pending_count,
+    )
+    return _envelope_ok({"source_name": source_name, "marked": pending_count, "idempotent": False})
 
 
 @router.get("/feedback", status_code=200)

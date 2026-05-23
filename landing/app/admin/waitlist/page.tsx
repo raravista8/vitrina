@@ -13,10 +13,12 @@
  * `first_seen`, `last_seen`, and a server-side `ready: bool` (true when
  * votes ≥ threshold, default 10 per FR-092 / ADR-0009).
  *
- * `onMarkInDevelopment` is exposed by canon but the backend doesn't
- * have a corresponding endpoint yet — we wire a placeholder that warns
- * to the console. Once `POST /admin/api/waitlist/{source}/mark-in-dev`
- * lands, swap in a real fetch.
+ * `onMarkInDevelopment` POSTs to
+ * `/admin/api/waitlist/{source}/mark-in-development` (PR #129) which
+ * soft-archives every feedback row of type='source_request' with the
+ * matching `source_name` so the row disappears from the next waitlist
+ * fetch. We re-fetch immediately on success so the founder sees the
+ * row leave without a manual reload.
  *
  * Source: `packages/canon/src/admin-ops/index.tsx::S17_Waitlist`.
  * Spec: `docs/handoff/CANON_ADMIN_INTERACTIVE_TZ.md §3.8`.
@@ -45,6 +47,7 @@ function WaitlistScreen() {
   const [data, setData] = useState<WaitlistData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +61,29 @@ function WaitlistScreen() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey]);
+
+  async function onMarkInDevelopment(sourceName: string) {
+    // URL-encode the source name — could contain reserved chars (e.g. `+`
+    // in some platform identifiers). FastAPI decodes the path arg
+    // server-side. Backend returns 404 if the source has zero votes
+    // (founder probably clicked a stale UI), 200 otherwise (idempotent
+    // for already-marked rows).
+    const encoded = encodeURIComponent(sourceName);
+    const result = await adminRequest<{
+      source_name: string;
+      marked: number;
+      idempotent: boolean;
+    }>(`/waitlist/${encoded}/mark-in-development`, { method: "POST" });
+    if (!result.ok) {
+      // Surface to user via the canon error block — same channel as
+      // the load error.
+      setError(`mark_failed: ${result.error}`);
+      return;
+    }
+    // Refetch on success — the marked rows disappear from aggregation.
+    setRefreshKey((n) => n + 1);
+  }
 
   return (
     <Waitlist
@@ -66,10 +91,7 @@ function WaitlistScreen() {
       data={data ?? undefined}
       loading={loading}
       error={error}
-      onMarkInDevelopment={(sourceName: string) => {
-        // TODO: wire to POST /admin/api/waitlist/{sourceName}/mark-in-dev once backend exposes it.
-        console.warn(`[admin] markInDevelopment(${sourceName}) — backend endpoint not yet wired`);
-      }}
+      onMarkInDevelopment={onMarkInDevelopment}
     />
   );
 }

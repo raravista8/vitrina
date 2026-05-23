@@ -240,6 +240,14 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
     message: Mapped[str | None] = mapped_column(Text, nullable=True)
     checkboxes: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, server_default="{}")
 
+    # Set by `POST /admin/api/waitlist/{source}/mark-in-development` when
+    # a founder takes a source request into development. Filters the row
+    # out of the public waitlist aggregation. Soft archive — keeps the
+    # underlying vote for audit; no UI to unmark today (manual SQL only).
+    marked_in_development_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     __table_args__ = (
         CheckConstraint(
             f"type IN {FEEDBACK_TYPES!r}",

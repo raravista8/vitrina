@@ -588,3 +588,227 @@ async def test_logout_clears_cookie(
     # Subsequent /me must be unauthorised even with the (now-deleted) cookie.
     follow = await client.get("/admin/api/me", cookies={"admin_session": cookie})
     assert follow.status_code == 303
+
+
+# --------------------------------------------------------------------------- #
+# Site lifecycle actions (PR #129) — pause_sync / resume_sync / archive / unarchive
+# --------------------------------------------------------------------------- #
+
+
+async def test_site_pause_sync_then_resume(
+    client: httpx.AsyncClient,
+    admin_creds,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """published → pause_sync → sync_paused → resume_sync → published."""
+    _, password, totp_secret = admin_creds
+    user = User(contact_type="email", contact_value="pause@b.c")
+    db_session.add(user)
+    await db_session.flush()
+    site = Site(user_id=user.id, subdomain="pi", source_type="ymaps", status="published")
+    db_session.add(site)
+    await db_session.commit()
+    site_id = site.id
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+
+    # published → sync_paused
+    r1 = await client.post(
+        f"/admin/api/sites/{site_id}/pause_sync", cookies={"admin_session": cookie}
+    )
+    assert r1.status_code == 200, r1.text
+    assert r1.json()["data"]["status"] == "sync_paused"
+
+    # Idempotent re-pause should 409 — already not published. Error
+    # envelope per app.api.middleware.error_handler: {ok:false, error:<code>}.
+    r2 = await client.post(
+        f"/admin/api/sites/{site_id}/pause_sync", cookies={"admin_session": cookie}
+    )
+    assert r2.status_code == 409
+    assert r2.json()["error"] == "cannot_pause_sync_from_sync_paused"
+
+    # sync_paused → published
+    r3 = await client.post(
+        f"/admin/api/sites/{site_id}/resume_sync", cookies={"admin_session": cookie}
+    )
+    assert r3.status_code == 200, r3.text
+    assert r3.json()["data"]["status"] == "published"
+
+
+async def test_site_archive_then_unarchive(
+    client: httpx.AsyncClient,
+    admin_creds,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """published → archive → archived → unarchive → published."""
+    _, password, totp_secret = admin_creds
+    user = User(contact_type="email", contact_value="archive@b.c")
+    db_session.add(user)
+    await db_session.flush()
+    site = Site(user_id=user.id, subdomain="omega", source_type="ymaps", status="published")
+    db_session.add(site)
+    await db_session.commit()
+    site_id = site.id
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+
+    # any → archived (allowed from any state except already archived)
+    r1 = await client.post(f"/admin/api/sites/{site_id}/archive", cookies={"admin_session": cookie})
+    assert r1.status_code == 200, r1.text
+    assert r1.json()["data"]["status"] == "archived"
+
+    # archive a second time → 409 already_archived
+    r2 = await client.post(f"/admin/api/sites/{site_id}/archive", cookies={"admin_session": cookie})
+    assert r2.status_code == 409
+    assert r2.json()["error"] == "already_archived"
+
+    # archived → published (unarchive default)
+    r3 = await client.post(
+        f"/admin/api/sites/{site_id}/unarchive", cookies={"admin_session": cookie}
+    )
+    assert r3.status_code == 200, r3.text
+    assert r3.json()["data"]["status"] == "published"
+
+
+async def test_site_action_404_on_missing_site(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+) -> None:
+    _, password, totp_secret = admin_creds
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.post(
+        "/admin/api/sites/00000000-0000-0000-0000-000000000000/archive",
+        cookies={"admin_session": cookie},
+    )
+    assert r.status_code == 404
+    assert r.json()["error"] == "site_not_found"
+
+
+async def test_site_action_requires_auth(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    user = User(contact_type="email", contact_value="anon@b.c")
+    db_session.add(user)
+    await db_session.flush()
+    site = Site(user_id=user.id, subdomain="psi", source_type="ymaps", status="published")
+    db_session.add(site)
+    await db_session.commit()
+    site_id = site.id
+
+    # No cookie — require_admin dep redirects to /admin/login (303).
+    r = await client.post(f"/admin/api/sites/{site_id}/archive")
+    assert r.status_code == 303
+
+
+async def test_site_pause_sync_rejects_non_published(
+    client: httpx.AsyncClient,
+    admin_creds,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    _, password, totp_secret = admin_creds
+    user = User(contact_type="email", contact_value="bad@b.c")
+    db_session.add(user)
+    await db_session.flush()
+    # status=pending — not allowed to pause_sync (matrix requires published)
+    site = Site(user_id=user.id, subdomain="phi", source_type="ymaps", status="pending")
+    db_session.add(site)
+    await db_session.commit()
+    site_id = site.id
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.post(
+        f"/admin/api/sites/{site_id}/pause_sync", cookies={"admin_session": cookie}
+    )
+    assert r.status_code == 409
+    assert r.json()["error"] == "cannot_pause_sync_from_pending"
+
+
+# --------------------------------------------------------------------------- #
+# Waitlist mark-in-development (PR #129)
+# --------------------------------------------------------------------------- #
+
+
+async def test_waitlist_mark_in_development_filters_out_source(
+    client: httpx.AsyncClient,
+    admin_creds,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """Marking a source as in-dev removes it from the next /waitlist
+    aggregation but keeps the underlying feedback rows."""
+    _, password, totp_secret = admin_creds
+    # 3 votes for instagram, 1 for vk
+    for i in range(3):
+        db_session.add(
+            Feedback(
+                type="source_request",
+                source_name="instagram",
+                email=f"voter{i}@example.com",
+                message=None,
+                checkboxes={},
+            )
+        )
+    db_session.add(
+        Feedback(
+            type="source_request",
+            source_name="vk",
+            email="someone@example.com",
+            message=None,
+            checkboxes={},
+        )
+    )
+    await db_session.commit()
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+
+    # Sanity — both sources present pre-mark
+    pre = await client.get("/admin/api/waitlist", cookies={"admin_session": cookie})
+    sources = {item["source_name"] for item in pre.json()["data"]["items"]}
+    assert sources == {"instagram", "vk"}
+
+    # Mark instagram in dev
+    mark = await client.post(
+        "/admin/api/waitlist/instagram/mark-in-development",
+        cookies={"admin_session": cookie},
+    )
+    assert mark.status_code == 200, mark.text
+    body = mark.json()["data"]
+    assert body["source_name"] == "instagram"
+    assert body["marked"] == 3
+    assert body["idempotent"] is False
+
+    # Aggregation excludes the marked source
+    post = await client.get("/admin/api/waitlist", cookies={"admin_session": cookie})
+    sources_after = {item["source_name"] for item in post.json()["data"]["items"]}
+    assert sources_after == {"vk"}
+
+    # Re-mark → idempotent (marked=0)
+    again = await client.post(
+        "/admin/api/waitlist/instagram/mark-in-development",
+        cookies={"admin_session": cookie},
+    )
+    assert again.status_code == 200
+    body = again.json()["data"]
+    assert body["marked"] == 0
+    assert body["idempotent"] is True
+
+
+async def test_waitlist_mark_in_development_404_unknown_source(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+) -> None:
+    _, password, totp_secret = admin_creds
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.post(
+        "/admin/api/waitlist/never_seen_source/mark-in-development",
+        cookies={"admin_session": cookie},
+    )
+    assert r.status_code == 404
+    assert r.json()["error"] == "source_not_found"
+
+
+async def test_waitlist_mark_in_development_requires_auth(
+    client: httpx.AsyncClient,  # type: ignore[no-untyped-def]
+) -> None:
+    r = await client.post("/admin/api/waitlist/instagram/mark-in-development")
+    assert r.status_code == 303
