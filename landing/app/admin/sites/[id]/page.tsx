@@ -13,13 +13,15 @@
  *   Actions = publish | republish | pause_sync | resume_sync | archive | unarchive.
  *
  * Backend coverage:
- *   - publish, republish → POST /admin/sites/{id}/publish (form-encoded,
- *     Jinja route that returns a 302 with ?flash=... params)
- *   - pause_sync, resume_sync, archive, unarchive → NOT YET in backend
- *     (TODO: add corresponding routes under /admin/api/sites/{id}/...).
- *     Canon enables/disables these buttons via the status matrix; until
- *     backend lands, our onAction handler `console.warn`s and bails on
- *     these 4 verbs so the founder doesn't get a silent no-op.
+ *   - publish, republish → POST /admin/sites/{id}/publish (form-encoded
+ *     Jinja route, returns 302). We post with `redirect: manual` so the
+ *     opaqueredirect counts as success.
+ *   - pause_sync, resume_sync, archive, unarchive → POST
+ *     /admin/api/sites/{id}/{action} (JSON, see
+ *     `backend/app/admin/routers/api.py::_advance_site_status`). Returns
+ *     409 if the transition isn't allowed by the status matrix; canon
+ *     already greys out illegal verbs, but we still surface the error
+ *     via `actionError` if a race lets through a stale enable.
  *
  * Source: `packages/canon/src/admin-ops/index.tsx::S15_SiteDetail`.
  * Spec: `docs/handoff/CANON_ADMIN_INTERACTIVE_TZ.md §3.6`.
@@ -83,38 +85,40 @@ function SiteDetailScreen() {
 
   async function onAction(siteId: string, action: SiteAction) {
     setActionLoading(action);
+    setError(null);
     try {
       if (action === "publish" || action === "republish") {
-        // Backend's publish endpoint is a Jinja form-handler that 302s on
-        // success. We POST with `redirect: manual` so adminRequest's
-        // opaqueredirect branch catches the 303 — same as auth re-routing.
-        // Result envelope: any non-2xx is "not ok" — but the 302 we want
-        // to follow is success. Detect it by `result.error === "auth_required"`
-        // (which is what adminRequest synthesises for opaqueredirect).
+        // Legacy Jinja endpoint: form-handler that returns a 302 redirect
+        // on success. adminRequest follows JSON envelopes and would treat
+        // the redirect as auth_required, so we hit fetch directly here.
         try {
           const response = await fetch(`/admin/sites/${siteId}/publish`, {
             method: "POST",
             credentials: "same-origin",
             redirect: "manual",
           });
-          // 302 / opaqueredirect = success (Jinja flow). 4xx/5xx = error.
           if (response.type === "opaqueredirect" || response.status === 302) {
-            // success
+            // success — fall through to refresh
           } else if (!response.ok) {
             throw new Error(`publish_failed (${response.status})`);
           }
         } catch (err) {
-          // Network error — surface to user via error state
           setError(err instanceof Error ? err.message : "network_error");
         }
-        setRefreshKey((n) => n + 1);
-        return;
+      } else {
+        // JSON action endpoint: POST /admin/api/sites/{id}/{action}.
+        // Returns 409 if the transition isn't allowed by the status
+        // matrix (e.g. trying to pause_sync on an archived site).
+        const result = await adminRequest<{
+          site_id: string;
+          status: string;
+          action: string;
+        }>(`/sites/${siteId}/${action}`, { method: "POST" });
+        if (!result.ok) {
+          setError(result.error);
+        }
       }
-      // Not yet wired backend — log + return without mutating UI state.
-      // Canon's status-aware matrix still disables these for the wrong
-      // statuses; clicking through them on enabled statuses is a no-op
-      // until the backend exposes JSON endpoints.
-      console.warn(`[admin] action ${action} not yet wired to backend`);
+      setRefreshKey((n) => n + 1);
     } finally {
       setActionLoading(null);
     }
