@@ -46,15 +46,36 @@ Python 3.12 + FastAPI + SQLAlchemy 2.0 + Postgres 16 + Redis (RQ) + Jinja2 (site
 
 **Currently consuming canon (drift = 0):**
 
-- `landing/app/page.tsx` — 9 sections via `<ResponsiveCanonSection>` (Examples → FreeMonth)
+_Landing & shared_
+
 - `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`
+- `landing/app/page.tsx` — 9 sections via `<ResponsiveCanonSection>` (Examples → FreeMonth)
+
+_Demo routes_
+
 - `landing/app/admin-demo/page.tsx` — `<ClientAdminDemo />` drop-in
+- `landing/app/customer-demo/page.tsx` — `<CustomerSite scheme={cream|slate|sage} />` palette-preview drop-in
+
+_Admin chrome (canon 0.2.0, PR #128)_ — all 10 founder-side screens
+
+- `landing/components/admin/AdminChrome.tsx` — wraps canon's `<AdminChrome>` with our auth-gate
+- `landing/app/admin/login/page.tsx` — `<AdminLogin>` (2-step + TOTP/backup + rate-limit countdown)
+- `landing/app/admin/page.tsx` — `<AdminDashboard>` (5 KPI tiles + 14-day trend)
+- `landing/app/admin/apps/page.tsx` — `<AppsList>`
+- `landing/app/admin/apps/[id]/page.tsx` — `<AppDetail>`
+- `landing/app/admin/sites/page.tsx` — `<SitesList>`
+- `landing/app/admin/sites/[id]/page.tsx` — `<SiteDetail>` (iframe preview + 6-action toolbar wired via PR #129)
+- `landing/app/admin/leads/page.tsx` — `<Leads>` (multi-select + decrypt modal, plaintext only after fresh TOTP)
+- `landing/app/admin/waitlist/page.tsx` — `<Waitlist>` (mark-in-development wired via PR #129)
+- `landing/app/admin/feedback/page.tsx` — `<FeedbackInbox>`
+- `landing/app/admin/settings/page.tsx` — `<Settings>`
 
 **Still hand-rolled (intentional):**
 
-- `Hero` — canon's `HeroBlock` is read-only (input is placeholder, CTA is anchor). Replacing would break signup. Wait for canon 0.2.x interactive variant.
+- `Hero` — canon's `HeroBlock` is read-only (input is placeholder, CTA is anchor). Replacing would break signup. Wait for canon 0.3.x interactive variant.
 - `Footer` — canon doesn't export standalone (inlined in `<SamosaytLanding>`). Trivial extraction needed canon-side.
-- `SubmitModal`, `PhotoDrawer`, `SourceDetectionBadge`, `FeedbackForm`, `ApplicationForm` — interactive, same compromise as Hero.
+- `SubmitModal`, `PhotoDrawer`, `SourceDetectionBadge`, `FeedbackForm` (public `/feedback`), `ApplicationForm` — interactive, same compromise as Hero.
+- Customer sites at `*.samosite.online` — Jinja2 templates in `sites-template/`, not React. Switching to canon SSR is a separate publish-pipeline project (see `docs/handoff/CANON_SWAP_PLAN.md`).
 
 **Refresh procedure when Claude Design ships a new canon version:**
 
