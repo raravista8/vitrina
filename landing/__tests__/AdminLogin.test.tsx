@@ -33,6 +33,16 @@ function mockFetchSequence(responses: MockResponseInit[]) {
   );
 }
 
+/**
+ * Tests target canon's `AdminLogin` (0.2.0-alpha.1) which uses:
+ *   - step 1: aria-label="Email" + aria-label="Пароль" + button "Дальше"
+ *   - step 2: aria-label="TOTP код" / "Backup-код" + button "Войти"
+ *   - mode toggle: `role="tab"` with name "Аутентификатор" / "Backup-код"
+ *
+ * If a future canon refresh changes these labels, rebaseline this file
+ * against the new render — the labels live in
+ * `packages/canon/src/admin-core/index.tsx::S10_AdminLogin`.
+ */
 describe("AdminLoginPage", () => {
   beforeEach(() => {
     replaceMock.mockReset();
@@ -50,12 +60,12 @@ describe("AdminLoginPage", () => {
 
     render(<AdminLoginPage />);
     // Step 1
-    fireEvent.change(screen.getByLabelText("Логин"), { target: { value: "founder" } });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "founder" } });
     fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "secret123" } });
     fireEvent.click(screen.getByRole("button", { name: /Дальше/ }));
 
     await screen.findByText(/Двухфакторная аутентификация/);
-    fireEvent.change(screen.getByLabelText(/Код из аутентификатора/), {
+    fireEvent.change(screen.getByLabelText(/TOTP код/), {
       target: { value: "123456" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Войти/ }));
@@ -69,7 +79,7 @@ describe("AdminLoginPage", () => {
     ]);
 
     render(<AdminLoginPage />);
-    fireEvent.change(screen.getByLabelText("Логин"), { target: { value: "founder" } });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "founder" } });
     fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "x" } });
     fireEvent.click(screen.getByRole("button", { name: /Дальше/ }));
 
@@ -84,18 +94,19 @@ describe("AdminLoginPage", () => {
     ]);
 
     render(<AdminLoginPage />);
-    fireEvent.change(screen.getByLabelText("Логин"), { target: { value: "founder" } });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "founder" } });
     fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "ok" } });
     fireEvent.click(screen.getByRole("button", { name: /Дальше/ }));
     await screen.findByText(/Двухфакторная аутентификация/);
-    fireEvent.change(screen.getByLabelText(/Код из аутентификатора/), {
+    fireEvent.change(screen.getByLabelText(/TOTP код/), {
       target: { value: "999999" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Войти/ }));
 
     // Returns to step 1 with an explanatory error.
-    await screen.findByText(/Сессия входа истекла/);
-    expect(screen.getByLabelText("Логин")).toBeInTheDocument();
+    // Canon's `LOGIN_ERROR_MSG.invalid_challenge` = "Сессия истекла. Начните заново."
+    await screen.findByText(/Сессия истекла/);
+    expect(screen.getByLabelText("Email")).toBeInTheDocument();
   });
 
   it("swaps to backup-code mode when the link is clicked", async () => {
@@ -104,12 +115,13 @@ describe("AdminLoginPage", () => {
     ]);
 
     render(<AdminLoginPage />);
-    fireEvent.change(screen.getByLabelText("Логин"), { target: { value: "founder" } });
+    fireEvent.change(screen.getByLabelText("Email"), { target: { value: "founder" } });
     fireEvent.change(screen.getByLabelText("Пароль"), { target: { value: "ok" } });
     fireEvent.click(screen.getByRole("button", { name: /Дальше/ }));
     await screen.findByText(/Двухфакторная аутентификация/);
 
-    fireEvent.click(screen.getByRole("button", { name: /Использовать backup-код/ }));
+    // Canon renders the mode toggle as a tablist with two tabs.
+    fireEvent.click(screen.getByRole("tab", { name: /Backup-код/ }));
     expect(screen.getByLabelText(/Backup-код/)).toBeInTheDocument();
   });
 });

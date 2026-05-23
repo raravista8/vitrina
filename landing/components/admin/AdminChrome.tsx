@@ -1,96 +1,58 @@
 "use client";
 
 /**
- * Shared admin chrome — sidebar + auth-gate (PR-F).
+ * Admin chrome — canon `AdminChrome` drop-in (canon 0.2.0-alpha.1).
  *
- * Wraps every /admin/* page (except /admin/login). On mount fetches
- * /admin/api/me; if the session is missing or expired the page
- * window-redirects to /admin/login so the cookie stays consistent
- * with the legacy Jinja flow (same path, same TTL).
+ * Replaces the previous hand-rolled Tailwind sidebar with the controlled
+ * canon component. Visual = canon's verbatim render (terracotta sidebar
+ * with emoji nav icons, Onest type, accent-soft active highlight).
+ * Drift = 0 from design canvas.
  *
- * Design source: `~/Downloads/vitrina ui/code/admin/AdminChrome.tsx`
- * (Concept A canvas). Tailwind classes ported from the canvas's
- * `stone-*` / `orange-*` to the project's `paper-soft` / `accent`
- * tokens so the admin shell shares the landing's palette.
+ * What this wrapper still owns (consumer concern):
+ *   - Auth gate: fetch `/admin/api/me` on mount; redirect to `/admin/login`
+ *     on missing/expired session. Same as the previous chrome.
+ *   - Routing: map canon's `onNavigate(section)` to Next.js `router.push`.
+ *     Canon's `active` prop maps from `usePathname()` — section IDs
+ *     in canon: `dashboard | apps | sites | leads | feedback |
+ *     waitlist | settings`.
+ *   - Logout: POST `/admin/api/logout`, redirect.
+ *   - Live badge counts: best-effort GET `/admin/api/dashboard` for
+ *     `apps_pending` — feeds canon's `badgeCounts.apps`.
+ *   - User identity: `me.admin_id.slice(0,8)` → canon's `user.username`,
+ *     initials default `'F'`.
  *
- * The page-level counter on "Заявки" is a live read of
- * /admin/api/dashboard.counters.apps_pending — refreshed on every
- * nav into a page that uses AdminChrome. Skipped silently if the
- * dashboard endpoint is unreachable; the chrome shouldn't fail open.
+ * Source: `packages/canon/src/admin-core/index.tsx::AdminChrome`.
+ * Spec: `docs/handoff/CANON_ADMIN_INTERACTIVE_TZ.md §3.11`.
  */
 
-import {
-  Globe,
-  Hourglass,
-  Inbox,
-  LayoutDashboard,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Settings,
-} from "lucide-react";
-import Link from "next/link";
+import { AdminChrome as CanonAdminChrome } from "@samosite/canon/admin-core";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { adminRequest, type AdminMeData, type DashboardData } from "@/lib/admin-api";
-import { cn } from "@/lib/cn";
-import { BrandMark } from "@/components/BrandMark";
 
-interface NavItem {
-  href: string;
-  icon: typeof LayoutDashboard;
-  label: string;
-  // Match function — segment-based so /admin/apps/<id> highlights "Заявки".
-  match: (pathname: string) => boolean;
-  counter?: "apps_pending";
+// Canon's nav sections — keep in lockstep with NAV array in
+// `packages/canon/src/admin-core/index.tsx`. Adding a section here
+// without canon support is fine (canon ignores unknown keys), removing
+// one canon ships will break navigation.
+type Section = "dashboard" | "apps" | "sites" | "leads" | "feedback" | "waitlist" | "settings";
+
+// Pathname → section mapper. Segment-based so `/admin/apps/<id>` still
+// highlights «Заявки» (was the same behaviour in the hand-rolled chrome).
+function sectionFromPath(pathname: string): Section {
+  if (pathname === "/admin" || pathname === "/admin/") return "dashboard";
+  if (pathname.startsWith("/admin/apps")) return "apps";
+  if (pathname.startsWith("/admin/sites")) return "sites";
+  if (pathname.startsWith("/admin/leads")) return "leads";
+  if (pathname.startsWith("/admin/feedback")) return "feedback";
+  if (pathname.startsWith("/admin/waitlist")) return "waitlist";
+  if (pathname.startsWith("/admin/settings")) return "settings";
+  return "dashboard";
 }
 
-const NAV: ReadonlyArray<NavItem> = [
-  {
-    href: "/admin",
-    icon: LayoutDashboard,
-    label: "Главная",
-    match: (p) => p === "/admin",
-  },
-  {
-    href: "/admin/apps",
-    icon: Inbox,
-    label: "Заявки",
-    match: (p) => p.startsWith("/admin/apps"),
-    counter: "apps_pending",
-  },
-  {
-    href: "/admin/sites",
-    icon: Globe,
-    label: "Сайты",
-    match: (p) => p.startsWith("/admin/sites"),
-  },
-  {
-    href: "/admin/leads",
-    icon: Mail,
-    label: "Лиды",
-    match: (p) => p.startsWith("/admin/leads"),
-  },
-  {
-    href: "/admin/feedback",
-    icon: MessageSquare,
-    label: "Обратная связь",
-    match: (p) => p.startsWith("/admin/feedback"),
-  },
-  {
-    href: "/admin/waitlist",
-    icon: Hourglass,
-    label: "Waitlist",
-    match: (p) => p.startsWith("/admin/waitlist"),
-  },
-  {
-    href: "/admin/settings",
-    icon: Settings,
-    label: "Настройки",
-    match: (p) => p.startsWith("/admin/settings"),
-  },
-];
+function pathFromSection(section: Section): string {
+  return section === "dashboard" ? "/admin" : `/admin/${section}`;
+}
 
 interface AdminChromeProps {
   children: React.ReactNode;
@@ -128,15 +90,22 @@ export function AdminChrome({ children }: AdminChromeProps) {
     };
   }, [router]);
 
-  async function handleLogout() {
-    await adminRequest("/logout", { method: "POST" });
-    router.replace("/admin/login");
-  }
-
   if (authState === "checking") {
+    // Match canon's `bgSoft` background so the auth-check splash doesn't flash
+    // a different colour for a frame before the chrome mounts.
     return (
-      <div className="flex min-h-screen items-center justify-center bg-paper">
-        <p className="text-sm text-ink-faint">Проверяем сессию…</p>
+      <div
+        style={{
+          display: "grid",
+          placeItems: "center",
+          minHeight: "100vh",
+          background: "var(--vt-bg-soft, #faf6f1)",
+          fontFamily: "Onest, system-ui, sans-serif",
+          fontSize: 14,
+          color: "var(--vt-ink-soft, #6b6157)",
+        }}
+      >
+        <p>Проверяем сессию…</p>
       </div>
     );
   }
@@ -146,64 +115,20 @@ export function AdminChrome({ children }: AdminChromeProps) {
   }
 
   return (
-    <div className="grid min-h-screen grid-cols-1 bg-paper-soft md:grid-cols-[240px_1fr]">
-      <aside className="flex flex-col gap-1 border-r border-line bg-paper p-4">
-        <div className="mb-5 flex items-center gap-2 px-2">
-          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Заменили
-              анонимный квадратик без буквы на терракотовый «С» из канона. */}
-          <BrandMark size={22} fontSize={15} />
-          <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
-            ADMIN
-          </span>
-        </div>
-        <nav className="flex flex-col gap-0.5">
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.match(pathname);
-            const counter = item.counter === "apps_pending" ? pendingCount : null;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm",
-                  isActive
-                    ? "bg-accent-soft font-semibold text-accent"
-                    : "text-ink-soft hover:bg-paper-soft hover:text-ink",
-                )}
-              >
-                <Icon className="h-4 w-4" aria-hidden />
-                <span>{item.label}</span>
-                {counter !== null && counter > 0 ? (
-                  <span
-                    className={cn(
-                      "ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-                      isActive ? "bg-accent text-white" : "bg-warn-soft text-warn",
-                    )}
-                  >
-                    {counter}
-                  </span>
-                ) : null}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-auto flex items-center gap-2 border-t border-line pt-3 text-xs text-ink-faint">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-soft font-bold text-accent-ink">
-            F
-          </span>
-          <span className="truncate">{me?.admin_id?.slice(0, 8) ?? "founder"}</span>
-          <button
-            type="button"
-            onClick={handleLogout}
-            aria-label="Выйти"
-            className="ml-auto rounded-md p-1 text-ink-faint hover:bg-paper-soft hover:text-ink"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      </aside>
-      <main className="min-w-0">{children}</main>
-    </div>
+    <CanonAdminChrome
+      active={sectionFromPath(pathname)}
+      user={{
+        username: me?.admin_id?.slice(0, 8) ?? "founder",
+        initials: "F",
+      }}
+      onNavigate={(section: Section) => router.push(pathFromSection(section))}
+      onLogout={async () => {
+        await adminRequest("/logout", { method: "POST" });
+        router.replace("/admin/login");
+      }}
+      badgeCounts={pendingCount !== null ? { apps: pendingCount } : undefined}
+    >
+      {children}
+    </CanonAdminChrome>
   );
 }
