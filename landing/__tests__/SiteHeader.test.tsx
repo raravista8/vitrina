@@ -38,8 +38,9 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     window.addEventListener(SAMOSITE_OPEN_SUBMIT, listener);
     // Canon labels: desktop «Сделать сайт», mobile «Сделать». Both
     // are rendered (one hidden via CSS) so we pick the desktop one.
-    const cta = screen.getAllByRole("button", { name: /^Сделать сайт/ })[0];
-    fireEvent.click(cta);
+    const ctas = screen.getAllByRole("button", { name: /^Сделать сайт/ });
+    expect(ctas.length).toBeGreaterThan(0);
+    fireEvent.click(ctas[0]!);
     expect(listener).toHaveBeenCalledTimes(1);
     window.removeEventListener(SAMOSITE_OPEN_SUBMIT, listener);
   });
