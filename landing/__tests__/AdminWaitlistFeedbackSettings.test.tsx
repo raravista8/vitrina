@@ -207,9 +207,14 @@ describe("AdminSettingsPage", () => {
 
     const { default: AdminSettingsPage } = await import("@/app/admin/settings/page");
     render(<AdminSettingsPage />);
-    await screen.findByText(/Yandex SmartCaptcha/);
-    expect(screen.getAllByText("настроено").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("не настроено").length).toBeGreaterThan(0);
+    // Canon's Settings uses short service labels: "Captcha" (not "Yandex
+    // SmartCaptcha"), "Telegram-бот", "YandexGPT", "ЮKassa", "S3 storage",
+    // "Fernet keys". Configured badges read "настроен" / "не настроен"
+    // (masculine, no -о suffix). See packages/canon/src/admin-ops/index.tsx
+    // §Внешние сервисы card.
+    await screen.findByText(/Captcha/);
+    expect(screen.getAllByText("настроен").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("не настроен").length).toBeGreaterThan(0);
     // Nothing that looks like a token literal leaks.
     expect(document.body.textContent).not.toMatch(/sk-/);
     expect(document.body.textContent).not.toMatch(/FERNET=/);

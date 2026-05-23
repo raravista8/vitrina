@@ -1,265 +1,203 @@
 "use client";
 
 /**
- * Admin login — Concept A canvas screen #10. Two-step:
+ * Admin login (canon `AdminLogin` drop-in, canon 0.2.0-alpha.1).
  *
- *   step=1  username + password → /admin/api/login → challenge_id
- *   step=2  challenge_id + TOTP → /admin/api/login/totp → cookie + nav to /admin
+ * Replaces the previous hand-rolled Tailwind form with the controlled
+ * canon component from `@samosite/canon/admin-core`. Visual is the
+ * canon's verbatim render (terracotta card, sans Onest, mono input) —
+ * drift = 0 from the design canvas.
  *
- * A "Использовать backup-код" link swaps step 2 to /admin/api/login/backup.
+ * Behaviour stays consumer-side: we own the fetch calls to
+ * `/admin/api/login` / `/login/totp` / `/login/backup` (FastAPI in
+ * `backend/app/admin/routers/api.py`), keep the challenge_id between
+ * step 1 → step 2, and route to `/admin` on success.
  *
- * Error envelope handling:
+ * The canon's `error` prop is a string enum; we map our
+ * `adminRequest()` envelope's error codes onto it.
  *
- *   - 401 invalid_credentials   → step 1 inline error "Неверный логин или пароль"
- *   - 401 invalid_challenge     → step 2 fall back to step 1 with "Сессия истекла"
- *   - 401 invalid_code          → step 2 inline error "Неверный код"
- *   - 429 from rate limiter     → banner with countdown (admin_login_rate_limiter)
- *   - 0 network_error           → "Нет связи с сервером"
+ * Rate-limit handling (CLAUDE.md SECURITY §T7.1): the FastAPI middleware
+ * returns `429 Retry-After: <seconds>`. The `adminRequest` helper
+ * discards headers, so we fall back to a flat 60s lockout — same as
+ * the previous hand-rolled flow. When canon's countdown reaches 0,
+ * the parent unsets `rateLimited` and the form re-enables.
  *
- * Anti-pattern guard (CLAUDE.md): never disable the input on bad input —
- * the submit button is the only thing that goes pending. A user who
- * mistypes can correct without losing focus.
+ * Source: `packages/canon/src/admin-core/index.tsx::S10_AdminLogin`.
+ * Spec: `docs/handoff/specs/05 §1` + `docs/handoff/CANON_ADMIN_INTERACTIVE_TZ.md §3.1`.
  */
 
-import { AlertTriangle, ArrowRight, ShieldCheck } from "lucide-react";
+import { AdminLogin } from "@samosite/canon/admin-core";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { adminRequest } from "@/lib/admin-api";
-import { cn } from "@/lib/cn";
-import { BrandMark } from "@/components/BrandMark";
 
 type Mode = "totp" | "backup";
+type Step = 1 | 2;
+type CanonError =
+  | null
+  | "invalid_credentials"
+  | "invalid_challenge"
+  | "invalid_code"
+  | "rate_limited"
+  | "network_error"
+  | "unknown_error";
 
-interface RateLimit {
-  retryAfterSeconds: number;
+/**
+ * Map our backend envelope's `error` codes onto canon's enum. Canon
+ * knows 6 codes (`invalid_credentials`, `invalid_challenge`,
+ * `invalid_code`, `rate_limited`, `network_error`, `unknown_error`);
+ * anything else falls back to `unknown_error`.
+ */
+function mapError(code: string): Exclude<CanonError, null> {
+  switch (code) {
+    case "invalid_credentials":
+    case "invalid_challenge":
+    case "invalid_code":
+    case "rate_limited":
+    case "network_error":
+      return code;
+    case "auth_required":
+      return "invalid_challenge";
+    default:
+      return "unknown_error";
+  }
 }
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<Step>(1);
   const [mode, setMode] = useState<Mode>("totp");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [totp, setTotp] = useState("");
+  const [backupCode, setBackupCode] = useState("");
   const [challengeId, setChallengeId] = useState<string | null>(null);
-  const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [rateLimit, setRateLimit] = useState<RateLimit | null>(null);
-  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<CanonError>(null);
+  const [loading, setLoading] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
+  const [rateLimitedRetryAfterSeconds, setRateLimitedRetryAfterSeconds] = useState<number | null>(
+    null,
+  );
 
-  // Rate-limit countdown tick. The setState happens inside the timer
-  // callback (not synchronously during render), which is the canonical
-  // pattern for "advance state on a wall-clock tick" — react-hooks's
-  // experimental `set-state-in-effect` rule still flags it because of
-  // the linter's coarse heuristic, hence the targeted disable.
+  // Self-managed rate-limit countdown — canon's `<RateLimitCountdown>`
+  // consumes `rateLimitedRetryAfterSeconds` but doesn't tick down. We
+  // mirror the previous hand-rolled flow: decrement once per second,
+  // clear on zero. The setState calls happen either inside the timer
+  // callback or as terminal-state cleanup on hitting zero — both are
+  // canonical "advance state on wall-clock tick" patterns; the lint
+  // rule's coarse heuristic still flags them, so we targeted-disable.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (rateLimit === null) return;
-    if (rateLimit.retryAfterSeconds <= 0) {
-      setRateLimit(null);
+    if (!rateLimited || rateLimitedRetryAfterSeconds === null) return;
+    if (rateLimitedRetryAfterSeconds <= 0) {
+      setRateLimited(false);
+      setRateLimitedRetryAfterSeconds(null);
+      setError(null);
       return;
     }
     const id = window.setTimeout(() => {
-      setRateLimit({ retryAfterSeconds: rateLimit.retryAfterSeconds - 1 });
+      setRateLimitedRetryAfterSeconds((s) => (s === null ? null : s - 1));
     }, 1000);
     return () => window.clearTimeout(id);
-  }, [rateLimit]);
+  }, [rateLimited, rateLimitedRetryAfterSeconds]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  async function submitStep1(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setPending(true);
-    setError(null);
-    const result = await adminRequest<{ challenge_id: string; expires_in: number }>("/login", {
-      method: "POST",
-      body: { username, password },
-    });
-    setPending(false);
-    if (result.ok) {
-      setChallengeId(result.data.challenge_id);
-      setCode("");
-      setStep(2);
-      return;
-    }
-    if (result.status === 429) {
-      // Backend's RateLimiter middleware returns Retry-After in seconds.
-      // We don't have the header here (adminRequest discards it), so
-      // we use a flat 60s placeholder; the user can wait it out.
-      setRateLimit({ retryAfterSeconds: 60 });
-      return;
-    }
-    setError(mapError(result.error, 1));
-  }
+  // Step 1 submit: POST /admin/api/login {username, password} →
+  // challenge_id (5min TTL) or 401 invalid_credentials / 429 rate-limit.
+  const onSubmitCredentials = useCallback(
+    async (u: string, p: string) => {
+      if (loading) return;
+      setError(null);
+      setLoading(true);
+      const result = await adminRequest<{ challenge_id: string; expires_in: number }>("/login", {
+        method: "POST",
+        body: { username: u, password: p },
+      });
+      setLoading(false);
+      if (result.ok) {
+        setChallengeId(result.data.challenge_id);
+        setTotp("");
+        setBackupCode("");
+        setStep(2);
+        return;
+      }
+      if (result.status === 429) {
+        setRateLimited(true);
+        setRateLimitedRetryAfterSeconds(60);
+        setError("rate_limited");
+        return;
+      }
+      setError(mapError(result.error));
+    },
+    [loading],
+  );
 
-  async function submitStep2(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setPending(true);
-    setError(null);
-    const endpoint = mode === "totp" ? "/login/totp" : "/login/backup";
-    const result = await adminRequest("/login" + endpoint.slice(6), {
-      method: "POST",
-      body: { challenge_id: challengeId, code },
-    });
-    setPending(false);
-    if (result.ok) {
-      router.replace("/admin");
-      return;
-    }
-    if (result.error === "invalid_challenge") {
+  // Step 2 submit: POST /admin/api/login/{totp,backup} {challenge_id, code}
+  // → set admin_session cookie + redirect to /admin.
+  const onSubmitCode = useCallback(
+    async (codeKind: Mode, codeValue: string) => {
+      if (loading) return;
+      setError(null);
+      setLoading(true);
+      const endpoint = codeKind === "totp" ? "/login/totp" : "/login/backup";
+      const result = await adminRequest(endpoint, {
+        method: "POST",
+        body: { challenge_id: challengeId, code: codeValue },
+      });
+      setLoading(false);
+      if (result.ok) {
+        router.replace("/admin");
+        return;
+      }
       // Challenge expired or already consumed — bounce back to step 1.
-      setStep(1);
-      setError("Сессия входа истекла, повторите ввод пароля.");
-      setChallengeId(null);
-      setCode("");
-      return;
-    }
-    if (result.status === 429) {
-      setRateLimit({ retryAfterSeconds: 60 });
-      return;
-    }
-    setError(mapError(result.error, 2));
-  }
+      if (result.error === "invalid_challenge") {
+        setStep(1);
+        setError("invalid_challenge");
+        setChallengeId(null);
+        setTotp("");
+        setBackupCode("");
+        return;
+      }
+      if (result.status === 429) {
+        setRateLimited(true);
+        setRateLimitedRetryAfterSeconds(60);
+        setError("rate_limited");
+        return;
+      }
+      setError(mapError(result.error));
+    },
+    [loading, challengeId, router],
+  );
 
   return (
-    <main className="grid min-h-screen place-items-center bg-paper-soft p-6">
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-white p-7 shadow-card">
-        <div className="mb-5 flex items-center gap-2">
-          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). */}
-          <BrandMark size={22} fontSize={15} />
-          <span className="ml-auto rounded-md bg-paper-soft px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-soft">
-            ADMIN
-          </span>
-        </div>
-
-        <h1 className="text-xl font-bold tracking-tight text-ink">
-          {step === 1 ? "Вход в админку" : "Двухфакторная аутентификация"}
-        </h1>
-        <p className="mt-1 text-sm text-ink-soft">
-          {step === 1
-            ? "Только для founder. Все попытки логируются."
-            : mode === "totp"
-              ? "Введите 6-значный код из аутентификатора."
-              : "Введите один backup-код из выданного списка."}
-        </p>
-
-        {rateLimit ? (
-          <div className="border-danger/30 mt-4 flex items-center gap-2 rounded-md border bg-danger-soft px-3 py-2.5 text-sm text-danger">
-            <AlertTriangle className="h-4 w-4" />
-            <span>
-              IP заблокирован. Подождите {Math.floor(rateLimit.retryAfterSeconds / 60)}:
-              {String(rateLimit.retryAfterSeconds % 60).padStart(2, "0")}.
-            </span>
-          </div>
-        ) : null}
-
-        {error ? <p className="mt-3 text-sm text-danger">{error}</p> : null}
-
-        {step === 1 ? (
-          <form className="mt-4 space-y-3" onSubmit={submitStep1}>
-            <Field label="Логин">
-              <input
-                type="text"
-                autoComplete="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                required
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Пароль">
-              <input
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-                className={inputClass}
-              />
-            </Field>
-            <SubmitButton pending={pending}>Дальше</SubmitButton>
-          </form>
-        ) : (
-          <form className="mt-4 space-y-3" onSubmit={submitStep2}>
-            <Field label={mode === "totp" ? "Код из аутентификатора" : "Backup-код"}>
-              <input
-                type="text"
-                inputMode={mode === "totp" ? "numeric" : "text"}
-                pattern={mode === "totp" ? "\\d{6}" : undefined}
-                maxLength={mode === "totp" ? 6 : 16}
-                value={code}
-                onChange={(event) =>
-                  setCode(
-                    mode === "totp" ? event.target.value.replace(/\D/g, "") : event.target.value,
-                  )
-                }
-                required
-                className={cn(
-                  inputClass,
-                  mode === "totp" && "text-center font-mono text-xl tracking-[0.6em]",
-                )}
-              />
-            </Field>
-            <button
-              type="button"
-              onClick={() => {
-                setMode(mode === "totp" ? "backup" : "totp");
-                setCode("");
-                setError(null);
-              }}
-              className="block text-sm text-accent underline"
-            >
-              {mode === "totp" ? "Использовать backup-код" : "Вернуться к коду аутентификатора"}
-            </button>
-            <SubmitButton pending={pending}>Войти</SubmitButton>
-          </form>
-        )}
-
-        <p className="mt-5 flex items-center gap-1.5 font-mono text-[11px] text-ink-faint">
-          <ShieldCheck className="h-3 w-3" /> bcrypt cost=12 · TOTP · audit log
-        </p>
-      </div>
-    </main>
+    <AdminLogin
+      step={step}
+      onStepChange={(s: Step) => setStep(s)}
+      mode={mode}
+      onModeChange={(m: Mode) => {
+        setMode(m);
+        setTotp("");
+        setBackupCode("");
+        setError(null);
+      }}
+      username={username}
+      onUsernameChange={setUsername}
+      password={password}
+      onPasswordChange={setPassword}
+      totp={totp}
+      onTotpChange={(value: string) =>
+        // Strip non-digits for TOTP — matches hand-rolled UX and backend pattern \d{6}.
+        setTotp(value.replace(/\D/g, "").slice(0, 6))
+      }
+      backupCode={backupCode}
+      onBackupCodeChange={(value: string) => setBackupCode(value.slice(0, 16))}
+      onSubmitCredentials={onSubmitCredentials}
+      onSubmitCode={onSubmitCode}
+      loading={loading}
+      error={error}
+      rateLimited={rateLimited}
+      rateLimitedRetryAfterSeconds={rateLimitedRetryAfterSeconds}
+    />
   );
-}
-
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
-
-const inputClass = cn(
-  "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-ink",
-  "placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/40",
-);
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-ink-soft">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function SubmitButton({ pending, children }: { pending: boolean; children: React.ReactNode }) {
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={cn(
-        "mt-1 inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-md bg-accent text-sm font-semibold text-white",
-        "hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70",
-      )}
-    >
-      {pending ? "…" : children}
-      {!pending && <ArrowRight className="h-4 w-4" />}
-    </button>
-  );
-}
-
-function mapError(code: string, step: 1 | 2): string {
-  if (code === "invalid_credentials") return "Неверный логин или пароль";
-  if (code === "invalid_code") return "Неверный код";
-  if (code === "network_error") return "Нет связи с сервером";
-  if (code === "auth_required") return "Сессия истекла";
-  return step === 1 ? "Не удалось войти. Попробуйте ещё раз." : "Не удалось проверить код.";
 }

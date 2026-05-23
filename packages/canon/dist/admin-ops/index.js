@@ -1,5 +1,8 @@
 "use client";
 
+// src/admin-ops/index.tsx
+import React2, { useState as useState2, useMemo } from "react";
+
 // src/tokens.ts
 var VT = {
   // Surfaces
@@ -150,11 +153,64 @@ function Badge({ kind = "success", children, style }) {
 function IconArrow({ size = 18 }) {
   return /* @__PURE__ */ jsx("span", { style: { fontSize: size, lineHeight: 1 }, children: "\u2192" });
 }
+function Spinner({ size = 14 }) {
+  return /* @__PURE__ */ jsx("svg", { width: size, height: size, viewBox: "0 0 24 24", style: { animation: "vt-spin 0.9s linear infinite" }, children: /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 9, fill: "none", stroke: "currentColor", strokeWidth: 2.5, strokeDasharray: "40 20", strokeLinecap: "round" }) });
+}
 
 // src/admin-core/index.tsx
-import { Fragment as Fragment2, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+import React, { useState, useEffect, useCallback } from "react";
+import { Fragment as Fragment3, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
+  return /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: {
+    display: "inline-block",
+    width,
+    height,
+    borderRadius: radius,
+    background: VT.bgSoft,
+    backgroundImage: `linear-gradient(90deg, ${VT.bgSoft}, ${VT.lineSoft}, ${VT.bgSoft})`,
+    backgroundSize: "200% 100%",
+    animation: "vt-shimmer 1.4s ease-in-out infinite",
+    ...style
+  } });
+}
+function EmptyState({ title, hint }) {
+  return /* @__PURE__ */ jsxs2("div", { role: "status", style: {
+    padding: "48px 24px",
+    textAlign: "center",
+    color: VT.inkFaint,
+    fontFamily: VT.font.sans
+  }, children: [
+    /* @__PURE__ */ jsx2("div", { "aria-hidden": "true", style: { fontSize: 28, opacity: 0.6, marginBottom: 8 }, children: "\u2205" }),
+    /* @__PURE__ */ jsx2("div", { style: { fontSize: 14.5, fontWeight: 500, color: VT.inkSoft, marginBottom: 4 }, children: title }),
+    hint && /* @__PURE__ */ jsx2("div", { style: { fontSize: 13 }, children: hint })
+  ] });
+}
+function ErrorBlock({ title, message, onRetry }) {
+  return /* @__PURE__ */ jsx2(Card, { role: "alert", style: {
+    padding: 18,
+    background: VT.dangerSoft,
+    borderColor: "oklch(0.86 0.06 28)"
+  }, children: /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+    /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { fontSize: 18 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsxs2("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ jsx2("div", { style: { fontWeight: 600, fontSize: 14, color: "oklch(0.4 0.15 28)" }, children: title || "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A" }),
+      message && /* @__PURE__ */ jsx2("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 2 }, children: message })
+    ] }),
+    onRetry && /* @__PURE__ */ jsx2("button", { type: "button", onClick: onRetry, style: {
+      border: "none",
+      background: VT.white,
+      color: VT.ink,
+      padding: "6px 12px",
+      borderRadius: VT.r.pill,
+      fontSize: 13,
+      fontWeight: 500,
+      cursor: "pointer",
+      fontFamily: VT.font.sans
+    }, children: "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u044C" })
+  ] }) });
+}
 var NAV = [
-  ["dash", "Dashboard", "\u{1F4CA}"],
+  ["dashboard", "Dashboard", "\u{1F4CA}"],
   ["apps", "\u0417\u0430\u044F\u0432\u043A\u0438", "\u{1F4E5}"],
   ["sites", "\u0421\u0430\u0439\u0442\u044B", "\u{1F310}"],
   ["leads", "\u041B\u0438\u0434\u044B", "\u{1F4E8}"],
@@ -162,7 +218,18 @@ var NAV = [
   ["waitlist", "Waitlist", "\u23F3"],
   ["settings", "Settings", "\u2699\uFE0F"]
 ];
-function AdminChrome({ active, children }) {
+var SECTION_ALIAS = { dash: "dashboard" };
+function AdminChrome({
+  active = "dashboard",
+  user,
+  onNavigate,
+  onLogout,
+  badgeCounts,
+  children
+}) {
+  const activeKey = SECTION_ALIAS[active] || active;
+  const u = user || { username: "founder@samosite.online", initials: "F" };
+  const badges = badgeCounts ?? { apps: 12 };
   return /* @__PURE__ */ jsxs2("div", { style: {
     display: "grid",
     gridTemplateColumns: "220px 1fr",
@@ -181,213 +248,460 @@ function AdminChrome({ active, children }) {
       gap: 4
     }, children: [
       /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
+        /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
         /* @__PURE__ */ jsx2("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
         /* @__PURE__ */ jsx2(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
       ] }),
-      NAV.map(([key, name, icon]) => /* @__PURE__ */ jsxs2("a", { style: {
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "8px 10px",
-        borderRadius: VT.r.sm,
-        background: active === key ? VT.accentSoft : "transparent",
-        color: active === key ? VT.accentInk : VT.ink,
-        fontSize: 14,
-        fontWeight: active === key ? 600 : 500,
-        cursor: "pointer"
-      }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
-        name,
-        key === "apps" && /* @__PURE__ */ jsx2(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: "12" })
-      ] }, key)),
+      /* @__PURE__ */ jsx2("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
+        const isActive = activeKey === key;
+        const count = badges?.[key];
+        return /* @__PURE__ */ jsxs2(
+          "button",
+          {
+            type: "button",
+            onClick: () => onNavigate && onNavigate(key),
+            "aria-current": isActive ? "page" : void 0,
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 10px",
+              borderRadius: VT.r.sm,
+              background: isActive ? VT.accentSoft : "transparent",
+              color: isActive ? VT.accentInk : VT.ink,
+              fontSize: 14,
+              fontWeight: isActive ? 600 : 500,
+              cursor: "pointer",
+              textAlign: "left",
+              border: "none",
+              fontFamily: "inherit",
+              width: "100%"
+            },
+            children: [
+              /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
+              name,
+              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx2(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
+            ]
+          },
+          key
+        );
+      }) }),
       /* @__PURE__ */ jsxs2("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: "F" }),
-        "founder@samosite.online",
-        /* @__PURE__ */ jsx2("a", { style: { marginLeft: "auto", color: VT.inkFaint }, children: "\u0432\u044B\u0439\u0442\u0438" })
+        /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
+        /* @__PURE__ */ jsx2("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
+        /* @__PURE__ */ jsx2(
+          "button",
+          {
+            type: "button",
+            onClick: () => onLogout && onLogout(),
+            style: {
+              border: "none",
+              background: "transparent",
+              color: VT.inkFaint,
+              cursor: "pointer",
+              fontSize: 12,
+              fontFamily: "inherit",
+              padding: 0
+            },
+            children: "\u0432\u044B\u0439\u0442\u0438"
+          }
+        )
       ] })
     ] }),
     /* @__PURE__ */ jsx2("main", { style: { minWidth: 0 }, children })
   ] });
 }
-function StatTile({ label, value, delta, deltaSign, sub }) {
-  return /* @__PURE__ */ jsxs2(Card, { style: { padding: 18 }, children: [
-    /* @__PURE__ */ jsx2(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: label.toUpperCase() }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
-      /* @__PURE__ */ jsx2("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
-      delta && /* @__PURE__ */ jsxs2("span", { style: {
-        fontSize: 12.5,
-        fontWeight: 600,
-        color: deltaSign === "+" ? VT.success : deltaSign === "-" ? VT.danger : VT.inkSoft
-      }, children: [
-        deltaSign,
-        delta
-      ] })
-    ] }),
-    sub && /* @__PURE__ */ jsx2("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub })
+var STATUS_MAP = {
+  // Applications (richer canon set + TZ API set)
+  new: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043D\u043E\u0432\u0430\u044F"],
+  parsing: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043F\u0430\u0440\u0441\u0438\u0442\u0441\u044F"],
+  generated: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u0433\u043E\u0442\u043E\u0432"],
+  published: [VT.successSoft, "oklch(0.34 0.12 145)", "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D"],
+  rejected: [VT.dangerSoft, "oklch(0.42 0.15 28)", "\u043E\u0442\u043A\u043B\u043E\u043D\u0451\u043D"],
+  rework: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u043F\u0435\u0440\u0435\u0434\u0435\u043B\u043A\u0430"],
+  pending: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043D\u0430 \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438"],
+  approved: [VT.successSoft, "oklch(0.34 0.12 145)", "\u043E\u0434\u043E\u0431\u0440\u0435\u043D\u0430"],
+  // Sites
+  draft: [VT.bgSoft, VT.inkSoft, "\u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A"],
+  generating: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u0443\u0435\u0442\u0441\u044F"],
+  pending_review: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435"],
+  paused: [VT.bgSoft, VT.inkSoft, "\u043D\u0430 \u043F\u0430\u0443\u0437\u0435"],
+  archived: [VT.bgSoft, VT.inkMuted, "\u0432 \u0430\u0440\u0445\u0438\u0432\u0435"],
+  // Leads
+  read: [VT.bgSoft, VT.inkSoft, "\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D"]
+};
+function StatusPill({ status, size = "md" }) {
+  const m = STATUS_MAP[status] || [VT.bgSoft, VT.inkSoft, String(status)];
+  return /* @__PURE__ */ jsxs2("span", { style: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: size === "sm" ? "2px 7px" : "3px 9px",
+    borderRadius: 999,
+    background: m[0],
+    color: m[1],
+    fontSize: size === "sm" ? 11 : 11.5,
+    fontWeight: 500
+  }, children: [
+    /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
+    m[2]
   ] });
+}
+function FilterChip({ label, active, count, onClick, disabled }) {
+  return /* @__PURE__ */ jsxs2(
+    "button",
+    {
+      type: "button",
+      onClick,
+      disabled,
+      "aria-pressed": active,
+      style: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "6px 12px",
+        borderRadius: 999,
+        background: active ? VT.accentSoft : VT.white,
+        color: active ? VT.accentInk : VT.ink,
+        border: `1px solid ${active ? "transparent" : VT.line}`,
+        fontSize: 13,
+        fontWeight: 500,
+        cursor: disabled ? "default" : "pointer",
+        opacity: disabled ? 0.5 : 1,
+        fontFamily: "inherit"
+      },
+      children: [
+        label,
+        count != null && /* @__PURE__ */ jsx2(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
+      ]
+    }
+  );
 }
 
 // src/admin-ops/index.tsx
-import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
-var SITES_DATA = [
-  ["studia-anna.samosite.online", "an***@gmail", "published", "2026-05-19 06:00", 4, "free"],
-  ["barber-samara.samosite.online", "+7***5678", "published", "2026-05-19 06:00", 12, "pro"],
-  ["lashes-dom.samosite.online", "@les***", "published", "2026-05-18 06:00", 2, "free"],
-  ["psy-marina.samosite.online", "ma***@gmail", "sync_paused", "2026-05-12 06:00", 0, "free"],
-  ["fit-studio-msk.samosite.online", "@fit***", "published", "2026-05-19 06:00", 7, "pro"],
-  ["konditer-katya.samosite.online", "ka***@yandex", "published", "2026-05-19 06:00", 3, "free"],
-  ["tutor-eng-spb.samosite.online", "+7***1122", "archived", "\u2014", 0, "free"]
-];
-function SiteStatusPill({ status }) {
-  const m = {
-    published: ["\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D", VT.successSoft, "oklch(0.34 0.12 145)"],
-    sync_paused: ["sync paused", VT.warnSoft, "oklch(0.40 0.13 70)"],
-    archived: ["\u0430\u0440\u0445\u0438\u0432", VT.bgSoft, VT.inkSoft]
-  }[status];
-  return /* @__PURE__ */ jsxs3("span", { style: { display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 9px", borderRadius: 999, background: m[1], color: m[2], fontSize: 11.5, fontWeight: 500 }, children: [
-    /* @__PURE__ */ jsx3("span", { style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
-    m[0]
-  ] });
+import { Fragment as Fragment5, jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
+function formatTs(iso) {
+  if (!iso) return "\u2014";
+  return iso.replace("T", " ").slice(0, 16);
 }
-function S14_SitesList() {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "sites", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
+function formatRel(iso) {
+  if (!iso) return "\u2014";
+  return iso.slice(0, 10);
+}
+function TextField({ value, onChange, placeholder, ariaLabel, inputMode, maxLength, autoFocus, disabled, style, mono, type = "text" }) {
+  return /* @__PURE__ */ jsx3(
+    "input",
+    {
+      type,
+      value: value ?? "",
+      onChange: (e) => onChange && onChange(e.target.value),
+      placeholder,
+      "aria-label": ariaLabel,
+      inputMode,
+      maxLength,
+      autoFocus,
+      disabled,
+      style: {
+        width: "100%",
+        boxSizing: "border-box",
+        padding: "10px 12px",
+        background: disabled ? VT.bgSoft : VT.white,
+        border: `1px solid ${VT.line}`,
+        borderRadius: VT.r.md,
+        fontSize: 14,
+        color: VT.ink,
+        fontFamily: mono ? VT.font.mono : VT.font.sans,
+        outline: "none",
+        ...style
+      }
+    }
+  );
+}
+var SITE_STATUS_FILTERS = [
+  ["all", "\u0412\u0441\u0435"],
+  ["published", "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u044B"],
+  ["pending_review", "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435"],
+  ["paused", "\u041D\u0430 \u043F\u0430\u0443\u0437\u0435"],
+  ["archived", "\u0410\u0440\u0445\u0438\u0432"]
+];
+var MOCK_SITES_LIST = {
+  total: 39,
+  limit: 10,
+  offset: 0,
+  items: [
+    { id: "s1", user_id: "u1842", subdomain: "studia-anna", custom_domain: null, source_type: "telegram", source_url: "t.me/studia_anna", status: "published", last_synced_at: "2026-05-19T06:00:00Z", published_at: "2026-05-05T10:22:00Z", created_at: "2026-05-05T09:30:00Z" },
+    { id: "s2", user_id: "u1837", subdomain: "barber-samara", custom_domain: null, source_type: "telegram", source_url: "t.me/barber_samara", status: "published", last_synced_at: "2026-05-19T06:00:00Z", published_at: "2026-05-04T14:10:00Z", created_at: "2026-05-04T13:00:00Z" },
+    { id: "s3", user_id: "u1838", subdomain: "lashes-dom", custom_domain: null, source_type: "telegram", source_url: "t.me/lashes_dom", status: "published", last_synced_at: "2026-05-18T06:00:00Z", published_at: "2026-05-02T09:00:00Z", created_at: "2026-05-02T08:30:00Z" },
+    { id: "s4", user_id: "u1834", subdomain: "psy-marina", custom_domain: null, source_type: "telegram", source_url: "t.me/psychomarina", status: "paused", last_synced_at: "2026-05-12T06:00:00Z", published_at: "2026-04-25T18:00:00Z", created_at: "2026-04-25T17:30:00Z" },
+    { id: "s5", user_id: "u1833", subdomain: "fit-studio-msk", custom_domain: "fitstudio.ru", source_type: "yandex_maps", source_url: "yandex.ru/maps/...", status: "published", last_synced_at: "2026-05-19T06:00:00Z", published_at: "2026-04-22T11:00:00Z", created_at: "2026-04-22T10:30:00Z" },
+    { id: "s6", user_id: "u1831", subdomain: "konditer-katya", custom_domain: null, source_type: "yandex_maps", source_url: "yandex.ru/maps/...", status: "published", last_synced_at: "2026-05-19T06:00:00Z", published_at: "2026-04-20T12:00:00Z", created_at: "2026-04-20T11:30:00Z" },
+    { id: "s7", user_id: "u1825", subdomain: "tutor-eng-spb", custom_domain: null, source_type: "website", source_url: "tutor-eng.ru", status: "archived", last_synced_at: null, published_at: null, created_at: "2026-04-12T08:00:00Z" }
+  ]
+};
+function S14_SitesList({
+  data,
+  loading,
+  error,
+  statusFilter = "all",
+  onStatusFilterChange,
+  onPageChange,
+  onRowClick,
+  _embed
+}) {
+  const d = data || MOCK_SITES_LIST;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "sites" };
+  const showItems = !loading && d.items && d.items.length > 0;
+  const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
+  const totalPages = Math.max(1, Math.ceil(d.total / Math.max(1, d.limit)));
+  const currentPage = Math.floor(d.offset / Math.max(1, d.limit)) + 1;
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
     /* @__PURE__ */ jsx3(Eyebrow, { children: "\u0421\u0410\u0419\u0422\u042B" }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
       /* @__PURE__ */ jsx3("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "CSV" }),
-        /* @__PURE__ */ jsx3(Btn, { size: "sm", children: "+ \u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0432\u0440\u0443\u0447\u043D\u0443\u044E" })
+      /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "CSV" })
+    ] }),
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsx3("div", { style: { display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }, children: SITE_STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx3(
+      FilterChip,
+      {
+        label,
+        active: statusFilter === key,
+        onClick: () => onStatusFilterChange && onStatusFilterChange(key)
+      },
+      key
+    )) }),
+    /* @__PURE__ */ jsxs3(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsx3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "Status", "Last sync", ""].map((h) => /* @__PURE__ */ jsx3("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+        /* @__PURE__ */ jsxs3("tbody", { children: [
+          loading && [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx3("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [160, 80, 220, 110, 110, 18].map((w, j) => /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
+          showItems && d.items.map((s) => /* @__PURE__ */ jsxs3(
+            "tr",
+            {
+              onClick: () => onRowClick && onRowClick(s.id),
+              tabIndex: onRowClick ? 0 : void 0,
+              onKeyDown: onRowClick ? (e) => {
+                if (e.key === "Enter") onRowClick(s.id);
+              } : void 0,
+              style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: onRowClick ? "pointer" : "default" },
+              children: [
+                /* @__PURE__ */ jsxs3("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: [
+                  s.subdomain,
+                  ".samosite.online",
+                  s.custom_domain && /* @__PURE__ */ jsx3(Badge, { kind: "success", style: { marginLeft: 8, padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: s.custom_domain })
+                ] }),
+                /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: s.source_type }) }),
+                /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: s.source_url }) }),
+                /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(StatusPill, { status: s.status }) }),
+                /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: formatTs(s.last_synced_at) }) }),
+                /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
+              ]
+            },
+            s.id
+          ))
+        ] })
+      ] }),
+      showEmpty && /* @__PURE__ */ jsx3(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", hint: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B \xAB\u0417\u0430\u044F\u0432\u043A\u0438\xBB \u2014 \u0442\u0430\u043C \u043E\u0434\u043E\u0431\u0440\u044F\u0439\u0442\u0435 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435." }),
+      !showEmpty && /* @__PURE__ */ jsxs3("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs3("span", { children: [
+          d.offset + 1,
+          "\u2013",
+          Math.min(d.offset + d.limit, d.total),
+          " \u0438\u0437 ",
+          d.total
+        ] }),
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
+          /* @__PURE__ */ jsxs3(Mono, { style: { alignSelf: "center" }, children: [
+            "/ ",
+            totalPages
+          ] }),
+          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+        ] })
       ] })
-    ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 16 }, children: [
-      /* @__PURE__ */ jsx3(StatTile, { label: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0445", value: "34", sub: "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u044B \u0438 \u0441\u0438\u043D\u043A\u0430\u044E\u0442\u0441\u044F" }),
-      /* @__PURE__ */ jsx3(StatTile, { label: "Sync paused", value: "2", sub: "\u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0439 sync >7 \u0434\u043D\u0435\u0439" }),
-      /* @__PURE__ */ jsx3(StatTile, { label: "\u0410\u0440\u0445\u0438\u0432\u043D\u044B\u0445", value: "3" }),
-      /* @__PURE__ */ jsx3(StatTile, { label: "\u041B\u0438\u0434\u043E\u0432 \u0437\u0430 7\u0434", value: "42", delta: "+18%", deltaSign: "+" })
-    ] }),
-    /* @__PURE__ */ jsx3(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-      /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsx3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0422\u0430\u0440\u0438\u0444", "Status", "Last sync", "\u041B\u0438\u0434\u044B 7\u0434", ""].map((h) => /* @__PURE__ */ jsx3("th", { style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h)) }) }),
-      /* @__PURE__ */ jsx3("tbody", { children: SITES_DATA.map(([sub, contact, status, sync, leads, plan]) => /* @__PURE__ */ jsxs3("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: "pointer" }, children: [
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: sub }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: contact }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3("span", { style: {
-          padding: "2px 8px",
-          borderRadius: 4,
-          fontSize: 10.5,
-          fontWeight: 600,
-          background: plan === "pro" ? VT.accentSoft : VT.bgSoft,
-          color: plan === "pro" ? VT.accentInk : VT.inkSoft,
-          fontFamily: VT.font.mono,
-          letterSpacing: "0.08em"
-        }, children: plan.toUpperCase() }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(SiteStatusPill, { status }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: sync }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", fontWeight: 600 }, children: leads }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", textAlign: "right", color: VT.inkFaint }, children: "\u2192" })
-      ] }, sub)) })
-    ] }) })
+    ] })
   ] }) });
 }
-function S15_SiteDetail() {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "sites", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "20px 32px 40px" }, children: [
+var MOCK_SITE_DETAIL = {
+  site: {
+    id: "s1",
+    user_id: "u1842",
+    subdomain: "studia-anna",
+    custom_domain: null,
+    source_type: "telegram",
+    source_url: "t.me/studia_anna",
+    status: "published",
+    last_synced_at: "2026-05-19T06:00:00Z",
+    published_at: "2026-05-05T10:22:00Z",
+    created_at: "2026-05-05T09:30:00Z"
+  },
+  leads_count: 4
+};
+function actionEnabled(action, status) {
+  if (status === "pending_review" && action === "publish") return true;
+  if (status === "published" && (action === "republish" || action === "pause_sync" || action === "archive")) return true;
+  if (status === "paused" && (action === "resume_sync" || action === "archive")) return true;
+  if (status === "archived" && action === "unarchive") return true;
+  return false;
+}
+var ACTION_LABELS = {
+  publish: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u0442\u044C",
+  republish: "Re-publish",
+  pause_sync: "Pause sync",
+  resume_sync: "Resume sync",
+  archive: "\u0412 \u0430\u0440\u0445\u0438\u0432",
+  unarchive: "\u0418\u0437 \u0430\u0440\u0445\u0438\u0432\u0430"
+};
+function S15_SiteDetail({
+  data,
+  loading,
+  error,
+  previewUrl,
+  onAction,
+  onBack,
+  actionLoading,
+  _embed
+}) {
+  const d = data || MOCK_SITE_DETAIL;
+  const site = d.site;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "sites" };
+  if (loading) {
+    return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "20px 32px 40px" }, children: [
+      /* @__PURE__ */ jsx3(SkeletonBlock, { width: 200, height: 14, style: { marginBottom: 14 } }),
+      /* @__PURE__ */ jsx3(SkeletonBlock, { width: 280, height: 28, radius: 6, style: { marginBottom: 24 } }),
+      /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
+        /* @__PURE__ */ jsx3(SkeletonBlock, { width: "100%", height: 420, radius: 10 }),
+        /* @__PURE__ */ jsx3(SkeletonBlock, { width: "100%", height: 420, radius: 10 })
+      ] })
+    ] }) });
+  }
+  const renderAction = (action, variant = "secondary") => {
+    const enabled = actionEnabled(action, site.status);
+    const isLoading = actionLoading === action;
+    const anyLoading = !!actionLoading;
+    return /* @__PURE__ */ jsx3(
+      Btn,
+      {
+        size: "sm",
+        variant,
+        disabled: !enabled || anyLoading,
+        onClick: () => enabled && onAction && onAction(site.id, action),
+        iconRight: isLoading ? /* @__PURE__ */ jsx3(Spinner, { size: 14 }) : variant === "primary" ? /* @__PURE__ */ jsx3(IconArrow, { size: 14 }) : void 0,
+        children: isLoading ? "..." : ACTION_LABELS[action]
+      },
+      action
+    );
+  };
+  const primaryAction = site.status === "pending_review" ? "publish" : site.status === "published" ? "republish" : site.status === "paused" ? "resume_sync" : site.status === "archived" ? "unarchive" : null;
+  const secondaryActions = ["publish", "republish", "pause_sync", "resume_sync", "archive", "unarchive"].filter((a) => a !== primaryAction && actionEnabled(a, site.status));
+  const safePreviewUrl = previewUrl || (site.subdomain ? `https://${site.subdomain}.samosite.online` : null);
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "20px 32px 40px" }, children: [
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsx3("a", { style: { color: VT.inkFaint }, children: "\u0421\u0430\u0439\u0442\u044B" }),
+      /* @__PURE__ */ jsx3(
+        "button",
+        {
+          type: "button",
+          onClick: () => onBack && onBack(),
+          style: { color: VT.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit", fontSize: 13 },
+          children: "\u2190 \u0421\u0430\u0439\u0442\u044B"
+        }
+      ),
       /* @__PURE__ */ jsx3("span", { children: "/" }),
-      /* @__PURE__ */ jsx3(Mono, { style: { color: VT.ink }, children: "studia-anna.samosite.online" })
+      /* @__PURE__ */ jsxs3(Mono, { style: { color: VT.ink }, children: [
+        site.subdomain,
+        ".samosite.online"
+      ] })
     ] }),
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error }) }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 18 }, children: [
       /* @__PURE__ */ jsxs3("div", { children: [
-        /* @__PURE__ */ jsx3("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft }, children: [
-          /* @__PURE__ */ jsxs3("a", { style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
-            /* @__PURE__ */ jsx3(Mono, { children: "studia-anna.samosite.online" }),
+        /* @__PURE__ */ jsx3("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: site.subdomain.replace(/-/g, " ") }),
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft, flexWrap: "wrap" }, children: [
+          safePreviewUrl && /* @__PURE__ */ jsxs3("a", { href: safePreviewUrl, target: "_blank", rel: "noreferrer", style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
+            /* @__PURE__ */ jsxs3(Mono, { style: { color: "inherit" }, children: [
+              site.subdomain,
+              ".samosite.online"
+            ] }),
             " \u2197"
           ] }),
           /* @__PURE__ */ jsx3("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx3(SiteStatusPill, { status: "published" }),
-          /* @__PURE__ */ jsx3("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx3("span", { children: "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D 14 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" })
+          /* @__PURE__ */ jsx3(StatusPill, { status: site.status }),
+          site.published_at && /* @__PURE__ */ jsxs3(Fragment5, { children: [
+            /* @__PURE__ */ jsx3("span", { children: "\xB7" }),
+            /* @__PURE__ */ jsxs3("span", { children: [
+              "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D ",
+              formatRel(site.published_at)
+            ] })
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "\u0410\u0440\u0445\u0438\u0432" }),
-        /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "Pause sync" }),
-        /* @__PURE__ */ jsx3(Btn, { size: "sm", iconRight: /* @__PURE__ */ jsx3(IconArrow, { size: 14 }), children: "Re-publish" })
+      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }, children: [
+        secondaryActions.map((a) => renderAction(a, "secondary")),
+        primaryAction && renderAction(primaryAction, "primary")
       ] })
     ] }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
       /* @__PURE__ */ jsxs3(Card, { style: { padding: 0, overflow: "hidden" }, children: [
         /* @__PURE__ */ jsxs3("div", { style: { padding: "10px 14px", borderBottom: `1px solid ${VT.line}`, display: "flex", alignItems: "center", gap: 6, background: VT.bgSoft, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx3("span", { style: { marginLeft: 10 }, children: "studia-anna.samosite.online" }),
-          /* @__PURE__ */ jsx3("span", { style: { marginLeft: "auto" }, children: "iframe preview" })
+          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx3("span", { style: { marginLeft: 10 }, children: safePreviewUrl }),
+          /* @__PURE__ */ jsx3("span", { style: { marginLeft: "auto" }, children: "preview" })
         ] }),
-        /* @__PURE__ */ jsxs3("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
+        safePreviewUrl ? /* @__PURE__ */ jsx3(
+          "iframe",
+          {
+            src: safePreviewUrl,
+            title: `${site.subdomain} preview`,
+            sandbox: "allow-same-origin allow-scripts allow-popups-to-escape-sandbox",
+            style: { width: "100%", aspectRatio: "4 / 3", border: "none", background: VT.bg, display: "block" }
+          }
+        ) : /* @__PURE__ */ jsxs3("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
           /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: `1px solid ${VT.line}` }, children: [
-            /* @__PURE__ */ jsx3("span", { style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
+            /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
             /* @__PURE__ */ jsx3("span", { style: { fontSize: 12, fontWeight: 700, color: VT.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
             /* @__PURE__ */ jsx3("span", { style: { marginLeft: "auto", padding: "3px 9px", borderRadius: 999, background: VT.accent, color: "#fff", fontSize: 10, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
           ] }),
           /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10 }, children: [
             /* @__PURE__ */ jsx3("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.12em", color: VT.accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-            /* @__PURE__ */ jsx3("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" }),
-            /* @__PURE__ */ jsxs3("div", { style: { marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 9px", background: VT.bgSoft, border: `1px solid ${VT.line}`, borderRadius: 999, fontSize: 10.5 }, children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: "#f4a93b" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
-              /* @__PURE__ */ jsx3("b", { style: { color: VT.ink }, children: "4.9" }),
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.inkFaint }, children: "\xB7 38 \u043E\u0442\u0437\u044B\u0432\u043E\u0432" })
-            ] })
+            /* @__PURE__ */ jsx3("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
           ] }),
-          /* @__PURE__ */ jsx3("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 4 }, children: [["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439", "1 500 \u20BD"], ["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u0433\u0435\u043B\u044C-\u043B\u0430\u043A", "2 200 \u20BD"], ["\u041F\u0435\u0434\u0438\u043A\u044E\u0440", "2 800 \u20BD"]].map(([n, p]) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", padding: "5px 8px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 6, fontSize: 11 }, children: [
-            /* @__PURE__ */ jsx3("span", { style: { flex: 1, color: VT.ink }, children: n }),
-            /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.ink, fontWeight: 600 }, children: p })
-          ] }, n)) }),
-          /* @__PURE__ */ jsx3("div", { style: { marginTop: 8, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx3("div", { style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
+          /* @__PURE__ */ jsx3("div", { style: { marginTop: 10, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
         ] })
       ] }),
       /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
         /* @__PURE__ */ jsxs3(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B \xB7 7 \u0414\u041D\u0415\u0419" }),
-          /* @__PURE__ */ jsxs3("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: [
-            "4 ",
-            /* @__PURE__ */ jsx3("span", { style: { fontSize: 12, fontWeight: 500, color: VT.success }, children: "+1 \u0441\u0435\u0433\u043E\u0434\u043D\u044F" })
-          ] }),
-          /* @__PURE__ */ jsx3("div", { style: { marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }, children: [
-            ["\u0410\u043D\u043D\u0430 \u041F***", "+7***1234", "2 \u0447"],
-            ["\u0421\u0435\u0440\u0433\u0435\u0439 \u041C***", "@ser***", "6 \u0447"],
-            ["\u041C\u0430\u0440\u0438\u044F \u041A***", "+7***5678", "1 \u0434"],
-            ["\u0410\u043B\u0435\u043A\u0441\u0435\u0439 \u0420***", "al***@gmail", "3 \u0434"]
-          ].map(([n, c, ago]) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, padding: "6px 0", borderBottom: `1px dashed ${VT.line}` }, children: [
-            /* @__PURE__ */ jsx3("span", { style: { fontWeight: 500 }, children: n }),
-            /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: c }),
-            /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11 }, children: ago })
-          ] }, n)) }),
-          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", style: { marginTop: 8, color: VT.accent }, children: "\u0412\u0441\u0435 \u043B\u0438\u0434\u044B \u2192" })
+          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B" }),
+          /* @__PURE__ */ jsx3("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: d.leads_count }),
+          /* @__PURE__ */ jsx3(
+            Btn,
+            {
+              variant: "ghost",
+              size: "sm",
+              style: { marginTop: 8, color: VT.accent, padding: 0 },
+              onClick: () => onAction && onAction(site.id, "view_leads"),
+              children: "\u0412\u0441\u0435 \u043B\u0438\u0434\u044B \u044D\u0442\u043E\u0433\u043E \u0441\u0430\u0439\u0442\u0430 \u2192"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxs3(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SYNC HISTORY" }),
-          /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10, fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft, lineHeight: 1.7 }, children: [
-            /* @__PURE__ */ jsxs3("div", { children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.success }, children: "\u2713" }),
-              " 2026-05-19 06:00 \xB7 2 \u043D\u043E\u0432\u044B\u0445 \u0444\u043E\u0442\u043E"
+          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0418\u0421\u0422\u041E\u0427\u041D\u0418\u041A" }),
+          /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+            /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0438\u043F" }),
+              /* @__PURE__ */ jsx3(Badge, { kind: "neutral", style: { padding: "2px 9px", fontSize: 11.5, borderRadius: 4 }, children: site.source_type })
             ] }),
-            /* @__PURE__ */ jsxs3("div", { children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.success }, children: "\u2713" }),
-              " 2026-05-12 06:00 \xB7 no diff"
+            /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "URL" }),
+              /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: site.source_url })
             ] }),
-            /* @__PURE__ */ jsxs3("div", { children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.success }, children: "\u2713" }),
-              " 2026-05-05 06:00 \xB7 5 \u043D\u043E\u0432\u044B\u0445 \u043F\u043E\u0441\u0442\u043E\u0432"
-            ] }),
-            /* @__PURE__ */ jsxs3("div", { children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.warn }, children: "\u23F8" }),
-              " 2026-04-28 06:00 \xB7 TG bot kicked, retry 1/3"
-            ] }),
-            /* @__PURE__ */ jsxs3("div", { children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.success }, children: "\u2713" }),
-              " 2026-04-21 06:00 \xB7 1 \u043D\u043E\u0432\u043E\u0435 \u0444\u043E\u0442\u043E"
+            /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "Last sync" }),
+              /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: formatTs(site.last_synced_at) })
             ] })
           ] })
         ] })
@@ -395,104 +709,359 @@ function S15_SiteDetail() {
     ] })
   ] }) });
 }
-var LEADS_DATA = [
-  ["studia-anna.samosite.online", "\u0410\u043D\u043D\u0430 \u041F***", "+7***1234", "\xAB\u0425\u043E\u0447\u0443 \u0437\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \u0432 \u0441\u0443\u0431\u0431\u043E\u0442\u0443 \u0434\u043D\u0451\u043C, \u0435\u0441\u043B\u0438 \u0435\u0441\u0442\u044C \u043E\u043A\u043D\u043E\xBB", "2026-05-19 12:22"],
-  ["barber-samara.samosite.online", "\u0421\u0435\u0440\u0433\u0435\u0439 \u041C***", "@ser***", "\xAB\u041C\u043E\u0436\u043D\u043E \u043B\u0438 \u043F\u043E\u0441\u0442\u0440\u0438\u0447\u044C\u0441\u044F \u0437\u0430\u0432\u0442\u0440\u0430 \u0432 \u043E\u0431\u0435\u0434?\xBB", "2026-05-19 11:08"],
-  ["lashes-dom.samosite.online", "\u041C\u0430\u0440\u0438\u044F \u041A***", "+7***5678", "\xAB\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u043E\u0438\u0442 \u043D\u0430\u0440\u0430\u0449\u0438\u0432\u0430\u043D\u0438\u0435 \u0440\u0435\u0441\u043D\u0438\u0446?\xBB", "2026-05-19 10:44"],
-  ["fit-studio-msk.samosite.online", "\u0410\u043B\u0435\u043A\u0441\u0435\u0439 \u0420***", "al***@gmail", "\u2014", "2026-05-19 09:30"],
-  ["konditer-katya.samosite.online", "\u041E\u043B\u044C\u0433\u0430 \u0422***", "+7***9012", "\xAB\u0422\u043E\u0440\u0442 \u043D\u0430 \u0441\u0432\u0430\u0434\u044C\u0431\u0443 12 \u0438\u044E\u043B\u044F, \u043D\u0430 80 \u0447\u0435\u043B\u043E\u0432\u0435\u043A, \u043C\u0435\u0434\u043E\u0432\u0438\u043A\xBB", "2026-05-19 08:12"]
-];
-function S16_Leads({ decryptModal = false }) {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "leads", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
+var MOCK_LEADS_LIST = {
+  total: 142,
+  limit: 10,
+  offset: 0,
+  items: [
+    { id: "l_1842", site_id: "studia-anna", status: "new", ip_prefix: "85.140.0.0/16", created_at: "2026-05-19T12:22:00Z" },
+    { id: "l_1841", site_id: "barber-samara", status: "new", ip_prefix: "178.34.0.0/16", created_at: "2026-05-19T11:08:00Z" },
+    { id: "l_1840", site_id: "lashes-dom", status: "read", ip_prefix: "95.220.0.0/16", created_at: "2026-05-19T10:44:00Z" },
+    { id: "l_1839", site_id: "fit-studio-msk", status: "new", ip_prefix: "46.180.0.0/16", created_at: "2026-05-19T09:30:00Z" },
+    { id: "l_1838", site_id: "konditer-katya", status: "new", ip_prefix: "109.252.0.0/16", created_at: "2026-05-19T08:12:00Z" }
+  ]
+};
+function S16_Leads(props) {
+  const {
+    data,
+    loading,
+    error,
+    // siteFilter, onSiteFilterChange,    // reserved — UI deferred
+    onPageChange,
+    // Selection
+    selectedLeadIds,
+    onSelectLead,
+    onClearSelection,
+    onOpenDecryptModal,
+    // Modal
+    decryptModalOpen,
+    decryptTotp,
+    onDecryptTotpChange,
+    onDecryptSubmit,
+    onDecryptCancel,
+    decryptedRows,
+    decryptLoading,
+    decryptError,
+    _embed
+  } = props;
+  const d = data || MOCK_LEADS_LIST;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "leads" };
+  const [uSelected, setUSelected] = useState2([]);
+  const [uModalOpen, setUModalOpen] = useState2(false);
+  const [uTotp, setUTotp] = useState2("");
+  const selected = selectedLeadIds ?? uSelected;
+  const setSelected = onSelectLead ? (id, on) => onSelectLead(id, on) : (id, on) => setUSelected((prev) => on ? [...prev, id] : prev.filter((x) => x !== id));
+  const clearSelection = onClearSelection ?? (() => setUSelected([]));
+  const modalOpen = decryptModalOpen ?? uModalOpen;
+  const openModal = onOpenDecryptModal ?? (() => setUModalOpen(true));
+  const totp = decryptTotp ?? uTotp;
+  const setTotp = onDecryptTotpChange ?? setUTotp;
+  const cancel = onDecryptCancel ?? (() => {
+    setUModalOpen(false);
+    setUTotp("");
+  });
+  const submitDecrypt = () => {
+    if (onDecryptSubmit) onDecryptSubmit(selected, totp);
+  };
+  const showItems = !loading && d.items && d.items.length > 0;
+  const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
+  const isSelected = (id) => selected.includes(id);
+  const allSelected = showItems && selected.length === d.items.length;
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
     /* @__PURE__ */ jsx3(Eyebrow, { children: "\u041B\u0418\u0414\u042B" }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
       /* @__PURE__ */ jsx3("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0412\u0441\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "CSV (encrypted)" }),
-        /* @__PURE__ */ jsx3(Btn, { size: "sm", children: "\u{1F513} \u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C bulk export" })
+      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 8, alignItems: "center" }, children: [
+        selected.length > 0 && /* @__PURE__ */ jsxs3(
+          "button",
+          {
+            type: "button",
+            onClick: clearSelection,
+            style: { fontSize: 12, color: VT.inkFaint, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" },
+            children: [
+              "\u0441\u0431\u0440\u043E\u0441\u0438\u0442\u044C (",
+              selected.length,
+              ")"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxs3(
+          Btn,
+          {
+            size: "sm",
+            onClick: openModal,
+            disabled: selected.length === 0 || loading,
+            iconRight: /* @__PURE__ */ jsx3(IconArrow, { size: 14 }),
+            children: [
+              "\u{1F513} \u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C (",
+              selected.length,
+              ")"
+            ]
+          }
+        )
       ] })
     ] }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }, children: [
-      /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: "\u0412\u0441\u0435\u0433\u043E: 142 \xB7 7 \u0434\u043D\u0435\u0439: 42 \xB7 \u0441\u0435\u0433\u043E\u0434\u043D\u044F: 6" }),
-      /* @__PURE__ */ jsx3(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES-128 \xB7 \u043A\u043B\u044E\u0447 \u0432 FERNET_KEY env" })
+      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 12 }, children: [
+        "\u0412\u0441\u0435\u0433\u043E: ",
+        d.total,
+        " \xB7 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043E: ",
+        d.items?.length ?? 0
+      ] }),
+      /* @__PURE__ */ jsx3(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES \u2014 plaintext \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 TOTP-\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F" })
     ] }),
-    /* @__PURE__ */ jsx3(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-      /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsx3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0421\u0430\u0439\u0442", "\u0418\u043C\u044F", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435", "\u041A\u043E\u0433\u0434\u0430", ""].map((h) => /* @__PURE__ */ jsx3("th", { style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h)) }) }),
-      /* @__PURE__ */ jsx3("tbody", { children: LEADS_DATA.map(([site, name, contact, msg, ts]) => /* @__PURE__ */ jsxs3("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: site }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", fontWeight: 500 }, children: name }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: contact }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 360, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: msg }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: ts }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", style: { fontSize: 12 }, children: "\u{1F513} \u0440\u0430\u0441\u043A\u0440\u044B\u0442\u044C" }) })
-      ] }, site + ts)) })
-    ] }) }),
-    /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u041A\u0430\u0436\u0434\u044B\u0439 decrypt \u043F\u0438\u0448\u0435\u0442\u0441\u044F \u0432 audit log \u0441 admin_id, ip, lead_id, ts. FR-053: \u043C\u0430\u0441\u043A\u0438 \u0432 \u043B\u043E\u0433\u0430\u0445." }),
-    decryptModal && /* @__PURE__ */ jsx3("div", { style: {
-      position: "absolute",
-      inset: 0,
-      background: "rgba(0,0,0,0.32)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 24
-    }, children: /* @__PURE__ */ jsxs3(Card, { style: { width: 360, padding: 24, background: VT.bg }, children: [
-      /* @__PURE__ */ jsx3("h3", { style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
-      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: "Bulk export \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u0442 142 \u043B\u0438\u0434\u0430. \u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043A\u043E\u0434." }),
-      /* @__PURE__ */ jsx3("div", { style: { display: "flex", gap: 6 }, children: [1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx3("div", { style: { flex: 1, aspectRatio: "1 / 1.2", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }, children: "\u2022" }, i)) }),
-      /* @__PURE__ */ jsxs3("div", { style: { marginTop: 12, display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx3(Btn, { size: "sm", style: { flex: 1 }, children: "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C" })
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs3(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsxs3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsx3("th", { scope: "col", style: { width: 48, padding: "12px 16px", textAlign: "left" }, children: /* @__PURE__ */ jsx3(
+            "input",
+            {
+              type: "checkbox",
+              "aria-label": "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0432\u0441\u0435",
+              checked: allSelected,
+              onChange: (e) => {
+                if (e.target.checked) {
+                  d.items.forEach((it) => !isSelected(it.id) && setSelected(it.id, true));
+                } else {
+                  clearSelection();
+                }
+              }
+            }
+          ) }),
+          ["ID", "\u0421\u0430\u0439\u0442", "IP prefix", "Status", "\u041A\u043E\u0433\u0434\u0430"].map((h) => /* @__PURE__ */ jsx3("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h))
+        ] }) }),
+        /* @__PURE__ */ jsxs3("tbody", { children: [
+          loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs3("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(SkeletonBlock, { width: 14, height: 14, radius: 3 }) }),
+            [90, 160, 120, 90, 110].map((w, j) => /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(SkeletonBlock, { width: w, height: 12 }) }, j))
+          ] }, i)),
+          showItems && d.items.map((row) => /* @__PURE__ */ jsxs3("tr", { style: {
+            borderBottom: `1px solid ${VT.lineSoft}`,
+            background: isSelected(row.id) ? VT.accentSoft : "transparent"
+          }, children: [
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(
+              "input",
+              {
+                type: "checkbox",
+                "aria-label": `\u0412\u044B\u0431\u0440\u0430\u0442\u044C ${row.id}`,
+                checked: isSelected(row.id),
+                onChange: (e) => setSelected(row.id, e.target.checked)
+              }
+            ) }),
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { children: row.id }) }),
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft }, children: row.site_id }),
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: row.ip_prefix || "\u2014" }) }),
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(StatusPill, { status: row.status, size: "sm" }) }),
+            /* @__PURE__ */ jsx3("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: formatTs(row.created_at) }) })
+          ] }, row.id))
+        ] })
+      ] }),
+      showEmpty && /* @__PURE__ */ jsx3(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043B\u0438\u0434\u043E\u0432", hint: "\u041A\u043E\u0433\u0434\u0430 \u043A\u0442\u043E-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442 \u0444\u043E\u0440\u043C\u0443 \u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0441\u0430\u0439\u0442\u043E\u0432 \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+      !showEmpty && !loading && /* @__PURE__ */ jsxs3("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs3("span", { children: [
+          d.offset + 1,
+          "\u2013",
+          Math.min(d.offset + d.limit, d.total),
+          " \u0438\u0437 ",
+          d.total
+        ] }),
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+        ] })
       ] })
-    ] }) })
+    ] }),
+    /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u0412\u0441\u0435 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F \u0432 audit-log (admin_actions) \u2014 admin_id, ip, lead_ids, ts." }),
+    modalOpen && /* @__PURE__ */ jsx3(
+      "div",
+      {
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-labelledby": "decrypt-title",
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: "rgba(0,0,0,0.32)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+          zIndex: 10
+        },
+        children: /* @__PURE__ */ jsx3(Card, { style: { width: decryptedRows ? 560 : 380, padding: 24, background: VT.bg }, children: !decryptedRows ? /* @__PURE__ */ jsxs3(Fragment5, { children: [
+          /* @__PURE__ */ jsx3("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
+          /* @__PURE__ */ jsxs3("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: [
+            "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C ",
+            /* @__PURE__ */ jsx3("b", { children: selected.length }),
+            " ",
+            selected.length === 1 ? "\u043B\u0438\u0434" : "\u043B\u0438\u0434\u043E\u0432",
+            ". \u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430."
+          ] }),
+          decryptError && /* @__PURE__ */ jsx3("div", { role: "alert", style: {
+            padding: "8px 12px",
+            background: VT.dangerSoft,
+            border: `1px solid oklch(0.85 0.06 28)`,
+            borderRadius: VT.r.md,
+            fontSize: 13,
+            color: "oklch(0.4 0.15 28)",
+            marginBottom: 14
+          }, children: decryptError }),
+          /* @__PURE__ */ jsx3(
+            TextField,
+            {
+              value: totp,
+              onChange: setTotp,
+              ariaLabel: "TOTP \u043A\u043E\u0434",
+              inputMode: "numeric",
+              maxLength: 6,
+              placeholder: "\xB7 \xB7 \xB7 \xB7 \xB7 \xB7",
+              autoFocus: true,
+              disabled: !!decryptLoading,
+              mono: true,
+              style: { fontSize: 20, letterSpacing: "0.4em", textAlign: "center" }
+            }
+          ),
+          /* @__PURE__ */ jsxs3("div", { style: { marginTop: 14, display: "flex", gap: 8 }, children: [
+            /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, onClick: cancel, disabled: !!decryptLoading, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
+            /* @__PURE__ */ jsx3(
+              Btn,
+              {
+                size: "sm",
+                style: { flex: 1 },
+                onClick: submitDecrypt,
+                disabled: !totp || totp.length < 6 || !!decryptLoading,
+                iconRight: decryptLoading ? /* @__PURE__ */ jsx3(Spinner, { size: 14 }) : void 0,
+                children: decryptLoading ? "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C\u2026" : "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C"
+              }
+            )
+          ] })
+        ] }) : /* @__PURE__ */ jsxs3(Fragment5, { children: [
+          /* @__PURE__ */ jsxs3("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: [
+            "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u043E \xB7 ",
+            decryptedRows.length
+          ] }),
+          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint, display: "block", marginBottom: 12 }, children: "\u0417\u0430\u043B\u043E\u0433\u0438\u0440\u043E\u0432\u0430\u043D\u043E \u0432 audit-log. \u0417\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u043E\u043A\u043D\u043E \u2014 plaintext \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442 \u0438\u0437 DOM." }),
+          /* @__PURE__ */ jsx3("div", { style: { maxHeight: 360, overflow: "auto", display: "flex", flexDirection: "column", gap: 10 }, children: decryptedRows.map((r) => /* @__PURE__ */ jsxs3(Card, { style: { padding: 12, border: `1px solid ${VT.line}` }, children: [
+            /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }, children: [
+              /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5 }, children: r.id }),
+              /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: r.site_id }),
+              /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs(r.created_at) })
+            ] }),
+            /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, fontWeight: 500 }, children: r.name || "\u2014" }),
+            /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: r.phone || "\u2014" }),
+            r.message && /* @__PURE__ */ jsxs3("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 4, lineHeight: 1.5 }, children: [
+              "\xAB",
+              r.message,
+              "\xBB"
+            ] })
+          ] }, r.id)) }),
+          /* @__PURE__ */ jsx3("div", { style: { marginTop: 14, display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ jsx3(Btn, { size: "sm", onClick: cancel, children: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C" }) })
+        ] }) })
+      }
+    )
   ] }) });
 }
-var WAITLIST_DATA = [
-  ["instagram", "Instagram (\u043F\u0440\u044F\u043C\u043E\u0439 \u043F\u0430\u0440\u0441\u0438\u043D\u0433)", 24, "2026-04-03", "high"],
-  ["vk", "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435", 18, "2026-03-28", "high"],
-  ["2gis", "2GIS", 11, "2026-04-12", "high"],
-  ["avito", "Avito", 7, "2026-04-05", "low"],
-  ["whatsapp", "WhatsApp Catalog", 6, "2026-04-19", "low"],
-  ["youtube", "YouTube / Shorts", 4, "2026-05-01", "low"],
-  ["max", "MAX-\u043A\u0430\u043D\u0430\u043B", 3, "2026-04-22", "low"],
-  ["dzen", "\u0414\u0437\u0435\u043D", 2, "2026-05-08", "low"],
-  ["own_site", "\u0421\u0432\u043E\u0439 \u0441\u0430\u0439\u0442", 2, "2026-05-11", "low"]
-];
-function S17_Waitlist() {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "waitlist", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
+var MOCK_WAITLIST = {
+  threshold: 10,
+  items: [
+    { source_name: "instagram", votes: 24, first_seen: "2026-04-03", last_seen: "2026-05-19", ready: true },
+    { source_name: "vk", votes: 18, first_seen: "2026-03-28", last_seen: "2026-05-18", ready: true },
+    { source_name: "2gis", votes: 11, first_seen: "2026-04-12", last_seen: "2026-05-15", ready: true },
+    { source_name: "avito", votes: 7, first_seen: "2026-04-05", last_seen: "2026-05-10", ready: false },
+    { source_name: "whatsapp", votes: 6, first_seen: "2026-04-19", last_seen: "2026-05-08", ready: false },
+    { source_name: "youtube", votes: 4, first_seen: "2026-05-01", last_seen: "2026-05-12", ready: false },
+    { source_name: "max", votes: 3, first_seen: "2026-04-22", last_seen: "2026-05-06", ready: false },
+    { source_name: "dzen", votes: 2, first_seen: "2026-05-08", last_seen: "2026-05-14", ready: false }
+  ]
+};
+var SOURCE_LABELS = {
+  instagram: "Instagram",
+  vk: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435",
+  "2gis": "2GIS",
+  avito: "Avito",
+  whatsapp: "WhatsApp Catalog",
+  youtube: "YouTube / Shorts",
+  max: "MAX-\u043A\u0430\u043D\u0430\u043B",
+  dzen: "\u0414\u0437\u0435\u043D",
+  own_site: "\u0421\u0432\u043E\u0439 \u0441\u0430\u0439\u0442",
+  yandex_maps: "\u042F\u043D\u0434\u0435\u043A\u0441 \u041A\u0430\u0440\u0442\u044B",
+  telegram: "Telegram"
+};
+function S17_Waitlist({ data, loading, error, onMarkInDevelopment, _embed }) {
+  const d = data || MOCK_WAITLIST;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "waitlist" };
+  const items = d.items || [];
+  const readyItems = items.filter((it) => it.ready);
+  const restItems = items.filter((it) => !it.ready);
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
     /* @__PURE__ */ jsx3(Eyebrow, { children: "WAITLIST \xB7 ADR-0009" }),
     /* @__PURE__ */ jsx3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 6px" }, children: /* @__PURE__ */ jsx3("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0413\u043E\u043B\u043E\u0441\u0430 \u043F\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\u043C" }) }),
     /* @__PURE__ */ jsxs3("p", { style: { fontSize: 14, color: VT.inkSoft, margin: "0 0 22px", maxWidth: 680 }, children: [
       "\u0413\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0430 \u043F\u043E ",
       /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: "source_name" }),
-      " \xB7 \u0443\u043D\u0438\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B \xB7 \u043F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435. \u0417\u0435\u043B\u0451\u043D\u044B\u043C \u2014 \u226510 \u0433\u043E\u043B\u043E\u0441\u043E\u0432, \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C ADR."
+      ". \u0417\u0435\u043B\u0451\u043D\u044B\u043C \u2014 \u2265",
+      d.threshold,
+      " \u0433\u043E\u043B\u043E\u0441\u043E\u0432, \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C ADR."
     ] }),
-    /* @__PURE__ */ jsx3(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
-      /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsx3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx3("th", { style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h)) }) }),
-      /* @__PURE__ */ jsx3("tbody", { children: WAITLIST_DATA.map(([key, name, votes, first, prio]) => /* @__PURE__ */ jsxs3("tr", { style: {
-        borderBottom: `1px solid ${VT.lineSoft}`,
-        background: prio === "high" ? "oklch(0.97 0.03 145 / 0.5)" : "transparent"
-      }, children: [
-        /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: key }),
-          /* @__PURE__ */ jsx3("span", { style: { fontWeight: 500 }, children: name })
-        ] }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 22, fontWeight: 700, color: prio === "high" ? VT.success : VT.ink }, children: votes }),
-          prio === "high" && /* @__PURE__ */ jsx3(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: "\u2265 10 \xB7 \u041F\u041E\u0420\u0410" })
-        ] }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: first }) }),
-        /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px", textAlign: "right" }, children: prio === "high" ? /* @__PURE__ */ jsx3(Btn, { size: "sm", children: "\u0423\u0432\u0435\u0434\u043E\u043C\u0438\u0442\u044C waitlist" }) : /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", style: { color: VT.inkFaint }, children: "\u2014" }) })
-      ] }, key)) })
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error }) }),
+    !loading && items.length === 0 && /* @__PURE__ */ jsx3(Card, { style: { padding: 0 }, children: /* @__PURE__ */ jsx3(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0430 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438", hint: "\u0413\u043E\u043B\u043E\u0441\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0438\u0437 feedback-\u0444\u043E\u0440\u043C\u044B \u0438 source-detection \xABunknown\xBB." }) }),
+    (loading || items.length > 0) && /* @__PURE__ */ jsx3(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs3("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
+      /* @__PURE__ */ jsx3("thead", { children: /* @__PURE__ */ jsx3("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx3("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+      /* @__PURE__ */ jsxs3("tbody", { children: [
+        loading && [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsx3("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [200, 100, 140, 120].map((w, j) => /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx3(SkeletonBlock, { width: w, height: 14 }) }, j)) }, i)),
+        !loading && readyItems.map((it) => /* @__PURE__ */ jsx3(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name)),
+        !loading && readyItems.length > 0 && restItems.length > 0 && /* @__PURE__ */ jsx3("tr", { "aria-hidden": "true", children: /* @__PURE__ */ jsx3("td", { colSpan: 4, style: { padding: "6px 16px", background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.08em" }, children: [
+          "\u2500\u2500\u2500 \u041D\u0418\u0416\u0415 \u041F\u041E\u0420\u041E\u0413\u0410 (",
+          d.threshold,
+          " \u0413\u041E\u041B\u041E\u0421\u041E\u0412) \u2500\u2500\u2500"
+        ] }) }) }),
+        !loading && restItems.map((it) => /* @__PURE__ */ jsx3(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name))
+      ] })
     ] }) })
   ] }) });
 }
-var FEEDBACK_DATA = [
-  ["#F-238", "feature_request", "an***@gmail", "\xAB\u0425\u043E\u0447\u0443 YCLIENTS \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E, \u0438\u043D\u0430\u0447\u0435 \u0444\u0440\u043E\u043D\u0442-\u043E\u0444\u0438\u0441 \u0432\u0435\u0434\u0443\u0442 \u043F\u043E \u0434\u0432\u0443\u043C \u043E\u043A\u043D\u0430\u043C\xBB", ["yclients"], "12 \u043C\u0438\u043D"],
-  ["#F-237", "source_request", "+7***5678", "Instagram \u043D\u0443\u0436\u0435\u043D \u0440\u0435\u0430\u043B\u044C\u043D\u043E \u043C\u043D\u043E\u0433\u043E \u043A\u0442\u043E \u043F\u0440\u043E\u0441\u0438\u0442", ["instagram"], "2 \u0447"],
-  ["#F-236", "bug", "st***@yandex", "\xAB\u041F\u043E\u0441\u043B\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0430\u0446\u0438\u0438 \u0444\u0430\u0432\u0438\u043A\u043E\u043D \u043D\u0435 \u043F\u043E\u0434\u0442\u044F\u043D\u0443\u043B\u0441\u044F\xBB", [], "4 \u0447"],
-  ["#F-235", "feature_request", "@les***", "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D \u0438 \u0443\u0431\u0440\u0430\u0442\u044C \xAB\u0421\u0434\u0435\u043B\u0430\u043D\u043E \u043D\u0430 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435\xBB", ["custom_domain", "no_watermark"], "8 \u0447"],
-  ["#F-234", "general", "ma***@gmail", "\xAB\u0421\u043F\u0430\u0441\u0438\u0431\u043E! \u0423\u0436\u0435 3 \u043B\u0438\u0434\u0430 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E\xBB", [], "1 \u0434"]
+function WaitlistRow({ item, threshold, onMarkInDevelopment }) {
+  return /* @__PURE__ */ jsxs3("tr", { style: {
+    borderBottom: `1px solid ${VT.lineSoft}`,
+    background: item.ready ? "oklch(0.97 0.03 145 / 0.5)" : "transparent"
+  }, children: [
+    /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: item.source_name }),
+      /* @__PURE__ */ jsx3("span", { style: { fontWeight: 500 }, children: SOURCE_LABELS[item.source_name] || item.source_name })
+    ] }) }),
+    /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { fontSize: 22, fontWeight: 700, color: item.ready ? VT.success : VT.ink }, children: item.votes }),
+      item.ready && /* @__PURE__ */ jsxs3(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: [
+        "\u2265 ",
+        threshold,
+        " \xB7 \u041F\u041E\u0420\u0410"
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: item.first_seen }) }),
+    /* @__PURE__ */ jsx3("td", { style: { padding: "14px 16px", textAlign: "right" }, children: item.ready ? /* @__PURE__ */ jsx3(Btn, { size: "sm", onClick: () => onMarkInDevelopment && onMarkInDevelopment(item.source_name), children: "\u0412 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0443" }) : /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2014" }) })
+  ] });
+}
+var MOCK_FEEDBACK = {
+  total: 142,
+  limit: 10,
+  offset: 0,
+  items: [
+    { id: "#F-238", type: "feature_request", source_name: null, email_or_contact_masked: "an***@gmail", message: "\xAB\u0425\u043E\u0447\u0443 YCLIENTS \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E, \u0438\u043D\u0430\u0447\u0435 \u0444\u0440\u043E\u043D\u0442-\u043E\u0444\u0438\u0441 \u0432\u0435\u0434\u0443\u0442 \u043F\u043E \u0434\u0432\u0443\u043C \u043E\u043A\u043D\u0430\u043C \u2014 \u0440\u0430\u0437\u0434\u0440\u0430\u0436\u0430\u0435\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u043A. \u0413\u043E\u0442\u043E\u0432\u0430 \u0434\u043E\u043F\u043B\u0430\u0447\u0438\u0432\u0430\u0442\u044C.\xBB", checkboxes: { yclients: true, custom_domain: false }, created_at: "2026-05-19T14:22:00Z" },
+    { id: "#F-237", type: "source_request", source_name: "instagram", email_or_contact_masked: "+7***5678", message: "Instagram \u043D\u0443\u0436\u0435\u043D \u0440\u0435\u0430\u043B\u044C\u043D\u043E \u043C\u043D\u043E\u0433\u043E \u043A\u0442\u043E \u043F\u0440\u043E\u0441\u0438\u0442", checkboxes: null, created_at: "2026-05-19T12:10:00Z" },
+    { id: "#F-236", type: "bug", source_name: null, email_or_contact_masked: "st***@yandex", message: "\xAB\u041F\u043E\u0441\u043B\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0430\u0446\u0438\u0438 \u0444\u0430\u0432\u0438\u043A\u043E\u043D \u043D\u0435 \u043F\u043E\u0434\u0442\u044F\u043D\u0443\u043B\u0441\u044F\xBB", checkboxes: null, created_at: "2026-05-19T10:00:00Z" },
+    { id: "#F-235", type: "feature_request", source_name: null, email_or_contact_masked: "@les***", message: "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D \u0438 \u0443\u0431\u0440\u0430\u0442\u044C \xAB\u0421\u0434\u0435\u043B\u0430\u043D\u043E \u043D\u0430 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435\xBB", checkboxes: { custom_domain: true, no_watermark: true }, created_at: "2026-05-19T06:00:00Z" },
+    { id: "#F-234", type: "general", source_name: null, email_or_contact_masked: "ma***@gmail", message: "\xAB\u0421\u043F\u0430\u0441\u0438\u0431\u043E! \u0423\u0436\u0435 3 \u043B\u0438\u0434\u0430 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E\xBB", checkboxes: null, created_at: "2026-05-18T18:00:00Z" }
+  ]
+};
+var FB_TYPE_FILTERS = [
+  ["all", "\u0412\u0441\u0435"],
+  ["source_request", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A"],
+  ["feature_request", "\u0424\u0438\u0447\u0430"],
+  ["bug", "\u0411\u0430\u0433"],
+  ["general", "\u0414\u0440\u0443\u0433\u043E\u0435"]
 ];
 function FbTypePill({ type }) {
   const m = {
@@ -500,153 +1069,255 @@ function FbTypePill({ type }) {
     feature_request: ["\u0444\u0438\u0447\u0430", VT.accentSoft, VT.accentInk],
     bug: ["\u0431\u0430\u0433", VT.dangerSoft, "oklch(0.42 0.15 28)"],
     general: ["\u0434\u0440\u0443\u0433\u043E\u0435", VT.bgSoft, VT.inkSoft]
-  }[type];
+  }[type] || ["\u2014", VT.bgSoft, VT.inkSoft];
   return /* @__PURE__ */ jsx3("span", { style: { display: "inline-flex", padding: "2px 8px", borderRadius: 4, background: m[1], color: m[2], fontSize: 10.5, fontWeight: 600, fontFamily: VT.font.mono, letterSpacing: "0.06em" }, children: m[0].toUpperCase() });
 }
-function S18_FeedbackInbox() {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "feedback", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
+function S18_FeedbackInbox({
+  data,
+  loading,
+  error,
+  typeFilter = "all",
+  onTypeFilterChange,
+  searchQuery,
+  onSearchChange,
+  onPageChange,
+  onRowClick,
+  _embed
+}) {
+  const d = data || MOCK_FEEDBACK;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "feedback" };
+  const [selectedId, setSelectedId] = useState2(null);
+  const selected = useMemo(() => {
+    const items = d.items || [];
+    if (selectedId) return items.find((it) => it.id === selectedId) || items[0] || null;
+    return items[0] || null;
+  }, [d.items, selectedId]);
+  const handleRowClick = (id) => {
+    setSelectedId(id);
+    if (onRowClick) onRowClick(id);
+  };
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
     /* @__PURE__ */ jsx3(Eyebrow, { children: "FEEDBACK INBOX" }),
     /* @__PURE__ */ jsx3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: /* @__PURE__ */ jsx3("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" }) }),
-    /* @__PURE__ */ jsx3("div", { style: { display: "flex", gap: 6, marginBottom: 14 }, children: [
-      ["\u0412\u0441\u0435", 142, true],
-      ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", 56, false],
-      ["\u0424\u0438\u0447\u0430", 48, false],
-      ["\u0411\u0430\u0433", 12, false],
-      ["\u0414\u0440\u0443\u0433\u043E\u0435", 26, false]
-    ].map(([label, count, active]) => /* @__PURE__ */ jsxs3("button", { style: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "6px 12px",
-      borderRadius: 999,
-      background: active ? VT.accentSoft : VT.white,
-      color: active ? VT.accentInk : VT.ink,
-      border: `1px solid ${active ? "transparent" : VT.line}`,
-      fontSize: 13,
-      fontWeight: 500,
-      cursor: "pointer"
-    }, children: [
-      label,
-      " ",
-      /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
-    ] }, label)) }),
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { display: "flex", gap: 6 }, children: FB_TYPE_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx3(
+        FilterChip,
+        {
+          label,
+          active: typeFilter === key,
+          onClick: () => onTypeFilterChange && onTypeFilterChange(key)
+        },
+        key
+      )) }),
+      /* @__PURE__ */ jsx3("div", { style: { marginLeft: "auto" }, children: /* @__PURE__ */ jsx3(
+        "input",
+        {
+          type: "search",
+          value: searchQuery ?? "",
+          onChange: (e) => onSearchChange && onSearchChange(e.target.value),
+          placeholder: "\u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0442\u0435\u043A\u0441\u0442\u0443",
+          "aria-label": "\u041F\u043E\u0438\u0441\u043A \u043F\u043E feedback",
+          style: {
+            padding: "6px 12px",
+            minWidth: 240,
+            background: VT.white,
+            border: `1px solid ${VT.line}`,
+            borderRadius: 999,
+            fontSize: 13,
+            color: VT.ink,
+            outline: "none",
+            fontFamily: "inherit"
+          }
+        }
+      ) })
+    ] }),
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error }) }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsx3(Card, { style: { padding: 0, overflow: "hidden" }, children: FEEDBACK_DATA.map(([id, type, contact, msg, checks, ago], i) => /* @__PURE__ */ jsxs3("div", { style: {
-        padding: "14px 16px",
-        borderBottom: i < FEEDBACK_DATA.length - 1 ? `1px solid ${VT.lineSoft}` : "none",
-        background: i === 0 ? VT.accentSoft : "transparent",
-        cursor: "pointer"
-      }, children: [
-        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
-          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5 }, children: id }),
-          /* @__PURE__ */ jsx3(FbTypePill, { type }),
-          /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: ago })
-        ] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4 }, children: msg }),
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: contact })
-      ] }, id)) }),
-      /* @__PURE__ */ jsxs3(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx3(Mono, { children: "#F-238" }),
-          /* @__PURE__ */ jsx3(FbTypePill, { type: "feature_request" }),
-          /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: "2026-05-19 14:22" })
-        ] }),
-        /* @__PURE__ */ jsx3("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" }),
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: "an***@gmail" }),
-        /* @__PURE__ */ jsx3("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: "\xAB\u0425\u043E\u0447\u0443 YCLIENTS \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044E, \u0438\u043D\u0430\u0447\u0435 \u0444\u0440\u043E\u043D\u0442-\u043E\u0444\u0438\u0441 \u0432\u0435\u0434\u0443\u0442 \u043F\u043E \u0434\u0432\u0443\u043C \u043E\u043A\u043D\u0430\u043C \u2014 \u0440\u0430\u0437\u0434\u0440\u0430\u0436\u0430\u0435\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u043A. \u0413\u043E\u0442\u043E\u0432\u0430 \u0434\u043E\u043F\u043B\u0430\u0447\u0438\u0432\u0430\u0442\u044C.\xBB" }),
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "CHECKBOXES \xB7 JSONB" }),
-        /* @__PURE__ */ jsx3("pre", { style: {
-          margin: "6px 0 0",
-          padding: 14,
-          background: VT.bgSoft,
-          border: `1px solid ${VT.line}`,
-          borderRadius: VT.r.sm,
-          fontFamily: VT.font.mono,
-          fontSize: 12,
-          lineHeight: 1.55,
-          color: VT.inkSoft
-        }, children: `{
-  "features": ["yclients"],
-  "sources": [],
-  "other_feature": null,
-  "other_source": null
-}` }),
-        /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, display: "flex", gap: 8 }, children: [
-          /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "\u041E\u0442\u0432\u0435\u0442\u0438\u0442\u044C" }),
-          /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", children: "\u2192 \u0432 backlog" }),
-          /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", style: { color: VT.inkFaint, marginLeft: "auto" }, children: "\u0410\u0440\u0445\u0438\u0432" })
+      /* @__PURE__ */ jsxs3(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+        loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs3("div", { style: { padding: "14px 16px", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+          /* @__PURE__ */ jsx3(SkeletonBlock, { width: "60%", height: 12, style: { marginBottom: 6 } }),
+          /* @__PURE__ */ jsx3(SkeletonBlock, { width: "90%", height: 14 })
+        ] }, i)),
+        !loading && (d.items || []).length === 0 && /* @__PURE__ */ jsx3(EmptyState, { title: "Inbox \u043F\u0443\u0441\u0442", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043E\u0441\u0442\u0430\u0432\u0438\u0442 feedback \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+        !loading && (d.items || []).map((row, i, arr) => {
+          const isSelected = selected && selected.id === row.id;
+          return /* @__PURE__ */ jsxs3(
+            "button",
+            {
+              type: "button",
+              onClick: () => handleRowClick(row.id),
+              style: {
+                display: "block",
+                width: "100%",
+                textAlign: "left",
+                padding: "14px 16px",
+                borderBottom: i < arr.length - 1 ? `1px solid ${VT.lineSoft}` : "none",
+                background: isSelected ? VT.accentSoft : "transparent",
+                cursor: "pointer",
+                border: "none",
+                fontFamily: "inherit"
+              },
+              children: [
+                /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
+                  /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5 }, children: row.id }),
+                  /* @__PURE__ */ jsx3(FbTypePill, { type: row.type }),
+                  /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs(row.created_at) })
+                ] }),
+                /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: row.message }),
+                /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: row.email_or_contact_masked || "\u2014" })
+              ]
+            },
+            row.id
+          );
+        }),
+        !loading && (d.items || []).length > 0 && onPageChange && /* @__PURE__ */ jsxs3("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft, borderTop: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsxs3("span", { children: [
+            d.offset + 1,
+            "\u2013",
+            Math.min(d.offset + d.limit, d.total),
+            " \u0438\u0437 ",
+            d.total
+          ] }),
+          /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 6 }, children: [
+            /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0, children: "\u2190" }),
+            /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total, children: "\u2192" })
+          ] })
         ] })
-      ] })
+      ] }),
+      /* @__PURE__ */ jsx3(Card, { style: { padding: 22 }, children: !selected ? /* @__PURE__ */ jsx3(EmptyState, { title: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043B\u0435\u0432\u0430" }) : /* @__PURE__ */ jsxs3(Fragment5, { children: [
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx3(Mono, { children: selected.id }),
+          /* @__PURE__ */ jsx3(FbTypePill, { type: selected.type }),
+          /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs(selected.created_at) })
+        ] }),
+        /* @__PURE__ */ jsx3("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: selected.type === "source_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" : selected.type === "feature_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" : selected.type === "bug" ? "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435" : "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435" }),
+        selected.email_or_contact_masked && /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: selected.email_or_contact_masked }),
+        /* @__PURE__ */ jsx3("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: selected.message }),
+        selected.source_name && /* @__PURE__ */ jsxs3("div", { style: { marginBottom: 14 }, children: [
+          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE NAME" }),
+          /* @__PURE__ */ jsx3("div", { style: { marginTop: 4 }, children: /* @__PURE__ */ jsx3(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 12 }, children: selected.source_name }) })
+        ] }),
+        selected.checkboxes && Object.keys(selected.checkboxes).length > 0 && /* @__PURE__ */ jsxs3("details", { open: false, children: [
+          /* @__PURE__ */ jsx3("summary", { style: {
+            fontFamily: VT.font.mono,
+            fontSize: 10.5,
+            letterSpacing: "0.1em",
+            color: VT.inkSoft,
+            cursor: "pointer",
+            padding: "6px 0",
+            listStyle: "none"
+          }, children: "CHECKBOXES \xB7 JSONB \u25BE" }),
+          /* @__PURE__ */ jsx3("pre", { style: {
+            margin: "6px 0 0",
+            padding: 14,
+            background: VT.bgSoft,
+            border: `1px solid ${VT.line}`,
+            borderRadius: VT.r.sm,
+            fontFamily: VT.font.mono,
+            fontSize: 12,
+            lineHeight: 1.55,
+            color: VT.inkSoft,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word"
+          }, children: JSON.stringify(selected.checkboxes, null, 2) })
+        ] })
+      ] }) })
     ] })
   ] }) });
 }
-function HealthRow({ name, status, latency, note }) {
-  const ok = status === "ok";
-  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-    /* @__PURE__ */ jsx3("span", { style: { width: 10, height: 10, borderRadius: "50%", background: ok ? VT.success : VT.danger, boxShadow: `0 0 0 4px ${ok ? VT.successSoft : VT.dangerSoft}` } }),
-    /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, fontWeight: 500, minWidth: 120 }, children: name }),
-    /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: status.toUpperCase() }),
-    /* @__PURE__ */ jsx3(Mono, { style: { marginLeft: "auto", fontSize: 12, color: VT.inkFaint }, children: latency }),
-    /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5, color: VT.inkFaint, minWidth: 220, textAlign: "right" }, children: note })
+var MOCK_SETTINGS = {
+  environment: "prod",
+  log_level: "INFO",
+  app_base_url: "https://app.samosite.online",
+  landing_base_url: "https://samosite.online",
+  sites_base_domain: "samosite.online",
+  feature_max_bot: false,
+  feature_auto_sync: true,
+  captcha_configured: true,
+  tg_bot_configured: true,
+  yandexgpt_configured: true,
+  yookassa_configured: true,
+  s3_configured: true,
+  fernet_keys_configured: true
+};
+function ConfiguredBadge({ on, label }) {
+  return /* @__PURE__ */ jsxs3("span", { style: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "3px 9px",
+    borderRadius: 999,
+    background: on ? VT.successSoft : VT.warnSoft,
+    color: on ? "oklch(0.34 0.12 145)" : "oklch(0.40 0.13 70)",
+    fontSize: 11.5,
+    fontWeight: 500
+  }, children: [
+    /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: on ? "\u2713" : "\u26A0" }),
+    label || (on ? "\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D" : "\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D")
   ] });
 }
-function S19_Settings() {
-  return /* @__PURE__ */ jsx3(AdminChrome, { active: "settings", children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
+function KeyValueRow({ label, children }) {
+  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px dashed ${VT.line}`, gap: 16 }, children: [
+    /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: VT.inkSoft }, children: label }),
+    /* @__PURE__ */ jsx3("div", { children })
+  ] });
+}
+function S19_Settings({ data, loading, error, onRefresh, _embed }) {
+  const d = data || MOCK_SETTINGS;
+  const Wrap = _embed === false ? React2.Fragment : AdminChrome;
+  const wrapProps = _embed === false ? {} : { active: "settings" };
+  const envBadge = d.environment === "prod" ? { kind: "danger", label: "PROD" } : d.environment === "staging" ? { kind: "warn", label: "STAGING" } : { kind: "info", label: "DEV" };
+  return /* @__PURE__ */ jsx3(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs3("div", { style: { padding: "24px 32px 40px" }, children: [
     /* @__PURE__ */ jsx3(Eyebrow, { children: "SETTINGS \xB7 SYSTEM" }),
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
       /* @__PURE__ */ jsx3("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }),
-      /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12, color: VT.inkFaint }, children: "uptime \xB7 14 \u0434\u043D\u0435\u0439 3 \u0447\u0430\u0441\u0430" })
+      onRefresh && /* @__PURE__ */ jsx3(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
+    error && /* @__PURE__ */ jsx3("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx3(ErrorBlock, { message: error, onRetry: onRefresh }) }),
+    loading && /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsx3(SkeletonBlock, { width: "100%", height: 200, radius: 10 }),
+      /* @__PURE__ */ jsx3(SkeletonBlock, { width: "100%", height: 200, radius: 10 })
+    ] }),
+    !loading && /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
       /* @__PURE__ */ jsxs3(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "HEALTH CHECKS" }),
+        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0421\u0420\u0415\u0414\u0410" }),
         /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx3(HealthRow, { name: "PostgreSQL", status: "ok", latency: "3 ms", note: "14/20 connections" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "Redis", status: "ok", latency: "0.4 ms", note: "cache hit rate 92%" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "S3 (Selectel)", status: "ok", latency: "42 ms", note: "bucket vitrina-sites" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "YandexGPT 5 Pro", status: "ok", latency: "1.2 s", note: "\u043A\u0432\u043E\u0442\u0430: 1240/5000 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "Yandex SmartCaptcha", status: "ok", latency: "180 ms", note: "\u2014" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "TG Bot API", status: "ok", latency: "220 ms", note: "\u2014" }),
-          /* @__PURE__ */ jsx3(HealthRow, { name: "Caddy / wildcard SSL", status: "ok", latency: "\u2014", note: "cert exp \u0432 47 \u0434\u043D\u044F\u0445" })
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Environment", children: /* @__PURE__ */ jsx3(Badge, { kind: envBadge.kind, style: { padding: "2px 10px", fontSize: 11.5 }, children: envBadge.label }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Log level", children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 13 }, children: d.log_level }) })
         ] })
       ] }),
       /* @__PURE__ */ jsxs3(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SECRETS \xB7 ROTATION" }),
-        /* @__PURE__ */ jsx3("div", { style: { marginTop: 10, fontSize: 13 }, children: [
-          ["FERNET_KEY", "142 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434", "warn"],
-          ["DATABASE_URL", "8 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434", "ok"],
-          ["TG_BOT_TOKEN", "23 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434", "ok"],
-          ["YANDEX_GPT_API_KEY", "8 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434", "ok"],
-          ["SMARTCAPTCHA_KEY", "54 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434", "ok"],
-          ["SMTP_PASSWORD", "210 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434", "warn"]
-        ].map(([name, ago, lvl]) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 0", borderBottom: `1px dashed ${VT.line}` }, children: [
-          /* @__PURE__ */ jsx3(Mono, { style: { flex: 1, fontSize: 12 }, children: name }),
-          /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11.5, color: VT.inkSoft }, children: ago }),
-          lvl === "warn" && /* @__PURE__ */ jsx3(Badge, { kind: "warn", style: { padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: "ROTATE" })
-        ] }, name)) })
+        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0411\u0410\u0417\u041E\u0412\u042B\u0415 URL" }),
+        /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "App", children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: d.app_base_url }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Landing", children: /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 12 }, children: d.landing_base_url }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Sites", children: /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 12 }, children: [
+            "*.",
+            d.sites_base_domain
+          ] }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs3(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "FEATURE FLAGS" }),
+        /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "MAX-bot integration", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.feature_max_bot, label: d.feature_max_bot ? "on" : "off" }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Auto-sync sites", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.feature_auto_sync, label: d.feature_auto_sync ? "on" : "off" }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs3(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0412\u041D\u0415\u0428\u041D\u0418\u0415 \u0421\u0415\u0420\u0412\u0418\u0421\u042B" }),
+        /* @__PURE__ */ jsxs3("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Captcha", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.captcha_configured }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Telegram-\u0431\u043E\u0442", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.tg_bot_configured }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "YandexGPT", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.yandexgpt_configured }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "\u042EKassa", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.yookassa_configured }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "S3 storage", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.s3_configured }) }),
+          /* @__PURE__ */ jsx3(KeyValueRow, { label: "Fernet keys", children: /* @__PURE__ */ jsx3(ConfiguredBadge, { on: d.fernet_keys_configured }) })
+        ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs3(Card, { style: { padding: 22, marginTop: 14 }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center" }, children: [
-        /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "ADMIN ACTIONS \xB7 \u041F\u041E\u0421\u041B\u0415\u0414\u041D\u0418\u0415 20" }),
-        /* @__PURE__ */ jsx3(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "\u044D\u043A\u0441\u043F\u043E\u0440\u0442 JSONL" })
-      ] }),
-      /* @__PURE__ */ jsx3("div", { style: { marginTop: 10, fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft, lineHeight: 1.7 }, children: [
-        ["14:22:18", "founder", "lead.decrypt", "lead_id=8124 \xB7 site=studia-anna"],
-        ["14:12:04", "founder", "site.publish", "#A-1837 \u2192 barber-samara"],
-        ["13:48:11", "founder", "application.reject", "#A-1836 \xB7 reason=spam"],
-        ["12:30:55", "founder", "lead.bulk_decrypt", "count=12 \xB7 totp_verified=true"],
-        ["11:02:00", "system", "sync.run", "34 sites \xB7 5 diff \xB7 0 errors"],
-        ["09:15:33", "founder", "application.publish", "#A-1834 \u2192 psy-marina"],
-        ["08:48:12", "founder", "feedback.reply", "#F-235"],
-        ["07:00:00", "system", "cron.daily_summary", "sent TG"]
-      ].map((r, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 10 }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { color: VT.inkFaint }, children: r[0] }),
-        /* @__PURE__ */ jsx3("span", { style: { color: r[1] === "system" ? VT.info : VT.accent, width: 64 }, children: r[1] }),
-        /* @__PURE__ */ jsx3("span", { style: { color: VT.ink, width: 160 }, children: r[2] }),
-        /* @__PURE__ */ jsx3("span", { style: { flex: 1 }, children: r[3] })
-      ] }, i)) })
-    ] })
+    /* @__PURE__ */ jsx3(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 14, display: "block" }, children: "Read-only snapshot. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u0435\u043A\u0440\u0435\u0442\u043E\u0432 \u043D\u0435 \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u0441\u044F \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u0430\u0442\u0443\u0441 \xAB\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D/\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\xBB." })
   ] }) });
 }
 var SitesList = S14_SitesList;

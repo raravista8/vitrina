@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.1.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. Drop-in React components that match canon/index.html byte-for-byte.",
+  "version": "0.2.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. Drop-in React components that match canon/index.html byte-for-byte. 0.2 adds interactive admin variants.",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -13,36 +13,47 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
     "./tokens": {
+      "types": "./dist/tokens.d.ts",
       "import": "./dist/tokens.js"
     },
     "./primitives": {
+      "types": "./dist/primitives/index.d.ts",
       "import": "./dist/primitives/index.js"
     },
     "./landing": {
+      "types": "./dist/landing/index.d.ts",
       "import": "./dist/landing/index.js"
     },
     "./intake": {
+      "types": "./dist/intake/index.d.ts",
       "import": "./dist/intake/index.js"
     },
     "./customer": {
+      "types": "./dist/customer/index.d.ts",
       "import": "./dist/customer/index.js"
     },
     "./admin-demo": {
+      "types": "./dist/admin-demo/index.d.ts",
       "import": "./dist/admin-demo/index.js"
     },
     "./admin-core": {
+      "types": "./dist/admin-core/index.d.ts",
       "import": "./dist/admin-core/index.js"
     },
     "./admin-ops": {
+      "types": "./dist/admin-ops/index.d.ts",
       "import": "./dist/admin-ops/index.js"
     },
     "./source": {
+      "types": "./dist/source/index.d.ts",
       "import": "./dist/source/index.js"
     },
     "./tailwind-preset": {
+      "types": "./dist/tailwind-preset.d.ts",
       "import": "./dist/tailwind-preset.js"
     },
     "./styles.css": "./dist/styles.css",

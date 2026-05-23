@@ -1,7 +1,4 @@
-node_modules/
-*.log
+node_modules
+dist
 .DS_Store
-# dist/ INTENTIONALLY NOT IGNORED — this is a vendored package, dist
-# is committed so landing can install via `file:` without a build step.
-# The `!dist/` un-ignore overrides the root .gitignore line `dist/`.
-!dist/
+*.log

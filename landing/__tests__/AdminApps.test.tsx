@@ -86,14 +86,25 @@ describe("AdminHome (Dashboard)", () => {
     render(<AdminHomePage />);
 
     // findByText polls until the chrome auth-gate + dashboard fetch
-    // both resolve and the counter labels mount.
-    await screen.findByText("Все заявки");
-    expect(screen.getByText("Ждут модерации")).toBeInTheDocument();
-    expect(screen.getByText("Опубликованные сайты")).toBeInTheDocument();
-    expect(screen.getByText("Лиды (всего)")).toBeInTheDocument();
-    expect(screen.getByText("Feedback")).toBeInTheDocument();
-    // Numeric values formatted in ru-RU.
-    expect(screen.getAllByText("42").length).toBeGreaterThan(0);
+    // both resolve and the counter tiles mount. Canon's `StatTile`
+    // uppercases the label via `String(label).toUpperCase()`, so we
+    // assert against the uppercased renders. Labels per canon 0.2.0
+    // `COUNTER_TILES` in `packages/canon/src/admin-core/index.tsx`:
+    //   apps_total → "Всего заявок"   → "ВСЕГО ЗАЯВОК"
+    //   apps_pending → "Pending"      → "PENDING"
+    //   sites_published → "Опубликовано" → "ОПУБЛИКОВАНО"
+    //   leads_total → "Лиды"          → "ЛИДЫ"
+    //   feedback_total → "Feedback"   → "FEEDBACK"
+    await screen.findByText("ВСЕГО ЗАЯВОК");
+    expect(screen.getByText("PENDING")).toBeInTheDocument();
+    expect(screen.getByText("ОПУБЛИКОВАНО")).toBeInTheDocument();
+    expect(screen.getByText("ЛИДЫ")).toBeInTheDocument();
+    expect(screen.getByText("FEEDBACK")).toBeInTheDocument();
+    // Wait for the numeric value to render (post-fetch, loading=false).
+    // While `loading=true`, canon renders `<SkeletonBlock>` placeholders
+    // instead of the value text — so we await one specific value before
+    // asserting the rest synchronously.
+    await screen.findByText("42");
     expect(screen.getAllByText("7").length).toBeGreaterThan(0);
   });
 

@@ -2,6 +2,8 @@
 
 > Canonical UI for **Самосайт** (samosite.online). Single source of truth for visual design — same React render that the dev canvas uses, packaged as a real npm module.
 
+**Current version: `0.2.0`** — admin interactive variants complete. All 10 admin screens are now drop-in for production (AdminLogin, AdminChrome, AdminDashboard, AppsList, AppDetail, SitesList, SiteDetail, Leads + decrypt modal, Waitlist, FeedbackInbox, Settings). See [CHANGELOG](./CHANGELOG.md).
+
 ## Why this exists
 
 The previous workflow was: design canvas in JSX → handoff doc → developer transcribes into prod TSX → drift on every value. **This package eliminates the transcription step.** Production imports the canon components and renders them directly. Visual diff vs canvas = 0 by construction.
@@ -105,10 +107,89 @@ Your custom Tailwind classes now share token names with the canon (`bg-accent`, 
 | `@samosite/canon/customer` | `CustomerSite`, `LeadForm`, `FeedbackPage` + `S7_SchemeSwatches` |
 | `@samosite/canon/source` | `SourceDetectionBadge` (desktop catalog) + `S2_Desktop`, `S2_Mobile` |
 | `@samosite/canon/admin-demo` | `ClientAdminDemo` — `/admin-demo` page |
-| `@samosite/canon/admin-core` | `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail`, `AdminChrome`, `StatusPill`, `StatTile` |
-| `@samosite/canon/admin-ops` | `SitesList`, `SiteDetail`, `Leads`, `Waitlist`, `FeedbackInbox`, `Settings` |
+| `@samosite/canon/admin-core` | **Interactive (0.2.0):** `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail`, `AdminChrome`, `StatusPill`, `StatTile` + shared design surfaces `SkeletonBlock`, `EmptyState`, `ErrorBlock`, `RateLimitCountdown`, `FilterChip`, `TrendChart` + all prop types |
+| `@samosite/canon/admin-ops` | **Interactive (0.2.0):** `SitesList`, `SiteDetail`, `Leads` (включая decrypt modal), `Waitlist`, `FeedbackInbox`, `Settings` + all prop types |
 | `@samosite/canon/tailwind-preset` | Tailwind preset (default export) |
 | `@samosite/canon/styles.css` | Raw CSS for option B above |
+
+## Admin chrome — drop-in for prod (0.2.0)
+
+`AdminChrome` + 4 admin-core screens accept full controlled props in 0.2.0. Pattern:
+
+```tsx
+// app/admin/layout.tsx
+'use client';
+import { AdminChrome } from '@samosite/canon/admin-core';
+import { useRouter, usePathname } from 'next/navigation';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const section = (pathname.split('/')[2] ?? 'dashboard') as any;
+
+  return (
+    <AdminChrome
+      active={section}
+      user={{ username: 'founder@samosite.online', initials: 'F' }}
+      badgeCounts={{ apps: 12, waitlist: 3 }}
+      onNavigate={(s) => router.push(`/admin/${s === 'dashboard' ? '' : s}`)}
+      onLogout={async () => {
+        await fetch('/admin/api/logout', { method: 'POST' });
+        router.push('/admin/login');
+      }}>
+      {children}
+    </AdminChrome>
+  );
+}
+```
+
+```tsx
+// app/admin/login/page.tsx
+'use client';
+import { useState } from 'react';
+import { AdminLogin } from '@samosite/canon/admin-core';
+import type { AdminLoginError, AdminLoginMode, AdminLoginStep } from '@samosite/canon/admin-core';
+
+export default function LoginPage() {
+  const [step, setStep] = useState<AdminLoginStep>(1);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [totp, setTotp] = useState('');
+  const [mode, setMode] = useState<AdminLoginMode>('totp');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<AdminLoginError>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+
+  return (
+    <AdminLogin
+      step={step} onStepChange={setStep}
+      username={username} onUsernameChange={setUsername}
+      password={password} onPasswordChange={setPassword}
+      totp={totp} onTotpChange={setTotp}
+      mode={mode} onModeChange={setMode}
+      loading={loading}
+      error={error}
+      onSubmitCredentials={async (u, p) => {
+        setLoading(true); setError(null);
+        const r = await fetch('/admin/api/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
+        setLoading(false);
+        if (r.ok) { const j = await r.json(); setChallengeId(j.data.challenge_id); setStep(2); }
+        else if (r.status === 429) setError('rate_limited');
+        else setError('invalid_credentials');
+      }}
+      onSubmitCode={async (kind, code) => {
+        setLoading(true); setError(null);
+        const endpoint = kind === 'totp' ? '/admin/api/login/totp' : '/admin/api/login/backup';
+        const r = await fetch(endpoint, { method: 'POST', body: JSON.stringify({ challenge_id: challengeId, code }) });
+        setLoading(false);
+        if (r.ok) window.location.href = '/admin';
+        else setError('invalid_code');
+      }} />
+  );
+}
+```
+
+More examples (Dashboard, AppsList, AppDetail) — same pattern: parent owns state, hands `data` + callbacks. See [CHANGELOG](./CHANGELOG.md#020-alpha1) for full prop list per component.
 
 ## Build
 
