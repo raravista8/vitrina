@@ -29,21 +29,22 @@
 
 import { test, expect } from "@playwright/test";
 import path from "node:path";
-import { LANDING_SECTIONS, baselinePath } from "./utils/sections";
+import { LANDING_SECTIONS, baselinePath, type ViewportName } from "./utils/sections";
 import { compareToBaseline } from "./utils/diff";
 
 const DIFF_DIR = path.join(__dirname, "__diff");
 const REPO_LANDING = path.resolve(__dirname, "..", "..");
 
-/* Each Playwright project (chromium-desktop/tablet/mobile) sets its own
-   viewport via the config. `test.info().project.name` tells us which one
-   we're in, which we map back to the viewport name embedded in baseline
-   filenames. */
-function viewportNameFromProject(projectName: string): "1440" | "768" | "390" {
-  if (projectName.endsWith("desktop")) return "1440";
-  if (projectName.endsWith("tablet")) return "768";
-  if (projectName.endsWith("mobile")) return "390";
-  throw new Error(`Unknown project: ${projectName}`);
+/* Playwright projects are named `chromium-<role>-<width>` (see
+   `playwright.config.ts`). The width suffix IS the ViewportName —
+   no mapping table needed, just extract it. Adding a new viewport
+   to playwright.config.ts means no edit here. */
+function viewportNameFromProject(projectName: string): ViewportName {
+  const match = projectName.match(/-(\d+)$/);
+  if (!match) {
+    throw new Error(`Unknown project: ${projectName}. Expected chromium-<role>-<width> form.`);
+  }
+  return match[1] as ViewportName;
 }
 
 test.describe("landing visual regression", () => {

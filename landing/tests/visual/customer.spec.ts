@@ -41,6 +41,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { CUSTOMER_SECTIONS } from "./utils/customer-sections";
+import type { ViewportName } from "./utils/sections";
 
 const FIXTURE_DIR = path.resolve(__dirname, "__fixtures__", "customer-site");
 const PORT = 4322;
@@ -112,11 +113,16 @@ test.describe("customer-site visual regression", () => {
 
   for (const section of CUSTOMER_SECTIONS) {
     test(`${section.label}`, async ({ page }, testInfo) => {
-      const viewport = testInfo.project.name.endsWith("desktop")
-        ? "1440"
-        : testInfo.project.name.endsWith("tablet")
-          ? "768"
-          : "390";
+      /* Playwright projects are named `chromium-<role>-<width>` (see
+         playwright.config.ts). Extract the width suffix as the viewport
+         name — same scheme as `landing.spec.ts::viewportNameFromProject`.
+         Without this regex, the older endsWith("desktop"/"tablet") chain
+         silently fell through to "390" for every renamed project, making
+         every customer-spec test think it ran at 390 (which broke
+         hiddenOn filtering for the Sticky-mobile-CTA — visible at 390
+         but `display:none` at 1440/768/375). */
+      const widthMatch = testInfo.project.name.match(/-(\d+)$/);
+      const viewport = (widthMatch ? widthMatch[1] : "390") as ViewportName;
 
       await page.goto(BASE, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);

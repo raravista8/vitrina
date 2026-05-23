@@ -45,6 +45,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { INTAKE_SCREENS } from "./utils/intake-screens";
+import type { ViewportName } from "./utils/sections";
 
 const FIXTURE_DIR = path.resolve(__dirname, "__fixtures__", "customer-site");
 const CUSTOMER_PORT = 4323;
@@ -133,11 +134,11 @@ test.describe("intake visual regression", () => {
 
   for (const screen of INTAKE_SCREENS) {
     test(`${screen.label}`, async ({ page }, testInfo) => {
-      const viewport = testInfo.project.name.endsWith("desktop")
-        ? "1440"
-        : testInfo.project.name.endsWith("tablet")
-          ? "768"
-          : "390";
+      /* Playwright projects are named `chromium-<role>-<width>` (see
+         playwright.config.ts). Extract the width suffix — same scheme as
+         `landing.spec.ts::viewportNameFromProject`. */
+      const widthMatch = testInfo.project.name.match(/-(\d+)$/);
+      const viewport = (widthMatch ? widthMatch[1] : "390") as ViewportName;
 
       if (screen.hiddenOn?.includes(viewport)) {
         testInfo.annotations.push({

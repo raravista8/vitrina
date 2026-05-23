@@ -88,14 +88,22 @@ async function captureViewport(viewportName: string, isMobile: boolean) {
 async function main() {
   fs.mkdirSync(BASELINES_DIR, { recursive: true });
 
-  /* 1440 + 768 use the canon Desktop variant. 390 uses Mobile.
+  /* 1440 + 768 use the canon Desktop variant. 390 and 375 use Mobile.
      The canon has only two layout variants — there's no separate tablet
      design. 768 captures Desktop at a smaller viewport, which exercises
      prod's Tailwind sm: breakpoint (640px+) without going to the canon's
-     mobile layout. */
+     mobile layout.
+
+     Why two mobile widths:
+       390 = iPhone 12-15 Pro standard (typical modern iPhone)
+       375 = iPhone SE / mini / Reachability mode (narrow safety net)
+     Both render the canon mobile variant — same JSX, different viewport
+     widths. Captures any section that breaks specifically at ≤375 px
+     (long Russian button labels, fixed-width canon cards, hero H1 splits). */
   await captureViewport("1440", /* mobile */ false);
   await captureViewport("768", /* mobile */ false);
   await captureViewport("390", /* mobile */ true);
+  await captureViewport("375", /* mobile */ true);
 
   console.log("[done] baselines committed to", path.relative(REPO_ROOT, BASELINES_DIR));
 }

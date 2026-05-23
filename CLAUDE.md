@@ -1,159 +1,220 @@
-# Project: Vitrina
+# Project: Vitrina (code-name) / Самосайт (brand)
 
-AI website generator for micro-businesses; source → site in 2 minutes, weekly auto-sync, fully hosted in RF (FZ-152).
+AI website generator for micro-businesses in RF. Source (Telegram channel, Yandex.Maps, photos) → site in 2 minutes. Weekly auto-sync. FZ-152 compliant.
 
-## Stack
+This is the **root** `CLAUDE.md`. It applies to the whole repo. For area-specific rules, Claude Code also reads the nearest nested `CLAUDE.md` when working in that directory:
 
-Python 3.12 + FastAPI + SQLAlchemy 2.0 + Postgres 16 + Redis (RQ) + Jinja2 (sites). Next.js 16 (App Router) + Tailwind + `@samosite/canon` (UI source of truth, see "Canon workflow" below) — landing. Docker Compose on Selectel VPS. YandexGPT 5 Pro (only LLM).
+- `backend/CLAUDE.md` — Python / FastAPI / SQLAlchemy / RQ
+- `landing/CLAUDE.md` — Next.js 16 / Tailwind / canon consumer / **pixel-perfect protocol**
+- `packages/canon/CLAUDE.md` — vendored `@samosite/canon` package rules
 
-## Commands
+---
 
-- `make install` — install poetry + npm deps
-- `make dev` — docker compose up locally
-- `make test` — pytest unit + integration + security subset
-- `make test-full` — + e2e + full security suite
-- `make lint` — ruff + eslint + mypy
-- `make typecheck` — mypy strict
-- `make security-check` — bandit + pip-audit + gitleaks
-- `make migrate` — alembic upgrade head
-- `make deploy` — push images + ssh + compose up
-- `make visual-test` — run Playwright pixel-diff against canon baselines
-- `make visual-update` — refresh baselines (ONLY after explicit design sign-off)
+## 0. Behavioral principles (read FIRST, applies to EVERY task)
 
-## Project structure
+These four principles override task-specific instinct. They exist to suppress the most common AI coding failure modes: silent assumptions, overengineering, scope creep, unverified completion.
 
-- `backend/app/api/` — FastAPI routers (thin)
-- `backend/app/core/` — domain logic, hexagonal for parsing/content/auth/leads, NEVER imports from infrastructure/
-- `backend/app/infrastructure/` — concrete adapters (postgres, redis, s3, ygpt clients)
-- `backend/app/workers/` — RQ worker entrypoints
-- `backend/app/bot/` — aiogram TG bot handlers
-- `landing/` — Next.js
-- `packages/canon/` — vendored `@samosite/canon` npm package (UI source of truth from Claude Design — see "Canon workflow" below)
-- `sites-template/` — Jinja2 templates for customer sites
-- `infra/` — docker-compose, Caddyfile, deploy scripts
+### 0.1 Think before coding
 
-## Canon workflow (UI source of truth)
+Don't assume. Don't hide confusion. Surface tradeoffs.
 
-`@samosite/canon` is vendored as a workspace `file:` dep under `packages/canon/`. **Canon = the design team's React source. Prod imports canon directly = drift is mathematically impossible.** Per `docs/handoff/CANON_PACKAGE_TZ.md` (Variant C).
+Before implementing:
 
-**What lives in canon:**
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, STOP. Name what's confusing. Ask.
 
-- 19 screens (landing × 13 + intake × 6 + customer × 1 + admin × 10 + admin-demo × 1)
-- 12 primitives (`SectionTitle`, `SectionSub`, `Btn`, `Mono`, `Logo`, `BrandMark`, icons, `FeatureCard`, etc.)
-- Design tokens (`VT`, `BRAND`, flat `tokens` colors/fonts/shadows/radii)
-- `<CanonStyles />` provider — hover-lift, focus rings, vt-pulse keyframes, smooth-scroll
-- Tailwind preset (`@samosite/canon/tailwind-preset`)
+### 0.2 Simplicity first
 
-**Currently consuming canon (drift = 0):**
+Minimum code that solves the problem. Nothing speculative.
 
-_Landing & shared_
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
 
-- `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`
-- `landing/app/page.tsx` — 9 sections via `<ResponsiveCanonSection>` (Examples → FreeMonth)
+Self-check: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-_Demo routes_
+### 0.3 Surgical changes
 
-- `landing/app/admin-demo/page.tsx` — `<ClientAdminDemo />` drop-in
-- `landing/app/customer-demo/page.tsx` — `<CustomerSite scheme={cream|slate|sage} />` palette-preview drop-in
+Touch only what you must. Clean up only your own mess.
 
-_Admin chrome (canon 0.2.0, PR #128)_ — all 10 founder-side screens
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it — don't delete it.
 
-- `landing/components/admin/AdminChrome.tsx` — wraps canon's `<AdminChrome>` with our auth-gate
-- `landing/app/admin/login/page.tsx` — `<AdminLogin>` (2-step + TOTP/backup + rate-limit countdown)
-- `landing/app/admin/page.tsx` — `<AdminDashboard>` (5 KPI tiles + 14-day trend)
-- `landing/app/admin/apps/page.tsx` — `<AppsList>`
-- `landing/app/admin/apps/[id]/page.tsx` — `<AppDetail>`
-- `landing/app/admin/sites/page.tsx` — `<SitesList>`
-- `landing/app/admin/sites/[id]/page.tsx` — `<SiteDetail>` (iframe preview + 6-action toolbar wired via PR #129)
-- `landing/app/admin/leads/page.tsx` — `<Leads>` (multi-select + decrypt modal, plaintext only after fresh TOTP)
-- `landing/app/admin/waitlist/page.tsx` — `<Waitlist>` (mark-in-development wired via PR #129)
-- `landing/app/admin/feedback/page.tsx` — `<FeedbackInbox>`
-- `landing/app/admin/settings/page.tsx` — `<Settings>`
+Orphan rule: remove imports/variables/functions YOUR changes made unused. Don't remove pre-existing dead code unless asked.
 
-**Still hand-rolled (intentional):**
+Test: every changed line traces directly to the user's request.
 
-- `Hero` — canon's `HeroBlock` is read-only (input is placeholder, CTA is anchor). Replacing would break signup. Wait for canon 0.3.x interactive variant.
-- `Footer` — canon doesn't export standalone (inlined in `<SamosaytLanding>`). Trivial extraction needed canon-side.
-- `SubmitModal`, `PhotoDrawer`, `SourceDetectionBadge`, `FeedbackForm` (public `/feedback`), `ApplicationForm` — interactive, same compromise as Hero.
-- Customer sites at `*.samosite.online` — Jinja2 templates in `sites-template/`, not React. Switching to canon SSR is a separate publish-pipeline project (see `docs/handoff/CANON_SWAP_PLAN.md`).
+### 0.4 Goal-driven execution
 
-**Refresh procedure when Claude Design ships a new canon version:**
+Define success criteria. Loop until verified.
 
-1. Replace `packages/canon/{src,README.md,CHANGELOG.md,package.json,…}` with the new package wholesale
-2. `cd packages/canon && npm i && npm run build` (regenerates `dist/`)
-3. `cd landing && npm install --install-links file:../packages/canon` (force-copy, not symlink — turbopack/Vite peer-dep symlink quirk)
-4. `npm run build` from `landing/` to verify nothing broke
-5. Commit (dist/ is committed; pre-commit hooks already exempt `packages/canon/dist/` from whitespace/EOF normalization)
+Transform tasks into verifiable goals:
 
-**Hard rules around canon:**
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+- "Make UI match design" → "`npm run test:visual` passes with diff ≤ 2%"
 
-- NEVER transcribe canon JSX into hand-rolled Tailwind manually. If a section needs to be on prod, import it from `@samosite/canon/<entry>`. If it doesn't exist in canon yet, file an issue with design before doing transcription.
-- NEVER edit `packages/canon/src/*` directly. It's vendored — round-trip through Claude Design.
-- NEVER drop `--install-links` from `npm ci` invocations (`landing/Dockerfile`, `.github/actions/setup-landing/action.yml`, `.github/workflows/visual-regression.yml`). Turbopack/Vite can't follow `file:` symlinks for peer-dep resolution.
-- ALWAYS keep `transpilePackages: ['@samosite/canon']` in `landing/next.config.mjs` (defense-in-depth alongside `--install-links`).
-- ALWAYS mount `<CanonStyles />` ONCE in `landing/app/layout.tsx`. Hover/focus/pulse don't fire without it.
-- WHEN swapping a section back from canon to hand-rolled Tailwind (e.g. for Tailwind bundle size or A/B copy), gate the swap on a pixel-diff test against the canon component (see `docs/handoff/CANON_PACKAGE_TZ.md §6` Scenario 2).
-- WHEN replacing a hand-rolled section with a canon import: always run the migration protocol (see "UI implementation protocol" below). Never leave orphan imports.
-- WHEN canon doesn't export the component you need (Hero, Footer, modals): DO NOT transcribe by hand. STOP and ask, or log it as a known gap in CHANGELOG.
-- AFTER any UI change, before declaring done: pixel-diff is mandatory. `make visual-test` must pass, or deviations must be explicitly documented in the PR.
+For multi-step tasks, state a brief plan:
 
-## UI implementation protocol (read before any landing/admin/customer-site work)
+```
+1. [step] → verify: [check]
+2. [step] → verify: [check]
+3. [step] → verify: [check]
+```
 
-**Task size**: one screen = one task = one PR. "Migrate the landing" is 13 tasks, not one. If a request sounds like "do all of X", STOP and ask to break it down into a screen list from `SCREEN_INDEX.md`.
+**Working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, clarifying questions come BEFORE implementation rather than AFTER mistakes.
 
-**Three anchors per UI task** (don't start without all three):
+---
 
-1. **Source**: which canon entry is imported (`@samosite/canon/<entry>`) or which `canon/*.jsx` file serves as visual reference
-2. **Destination**: which prod file is edited, which component is replaced, which line range
-3. **Acceptance**: what must match (selectors, padding, sizes) + pixel-diff threshold
+## 1. Stack overview
 
-**Migration protocol** (when replacing hand-rolled with canon import):
+Python 3.12 + FastAPI + SQLAlchemy 2.0 + Postgres 16 + Redis (RQ) + Jinja2 (customer sites). Next.js 16 App Router + Tailwind + `@samosite/canon` (UI source of truth) — landing. Docker Compose on Selectel VPS. YandexGPT 5 Pro (only LLM).
 
-1. Grep all usages of the old component across the repo
-2. Swap the import to the canon entry
-3. Mark the old file `@deprecated` (JSDoc comment at top); DO NOT delete it
-4. Verify: `pnpm dev` → open the route → confirm the new component is in the DOM via `data-section` / `data-screen`
-5. If the old file is no longer imported anywhere active, note it in the PR description — deletion is a separate task
+Detailed rules: see `backend/CLAUDE.md` and `landing/CLAUDE.md`.
 
-**Definition of done for UI tasks** (ALL items required):
+## 2. Commands (`make` targets)
 
-- [ ] Build clean, `make lint` and `make typecheck` green
-- [ ] Pixel-diff against canon ≤ threshold (`make visual-test` passes)
-- [ ] New component visible on the prod route (verified via Playwright screenshot)
-- [ ] If migration: old component is `@deprecated` and not imported from active routes
-- [ ] `VISUAL_COVERAGE.md` updated (🟢/🟡/🔴 for affected cells)
+| Target                | What it does                                           |
+| --------------------- | ------------------------------------------------------ |
+| `make install`        | poetry (backend) + npm install (landing)               |
+| `make dev`            | docker compose up (full stack)                         |
+| `make test`           | pytest + vitest (unit + integration + security subset) |
+| `make test-full`      | adds e2e + slow markers                                |
+| `make lint`           | ruff (backend) + eslint (landing)                      |
+| `make typecheck`      | mypy --strict + tsc --noEmit                           |
+| `make security-check` | bandit + pip-audit + npm audit + gitleaks              |
+| `make migrate`        | alembic upgrade head                                   |
 
-**STOP and ask if**:
+Visual regression lives in `landing/`:
+| Command (run from `landing/`) | What it does |
+|-------------------------------|--------------|
+| `npm run test:visual` | Playwright pixel-diff against `tests/visual/baselines/` |
+| `npm run test:visual:update` | Regenerate baselines via `infra/scripts/generate-canon-baselines.sh` |
 
-- Canon doesn't export the needed component (see "Still hand-rolled" list above — Hero, Footer, SubmitModal, etc.)
-- Spec and canon JSX contradict each other
-- Canon has a state/variant the spec doesn't mention (or vice versa)
-- A design token is needed that isn't in `@samosite/canon/tokens`
-- It's unclear whether the task replaces an existing component or adds a new one
+Full UI protocol in `landing/CLAUDE.md`.
 
-## Conventions (non-defaults)
+## 3. Project structure
+
+```
+backend/         FastAPI + workers + bot (Python 3.12, poetry)
+  app/api/       FastAPI routers (thin)
+  app/core/      domain logic, hexagonal — NEVER imports infrastructure/
+  app/infrastructure/  concrete adapters (postgres, redis, s3, ygpt)
+  app/workers/   RQ worker entrypoints
+  app/bot/       aiogram TG bot handlers
+landing/         Next.js 16 (App Router, Tailwind, React 19)
+  app/           routes
+  components/    landing-only hand-rolled components
+  tests/visual/  Playwright pixel-diff suite + canon-source/ + baselines/
+packages/canon/  vendored @samosite/canon (UI source of truth)
+sites-template/  Jinja2 templates for customer sites
+infra/           docker-compose, Caddyfile, deploy scripts
+  scripts/       generate-canon-baselines.sh & co
+docs/            PRD, ARCHITECTURE, SECURITY, ADRs, TASKS, COPY, handoff/
+.claude/commands/  custom slash commands (e.g. /implement-screen)
+```
+
+## 4. File placement rules
+
+When creating new files, follow these rules. **Prefer editing existing files over creating duplicates.**
+
+| What                                       | Where                                                                        |
+| ------------------------------------------ | ---------------------------------------------------------------------------- |
+| FastAPI router                             | `backend/app/api/<domain>.py`                                                |
+| Domain logic                               | `backend/app/core/<domain>/`                                                 |
+| DB / external service adapter              | `backend/app/infrastructure/<service>.py`                                    |
+| Background job                             | `backend/app/workers/<job>.py`                                               |
+| Pydantic schema                            | colocated with router or in `backend/app/core/<domain>/schemas.py`           |
+| Alembic migration                          | `backend/alembic/versions/`                                                  |
+| Backend test                               | `backend/tests/<unit\|integration\|security\|e2e>/test_<thing>.py`           |
+| Landing page route                         | `landing/app/<route>/page.tsx`                                               |
+| Landing component (canon import)           | use directly from `@samosite/canon/<entry>` — do not wrap unnecessarily      |
+| Landing component (hand-rolled, justified) | `landing/components/<Name>.tsx` — only with reason (see `landing/CLAUDE.md`) |
+| Visual spec                                | `landing/tests/visual/<screen>.spec.ts`                                      |
+| Visual test util                           | `landing/tests/visual/utils/<thing>.ts`                                      |
+| ADR                                        | `docs/adr/<NNNN>-<slug>.md` — required for new runtime deps                  |
+
+**Don't:**
+
+- Create new top-level directories without ADR.
+- Duplicate code across `backend/` and `landing/` — share via API contracts.
+- Add new components to `packages/canon/src/` — vendored, round-trip through Claude Design.
+
+## 5. Protected paths (operational risk)
+
+Changes here require **extra care** — read the referenced doc first, update tests in the same commit, surface uncertainty.
+
+| Path                                 | Why protected                                            | Read first                         |
+| ------------------------------------ | -------------------------------------------------------- | ---------------------------------- |
+| `backend/app/core/auth/`             | Auth + 2FA + sessions                                    | `docs/SECURITY.md`                 |
+| `backend/app/core/leads/`            | PII, FZ-152                                              | `docs/SECURITY.md` + ADR-0006      |
+| `backend/app/core/parsing/`          | SSRF surface, untrusted input                            | `docs/SECURITY.md`                 |
+| `backend/app/core/content/`          | LLM output sanitization                                  | `docs/SECURITY.md`                 |
+| `backend/app/core/consent/`          | FZ-152 consent records                                   | `docs/SECURITY.md` + ADR-0007      |
+| `packages/canon/src/`                | Vendored from Claude Design — do NOT edit directly       | `docs/handoff/CANON_PACKAGE_TZ.md` |
+| `landing/tests/visual/baselines/`    | Pixel-perfect reference PNGs — only regenerate via canon | `landing/CLAUDE.md`                |
+| `landing/tests/visual/canon-source/` | Canon prototype rendered for baselines                   | `landing/CLAUDE.md`                |
+| `.github/workflows/`                 | CI/CD                                                    | ADR-0009                           |
+| `infra/`                             | Deploy infrastructure                                    | `docs/ARCHITECTURE.md`             |
+
+## 6. Conventions (non-defaults)
 
 - API responses: `{ "ok": true, "data": {...} }` OR `{ "ok": false, "error": "code", "request_id": "..." }`
-- Domain functions return `Result[T, DomainError]`; exceptions raised only at api boundary
+- Domain functions return `Result[T, DomainError]`; exceptions only at api boundary
 - All Pydantic schemas: `model_config = ConfigDict(extra='forbid')`
 - Jinja2: `autoescape=True` global, `{{ x | safe }}` forbidden (lint rule)
 - IDs: UUIDv4 for public-facing, BIGSERIAL only for high-volume internal (events)
 - Timestamps: TIMESTAMPTZ in DB, UTC in app, MSK in UI
+- Brand: «Самосайт» in customer-facing copy. `vitrina` is code-name only (repo, package paths, env vars).
 
-## Hard rules (NEVER violate)
+## 7. Hard rules (NEVER violate)
 
 - NEVER commit secrets, `.env`, or TOTP-seeds
 - NEVER weaken auth/2FA "temporarily"
 - NEVER add new runtime dependency without ADR
 - NEVER import `openai`, `anthropic`, `google.generativeai`, `telethon`, `instaloader`, `instagram_private_api` — enforced by import-linter
 - NEVER use raw SQL with f-strings; ORM or `text(":param")` only
-- NEVER concatenate user input into shell, HTML, or LLM prompts; use subprocess args, autoescape, `<user_content>` tagging
+- NEVER concatenate user input into shell, HTML, or LLM prompts
 - NEVER send PII to LLM without obfuscation (`[PHONE]`, `[EMAIL]`, `[NAME]`)
-- ALWAYS run `make test && make typecheck && make security-check` before declaring task done
-- ALWAYS read SECURITY.md before changes to `core/auth/`, `core/leads/`, `core/parsing/`, `core/content/`, `core/consent/`
-- ALWAYS update tests in the same commit when modifying `core/{auth,leads,parsing/url_validator,content/output_validator}`
+- NEVER edit `packages/canon/src/*` directly — vendored, round-trip through Claude Design
+- NEVER transcribe canon JSX into hand-rolled Tailwind manually (see `landing/CLAUDE.md`)
+- NEVER use "Latin transliteration" for the brand — «Самосайт» Cyrillic only in customer copy (legal, PRD §3)
 
-## Universal security block (include in every code-touching prompt)
+## 8. Definition of Done
+
+A task is NOT done until ALL apply:
+
+### For any task
+
+- [ ] Build clean
+- [ ] `make lint` green
+- [ ] `make typecheck` green
+- [ ] `make test` green (relevant subset minimum; full suite for protected paths)
+- [ ] If touching protected path: `make security-check` green + relevant doc re-read in same session
+- [ ] Diff is surgical — every changed line traces to the request
+
+### For backend tasks (additional)
+
+- [ ] Tests updated in same commit when modifying `core/{auth,leads,parsing,content,consent}`
+- [ ] Migration added if schema changed
+- [ ] If new endpoint — rate-limit decorator + Pydantic validation + auth check
+
+### For UI tasks (additional)
+
+- [ ] `npm run test:visual` passes for affected screens (diff ≤ 2%)
+- [ ] New component visible on prod route — verified via Playwright MCP screenshot
+- [ ] If migration from hand-rolled → canon: old component `@deprecated`, no active imports
+- [ ] `docs/handoff/VISUAL_COVERAGE.md` updated (🔵/🟢/🟡/🔴) for affected rows
+- [ ] See `landing/CLAUDE.md` for full UI implementation protocol
+
+## 9. Universal security block (include in every code-touching prompt for backend work)
 
 > Security requirements (mandatory):
 >
@@ -168,48 +229,32 @@ _Admin chrome (canon 0.2.0, PR #128)_ — all 10 founder-side screens
 >
 > If you violate any rule, explain why and ask for confirmation.
 
-## Visual verification tools
-
-Playwright MCP is registered as `playwright` (see `.mcp.json`). If not yet installed: `claude mcp add playwright npx @playwright/mcp@latest`.
-
-**Use it to:**
-
-- Screenshot a prod route and compare against canon before declaring a UI task done
-- Verify a new component actually rendered to the DOM after migration (`data-section`, `data-screen` attributes)
-- Reproduce UI bug reports (instead of guessing from descriptions)
-- Sanity-check responsive breakpoints (1440 desktop, 768 tablet, 375 mobile)
-
-**Don't use it for:**
-
-- Auto-fixing UI — verification and diff reporting only
-- Full E2E runs — that's `make test-full`
-- Bypassing `make visual-test` — the Playwright MCP is for interactive verification, `visual-regression.yml` is the source of truth in CI
-
-## Reference docs
+## 10. Reference docs
 
 ### Always loaded (read at session start)
 
 - @docs/handoff/SCREEN_INDEX.md — map of 19 canonical screens (canon JSX ⇄ prod TSX)
-- @docs/handoff/VISUAL_COVERAGE.md — live tracker: which screens are canon-import (drift=0), which still hand-rolled
+- @docs/handoff/VISUAL_COVERAGE.md — live tracker: canon-import vs hand-rolled, per-viewport status
 - @packages/canon/CHANGELOG.md — known gaps and recent canon releases
 
 ### Read on trigger (load when working in matching area)
 
-- @docs/COPY.md — **canonical messaging** for landing/UI work; tone-of-voice + anti-patterns. TRIGGER: any changes to `landing/components/Hero.tsx`, `landing/content/`, customer site templates copy
-- @docs/SECURITY.md — threat model + FZ-152 controls. TRIGGER: changes to `core/auth/`, `core/leads/`, `core/parsing/`, `core/content/`, `core/consent/`
-- @docs/handoff/CANON_PACKAGE_TZ.md — TZ that produced `@samosite/canon` (Variant C spec, exports, versioning, integration scenarios). TRIGGER: any canon refresh or new entry request
+- @docs/COPY.md — TRIGGER: landing/UI copy, customer site templates, Hero/CTA copy
+- @docs/SECURITY.md — TRIGGER: changes to `core/{auth,leads,parsing,content,consent}`
+- @docs/handoff/CANON_PACKAGE_TZ.md — TRIGGER: any canon refresh or new entry request
+- @docs/handoff/CANON_SWAP_PLAN.md — TRIGGER: planning a hand-rolled → canon migration
 - @docs/handoff/specs/01_landing.md — TRIGGER: landing work
 - @docs/handoff/specs/02_customer.md — TRIGGER: customer site templates
 - @docs/handoff/specs/03_session.md — TRIGGER: session/intake flow
-- @docs/handoff/specs/04_typography.md — TRIGGER: typography or font-related work
-- @docs/handoff/specs/05_admin.md — TRIGGER: admin panel work
+- @docs/handoff/specs/04_typography.md — TRIGGER: typography work
+- @docs/handoff/specs/05_admin.md — TRIGGER: admin panel
 - @docs/handoff/specs/06_public_screens.md — TRIGGER: source badge, submit modal, photo drawer, lead, feedback
-- @docs/adr/ — locked-in decisions. TRIGGER: architectural decisions or when conflicting with current approach. Key ADRs: 0004/0005 = IG/TG legal strategy; 0008 = multi-channel contact (v2: explicit radio, not auto-detect); 0010 = AI review curation; 0011 = two-bot architecture (@SamositeIntakeBot for source parsing vs @SamositeBot for user notifications — NEVER confuse the two)
+- @docs/adr/ — TRIGGER: architectural decisions, conflicts with current approach. Key ADRs: 0004/0005 (IG/TG legal), 0008 (multi-channel contact v2), 0010 (AI review curation), 0011 (two-bot architecture — @SamositeIntakeBot vs @SamositeBot, NEVER confuse)
 
 ### Context only (don't load unless explicitly needed)
 
-- @docs/PRD.md — what we're building
-- @docs/ARCHITECTURE.md — how it fits together
-- @docs/TASKS.md — current backlog with stable IDs
-- @CONTRIBUTING.md — PR checklist
-- @packages/canon/README.md — consumer docs for the canon package (entry points, fonts, Tailwind preset)
+- @docs/PRD.md
+- @docs/ARCHITECTURE.md
+- @docs/TASKS.md
+- @CONTRIBUTING.md
+- @packages/canon/README.md
