@@ -36,8 +36,8 @@
  */
 
 import { Gift, Link as LinkIcon, ShieldCheck, X } from "lucide-react";
+import { HeroPlatformStrip } from "@samosite/canon/landing";
 
-import { AvitoGlyph, TwoGisGlyph, YandexMapsGlyph } from "./brand-glyphs";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -415,55 +415,20 @@ export function Hero() {
             </button>
           </form>
 
-          {/* Compact platform list (v2.1.3 §1.3). Под free-month плашкой —
-              маленький kicker + inline-chips с micro brand glyphs.
-              Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
-              чего» — юзер видит supported pool сразу под input, без
-              scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
-              2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
-              shared `./brand-glyphs`. */}
-          <div className="mt-4 sm:mt-[18px]">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-ink-faint sm:text-[11px]">
-              Из чего мы можем сделать вам сайт
-            </p>
-            <ul className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft sm:gap-2 sm:text-[13px]">
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <YandexMapsGlyph size={14} />
-                Я.Карты
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  ✈️
-                </span>
-                Telegram
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  📷
-                </span>
-                Instagram
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <TwoGisGlyph size={14} />
-                2ГИС
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <AvitoGlyph size={14} />
-                Avito
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  🌐
-                </span>
-                Ваш старый сайт
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  🪪
-                </span>
-                Фото буклета или меню
-              </li>
-            </ul>
+          {/* Compact platform list — canon `<HeroPlatformStrip>` drop-in
+              (canon 0.2.2, replaces our drifted hand-roll). Strip shows
+              7 supported sources (Я.Карты / Telegram / Instagram / 2ГИС /
+              Avito / Ваш старый сайт / Фото буклета или меню) with
+              canon brand-icons + center-aligned chips on desktop,
+              left-aligned on mobile. Canon ships a `mobile` bool prop;
+              we render BOTH variants and CSS toggles via Tailwind sm:
+              (same pattern as `ResponsiveCanonSection` on landing page).
+              Drift vs canon = 0 by construction. */}
+          <div className="hidden sm:block">
+            <HeroPlatformStrip mobile={false} />
+          </div>
+          <div className="sm:hidden">
+            <HeroPlatformStrip mobile={true} />
           </div>
 
           {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под
