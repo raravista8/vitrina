@@ -2428,11 +2428,38 @@ function FreeMonthSection({ mobile }) {
 // ─────────────────────────────────────────────────────────────
 // MAIN
 
-// StickyHeader — top nav bar (lives on top of SamosaytLanding).
-// Extracted in 0.2.2 so it can be imported standalone for sub-pages /
-// marketing emails / Storybook stories without dragging the full Landing.
-function StickyHeader({ mobile = false, padX }) {
+// StickyHeader — top nav bar.
+// 0.2.2 — extracted from SamosaytLanding as standalone export.
+// 0.2.3 — added loginHref + onMakeSiteClick props for prod-routing flexibility.
+//         Defaults preserve back-compat: loginHref = 'https://samosite.online/login',
+//         no onMakeSiteClick → fallback to <a href="#hero"> as in canvas demo.
+function StickyHeader({
+  mobile = false,
+  padX,
+  loginHref = 'https://samosite.online/login',
+  onMakeSiteClick,
+}) {
   const px = padX ?? (mobile ? 20 : 80);
+  const primaryCtaStyle = mobile
+    ? { background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
+        padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit' }
+    : { background: VT.accent, color: '#fff', fontWeight: 600,
+        padding: '10px 20px', borderRadius: 999, fontSize: 14,
+        textDecoration: 'none',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit' };
+  const primaryLabel = mobile ? 'Сделать' : 'Сделать сайт';
+  // <button> if handler supplied, else fall back to <a href="#hero"> (canvas demo).
+  const PrimaryCta = onMakeSiteClick
+    ? <button type="button" onClick={onMakeSiteClick} style={primaryCtaStyle}>
+        {primaryLabel} <span aria-hidden="true">→</span>
+      </button>
+    : <a href="#hero" style={primaryCtaStyle}>
+        {primaryLabel} <span aria-hidden="true">→</span>
+      </a>;
   return (
     <div style={{
       position: 'sticky', top: 0, zIndex: 10,
@@ -2454,29 +2481,19 @@ function StickyHeader({ mobile = false, padX }) {
             <a href="#examples" style={{ color: 'inherit', textDecoration: 'none' }}>Примеры</a>
             <a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Цены</a>
             <a href="#faq" style={{ color: 'inherit', textDecoration: 'none' }}>Помощь</a>
-            <a style={{
+            <a href={loginHref} style={{
               color: VT.inkSoft, fontWeight: 500, fontSize: 14,
               padding: '8px 16px', textDecoration: 'none',
-            }} href="https://samosite.online/login">Войти</a>
-            <a href="#hero" style={{
-              background: VT.accent, color: '#fff', fontWeight: 600,
-              padding: '10px 20px', borderRadius: 999, fontSize: 14,
-              textDecoration: 'none',
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
-            }}>Сделать сайт <span aria-hidden="true">→</span></a>
+            }}>Войти</a>
+            {PrimaryCta}
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <a href="https://samosite.online/login" style={{
+            <a href={loginHref} style={{
               color: VT.inkSoft, fontWeight: 500, fontSize: 13.5,
               padding: '8px 12px', textDecoration: 'none',
             }}>Войти</a>
-            <a href="#hero" style={{
-              background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
-              padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
-              display: 'inline-flex', alignItems: 'center', gap: 4,
-            }}>Сделать <span aria-hidden="true">→</span></a>
+            {PrimaryCta}
           </div>
         )}
       </div>

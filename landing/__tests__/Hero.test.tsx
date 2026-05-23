@@ -46,9 +46,11 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // дело» → «Покажите ссылку» (короче) + `<b>` болды.
     expect(screen.getByText(/Покажите ссылку — карты/i)).toBeInTheDocument();
 
-    // Brand — Cyrillic only (legal requirement, PRD §3).
-    const brand = screen.getAllByText("Самосайт");
-    expect(brand.length).toBeGreaterThan(0);
+    // Brand «Самосайт» (Cyrillic per PRD §3) is rendered by the
+    // <StickyHeader> sibling now (mounted from app/page.tsx in prod
+    // — see SiteHeader.tsx + SiteHeader.test.tsx). Hero references the
+    // brand only inside copy strings (CTA «Сделать Самосайт», microcopy
+    // «Самосайт сам напомнит»). Assertion lives in SiteHeader.test.tsx.
 
     // CTA + microcopy.
     expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).toBeInTheDocument();

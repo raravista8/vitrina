@@ -2,7 +2,7 @@
 
 > Canonical UI for **Самосайт** (samosite.online). Single source of truth for visual design — same React render that the dev canvas uses, packaged as a real npm module.
 
-**Current version: `0.2.2`** — `StickyHeader` and `HeroPlatformStrip` extracted as named exports from `/landing` (additive, non-breaking). 0.2.0 admin interactive variants complete: all 10 admin screens are drop-in for production (AdminLogin, AdminChrome, AdminDashboard, AppsList, AppDetail, SitesList, SiteDetail, Leads + decrypt modal, Waitlist, FeedbackInbox, Settings). See [CHANGELOG](./CHANGELOG.md).
+**Current version: `0.2.3`** — `<StickyHeader>` accepts `loginHref` + `onMakeSiteClick` props so it can wire to your real auth route and submission modal instead of canvas-demo hardcoded URLs. 0.2.2 added `StickyHeader` and `HeroPlatformStrip` as named exports from `/landing`. 0.2.0 admin interactive variants complete: all 10 admin screens drop-in for production. See [CHANGELOG](./CHANGELOG.md).
 
 ## Why this exists
 

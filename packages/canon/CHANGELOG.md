@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.2.3 — StickyHeader props for prod-routing · 2026-05-23
+
+Additive minor release. Two new optional props on `<StickyHeader>` so prod apps can wire it without dropping into custom forks. Zero visual diff in zero-prop / canvas mode.
+
+### Why
+
+0.2.2 extracted `<StickyHeader>` but two URLs stayed hardcoded:
+- "Войти" → `https://samosite.online/login` (prod uses `/admin/login`)
+- "Сделать сайт" → `<a href="#hero">` (prod wants to open the submission modal, not jump-anchor)
+
+This blocked drop-in on prod — PR #132 deferred the integration. 0.2.3 fixes it.
+
+### New props
+
+```tsx
+<StickyHeader
+  mobile={false}
+  padX={80}
+
+  // NEW: override login target. Default = 'https://samosite.online/login' (canvas demo).
+  loginHref="/admin/login"
+
+  // NEW: when supplied, primary CTA renders as <button onClick={...}> instead of
+  // <a href="#hero">. Use for opening your real submission modal.
+  onMakeSiteClick={() => setSubmitModalOpen(true)}
+/>
+```
+
+### Back-compat
+
+Both props are optional. If you don't pass them:
+- `loginHref` defaults to the canvas-demo URL (unchanged from 0.2.2)
+- Primary CTA falls back to `<a href="#hero">` (unchanged from 0.2.2)
+
+Meaning: existing zero-prop usage (`<StickyHeader />`, or inside `<Landing />` without explicit props) renders identically to 0.2.2. No regression.
+
+### Implementation note
+
+CTA element type changes: with `onMakeSiteClick` it's a `<button type="button">`, without it stays `<a>`. Visual is identical (same inline styles) but if you have CSS selectors like `a[href="#hero"]` — they'll stop matching when you start using `onMakeSiteClick`. Use a class or data-attr if you need a stable hook.
+
+---
+
 ## 0.2.2 — StickyHeader extracted · 2026-05-23
 
 Minor additive release. One new named export from `@samosite/canon/landing`. **Visual diff = 0** (same DOM, just relocated into its own function).

@@ -69,6 +69,7 @@ import {
 
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
+import { SiteHeader } from "@/components/SiteHeader";
 
 /**
  * Render a canon section in BOTH desktop and mobile variants;
@@ -120,6 +121,7 @@ export const revalidate = 60;
 export default function HomePage() {
   return (
     <main id="top">
+      <SiteHeader />
       <Hero />
       <ResponsiveCanonSection id="examples" Component={ExamplesSection} />
       <ResponsiveCanonSection id="story" Component={StorySection} />

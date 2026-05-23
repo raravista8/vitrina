@@ -2712,8 +2712,53 @@ function FreeMonthSection({ mobile }) {
     ] })
   ] }) });
 }
-function StickyHeader({ mobile = false, padX }) {
+function StickyHeader({
+  mobile = false,
+  padX,
+  loginHref = "https://samosite.online/login",
+  onMakeSiteClick
+}) {
   const px = padX ?? (mobile ? 20 : 80);
+  const primaryCtaStyle = mobile ? {
+    background: VT.accent,
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: 13.5,
+    padding: "8px 16px",
+    borderRadius: 999,
+    textDecoration: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "inherit"
+  } : {
+    background: VT.accent,
+    color: "#fff",
+    fontWeight: 600,
+    padding: "10px 20px",
+    borderRadius: 999,
+    fontSize: 14,
+    textDecoration: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    boxShadow: "0 6px 16px -8px rgba(120,60,30,0.4)",
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "inherit"
+  };
+  const primaryLabel = mobile ? "\u0421\u0434\u0435\u043B\u0430\u0442\u044C" : "\u0421\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442";
+  const PrimaryCta = onMakeSiteClick ? /* @__PURE__ */ jsxs2("button", { type: "button", onClick: onMakeSiteClick, style: primaryCtaStyle, children: [
+    primaryLabel,
+    " ",
+    /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+  ] }) : /* @__PURE__ */ jsxs2("a", { href: "#hero", style: primaryCtaStyle, children: [
+    primaryLabel,
+    " ",
+    /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+  ] });
   return /* @__PURE__ */ jsx3("div", { style: {
     position: "sticky",
     top: 0,
@@ -2739,52 +2784,23 @@ function StickyHeader({ mobile = false, padX }) {
       /* @__PURE__ */ jsx3("a", { href: "#examples", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
       /* @__PURE__ */ jsx3("a", { href: "#pricing", style: { color: "inherit", textDecoration: "none" }, children: "\u0426\u0435\u043D\u044B" }),
       /* @__PURE__ */ jsx3("a", { href: "#faq", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-      /* @__PURE__ */ jsx3("a", { style: {
+      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
         color: VT.inkSoft,
         fontWeight: 500,
         fontSize: 14,
         padding: "8px 16px",
         textDecoration: "none"
-      }, href: "https://samosite.online/login", children: "\u0412\u043E\u0439\u0442\u0438" }),
-      /* @__PURE__ */ jsxs2("a", { href: "#hero", style: {
-        background: VT.accent,
-        color: "#fff",
-        fontWeight: 600,
-        padding: "10px 20px",
-        borderRadius: 999,
-        fontSize: 14,
-        textDecoration: "none",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        boxShadow: "0 6px 16px -8px rgba(120,60,30,0.4)"
-      }, children: [
-        "\u0421\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 ",
-        /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
-      ] })
+      }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+      PrimaryCta
     ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-      /* @__PURE__ */ jsx3("a", { href: "https://samosite.online/login", style: {
+      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
         color: VT.inkSoft,
         fontWeight: 500,
         fontSize: 13.5,
         padding: "8px 12px",
         textDecoration: "none"
       }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-      /* @__PURE__ */ jsxs2("a", { href: "#hero", style: {
-        background: VT.accent,
-        color: "#fff",
-        fontWeight: 600,
-        fontSize: 13.5,
-        padding: "8px 16px",
-        borderRadius: 999,
-        textDecoration: "none",
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 4
-      }, children: [
-        "\u0421\u0434\u0435\u043B\u0430\u0442\u044C ",
-        /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
-      ] })
+      PrimaryCta
     ] })
   ] }) });
 }

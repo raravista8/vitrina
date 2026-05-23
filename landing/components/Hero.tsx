@@ -44,8 +44,8 @@ import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/metrika";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
-import { BrandMark } from "./BrandMark";
 import { PhotoDrawer } from "./PhotoDrawer";
+import { SAMOSITE_OPEN_SUBMIT } from "./SiteHeader";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal, type SubmitModalStep } from "./SubmitModal";
 
@@ -169,6 +169,22 @@ export function Hero() {
      the env). */
   const [e2eInitialStep, setE2EInitialStep] = useState<SubmitModalStep | undefined>(undefined);
 
+  /* Cross-component "open SubmitModal" trigger.
+     Listens for the DOM custom event `samosite:open-submit` that
+     <SiteHeader /> dispatches when its «Сделать сайт» CTA is clicked.
+     Using a window event (instead of lifting state up to a context
+     provider) keeps app/page.tsx as a pure server component — Hero
+     is the only thing in this tree that needs to be client-rendered.
+     Hook is mounted unconditionally; in tests where SiteHeader isn't
+     rendered (RTL component-level tests) the listener simply never
+     fires. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onOpenSubmit = () => setModalOpen(true);
+    window.addEventListener(SAMOSITE_OPEN_SUBMIT, onOpenSubmit);
+    return () => window.removeEventListener(SAMOSITE_OPEN_SUBMIT, onOpenSubmit);
+  }, []);
+
   /* Visual-regression debug hooks (Tier 2b-2 + per-step follow-up).
      Exposes:
        window.__open_submit_modal({ url?, type?, step? })
@@ -239,42 +255,12 @@ export function Hero() {
           }}
         />
 
-        {/* Top nav — concept A spec. Login button is a quiet outlined
-            pill on desktop, becomes a primary-tone pill on mobile (where
-            the menu line is collapsed). */}
-        <nav className="relative z-10 flex items-center justify-between">
-          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Размер scales
-              up на desktop. Wordmark «Самосайт» уже включён в компонент. */}
-          <div className="hidden sm:block">
-            <BrandMark size={26} fontSize={20} />
-          </div>
-          <div className="sm:hidden">
-            <BrandMark size={22} fontSize={18} />
-          </div>
-          <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
-            <a className="hover:text-ink" href="#how-it-works">
-              Как это работает
-            </a>
-            <a className="hover:text-ink" href="#pricing">
-              Тарифы
-            </a>
-            <a className="hover:text-ink" href="/feedback">
-              Помощь
-            </a>
-            <a
-              className="rounded-full border border-line bg-white px-3.5 py-1.5 font-semibold text-ink hover:border-ink-faint"
-              href="/admin/login"
-            >
-              Войти
-            </a>
-          </div>
-          <a
-            className="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-semibold text-ink sm:hidden"
-            href="/admin/login"
-          >
-            Войти
-          </a>
-        </nav>
+        {/* Top nav now lives in <SiteHeader /> (canon 0.2.3 <StickyHeader>) —
+            mounted in app/page.tsx BEFORE this Hero. SiteHeader dispatches
+            a custom DOM event when its «Сделать сайт» CTA is clicked; the
+            useEffect below listens for it and opens the SubmitModal. This
+            removes drift between hand-rolled nav and canon (was diverging
+            on alignment + label) and unblocks loginHref=/admin/login. */}
 
         {/* Hero body */}
         {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
