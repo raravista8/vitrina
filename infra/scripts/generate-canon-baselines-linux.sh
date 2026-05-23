@@ -49,7 +49,13 @@ docker run --rm \
     # npm ci would re-run postinstall + try to re-fetch Playwright browsers
     # (already in the image). Skip with --ignore-scripts; the image has
     # chromium pre-installed under /ms-playwright.
-    npm ci --ignore-scripts --silent
+    # --install-links: canon is a workspace `file:` dep; Turbopack /
+    # peer-resolver can't follow symlinks, so npm must materialise it as
+    # a real copy (same flag used in landing/Dockerfile +
+    # .github/actions/setup-landing/action.yml + visual-regression
+    # workflow). Without it, `npm ci` aborts with a "include workspace
+    # root" error since 2024.
+    npm ci --install-links --ignore-scripts --silent
     export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
     cd /work
     bash infra/scripts/generate-canon-baselines.sh
