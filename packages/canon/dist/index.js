@@ -893,6 +893,57 @@ function SectionSub({ children, mobile, align = "center" }) {
     textAlign: align
   }, children });
 }
+function HeroPlatformStrip({ mobile }) {
+  return /* @__PURE__ */ jsxs2("div", { style: {
+    marginTop: mobile ? 14 : 18,
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    alignItems: mobile ? "flex-start" : "center"
+  }, children: [
+    /* @__PURE__ */ jsx3("div", { style: {
+      fontFamily: VT.font.mono,
+      fontSize: 11,
+      letterSpacing: "0.1em",
+      color: VT.inkFaint,
+      fontWeight: 600
+    }, children: "\u0418\u0417 \u0427\u0415\u0413\u041E \u041C\u042B \u041C\u041E\u0416\u0415\u041C \u0421\u0414\u0415\u041B\u0410\u0422\u042C \u0412\u0410\u041C \u0421\u0410\u0419\u0422" }),
+    /* @__PURE__ */ jsx3("div", { style: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 8,
+      justifyContent: mobile ? "flex-start" : "center"
+    }, children: PLATFORMS_OK.map((p) => /* @__PURE__ */ jsxs2("span", { style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      padding: "4px 12px 4px 4px",
+      background: VT.white,
+      border: `1px solid ${VT.line}`,
+      borderRadius: 999,
+      fontSize: 12.5,
+      color: VT.ink,
+      fontWeight: 500
+    }, children: [
+      /* @__PURE__ */ jsx3("span", { style: {
+        width: 22,
+        height: 22,
+        borderRadius: 7,
+        background: p.bg,
+        color: p.fg || "#fff",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 11,
+        fontWeight: 800,
+        letterSpacing: "-0.04em",
+        flex: "0 0 auto",
+        overflow: "hidden"
+      }, children: p.logo }),
+      p.name
+    ] }, p.id)) })
+  ] });
+}
 function HeroBlock({ mobile }) {
   return /* @__PURE__ */ jsxs2("div", { style: {
     position: "relative",
@@ -971,54 +1022,7 @@ function HeroBlock({ mobile }) {
         BRAND.name
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
-      marginTop: mobile ? 14 : 18,
-      display: "flex",
-      flexDirection: "column",
-      gap: 8,
-      alignItems: mobile ? "flex-start" : "center"
-    }, children: [
-      /* @__PURE__ */ jsx3("div", { style: {
-        fontFamily: VT.font.mono,
-        fontSize: 11,
-        letterSpacing: "0.1em",
-        color: VT.inkFaint,
-        fontWeight: 600
-      }, children: "\u0418\u0417\xA0\u0427\u0415\u0413\u041E \u041C\u042B\xA0\u041C\u041E\u0416\u0415\u041C \u0421\u0414\u0415\u041B\u0410\u0422\u042C \u0412\u0410\u041C \u0421\u0410\u0419\u0422" }),
-      /* @__PURE__ */ jsx3("div", { style: {
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 8,
-        justifyContent: mobile ? "flex-start" : "center"
-      }, children: PLATFORMS_OK.map((p) => /* @__PURE__ */ jsxs2("span", { style: {
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "5px 11px 5px 5px",
-        background: VT.white,
-        border: `1px solid ${VT.line}`,
-        borderRadius: 999,
-        fontSize: 12.5,
-        color: VT.ink,
-        fontWeight: 500
-      }, children: [
-        /* @__PURE__ */ jsx3("span", { style: {
-          width: 20,
-          height: 20,
-          borderRadius: 6,
-          background: p.bg,
-          color: p.fg || "#fff",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 10,
-          fontWeight: 800,
-          letterSpacing: "-0.04em",
-          flex: "0 0 auto"
-        }, children: p.logo }),
-        p.name
-      ] }, p.id)) })
-    ] }),
+    /* @__PURE__ */ jsx3(HeroPlatformStrip, { mobile }),
     /* @__PURE__ */ jsx3("div", { style: {
       marginTop: mobile ? 16 : 22,
       display: "flex",
@@ -2708,6 +2712,98 @@ function FreeMonthSection({ mobile }) {
     ] })
   ] }) });
 }
+function StickyHeader({
+  mobile = false,
+  padX,
+  loginHref = "https://samosite.online/login",
+  onMakeSiteClick
+}) {
+  const px = padX ?? (mobile ? 20 : 80);
+  const primaryCtaStyle = mobile ? {
+    background: VT.accent,
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: 13.5,
+    padding: "8px 16px",
+    borderRadius: 999,
+    textDecoration: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "inherit"
+  } : {
+    background: VT.accent,
+    color: "#fff",
+    fontWeight: 600,
+    padding: "10px 20px",
+    borderRadius: 999,
+    fontSize: 14,
+    textDecoration: "none",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    boxShadow: "0 6px 16px -8px rgba(120,60,30,0.4)",
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "inherit"
+  };
+  const primaryLabel = mobile ? "\u0421\u0434\u0435\u043B\u0430\u0442\u044C" : "\u0421\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442";
+  const PrimaryCta = onMakeSiteClick ? /* @__PURE__ */ jsxs2("button", { type: "button", onClick: onMakeSiteClick, style: primaryCtaStyle, children: [
+    primaryLabel,
+    " ",
+    /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+  ] }) : /* @__PURE__ */ jsxs2("a", { href: "#hero", style: primaryCtaStyle, children: [
+    primaryLabel,
+    " ",
+    /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+  ] });
+  return /* @__PURE__ */ jsx3("div", { style: {
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
+    marginLeft: -px,
+    marginRight: -px,
+    paddingLeft: px,
+    paddingRight: px,
+    paddingTop: mobile ? 10 : 14,
+    paddingBottom: mobile ? 10 : 14,
+    background: "oklch(0.972 0.012 80 / 0.92)",
+    backdropFilter: "blur(12px)",
+    borderBottom: `1px solid ${VT.lineSoft}`
+  }, children: /* @__PURE__ */ jsxs2("div", { style: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16
+  }, children: [
+    /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }),
+    !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14, color: VT.inkSoft }, children: [
+      /* @__PURE__ */ jsx3("a", { href: "#how", style: { color: "inherit", textDecoration: "none" }, children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
+      /* @__PURE__ */ jsx3("a", { href: "#examples", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+      /* @__PURE__ */ jsx3("a", { href: "#pricing", style: { color: "inherit", textDecoration: "none" }, children: "\u0426\u0435\u043D\u044B" }),
+      /* @__PURE__ */ jsx3("a", { href: "#faq", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
+      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
+        color: VT.inkSoft,
+        fontWeight: 500,
+        fontSize: 14,
+        padding: "8px 16px",
+        textDecoration: "none"
+      }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+      PrimaryCta
+    ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
+        color: VT.inkSoft,
+        fontWeight: 500,
+        fontSize: 13.5,
+        padding: "8px 12px",
+        textDecoration: "none"
+      }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+      PrimaryCta
+    ] })
+  ] }) });
+}
 function SamosaytLanding({ mobile = false }) {
   const padX = mobile ? 20 : 80;
   return /* @__PURE__ */ jsxs2(Fragment2, { children: [
@@ -2792,79 +2888,7 @@ function SamosaytLanding({ mobile = false }) {
         opacity: 0.7,
         pointerEvents: "none"
       } }),
-      /* @__PURE__ */ jsx3("div", { style: {
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        marginLeft: -padX,
-        marginRight: -padX,
-        paddingLeft: padX,
-        paddingRight: padX,
-        paddingTop: mobile ? 10 : 14,
-        paddingBottom: mobile ? 10 : 14,
-        background: "oklch(0.972 0.012 80 / 0.92)",
-        backdropFilter: "blur(12px)",
-        borderBottom: `1px solid ${VT.lineSoft}`
-      }, children: /* @__PURE__ */ jsxs2("div", { style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 16
-      }, children: [
-        /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }),
-        !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14, color: VT.inkSoft }, children: [
-          /* @__PURE__ */ jsx3("a", { href: "#how", style: { color: "inherit", textDecoration: "none" }, children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
-          /* @__PURE__ */ jsx3("a", { href: "#examples", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
-          /* @__PURE__ */ jsx3("a", { href: "#pricing", style: { color: "inherit", textDecoration: "none" }, children: "\u0426\u0435\u043D\u044B" }),
-          /* @__PURE__ */ jsx3("a", { href: "#faq", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-          /* @__PURE__ */ jsx3("a", { style: {
-            color: VT.inkSoft,
-            fontWeight: 500,
-            fontSize: 14,
-            padding: "8px 16px",
-            textDecoration: "none"
-          }, href: "https://samosite.online/login", children: "\u0412\u043E\u0439\u0442\u0438" }),
-          /* @__PURE__ */ jsxs2("a", { href: "#hero", style: {
-            background: VT.accent,
-            color: "#fff",
-            fontWeight: 600,
-            padding: "10px 20px",
-            borderRadius: 999,
-            fontSize: 14,
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            boxShadow: "0 6px 16px -8px rgba(120,60,30,0.4)"
-          }, children: [
-            "\u0421\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 ",
-            /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
-          ] })
-        ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-          /* @__PURE__ */ jsx3("a", { href: "https://samosite.online/login", style: {
-            color: VT.inkSoft,
-            fontWeight: 500,
-            fontSize: 13.5,
-            padding: "8px 12px",
-            textDecoration: "none"
-          }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-          /* @__PURE__ */ jsxs2("a", { href: "#hero", style: {
-            background: VT.accent,
-            color: "#fff",
-            fontWeight: 600,
-            fontSize: 13.5,
-            padding: "8px 16px",
-            borderRadius: 999,
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4
-          }, children: [
-            "\u0421\u0434\u0435\u043B\u0430\u0442\u044C ",
-            /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
-          ] })
-        ] })
-      ] }) }),
+      /* @__PURE__ */ jsx3(StickyHeader, { mobile, padX }),
       /* @__PURE__ */ jsx3("div", { id: "hero" }),
       /* @__PURE__ */ jsx3(HeroBlock, { mobile }),
       /* @__PURE__ */ jsx3("div", { id: "examples" }),
@@ -7482,7 +7506,7 @@ function S16_Leads(props) {
   const selected = selectedLeadIds ?? uSelected;
   const setSelected = onSelectLead ? (id, on) => onSelectLead(id, on) : (id, on) => setUSelected((prev) => on ? [...prev, id] : prev.filter((x) => x !== id));
   const clearSelection = onClearSelection ?? (() => setUSelected([]));
-  const modalOpen = decryptModalOpen ?? uModalOpen;
+  const modalOpen = decryptModalOpen ?? props.decryptModal ?? uModalOpen;
   const openModal = onOpenDecryptModal ?? (() => setUModalOpen(true));
   const totp = decryptTotp ?? uTotp;
   const setTotp = onDecryptTotpChange ?? setUTotp;
@@ -8358,6 +8382,7 @@ export {
   FilterChip,
   FreeMonthSection,
   HeroBlock,
+  HeroPlatformStrip,
   HeroSection,
   IconArrow,
   IconLink,
@@ -8410,6 +8435,7 @@ export {
   Spinner,
   StatTile,
   StatusPill,
+  StickyHeader,
   StorySection,
   StoryStepColorful,
   SubmitModal,

@@ -46,9 +46,11 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // дело» → «Покажите ссылку» (короче) + `<b>` болды.
     expect(screen.getByText(/Покажите ссылку — карты/i)).toBeInTheDocument();
 
-    // Brand — Cyrillic only (legal requirement, PRD §3).
-    const brand = screen.getAllByText("Самосайт");
-    expect(brand.length).toBeGreaterThan(0);
+    // Brand «Самосайт» (Cyrillic per PRD §3) is rendered by the
+    // <StickyHeader> sibling now (mounted from app/page.tsx in prod
+    // — see SiteHeader.tsx + SiteHeader.test.tsx). Hero references the
+    // brand only inside copy strings (CTA «Сделать Самосайт», microcopy
+    // «Самосайт сам напомнит»). Assertion lives in SiteHeader.test.tsx.
 
     // CTA + microcopy.
     expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).toBeInTheDocument();
@@ -169,15 +171,18 @@ describe("Hero — UX batch 1 (first user testing)", () => {
 
   it("shows the compact platform list under the form", () => {
     render(<Hero />);
-    // v2.1.3 §1.3 — старая «Поддерживаем: …» микрокопия заменена на
-    // compact-list block с kicker «ИЗ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ»
-    // + chips с brand glyphs. Список всегда виден (не зависит от input).
-    expect(screen.getByText(/из чего мы можем сделать вам сайт/i)).toBeInTheDocument();
-    // Use exact match to scope to compact-list items (avoid matching
-    // «Telegram или визитку» в Hero subtitle).
-    expect(screen.getByText("Я.Карты")).toBeInTheDocument();
-    expect(screen.getByText("Telegram")).toBeInTheDocument();
-    expect(screen.getByText("Avito")).toBeInTheDocument();
+    // v2.1.3 §1.3 → canon 0.2.2 — старая «Поддерживаем: …» микрокопия
+    // заменена на canon `<HeroPlatformStrip>` drop-in. Список всегда
+    // виден (не зависит от input). Canon ships TWO copies (desktop +
+    // mobile, CSS-toggled via Tailwind sm:) — `getAllByText` так что
+    // оба mount'а матчатся.
+    expect(screen.getAllByText(/из чего мы можем сделать вам сайт/i).length).toBeGreaterThan(0);
+    // Canon's PLATFORMS_OK uses full platform names — these labels
+    // come straight from canon source (packages/canon/src/landing
+    // line 488-503), don't hand-edit on prod side.
+    expect(screen.getAllByText("Яндекс.Карты").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Telegram-канал").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Avito").length).toBeGreaterThan(0);
   });
 
   it("keeps the compact platform list visible after the user types", () => {
@@ -185,10 +190,11 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // v2.1.3 §1.3 — compact list постоянно виден (раньше скрывался при
     // paste). Reason: brand-recognition value высокий, badge внизу
     // (SourceDetectionBadge) для recognized source не конфликтует.
+    // Canon ships TWO copies (desktop + mobile via Tailwind sm: toggle).
     fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/some_channel" },
     });
-    expect(screen.getByText(/из чего мы можем сделать вам сайт/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/из чего мы можем сделать вам сайт/i).length).toBeGreaterThan(0);
   });
 
   it("renders an × clear-button when input is non-empty; clears on click", () => {

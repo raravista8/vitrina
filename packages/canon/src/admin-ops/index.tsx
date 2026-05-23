@@ -439,7 +439,8 @@ function S16_Leads(props) {
     ? (id, on) => onSelectLead(id, on)
     : (id, on) => setUSelected(prev => on ? [...prev, id] : prev.filter(x => x !== id));
   const clearSelection = onClearSelection ?? (() => setUSelected([]));
-  const modalOpen = decryptModalOpen ?? uModalOpen;
+  // Canvas back-compat: legacy `decryptModal` boolean prop (0.1.x) → modalOpen
+  const modalOpen = decryptModalOpen ?? props.decryptModal ?? uModalOpen;
   const openModal = onOpenDecryptModal ?? (() => setUModalOpen(true));
   const totp = decryptTotp ?? uTotp;
   const setTotp = onDecryptTotpChange ?? setUTotp;

@@ -36,16 +36,16 @@
  */
 
 import { Gift, Link as LinkIcon, ShieldCheck, X } from "lucide-react";
+import { HeroPlatformStrip } from "@samosite/canon/landing";
 
-import { AvitoGlyph, TwoGisGlyph, YandexMapsGlyph } from "./brand-glyphs";
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/metrika";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
-import { BrandMark } from "./BrandMark";
 import { PhotoDrawer } from "./PhotoDrawer";
+import { SAMOSITE_OPEN_SUBMIT } from "./SiteHeader";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal, type SubmitModalStep } from "./SubmitModal";
 
@@ -169,6 +169,22 @@ export function Hero() {
      the env). */
   const [e2eInitialStep, setE2EInitialStep] = useState<SubmitModalStep | undefined>(undefined);
 
+  /* Cross-component "open SubmitModal" trigger.
+     Listens for the DOM custom event `samosite:open-submit` that
+     <SiteHeader /> dispatches when its «Сделать сайт» CTA is clicked.
+     Using a window event (instead of lifting state up to a context
+     provider) keeps app/page.tsx as a pure server component — Hero
+     is the only thing in this tree that needs to be client-rendered.
+     Hook is mounted unconditionally; in tests where SiteHeader isn't
+     rendered (RTL component-level tests) the listener simply never
+     fires. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onOpenSubmit = () => setModalOpen(true);
+    window.addEventListener(SAMOSITE_OPEN_SUBMIT, onOpenSubmit);
+    return () => window.removeEventListener(SAMOSITE_OPEN_SUBMIT, onOpenSubmit);
+  }, []);
+
   /* Visual-regression debug hooks (Tier 2b-2 + per-step follow-up).
      Exposes:
        window.__open_submit_modal({ url?, type?, step? })
@@ -239,42 +255,12 @@ export function Hero() {
           }}
         />
 
-        {/* Top nav — concept A spec. Login button is a quiet outlined
-            pill on desktop, becomes a primary-tone pill on mobile (where
-            the menu line is collapsed). */}
-        <nav className="relative z-10 flex items-center justify-between">
-          {/* Brand mark — canonical `<BrandMark>` (PR-B / E10). Размер scales
-              up на desktop. Wordmark «Самосайт» уже включён в компонент. */}
-          <div className="hidden sm:block">
-            <BrandMark size={26} fontSize={20} />
-          </div>
-          <div className="sm:hidden">
-            <BrandMark size={22} fontSize={18} />
-          </div>
-          <div className="hidden items-center gap-7 text-sm text-ink-soft sm:flex">
-            <a className="hover:text-ink" href="#how-it-works">
-              Как это работает
-            </a>
-            <a className="hover:text-ink" href="#pricing">
-              Тарифы
-            </a>
-            <a className="hover:text-ink" href="/feedback">
-              Помощь
-            </a>
-            <a
-              className="rounded-full border border-line bg-white px-3.5 py-1.5 font-semibold text-ink hover:border-ink-faint"
-              href="/admin/login"
-            >
-              Войти
-            </a>
-          </div>
-          <a
-            className="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-semibold text-ink sm:hidden"
-            href="/admin/login"
-          >
-            Войти
-          </a>
-        </nav>
+        {/* Top nav now lives in <SiteHeader /> (canon 0.2.3 <StickyHeader>) —
+            mounted in app/page.tsx BEFORE this Hero. SiteHeader dispatches
+            a custom DOM event when its «Сделать сайт» CTA is clicked; the
+            useEffect below listens for it and opens the SubmitModal. This
+            removes drift between hand-rolled nav and canon (was diverging
+            on alignment + label) and unblocks loginHref=/admin/login. */}
 
         {/* Hero body */}
         {/* Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. docs/COPY.md §2.2
@@ -415,55 +401,20 @@ export function Hero() {
             </button>
           </form>
 
-          {/* Compact platform list (v2.1.3 §1.3). Под free-month плашкой —
-              маленький kicker + inline-chips с micro brand glyphs.
-              Закрывает UX gap «дайте ссылку, но мы ещё не сказали из
-              чего» — юзер видит supported pool сразу под input, без
-              scroll до Platforms-секции. Brand glyphs (Я.Карты pin /
-              2ГИС «2» / Avito «A») — те же что в `<Platforms>` через
-              shared `./brand-glyphs`. */}
-          <div className="mt-4 sm:mt-[18px]">
-            <p className="font-mono text-[10px] uppercase tracking-widest text-ink-faint sm:text-[11px]">
-              Из чего мы можем сделать вам сайт
-            </p>
-            <ul className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft sm:gap-2 sm:text-[13px]">
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <YandexMapsGlyph size={14} />
-                Я.Карты
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  ✈️
-                </span>
-                Telegram
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  📷
-                </span>
-                Instagram
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <TwoGisGlyph size={14} />
-                2ГИС
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <AvitoGlyph size={14} />
-                Avito
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  🌐
-                </span>
-                Ваш старый сайт
-              </li>
-              <li className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white py-[3px] pl-[3px] pr-2.5 font-medium">
-                <span aria-hidden className="text-[12px]">
-                  🪪
-                </span>
-                Фото буклета или меню
-              </li>
-            </ul>
+          {/* Compact platform list — canon `<HeroPlatformStrip>` drop-in
+              (canon 0.2.2, replaces our drifted hand-roll). Strip shows
+              7 supported sources (Я.Карты / Telegram / Instagram / 2ГИС /
+              Avito / Ваш старый сайт / Фото буклета или меню) with
+              canon brand-icons + center-aligned chips on desktop,
+              left-aligned on mobile. Canon ships a `mobile` bool prop;
+              we render BOTH variants and CSS toggles via Tailwind sm:
+              (same pattern as `ResponsiveCanonSection` on landing page).
+              Drift vs canon = 0 by construction. */}
+          <div className="hidden sm:block">
+            <HeroPlatformStrip mobile={false} />
+          </div>
+          <div className="sm:hidden">
+            <HeroPlatformStrip mobile={true} />
           </div>
 
           {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под

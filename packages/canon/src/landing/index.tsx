@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, useCallback, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { VT, BRAND } from '../tokens';
 import { Mono, Card, Btn, Input, IconLink, IconArrow, BrandMark } from '../primitives';
 
@@ -635,6 +635,48 @@ function SectionSub({ children, mobile, align = 'center' }) {
 // ─────────────────────────────────────────────────────────────
 // HERO
 
+// Strip «ИЗ ЧЕГО» в hero — вынесен в отдельный компонент, чтобы можно было
+// импортировать отдельно из @samosite/canon/landing.
+function HeroPlatformStrip({ mobile }) {
+  return (
+    <div style={{
+      marginTop: mobile ? 14 : 18,
+      display: 'flex', flexDirection: 'column', gap: 8,
+      alignItems: mobile ? 'flex-start' : 'center',
+    }}>
+      <div style={{
+        fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.1em',
+        color: VT.inkFaint, fontWeight: 600,
+      }}>
+        ИЗ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ
+      </div>
+      <div style={{
+        display: 'flex', flexWrap: 'wrap', gap: 8,
+        justifyContent: mobile ? 'flex-start' : 'center',
+      }}>
+        {PLATFORMS_OK.map(p => (
+          <span key={p.id} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '4px 12px 4px 4px',
+            background: VT.white, border: `1px solid ${VT.line}`,
+            borderRadius: 999,
+            fontSize: 12.5, color: VT.ink, fontWeight: 500,
+          }}>
+            <span style={{
+              width: 22, height: 22, borderRadius: 7,
+              background: p.bg, color: p.fg || '#fff',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 11, fontWeight: 800, letterSpacing: '-0.04em',
+              flex: '0 0 auto', overflow: 'hidden',
+            }}>{p.logo}</span>
+            {p.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HeroBlock({ mobile }) {
   return (
     <div style={{
@@ -700,42 +742,8 @@ function HeroBlock({ mobile }) {
         </Btn>
       </div>
 
-      {/* Из чего мы можем сделать сайт — compact list of supported sources */}
-      <div style={{
-        marginTop: mobile ? 14 : 18,
-        display: 'flex', flexDirection: 'column', gap: 8,
-        alignItems: mobile ? 'flex-start' : 'center',
-      }}>
-        <div style={{
-          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.1em',
-          color: VT.inkFaint, fontWeight: 600,
-        }}>
-          ИЗ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ
-        </div>
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', gap: 8,
-          justifyContent: mobile ? 'flex-start' : 'center',
-        }}>
-          {PLATFORMS_OK.map(p => (
-            <span key={p.id} style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '5px 11px 5px 5px',
-              background: VT.white, border: `1px solid ${VT.line}`,
-              borderRadius: 999,
-              fontSize: 12.5, color: VT.ink, fontWeight: 500,
-            }}>
-              <span style={{
-                width: 20, height: 20, borderRadius: 6,
-                background: p.bg, color: p.fg || '#fff',
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 10, fontWeight: 800, letterSpacing: '-0.04em',
-                flex: '0 0 auto',
-              }}>{p.logo}</span>
-              {p.name}
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Из чего мы можем сделать сайт — вынесено в <HeroPlatformStrip /> */}
+      <HeroPlatformStrip mobile={mobile} />
 
       {/* Free-month + price badge — clear stacked layout */}
       <div style={{
@@ -2420,6 +2428,79 @@ function FreeMonthSection({ mobile }) {
 // ─────────────────────────────────────────────────────────────
 // MAIN
 
+// StickyHeader — top nav bar.
+// 0.2.2 — extracted from SamosaytLanding as standalone export.
+// 0.2.3 — added loginHref + onMakeSiteClick props for prod-routing flexibility.
+//         Defaults preserve back-compat: loginHref = 'https://samosite.online/login',
+//         no onMakeSiteClick → fallback to <a href="#hero"> as in canvas demo.
+function StickyHeader({
+  mobile = false,
+  padX,
+  loginHref = 'https://samosite.online/login',
+  onMakeSiteClick,
+}) {
+  const px = padX ?? (mobile ? 20 : 80);
+  const primaryCtaStyle = mobile
+    ? { background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
+        padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit' }
+    : { background: VT.accent, color: '#fff', fontWeight: 600,
+        padding: '10px 20px', borderRadius: 999, fontSize: 14,
+        textDecoration: 'none',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit' };
+  const primaryLabel = mobile ? 'Сделать' : 'Сделать сайт';
+  // <button> if handler supplied, else fall back to <a href="#hero"> (canvas demo).
+  const PrimaryCta = onMakeSiteClick
+    ? <button type="button" onClick={onMakeSiteClick} style={primaryCtaStyle}>
+        {primaryLabel} <span aria-hidden="true">→</span>
+      </button>
+    : <a href="#hero" style={primaryCtaStyle}>
+        {primaryLabel} <span aria-hidden="true">→</span>
+      </a>;
+  return (
+    <div style={{
+      position: 'sticky', top: 0, zIndex: 10,
+      marginLeft: -px, marginRight: -px,
+      paddingLeft: px, paddingRight: px,
+      paddingTop: mobile ? 10 : 14, paddingBottom: mobile ? 10 : 14,
+      background: 'oklch(0.972 0.012 80 / 0.92)',
+      backdropFilter: 'blur(12px)',
+      borderBottom: `1px solid ${VT.lineSoft}`,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 16,
+      }}>
+        <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
+        {!mobile ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14, color: VT.inkSoft }}>
+            <a href="#how" style={{ color: 'inherit', textDecoration: 'none' }}>Как это работает</a>
+            <a href="#examples" style={{ color: 'inherit', textDecoration: 'none' }}>Примеры</a>
+            <a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Цены</a>
+            <a href="#faq" style={{ color: 'inherit', textDecoration: 'none' }}>Помощь</a>
+            <a href={loginHref} style={{
+              color: VT.inkSoft, fontWeight: 500, fontSize: 14,
+              padding: '8px 16px', textDecoration: 'none',
+            }}>Войти</a>
+            {PrimaryCta}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <a href={loginHref} style={{
+              color: VT.inkSoft, fontWeight: 500, fontSize: 13.5,
+              padding: '8px 12px', textDecoration: 'none',
+            }}>Войти</a>
+            {PrimaryCta}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SamosaytLanding({ mobile = false }) {
   const padX = mobile ? 20 : 80;
   return (
@@ -2497,54 +2578,7 @@ function SamosaytLanding({ mobile = false }) {
         opacity: 0.7, pointerEvents: 'none',
       }} />
 
-      {/* Nav — sticky, with primary CTA "Собрать сайт" */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 10,
-        marginLeft: -padX, marginRight: -padX,
-        paddingLeft: padX, paddingRight: padX,
-        paddingTop: mobile ? 10 : 14, paddingBottom: mobile ? 10 : 14,
-        background: 'oklch(0.972 0.012 80 / 0.92)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: `1px solid ${VT.lineSoft}`,
-      }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 16,
-        }}>
-          <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
-          {!mobile ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14, color: VT.inkSoft }}>
-              <a href="#how" style={{ color: 'inherit', textDecoration: 'none' }}>Как это работает</a>
-              <a href="#examples" style={{ color: 'inherit', textDecoration: 'none' }}>Примеры</a>
-              <a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Цены</a>
-              <a href="#faq" style={{ color: 'inherit', textDecoration: 'none' }}>Помощь</a>
-              <a style={{
-                color: VT.inkSoft, fontWeight: 500, fontSize: 14,
-                padding: '8px 16px', textDecoration: 'none',
-              }} href="https://samosite.online/login">Войти</a>
-              <a href="#hero" style={{
-                background: VT.accent, color: '#fff', fontWeight: 600,
-                padding: '10px 20px', borderRadius: 999, fontSize: 14,
-                textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
-              }}>Сделать сайт <span aria-hidden="true">→</span></a>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <a href="https://samosite.online/login" style={{
-                color: VT.inkSoft, fontWeight: 500, fontSize: 13.5,
-                padding: '8px 12px', textDecoration: 'none',
-              }}>Войти</a>
-              <a href="#hero" style={{
-                background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
-                padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: 4,
-              }}>Сделать <span aria-hidden="true">→</span></a>
-            </div>
-          )}
-        </div>
-      </div>
+      <StickyHeader mobile={mobile} padX={padX} />
 
       <div id="hero" />
       <HeroBlock mobile={mobile} />
@@ -2600,6 +2634,8 @@ export {
   SamosaytLanding,
   SamosaytLanding_Desktop,
   SamosaytLanding_Mobile,
+  StickyHeader,
+  HeroPlatformStrip,
   ConceptA_Desktop,
   ConceptA_Mobile,
   Landing,

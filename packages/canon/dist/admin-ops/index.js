@@ -753,7 +753,7 @@ function S16_Leads(props) {
   const selected = selectedLeadIds ?? uSelected;
   const setSelected = onSelectLead ? (id, on) => onSelectLead(id, on) : (id, on) => setUSelected((prev) => on ? [...prev, id] : prev.filter((x) => x !== id));
   const clearSelection = onClearSelection ?? (() => setUSelected([]));
-  const modalOpen = decryptModalOpen ?? uModalOpen;
+  const modalOpen = decryptModalOpen ?? props.decryptModal ?? uModalOpen;
   const openModal = onOpenDecryptModal ?? (() => setUModalOpen(true));
   const totp = decryptTotp ?? uTotp;
   const setTotp = onDecryptTotpChange ?? setUTotp;

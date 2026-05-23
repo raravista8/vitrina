@@ -1,5 +1,105 @@
 # Changelog
 
+## 0.2.3 — StickyHeader props for prod-routing · 2026-05-23
+
+Additive minor release. Two new optional props on `<StickyHeader>` so prod apps can wire it without dropping into custom forks. Zero visual diff in zero-prop / canvas mode.
+
+### Why
+
+0.2.2 extracted `<StickyHeader>` but two URLs stayed hardcoded:
+- "Войти" → `https://samosite.online/login` (prod uses `/admin/login`)
+- "Сделать сайт" → `<a href="#hero">` (prod wants to open the submission modal, not jump-anchor)
+
+This blocked drop-in on prod — PR #132 deferred the integration. 0.2.3 fixes it.
+
+### New props
+
+```tsx
+<StickyHeader
+  mobile={false}
+  padX={80}
+
+  // NEW: override login target. Default = 'https://samosite.online/login' (canvas demo).
+  loginHref="/admin/login"
+
+  // NEW: when supplied, primary CTA renders as <button onClick={...}> instead of
+  // <a href="#hero">. Use for opening your real submission modal.
+  onMakeSiteClick={() => setSubmitModalOpen(true)}
+/>
+```
+
+### Back-compat
+
+Both props are optional. If you don't pass them:
+- `loginHref` defaults to the canvas-demo URL (unchanged from 0.2.2)
+- Primary CTA falls back to `<a href="#hero">` (unchanged from 0.2.2)
+
+Meaning: existing zero-prop usage (`<StickyHeader />`, or inside `<Landing />` without explicit props) renders identically to 0.2.2. No regression.
+
+### Implementation note
+
+CTA element type changes: with `onMakeSiteClick` it's a `<button type="button">`, without it stays `<a>`. Visual is identical (same inline styles) but if you have CSS selectors like `a[href="#hero"]` — they'll stop matching when you start using `onMakeSiteClick`. Use a class or data-attr if you need a stable hook.
+
+---
+
+## 0.2.2 — StickyHeader extracted · 2026-05-23
+
+Minor additive release. One new named export from `@samosite/canon/landing`. **Visual diff = 0** (same DOM, just relocated into its own function).
+
+### What's new
+
+- **`StickyHeader`** — sticky top nav bar (brand mark + nav links + login + primary CTA) that used to live inline inside `SamosaytLanding`. Now standalone:
+
+```tsx
+import { StickyHeader } from '@samosite/canon/landing';
+
+<StickyHeader mobile={isMobile} padX={80} />
+```
+
+Props:
+- `mobile?: boolean` — swaps the desktop link row for the compact mobile pill (default `false`)
+- `padX?: number` — horizontal padding bleed for full-bleed bg under the blur. Default: `20` on mobile, `80` on desktop — same as `SamosaytLanding`.
+
+Use case: any sub-page / marketing email preview that needs the same header as the main landing without rendering the whole landing. Also unblocks `/admin-demo` and other secondary pages from rolling their own nav.
+
+### Carry-over from 0.2.1
+
+- `HeroPlatformStrip` still exported (added in 0.2.1).
+- Icon-cell normalization 20→22 still in effect.
+
+---
+
+## 0.2.1 — HeroPlatformStrip extracted · 2026-05-23
+
+Minor additive release. One new named export, no breaking changes, no visual diff in zero-prop mode beyond a tiny icon-cell tweak (see below).
+
+### What's new
+
+- **`HeroPlatformStrip`** — new export from `@samosite/canon/landing`. The horizontal «IZ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ» chip-strip that used to live inline inside `HeroBlock` is now a standalone component. Same data (`PLATFORMS_OK`), same icons.
+
+```tsx
+import { HeroPlatformStrip } from '@samosite/canon/landing';
+
+<HeroPlatformStrip mobile={false} />
+```
+
+Use case: rendering the platform strip outside hero (e.g., in a marketing email preview, a sub-page hero variant, or a Storybook story) without dragging in the full `<HeroBlock>` or `<Landing>` composition.
+
+### Tiny visual change inside the strip
+
+Icon cell normalized to fit the `YandexIcon` 22-px viewBox cleanly:
+
+| Was (0.2.0) | Now (0.2.1) |
+|---|---|
+| `width: 20, height: 20` | `width: 22, height: 22` |
+| `borderRadius: 6` | `borderRadius: 7` |
+| `padding: '5px 11px 5px 5px'` | `padding: '4px 12px 4px 4px'` |
+| no `overflow` | `overflow: hidden` |
+
+Net visible delta: chip is ~1 px taller / 1 px wider per platform; YandexIcon no longer overflows. If you've pinned pixel-diff baselines against 0.2.0 hero, regenerate them.
+
+---
+
 ## 0.2.0 — admin interactive variants (stable) · 2026-05-23
 
 Second half of the interactive-admin refactor per [`CANON_ADMIN_INTERACTIVE_TZ`](../uploads/CANON_ADMIN_INTERACTIVE_TZ.md). All 6 admin-ops components are now fully controlled and drop-in for production. Combined with 0.2.0-alpha.1, this completes the 10-admin-screen contract.
