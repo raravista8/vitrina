@@ -44,6 +44,7 @@ export const VIEWPORTS = [
   { name: "1440", width: 1440, height: 900 },
   { name: "768", width: 768, height: 1024 },
   { name: "390", width: 390, height: 844 },
+  { name: "375", width: 375, height: 812 },
 ] as const;
 
 export type ViewportName = (typeof VIEWPORTS)[number]["name"];
