@@ -152,9 +152,23 @@ function IconArrow({ size = 18 }) {
 }
 
 // src/admin-core/index.tsx
-import { Fragment as Fragment2, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+import React, { useState, useEffect, useCallback } from "react";
+import { Fragment as Fragment3, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
+  return /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: {
+    display: "inline-block",
+    width,
+    height,
+    borderRadius: radius,
+    background: VT.bgSoft,
+    backgroundImage: `linear-gradient(90deg, ${VT.bgSoft}, ${VT.lineSoft}, ${VT.bgSoft})`,
+    backgroundSize: "200% 100%",
+    animation: "vt-shimmer 1.4s ease-in-out infinite",
+    ...style
+  } });
+}
 var NAV = [
-  ["dash", "Dashboard", "\u{1F4CA}"],
+  ["dashboard", "Dashboard", "\u{1F4CA}"],
   ["apps", "\u0417\u0430\u044F\u0432\u043A\u0438", "\u{1F4E5}"],
   ["sites", "\u0421\u0430\u0439\u0442\u044B", "\u{1F310}"],
   ["leads", "\u041B\u0438\u0434\u044B", "\u{1F4E8}"],
@@ -162,7 +176,18 @@ var NAV = [
   ["waitlist", "Waitlist", "\u23F3"],
   ["settings", "Settings", "\u2699\uFE0F"]
 ];
-function AdminChrome({ active, children }) {
+var SECTION_ALIAS = { dash: "dashboard" };
+function AdminChrome({
+  active = "dashboard",
+  user,
+  onNavigate,
+  onLogout,
+  badgeCounts,
+  children
+}) {
+  const activeKey = SECTION_ALIAS[active] || active;
+  const u = user || { username: "founder@samosite.online", initials: "F" };
+  const badges = badgeCounts ?? { apps: 12 };
   return /* @__PURE__ */ jsxs2("div", { style: {
     display: "grid",
     gridTemplateColumns: "220px 1fr",
@@ -181,52 +206,131 @@ function AdminChrome({ active, children }) {
       gap: 4
     }, children: [
       /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
+        /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
         /* @__PURE__ */ jsx2("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
         /* @__PURE__ */ jsx2(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
       ] }),
-      NAV.map(([key, name, icon]) => /* @__PURE__ */ jsxs2("a", { style: {
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "8px 10px",
-        borderRadius: VT.r.sm,
-        background: active === key ? VT.accentSoft : "transparent",
-        color: active === key ? VT.accentInk : VT.ink,
-        fontSize: 14,
-        fontWeight: active === key ? 600 : 500,
-        cursor: "pointer"
-      }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
-        name,
-        key === "apps" && /* @__PURE__ */ jsx2(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: "12" })
-      ] }, key)),
+      /* @__PURE__ */ jsx2("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
+        const isActive = activeKey === key;
+        const count = badges?.[key];
+        return /* @__PURE__ */ jsxs2(
+          "button",
+          {
+            type: "button",
+            onClick: () => onNavigate && onNavigate(key),
+            "aria-current": isActive ? "page" : void 0,
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "8px 10px",
+              borderRadius: VT.r.sm,
+              background: isActive ? VT.accentSoft : "transparent",
+              color: isActive ? VT.accentInk : VT.ink,
+              fontSize: 14,
+              fontWeight: isActive ? 600 : 500,
+              cursor: "pointer",
+              textAlign: "left",
+              border: "none",
+              fontFamily: "inherit",
+              width: "100%"
+            },
+            children: [
+              /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
+              name,
+              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx2(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
+            ]
+          },
+          key
+        );
+      }) }),
       /* @__PURE__ */ jsxs2("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx2("span", { style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: "F" }),
-        "founder@samosite.online",
-        /* @__PURE__ */ jsx2("a", { style: { marginLeft: "auto", color: VT.inkFaint }, children: "\u0432\u044B\u0439\u0442\u0438" })
+        /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
+        /* @__PURE__ */ jsx2("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
+        /* @__PURE__ */ jsx2(
+          "button",
+          {
+            type: "button",
+            onClick: () => onLogout && onLogout(),
+            style: {
+              border: "none",
+              background: "transparent",
+              color: VT.inkFaint,
+              cursor: "pointer",
+              fontSize: 12,
+              fontFamily: "inherit",
+              padding: 0
+            },
+            children: "\u0432\u044B\u0439\u0442\u0438"
+          }
+        )
       ] })
     ] }),
     /* @__PURE__ */ jsx2("main", { style: { minWidth: 0 }, children })
   ] });
 }
-function StatTile({ label, value, delta, deltaSign, sub }) {
-  return /* @__PURE__ */ jsxs2(Card, { style: { padding: 18 }, children: [
-    /* @__PURE__ */ jsx2(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: label.toUpperCase() }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
-      /* @__PURE__ */ jsx2("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
-      delta && /* @__PURE__ */ jsxs2("span", { style: {
-        fontSize: 12.5,
-        fontWeight: 600,
-        color: deltaSign === "+" ? VT.success : deltaSign === "-" ? VT.danger : VT.inkSoft
-      }, children: [
-        deltaSign,
-        delta
-      ] })
-    ] }),
-    sub && /* @__PURE__ */ jsx2("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub })
-  ] });
+function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
+  const clickable = !!onClick && !loading;
+  return /* @__PURE__ */ jsx2(
+    Card,
+    {
+      style: {
+        padding: 18,
+        cursor: clickable ? "pointer" : "default",
+        transition: "transform .15s ease, box-shadow .15s ease"
+      },
+      children: /* @__PURE__ */ jsxs2(
+        "div",
+        {
+          role: clickable ? "button" : void 0,
+          tabIndex: clickable ? 0 : void 0,
+          onClick: clickable ? onClick : void 0,
+          onKeyDown: clickable ? (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onClick();
+            }
+          } : void 0,
+          children: [
+            /* @__PURE__ */ jsx2(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: String(label).toUpperCase() }),
+            loading ? /* @__PURE__ */ jsx2("div", { style: { marginTop: 8 }, children: /* @__PURE__ */ jsx2(SkeletonBlock, { width: 64, height: 28, radius: 6 }) }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
+              /* @__PURE__ */ jsx2("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
+              delta && /* @__PURE__ */ jsxs2("span", { style: {
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: deltaSign === "+" ? VT.success : deltaSign === "-" ? VT.danger : VT.inkSoft
+              }, children: [
+                deltaSign,
+                delta
+              ] })
+            ] }),
+            sub && !loading && /* @__PURE__ */ jsx2("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub }),
+            loading && /* @__PURE__ */ jsx2("div", { style: { marginTop: 6 }, children: /* @__PURE__ */ jsx2(SkeletonBlock, { width: "50%", height: 10 }) })
+          ]
+        }
+      )
+    }
+  );
 }
+var STATUS_MAP = {
+  // Applications (richer canon set + TZ API set)
+  new: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043D\u043E\u0432\u0430\u044F"],
+  parsing: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043F\u0430\u0440\u0441\u0438\u0442\u0441\u044F"],
+  generated: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u0433\u043E\u0442\u043E\u0432"],
+  published: [VT.successSoft, "oklch(0.34 0.12 145)", "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D"],
+  rejected: [VT.dangerSoft, "oklch(0.42 0.15 28)", "\u043E\u0442\u043A\u043B\u043E\u043D\u0451\u043D"],
+  rework: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u043F\u0435\u0440\u0435\u0434\u0435\u043B\u043A\u0430"],
+  pending: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u043D\u0430 \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438"],
+  approved: [VT.successSoft, "oklch(0.34 0.12 145)", "\u043E\u0434\u043E\u0431\u0440\u0435\u043D\u0430"],
+  // Sites
+  draft: [VT.bgSoft, VT.inkSoft, "\u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A"],
+  generating: [VT.infoSoft, "oklch(0.38 0.10 240)", "\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u0443\u0435\u0442\u0441\u044F"],
+  pending_review: [VT.warnSoft, "oklch(0.40 0.13 70)", "\u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435"],
+  paused: [VT.bgSoft, VT.inkSoft, "\u043D\u0430 \u043F\u0430\u0443\u0437\u0435"],
+  archived: [VT.bgSoft, VT.inkMuted, "\u0432 \u0430\u0440\u0445\u0438\u0432\u0435"],
+  // Leads
+  read: [VT.bgSoft, VT.inkSoft, "\u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D"]
+};
 
 // src/admin-ops/index.tsx
 import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";

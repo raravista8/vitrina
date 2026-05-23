@@ -20,14 +20,17 @@ repos:
     hooks:
       # Canon JSX prototypes are mirrored byte-identical from the handoff
       # archive (`docs/handoff/specs/04_typography.md §9.1` requires it).
-      # Trailing-whitespace / EOF-newline normalization would drift them
-      # from the upstream reference, so we exempt the dir from the
-      # whitespace hooks. Same dir is also opted out of eslint/prettier
-      # for the same reason (see landing/eslint.config.mjs).
+      # `packages/canon/{src,dist}/` is also vendored from the design team
+      # (CLAUDE.md «Canon workflow» — round-trip only via Claude Design,
+      # never edit src/* directly). Trailing-whitespace / EOF-newline
+      # normalization would drift these from the upstream reference, so
+      # we exempt them from the whitespace hooks. Same dirs are also
+      # opted out of eslint/prettier for the same reason (see
+      # landing/eslint.config.mjs).
       - id: trailing-whitespace
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/dist/|^packages/canon/package-lock\.json$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/src/|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: end-of-file-fixer
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/dist/|^packages/canon/package-lock\.json$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/canon-source/|^packages/canon/src/|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: check-yaml
         args: [--unsafe]
       - id: check-json
@@ -41,7 +44,7 @@ repos:
         # Regen is a deliberate `npm run test:visual:update` op and PRs
         # touching the dir get human review — the size limit guards against
         # accidental commits of build artefacts / binaries, not these.
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/baselines/.*\.png$|^packages/canon/dist/|^packages/canon/package-lock\.json$
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|^landing/tests/visual/baselines/.*\.png$|^packages/canon/src/|^packages/canon/dist/|^packages/canon/package-lock\.json$
       - id: check-case-conflict
       - id: detect-private-key
       - id: mixed-line-ending

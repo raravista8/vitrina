@@ -566,3 +566,6 @@ export {
   FeedbackInbox,
   Settings
 };
+
+
+export type * from './types';
