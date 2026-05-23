@@ -80,11 +80,6 @@ const okDecryptBulk = {
   },
 };
 
-/**
- * Route a fetch request by URL pattern. The chrome's /me + /dashboard
- * fire in parallel with the page's own /leads call, so a strict-order
- * mock would race; matching by path makes the test deterministic.
- */
 function mockFetchByPath(
   routes: Record<
     string,
@@ -109,6 +104,20 @@ function mockFetchByPath(
   );
 }
 
+/**
+ * Tests target canon's `Leads` component (0.2.0) which uses:
+ *   - Per-row checkbox: aria-label="Выбрать ${row.id}" (full UUID)
+ *   - Open modal button: text "🔓 Расшифровать (N)"
+ *   - Modal title: "Подтвердите TOTP"
+ *   - TOTP input: aria-label="TOTP код"
+ *   - Submit: "Расшифровать" (or "Расшифровываем…" when loading)
+ *   - Decrypted view: heading "Расшифровано · N", close button "Закрыть"
+ *
+ * Critical: canon's decrypted view renders plaintext IMMEDIATELY — there's
+ * no «Показать значения» eye-toggle. This is a deliberate UX simplification
+ * vs the previous hand-roll (CHANGELOG 0.2.0 «Migration mines» — the table
+ * NEVER shows plaintext, only the decrypt-modal success view does).
+ */
 describe("AdminLeadsPage", () => {
   beforeEach(() => {
     replaceMock.mockReset();
@@ -127,29 +136,36 @@ describe("AdminLeadsPage", () => {
 
     render(<AdminLeadsPage />);
 
-    // Masked row visible — no plaintext name yet.
-    await screen.findByText("aaaaaaaa");
+    // Masked row visible — no plaintext name yet. Canon renders the full UUID
+    // in the row, not a slice, so we await the full id text.
+    await screen.findByText("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
     expect(screen.queryByText("Маша Петрова")).not.toBeInTheDocument();
 
     // Select the row, open the modal, type the code, submit.
-    fireEvent.click(screen.getByLabelText(/Выбрать aaaaaaaa/));
-    fireEvent.click(screen.getByRole("button", { name: /Раскрыть выбранные/ }));
+    fireEvent.click(screen.getByLabelText("Выбрать aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
+    fireEvent.click(screen.getByRole("button", { name: /Расшифровать \(1\)/ }));
     await screen.findByText(/Подтвердите TOTP/);
 
-    fireEvent.change(screen.getByLabelText(/Код из аутентификатора/), {
+    fireEvent.change(screen.getByLabelText("TOTP код"), {
       target: { value: "123456" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Расшифровать/ }));
+    // The "Расшифровать" button inside the modal is also matched by /Расшифровать/
+    // — we use getAllByRole and click the one inside the dialog. The dialog is
+    // the only place where the button doesn't have a count suffix.
+    const submitButtons = screen
+      .getAllByRole("button", { name: /Расшифровать/ })
+      .filter((btn) => !btn.textContent?.includes("("));
+    fireEvent.click(submitButtons[0]!);
 
-    // Plaintext rendered (after pressing the eye-toggle to reveal).
-    await screen.findByText(/Расшифровано 1 лид/);
-    // The plaintext row defaults to masked — toggle to reveal.
-    fireEvent.click(screen.getByLabelText("Показать значения"));
+    // Decrypted view appears with heading "Расшифровано · 1". Plaintext is
+    // rendered immediately — no eye-toggle in canon's design.
+    await screen.findByText(/Расшифровано · 1/);
     expect(screen.getByText("Маша Петрова")).toBeInTheDocument();
     expect(screen.getByText("+7 921 999-99-99")).toBeInTheDocument();
 
-    // Closing the modal drops plaintext from the DOM.
-    fireEvent.click(screen.getByRole("button", { name: /Готово/ }));
+    // Closing the modal drops plaintext from the DOM. Canon's button is
+    // "Закрыть" (not "Готово" like the old hand-roll).
+    fireEvent.click(screen.getByRole("button", { name: /Закрыть/ }));
     await waitFor(() => expect(screen.queryByText("Маша Петрова")).not.toBeInTheDocument());
   });
 
@@ -165,14 +181,17 @@ describe("AdminLeadsPage", () => {
     });
 
     render(<AdminLeadsPage />);
-    await screen.findByText("aaaaaaaa");
-    fireEvent.click(screen.getByLabelText(/Выбрать aaaaaaaa/));
-    fireEvent.click(screen.getByRole("button", { name: /Раскрыть выбранные/ }));
+    await screen.findByText("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+    fireEvent.click(screen.getByLabelText("Выбрать aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
+    fireEvent.click(screen.getByRole("button", { name: /Расшифровать \(1\)/ }));
     await screen.findByText(/Подтвердите TOTP/);
-    fireEvent.change(screen.getByLabelText(/Код из аутентификатора/), {
+    fireEvent.change(screen.getByLabelText("TOTP код"), {
       target: { value: "000000" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Расшифровать/ }));
+    const submitButtons = screen
+      .getAllByRole("button", { name: /Расшифровать/ })
+      .filter((btn) => !btn.textContent?.includes("("));
+    fireEvent.click(submitButtons[0]!);
     await screen.findByText(/Неверный код TOTP/);
   });
 });

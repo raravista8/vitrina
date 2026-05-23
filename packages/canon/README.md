@@ -2,7 +2,7 @@
 
 > Canonical UI for **Самосайт** (samosite.online). Single source of truth for visual design — same React render that the dev canvas uses, packaged as a real npm module.
 
-**Current version: `0.2.0-alpha.1`** — admin-core interactive variants (AdminLogin, AdminChrome, AdminDashboard, AppsList, AppDetail are now drop-in for production). See [CHANGELOG](./CHANGELOG.md).
+**Current version: `0.2.0`** — admin interactive variants complete. All 10 admin screens are now drop-in for production (AdminLogin, AdminChrome, AdminDashboard, AppsList, AppDetail, SitesList, SiteDetail, Leads + decrypt modal, Waitlist, FeedbackInbox, Settings). See [CHANGELOG](./CHANGELOG.md).
 
 ## Why this exists
 
@@ -108,7 +108,7 @@ Your custom Tailwind classes now share token names with the canon (`bg-accent`, 
 | `@samosite/canon/source` | `SourceDetectionBadge` (desktop catalog) + `S2_Desktop`, `S2_Mobile` |
 | `@samosite/canon/admin-demo` | `ClientAdminDemo` — `/admin-demo` page |
 | `@samosite/canon/admin-core` | **Interactive (0.2.0):** `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail`, `AdminChrome`, `StatusPill`, `StatTile` + shared design surfaces `SkeletonBlock`, `EmptyState`, `ErrorBlock`, `RateLimitCountdown`, `FilterChip`, `TrendChart` + all prop types |
-| `@samosite/canon/admin-ops` | `SitesList`, `SiteDetail`, `Leads`, `Waitlist`, `FeedbackInbox`, `Settings` (presentational in 0.2.0-alpha.1, full props in 0.2.0) + **all prop types ready now** |
+| `@samosite/canon/admin-ops` | **Interactive (0.2.0):** `SitesList`, `SiteDetail`, `Leads` (включая decrypt modal), `Waitlist`, `FeedbackInbox`, `Settings` + all prop types |
 | `@samosite/canon/tailwind-preset` | Tailwind preset (default export) |
 | `@samosite/canon/styles.css` | Raw CSS for option B above |
 

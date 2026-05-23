@@ -1,25 +1,38 @@
 "use client";
 
 /**
- * Site detail (#15). Renders the site row + leads count + a deep-link
- * to the public site preview.
+ * Site detail (canon `SiteDetail` drop-in, canon 0.2.0).
  *
- * Design source: `~/Downloads/vitrina ui/code/admin/SiteDetail.tsx`.
- * Republish / pause-sync / archive actions from the canvas aren't
- * wired here — backend `/admin/api/sites/{id}` exposes only the read
- * surface in PR-E; the legacy Jinja routes still own the mutation
- * verbs. Until those move to JSON, this screen is read-only.
+ * Replaces hand-rolled Tailwind detail screen with canon's controlled
+ * `S15_SiteDetail`. Visual = canon's verbatim render (header + status,
+ * `<iframe sandbox>` preview pane via `previewUrl`, 6-action toolbar
+ * with status-aware enable/disable matrix, `actionLoading` per action).
+ * Drift = 0 from canvas.
+ *
+ * Per canon CHANGELOG 0.2.0:
+ *   Actions = publish | republish | pause_sync | resume_sync | archive | unarchive.
+ *
+ * Backend coverage:
+ *   - publish, republish → POST /admin/sites/{id}/publish (form-encoded,
+ *     Jinja route that returns a 302 with ?flash=... params)
+ *   - pause_sync, resume_sync, archive, unarchive → NOT YET in backend
+ *     (TODO: add corresponding routes under /admin/api/sites/{id}/...).
+ *     Canon enables/disables these buttons via the status matrix; until
+ *     backend lands, our onAction handler `console.warn`s and bails on
+ *     these 4 verbs so the founder doesn't get a silent no-op.
+ *
+ * Source: `packages/canon/src/admin-ops/index.tsx::S15_SiteDetail`.
+ * Spec: `docs/handoff/CANON_ADMIN_INTERACTIVE_TZ.md §3.6`.
  */
 
-import { ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { SiteDetail } from "@samosite/canon/admin-ops";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { SiteStatusPill } from "@/app/admin/sites/page";
 import { AdminChrome } from "@/components/admin/AdminChrome";
 import { adminRequest, type SiteRow } from "@/lib/admin-api";
-import { cn } from "@/lib/cn";
+
+type SiteAction = "publish" | "republish" | "pause_sync" | "resume_sync" | "archive" | "unarchive";
 
 interface SiteDetailData {
   site: SiteRow;
@@ -36,145 +49,87 @@ export default function SiteDetailPage() {
 
 function SiteDetailScreen() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const id = params.id;
   const [data, setData] = useState<SiteDetailData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<SiteAction | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       const result = await adminRequest<SiteDetailData>(`/sites/${id}`);
       if (cancelled) return;
-      if (result.ok) setData(result.data);
-      else setError(result.error);
+      setLoading(false);
+      if (result.ok) {
+        setData(result.data);
+        setError(null);
+      } else {
+        setError(result.error);
+      }
     })();
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, refreshKey]);
 
-  if (error) {
-    return (
-      <div className="p-6 sm:p-10">
-        <p className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger">
-          Не удалось загрузить сайт ({error}).
-        </p>
-      </div>
-    );
+  const previewUrl = data
+    ? data.site.custom_domain
+      ? `https://${data.site.custom_domain}`
+      : `https://${data.site.subdomain}.samosite.online`
+    : undefined;
+
+  async function onAction(siteId: string, action: SiteAction) {
+    setActionLoading(action);
+    try {
+      if (action === "publish" || action === "republish") {
+        // Backend's publish endpoint is a Jinja form-handler that 302s on
+        // success. We POST with `redirect: manual` so adminRequest's
+        // opaqueredirect branch catches the 303 — same as auth re-routing.
+        // Result envelope: any non-2xx is "not ok" — but the 302 we want
+        // to follow is success. Detect it by `result.error === "auth_required"`
+        // (which is what adminRequest synthesises for opaqueredirect).
+        try {
+          const response = await fetch(`/admin/sites/${siteId}/publish`, {
+            method: "POST",
+            credentials: "same-origin",
+            redirect: "manual",
+          });
+          // 302 / opaqueredirect = success (Jinja flow). 4xx/5xx = error.
+          if (response.type === "opaqueredirect" || response.status === 302) {
+            // success
+          } else if (!response.ok) {
+            throw new Error(`publish_failed (${response.status})`);
+          }
+        } catch (err) {
+          // Network error — surface to user via error state
+          setError(err instanceof Error ? err.message : "network_error");
+        }
+        setRefreshKey((n) => n + 1);
+        return;
+      }
+      // Not yet wired backend — log + return without mutating UI state.
+      // Canon's status-aware matrix still disables these for the wrong
+      // statuses; clicking through them on enabled statuses is a no-op
+      // until the backend exposes JSON endpoints.
+      console.warn(`[admin] action ${action} not yet wired to backend`);
+    } finally {
+      setActionLoading(null);
+    }
   }
-  if (data === null) {
-    return <div className="p-6 text-sm text-ink-faint sm:p-10">Загружаем…</div>;
-  }
-
-  const { site, leads_count } = data;
-  const publicUrl = site.custom_domain
-    ? `https://${site.custom_domain}`
-    : `https://${site.subdomain}.samosite.online`;
 
   return (
-    <div className="p-6 sm:p-10">
-      <p className="flex items-center gap-2 text-sm text-ink-soft">
-        <Link href="/admin/sites" className="hover:text-ink hover:underline">
-          Сайты
-        </Link>{" "}
-        / <span className="font-mono text-ink">{site.subdomain}</span>
-      </p>
-
-      <header className="mt-3 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            {site.subdomain}.samosite.online
-          </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
-            <a
-              href={publicUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-mono text-[12px] text-accent underline"
-            >
-              {publicUrl} <ExternalLink className="h-3 w-3" />
-            </a>
-            <span>·</span>
-            <SiteStatusPill status={site.status} />
-          </div>
-        </div>
-        <Link
-          href={`/admin/leads?site_id=${site.id}`}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-4 py-2 text-sm font-medium text-ink",
-            "hover:bg-paper-soft",
-          )}
-        >
-          Лиды сайта ({leads_count.toLocaleString("ru-RU")})
-        </Link>
-      </header>
-
-      <section className="mt-6 grid gap-3 sm:grid-cols-2">
-        <Card title="Сайт">
-          <Field label="Поддомен" value={site.subdomain} mono />
-          <Field label="Кастомный домен" value={site.custom_domain ?? "—"} mono />
-          <Field label="Источник" value={site.source_type} />
-          <Field label="URL источника" value={site.source_url ?? "—"} mono />
-          <Field label="Статус" value={site.status} />
-        </Card>
-        <Card title="Тайминги">
-          <Field label="Создан" value={formatDate(site.created_at)} mono />
-          <Field label="Опубликован" value={formatDate(site.published_at)} mono />
-          <Field label="Last sync" value={formatDate(site.last_synced_at)} mono />
-        </Card>
-      </section>
-
-      <section className="mt-6 rounded-2xl border border-line bg-white p-5 shadow-card">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
-          ПРЕВЬЮ САЙТА
-        </p>
-        <div className="mt-3 overflow-hidden rounded-xl border border-line bg-paper-soft">
-          <iframe
-            src={publicUrl}
-            title={`Превью ${site.subdomain}`}
-            className="aspect-[4/3] w-full"
-            loading="lazy"
-            // Customer sites set their own restrictive CSP; sandbox is
-            // a defence-in-depth (we still trust our own rendering).
-            sandbox="allow-same-origin allow-scripts"
-          />
-        </div>
-      </section>
-    </div>
+    <SiteDetail
+      _embed={false}
+      data={data ?? undefined}
+      loading={loading}
+      error={error}
+      previewUrl={previewUrl}
+      onAction={onAction}
+      onBack={() => router.push("/admin/sites")}
+      actionLoading={actionLoading}
+    />
   );
-}
-
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-line bg-white p-5 shadow-card">
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">{title}</p>
-      <dl className="mt-3 space-y-2 text-sm">{children}</dl>
-    </div>
-  );
-}
-
-function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex justify-between gap-3">
-      <dt className="text-ink-soft">{label}</dt>
-      <dd
-        className={cn("max-w-[60%] truncate text-right text-ink", mono && "font-mono text-[12px]")}
-      >
-        {value}
-      </dd>
-    </div>
-  );
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return "—";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
