@@ -31,12 +31,17 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     expect(brand.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("«Войти» link points to /admin/login, not canon's default absolute URL", () => {
+  it("«Войти» link points to /admin-demo — master's site-management ЛК", () => {
+    // Public-facing «Войти» = master's customer admin (canon's
+    // ClientAdminDemo drop-in at /admin-demo). Operator admin lives at
+    // /admin/login but is NOT surfaced on the public landing. Canon's
+    // default `loginHref` is `https://samosite.online/login` (canvas
+    // demo URL) — must be overridden on our side.
     render(<SiteHeader />);
     const loginLinks = screen.getAllByRole("link", { name: /Войти/i });
     expect(loginLinks.length).toBeGreaterThan(0);
     for (const link of loginLinks) {
-      expect(link).toHaveAttribute("href", "/admin/login");
+      expect(link).toHaveAttribute("href", "/admin-demo");
     }
   });
 
