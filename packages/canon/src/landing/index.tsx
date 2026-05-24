@@ -515,7 +515,7 @@ const PLATFORMS_OK = [
   { id: 'site',     name: 'Ваш старый сайт',        bg: 'oklch(0.42 0.04 250)', fg: '#fff', logo: <GlobeMini />,
     pull: 'тексты · фото · услуги' },
   { id: 'card',     name: 'Фото буклета или меню', bg: 'oklch(0.78 0.07 70)', fg: '#3a2410', logo: <CardIcon />,
-    pull: 'распознаем услуги · контакты' },
+    pull: 'распознаём услуги · контакты' },
 ];
 
 const PLATFORMS_SOON = [
@@ -664,7 +664,7 @@ function HeroPlatformStrip({ mobile }) {
         fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.1em',
         color: VT.inkFaint, fontWeight: 600,
       }}>
-        ИЗ ЧЕГО МЫ МОЖЕМ СДЕЛАТЬ ВАМ САЙТ
+        ПОДДЕРЖИВАЕМ
       </div>
       <div style={{
         display: 'flex', flexWrap: 'wrap', gap: 8,
@@ -718,8 +718,8 @@ function HeroBlock({ mobile }) {
           Also: overflowWrap/wordBreak floor so even on a sub-320-px viewport
           no single word can punch through the content box. */}
       <h1 style={{
-        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 88,
-        lineHeight: mobile ? 1.08 : 1.02,
+        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 76,
+        lineHeight: mobile ? 1.08 : 1.04,
         fontWeight: 700,
         letterSpacing: '-0.035em',
         margin: 0,
@@ -728,29 +728,29 @@ function HeroBlock({ mobile }) {
         wordBreak: 'normal',
         maxWidth: '100%',
       }}>
-        Сайт, который{mobile ? ' ' : <br />}
-        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
-          сам себя соберёт,
+        Сайт, который{' '}
+        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
+          соберётся из вашей ссылки
           {!mobile && (
             <span aria-hidden="true" style={{
-              position: 'absolute', left: 4, right: 14, bottom: 8,
+              position: 'absolute', left: 4, right: 14, bottom: 6,
               height: 14, background: VT.accentSoft, opacity: 0.7,
               zIndex: -1, borderRadius: 3,
             }} />
           )}
         </span>
-        {mobile ? ' ' : <br />}
-        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>сам обновит</span>
-        {' '}
-        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>и сам приведёт клиентов</span>
+        {' — '}
+        {mobile ? null : <br />}
+        и дальше{' '}
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>работает сам</span>
       </h1>
 
       <p style={{
         fontSize: mobile ? 17 : 20, lineHeight: 1.45, color: VT.inkSoft,
-        margin: mobile ? '20px 0 0' : '32px auto 0',
-        maxWidth: mobile ? '100%' : 760, textWrap: 'pretty',
+        margin: mobile ? '20px 0 0' : '28px auto 0',
+        maxWidth: mobile ? '100%' : 820, textWrap: 'pretty',
       }}>
-        Покажите ссылку — карты, Telegram или визитку. <b style={{ color: VT.ink }}>{BRAND.name} на базе ИИ соберёт сайт за 2 часа</b> и дальше <b style={{ color: VT.ink }}>делает всё сам</b>: обновляет цены, ловит заявки, ведёт аналитику и публикует лучшие отзывы
+        {BRAND.name} на базе ИИ <b style={{ color: VT.ink }}>соберёт сайт за 2 часа</b> из того, что у вас уже есть — карточки на Яндекс.Картах, Telegram-канала, профиля на Avito, фото буклета или меню. После запуска не бросит — <b style={{ color: VT.ink }}>сам обновляет цены, отбирает отзывы и ловит заявки в мессенджер</b>.
       </p>
 
       {/* Input + CTA */}
@@ -767,15 +767,25 @@ function HeroBlock({ mobile }) {
         boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)',
         alignItems: mobile ? 'stretch' : 'center',
       }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: mobile ? '12px 14px' : '0 18px' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: mobile ? '12px 14px' : '0 18px', minWidth: 0 }}>
           <IconLink />
-          <span style={{ color: VT.inkFaint, fontSize: mobile ? 16 : 17 }}>
-            ссылка на ваш профиль или сайт
+          <span style={{ color: VT.inkFaint, fontSize: mobile ? 15 : 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            Вставьте ссылку: Яндекс.Карты, Telegram, Avito…
           </span>
         </div>
         <Btn style={{ padding: mobile ? '14px 20px' : '14px 26px', borderRadius: mobile ? 10 : 999 }} iconRight={<IconArrow />}>
-          Сделать {BRAND.name}
+          Собрать сайт
         </Btn>
+      </div>
+
+      {/* 0.5.0 — microcopy под кнопкой (COPY.md §1.7). */}
+      <div style={{
+        marginTop: mobile ? 10 : 12,
+        textAlign: mobile ? 'left' : 'center',
+        fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12,
+        letterSpacing: '0.04em', color: VT.inkSoft,
+      }}>
+        Без карты · Первый месяц бесплатно · Сайт через 2 часа
       </div>
 
       {/* Photo-upload companion link — opens SubmitModal on Step 1 mode='photo'.
@@ -794,7 +804,7 @@ function HeroBlock({ mobile }) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
           </svg>
-          или загрузите фото работ, буклета или меню
+          Нет ссылки? Загрузите фото буклета, меню или работ
           <span aria-hidden="true">→</span>
         </a>
       </div>
@@ -928,7 +938,7 @@ function ExamplesSection({ mobile }) {
       category: 'Хатха-йога',
       city: 'Краснодар',
       palette: 'sage', tone: 'sage',
-      src: 'фото визитки',
+      src: 'фото буклета',
       logo: { letter: 'Л', bg: 'oklch(0.45 0.11 145)' },
       heroPhoto: U('photo-1545205597-3d9d02c29597'),
       heroFormula: 'Хатха-йога —\nдля тех, у кого болит спина',
@@ -983,7 +993,7 @@ function ExamplesSection({ mobile }) {
   return (
     <section style={{ ...sectionPad(mobile), marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>через несколько минут</SectionTitle>
+        <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>сегодня же</SectionTitle>
         <SectionSub mobile={mobile}>
           Реальные сайты, которые {BRAND.name} собрал из разных источников — с вашими фото, услугами и лучшими отзывами
         </SectionSub>
@@ -1034,7 +1044,7 @@ function ExamplesSection({ mobile }) {
           textDecoration: 'none',
           boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
           letterSpacing: '-0.005em',
-        }}>Сделать себе такой {BRAND.name} <span aria-hidden="true">→</span></a>
+        }}>Собрать такой же из моей ссылки <span aria-hidden="true">→</span></a>
       </div>
     </section>
   );
@@ -1234,11 +1244,11 @@ function StoryStepColorful({ idx, total, title, body, kind, mobile, palette }) {
 function StorySection({ mobile }) {
   const steps = [
     { kind: 'link',    title: 'Дайте ссылку на ваше дело',
-      body: 'Страница на Яндекс.Картах, ваш Telegram-канал, профиль на Avito или просто фото визитки. Подойдёт всё, что у вас уже есть.' },
-    { kind: 'ai',      title: 'ИИ соберёт продающий сайт',
-      body: 'Найдёт услуги, цены, отзывы и фото. Сам напишет тексты, подберёт цвета и сложит в красивую галерею. За пару минут.' },
+      body: 'Карточка на Яндекс.Картах, ваш Telegram-канал, профиль на Avito или фото буклета. Подойдёт всё, что у вас уже есть.' },
+    { kind: 'ai',      title: 'ИИ соберёт сайт за 2 часа',
+      body: 'Найдёт услуги, цены, отзывы и фото. Сам напишет тексты, подберёт цвета и шрифты под стилистику вашего дела, сложит всё в готовый сайт.' },
     { kind: 'globe',   title: 'Сайт появится на своём адресе',
-      body: <>На <Mono style={{ fontSize: mobile ? 14 : 15, color: VT.ink }}>{`<ваш-сайт>.${BRAND.domain}`}</Mono> или подключите свой домен. Защищённый https, индексация в Яндексе и Google — из коробки.</> },
+      body: <>На <Mono style={{ fontSize: mobile ? 14 : 15, color: VT.ink }}>{`ваше-имя.${BRAND.domain}`}</Mono> или подключите свой домен. Защищённый https, индексация в Яндексе и Google — из коробки.</> },
     { kind: 'refresh', title: 'Сам обновляется — или вы добавляете',
       body: 'Раз в неделю забирает свежие посты из источника. А если добавили новую услугу — просто пришлите фото и текст в личном кабинете, сайт обновится.' },
     { kind: 'inbox',   title: 'Заявки летят к вам в мессенджер',
@@ -1287,7 +1297,7 @@ function PlatformsSection({ mobile }) {
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Что подойдёт<br/>для создания {BRAND.name}а</SectionTitle>
         <SectionSub mobile={mobile}>
-          Подойдёт любая ссылка, где про вас уже что-то написано или показано
+          Подойдёт всё, где про вас уже что-то написано или показано — в интернете или на бумаге
         </SectionSub>
       </div>
 
@@ -1423,6 +1433,13 @@ function FeatureGlyph({ kind, size = 44, tint }) {
           <path d="M11 18.5 h2"/>
         </svg>
       );
+    case 'pen':
+      return wrap(
+        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 20 L4 16 L16 4 L20 8 L8 20 Z"/>
+          <path d="M14 6 L18 10"/>
+        </svg>
+      );
     case 'shield':
       return wrap(
         <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
@@ -1488,26 +1505,30 @@ const FEATURE_TINTS = {
   search:   { bg: 'oklch(0.92 0.05 285)', fg: 'oklch(0.38 0.11 285)', cardBg: VT.white },
   phone:    { bg: 'oklch(0.92 0.05 25)',  fg: 'oklch(0.40 0.13 22)',  cardBg: VT.white },
   shield:   { bg: 'oklch(0.92 0.06 145)', fg: 'oklch(0.35 0.11 145)', cardBg: VT.bgSoft },
+  pen:      { bg: 'oklch(0.93 0.06 285)', fg: 'oklch(0.38 0.11 285)', cardBg: VT.white },
 };
 
 function BigFeaturesSection({ mobile }) {
+  // 0.5.0 — 8 «сам» rewritten per COPY.md §5.
+  // Removed duplicates with "Как это работает" (old 01 «соберётся», old 04 «поймает» were repeats of steps 2 & 5).
+  // Added differentiators: «подберёт стиль», «напишет тексты», «себя улучшит».
   const features = [
-    { kind: 'sparkles', heading: 'Сам соберётся',          subtitle: 'Дайте ссылку — соберётся за 2 часа',
-      body: <>Дайте ссылку на Яндекс.Карты, Telegram-канал или просто фото визитки — {BRAND.name} за 2 часа найдёт услуги, цены, отзывы и фото. Сам напишет тексты и подберёт оформление.</> },
+    { kind: 'sparkles', heading: 'Сам подберёт стиль',     subtitle: 'Цвета и шрифты — из ваших материалов, а не из шаблона',
+      body: 'ИИ читает не только тексты, но и визуальный язык: цвета вашего логотипа, тон фотографий, атмосферу постов в Telegram. Сайт собирается в стилистике вашего дела — не похож на тысячу других на той же платформе.' },
+    { kind: 'search',   heading: 'Сам соберёт сайт за 2 часа', subtitle: 'Из любой ссылки или фото — от первого экрана до отзывов',
+      body: <>Дайте карточку на Яндекс.Картах, Telegram-канал, профиль на Avito или просто фото буклета — за 2 часа найдёт услуги, цены, отзывы и фото. Сложит в готовый сайт с приёмом заявок.</> },
+    { kind: 'pen',      heading: 'Сам напишет тексты',     subtitle: 'В вашей интонации, а не «инновационные решения»',
+      body: 'ИИ читает ваши посты и отзывы клиентов, понимает, как вы говорите, и пишет тексты в этой же интонации. Никаких корпоративных штампов.' },
+    { kind: 'star',     heading: 'Сам отберёт лучшие отзывы', subtitle: 'Только тёплые и конкретные на сайте',
+      body: 'Прочитает все отзывы клиентов, отсеет «норм», тройки и троллей. Поставит 4–6 самых тёплых. Появился сильнее — заменит.' },
     { kind: 'refresh',  heading: 'Сам обновится',          subtitle: 'Каждую неделю — свежие посты, фото и цены',
       body: 'Забирает свежие посты, новые цены и фото из источника. Поменяли прайс в Яндекс.Картах — на сайте уже новый.' },
-    { kind: 'star',     heading: 'Сам отберёт отзывы',     subtitle: 'На сайте — только лучшие',
-      body: 'Прочитает все отзывы клиентов, отсеет «норм», тройки и троллей. Поставит на сайт 4–6 самых тёплых. Появился сильнее — заменит.' },
-    { kind: 'inbox',    heading: 'Сам поймает заявку',     subtitle: 'В Telegram, MAX или почту',
-      body: 'Клиент жмёт «Записаться» — уведомление падает в Telegram, MAX или на почту. Без CRM, без личных кабинетов, без забытых заявок.' },
-    { kind: 'bar',      heading: 'Сам посчитает',          subtitle: 'Короткая сводка раз в неделю',
-      body: 'Сколько людей зашли, откуда пришли, сколько оставили заявок. Без графиков — на человеческом языке.' },
-    { kind: 'search',   heading: 'Сам попадёт в поиск',    subtitle: 'Клиенты найдут вас в Яндексе и Google',
-      body: 'Сразу настроены индексация в Яндексе и Google, защищённый https, разметка для карт и поисковиков. Ничего настраивать не нужно.' },
-    { kind: 'phone',    heading: 'Сам подстроится под телефон', subtitle: '80% клиентов зайдут с мобильного',
-      body: `${BRAND.name} собирается так, чтобы на телефоне всё было удобно. Никаких отдельных мобильных версий.` },
-    { kind: 'shield',   heading: 'Сам защитится от спама', subtitle: 'Только живые заявки — без ботов',
-      body: 'Форма с антибот-проверкой, которую настоящий клиент даже не замечает. Боты получают тишину, вам приходят только заявки от людей.' },
+    { kind: 'inbox',    heading: 'Сам поймает заявки',     subtitle: 'В Telegram, MAX, SMS или почту — без CRM',
+      body: 'Клиент жмёт «Записаться» — уведомление падает туда, где вам удобно читать. Без CRM, без отдельных приложений, без забытых заявок.' },
+    { kind: 'bar',      heading: 'Сам себя улучшит',       subtitle: 'Смотрит, где люди уходят — предлагает что поправить',
+      body: <>{BRAND.name} следит за поведением посетителей: какие блоки читают, на чём закрывают вкладку. Раз в неделю присылает короткие подсказки: «фото на первом экране слабое — замените», «формулировка цены отпугивает — попробуйте другую». Применить — одна кнопка. Отклонить — тоже.</> },
+    { kind: 'shield',   heading: 'Сам пройдёт техминимум', subtitle: 'Индексация в поиске, мобильная вёрстка, защита от спама',
+      body: 'Индексация в Яндексе и Google, https, разметка для карт, мобильная вёрстка, антибот-проверка на форме. Ничего настраивать не нужно — всё работает из коробки.' },
   ];
 
   return (
@@ -1515,7 +1536,7 @@ function BigFeaturesSection({ mobile }) {
       <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 800, margin: '0 auto' }}>
         <SectionTitle mobile={mobile}>Восемь «сам» —<br/>поэтому он {BRAND.name}</SectionTitle>
         <SectionSub mobile={mobile}>
-          {BRAND.name} — это не один трюк, а восемь вещей, которые он делает сам — от первого «давайте посмотрим» до недельной аналитики
+          {BRAND.name} — это не один трюк, а восемь вещей, которые он делает сам — от первого «давайте посмотрим» до недельного отчёта по конверсии
         </SectionSub>
       </div>
 
@@ -1852,7 +1873,7 @@ function AnalyticsSection({ mobile }) {
           </svg>
         </span>
         <div style={{ fontSize: mobile ? 13.5 : 14.5, color: VT.accentInk, lineHeight: 1.45, flex: 1 }}>
-          <b style={{ color: VT.accentInk }}>Кратко и регулярно</b> — {BRAND.name} пришлёт сводку аналитики, куда скажете: в Telegram, MAX или на почту. Не нужно заходить в кабинет, чтобы знать как идут дела
+          <b style={{ color: VT.accentInk }}>Кратко и регулярно</b> — {BRAND.name} пришлёт сводку, куда скажете: в Telegram, MAX или на почту. Не нужно заходить в кабинет, чтобы знать, как идут дела
         </div>
       </div>
     </section>
@@ -1899,7 +1920,7 @@ function OwnershipSection({ mobile }) {
             fontSize: mobile ? 30 : 44, fontWeight: 700, letterSpacing: '-0.03em',
             margin: '14px 0 0', lineHeight: 1.05, textWrap: 'balance',
           }}>
-            Восемь «сам» — но кнопка всегда у вас
+            {BRAND.name} делает рутину — но кнопка всегда у вас
           </h2>
           <p style={{
             fontSize: mobile ? 16 : 18, lineHeight: 1.5, color: VT.inkSoft,
@@ -2143,13 +2164,15 @@ function SocialProofSection({ mobile }) {
 
 function PricingSection({ mobile }) {
   const bullets = [
-    'Сам собирает сайт за 2 часа',
-    'Сам обновляет 4 раза в месяц из источника',
-    'Сам ловит заявки в Telegram / MAX / Email',
+    'Сам соберёт сайт за 2 часа',
+    'Сам подберёт стиль и напишет тексты под ваше дело',
+    'Сам обновляет 4 раза в месяц из источника',
+    'Сам ловит заявки в Telegram / MAX / SMS / Email',
     'Сам отбирает лучшие отзывы каждую неделю',
-    'Сам индексирует в Яндексе и Google',
-    'Личный кабинет с аналитикой и контролем',
-    'Защищённый https + данные хранятся в РФ',
+    'Сам подскажет, что улучшить — по поведению ваших посетителей',
+    'Индексация в Яндексе и Google, https, мобильная вёрстка',
+    'Личный кабинет с аналитикой и полным контролем',
+    'Данные хранятся в РФ',
   ];
 
   return (
@@ -2243,7 +2266,7 @@ function PricingSection({ mobile }) {
           {/* CTA */}
           <div style={{ marginTop: mobile ? 24 : 32 }}>
             <Btn style={{ width: '100%', padding: mobile ? '14px 22px' : '16px 26px', fontSize: mobile ? 15 : 16 }} iconRight={<IconArrow />}>
-              Сделать {BRAND.name}
+              Собрать {BRAND.name}
             </Btn>
           </div>
           <div style={{
@@ -2261,7 +2284,7 @@ function PricingSection({ mobile }) {
           fontSize: mobile ? 13.5 : 14.5, lineHeight: 1.55,
           color: VT.inkSoft, textAlign: 'center', textWrap: 'pretty',
         }}>
-          Час работы SMM-щика стоит дороже. Час маркетолога — в разы. {BRAND.name} делает то, что им пришлось бы делать каждую неделю — но автоматически.
+          <b style={{ color: VT.ink }}>Стоимость подписки окупается с первой заявки.</b> Сравните: вёрстка простого сайта у подрядчика — от 30 000 ₽, поддержка — ещё столько же в год. {BRAND.name} делает обе эти работы за 11 880 ₽ в год — и не пропадает после запуска.
         </p>
       </div>
     </section>
@@ -2305,6 +2328,14 @@ function FaqItem({ q, a, defaultOpen, mobile }) {
 }
 
 function FaqSection({ mobile }) {
+  // 0.5.0 — FAQ reordered per COPY.md §9:
+  //   • «Что НЕ умеет» moved to position 4 (was last) — honesty up front.
+  //   • Two new questions about «подбирает стиль» and «себя улучшит»
+  //     (the new differentiators in BigFeatures).
+  //   • «нет Telegram-канала» answer references «фото буклета или меню»
+  //     instead of legacy «фото визитки».
+  //   • «Может ли подключить домен» uses literal «ваше-имя.…» instead of
+  //     angle-bracket syntax.
   const faqs = [
     {
       q: `А если ${BRAND.name} сам напишет что-то не то?`,
@@ -2316,7 +2347,27 @@ function FaqSection({ mobile }) {
     },
     {
       q: 'Что если у меня нет Telegram-канала и нет карточки в Яндекс.Картах?',
-      a: <>Загрузите 5–10 фото работ, скриншот шапки профиля или просто фото визитки — {BRAND.name} соберёт сайт из этого. На стартовой странице есть кнопка «Загрузить фото работ, скриншот профиля или визитку».</>
+      a: <>Загрузите 5–10 фото работ, скриншот шапки профиля или фото буклета или меню — {BRAND.name} соберёт сайт из этого. На стартовой странице есть ссылка «Нет ссылки? Загрузите фото буклета, меню или работ».</>
+    },
+    {
+      q: `Что ${BRAND.name} сам НЕ умеет?`,
+      a: <>
+        Не пишет сайт «с нуля без источника» — нужна хотя бы одна ссылка или фото.<br/>
+        Не редактирует фото и не подбирает чужие.<br/>
+        Не отвечает клиентам в чатах за вас — только присылает заявки.<br/>
+        Не покупает домен и не настраивает корпоративную почту.<br/>
+        Не делает интернет-магазины с оплатой — только заявки.<br/>
+        Не применяет улучшения автоматически — только предлагает, решаете вы.<br/>
+        Не гарантирует уникальность стиля на 100% — два бизнеса в одной нише с похожими источниками могут получить похожие палитры.
+      </>
+    },
+    {
+      q: `Что значит «${BRAND.name} сам подбирает стиль»? Сайт получится непохожим на чужие?`,
+      a: 'Да. ИИ смотрит на ваш визуальный язык: цвета логотипа, фотографии, тон постов. Подбирает палитру, шрифты и расположение блоков под вашу стилистику, а не из десятка стандартных шаблонов. Два сайта от разных мастеров маникюра будут выглядеть по-разному — даже если оба собраны из Telegram-канала.'
+    },
+    {
+      q: `Как ${BRAND.name} понимает, что улучшить на сайте?`,
+      a: 'Смотрит на поведение посетителей: какие блоки люди читают, а какие пролистывают, на чём закрывают вкладку, какие услуги кликают, какие нет. Раз в неделю присылает короткий разбор: «замените фото на первом экране», «цена услуги Х отпугивает — попробуйте другую формулировку», «отзыв номер 3 работает лучше всех — добавьте ещё похожих». Применить правку — одна кнопка. Отклонить — тоже. Решает всегда владелец.'
     },
     {
       q: `Мой Telegram-канал закрытый. ${BRAND.name} его прочитает?`,
@@ -2328,23 +2379,19 @@ function FaqSection({ mobile }) {
     },
     {
       q: `Куда ${BRAND.name} сам отправит заявку, если у меня нет Telegram?`,
-      a: 'Выбираете один канал из четырёх: Telegram, телефон (SMS), email или MAX (российский мессенджер от VK). Заявка падает туда. Никаких CRM и отдельных приложений — только то, что вы и так читаете.'
+      a: 'Выбираете один канал из четырёх: Telegram, телефон (SMS), email или MAX (российский мессенджер от VK). Заявка падает туда. Никаких CRM и отдельных приложений — только то, что вы и так читаете.'
     },
     {
       q: `Может ли ${BRAND.name} сам подключить мой домен?`,
-      a: <>Если у вас уже есть домен — пришлите его, мы поможем настроить DNS. Если нет — сайт сразу живёт на адресе <Mono style={{ fontSize: 13, color: VT.ink }}>{`<ваш-сайт>.${BRAND.domain}`}</Mono> со всем тем же самым, бесплатно.</>
+      a: <>Если у вас уже есть домен — пришлите его, мы поможем настроить DNS. Если нет — сайт сразу живёт на адресе <Mono style={{ fontSize: 13, color: VT.ink }}>{`ваше-имя.${BRAND.domain}`}</Mono> со всем тем же самым, бесплатно.</>
     },
     {
       q: 'Что с моими данными, если я откажусь от подписки?',
-      a: 'Сайт перестаёт показываться сразу. Все ваши данные — тексты, фото, заявки клиентов — удаляются в течение 10 дней. До удаления можно скачать архив (HTML + фото) одной кнопкой. По ФЗ-152 — все данные хранятся в РФ.'
+      a: 'Сайт перестаёт показываться сразу. Все ваши данные — тексты, фото, заявки клиентов — удаляются в течение 10 дней. До удаления можно скачать архив (HTML + фото) одной кнопкой. По ФЗ-152 — все данные хранятся в РФ.'
     },
     {
       q: 'А если клиент жалуется на сайт — кто отвечает?',
       a: 'Ответственность за контент несёте вы как владелец дела. Мы проверяем, что текст не нарушает закон, но не контролируем фактическую точность («стерильные инструменты», «гарантия 14 дней» — это ваши обещания). Если клиент пишет про техническую проблему сайта — пишите нам, поправим.'
-    },
-    {
-      q: `Что ${BRAND.name} сам НЕ умеет?`,
-      a: 'Не пишет сайт «с нуля без источника» — нужна хотя бы одна ссылка или фото. Не редактирует фото и не подбирает чужие. Не отвечает клиентам в чатах за вас — только присылает заявки. Не покупает домен и не настраивает корпоративную почту. Не делает интернет-магазины с оплатой — только заявки.'
     },
   ];
 
@@ -2371,8 +2418,8 @@ function FaqSection({ mobile }) {
 
 function FreeMonthSection({ mobile }) {
   const bullets = [
-    <>Сайт на адресе <Mono style={{ fontSize: 13, color: '#fff' }}>{`ваш-сайт.${BRAND.domain}`}</Mono></>,
-    'Кнопка «Записаться» и приём заявок в Telegram',
+    <>Сайт на адресе <Mono style={{ fontSize: 13, color: '#fff' }}>{`ваше-имя.${BRAND.domain}`}</Mono></>,
+    'Кнопка «Записаться» и приём заявок в мессенджер',
     'Свежие отзывы и фото каждую неделю',
     'Аналитика посещений и заявок в личном кабинете',
   ];
@@ -2411,13 +2458,13 @@ function FreeMonthSection({ mobile }) {
             fontSize: mobile ? 30 : 54, fontWeight: 700, letterSpacing: '-0.03em',
             margin: 0, lineHeight: 1.05, textWrap: 'balance',
           }}>
-            Дайте {BRAND.name}у собрать себя
+            Покажите ссылку — получите сайт за 2 часа
           </h2>
           <p style={{
             fontSize: mobile ? 16 : 19, lineHeight: 1.5, color: 'oklch(0.85 0.014 60)',
             margin: '14px auto 0', maxWidth: 640, textWrap: 'pretty',
           }}>
-            Через 2 часа у вас будет работающий сайт с услугами, ценами и отзывами. Через неделю — первые заявки в Telegram.
+            Через 2 часа у вас будет работающий сайт с услугами, ценами и отзывами. Через неделю — первые заявки в мессенджер.
           </p>
 
           {/* 4 bullets */}
@@ -2454,7 +2501,7 @@ function FreeMonthSection({ mobile }) {
           {/* CTA */}
           <div style={{ marginTop: mobile ? 24 : 32, display: 'inline-flex' }}>
             <Btn iconRight={<IconArrow />} style={{ padding: mobile ? '14px 24px' : '18px 32px', fontSize: mobile ? 16 : 18 }}>
-              Сделать {BRAND.name}
+              Собрать {BRAND.name}
             </Btn>
           </div>
 
@@ -2518,7 +2565,7 @@ function StickyHeader({
         display: 'inline-flex', alignItems: 'center', gap: 6,
         boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
         border: 'none', cursor: 'pointer', fontFamily: 'inherit' };
-  const primaryLabel = mobile ? 'Сделать' : 'Сделать сайт';
+  const primaryLabel = mobile ? 'Собрать' : 'Собрать сайт';
   // <button> if handler supplied, else fall back to <a href="#hero"> (canvas demo).
   const PrimaryCta = onMakeSiteClick
     ? <button type="button" onClick={onMakeSiteClick} style={primaryCtaStyle}>

@@ -177,12 +177,12 @@ const SOURCE_LIB = {
   telegram:    { label: 'Telegram-канал',   icon: '✈️', tier: 'ok' },
   twogis:      { label: '2ГИС',             icon: '📍', tier: 'ok' },
   avito:       { label: 'Avito-профиль',    icon: '🅰️', tier: 'ok' },
-  instagram:   { label: 'Instagram',        icon: '📷', tier: 'ok' },
+  instagram:   { label: 'Instagram-профиль', icon: '📷', tier: 'ok' },
   website:     { label: 'Свой сайт',        icon: '🌐', tier: 'ok' },
   vk:          { label: 'VK-страница',      icon: 'V',  tier: 'soon' },
   whatsapp:    { label: 'WhatsApp-каталог', icon: '🟢', tier: 'soon' },
   youtube:     { label: 'YouTube-канал',    icon: '▶️', tier: 'soon' },
-  unknown:     { label: 'не распознали',    icon: '?',  tier: 'unknown' },
+  unknown:     { label: 'не узнали источник', icon: '?',  tier: 'unknown' },
 };
 
 function SourceBadge({ source, counts, onCorrect }) {
@@ -233,7 +233,7 @@ function SourceBadge({ source, counts, onCorrect }) {
       fontSize: 13.5, color: 'oklch(0.42 0.13 70)',
     }}>
       <span style={{ fontSize: 16 }}>⚠️</span>
-      <span>Не распознали — проверьте ссылку. Или переключитесь на фото →</span>
+      <span>Не узнали источник — проверьте ссылку или переключитесь на фото →</span>
     </div>
   );
 }
@@ -526,7 +526,8 @@ function S3_Step1_Link({
   return (
     <ModalShell width={540}>
       <StepHeader step={1} total={total} showBack={false}
-        title="Ссылка на вашу страницу или профиль, из которой мы сделаем сайт" />
+        title="Покажите ваше дело — соберём из этого сайт"
+        sub={`Вставьте ссылку — ${BRAND.name} распознает источник и заберёт всё нужное`} />
 
       <ModeSwitcher mode="link" onModeChange={onModeChange} />
 
@@ -571,8 +572,8 @@ function S3_Step1_Photo({
   return (
     <ModalShell width={560}>
       <StepHeader step={1} total={total} showBack={false}
-        title="Загрузите фото вашего дела"
-        sub="Работы, скриншоты профиля, фото визитки, буклета или меню — соберём сайт из того, что у вас есть" />
+        title="Покажите ваше дело — соберём из этого сайт"
+        sub="Загрузите работы, скриншоты профиля, фото буклета или меню — соберём сайт из того, что у вас есть" />
 
       <ModeSwitcher mode="photo" onModeChange={onModeChange} />
 
@@ -620,7 +621,7 @@ function S3_Step2_PhotoDesc({
     <ModalShell width={560}>
       <StepHeader step={2} total={4}
         title="Расскажите о вашем деле"
-        sub="Что нам нужно знать перед тем как начать?" />
+        sub="Пара строк, чтобы ИИ собрал сайт точнее" />
 
       <div style={{ marginTop: 20 }}>
         <FieldLabel required>Что вы делаете</FieldLabel>
@@ -635,7 +636,7 @@ function S3_Step2_PhotoDesc({
           <FieldInput value={city} placeholder="Петрозаводск" onChange={onCityChange} />
         </div>
         <div>
-          <FieldLabel required>Контакты на сайте</FieldLabel>
+          <FieldLabel required>Контакт для клиентов на сайте</FieldLabel>
           <CustomerContactPicker
             type={customerContactType} value={customerContact}
             onTypeChange={onCustomerContactTypeChange}
@@ -726,7 +727,7 @@ function S3_StepContact({
     <ModalShell width={540}>
       <StepHeader step={step} total={total}
         title="Куда вам писать?"
-        sub="Один основной контакт — туда придёт ссылка на готовый сайт и заявки клиентов." />
+        sub="Один контакт для вас — туда придёт ссылка на готовый сайт и заявки от клиентов." />
 
       <div style={{ marginTop: 20 }}>
         <FieldLabel>Основной канал</FieldLabel>
@@ -735,7 +736,7 @@ function S3_StepContact({
             selected={channel === 'telegram'} onSelect={onChannelChange} />
           <ChannelOption value="phone"    label="Телефон"  hint="SMS-уведомления" icon="📱"
             selected={channel === 'phone'} onSelect={onChannelChange} />
-          <ChannelOption value="email"    label="Email"    hint="на ящик" icon="📧"
+          <ChannelOption value="email"    label="Email"    hint="письмом" icon="📧"
             selected={channel === 'email'} onSelect={onChannelChange} />
           <ChannelOption value="max"      label="MAX"      hint="мессенджер от VK" icon="💬"
             selected={channel === 'max'} onSelect={onChannelChange} />
@@ -744,9 +745,9 @@ function S3_StepContact({
 
       <div style={{ marginTop: 18 }}>
         <FieldLabel>
-          {channel === 'phone' ? 'Номер телефона'
-            : channel === 'email' ? 'Email'
-            : channel === 'max' ? 'Логин в MAX'
+          {channel === 'phone' ? 'Ваш номер для SMS'
+            : channel === 'email' ? 'Ваш email'
+            : channel === 'max' ? 'Ваш MAX (логин или номер)'
             : 'Ваш Telegram (логин или номер)'}
         </FieldLabel>
         <FieldInput value={contact} placeholder={ph} mono onChange={onContactChange} />
@@ -792,6 +793,15 @@ function SummaryRow({ label, value }) {
       </div>
     </div>
   );
+}
+
+// Russian plural for file count: 1 файл, 2–4 файла, 5+ файлов.
+function pluralFiles(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'файл';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'файла';
+  return 'файлов';
 }
 
 function S3_FinalConfirm({ mode = 'link', total = 3, summary = {}, onClose }) {
@@ -840,7 +850,7 @@ function S3_FinalConfirm({ mode = 'link', total = 3, summary = {}, onClose }) {
               <SummaryRow label="НА САЙТЕ" value={<span style={{ fontFamily: VT.font.mono, fontSize: 13 }}>{summary.customerContact}</span>} />
             )}
             {summary.textFileCount > 0 && (
-              <SummaryRow label="ТЕКСТЫ" value={`${summary.textFileCount} файлов`} />
+              <SummaryRow label="ТЕКСТЫ" value={`${summary.textFileCount} ${pluralFiles(summary.textFileCount)}`} />
             )}
           </>
         )}
@@ -856,7 +866,7 @@ function S3_FinalConfirm({ mode = 'link', total = 3, summary = {}, onClose }) {
       </div>
 
       <div style={{ marginTop: 24 }}>
-        <Btn variant="secondary" style={{ width: '100%' }} onClick={onClose}>Понятно</Btn>
+        <Btn variant="secondary" style={{ width: '100%' }} onClick={onClose} iconRight={<IconArrow />}>Ок, жду</Btn>
       </div>
     </ModalShell>
   );

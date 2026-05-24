@@ -1,13 +1,14 @@
 {
   "name": "@samosite/canon",
-  "version": "0.4.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.4.0: customer login (S20_CustomerLogin) + StickyHeader homeHref prop.",
+  "version": "0.5.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.5.0: copy rewrite per docs/COPY.md (Hero, Story, BigFeatures, FAQ, FreeMonth, SubmitModal).",
   "type": "module",
   "sideEffects": [
     "*.css"
   ],
   "files": [
     "dist",
+    "docs",
     "README.md",
     "CHANGELOG.md"
   ],

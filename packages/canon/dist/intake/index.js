@@ -38,6 +38,12 @@ var VT = {
     mono: "'JetBrains Mono', ui-monospace, monospace"
   }
 };
+var BRAND = {
+  name: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442",
+  domain: "samosite.online",
+  bot: "@SamositeIntakeBot",
+  contactBot: "@SamositeBot"
+};
 var tokens = {
   color: {
     accent: VT.accent,
@@ -275,12 +281,12 @@ var SOURCE_LIB = {
   telegram: { label: "Telegram-\u043A\u0430\u043D\u0430\u043B", icon: "\u2708\uFE0F", tier: "ok" },
   twogis: { label: "2\u0413\u0418\u0421", icon: "\u{1F4CD}", tier: "ok" },
   avito: { label: "Avito-\u043F\u0440\u043E\u0444\u0438\u043B\u044C", icon: "\u{1F170}\uFE0F", tier: "ok" },
-  instagram: { label: "Instagram", icon: "\u{1F4F7}", tier: "ok" },
+  instagram: { label: "Instagram-\u043F\u0440\u043E\u0444\u0438\u043B\u044C", icon: "\u{1F4F7}", tier: "ok" },
   website: { label: "\u0421\u0432\u043E\u0439 \u0441\u0430\u0439\u0442", icon: "\u{1F310}", tier: "ok" },
   vk: { label: "VK-\u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430", icon: "V", tier: "soon" },
   whatsapp: { label: "WhatsApp-\u043A\u0430\u0442\u0430\u043B\u043E\u0433", icon: "\u{1F7E2}", tier: "soon" },
   youtube: { label: "YouTube-\u043A\u0430\u043D\u0430\u043B", icon: "\u25B6\uFE0F", tier: "soon" },
-  unknown: { label: "\u043D\u0435 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438", icon: "?", tier: "unknown" }
+  unknown: { label: "\u043D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A", icon: "?", tier: "unknown" }
 };
 function SourceBadge({ source, counts, onCorrect }) {
   const meta = SOURCE_LIB[source] || SOURCE_LIB.unknown;
@@ -347,7 +353,7 @@ function SourceBadge({ source, counts, onCorrect }) {
     color: "oklch(0.42 0.13 70)"
   }, children: [
     /* @__PURE__ */ jsx2("span", { style: { fontSize: 16 }, children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsx2("span", { children: "\u041D\u0435 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438 \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443. \u0418\u043B\u0438 \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u0441\u044C \u043D\u0430 \u0444\u043E\u0442\u043E \u2192" })
+    /* @__PURE__ */ jsx2("span", { children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u0441\u044C \u043D\u0430 \u0444\u043E\u0442\u043E \u2192" })
   ] });
 }
 function LinkInput({ value, placeholder = "https://...", onChange, loading = false }) {
@@ -679,7 +685,8 @@ function S3_Step1_Link({
         step: 1,
         total,
         showBack: false,
-        title: "\u0421\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0432\u0430\u0448\u0443 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u0438\u043B\u0438 \u043F\u0440\u043E\u0444\u0438\u043B\u044C, \u0438\u0437 \u043A\u043E\u0442\u043E\u0440\u043E\u0439 \u043C\u044B \u0441\u0434\u0435\u043B\u0430\u0435\u043C \u0441\u0430\u0439\u0442"
+        title: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0432\u0430\u0448\u0435 \u0434\u0435\u043B\u043E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0438\u0437 \u044D\u0442\u043E\u0433\u043E \u0441\u0430\u0439\u0442",
+        sub: `\u0412\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u2014 ${BRAND.name} \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438 \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u0432\u0441\u0451 \u043D\u0443\u0436\u043D\u043E\u0435`
       }
     ),
     /* @__PURE__ */ jsx2(ModeSwitcher, { mode: "link", onModeChange }),
@@ -730,8 +737,8 @@ function S3_Step1_Photo({
         step: 1,
         total,
         showBack: false,
-        title: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0432\u0430\u0448\u0435\u0433\u043E \u0434\u0435\u043B\u0430",
-        sub: "\u0420\u0430\u0431\u043E\u0442\u044B, \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u044B \u043F\u0440\u043E\u0444\u0438\u043B\u044F, \u0444\u043E\u0442\u043E \u0432\u0438\u0437\u0438\u0442\u043A\u0438, \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0441\u0430\u0439\u0442 \u0438\u0437 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044C"
+        title: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0432\u0430\u0448\u0435 \u0434\u0435\u043B\u043E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0438\u0437 \u044D\u0442\u043E\u0433\u043E \u0441\u0430\u0439\u0442",
+        sub: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0440\u0430\u0431\u043E\u0442\u044B, \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u044B \u043F\u0440\u043E\u0444\u0438\u043B\u044F, \u0444\u043E\u0442\u043E \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0441\u0430\u0439\u0442 \u0438\u0437 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044C"
       }
     ),
     /* @__PURE__ */ jsx2(ModeSwitcher, { mode: "photo", onModeChange }),
@@ -786,7 +793,7 @@ function S3_Step2_PhotoDesc({
         step: 2,
         total: 4,
         title: "\u0420\u0430\u0441\u0441\u043A\u0430\u0436\u0438\u0442\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435",
-        sub: "\u0427\u0442\u043E \u043D\u0430\u043C \u043D\u0443\u0436\u043D\u043E \u0437\u043D\u0430\u0442\u044C \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C \u043A\u0430\u043A \u043D\u0430\u0447\u0430\u0442\u044C?"
+        sub: "\u041F\u0430\u0440\u0430 \u0441\u0442\u0440\u043E\u043A, \u0447\u0442\u043E\u0431\u044B \u0418\u0418 \u0441\u043E\u0431\u0440\u0430\u043B \u0441\u0430\u0439\u0442 \u0442\u043E\u0447\u043D\u0435\u0435"
       }
     ),
     /* @__PURE__ */ jsxs2("div", { style: { marginTop: 20 }, children: [
@@ -807,7 +814,7 @@ function S3_Step2_PhotoDesc({
         /* @__PURE__ */ jsx2(FieldInput, { value: city, placeholder: "\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A", onChange: onCityChange })
       ] }),
       /* @__PURE__ */ jsxs2("div", { children: [
-        /* @__PURE__ */ jsx2(FieldLabel, { required: true, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B \u043D\u0430 \u0441\u0430\u0439\u0442\u0435" }),
+        /* @__PURE__ */ jsx2(FieldLabel, { required: true, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435" }),
         /* @__PURE__ */ jsx2(
           CustomerContactPicker,
           {
@@ -919,7 +926,7 @@ function S3_StepContact({
         step,
         total,
         title: "\u041A\u0443\u0434\u0430 \u0432\u0430\u043C \u043F\u0438\u0441\u0430\u0442\u044C?",
-        sub: "\u041E\u0434\u0438\u043D \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
+        sub: "\u041E\u0434\u0438\u043D \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u0432\u0430\u0441 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043E\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
       }
     ),
     /* @__PURE__ */ jsxs2("div", { style: { marginTop: 20 }, children: [
@@ -952,7 +959,7 @@ function S3_StepContact({
           {
             value: "email",
             label: "Email",
-            hint: "\u043D\u0430 \u044F\u0449\u0438\u043A",
+            hint: "\u043F\u0438\u0441\u044C\u043C\u043E\u043C",
             icon: "\u{1F4E7}",
             selected: channel === "email",
             onSelect: onChannelChange
@@ -972,7 +979,7 @@ function S3_StepContact({
       ] })
     ] }),
     /* @__PURE__ */ jsxs2("div", { style: { marginTop: 18 }, children: [
-      /* @__PURE__ */ jsx2(FieldLabel, { children: channel === "phone" ? "\u041D\u043E\u043C\u0435\u0440 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430" : channel === "email" ? "Email" : channel === "max" ? "\u041B\u043E\u0433\u0438\u043D \u0432 MAX" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" }),
+      /* @__PURE__ */ jsx2(FieldLabel, { children: channel === "phone" ? "\u0412\u0430\u0448 \u043D\u043E\u043C\u0435\u0440 \u0434\u043B\u044F SMS" : channel === "email" ? "\u0412\u0430\u0448 email" : channel === "max" ? "\u0412\u0430\u0448 MAX (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" }),
       /* @__PURE__ */ jsx2(FieldInput, { value: contact, placeholder: ph, mono: true, onChange: onContactChange })
     ] }),
     /* @__PURE__ */ jsx2("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx2(
@@ -1015,6 +1022,13 @@ function SummaryRow({ label, value }) {
     /* @__PURE__ */ jsx2("div", { style: { flex: 1, fontSize: 14, color: VT.ink, lineHeight: 1.45, wordBreak: "break-word" }, children: value })
   ] });
 }
+function pluralFiles(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "\u0444\u0430\u0439\u043B";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "\u0444\u0430\u0439\u043B\u0430";
+  return "\u0444\u0430\u0439\u043B\u043E\u0432";
+}
 function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
   return /* @__PURE__ */ jsxs2(ModalShell, { width: 540, children: [
     /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }, children: [
@@ -1049,7 +1063,7 @@ function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
         summary.description && /* @__PURE__ */ jsx2(SummaryRow, { label: "\u041E\u041F\u0418\u0421\u0410\u041D\u0418\u0415", value: summary.description }),
         summary.city && /* @__PURE__ */ jsx2(SummaryRow, { label: "\u0413\u041E\u0420\u041E\u0414", value: summary.city }),
         summary.customerContact && /* @__PURE__ */ jsx2(SummaryRow, { label: "\u041D\u0410 \u0421\u0410\u0419\u0422\u0415", value: /* @__PURE__ */ jsx2("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.customerContact }) }),
-        summary.textFileCount > 0 && /* @__PURE__ */ jsx2(SummaryRow, { label: "\u0422\u0415\u041A\u0421\u0422\u042B", value: `${summary.textFileCount} \u0444\u0430\u0439\u043B\u043E\u0432` })
+        summary.textFileCount > 0 && /* @__PURE__ */ jsx2(SummaryRow, { label: "\u0422\u0415\u041A\u0421\u0422\u042B", value: `${summary.textFileCount} ${pluralFiles(summary.textFileCount)}` })
       ] }),
       /* @__PURE__ */ jsx2(
         SummaryRow,
@@ -1070,7 +1084,7 @@ function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx2("div", { style: { marginTop: 24 }, children: /* @__PURE__ */ jsx2(Btn, { variant: "secondary", style: { width: "100%" }, onClick: onClose, children: "\u041F\u043E\u043D\u044F\u0442\u043D\u043E" }) })
+    /* @__PURE__ */ jsx2("div", { style: { marginTop: 24 }, children: /* @__PURE__ */ jsx2(Btn, { variant: "secondary", style: { width: "100%" }, onClick: onClose, iconRight: /* @__PURE__ */ jsx2(IconArrow, {}), children: "\u041E\u043A, \u0436\u0434\u0443" }) })
   ] });
 }
 function SubmitModal(props) {

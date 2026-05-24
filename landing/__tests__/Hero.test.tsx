@@ -37,19 +37,22 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // Eyebrow «САЙТ ДЛЯ ЗАЯВОК…» удалён в v2 — см. COPY.md §11.1.
     expect(screen.queryByText("САЙТ ДЛЯ ЗАЯВОК — ИЗ ТОГО, ЧТО У ВАС УЖЕ ЕСТЬ")).toBeNull();
 
-    // H1 + sub (v2 / PR-G — three «сам» pattern).
+    // H1 — canon 0.5.0: «Сайт, который соберётся из вашей ссылки — и
+    // дальше работает сам» (two accent phrases, single SLA).
     const h1 = screen.getByRole("heading", { level: 1 });
-    expect(h1).toHaveTextContent(/сам себя соберёт/i);
-    expect(h1).toHaveTextContent(/сам обновит/i);
-    expect(h1).toHaveTextContent(/сам приведёт клиентов/i);
-    // v2.1.3 §1.1 — Hero subtitle переписан: «Покажите ссылку на ваше
-    // дело» → «Покажите ссылку» (короче) + `<b>` болды.
-    expect(screen.getByText(/Покажите ссылку — карты/i)).toBeInTheDocument();
+    expect(h1).toHaveTextContent(/Сайт, который/i);
+    expect(h1).toHaveTextContent(/соберётся из вашей ссылки/i);
+    expect(h1).toHaveTextContent(/работает сам/i);
+    // canon 0.5.0 — sub rewritten: opens with «Самосайт на базе ИИ»,
+    // then «соберёт сайт за 2 часа» (single SLA), then the source list,
+    // then «сам обновляет цены, отбирает отзывы и ловит заявки в
+    // мессенджер». Was «Покажите ссылку — карты, Telegram или визитку.»
+    expect(screen.getByText(/Самосайт на базе ИИ/i)).toBeInTheDocument();
 
     // Brand «Самосайт» (Cyrillic per PRD §3) is rendered by the
     // <StickyHeader> sibling now (mounted from app/page.tsx in prod
     // — see SiteHeader.tsx + SiteHeader.test.tsx). Hero references the
-    // brand only inside copy strings (CTA «Сделать Самосайт», microcopy
+    // brand only inside copy strings (CTA «Собрать сайт», microcopy
     // «Самосайт сам напомнит»). Assertion lives in SiteHeader.test.tsx.
 
     // CTA + free-month risk-reversal pill. The dedicated «Самосайт сам
@@ -57,7 +60,7 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // 0.2.5 (duplicated three other surfaces). The free-month pill
     // remains and carries the same promise via «Первый месяц —
     // бесплатно» + «далее 990 ₽/мес».
-    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Собрать сайт/ })).toBeInTheDocument();
     expect(screen.getByText(/Первый месяц — бесплатно/i)).toBeInTheDocument();
     expect(screen.getByText(/990 ₽\/мес/)).toBeInTheDocument();
     // Reassurance microcopy «Самосайт сам напомнит» MUST be gone from
@@ -77,7 +80,7 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // replaces the old «📷 Загрузить фото работ» button. Same plane as
     // the CTA — link OR photo, never both.
     expect(
-      screen.getByRole("button", { name: /или загрузите фото работ, буклета или меню/i }),
+      screen.getByRole("button", { name: /Нет ссылки\? Загрузите фото буклета, меню или работ/i }),
     ).toBeInTheDocument();
     // The «Закрытый TG-канал» link is gone (PR-G) and stays gone.
     expect(screen.queryByText(/Закрытый TG-канал/i)).toBeNull();
@@ -107,22 +110,22 @@ describe("Hero — interaction", () => {
     // input still get the modal (where they finish the submission or
     // jump to the photo path).
     render(<Hero />);
-    const button = screen.getByRole("button", { name: /Сделать Самосайт/ });
+    const button = screen.getByRole("button", { name: /Собрать сайт/ });
     expect(button).not.toBeDisabled();
   });
 
   it("CTA stays enabled after pasting a Telegram URL", async () => {
     render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i);
+    const input = screen.getByPlaceholderText(/Вставьте ссылку/i);
     fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
 
-    const button = screen.getByRole("button", { name: /Сделать Самосайт/ });
+    const button = screen.getByRole("button", { name: /Собрать сайт/ });
     await waitFor(() => expect(button).not.toBeDisabled());
   });
 
   it("renders the ✓ badge with preview counts once the live preview lands", async () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     // Loading badge first
@@ -135,11 +138,11 @@ describe("Hero — interaction", () => {
 
   it("for waitlist URLs, renders the email-capture panel; CTA stays clickable", () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://instagram.com/anna_master" },
     });
     expect(screen.getByText(/скоро будет — оставьте email/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать сайт/ })).not.toBeDisabled();
     // Parallel CTA per FR-093 — wired to open PhotoDrawer in Hero, so
     // the markup is a <button> when used inside Hero (the standalone
     // badge falls back to an <a href="#photo-upload"> for accessibility).
@@ -148,11 +151,11 @@ describe("Hero — interaction", () => {
 
   it("for a non-URL string, hints at supported sources; CTA stays clickable", () => {
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "just some text" },
     });
     expect(screen.getByText(/Введите ссылку на Telegram-канал, Яндекс.Карты/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: /Собрать сайт/ })).not.toBeDisabled();
   });
 
   it("clicking the photo-link opens SubmitModal in photo mode (canon 0.3.0)", () => {
@@ -160,16 +163,16 @@ describe("Hero — interaction", () => {
     // SubmitModal closed initially — canon's S3_Step1_Photo heading
     // «Загрузите фото вашего дела» only appears after the trigger.
     expect(
-      screen.queryByRole("heading", { name: /Загрузите фото вашего дела/i }),
+      screen.queryByRole("heading", { name: /Покажите ваше дело — соберём из этого сайт/i }),
     ).not.toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /или загрузите фото работ, буклета или меню/i }),
+      screen.getByRole("button", { name: /Нет ссылки\? Загрузите фото буклета, меню или работ/i }),
     );
 
     // Canon SubmitModal opens at Step 1 with photo-mode heading.
     expect(
-      screen.getByRole("heading", { name: /Загрузите фото вашего дела/i }),
+      screen.getByRole("heading", { name: /Покажите ваше дело — соберём из этого сайт/i }),
     ).toBeInTheDocument();
   });
 });
@@ -189,7 +192,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // виден (не зависит от input). Canon ships TWO copies (desktop +
     // mobile, CSS-toggled via Tailwind sm:) — `getAllByText` так что
     // оба mount'а матчатся.
-    expect(screen.getAllByText(/из чего мы можем сделать вам сайт/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/поддерживаем/i).length).toBeGreaterThan(0);
     // Canon's PLATFORMS_OK uses full platform names — these labels
     // come straight from canon source (packages/canon/src/landing
     // line 488-503), don't hand-edit on prod side.
@@ -204,15 +207,15 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // paste). Reason: brand-recognition value высокий, badge внизу
     // (SourceDetectionBadge) для recognized source не конфликтует.
     // Canon ships TWO copies (desktop + mobile via Tailwind sm: toggle).
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://t.me/some_channel" },
     });
-    expect(screen.getAllByText(/из чего мы можем сделать вам сайт/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/поддерживаем/i).length).toBeGreaterThan(0);
   });
 
   it("renders an × clear-button when input is non-empty; clears on click", () => {
     render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(/Вставьте ссылку/i) as HTMLInputElement;
     // No × initially.
     expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
 
@@ -231,10 +234,10 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // panel in Hero, not a special modal-routing decision). User can
     // switch to photo mode inside the modal via the pill-tabs.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Собрать сайт/ }));
 
     // canon's SubmitModal opens at Step 2 (contact) because URL is
     // present — heading is «Куда вам писать?» (S3_StepContact).
@@ -247,7 +250,7 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // yet supported" more honestly. The classNames carry the colour
     // tokens so we assert on those rather than computed CSS.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://www.instagram.com/anna_master" },
     });
     const banner = screen.getByText(/скоро будет — оставьте email/i);
@@ -263,10 +266,10 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     // assert that we route to the contact step correctly. Detailed step
     // markup lives in canon's S3_StepContact and is covered there.
     render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Вставьте ссылку/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Собрать сайт/ }));
     expect(screen.getByRole("heading", { name: /Куда вам писать/i })).toBeInTheDocument();
   });
 });
