@@ -82,13 +82,22 @@ export function SiteHeader() {
     return () => document.removeEventListener("click", onClick);
   }, [router]);
 
+  // `loginHref` — public-facing «Войти» destination. Canon's prop accepts
+  // any string (added in 0.2.3). For pre-launch we point at /admin-demo —
+  // the master's site-management ЛК (canon's <ClientAdminDemo /> drop-in).
+  // Operator/founder admin lives separately at /admin/login — not surfaced
+  // on the public landing; founder bookmarks it.
+  //
+  // When real customer-auth lands (magic-link / OAuth, FR-062), introduce a
+  // proper /login route that handles both audiences, and switch this href
+  // there. /admin-demo stays as the post-login destination.
   return (
     <>
       <div className="hidden sm:block">
-        <StickyHeader mobile={false} loginHref="/admin/login" onMakeSiteClick={openSubmitModal} />
+        <StickyHeader mobile={false} loginHref="/admin-demo" onMakeSiteClick={openSubmitModal} />
       </div>
       <div className="sm:hidden">
-        <StickyHeader mobile={true} loginHref="/admin/login" onMakeSiteClick={openSubmitModal} />
+        <StickyHeader mobile={true} loginHref="/admin-demo" onMakeSiteClick={openSubmitModal} />
       </div>
     </>
   );

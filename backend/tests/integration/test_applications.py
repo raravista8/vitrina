@@ -118,6 +118,16 @@ async def app(_postgres_container: str, db_session) -> AsyncIterator[FastAPI]:  
     fastapi_app.dependency_overrides[get_session] = _override_session
     fastapi_app.dependency_overrides[get_notification_dispatcher] = lambda: test_dispatcher
     fastapi_app.state.redis = _FakeRedis()
+
+    # canon 0.3.0 photo flow Fernet-encrypts customer_contact_value via
+    # the same MultiFernet as leads. Lifespan would wire this — bypass
+    # in tests by building a single-key Fernet from a fresh test key.
+    from cryptography.fernet import Fernet
+
+    from app.core.leads.encryption import build_fernet
+
+    fastapi_app.state.lead_fernet = build_fernet([Fernet.generate_key().decode("ascii")])
+
     try:
         yield fastapi_app
     finally:
@@ -389,76 +399,11 @@ async def test_persistence_creates_user_consent_application(
     assert apps[0].consent_id == consents[0].id
 
 
-# ---- tg-bot-status polling (UI Step #4) ----------------------------------
-
-
-async def test_tg_bot_status_pending_before_processing(
-    client: httpx.AsyncClient,
-    db_session,  # type: ignore[no-untyped-def]
-) -> None:
-    """Newly-created application sits in `pending` until the parser-
-    worker (or the founder) advances it. UI polls every 5s and the
-    endpoint reports `added=False` until that happens."""
-    submit = await client.post(
-        "/api/submit-application",
-        json={
-            "source_type": "telegram",
-            "source_url": "https://t.me/poll_test",
-            "contact": "anna@example.com",
-            "consent_given": True,
-            "captcha_token": DEV_TOKEN,
-        },
-    )
-    assert submit.status_code == 202
-    app_id = submit.json()["data"]["application_id"]
-
-    resp = await client.get(f"/api/applications/{app_id}/tg-bot-status")
-    assert resp.status_code == 200
-    assert resp.json() == {"ok": True, "data": {"added": False}}
-
-
-async def test_tg_bot_status_added_after_status_advances(
-    client: httpx.AsyncClient,
-    db_session,  # type: ignore[no-untyped-def]
-) -> None:
-    """Once the application's status moves off `pending` (parser-worker
-    ingested OR founder approved), the endpoint reports `added=True`
-    and the UI flips to the confirmation step."""
-    from sqlalchemy import select
-
-    from app.infrastructure.postgres.models import Application
-
-    submit = await client.post(
-        "/api/submit-application",
-        json={
-            "source_type": "telegram",
-            "source_url": "https://t.me/poll_done",
-            "contact": "anna2@example.com",
-            "consent_given": True,
-            "captcha_token": DEV_TOKEN,
-        },
-    )
-    app_id = submit.json()["data"]["application_id"]
-
-    # Simulate worker / founder advancing the status.
-    row = (
-        await db_session.execute(select(Application).where(Application.id == app_id))
-    ).scalar_one()
-    row.status = "approved"
-    await db_session.commit()
-
-    resp = await client.get(f"/api/applications/{app_id}/tg-bot-status")
-    assert resp.status_code == 200
-    assert resp.json()["data"]["added"] is True
-
-
-async def test_tg_bot_status_404_for_unknown_id(client: httpx.AsyncClient) -> None:
-    """Unknown application id → 404. Safe because IDs are UUIDv4 —
-    no enumeration value in a successful guess."""
-    import uuid
-
-    resp = await client.get(f"/api/applications/{uuid.uuid4()}/tg-bot-status")
-    assert resp.status_code == 404
+# tg-bot-status polling — endpoint removed in canon 0.3.0 (TG-bot
+# personal-onboarding flow deleted from intake; notifications happen
+# post-approval via email/TG by the operator). The three tests that
+# exercised `GET /api/applications/{id}/tg-bot-status` were deleted
+# along with the endpoint.
 
 
 # --------------------------------------------------------------------------- #
@@ -479,13 +424,19 @@ def _make_jpeg_bytes() -> bytes:
 
 
 def _photo_form_fields(contact: str = "alice@example.com") -> dict[str, str]:
+    # canon 0.3.0: photo branch now requires description (≥30 chars), city,
+    # customer_contact_type, customer_contact_value. Old `business_name` +
+    # `category` form keys are gone; the new endpoint rejects them
+    # (Pydantic-style — but multipart Form() just ignores unknown keys
+    # silently, so omit them for cleanliness).
     return {
         "contact": contact,
         "consent_given": "true",
         "captcha_token": DEV_TOKEN,
-        "business_name": "Студия Анны",
-        "category": "Маникюр",
+        "description": ("Маникюр, педикюр, наращивание. 7 лет опыта, " "работаю в Петрозаводске."),
         "city": "Петрозаводск",
+        "customer_contact_type": "phone",
+        "customer_contact_value": "+79215557788",
     }
 
 
