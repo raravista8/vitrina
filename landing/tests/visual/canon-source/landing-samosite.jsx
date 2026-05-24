@@ -646,9 +646,17 @@ function SectionSub({ children, mobile, align = 'center' }) {
 // HERO
 
 function HeroBlock({ mobile }) {
-  // 0.2.6 — self-padded outer wrapper + H1 overflow fix on mobile.
+  // 0.2.6: canon's prod-facing HeroBlock has an outer sectionPad wrapper
+  // (so the section self-pads when consumed outside <SamosaytLanding>).
+  // That outer wrapper is INTENTIONALLY NOT mirrored in canon-source —
+  // this file feeds the baseline generator (`_visual-host.html` tags
+  // children by index), and our prod Hero (`landing/components/Hero.tsx`)
+  // is hand-rolled with its own `<section px-5 sm:px-16>` padding around
+  // a `max-w-[1100px] mx-auto` body marked `data-section-body="hero"`.
+  // Baseline must measure the inner block so prod's locator captures
+  // the same DOM subtree (width = 1100 on desktop). H1 mobile-overflow
+  // fixes BELOW are still synced because they affect inner rendering.
   return (
-    <div style={{ ...sectionPad(mobile), width: '100%', paddingTop: mobile ? 18 : 28, position: 'relative' }}>
     <div style={{
       position: 'relative', zIndex: 1,
       maxWidth: mobile ? '100%' : 1100,
@@ -795,7 +803,6 @@ function HeroBlock({ mobile }) {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }
