@@ -865,12 +865,15 @@ function HeroBlock({ mobile }) {
     textAlign: mobile ? "left" : "center"
   }, children: [
     /* @__PURE__ */ jsxs2("h1", { style: {
-      fontSize: mobile ? 38 : 88,
+      fontSize: mobile ? "clamp(28px, 8.6vw, 38px)" : 88,
       lineHeight: mobile ? 1.08 : 1.02,
       fontWeight: 700,
       letterSpacing: "-0.035em",
       margin: 0,
-      textWrap: mobile ? "pretty" : "balance"
+      textWrap: mobile ? "pretty" : "balance",
+      overflowWrap: "break-word",
+      wordBreak: "normal",
+      maxWidth: "100%"
     }, children: [
       "\u0421\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439",
       mobile ? " " : /* @__PURE__ */ jsx2("br", {}),
@@ -2499,11 +2502,15 @@ function FreeMonthSection({ mobile }) {
   ];
   return /* @__PURE__ */ jsx2("section", { style: {
     ...sectionPad(mobile),
-    marginTop: mobile ? 64 : 110,
     position: "relative",
     zIndex: 1,
     maxWidth: mobile ? "100%" : 1360,
-    margin: `${mobile ? 64 : 110}px auto 0`
+    // 0.2.7 — explicit marginBottom so prod compositions that append their
+    // own footer immediately after <FreeMonthSection /> get visible air
+    // between the dark CTA block and the footer. Without this the section
+    // had `margin-bottom: 0` and prod's footer rendered flush against the
+    // bottom edge of the dark block on desktop (reported on samosite.online).
+    margin: `${mobile ? 64 : 110}px auto ${mobile ? 48 : 96}px`
   }, id: "cta", children: /* @__PURE__ */ jsxs2("div", { style: {
     background: "oklch(0.20 0.020 60)",
     color: VT.bg,

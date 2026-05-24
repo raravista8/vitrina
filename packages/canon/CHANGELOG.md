@@ -1,5 +1,89 @@
 # Changelog
 
+## 0.2.7 — Hero H1 mobile clip (still) + FreeMonth→footer gap (hotfix) · 2026-05-24
+
+Hotfix on top of 0.2.6. Two prod-reported defects on samosite.online. **No API changes.** Drop-in over 0.2.6.
+
+### What was broken on prod
+
+1. **Hero H1 «и сам приведёт клиентов» was still clipping on iPhone-class viewports**, even after 0.2.6's switch from `inline-block` to `inline`. Reproduced from prod screenshot (iPhone 17 Pro Safari, samosite.online, 09:42): the last word renders as `...приведёт клиен` and «тов» sits off-canvas to the right. 0.2.6's inline-fix worked in Chrome dev-tools but Safari iOS was still treating the accent spans as atomic line-breaking units because of the `position: relative` on the first accent — it created a containing block that the layout engine then sized at `max-content`, pinning the whole phrase to one line.
+2. **On desktop, the «Дайте Самосайту собрать себя» block (final `<FreeMonthSection>`) sat flush against the page footer.** Zero visible whitespace between the dark CTA block's bottom edge and the footer's top border. Reported on the full-width composed page (prod uses `<FreeMonthSection>` then renders its own footer immediately after, outside `<SamosaytLanding>`).
+
+### Root cause
+
+**Defect 1.** Two interacting issues:
+   - The first accent span (`сам себя соберёт,`) carried `position: relative` so the desktop-only underline highlight had a containing block. On Safari iOS, `position: relative` on an `inline` element promotes it to an inline atomic-ish layout in some flow contexts — long enough phrases that nominally fit will still get measured at `max-content` and overflow.
+   - At a flat `font-size: 38 px`, the longest accent phrase «и сам приведёт клиентов» measures ~360 CSS px on Safari iOS at the default font stack (letter-spacing `-0.035em` doesn't shrink it enough). iPhone-class viewports give the hero ~350 CSS px of content area after the 20-px section pad on each side of a 390-px viewport. The phrase didn't fit.
+
+**Defect 2.** The `<FreeMonthSection>` `<section>` had `margin: '110px auto 0'` (top 110, bottom 0). Whatever rendered next — prod's footer, in this case — was expected to provide its own top margin. Prod's footer didn't. The `<SamosaytLanding>` composition put a `marginTop: 64` on its own slim footer, so canvas mode looked fine, but the prod page wires a different footer that sits flush.
+
+### Fix
+
+**Defect 1 — H1 mobile hardening.** Three reinforcing changes on the `<h1>` style object inside `<HeroBlock>` (mobile branch only — desktop unchanged):
+
+```diff
+- fontSize: mobile ? 38 : 88,
++ fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 88,
+  lineHeight: mobile ? 1.08 : 1.02,
+  fontWeight: 700,
+  letterSpacing: '-0.035em',
+  margin: 0,
+  textWrap: mobile ? 'pretty' : 'balance',
++ overflowWrap: 'break-word',
++ wordBreak: 'normal',
++ maxWidth: '100%',
+```
+
+What each line buys:
+- `clamp(28px, 8.6vw, 38px)` — at 390 CSS px viewport the font is `8.6vw = 33.54 px`; at 360 px it's `30.96 px`; at 320 px it's `27.52 px → 28 px floor`. Headline still reads at hero scale but is no longer pinned to 38 px on phones where it doesn't fit. Desktop branch unchanged at 88 px.
+- `overflowWrap: 'break-word'` — defensive floor. Even if a future content edit introduces a longer single word (or an iOS update changes layout heuristics again), the word breaks inside the box rather than overflowing.
+- `wordBreak: 'normal'` — explicit so the floor doesn't get inherited as `break-all` from a global stylesheet.
+- `maxWidth: '100%'` — paranoia. Pins the h1's own box to its parent so it can never grow past the section's content area even under inline-atomic sizing.
+
+The three accent `<span>`s and the `<br />` toggle are unchanged from 0.2.6.
+
+**Defect 2 — explicit bottom margin on `<FreeMonthSection>`.**
+
+```diff
+  return (
+    <section style={{
+      ...sectionPad(mobile),
+-     marginTop: mobile ? 64 : 110,
+      position: 'relative', zIndex: 1,
+      maxWidth: mobile ? '100%' : 1360,
+-     margin: `${mobile ? 64 : 110}px auto 0`,
++     margin: `${mobile ? 64 : 110}px auto ${mobile ? 48 : 96}px`,
+    }} id="cta">
+```
+
+The section now self-provides bottom air — 96 px desktop, 48 px mobile — so any composition that drops a footer (or anything else) right after `<FreeMonthSection />` gets visible separation without the consumer having to add it.
+
+Inside `<SamosaytLanding>` the slim footer still keeps its `marginTop: mobile ? 40 : 64` — that stacks on top of the section's new 96 / 48, so the **canvas-mode** gap between the dark block and the slim footer grows from 64 → 160 px desktop, 40 → 88 px mobile. If that ends up too generous, the next minor can trim the footer's own marginTop, but in practice this just reads as a cleaner page bottom.
+
+### Visual diff
+
+| Element | 0.2.6 | 0.2.7 |
+|---|---|---|
+| Hero H1 mobile size | flat 38 px | `clamp(28, 8.6vw, 38)` — ~33 px @ iPhone 17 Pro |
+| Hero H1 mobile «и сам приведёт клиентов» | clipped on right edge in Safari iOS | wraps cleanly inside content box |
+| Hero H1 desktop | 88 px (unchanged) | 88 px (unchanged) |
+| FreeMonthSection bottom margin | 0 | 96 desktop / 48 mobile |
+| FreeMonthSection → prod footer gap | flush (0 px) | 96 px desktop / 48 mobile |
+| FreeMonthSection → canvas slim footer gap | 64 px desktop / 40 mobile | 160 px desktop / 88 mobile |
+
+### Migration
+
+None. `npm i @samosite/canon@0.2.7` and rebuild.
+
+### Back-compat
+
+- All component signatures unchanged. Zero new props, zero removed props.
+- Desktop hero is identical to 0.2.6.
+- Mobile hero looks the same on standard iPhone-class viewports, just with the safety floor in place; on narrow Androids (≤360 CSS px) the headline is now visibly smaller, which is the fix.
+- Canvas-mode `<SamosaytLanding>` page bottom is taller by ~96 px desktop / ~48 px mobile. If you've pinned pixel-diff baselines against 0.2.6, regenerate them.
+
+---
+
 ## 0.2.6 — Section side-paddings + hero H1 overflow (mobile hotfix) · 2026-05-24
 
 Hotfix. Two related mobile-only defects reported from prod on iPhone 17 Pro. **No API changes.** Drop-in over 0.2.5.

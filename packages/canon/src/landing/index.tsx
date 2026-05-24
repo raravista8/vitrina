@@ -709,14 +709,24 @@ function HeroBlock({ mobile }) {
           «и сам приведёт клиентов» overflowed on iPhone-class viewports (~390px).
           With inline each word can wrap independently. Underline highlight on the
           first accent is desktop-only — inline has no containing block for the
-          absolute child. */}
+          absolute child.
+          0.2.7: on mobile font-size uses clamp() so it scales down on narrow
+          devices (~360–390 CSS px). 0.2.6's flat 38 px still clipped
+          «приведёт клиентов» on iPhone-class viewports because the accent
+          span's `position: relative` was being promoted by Safari iOS into a
+          block-level-ish containing context, defeating intra-phrase word-wrap.
+          Also: overflowWrap/wordBreak floor so even on a sub-320-px viewport
+          no single word can punch through the content box. */}
       <h1 style={{
-        fontSize: mobile ? 38 : 88,
+        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 88,
         lineHeight: mobile ? 1.08 : 1.02,
         fontWeight: 700,
         letterSpacing: '-0.035em',
         margin: 0,
         textWrap: mobile ? 'pretty' : 'balance',
+        overflowWrap: 'break-word',
+        wordBreak: 'normal',
+        maxWidth: '100%',
       }}>
         Сайт, который{mobile ? ' ' : <br />}
         <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
@@ -2349,10 +2359,14 @@ function FreeMonthSection({ mobile }) {
   return (
     <section style={{
       ...sectionPad(mobile),
-      marginTop: mobile ? 64 : 110,
       position: 'relative', zIndex: 1,
       maxWidth: mobile ? '100%' : 1360,
-      margin: `${mobile ? 64 : 110}px auto 0`,
+      // 0.2.7 — explicit marginBottom so prod compositions that append their
+      // own footer immediately after <FreeMonthSection /> get visible air
+      // between the dark CTA block and the footer. Without this the section
+      // had `margin-bottom: 0` and prod's footer rendered flush against the
+      // bottom edge of the dark block on desktop (reported on samosite.online).
+      margin: `${mobile ? 64 : 110}px auto ${mobile ? 48 : 96}px`,
     }} id="cta">
       <div style={{
         background: 'oklch(0.20 0.020 60)', color: VT.bg,
