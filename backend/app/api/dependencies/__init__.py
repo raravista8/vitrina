@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware import RateLimiter
 from app.config import get_settings
+from app.core.auth.customer import CustomerSessionStore
 from app.core.auth.login_challenge import LoginChallengeStore
 from app.core.auth.sessions import AdminSession, AdminSessionStore
 from app.core.billing.ports import PaymentGateway
@@ -108,6 +109,20 @@ def get_admin_session_store(request: Request) -> AdminSessionStore:
     store: AdminSessionStore | None = getattr(request.app.state, "admin_session_store", None)
     if store is None:
         msg = "admin_session_store not initialised — lifespan didn't run?"
+        raise RuntimeError(msg)
+    return store
+
+
+def get_customer_session_store(request: Request) -> CustomerSessionStore:
+    """Per-app CustomerSessionStore — canon 0.4.0 customer login (T-Auth).
+
+    Lifespan attaches Redis + secret on startup. Distinct from admin store
+    (different cookie name `samosite_session`, different Redis prefix
+    `customer_session:`, different TTL — 30 days vs 4h).
+    """
+    store: CustomerSessionStore | None = getattr(request.app.state, "customer_session_store", None)
+    if store is None:
+        msg = "customer_session_store not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return store
 

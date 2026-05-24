@@ -1,5 +1,126 @@
 # Changelog
 
+## 0.4.0 — Customer login (S20) + StickyHeader `homeHref` · 2026-05-24
+
+Additive minor release. Two changes, both back-compat-safe (zero visual diff for canvas / zero-prop callers):
+
+### What's new
+
+1. **`S20_CustomerLogin`** — full-page single-step login for the master (customer-site owner). Sister screen to `S10_AdminLogin` (founder/operator, 2-factor). Exposed as both `S20_CustomerLogin` and `CustomerLogin` from new `@samosite/canon/auth` entry.
+
+   ```tsx
+   import { CustomerLogin } from '@samosite/canon/auth';
+
+   <CustomerLogin
+     login={login}
+     password={password}
+     loading={loading}
+     error={null}                  // | 'invalid_credentials' | 'rate_limited' | 'network_error' | 'unknown_error'
+     retryAfterSeconds={null}      // required when error === 'rate_limited'
+     onLoginChange={setLogin}
+     onPasswordChange={setPassword}
+     onSubmit={() => handleSubmit()}
+     onCreateSiteClick={() => openSubmitModal()}  // optional bridge — consumer routes
+   />
+   ```
+
+   Zero-prop call = mock-mode (canvas back-compat), `error=null`, local state.
+
+   **Visual differentiation from S10** (per brief §8.3 — must read as a *different* flow so customers don't land on admin login by accident):
+   - Subtle sage hairline (2px) at top of card — single visual signal that this is the customer area
+   - Friendlier subhead: «Введите логин и пароль, которые мы прислали вам после создания Самосайта»
+   - Bridge link below card: «Ещё нет Самосайта? Сделать →»
+   - One logical step — no TOTP, no mode-switcher, no step counter
+   - `autocomplete="username"` / `current-password` — browsers auto-save
+   - Same tokens (terracotta primary CTA, Onest, cream surface) for brand consistency
+
+   **4 canvas artboards** in `index.html` (per brief §2 acceptance criteria):
+   - `s20-idle` — empty form, focus on «Логин»
+   - `s20-loading` — both filled + spinner in CTA
+   - `s20-invalid` — `invalid_credentials` inline error
+   - `s20-rate` — `rate_limited` with live countdown «через N мин — осталось MM:SS»
+
+   **Not in scope** (per brief §3, §9): magic-link, OAuth, password reset, signup, real `<ClientAdmin>` post-login destination (placeholder = `<ClientAdminDemo>` until 0.5.x).
+
+2. **`<StickyHeader homeHref>`** — new optional prop, default `'#hero'`. Brand `<BrandMark>` now wraps in `<a href={homeHref}>` instead of the previously hardcoded `<a href="#hero">`. Same additive shape as `loginHref` from 0.2.3.
+
+   ```tsx
+   <StickyHeader
+     loginHref="/login"      // 0.2.3 — points "Войти" at S20_CustomerLogin
+     homeHref="/"            // 0.4.0 — points brand mark at canonical landing route
+   />
+   ```
+
+   **Why:** without this, prod consumers (vitrina) have to patch click delegation on their side to override the in-page `#hero` anchor — see vitrina PR #138. Now it's a one-prop wiring.
+
+### Back-compat
+
+- All existing component signatures unchanged. Zero new required props.
+- Zero-prop `<StickyHeader />` and canvas-mode usage render identically to 0.3.x.
+- `loginHref` and `onMakeSiteClick` from 0.2.3 unchanged.
+
+### Migration
+
+```diff
+- <StickyHeader loginHref="/admin-demo" />
++ <StickyHeader loginHref="/login" homeHref="/" />
+```
+
+Then mount `<CustomerLogin>` at `/login`:
+
+```tsx
+// landing/app/login/page.tsx
+'use client';
+import { CustomerLogin } from '@samosite/canon/auth';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<null | 'invalid_credentials' | 'rate_limited' | 'network_error' | 'unknown_error'>(null);
+  const [retryAfter, setRetryAfter] = useState<number | null>(null);
+
+  async function handleSubmit() {
+    setLoading(true); setError(null);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, password }),
+      });
+      if (res.ok) { router.push('/admin-demo'); return; }
+      if (res.status === 429) {
+        setError('rate_limited');
+        setRetryAfter(parseInt(res.headers.get('Retry-After') || '263', 10));
+      } else if (res.status === 401) setError('invalid_credentials');
+      else setError('unknown_error');
+    } catch { setError('network_error'); }
+    finally { setLoading(false); }
+  }
+
+  return (
+    <CustomerLogin
+      login={login} password={password}
+      loading={loading} error={error} retryAfterSeconds={retryAfter}
+      onLoginChange={setLogin} onPasswordChange={setPassword}
+      onSubmit={handleSubmit}
+      onCreateSiteClick={() => router.push('/')}
+    />
+  );
+}
+```
+
+### Open questions (answered)
+
+- **Single entry vs separate** (brief §8.1): went with separate — new `@samosite/canon/auth` entry. Cleaner domain split: `auth/` will host both `S10_AdminLogin` (when moved out of admin-core) and `S20_CustomerLogin`. For 0.4.0 only `S20` lives there; S10 stays in `admin-core` for back-compat.
+- **Bridge link shape** (brief §8.2): `onCreateSiteClick` callback prop. When supplied, renders as `<button>`; when omitted, falls back to `<a href="/">` for canvas/zero-prop.
+- **Mobile layout** (brief §8.4): same chassis as S10 — full-page, centred card, 24px page padding.
+
+---
+
 ## 0.3.0 — Intake flow rewrite (BREAKING) · 2026-05-24
 
 > **BREAKING.** Hard cut-over. No `@deprecated` period — vitrina prod is pre-launch so consumers migrate at lockstep with the version bump. Bumped from `0.2.7 → 0.3.0` (skipping `0.2.8`).

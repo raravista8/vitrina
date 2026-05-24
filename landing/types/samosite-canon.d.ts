@@ -22,6 +22,7 @@ declare module "@samosite/canon/customer";
 declare module "@samosite/canon/admin-demo";
 declare module "@samosite/canon/admin-core";
 declare module "@samosite/canon/admin-ops";
+declare module "@samosite/canon/auth";
 declare module "@samosite/canon/source";
 declare module "@samosite/canon/primitives";
 declare module "@samosite/canon/tokens";

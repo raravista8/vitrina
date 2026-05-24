@@ -2494,10 +2494,16 @@ function FreeMonthSection({ mobile }) {
 //         negative-margin escape from parent padding — now works in any wrapper,
 //         not just inside SamosaytLanding's padX-padded container.
 //         Added explicit hovers on nav links / login link / brand mark.
+// 0.4.0 — added homeHref prop (default '#hero'). Brand <BrandMark> wraps in
+//         <a href={homeHref}>. Lets prod consumers point the brand at their
+//         canonical landing route ('/') instead of patching click delegation
+//         themselves (see vitrina PR #138). Same additive shape as loginHref
+//         in 0.2.3 — zero visual diff for canvas / zero-prop callers.
 function StickyHeader({
   mobile = false,
   padX,
   loginHref = 'https://samosite.online/login',
+  homeHref = '#hero',
   onMakeSiteClick,
 }) {
   const px = padX ?? (mobile ? 20 : 80);
@@ -2573,7 +2579,7 @@ function StickyHeader({
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: 16,
       }}>
-        <a href="#hero" className="ss-brand-hover" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <a href={homeHref} className="ss-brand-hover" style={{ textDecoration: 'none', color: 'inherit' }}>
           <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
         </a>
         {!mobile ? (

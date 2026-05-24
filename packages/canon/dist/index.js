@@ -2739,6 +2739,7 @@ function StickyHeader({
   mobile = false,
   padX,
   loginHref = "https://samosite.online/login",
+  homeHref = "#hero",
   onMakeSiteClick
 }) {
   const px = padX ?? (mobile ? 20 : 80);
@@ -2839,7 +2840,7 @@ function StickyHeader({
       justifyContent: "space-between",
       gap: 16
     }, children: [
-      /* @__PURE__ */ jsx3("a", { href: "#hero", className: "ss-brand-hover", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
+      /* @__PURE__ */ jsx3("a", { href: homeHref, className: "ss-brand-hover", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
       !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
         /* @__PURE__ */ jsx3("a", { href: "#how", className: "ss-nav-link", children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
         /* @__PURE__ */ jsx3("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
@@ -8525,10 +8526,268 @@ var Waitlist = S17_Waitlist;
 var FeedbackInbox = S18_FeedbackInbox;
 var Settings = S19_Settings;
 
-// src/source/index.tsx
+// src/auth/index.tsx
+import { useState as useState4, useEffect as useEffect3, useCallback as useCallback3 } from "react";
 import { jsx as jsx9, jsxs as jsxs8 } from "react/jsx-runtime";
+var CUSTOMER_ERROR_MSG = {
+  invalid_credentials: "\u041D\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435, \u043A\u043E\u0442\u043E\u0440\u043E\u0435 \u043C\u044B \u0432\u0430\u043C \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u043B\u0438.",
+  rate_limited: null,
+  // rendered via CustomerRateLimitNotice w/ countdown
+  network_error: "\u0421\u0435\u0442\u044C \u043D\u0435 \u043E\u0442\u0432\u0435\u0447\u0430\u0435\u0442. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u0447\u0435\u0440\u0435\u0437 \u043C\u0438\u043D\u0443\u0442\u0443.",
+  unknown_error: "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u0447\u0435\u0440\u0435\u0437 \u043C\u0438\u043D\u0443\u0442\u0443."
+};
+function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
+  const [remaining, setRemaining] = useState4(retryAfterSeconds);
+  useEffect3(() => {
+    setRemaining(retryAfterSeconds);
+    if (retryAfterSeconds <= 0) return;
+    const id = setInterval(() => setRemaining((r) => Math.max(0, r - 1)), 1e3);
+    return () => clearInterval(id);
+  }, [retryAfterSeconds]);
+  const totalMin = Math.ceil(remaining / 60);
+  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const ss = String(remaining % 60).padStart(2, "0");
+  return /* @__PURE__ */ jsxs8("div", { role: "alert", style: {
+    padding: "10px 12px",
+    background: VT.dangerSoft,
+    border: `1px solid oklch(0.85 0.06 28)`,
+    borderRadius: VT.r.md,
+    fontSize: 13,
+    color: "oklch(0.4 0.15 28)",
+    marginBottom: 14,
+    lineHeight: 1.5
+  }, children: [
+    /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    "\u0421\u043B\u0438\u0448\u043A\u043E\u043C \u043C\u043D\u043E\u0433\u043E \u043F\u043E\u043F\u044B\u0442\u043E\u043A. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0447\u0435\u0440\u0435\u0437 ",
+    totalMin,
+    "\xA0\u043C\u0438\u043D \u2014 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C",
+    " ",
+    /* @__PURE__ */ jsxs8("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
+      mm,
+      ":",
+      ss
+    ] }),
+    "."
+  ] });
+}
+function CustomerErrorNotice({ code }) {
+  const msg = CUSTOMER_ERROR_MSG[code] || CUSTOMER_ERROR_MSG.unknown_error;
+  if (!msg) return null;
+  return /* @__PURE__ */ jsxs8("div", { role: "alert", style: {
+    padding: "10px 12px",
+    background: VT.dangerSoft,
+    border: `1px solid oklch(0.85 0.06 28)`,
+    borderRadius: VT.r.md,
+    fontSize: 13,
+    color: "oklch(0.4 0.15 28)",
+    marginBottom: 14,
+    lineHeight: 1.5
+  }, children: [
+    /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    msg
+  ] });
+}
+function CLTextField({
+  id,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  ariaLabel,
+  autoComplete,
+  autoFocus,
+  disabled,
+  mono,
+  style
+}) {
+  return /* @__PURE__ */ jsx9(
+    "input",
+    {
+      id,
+      type,
+      value: value ?? "",
+      onChange: (e) => onChange(e.target.value),
+      placeholder,
+      "aria-label": ariaLabel,
+      autoComplete,
+      autoFocus,
+      disabled,
+      style: {
+        width: "100%",
+        boxSizing: "border-box",
+        padding: "11px 13px",
+        background: disabled ? VT.bgSoft : VT.white,
+        border: `1px solid ${VT.line}`,
+        borderRadius: VT.r.md,
+        fontSize: 14.5,
+        color: VT.ink,
+        fontFamily: mono ? VT.font.mono : VT.font.sans,
+        outline: "none",
+        ...style
+      }
+    }
+  );
+}
+function S20_CustomerLogin(props) {
+  const [uLogin, setULogin] = useState4(props.login ?? "");
+  const [uPass, setUPass] = useState4(props.password ?? "");
+  const login = props.login ?? uLogin;
+  const password = props.password ?? uPass;
+  const setLogin = props.onLoginChange ?? setULogin;
+  const setPassword = props.onPasswordChange ?? setUPass;
+  const { loading, error, retryAfterSeconds, onSubmit, onCreateSiteClick } = props;
+  const isRateLimited = error === "rate_limited";
+  const handleSubmit = useCallback3((e) => {
+    e.preventDefault();
+    if (loading || isRateLimited) return;
+    if (onSubmit) onSubmit();
+  }, [loading, isRateLimited, onSubmit]);
+  return /* @__PURE__ */ jsx9("div", { style: {
+    background: VT.bgSoft,
+    minHeight: "100%",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: VT.font.sans,
+    color: VT.ink,
+    padding: "40px 24px",
+    boxSizing: "border-box"
+  }, children: /* @__PURE__ */ jsxs8("div", { style: { width: "100%", maxWidth: 420 }, children: [
+    /* @__PURE__ */ jsx9("div", { style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 18
+    }, children: /* @__PURE__ */ jsx9("a", { href: "/", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx9(BrandMark, { size: 26, fontSize: 20 }) }) }),
+    /* @__PURE__ */ jsxs8(Card, { style: {
+      padding: 28,
+      boxShadow: VT.shadow.card,
+      borderTop: `2px solid ${VT.success}`
+    }, children: [
+      /* @__PURE__ */ jsx9("h1", { style: {
+        fontSize: 22,
+        fontWeight: 700,
+        letterSpacing: "-0.02em",
+        margin: "0 0 6px",
+        lineHeight: 1.2
+      }, children: "\u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0432 \u0441\u0432\u043E\u0439 \u043A\u0430\u0431\u0438\u043D\u0435\u0442" }),
+      /* @__PURE__ */ jsx9("p", { style: {
+        fontSize: 13.5,
+        color: VT.inkSoft,
+        margin: "0 0 18px",
+        lineHeight: 1.5
+      }, children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043B\u043E\u0433\u0438\u043D \u0438 \u043F\u0430\u0440\u043E\u043B\u044C, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043C\u044B \u043F\u0440\u0438\u0441\u043B\u0430\u043B\u0438 \u0432\u0430\u043C \u043F\u043E\u0441\u043B\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430." }),
+      isRateLimited ? /* @__PURE__ */ jsx9(CustomerRateLimitNotice, { retryAfterSeconds: retryAfterSeconds ?? 263 }) : error && /* @__PURE__ */ jsx9(CustomerErrorNotice, { code: error }),
+      /* @__PURE__ */ jsxs8("form", { onSubmit: handleSubmit, noValidate: true, children: [
+        /* @__PURE__ */ jsx9("label", { htmlFor: "ss-customer-login", style: {
+          display: "block",
+          fontSize: 12,
+          color: VT.inkSoft,
+          marginBottom: 4,
+          fontWeight: 500
+        }, children: "\u041B\u043E\u0433\u0438\u043D" }),
+        /* @__PURE__ */ jsx9(
+          CLTextField,
+          {
+            id: "ss-customer-login",
+            type: "text",
+            value: login,
+            onChange: setLogin,
+            ariaLabel: "\u041B\u043E\u0433\u0438\u043D",
+            autoComplete: "username",
+            placeholder: "\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, studia-anna",
+            autoFocus: true,
+            disabled: loading || isRateLimited,
+            mono: true,
+            style: { marginBottom: 12 }
+          }
+        ),
+        /* @__PURE__ */ jsx9("label", { htmlFor: "ss-customer-password", style: {
+          display: "block",
+          fontSize: 12,
+          color: VT.inkSoft,
+          marginBottom: 4,
+          fontWeight: 500
+        }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
+        /* @__PURE__ */ jsx9(
+          CLTextField,
+          {
+            id: "ss-customer-password",
+            type: "password",
+            value: password,
+            onChange: setPassword,
+            ariaLabel: "\u041F\u0430\u0440\u043E\u043B\u044C",
+            autoComplete: "current-password",
+            placeholder: "\u041F\u0430\u0440\u043E\u043B\u044C \u0438\u0437 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F",
+            disabled: loading || isRateLimited,
+            mono: true
+          }
+        ),
+        /* @__PURE__ */ jsx9("div", { style: { marginTop: 20 }, children: /* @__PURE__ */ jsx9(
+          Btn,
+          {
+            type: "submit",
+            style: { width: "100%" },
+            disabled: loading || isRateLimited || !login || !password,
+            iconRight: loading ? /* @__PURE__ */ jsx9(Spinner, { size: 14 }) : /* @__PURE__ */ jsx9(IconArrow, {}),
+            children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0412\u043E\u0439\u0442\u0438"
+          }
+        ) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs8("div", { style: {
+      marginTop: 22,
+      textAlign: "center",
+      fontSize: 13.5,
+      color: VT.inkSoft
+    }, children: [
+      "\u0415\u0449\u0451 \u043D\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430?",
+      " ",
+      onCreateSiteClick ? /* @__PURE__ */ jsxs8(
+        "button",
+        {
+          type: "button",
+          onClick: onCreateSiteClick,
+          style: {
+            border: "none",
+            background: "transparent",
+            color: VT.accent,
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "inherit",
+            fontSize: 13.5,
+            padding: 0
+          },
+          children: [
+            "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
+            /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", children: "\u2192" })
+          ]
+        }
+      ) : /* @__PURE__ */ jsxs8("a", { href: "/", style: {
+        color: VT.accent,
+        fontWeight: 600,
+        textDecoration: "none"
+      }, children: [
+        "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
+        /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", children: "\u2192" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx9("div", { style: {
+      marginTop: 14,
+      textAlign: "center",
+      fontSize: 11.5,
+      color: VT.inkFaint,
+      lineHeight: 1.5
+    }, children: "\u0414\u043E\u0441\u0442\u0443\u043F \u0432 \u043A\u0430\u0431\u0438\u043D\u0435\u0442 \u0432\u044B\u0434\u0430\u0451\u0442\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430 \u2014 \u043C\u044B \u043F\u0440\u0438\u0448\u043B\u0451\u043C \u043B\u043E\u0433\u0438\u043D \u0438 \u043F\u0430\u0440\u043E\u043B\u044C \u043F\u043E \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u044B\u043C \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430\u043C." })
+  ] }) });
+}
+var CustomerLogin = S20_CustomerLogin;
+
+// src/source/index.tsx
+import { jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
 function MiniHero({ url }) {
-  return /* @__PURE__ */ jsxs8("div", { style: {
+  return /* @__PURE__ */ jsxs9("div", { style: {
     display: "flex",
     gap: 8,
     alignItems: "center",
@@ -8538,9 +8797,9 @@ function MiniHero({ url }) {
     padding: 8,
     boxShadow: VT.shadow.card
   }, children: [
-    /* @__PURE__ */ jsxs8("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
-      /* @__PURE__ */ jsx9(IconLink, {}),
-      /* @__PURE__ */ jsx9("span", { style: {
+    /* @__PURE__ */ jsxs9("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
+      /* @__PURE__ */ jsx10(IconLink, {}),
+      /* @__PURE__ */ jsx10("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 14,
         color: VT.ink,
@@ -8549,11 +8808,11 @@ function MiniHero({ url }) {
         textOverflow: "ellipsis"
       }, children: url })
     ] }),
-    /* @__PURE__ */ jsx9(Btn, { iconRight: /* @__PURE__ */ jsx9(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+    /* @__PURE__ */ jsx10(Btn, { iconRight: /* @__PURE__ */ jsx10(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
   ] });
 }
 function StateBadge({ kind, icon, children }) {
-  return /* @__PURE__ */ jsxs8("span", { style: {
+  return /* @__PURE__ */ jsxs9("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 8,
@@ -8564,7 +8823,7 @@ function StateBadge({ kind, icon, children }) {
     fontSize: 14,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx9("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
+    /* @__PURE__ */ jsx10("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
     children
   ] });
 }
@@ -8574,7 +8833,7 @@ var STATES = [
     label: "1 \xB7 Loading",
     kind: "neutral",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx9(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx10(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
     note: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u043B \u0442\u0438\u043F (<100ms). \u0417\u0430\u043F\u0440\u043E\u0441 preview API \u0432 \u0444\u043E\u043D\u0435, 3s timeout.",
     api: "GET /api/preview?url=\u2026 (debounced 300ms)"
   },
@@ -8583,7 +8842,7 @@ var STATES = [
     label: "2 \xB7 \u2713 Telegram",
     kind: "success",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx9("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx9("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
     note: "Bot API getChat + getChatHistory(1). CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB \u0430\u043A\u0442\u0438\u0432\u043D\u0430 \u2014 open Submit modal.",
     api: 'GET /api/preview \u2192 {source:"telegram", posts:47, photos:12}'
   },
@@ -8592,7 +8851,7 @@ var STATES = [
     label: "3 \xB7 \u2713 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
     kind: "success",
     url: "yandex.ru/maps/-/CDvI7QJM",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx9("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx9("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
     note: "Geosearch API find. \u0415\u0441\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u2192 fallback \u043A \u0441\u0442\u0430\u0442\u0438\u0447\u043D\u043E\u043C\u0443 \u2713 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B.",
     api: 'GET /api/preview \u2192 {source:"yandex_maps", reviews:24, photos:18}'
   },
@@ -8601,7 +8860,7 @@ var STATES = [
     label: "4 \xB7 \u2713 \u0411\u0435\u0437 \u0447\u0438\u0441\u0435\u043B (preview timeout >3s)",
     kind: "success",
     url: "t.me/privatechannel",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx9("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx9("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
     note: "FR-005a: regex \u043E\u0442\u0434\u0430\u043B \u0442\u0438\u043F, preview API \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u0437\u0430 3s \u2192 \u0431\u0435\u0439\u0434\u0436 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u043C \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E.",
     api: "Timeout fallback \u2014 UI \u043D\u0435 \u0431\u043B\u043E\u043A\u0438\u0440\u0443\u0435\u0442 submit"
   },
@@ -8610,7 +8869,7 @@ var STATES = [
     label: "5 \xB7 \u2713 Instagram",
     kind: "success",
     url: "instagram.com/master.nails.spb",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx9("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx9("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
     note: "0.3.0: Instagram \u0442\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044B\u0447\u043D\u044B\u0439 ok-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u0417\u0430\u044F\u0432\u043A\u0430 \u0438\u0434\u0451\u0442 \u0432 \u043E\u0431\u0449\u0443\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C, \u0440\u0443\u0447\u043D\u0430\u044F \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u0440\u0435\u0448\u0438\u0442 \u0447\u0442\u043E \u0432\u044B\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0442\u044C.",
     api: 'GET /api/preview \u2192 {source:"instagram", status:"ok"}'
   },
@@ -8619,7 +8878,7 @@ var STATES = [
     label: "6 \xB7 \u2139\uFE0F \u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u2014 waitlist + photo CTA",
     kind: "info",
     url: "vk.com/master_nails",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx9("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: true,
     note: "Identical pattern to IG. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA: \xAB\u0418\u043B\u0438 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442\xBB.",
@@ -8630,7 +8889,7 @@ var STATES = [
     label: "7 \xB7 \u2139\uFE0F \u0414\u0440\u0443\u0433\u043E\u0439 known \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A (2GIS / Avito / WA / YT / \u0414\u0437\u0435\u043D)",
     kind: "info",
     url: "2gis.ru/samara/firm/70000001045896531",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx9("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: false,
     note: "\u0411\u0435\u0437 photo CTA \u2014 2GIS/Avito/WA \u043D\u0435 \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u044E\u0442\u0441\u044F \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u043E\u043C \u043F\u0440\u043E\u0444\u0438\u043B\u044F.",
@@ -8641,7 +8900,7 @@ var STATES = [
     label: "8 \xB7 \u26A0\uFE0F \u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
     kind: "warn",
     url: "https://my-portfolio.example.com",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx9("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
     unknownInput: true,
     note: "Open input. \u0421\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u043C \u043A\u0430\u043A source_request c source_name=user-typed \u0434\u043B\u044F \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0438.",
     api: 'POST /api/feedback { type:"source_request", source_name:<user>, source_url_raw:<url> }'
@@ -8651,29 +8910,29 @@ var STATES = [
     label: "9 \xB7 \u26A0\uFE0F \u041D\u0435 \u0441\u0441\u044B\u043B\u043A\u0430 \u0438 \u043D\u0435 \u0444\u0430\u0439\u043B",
     kind: "warn",
     url: "\u043C\u0430\u0441\u0442\u0435\u0440 \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx9("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
     note: "CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB disabled, fallback-\u0441\u0441\u044B\u043B\u043A\u0430 \xAB\u{1F4F7} \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0444\u043E\u0442\u043E\xBB \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u043D\u0443\u0442\u0430.",
     api: "\u2014 (client-side only)"
   }
 ];
 function WaitlistCapture({ source, withPhotoCta }) {
   const label = source === "instagram" ? "Instagram" : source === "vk" ? "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435" : source === "2gis" ? "2GIS" : source;
-  return /* @__PURE__ */ jsxs8("div", { style: {
+  return /* @__PURE__ */ jsxs9("div", { style: {
     marginTop: 12,
     background: VT.infoSoft,
     border: `1px solid oklch(0.85 0.05 240)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsxs8("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
+    /* @__PURE__ */ jsxs9("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
       "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C ",
       label
     ] }),
-    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
-      /* @__PURE__ */ jsx9(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx9(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsx10(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx10(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
     ] }),
-    withPhotoCta && /* @__PURE__ */ jsxs8("div", { style: {
+    withPhotoCta && /* @__PURE__ */ jsxs9("div", { style: {
       marginTop: 12,
       paddingTop: 12,
       borderTop: `1px dashed oklch(0.85 0.05 240)`,
@@ -8681,7 +8940,7 @@ function WaitlistCapture({ source, withPhotoCta }) {
       color: VT.inkSoft
     }, children: [
       "\u0418\u043B\u0438 \u0441\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0441\u0435\u0439\u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F:",
-      /* @__PURE__ */ jsxs8("a", { style: {
+      /* @__PURE__ */ jsxs9("a", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -8692,40 +8951,40 @@ function WaitlistCapture({ source, withPhotoCta }) {
         textUnderlineOffset: 3
       }, children: [
         "\u{1F4F7} \u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442",
-        /* @__PURE__ */ jsx9(IconArrow, { size: 14 })
+        /* @__PURE__ */ jsx10(IconArrow, { size: 14 })
       ] })
     ] })
   ] });
 }
 function UnknownSourceInput() {
-  return /* @__PURE__ */ jsxs8("div", { style: {
+  return /* @__PURE__ */ jsxs9("div", { style: {
     marginTop: 12,
     background: VT.warnSoft,
     border: `1px solid oklch(0.85 0.06 70)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsx9("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
-    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
-      /* @__PURE__ */ jsx9(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx9(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsx10("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
+    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
+      /* @__PURE__ */ jsx10(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx10(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
     ] })
   ] });
 }
 function StateRow({ s }) {
-  return /* @__PURE__ */ jsx9(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
-    /* @__PURE__ */ jsxs8("div", { children: [
-      /* @__PURE__ */ jsx9("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsx9(MiniHero, { url: s.url }),
-      /* @__PURE__ */ jsx9("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx9(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx9(UnknownSourceInput, {})
+  return /* @__PURE__ */ jsx10(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs9("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
+    /* @__PURE__ */ jsxs9("div", { children: [
+      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsx10(MiniHero, { url: s.url }),
+      /* @__PURE__ */ jsx10("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx10(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx10(UnknownSourceInput, {})
     ] }),
-    /* @__PURE__ */ jsxs8("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
-      /* @__PURE__ */ jsx9("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
-      /* @__PURE__ */ jsx9("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
-      /* @__PURE__ */ jsx9("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
-      /* @__PURE__ */ jsx9("div", { style: {
+    /* @__PURE__ */ jsxs9("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
+      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
+      /* @__PURE__ */ jsx10("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
+      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
+      /* @__PURE__ */ jsx10("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 12,
         color: VT.inkSoft,
@@ -8738,7 +8997,7 @@ function StateRow({ s }) {
   ] }) });
 }
 function S2_Desktop() {
-  return /* @__PURE__ */ jsxs8("div", { style: {
+  return /* @__PURE__ */ jsxs9("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -8747,18 +9006,18 @@ function S2_Desktop() {
     padding: "40px 56px 64px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
-      /* @__PURE__ */ jsx9(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
-      /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
+    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
+      /* @__PURE__ */ jsx10(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
+      /* @__PURE__ */ jsx10(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
     ] }),
-    /* @__PURE__ */ jsx9("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
-    /* @__PURE__ */ jsx9("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
-    /* @__PURE__ */ jsx9("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx9(StateRow, { s }, s.id)) })
+    /* @__PURE__ */ jsx10("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
+    /* @__PURE__ */ jsx10("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
+    /* @__PURE__ */ jsx10("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx10(StateRow, { s }, s.id)) })
   ] });
 }
 function S2_Mobile() {
   const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-success", "unknown-url"].includes(s.id));
-  return /* @__PURE__ */ jsxs8("div", { style: {
+  return /* @__PURE__ */ jsxs9("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -8767,11 +9026,11 @@ function S2_Mobile() {
     padding: "20px 16px 40px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsx9(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
-    /* @__PURE__ */ jsx9("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
-    /* @__PURE__ */ jsx9("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs8(Card, { style: { padding: 14 }, children: [
-      /* @__PURE__ */ jsx9("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsxs8("div", { style: {
+    /* @__PURE__ */ jsx10(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
+    /* @__PURE__ */ jsx10("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
+    /* @__PURE__ */ jsx10("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs9(Card, { style: { padding: 14 }, children: [
+      /* @__PURE__ */ jsx10("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsxs9("div", { style: {
         display: "flex",
         flexDirection: "column",
         gap: 8,
@@ -8780,15 +9039,15 @@ function S2_Mobile() {
         borderRadius: VT.r.lg,
         padding: 10
       }, children: [
-        /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
-          /* @__PURE__ */ jsx9(IconLink, {}),
-          /* @__PURE__ */ jsx9("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
+        /* @__PURE__ */ jsxs9("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
+          /* @__PURE__ */ jsx10(IconLink, {}),
+          /* @__PURE__ */ jsx10("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
         ] }),
-        /* @__PURE__ */ jsx9(Btn, { iconRight: /* @__PURE__ */ jsx9(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+        /* @__PURE__ */ jsx10(Btn, { iconRight: /* @__PURE__ */ jsx10(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
       ] }),
-      /* @__PURE__ */ jsx9("div", { style: { marginTop: 10 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx9(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx9(UnknownSourceInput, {})
+      /* @__PURE__ */ jsx10("div", { style: { marginTop: 10 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx10(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx10(UnknownSourceInput, {})
     ] }, s.id)) })
   ] });
 }
@@ -8812,6 +9071,7 @@ export {
   ConceptA_Desktop,
   ConceptA_Mobile,
   Confirmation,
+  CustomerLogin,
   CustomerSite,
   EmptyState,
   ErrorBlock,
@@ -8853,6 +9113,7 @@ export {
   S17_Waitlist,
   S18_FeedbackInbox,
   S19_Settings,
+  S20_CustomerLogin,
   S2_Desktop,
   S2_Mobile,
   S3_FinalConfirm,

@@ -15,6 +15,7 @@ export default defineConfig({
     'src/admin-core/types.ts',
     'src/admin-ops/index.tsx',
     'src/admin-ops/types.ts',
+    'src/auth/index.tsx',
     'src/source/index.tsx',
   ],
   format: ['esm'],

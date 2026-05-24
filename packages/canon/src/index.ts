@@ -8,4 +8,5 @@ export * from './customer';
 export * from './admin-demo';
 export * from './admin-core';
 export * from './admin-ops';
+export * from './auth';
 export * from './source';
