@@ -1029,6 +1029,25 @@ function HeroBlock({ mobile }) {
         BRAND.name
       ] })
     ] }),
+    /* @__PURE__ */ jsx3("div", { style: {
+      marginTop: mobile ? 12 : 14,
+      textAlign: mobile ? "left" : "center"
+    }, children: /* @__PURE__ */ jsxs2("a", { href: "#hero-photo", "data-open-submit-modal": "photo", style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      color: VT.accent,
+      fontSize: mobile ? 14.5 : 15,
+      textDecoration: "underline",
+      textUnderlineOffset: 4,
+      textDecorationColor: VT.accentSoft,
+      textDecorationThickness: "1.5px",
+      fontWeight: 500
+    }, children: [
+      /* @__PURE__ */ jsx3("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx3("path", { d: "M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" }) }),
+      "\u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442, \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E",
+      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+    ] }) }),
     /* @__PURE__ */ jsx3(HeroPlatformStrip, { mobile }),
     /* @__PURE__ */ jsx3("div", { style: {
       marginTop: mobile ? 16 : 22,
@@ -2985,7 +3004,7 @@ var ConceptA_Mobile = SamosaytLanding_Mobile;
 
 // src/intake/index.tsx
 import { Fragment as Fragment3, jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
-function ModalShell({ children, width = 520 }) {
+function ModalShell({ children, width = 540 }) {
   return /* @__PURE__ */ jsx4("div", { style: {
     background: "rgba(0,0,0,0.32)",
     minHeight: "100%",
@@ -3023,10 +3042,10 @@ function ModalShell({ children, width = 520 }) {
     children
   ] }) });
 }
-function StepHeader({ step, total, title, sub, onBack = true }) {
+function StepHeader({ step, total, title, sub, showBack = true }) {
   return /* @__PURE__ */ jsxs3(Fragment3, { children: [
     /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
-      step > 1 && onBack && /* @__PURE__ */ jsxs3("button", { style: {
+      step > 1 && showBack && /* @__PURE__ */ jsxs3("button", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -3056,8 +3075,62 @@ function StepHeader({ step, total, title, sub, onBack = true }) {
         background: i < step ? VT.accent : VT.line
       } }, i)) })
     ] }),
-    /* @__PURE__ */ jsx4("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2 }, children: title }),
+    /* @__PURE__ */ jsx4("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
     sub && /* @__PURE__ */ jsx4("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
+  ] });
+}
+function SvgLink() {
+  return /* @__PURE__ */ jsxs3("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", children: [
+    /* @__PURE__ */ jsx4("path", { d: "M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11 5" }),
+    /* @__PURE__ */ jsx4("path", { d: "M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07L13 19" })
+  ] });
+}
+function SvgPaperclip() {
+  return /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" }) });
+}
+function ModeSwitcher({ mode = "link", onModeChange }) {
+  const tab = (id, label, icon) => {
+    const active = mode === id;
+    return /* @__PURE__ */ jsxs3(
+      "button",
+      {
+        onClick: () => onModeChange?.(id),
+        style: {
+          flex: 1,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+          padding: "10px 14px",
+          borderRadius: 999,
+          background: active ? VT.white : "transparent",
+          boxShadow: active ? "0 1px 0 rgba(0,0,0,0.04), 0 6px 14px -8px rgba(120,60,30,0.18)" : "none",
+          border: "none",
+          cursor: "pointer",
+          fontFamily: VT.font.sans,
+          fontSize: 14,
+          fontWeight: active ? 600 : 500,
+          color: active ? VT.ink : VT.inkSoft
+        },
+        children: [
+          /* @__PURE__ */ jsx4("span", { style: { fontSize: 15, display: "inline-flex" }, children: icon }),
+          label
+        ]
+      },
+      id
+    );
+  };
+  return /* @__PURE__ */ jsxs3("div", { role: "tablist", "aria-label": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430", style: {
+    display: "flex",
+    gap: 4,
+    padding: 4,
+    background: VT.bgSoft,
+    border: `1px solid ${VT.line}`,
+    borderRadius: 999,
+    marginTop: 18
+  }, children: [
+    tab("link", "\u0421\u0441\u044B\u043B\u043A\u0430", /* @__PURE__ */ jsx4(SvgLink, {})),
+    tab("photo", "\u0424\u043E\u0442\u043E", /* @__PURE__ */ jsx4(SvgPaperclip, {}))
   ] });
 }
 var SOURCE_LIB = {
@@ -3065,52 +3138,16 @@ var SOURCE_LIB = {
   telegram: { label: "Telegram-\u043A\u0430\u043D\u0430\u043B", icon: "\u2708\uFE0F", tier: "ok" },
   twogis: { label: "2\u0413\u0418\u0421", icon: "\u{1F4CD}", tier: "ok" },
   avito: { label: "Avito-\u043F\u0440\u043E\u0444\u0438\u043B\u044C", icon: "\u{1F170}\uFE0F", tier: "ok" },
+  instagram: { label: "Instagram", icon: "\u{1F4F7}", tier: "ok" },
   website: { label: "\u0421\u0432\u043E\u0439 \u0441\u0430\u0439\u0442", icon: "\u{1F310}", tier: "ok" },
-  instagram: { label: "Instagram", icon: "\u{1F4F7}", tier: "ok-instagram" },
   vk: { label: "VK-\u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430", icon: "V", tier: "soon" },
   whatsapp: { label: "WhatsApp-\u043A\u0430\u0442\u0430\u043B\u043E\u0433", icon: "\u{1F7E2}", tier: "soon" },
   youtube: { label: "YouTube-\u043A\u0430\u043D\u0430\u043B", icon: "\u25B6\uFE0F", tier: "soon" },
   unknown: { label: "\u043D\u0435 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438", icon: "?", tier: "unknown" }
 };
-function SourceBadge({ source, counts, url, onCorrect }) {
+function SourceBadge({ source, counts, onCorrect }) {
   const meta = SOURCE_LIB[source] || SOURCE_LIB.unknown;
   const tier = meta.tier;
-  if (tier === "ok-instagram") {
-    return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: {
-        padding: "12px 14px",
-        background: VT.successSoft,
-        borderRadius: VT.r.md,
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        fontSize: 13.5,
-        color: "oklch(0.32 0.12 145)"
-      }, children: [
-        /* @__PURE__ */ jsx4("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10" }) }),
-        /* @__PURE__ */ jsxs3("span", { children: [
-          "\u0420\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438: ",
-          /* @__PURE__ */ jsx4("b", { children: "Instagram" }),
-          /* @__PURE__ */ jsx4("span", { style: { color: "oklch(0.42 0.11 145)" }, children: " \xB7 \u043D\u0443\u0436\u0435\u043D \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F \u0438 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442" })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxs3("div", { style: {
-        padding: "12px 14px",
-        background: VT.bgSoft,
-        border: `1px dashed ${VT.line}`,
-        borderRadius: VT.r.md,
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        fontSize: 13,
-        color: VT.inkSoft
-      }, children: [
-        /* @__PURE__ */ jsx4("span", { style: { fontSize: 18 }, children: "\u{1F4F7}" }),
-        /* @__PURE__ */ jsx4("span", { style: { flex: 1 }, children: "\u0418\u0437 Instagram \u043C\u044B \u0437\u0430\u0431\u0435\u0440\u0451\u043C \u0442\u043E\u043B\u044C\u043A\u043E \u0442\u043E, \u0447\u0442\u043E \u0432\u044B \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0441\u0430\u043C\u0438 \u2014 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u0448\u0430\u043F\u043A\u0438 \u043F\u0440\u043E\u0444\u0438\u043B\u044F \u0438 5\u201310 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442" }),
-        /* @__PURE__ */ jsx4(Btn, { size: "sm", variant: "secondary", children: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u2192" })
-      ] })
-    ] });
-  }
   if (tier === "ok") {
     return /* @__PURE__ */ jsxs3("div", { style: {
       padding: "12px 14px",
@@ -3131,7 +3168,7 @@ function SourceBadge({ source, counts, url, onCorrect }) {
           counts
         ] }) : null
       ] }),
-      /* @__PURE__ */ jsx4("button", { style: {
+      /* @__PURE__ */ jsx4("button", { onClick: onCorrect, style: {
         marginLeft: "auto",
         background: "transparent",
         border: "none",
@@ -3141,7 +3178,7 @@ function SourceBadge({ source, counts, url, onCorrect }) {
         textDecoration: "underline",
         textUnderlineOffset: 3,
         fontFamily: VT.font.sans
-      }, children: "\u043D\u0435\xA0\u0442\u043E?" })
+      }, children: "\u043D\u0435 \u0442\u043E?" })
     ] });
   }
   if (tier === "soon") {
@@ -3158,7 +3195,7 @@ function SourceBadge({ source, counts, url, onCorrect }) {
       /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: meta.icon }),
       /* @__PURE__ */ jsxs3("span", { children: [
         /* @__PURE__ */ jsx4("b", { children: meta.label }),
-        " \u2014 \u0441\u043A\u043E\u0440\u043E \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u043C. \u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email \u2014 \u043D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u0430\u043A\xA0\u0434\u043E\u0431\u0430\u0432\u0438\u043C."
+        " \u2014 \u0441\u043A\u043E\u0440\u043E \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u043C. \u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email \u2014 \u043D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u0430\u043A \u0434\u043E\u0431\u0430\u0432\u0438\u043C."
       ] })
     ] });
   }
@@ -3173,354 +3210,59 @@ function SourceBadge({ source, counts, url, onCorrect }) {
     color: "oklch(0.42 0.13 70)"
   }, children: [
     /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsxs3("span", { children: [
-      "\u041D\u0435 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438 \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443. \u0418\u043B\u0438 ",
-      /* @__PURE__ */ jsx4("a", { style: { color: "oklch(0.42 0.13 70)", textDecoration: "underline" }, children: "\u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0432\u0438\u0437\u0438\u0442\u043A\u0438 \u2192" })
-    ] })
+    /* @__PURE__ */ jsx4("span", { children: "\u041D\u0435 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438 \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443. \u0418\u043B\u0438 \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u0441\u044C \u043D\u0430 \u0444\u043E\u0442\u043E \u2192" })
   ] });
 }
-function LinkInput({ value }) {
+function LinkInput({ value, placeholder = "https://...", onChange, loading = false }) {
+  const empty = !value;
   return /* @__PURE__ */ jsxs3("div", { style: {
     display: "flex",
     alignItems: "center",
     gap: 10,
     padding: "14px 16px",
     background: VT.white,
-    border: `1.5px solid ${VT.accent}`,
+    border: `1.5px solid ${empty ? VT.line : VT.accent}`,
     borderRadius: VT.r.md
   }, children: [
     /* @__PURE__ */ jsx4(IconLink, {}),
-    /* @__PURE__ */ jsx4("span", { style: { flex: 1, fontFamily: VT.font.mono, fontSize: 14, color: VT.ink }, children: value }),
-    /* @__PURE__ */ jsx4("span", { style: { color: VT.success, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Spinner, { size: 14 }) })
-  ] });
-}
-function S3_Step1_Link({ url = "https://t.me/studia_anna", source = "telegram", counts = "\u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }) {
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 520, children: [
     /* @__PURE__ */ jsx4(
-      StepHeader,
+      "input",
       {
-        step: 1,
-        total: 3,
-        title: "\u0414\u0430\u0439\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430\xA0\u0432\u0430\u0448\u0435 \u0434\u0435\u043B\u043E",
-        sub: "\u0427\u0442\u043E \u0443\xA0\u0432\u0430\u0441 \u0443\u0436\u0435 \u0435\u0441\u0442\u044C \u043E\u043D\u043B\u0430\u0439\u043D \u2014 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram-\u043A\u0430\u043D\u0430\u043B, 2\u0413\u0418\u0421 \u0438\u043B\u0438 \u0432\u0430\u0448 \u0441\u0430\u0439\u0442"
+        type: "url",
+        value: value || "",
+        placeholder,
+        onChange: (e) => onChange?.(e.target.value),
+        style: {
+          flex: 1,
+          fontFamily: VT.font.mono,
+          fontSize: 14,
+          color: empty ? VT.inkFaint : VT.ink,
+          border: "none",
+          outline: "none",
+          background: "transparent"
+        }
       }
     ),
-    /* @__PURE__ */ jsx4("label", { style: { display: "block", fontSize: 13, color: VT.inkSoft, fontWeight: 500, margin: "20px 0 6px" }, children: "\u0421\u0441\u044B\u043B\u043A\u0430 \u043D\u0430\xA0\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A" }),
-    /* @__PURE__ */ jsx4(LinkInput, { value: url }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx4(SourceBadge, { source, counts, url }) }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, fontSize: 12.5, color: VT.inkFaint }, children: [
-      /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: "\u041F\u041E\u0414\u0414\u0415\u0420\u0416\u0418\u0412\u0410\u0415\u041C:" }),
-      " ",
-      "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \xB7 Telegram-\u043A\u0430\u043D\u0430\u043B \xB7 Instagram \xB7 2\u0413\u0418\u0421 \xB7 Avito \xB7 \u0432\u0430\u0448 \u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442 \xB7 \u0444\u043E\u0442\u043E \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E"
-    ] }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(Btn, { style: { flex: 1 }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C" }) }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 14, fontSize: 13, color: VT.inkSoft }, children: [
-      "\u041D\u0435\u0442 \u043D\u0438\u0447\u0435\u0433\u043E \u043E\u043D\u043B\u0430\u0439\u043D? ",
-      /* @__PURE__ */ jsx4("a", { style: { color: VT.accent, textDecoration: "underline" }, children: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0432\u0438\u0437\u0438\u0442\u043A\u0438, \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438\xA0\u0440\u0430\u0431\u043E\u0442 \u2192" })
-    ] })
+    loading && /* @__PURE__ */ jsx4("span", { style: { color: VT.success, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Spinner, { size: 14 }) })
   ] });
 }
-function ChannelOption({ value, label, hint, icon, selected }) {
-  return /* @__PURE__ */ jsxs3("label", { style: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    padding: "12px 14px",
-    background: selected ? VT.accentSoft : VT.white,
-    border: `1.5px solid ${selected ? VT.accent : VT.line}`,
-    borderRadius: VT.r.md,
-    cursor: "pointer"
-  }, children: [
-    /* @__PURE__ */ jsx4("span", { style: {
-      width: 18,
-      height: 18,
-      borderRadius: "50%",
-      border: `1.5px solid ${selected ? VT.accent : VT.line}`,
-      background: VT.white,
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flex: "0 0 auto"
-    }, children: selected && /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent } }) }),
-    /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: icon }),
-    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 1 }, children: hint })
-    ] })
-  ] });
-}
-function ContactValueInput({ channel, value }) {
-  const ph = {
-    telegram: "@your_handle",
-    phone: "+7 921 234-56-78",
-    email: "you@example.ru",
-    max: "@your_handle"
-  }[channel] || "";
+var PHOTO_LIMITS = { minFiles: 5, maxFiles: 60, maxFileBytes: 15 * 1024 * 1024, maxTotalBytes: 200 * 1024 * 1024 };
+function PhotoDropZone({ compact = false, onPick }) {
   return /* @__PURE__ */ jsxs3("div", { style: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    padding: "14px 16px",
-    background: VT.white,
-    border: `1px solid ${VT.line}`,
-    borderRadius: VT.r.md
+    border: `1.5px dashed ${VT.accent}`,
+    background: `repeating-linear-gradient(45deg, ${VT.bg} 0 8px, ${VT.accentSoft} 8px 9px)`,
+    borderRadius: VT.r.lg,
+    padding: compact ? 20 : 28,
+    textAlign: "center"
   }, children: [
-    /* @__PURE__ */ jsx4("span", { style: {
-      fontFamily: VT.font.mono,
-      fontSize: 15,
-      color: value ? VT.ink : VT.inkFaint,
-      flex: 1
-    }, children: value || ph }),
-    value && /* @__PURE__ */ jsx4("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: VT.success, strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10" }) })
+    /* @__PURE__ */ jsx4("div", { style: { fontSize: compact ? 22 : 26, marginBottom: 6 }, children: "\u{1F4F7}" }),
+    /* @__PURE__ */ jsx4("div", { style: { fontSize: compact ? 14 : 15, fontWeight: 600 }, children: "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0441\u044E\u0434\u0430" }),
+    /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, color: VT.inkSoft, margin: "4px 0 12px" }, children: "\u0438\u043B\u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \xB7 JPEG / PNG / WebP / HEIC" }),
+    /* @__PURE__ */ jsx4(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B" }),
+    /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 10, fontFamily: VT.font.mono }, children: "5\u201360 \u0444\u0430\u0439\u043B\u043E\u0432 \xB7 \u0434\u043E 15 \u041C\u0411 \u043A\u0430\u0436\u0434\u044B\u0439 \xB7 \u0434\u043E 200 \u041C\u0411 \u0432\u0441\u0435\u0433\u043E" })
   ] });
 }
-function S3_Step2_Contact({ channel = "telegram", value = "@studia_anna" }) {
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 520, children: [
-    /* @__PURE__ */ jsx4(
-      StepHeader,
-      {
-        step: 2,
-        total: 2,
-        title: "\u041A\u0443\u0434\u0430 \u0432\u0430\u043C \u043F\u0438\u0441\u0430\u0442\u044C?",
-        sub: "\u041E\u0434\u0438\u043D \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430\xA0\u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438\xA0\u0437\u0430\u044F\u0432\u043A\u0438 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
-      }
-    ),
-    /* @__PURE__ */ jsx4("label", { style: { display: "block", fontSize: 13, color: VT.inkSoft, fontWeight: 500, margin: "18px 0 8px" }, children: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u0430\u043D\u0430\u043B" }),
-    /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }, children: [
-      /* @__PURE__ */ jsx4(
-        ChannelOption,
-        {
-          value: "telegram",
-          label: "Telegram",
-          hint: "\u043D\u0430\u043F\u0438\u0448\u0435\u0442 \u043D\u0430\u0448 \u0431\u043E\u0442 \xB7 \u043C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E",
-          icon: "\u2708\uFE0F",
-          selected: channel === "telegram"
-        }
-      ),
-      /* @__PURE__ */ jsx4(
-        ChannelOption,
-        {
-          value: "phone",
-          label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D",
-          hint: "SMS-\u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F",
-          icon: "\u{1F4F1}",
-          selected: channel === "phone"
-        }
-      ),
-      /* @__PURE__ */ jsx4(
-        ChannelOption,
-        {
-          value: "email",
-          label: "Email",
-          hint: "\u043D\u0430 \u044F\u0449\u0438\u043A",
-          icon: "\u{1F4E7}",
-          selected: channel === "email"
-        }
-      ),
-      /* @__PURE__ */ jsx4(
-        ChannelOption,
-        {
-          value: "max",
-          label: "MAX",
-          hint: "\u043C\u0435\u0441\u0441\u0435\u043D\u0434\u0436\u0435\u0440 \u043E\u0442 VK",
-          icon: "\u{1F4AC}",
-          selected: channel === "max"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ jsx4("label", { style: { display: "block", fontSize: 13, color: VT.inkSoft, fontWeight: 500, margin: "18px 0 6px" }, children: channel === "phone" ? "\u041D\u043E\u043C\u0435\u0440 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430" : channel === "email" ? "Email" : channel === "max" ? "\u041B\u043E\u0433\u0438\u043D \u0432 MAX" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438\xA0\u043D\u043E\u043C\u0435\u0440)" }),
-    /* @__PURE__ */ jsx4(ContactValueInput, { channel, value }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx4(Checkbox, { checked: true, label: /* @__PURE__ */ jsx4(Fragment3, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445 \u0441\u043E\u0433\u043B\u0430\u0441\u043D\u043E" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0435 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }) }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 20 }, children: /* @__PURE__ */ jsx4(Btn, { style: { flex: 1 }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C" }) }),
-    /* @__PURE__ */ jsx4(CaptchaNotice, {})
-  ] });
-}
-function CaptchaNotice() {
-  return /* @__PURE__ */ jsxs3("div", { style: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-    fontSize: 11.5,
-    color: VT.inkMuted,
-    marginTop: 10,
-    fontFamily: VT.font.mono,
-    letterSpacing: "0.02em"
-  }, children: [
-    /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: /* @__PURE__ */ jsx4("path", { d: "M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" }) }),
-    "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha \xB7 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E"
-  ] });
-}
-function S3_Step3_TgBot() {
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 560, children: [
-    /* @__PURE__ */ jsx4(
-      StepHeader,
-      {
-        step: 3,
-        total: 3,
-        title: "\u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u0431\u043E\u0442\u0430 \u043D\u0430 1 \u043C\u0438\u043D\u0443\u0442\u0443",
-        sub: /* @__PURE__ */ jsxs3(Fragment3, { children: [
-          "\u0427\u0442\u043E\u0431\u044B \u043F\u0440\u0438\u0441\u043B\u0430\u0442\u044C \u0432\u0430\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430\xA0\u0441\u0430\u0439\u0442 \u0438\xA0\u0437\u0430\u044F\u0432\u043A\u0438 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u2014 \u043D\u0430\u0439\u0434\u0438\u0442\u0435 \u0432 Telegram ",
-          /* @__PURE__ */ jsx4("b", { children: BRAND.contactBot }),
-          " \u0438\xA0\u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0421\u0442\u0430\u0440\u0442\xBB."
-        ] })
-      }
-    ),
-    /* @__PURE__ */ jsx4("ol", { style: {
-      margin: "20px 0 0",
-      padding: 0,
-      listStyle: "none",
-      display: "flex",
-      flexDirection: "column",
-      gap: 10
-    }, children: [
-      /* @__PURE__ */ jsxs3(Fragment3, { children: [
-        "\u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 Telegram \u0438\xA0\u043D\u0430\u0439\u0434\u0438\u0442\u0435 ",
-        /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 13, color: VT.ink }, children: BRAND.contactBot })
-      ] }),
-      /* @__PURE__ */ jsxs3(Fragment3, { children: [
-        "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 ",
-        /* @__PURE__ */ jsx4("b", { children: "\xAB\u0421\u0442\u0430\u0440\u0442\xBB" }),
-        " \u2014 \u0431\u043E\u043B\u044C\u0448\u0435 \u043D\u0438\u0447\u0435\u0433\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u043E"
-      ] }),
-      /* @__PURE__ */ jsx4(Fragment3, { children: "\u041C\u044B \u043F\u0440\u0438\u0448\u043B\u0451\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430\xA0\u0441\u0430\u0439\u0442 \u0441\u044E\u0434\u0430 \u0436\u0435, \u0432\xA0\u043B\u0438\u0447\u043A\u0443" })
-    ].map((line, i) => /* @__PURE__ */ jsxs3("li", { style: {
-      display: "flex",
-      gap: 12,
-      alignItems: "flex-start",
-      padding: "12px 14px",
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.md
-    }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
-        width: 24,
-        height: 24,
-        borderRadius: "50%",
-        background: VT.accent,
-        color: VT.white,
-        fontFamily: VT.font.mono,
-        fontSize: 12,
-        fontWeight: 600,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flex: "0 0 auto",
-        marginTop: 1
-      }, children: i + 1 }),
-      /* @__PURE__ */ jsx4("span", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: line })
-    ] }, i)) }),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      marginTop: 14,
-      padding: "12px 14px",
-      background: VT.accentSoft,
-      border: `1px solid ${VT.accentSoft}`,
-      borderRadius: VT.r.md,
-      display: "flex",
-      alignItems: "center",
-      gap: 12
-    }, children: [
-      /* @__PURE__ */ jsx4("div", { style: {
-        width: 38,
-        height: 38,
-        borderRadius: 10,
-        background: VT.white,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 18
-      }, children: "\u{1F916}" }),
-      /* @__PURE__ */ jsxs3("div", { style: { flex: 1 }, children: [
-        /* @__PURE__ */ jsx4("div", { style: { fontFamily: VT.font.mono, fontSize: 15, fontWeight: 500 }, children: BRAND.contactBot }),
-        /* @__PURE__ */ jsx4("div", { style: { fontSize: 12, color: VT.accentInk }, children: "\u043E\u0442\u043A\u0440\u043E\u0439\u0442\u0435 \u0432 Telegram" })
-      ] }),
-      /* @__PURE__ */ jsx4(Btn, { size: "sm", children: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C" })
-    ] }),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      marginTop: 14,
-      padding: "12px 14px",
-      background: VT.bgSoft,
-      borderRadius: VT.r.md,
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      fontSize: 13.5,
-      color: VT.inkSoft
-    }, children: [
-      /* @__PURE__ */ jsx4("span", { style: { color: VT.accent, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Spinner, { size: 14 }) }),
-      /* @__PURE__ */ jsx4("span", { children: "\u0416\u0434\u0451\u043C, \u043F\u043E\u043A\u0430 \u0432\u044B \u043D\u0430\u0436\u043C\u0451\u0442\u0435 \xAB\u0421\u0442\u0430\u0440\u0442\xBB\u2026" }),
-      /* @__PURE__ */ jsx4(Mono, { style: { marginLeft: "auto", fontSize: 11 }, children: "5 \u0441\u0435\u043A" })
-    ] }),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      marginTop: 14,
-      fontSize: 13,
-      color: VT.inkSoft,
-      lineHeight: 1.5
-    }, children: [
-      "\u041D\u0435\u0442 Telegram \u0438\u043B\u0438\xA0\u043D\u0435\xA0\u043F\u043E\u043B\u0443\u0447\u0430\u0435\u0442\u0441\u044F?",
-      " ",
-      /* @__PURE__ */ jsx4("a", { style: { color: VT.accent, textDecoration: "underline", textUnderlineOffset: 3 }, children: "\u041F\u043E\u043B\u0443\u0447\u0438\u0442\u044C \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430\xA0\u043F\u043E\u0447\u0442\u0443 \u2192" })
-    ] })
-  ] });
-}
-function S3_SubmitModal(props) {
-  const {
-    step = 1,
-    source = "telegram",
-    sourceUrl = "https://t.me/studia_anna",
-    channel = "telegram",
-    contact = "@studia_anna",
-    counts = "\u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E"
-  } = props;
-  if (step === 1) return /* @__PURE__ */ jsx4(S3_Step1_Link, { url: sourceUrl, source, counts });
-  if (step === 2) return /* @__PURE__ */ jsx4(S3_Step2_Contact, { channel, value: contact });
-  return /* @__PURE__ */ jsx4(S3_Step1_Link, { url: sourceUrl, source, counts });
-}
-function S5_Confirmation({ contactType = "telegram" }) {
-  const isTg = contactType === "telegram";
-  return /* @__PURE__ */ jsx4("div", { style: {
-    width: "100%",
-    minHeight: "100%",
-    background: VT.bg,
-    color: VT.ink,
-    fontFamily: VT.font.sans,
-    padding: 32,
-    letterSpacing: "-0.01em",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  }, children: /* @__PURE__ */ jsxs3("div", { style: { maxWidth: 560, width: "100%" }, children: [
-    /* @__PURE__ */ jsx4(BrandMark, { size: 22, fontSize: 18 }),
-    /* @__PURE__ */ jsx4("div", { style: {
-      marginTop: 36,
-      width: 64,
-      height: 64,
-      borderRadius: "50%",
-      background: VT.successSoft,
-      color: VT.success,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center"
-    }, children: /* @__PURE__ */ jsx4("svg", { width: "32", height: "32", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-    /* @__PURE__ */ jsx4("h1", { style: { fontSize: 38, fontWeight: 700, letterSpacing: "-0.03em", margin: "20px 0 12px", lineHeight: 1.1, textWrap: "balance" }, children: "\u0413\u043E\u0442\u043E\u0432\u0438\u043C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442" }),
-    /* @__PURE__ */ jsx4("p", { style: { fontSize: 18, lineHeight: 1.5, color: VT.inkSoft, margin: 0, maxWidth: 480 }, children: "\u0421\u0432\u044F\u0436\u0435\u043C\u0441\u044F \u0441\xA0\u0432\u0430\u043C\u0438 \u0438\xA0\u043F\u0440\u0438\u0448\u043B\u0451\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 2\xA0\u0447\u0430\u0441\u043E\u0432" }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 28 }, children: /* @__PURE__ */ jsx4(Btn, { variant: "secondary", iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043D\u0430\xA0\u0433\u043B\u0430\u0432\u043D\u0443\u044E" }) })
-  ] }) });
-}
-var ICP = [
-  "\u041C\u0430\u043D\u0438\u043A\u044E\u0440",
-  "\u0411\u0430\u0440\u0431\u0435\u0440",
-  "\u0422\u0430\u0442\u0443-\u043C\u0430\u0441\u0442\u0435\u0440",
-  "\u0424\u0438\u0442\u043D\u0435\u0441-\u0442\u0440\u0435\u043D\u0435\u0440",
-  "\u041F\u0441\u0438\u0445\u043E\u043B\u043E\u0433",
-  "\u0424\u043E\u0442\u043E\u0433\u0440\u0430\u0444",
-  "\u041A\u043E\u043D\u0434\u0438\u0442\u0435\u0440",
-  "\u041A\u0443\u043B\u0438\u043D\u0430\u0440",
-  "\u0420\u0435\u043F\u0435\u0442\u0438\u0442\u043E\u0440",
-  "\u041C\u0430\u0441\u0442\u0435\u0440 \u0440\u0435\u0441\u043D\u0438\u0446",
-  "\u0411\u0440\u043E\u0432\u0438\u0441\u0442",
-  "\u041F\u0440\u043E\u0447\u0435\u0435"
-];
-function PhotoThumb({ name, type, idx }) {
+function PhotoThumb({ name, sizeKb = 2400, idx = 0, onRemove }) {
   return /* @__PURE__ */ jsxs3("div", { style: {
     display: "flex",
     gap: 12,
@@ -3531,31 +3273,22 @@ function PhotoThumb({ name, type, idx }) {
     borderRadius: VT.r.md
   }, children: [
     /* @__PURE__ */ jsx4("div", { style: {
-      width: 48,
-      height: 48,
+      width: 44,
+      height: 44,
       borderRadius: 8,
       background: `repeating-linear-gradient(${30 + idx * 35}deg, ${VT.accentSoft} 0 6px, ${VT.bgSoft} 6px 12px)`,
       flex: "0 0 auto"
     } }),
     /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
       /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: "JPEG \xB7 2.4 MB" })
+      /* @__PURE__ */ jsxs3("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
+        name.split(".").pop().toUpperCase(),
+        " \xB7 ",
+        (sizeKb / 1e3).toFixed(1),
+        " MB"
+      ] })
     ] }),
-    /* @__PURE__ */ jsxs3("select", { defaultValue: type, style: {
-      fontFamily: VT.font.sans,
-      fontSize: 12.5,
-      padding: "6px 8px",
-      borderRadius: 8,
-      border: `1px solid ${VT.line}`,
-      background: VT.bgSoft,
-      color: VT.ink
-    }, children: [
-      /* @__PURE__ */ jsx4("option", { value: "work", children: "\u0440\u0430\u0431\u043E\u0442\u0430" }),
-      /* @__PURE__ */ jsx4("option", { value: "profile_screenshot", children: "\u0448\u0430\u043F\u043A\u0430 \u043F\u0440\u043E\u0444\u0438\u043B\u044F" }),
-      /* @__PURE__ */ jsx4("option", { value: "business_card", children: "\u0432\u0438\u0437\u0438\u0442\u043A\u0430" }),
-      /* @__PURE__ */ jsx4("option", { value: "booklet", children: "\u0431\u0443\u043A\u043B\u0435\u0442" })
-    ] }),
-    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", style: {
+    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
       width: 28,
       height: 28,
       borderRadius: 6,
@@ -3567,106 +3300,780 @@ function PhotoThumb({ name, type, idx }) {
     }, children: "\xD7" })
   ] });
 }
-function S6_PhotoDrawer({ variant = "desktop" }) {
-  const Wrap = variant === "desktop" ? ModalShell : MobileSheet;
-  return /* @__PURE__ */ jsxs3(Wrap, { width: 620, children: [
+function PhotoList({ files, onRemove }) {
+  const totalKb = files.reduce((s, f) => s + (f.sizeKb || 2400), 0);
+  return /* @__PURE__ */ jsxs3("div", { style: { marginTop: 14 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
+        "\u0417\u0410\u0413\u0420\u0423\u0416\u0415\u041D\u041E \xB7 ",
+        files.length,
+        " \u0418\u0417 ",
+        PHOTO_LIMITS.maxFiles
+      ] }),
+      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11 }, children: [
+        (totalKb / 1e3).toFixed(1),
+        " \u041C\u0411 \xB7 \u2264 200 \u041C\u0411"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: files.map((f, i) => /* @__PURE__ */ jsx4(
+      PhotoThumb,
+      {
+        name: f.name,
+        sizeKb: f.sizeKb,
+        idx: i,
+        onRemove: () => onRemove?.(i)
+      },
+      i
+    )) })
+  ] });
+}
+function FieldLabel({ children, required = false }) {
+  return /* @__PURE__ */ jsxs3("label", { style: {
+    display: "block",
+    fontSize: 13,
+    color: VT.inkSoft,
+    fontWeight: 500,
+    marginBottom: 6
+  }, children: [
+    children,
+    required && /* @__PURE__ */ jsx4("span", { style: { color: VT.accent, marginLeft: 4 }, children: "*" })
+  ] });
+}
+function FieldInput({ value, placeholder, onChange, mono = false, type = "text" }) {
+  return /* @__PURE__ */ jsx4(
+    "input",
+    {
+      type,
+      value: value || "",
+      placeholder,
+      onChange: (e) => onChange?.(e.target.value),
+      style: {
+        width: "100%",
+        boxSizing: "border-box",
+        padding: "12px 14px",
+        background: VT.white,
+        border: `1px solid ${value ? VT.accent : VT.line}`,
+        borderRadius: VT.r.md,
+        fontSize: 14,
+        lineHeight: 1.5,
+        fontFamily: mono ? VT.font.mono : VT.font.sans,
+        color: VT.ink,
+        outline: "none"
+      }
+    }
+  );
+}
+function FieldTextarea({ value, placeholder, onChange, rows = 4 }) {
+  return /* @__PURE__ */ jsx4(
+    "textarea",
+    {
+      value: value || "",
+      placeholder,
+      onChange: (e) => onChange?.(e.target.value),
+      rows,
+      style: {
+        width: "100%",
+        boxSizing: "border-box",
+        resize: "vertical",
+        padding: "12px 14px",
+        background: VT.white,
+        border: `1px solid ${value ? VT.accent : VT.line}`,
+        borderRadius: VT.r.md,
+        fontSize: 14,
+        lineHeight: 1.5,
+        fontFamily: VT.font.sans,
+        color: VT.ink,
+        outline: "none"
+      }
+    }
+  );
+}
+function CustomerContactPicker({ type = "phone", value = "", onTypeChange, onValueChange }) {
+  const tab = (id, label, icon) => {
+    const active = type === id;
+    return /* @__PURE__ */ jsxs3(
+      "button",
+      {
+        onClick: () => onTypeChange?.(id),
+        style: {
+          flex: 1,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+          padding: "10px 12px",
+          borderRadius: 999,
+          background: active ? VT.white : "transparent",
+          boxShadow: active ? "0 1px 0 rgba(0,0,0,0.04), 0 6px 14px -8px rgba(120,60,30,0.18)" : "none",
+          border: "none",
+          cursor: "pointer",
+          fontFamily: VT.font.sans,
+          fontSize: 13.5,
+          fontWeight: active ? 600 : 500,
+          color: active ? VT.ink : VT.inkSoft
+        },
+        children: [
+          /* @__PURE__ */ jsx4("span", { style: { fontSize: 14 }, children: icon }),
+          label
+        ]
+      },
+      id
+    );
+  };
+  const ph = type === "phone" ? "+7 921 234-56-78" : "@your_handle";
+  return /* @__PURE__ */ jsxs3(Fragment3, { children: [
+    /* @__PURE__ */ jsxs3("div", { role: "tablist", style: {
+      display: "flex",
+      gap: 4,
+      padding: 4,
+      background: VT.bgSoft,
+      border: `1px solid ${VT.line}`,
+      borderRadius: 999,
+      marginBottom: 8
+    }, children: [
+      tab("phone", "\u0422\u0435\u043B\u0435\u0444\u043E\u043D", "\u{1F4F1}"),
+      tab("telegram", "Telegram", "\u2708\uFE0F")
+    ] }),
+    /* @__PURE__ */ jsx4(FieldInput, { value, placeholder: ph, mono: true, onChange: onValueChange })
+  ] });
+}
+function TextFileThumb({ name, sizeKb = 240, onRemove }) {
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    display: "flex",
+    gap: 12,
+    alignItems: "center",
+    padding: "8px 12px",
+    background: VT.white,
+    border: `1px solid ${VT.line}`,
+    borderRadius: VT.r.md
+  }, children: [
+    /* @__PURE__ */ jsx4("div", { style: {
+      width: 32,
+      height: 32,
+      borderRadius: 6,
+      background: VT.bgSoft,
+      border: `1px solid ${VT.line}`,
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 14,
+      flex: "0 0 auto"
+    }, children: "\u{1F4C4}" }),
+    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
+      /* @__PURE__ */ jsxs3("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
+        name.split(".").pop().toUpperCase(),
+        " \xB7 ",
+        (sizeKb / 1e3).toFixed(1),
+        " MB"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
+      width: 26,
+      height: 26,
+      borderRadius: 6,
+      background: "transparent",
+      border: "none",
+      cursor: "pointer",
+      color: VT.inkFaint,
+      fontSize: 16
+    }, children: "\xD7" })
+  ] });
+}
+function TextFilesDropZone({ onPick }) {
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    border: `1.5px dashed ${VT.line}`,
+    background: VT.bgSoft,
+    borderRadius: VT.r.md,
+    padding: 14,
+    display: "flex",
+    alignItems: "center",
+    gap: 12
+  }, children: [
+    /* @__PURE__ */ jsx4("div", { style: {
+      width: 38,
+      height: 38,
+      borderRadius: 8,
+      background: VT.white,
+      border: `1px solid ${VT.line}`,
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 16,
+      flex: "0 0 auto"
+    }, children: "\u{1F4CE}" }),
+    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 500 }, children: "\u041F\u0440\u0430\u0439\u0441, \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u044F \u0443\u0441\u043B\u0443\u0433, FAQ" }),
+      /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, fontFamily: VT.font.mono, marginTop: 1 }, children: "PDF / DOCX / TXT / RTF \xB7 \u0434\u043E 10 \u0444\u0430\u0439\u043B\u043E\u0432" })
+    ] }),
+    /* @__PURE__ */ jsx4(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C" })
+  ] });
+}
+function CaptchaNotice() {
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    fontSize: 11.5,
+    color: VT.inkMuted,
+    marginTop: 14,
+    fontFamily: VT.font.mono,
+    letterSpacing: "0.02em"
+  }, children: [
+    /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: /* @__PURE__ */ jsx4("path", { d: "M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" }) }),
+    "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha"
+  ] });
+}
+function S3_Step1_Link({
+  url = "",
+  source = null,
+  counts = null,
+  total = 3,
+  onUrlChange,
+  onModeChange,
+  onCorrect,
+  onContinue
+}) {
+  const canContinue = !!url && source && SOURCE_LIB[source]?.tier === "ok";
+  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
     /* @__PURE__ */ jsx4(
       StepHeader,
       {
         step: 1,
-        total: 2,
-        title: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E",
-        sub: "\u0420\u0430\u0431\u043E\u0442\u044B, \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u0448\u0430\u043F\u043A\u0438 \u043F\u0440\u043E\u0444\u0438\u043B\u044F, \u0432\u0438\u0437\u0438\u0442\u043A\u0430 \u0438\u043B\u0438\xA0\u0431\u0443\u043A\u043B\u0435\u0442. \u041E\u0442 5 \u0434\u043E 30 \u0444\u0430\u0439\u043B\u043E\u0432, \u0434\u043E 10 \u041C\u0411 \u043A\u0430\u0436\u0434\u044B\u0439.",
-        onBack: false
+        total,
+        showBack: false,
+        title: "\u0421\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0432\u0430\u0448\u0443 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u0438\u043B\u0438 \u043F\u0440\u043E\u0444\u0438\u043B\u044C, \u0438\u0437 \u043A\u043E\u0442\u043E\u0440\u043E\u0439 \u043C\u044B \u0441\u0434\u0435\u043B\u0430\u0435\u043C \u0441\u0430\u0439\u0442"
       }
     ),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      marginTop: 18,
-      border: `1.5px dashed ${VT.accent}`,
-      background: `repeating-linear-gradient(45deg, ${VT.bg} 0 8px, ${VT.accentSoft} 8px 9px)`,
-      borderRadius: VT.r.lg,
-      padding: 28,
-      textAlign: "center"
-    }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 26, marginBottom: 6 }, children: "\u{1F4F7}" }),
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 15, fontWeight: 600 }, children: "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0441\u044E\u0434\u0430" }),
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, color: VT.inkSoft, margin: "4px 0 12px" }, children: "\u0438\u043B\u0438\xA0\u043D\u0430\u0436\u043C\u0438\u0442\u0435 \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \xB7 JPEG / PNG / WebP / HEIC" }),
-      /* @__PURE__ */ jsx4(Btn, { variant: "secondary", size: "sm", children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B" })
-    ] }),
+    /* @__PURE__ */ jsx4(ModeSwitcher, { mode: "link", onModeChange }),
     /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }, children: [
-        /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: "\u0417\u0410\u0413\u0420\u0423\u0416\u0415\u041D\u041E \xB7 3 \u0418\u0417 30" }),
-        /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 11 }, children: "6.8 \u041C\u0411 \xB7 \u2264 100 \u041C\u0411" })
-      ] }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
-        /* @__PURE__ */ jsx4(PhotoThumb, { name: "IMG_2847.jpg", type: "work", idx: 0 }),
-        /* @__PURE__ */ jsx4(PhotoThumb, { name: "profile-screenshot.png", type: "profile_screenshot", idx: 1 }),
-        /* @__PURE__ */ jsx4(PhotoThumb, { name: "vizitka-front.jpg", type: "business_card", idx: 2 })
-      ] })
+      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u0421\u0441\u044B\u043B\u043A\u0430" }),
+      /* @__PURE__ */ jsx4(
+        LinkInput,
+        {
+          value: url,
+          placeholder: "https://t.me/studia_anna",
+          onChange: onUrlChange,
+          loading: !!url && !source
+        }
+      )
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 22, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
-      /* @__PURE__ */ jsx4(FormField, { label: "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0434\u0435\u043B\u0430", placeholder: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-      /* @__PURE__ */ jsx4(FormField, { label: "\u0413\u043E\u0440\u043E\u0434", placeholder: "\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A" }),
-      /* @__PURE__ */ jsx4(FormField, { label: "\u041A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044F", placeholder: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", select: true, options: ICP }),
-      /* @__PURE__ */ jsx4(FormField, { label: "Email", placeholder: "anya@example.com" }),
-      /* @__PURE__ */ jsx4("div", { style: { gridColumn: "1 / -1" }, children: /* @__PURE__ */ jsx4(FormField, { label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", placeholder: "+7 921 234-56-78" }) })
+    source && /* @__PURE__ */ jsx4("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx4(SourceBadge, { source, counts, onCorrect }) }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, fontSize: 12.5, color: VT.inkFaint, lineHeight: 1.5 }, children: [
+      /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: "\u041F\u041E\u0414\u0414\u0415\u0420\u0416\u0418\u0412\u0410\u0415\u041C:" }),
+      " ",
+      "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \xB7 Telegram-\u043A\u0430\u043D\u0430\u043B \xB7 Instagram \xB7 2\u0413\u0418\u0421 \xB7 Avito \xB7 \u0432\u0430\u0448 \u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442"
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx4(Checkbox, { checked: false, label: /* @__PURE__ */ jsx4(Fragment3, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445 \u0441\u043E\u0433\u043B\u0430\u0441\u043D\u043E" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0435 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }) }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 18 }, children: /* @__PURE__ */ jsx4(Btn, { style: { flex: 1 }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0438\u0437\xA0\u0444\u043E\u0442\u043E" }) }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+      Btn,
+      {
+        style: { flex: 1, opacity: canContinue ? 1 : 0.55 },
+        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        onClick: canContinue ? onContinue : void 0,
+        children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
+      }
+    ) }),
     /* @__PURE__ */ jsx4(CaptchaNotice, {})
   ] });
 }
-function FormField({ label, placeholder, select, options = [] }) {
-  return /* @__PURE__ */ jsxs3("div", { children: [
-    /* @__PURE__ */ jsx4("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, fontWeight: 500, marginBottom: 4 }, children: label }),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      padding: "10px 12px",
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.md,
-      fontSize: 14,
-      color: VT.inkFaint,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between"
+function S3_Step1_Photo({
+  files = [],
+  total = 4,
+  onPick,
+  onRemove,
+  onModeChange,
+  onContinue
+}) {
+  const empty = files.length === 0;
+  const canContinue = files.length >= PHOTO_LIMITS.minFiles;
+  return /* @__PURE__ */ jsxs3(ModalShell, { width: 560, children: [
+    /* @__PURE__ */ jsx4(
+      StepHeader,
+      {
+        step: 1,
+        total,
+        showBack: false,
+        title: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0432\u0430\u0448\u0435\u0433\u043E \u0434\u0435\u043B\u0430",
+        sub: "\u0420\u0430\u0431\u043E\u0442\u044B, \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u044B \u043F\u0440\u043E\u0444\u0438\u043B\u044F, \u0444\u043E\u0442\u043E \u0432\u0438\u0437\u0438\u0442\u043A\u0438, \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0441\u0430\u0439\u0442 \u0438\u0437 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044C"
+      }
+    ),
+    /* @__PURE__ */ jsx4(ModeSwitcher, { mode: "photo", onModeChange }),
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx4(PhotoDropZone, { compact: !empty, onPick }) }),
+    !empty && /* @__PURE__ */ jsx4(PhotoList, { files, onRemove }),
+    !empty && files.length < PHOTO_LIMITS.minFiles && /* @__PURE__ */ jsxs3("div", { style: {
+      marginTop: 12,
+      fontSize: 12.5,
+      color: VT.inkSoft,
+      padding: "8px 12px",
+      background: VT.warnSoft,
+      borderRadius: VT.r.sm
     }, children: [
-      /* @__PURE__ */ jsx4("span", { children: placeholder }),
-      select && /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: /* @__PURE__ */ jsx4("path", { d: "M6 9l6 6 6-6", strokeLinecap: "round", strokeLinejoin: "round" }) })
-    ] })
+      "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0435\u0449\u0451 ",
+      PHOTO_LIMITS.minFiles - files.length,
+      " \u2014 \u0447\u0442\u043E\u0431\u044B \u0441\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u043D\u0443\u0436\u043D\u043E \u043C\u0438\u043D\u0438\u043C\u0443\u043C ",
+      PHOTO_LIMITS.minFiles,
+      " \u0444\u043E\u0442\u043E."
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+      Btn,
+      {
+        style: { flex: 1, opacity: canContinue ? 1 : 0.55 },
+        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        onClick: canContinue ? onContinue : void 0,
+        children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(CaptchaNotice, {})
   ] });
 }
-function MobileSheet({ children }) {
-  return /* @__PURE__ */ jsx4("div", { style: {
-    width: "100%",
-    minHeight: "100%",
-    background: "rgba(0,0,0,0.32)",
-    display: "flex",
-    alignItems: "flex-end",
-    justifyContent: "center",
-    fontFamily: VT.font.sans
-  }, children: /* @__PURE__ */ jsxs3("div", { style: {
-    width: "100%",
-    background: VT.bg,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    paddingBottom: 28,
-    position: "relative"
-  }, children: [
-    /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", style: {
-      display: "block",
-      width: 42,
-      height: 4,
-      borderRadius: 2,
-      background: VT.line,
-      margin: "0 auto 14px"
-    } }),
-    children
-  ] }) });
+function S3_Step2_PhotoDesc({
+  description = "",
+  city = "",
+  customerContact = "",
+  customerContactType = "phone",
+  textFiles = [],
+  onDescriptionChange,
+  onCityChange,
+  onCustomerContactChange,
+  onCustomerContactTypeChange,
+  onPickTextFile,
+  onRemoveTextFile,
+  onBack,
+  onContinue
+}) {
+  const ok = description.length >= 30 && !!city && !!customerContact;
+  return /* @__PURE__ */ jsxs3(ModalShell, { width: 560, children: [
+    /* @__PURE__ */ jsx4(
+      StepHeader,
+      {
+        step: 2,
+        total: 4,
+        title: "\u0420\u0430\u0441\u0441\u043A\u0430\u0436\u0438\u0442\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435",
+        sub: "\u0427\u0442\u043E \u043D\u0430\u043C \u043D\u0443\u0436\u043D\u043E \u0437\u043D\u0430\u0442\u044C \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C \u043A\u0430\u043A \u043D\u0430\u0447\u0430\u0442\u044C?"
+      }
+    ),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
+      /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u0427\u0442\u043E \u0432\u044B \u0434\u0435\u043B\u0430\u0435\u0442\u0435" }),
+      /* @__PURE__ */ jsx4(
+        FieldTextarea,
+        {
+          value: description,
+          placeholder: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440, \u043F\u0435\u0434\u0438\u043A\u044E\u0440, \u043D\u0430\u0440\u0430\u0449\u0438\u0432\u0430\u043D\u0438\u0435. 7 \u043B\u0435\u0442 \u043E\u043F\u044B\u0442\u0430, \u0440\u0430\u0431\u043E\u0442\u0430\u044E \u0432 \u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A\u0435, \u0432\u044B\u0435\u0437\u0434 \u043D\u0430 \u0434\u043E\u043C",
+          onChange: onDescriptionChange,
+          rows: 4
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, display: "grid", gridTemplateColumns: "1fr", gap: 16 }, children: [
+      /* @__PURE__ */ jsxs3("div", { children: [
+        /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u0413\u043E\u0440\u043E\u0434" }),
+        /* @__PURE__ */ jsx4(FieldInput, { value: city, placeholder: "\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A", onChange: onCityChange })
+      ] }),
+      /* @__PURE__ */ jsxs3("div", { children: [
+        /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B \u043D\u0430 \u0441\u0430\u0439\u0442\u0435" }),
+        /* @__PURE__ */ jsx4(
+          CustomerContactPicker,
+          {
+            type: customerContactType,
+            value: customerContact,
+            onTypeChange: onCustomerContactTypeChange,
+            onValueChange: onCustomerContactChange
+          }
+        ),
+        /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 6, lineHeight: 1.4 }, children: "\u041F\u043E\u043A\u0430\u0436\u0435\u043C \u043A\u043B\u0438\u0435\u043D\u0442\u0430\u043C \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u041A\u0443\u0434\u0430 \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u0430\u043C \u043B\u0438\u0447\u043D\u043E \u2014 \u0441\u043F\u0440\u043E\u0441\u0438\u043C \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u0448\u0430\u0433\u0435." })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
+      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u041F\u0440\u0438\u043A\u0440\u0435\u043F\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)" }),
+      textFiles.length === 0 ? /* @__PURE__ */ jsx4(TextFilesDropZone, { onPick: onPickTextFile }) : /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 6 }, children: [
+        textFiles.map((f, i) => /* @__PURE__ */ jsx4(
+          TextFileThumb,
+          {
+            name: f.name,
+            sizeKb: f.sizeKb,
+            onRemove: () => onRemoveTextFile?.(i)
+          },
+          i
+        )),
+        /* @__PURE__ */ jsx4("button", { onClick: onPickTextFile, style: {
+          alignSelf: "flex-start",
+          marginTop: 4,
+          background: "transparent",
+          border: "none",
+          color: VT.accent,
+          fontSize: 13,
+          cursor: "pointer",
+          textDecoration: "underline",
+          textUnderlineOffset: 3,
+          fontFamily: VT.font.sans
+        }, children: "+ \u0435\u0449\u0451 \u0444\u0430\u0439\u043B" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+      Btn,
+      {
+        style: { flex: 1, opacity: ok ? 1 : 0.55 },
+        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        onClick: ok ? onContinue : void 0,
+        children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+  ] });
 }
-var SubmitModal = S3_SubmitModal;
-var Confirmation = S5_Confirmation;
-var PhotoDrawer = S6_PhotoDrawer;
+function ChannelOption({ value, label, hint, icon, selected, onSelect }) {
+  return /* @__PURE__ */ jsxs3(
+    "label",
+    {
+      onClick: () => onSelect?.(value),
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "12px 14px",
+        background: selected ? VT.accentSoft : VT.white,
+        border: `1.5px solid ${selected ? VT.accent : VT.line}`,
+        borderRadius: VT.r.md,
+        cursor: "pointer"
+      },
+      children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          width: 18,
+          height: 18,
+          borderRadius: "50%",
+          border: `1.5px solid ${selected ? VT.accent : VT.line}`,
+          background: VT.white,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flex: "0 0 auto"
+        }, children: selected && /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent } }) }),
+        /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: icon }),
+        /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx4("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
+          /* @__PURE__ */ jsx4("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 1 }, children: hint })
+        ] })
+      ]
+    }
+  );
+}
+function S3_StepContact({
+  step,
+  total,
+  channel = "telegram",
+  contact = "",
+  consent = true,
+  onChannelChange,
+  onContactChange,
+  onConsentChange,
+  onBack,
+  onSubmit
+}) {
+  const ph = {
+    telegram: "@your_handle",
+    phone: "+7 921 234-56-78",
+    email: "you@example.ru",
+    max: "@your_handle"
+  }[channel];
+  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
+    /* @__PURE__ */ jsx4(
+      StepHeader,
+      {
+        step,
+        total,
+        title: "\u041A\u0443\u0434\u0430 \u0432\u0430\u043C \u043F\u0438\u0441\u0430\u0442\u044C?",
+        sub: "\u041E\u0434\u0438\u043D \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
+      }
+    ),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
+      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u0430\u043D\u0430\u043B" }),
+      /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }, children: [
+        /* @__PURE__ */ jsx4(
+          ChannelOption,
+          {
+            value: "telegram",
+            label: "Telegram",
+            hint: "\u043C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E",
+            icon: "\u2708\uFE0F",
+            selected: channel === "telegram",
+            onSelect: onChannelChange
+          }
+        ),
+        /* @__PURE__ */ jsx4(
+          ChannelOption,
+          {
+            value: "phone",
+            label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D",
+            hint: "SMS-\u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F",
+            icon: "\u{1F4F1}",
+            selected: channel === "phone",
+            onSelect: onChannelChange
+          }
+        ),
+        /* @__PURE__ */ jsx4(
+          ChannelOption,
+          {
+            value: "email",
+            label: "Email",
+            hint: "\u043D\u0430 \u044F\u0449\u0438\u043A",
+            icon: "\u{1F4E7}",
+            selected: channel === "email",
+            onSelect: onChannelChange
+          }
+        ),
+        /* @__PURE__ */ jsx4(
+          ChannelOption,
+          {
+            value: "max",
+            label: "MAX",
+            hint: "\u043C\u0435\u0441\u0441\u0435\u043D\u0434\u0436\u0435\u0440 \u043E\u0442 VK",
+            icon: "\u{1F4AC}",
+            selected: channel === "max",
+            onSelect: onChannelChange
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
+      /* @__PURE__ */ jsx4(FieldLabel, { children: channel === "phone" ? "\u041D\u043E\u043C\u0435\u0440 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430" : channel === "email" ? "Email" : channel === "max" ? "\u041B\u043E\u0433\u0438\u043D \u0432 MAX" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" }),
+      /* @__PURE__ */ jsx4(FieldInput, { value: contact, placeholder: ph, mono: true, onChange: onContactChange })
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx4(
+      Checkbox,
+      {
+        checked: consent,
+        onChange: (v) => onConsentChange?.(v),
+        label: /* @__PURE__ */ jsx4(Fragment3, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0430\u0446\u0438\u044E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 \u0441\u043E\u0433\u043B\u0430\u0441\u043D\u043E" }),
+        link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0435 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 20 }, children: /* @__PURE__ */ jsx4(
+      Btn,
+      {
+        style: { flex: 1, opacity: contact && consent ? 1 : 0.55 },
+        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        onClick: contact && consent ? onSubmit : void 0,
+        children: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+  ] });
+}
+function SummaryRow({ label, value }) {
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 12,
+    padding: "10px 0",
+    borderTop: `1px solid ${VT.line}`
+  }, children: [
+    /* @__PURE__ */ jsx4("div", { style: {
+      flex: "0 0 130px",
+      fontFamily: VT.font.mono,
+      fontSize: 11,
+      letterSpacing: "0.08em",
+      color: VT.inkFaint,
+      paddingTop: 2
+    }, children: label }),
+    /* @__PURE__ */ jsx4("div", { style: { flex: 1, fontSize: 14, color: VT.ink, lineHeight: 1.45, wordBreak: "break-word" }, children: value })
+  ] });
+}
+function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
+  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }, children: [
+      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
+        "\u0428\u0410\u0413 ",
+        total,
+        "/",
+        total
+      ] }),
+      /* @__PURE__ */ jsx4("div", { style: { display: "flex", gap: 4 }, children: Array.from({ length: total }).map((_, i) => /* @__PURE__ */ jsx4("span", { style: { width: 28, height: 4, borderRadius: 2, background: VT.accent } }, i)) })
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: {
+      width: 56,
+      height: 56,
+      borderRadius: "50%",
+      background: VT.successSoft,
+      color: VT.success,
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }, children: /* @__PURE__ */ jsx4("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10" }) }) }),
+    /* @__PURE__ */ jsx4("h2", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.03em", margin: "16px 0 8px", lineHeight: 1.15 }, children: "\u0413\u043E\u0442\u043E\u0432\u0438\u043C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442" }),
+    /* @__PURE__ */ jsxs3("p", { style: { fontSize: 15, lineHeight: 1.5, color: VT.inkSoft, margin: 0 }, children: [
+      "\u0421\u0432\u044F\u0436\u0435\u043C\u0441\u044F \u0441 \u0432\u0430\u043C\u0438 \u0438 \u043F\u0440\u0438\u0448\u043B\u0451\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u0432 \u0442\u0435\u0447\u0435\u043D\u0438\u0435 ",
+      /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "2 \u0447\u0430\u0441\u043E\u0432" }),
+      "."
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
+      mode === "link" && summary.url && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0421\u0421\u042B\u041B\u041A\u0410", value: /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.url }) }),
+      mode === "photo" && /* @__PURE__ */ jsxs3(Fragment3, { children: [
+        /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0424\u0410\u0419\u041B\u042B", value: `${summary.fileCount || 0} \u0444\u043E\u0442\u043E` }),
+        summary.description && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u041E\u041F\u0418\u0421\u0410\u041D\u0418\u0415", value: summary.description }),
+        summary.city && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0413\u041E\u0420\u041E\u0414", value: summary.city }),
+        summary.customerContact && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u041D\u0410 \u0421\u0410\u0419\u0422\u0415", value: /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.customerContact }) }),
+        summary.textFileCount > 0 && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0422\u0415\u041A\u0421\u0422\u042B", value: `${summary.textFileCount} \u0444\u0430\u0439\u043B\u043E\u0432` })
+      ] }),
+      /* @__PURE__ */ jsx4(
+        SummaryRow,
+        {
+          label: "\u041D\u0410\u041F\u0418\u0428\u0415\u041C \u0412\u0410\u041C",
+          value: /* @__PURE__ */ jsxs3("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
+            summary.contact,
+            /* @__PURE__ */ jsxs3("span", { style: { color: VT.inkFaint }, children: [
+              " \xB7 ",
+              {
+                telegram: "Telegram",
+                phone: "SMS",
+                email: "Email",
+                max: "MAX"
+              }[summary.channel] || ""
+            ] })
+          ] })
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: 24 }, children: /* @__PURE__ */ jsx4(Btn, { variant: "secondary", style: { width: "100%" }, onClick: onClose, children: "\u041F\u043E\u043D\u044F\u0442\u043D\u043E" }) })
+  ] });
+}
+function SubmitModal(props) {
+  const {
+    mode = "link",
+    step = 1,
+    // step 1 link
+    url = "",
+    source = null,
+    counts = null,
+    onUrlChange,
+    onCorrect,
+    // step 1 photo
+    files = [],
+    onPickPhoto,
+    onRemovePhoto,
+    // mode-switcher
+    onModeChange,
+    // step 2 photo
+    description = "",
+    city = "",
+    customerContact = "",
+    customerContactType = "phone",
+    textFiles = [],
+    onDescriptionChange,
+    onCityChange,
+    onCustomerContactChange,
+    onCustomerContactTypeChange,
+    onPickTextFile,
+    onRemoveTextFile,
+    // contact
+    channel = "telegram",
+    contact = "",
+    consent = true,
+    onChannelChange,
+    onContactChange,
+    onConsentChange,
+    // navigation
+    onBack,
+    onContinue,
+    onSubmit,
+    onClose,
+    // final
+    summary
+  } = props;
+  const total = mode === "photo" ? 4 : 3;
+  if (step === 1 && mode === "link") {
+    return /* @__PURE__ */ jsx4(
+      S3_Step1_Link,
+      {
+        url,
+        source,
+        counts,
+        total,
+        onUrlChange,
+        onModeChange,
+        onCorrect,
+        onContinue
+      }
+    );
+  }
+  if (step === 1 && mode === "photo") {
+    return /* @__PURE__ */ jsx4(
+      S3_Step1_Photo,
+      {
+        files,
+        total,
+        onPick: onPickPhoto,
+        onRemove: onRemovePhoto,
+        onModeChange,
+        onContinue
+      }
+    );
+  }
+  if (step === 2 && mode === "photo") {
+    return /* @__PURE__ */ jsx4(
+      S3_Step2_PhotoDesc,
+      {
+        description,
+        city,
+        customerContact,
+        customerContactType,
+        textFiles,
+        onDescriptionChange,
+        onCityChange,
+        onCustomerContactChange,
+        onCustomerContactTypeChange,
+        onPickTextFile,
+        onRemoveTextFile,
+        onBack,
+        onContinue
+      }
+    );
+  }
+  if (step === 2 && mode === "link" || step === 3 && mode === "photo") {
+    return /* @__PURE__ */ jsx4(
+      S3_StepContact,
+      {
+        step,
+        total,
+        channel,
+        contact,
+        consent,
+        onChannelChange,
+        onContactChange,
+        onConsentChange,
+        onBack,
+        onSubmit
+      }
+    );
+  }
+  if (step === 3 && mode === "link" || step === 4 && mode === "photo") {
+    const s = summary || {
+      url,
+      fileCount: files.length,
+      description,
+      city,
+      customerContact,
+      textFileCount: textFiles.length,
+      channel,
+      contact
+    };
+    return /* @__PURE__ */ jsx4(S3_FinalConfirm, { mode, total, summary: s, onClose });
+  }
+  return /* @__PURE__ */ jsx4(
+    S3_Step1_Link,
+    {
+      url,
+      source,
+      counts,
+      total,
+      onUrlChange,
+      onModeChange
+    }
+  );
+}
+function PhotoDrawer(props) {
+  return /* @__PURE__ */ jsx4(S3_Step1_Photo, { ...props, total: 4 });
+}
+var Confirmation = S3_FinalConfirm;
 
 // src/customer/index.tsx
 import { Fragment as Fragment4, jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
@@ -4568,7 +4975,7 @@ function CustomerBooking({ s, confirmed = false }) {
           "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F ",
           /* @__PURE__ */ jsx5(IconArrow, { size: 16 })
         ] }) }),
-        /* @__PURE__ */ jsx5(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha \xB7 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E" }),
+        /* @__PURE__ */ jsx5(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha" }),
         /* @__PURE__ */ jsxs4("div", { style: {
           marginTop: 18,
           paddingTop: 16,
@@ -8199,15 +8606,13 @@ var STATES = [
     api: "Timeout fallback \u2014 UI \u043D\u0435 \u0431\u043B\u043E\u043A\u0438\u0440\u0443\u0435\u0442 submit"
   },
   {
-    id: "ig-waitlist",
-    label: "5 \xB7 \u2139\uFE0F Instagram \u2014 waitlist + photo CTA",
-    kind: "info",
+    id: "ig-success",
+    label: "5 \xB7 \u2713 Instagram",
+    kind: "success",
     url: "instagram.com/master.nails.spb",
-    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx9("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "Instagram \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
-    waitlist: true,
-    photoCta: true,
-    note: "ADR-0009: known waitlist source. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u0435\u0442 80% IG-\u044E\u0437\u0435\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 S4 (\u0444\u043E\u0442\u043E).",
-    api: 'POST /api/feedback { type:"source_request", source_name:"instagram" }'
+    badge: /* @__PURE__ */ jsx9(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx9("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx9("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
+    note: "0.3.0: Instagram \u0442\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044B\u0447\u043D\u044B\u0439 ok-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u0417\u0430\u044F\u0432\u043A\u0430 \u0438\u0434\u0451\u0442 \u0432 \u043E\u0431\u0449\u0443\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C, \u0440\u0443\u0447\u043D\u0430\u044F \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u0440\u0435\u0448\u0438\u0442 \u0447\u0442\u043E \u0432\u044B\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0442\u044C.",
+    api: 'GET /api/preview \u2192 {source:"instagram", status:"ok"}'
   },
   {
     id: "vk-waitlist",
@@ -8352,7 +8757,7 @@ function S2_Desktop() {
   ] });
 }
 function S2_Mobile() {
-  const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-waitlist", "unknown-url"].includes(s.id));
+  const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-success", "unknown-url"].includes(s.id));
   return /* @__PURE__ */ jsxs8("div", { style: {
     width: "100%",
     minHeight: "100%",
@@ -8431,6 +8836,7 @@ export {
   Logo,
   Mono,
   OwnershipSection,
+  PHOTO_LIMITS,
   PhotoDrawer,
   PlatformCard,
   PlatformLogo,
@@ -8449,16 +8855,16 @@ export {
   S19_Settings,
   S2_Desktop,
   S2_Mobile,
+  S3_FinalConfirm,
   S3_Step1_Link,
-  S3_Step2_Contact,
-  S3_Step3_TgBot,
-  S3_SubmitModal,
-  S5_Confirmation,
-  S6_PhotoDrawer,
+  S3_Step1_Photo,
+  S3_Step2_PhotoDesc,
+  S3_StepContact,
   S7_CustomerSite,
   S7_SchemeSwatches,
   S8_LeadFormConfirm,
   S9_FeedbackPage,
+  SOURCE_LIB,
   SamosaytLanding,
   SamosaytLanding_Desktop,
   SamosaytLanding_Mobile,

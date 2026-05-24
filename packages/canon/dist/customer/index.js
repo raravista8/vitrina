@@ -1033,7 +1033,7 @@ function CustomerBooking({ s, confirmed = false }) {
           "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F ",
           /* @__PURE__ */ jsx2(IconArrow, { size: 16 })
         ] }) }),
-        /* @__PURE__ */ jsx2(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha \xB7 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E" }),
+        /* @__PURE__ */ jsx2(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha" }),
         /* @__PURE__ */ jsxs2("div", { style: {
           marginTop: 18,
           paddingTop: 16,

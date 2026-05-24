@@ -35,7 +35,7 @@
  * the public brand strictly.
  */
 
-import { Gift, Link as LinkIcon, X } from "lucide-react";
+import { Gift, Link as LinkIcon, Paperclip, X } from "lucide-react";
 import { HeroPlatformStrip } from "@samosite/canon/landing";
 
 import { useDeferredValue, useEffect, useId, useState } from "react";
@@ -44,10 +44,9 @@ import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/metrika";
 import { type PreviewData, fetchPreview } from "@/lib/preview";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
-import { PhotoDrawer } from "./PhotoDrawer";
 import { SAMOSITE_OPEN_SUBMIT } from "./SiteHeader";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
-import { SubmitModal, type SubmitModalStep } from "./SubmitModal";
+import { SubmitModal, type SubmitMode } from "./SubmitModal";
 
 // Placeholder — user batch 1 testing flagged that the original copy
 // ("ссылка на соцсеть, Яндекс.Карты или сайт") truncated mid-word on
@@ -78,7 +77,7 @@ export function Hero() {
   const inputId = useId();
   const [raw, setRaw] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [photoOpen, setPhotoOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<SubmitMode>("link");
   const [preview, setPreview] = useState<PreviewState>({ phase: "idle" });
 
   // useDeferredValue gives us debounce-by-priority for the classifier
@@ -103,37 +102,32 @@ export function Hero() {
   //   - not_url    → SubmitModal with empty source (same path)
   // The inline waitlist email-capture below the form covers the
   // "notify me when this source ships" intent separately.
-  const modalSourceUrl = detection.kind === "mvp" ? detection.canonical : "";
-  // When detection didn't settle on an MVP source, we land in the
-  // SubmitModal with an empty `sourceUrl`. Picking "photo" as the
-  // fallback type is deliberate: SubmitModal routes ONLY `telegram`
-  // submissions to the bot-invite step (Step2TgBot), and that step
-  // is meaningless without a real TG channel. "photo" skips the
-  // bot step and goes straight to confirmation — which is the
-  // right outcome for {unknown_url, not_url, empty} flows.
-  const modalSourceType: "ymaps" | "telegram" | "photo" =
-    detection.kind === "mvp" ? detection.type : "photo";
+  // canon 0.3.0: «link OR photo, never both». Hero CTA always opens the
+  // modal in `link` mode (with the typed URL prefilled). The photo-link
+  // companion under CTA opens it in `photo` mode (empty URL). User can
+  // also switch mid-flow via the Step-1 mode-switcher inside the modal.
+  const modalUrl = detection.kind === "mvp" ? detection.canonical : raw;
 
   function handlePrimaryCta() {
     // Я.Метрика goal — fires on every CTA click regardless of detection
-    // state. This is the "intent to submit" event, before any modal /
-    // photo-drawer opens. The backend success goal (`hero_submit_success`)
-    // fires later from SubmitModal when API returns 200.
+    // state. This is the "intent to submit" event.
     reachGoal("hero_submit_attempt", {
+      mode: "link",
       detection: detection.kind,
-      // Discriminated union narrowing: `mvp` has `type`, `waitlist` has
-      // `source` — flatten both into a single analytics field.
       ...(detection.kind === "mvp"
         ? { source: detection.type }
         : detection.kind === "waitlist"
           ? { source: detection.source }
           : {}),
     });
-    if (detection.kind === "waitlist") {
-      setPhotoOpen(true);
-    } else {
-      setModalOpen(true);
-    }
+    setModalMode("link");
+    setModalOpen(true);
+  }
+
+  function handlePhotoCta() {
+    reachGoal("hero_submit_attempt", { mode: "photo" });
+    setModalMode("photo");
+    setModalOpen(true);
   }
 
   // T1.4b live preview: fire when classifier settles on an MVP source.
@@ -162,13 +156,6 @@ export function Hero() {
   }, [previewType, canonical]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  /* E2E-only state — initial step override for SubmitModal. Lets the
-     intake spec mount the modal on step 2/3 directly via the
-     `window.__open_submit_modal({step})` hook. Production never sets
-     this (the hook is gated and `setE2EInitialStep` is a no-op without
-     the env). */
-  const [e2eInitialStep, setE2EInitialStep] = useState<SubmitModalStep | undefined>(undefined);
-
   /* Cross-component "open SubmitModal" trigger.
      Listens for the DOM custom event `samosite:open-submit` that
      <SiteHeader /> dispatches when its «Сделать сайт» CTA is clicked.
@@ -185,26 +172,20 @@ export function Hero() {
     return () => window.removeEventListener(SAMOSITE_OPEN_SUBMIT, onOpenSubmit);
   }, []);
 
-  /* Visual-regression debug hooks (Tier 2b-2 + per-step follow-up).
+  /* Visual-regression debug hooks (Tier 2b-2 + canon 0.3.0 rewrite).
      Exposes:
-       window.__open_submit_modal({ url?, type?, step? })
-       window.__open_photo_drawer()
+       window.__open_submit_modal({ url?, mode? })
+       window.__open_photo_drawer()              — alias for mode='photo'
        window.__close_intake_modals()
-     so `tests/visual/intake.spec.ts` can programmatically open the
-     submit-flow + photo-drawer screens without typing a URL into the
-     Hero input or clicking through the CTA. Gated by
-     `NEXT_PUBLIC_E2E === '1'` so the hooks never exist in normal prod
-     bundles. The env var is baked at build time. */
+     Gated by NEXT_PUBLIC_E2E === '1'.
+
+     canon 0.3.0: removed `step` param — initial step is derived from
+     mode + url presence. */
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_E2E !== "1" || typeof window === "undefined") return;
     type SubmitOpts = {
       url?: string;
-      type?: "ymaps" | "telegram" | "photo";
-      /* Forces SubmitModal to mount on this step instead of the
-         default `{kind:"contact"}`. Used by intake.spec.ts to
-         screenshot step 2 (tg_bot, needs an applicationId) and step 3
-         (confirmation, needs a contactType). */
-      step?: SubmitModalStep;
+      mode?: SubmitMode;
     };
     type WindowWithE2E = Window & {
       __open_submit_modal?: (opts?: SubmitOpts) => void;
@@ -214,14 +195,15 @@ export function Hero() {
     const w = window as WindowWithE2E;
     w.__open_submit_modal = (opts?: SubmitOpts) => {
       if (opts?.url !== undefined) setRaw(opts.url);
-      setE2EInitialStep(opts?.step);
+      setModalMode(opts?.mode ?? "link");
       setModalOpen(true);
     };
-    w.__open_photo_drawer = () => setPhotoOpen(true);
+    w.__open_photo_drawer = () => {
+      setModalMode("photo");
+      setModalOpen(true);
+    };
     w.__close_intake_modals = () => {
       setModalOpen(false);
-      setPhotoOpen(false);
-      setE2EInitialStep(undefined);
     };
     return () => {
       delete w.__open_submit_modal;
@@ -484,41 +466,35 @@ export function Hero() {
             detection={detection}
             rawInput={raw}
             preview={preview}
-            onOpenPhotoUpload={() => setPhotoOpen(true)}
+            onOpenPhotoUpload={handlePhotoCta}
           />
 
-          {/* Fallback link — photo path. The «закрытый TG-канал»
-              option moved to FAQ (PR-H) because it's a narrow scenario
-              that confused mainstream visitors when shown next to the
-              primary CTA. */}
-          <div className="mt-5 flex flex-col items-start gap-2.5 text-sm sm:mt-7 sm:flex-row sm:justify-center sm:gap-6">
+          {/* Photo-link companion (canon 0.3.0 §1 Hero): «или загрузите фото
+              работ, буклета или меню». One plane with CTA above — link OR
+              photo, never both. Replaces the old "📷 Загрузить фото работ"
+              button which routed to the now-deleted PhotoDrawer. */}
+          <div className="mt-5 flex justify-start text-sm sm:mt-7 sm:justify-center">
             <button
               type="button"
-              onClick={() => setPhotoOpen(true)}
-              className="inline-flex gap-2 text-left text-ink underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink"
+              onClick={handlePhotoCta}
+              className="inline-flex items-center gap-2 text-accent underline decoration-accent-soft decoration-[1.5px] underline-offset-4 hover:decoration-accent"
             >
-              📷 Загрузить фото работ, скриншот профиля или визитку
+              <Paperclip aria-hidden className="h-3.5 w-3.5" strokeWidth={1.9} />
+              или загрузите фото работ, буклета или меню
+              <span aria-hidden>→</span>
             </button>
           </div>
         </div>
 
-        {/* Benefits stack удалён в v2 — см. docs/COPY.md §2.2 + self-critique
-            §11.2: на скриншотах он визуально конкурировал с input+CTA, глаз
-            метался. Перенесено в отдельную <BigFeatures /> секцию ниже по
-            странице с новым составом (4 новых карточки, включая «Сам
-            выбирает отзывы»). */}
+        {/* Benefits stack removed in v2 — see docs/COPY.md §2.2 self-critique. */}
       </section>
       <SubmitModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        sourceUrl={modalSourceUrl}
-        sourceType={modalSourceType}
-        /* Production builds (no NEXT_PUBLIC_E2E) always pass undefined
-           because `setE2EInitialStep` is only wired up in the gated
-           useEffect above — prod state stays at the default value. */
-        e2eInitialStep={e2eInitialStep}
+        initialMode={modalMode}
+        initialUrl={modalMode === "link" ? modalUrl : ""}
+        initialDetection={detection}
       />
-      <PhotoDrawer open={photoOpen} onOpenChange={setPhotoOpen} />
     </>
   );
 }

@@ -43,8 +43,12 @@ export interface DashboardData {
 
 export interface AppRow {
   id: string;
+  // canon 0.3.0: mode discriminator + photo-branch summary fields.
+  mode: "link" | "photo";
   source_type: "ymaps" | "telegram" | "photo";
   source_url: string | null;
+  city: string | null;
+  description_preview: string | null;
   contact_type: "email" | "phone" | "telegram" | "max";
   contact_value_masked: string;
   status: "pending" | "approved" | "rejected" | "fulfilled";
@@ -54,8 +58,28 @@ export interface AppRow {
   created_at: string | null;
 }
 
+export interface ApplicationFileRef {
+  id: string;
+  index: number;
+  filename: string;
+  mime: string;
+  size_bytes: number;
+  download_url: string;
+  /** Only present on photos. */
+  photo_type?: string;
+}
+
 export interface AppDetail {
   application: AppRow;
+  /** Photo-mode extras — null on link mode. */
+  photo_details: {
+    description: string | null;
+    city: string | null;
+    customer_contact_type: "phone" | "telegram" | null;
+    customer_contact_value: string | null;
+    photos: ApplicationFileRef[];
+    text_files: ApplicationFileRef[];
+  } | null;
   user: {
     id: string;
     contact_type: string;

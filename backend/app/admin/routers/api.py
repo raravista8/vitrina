@@ -42,10 +42,12 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Annotated, Any, Literal
 
 from cryptography.fernet import MultiFernet
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -54,6 +56,7 @@ from app.api.dependencies import (
     admin_login_rate_limiter,
     get_admin_session_store,
     get_client_ip,
+    get_lead_fernet,
     get_login_challenge_store,
     get_session,
     require_admin,
@@ -71,9 +74,12 @@ from app.core.auth.sessions import (
 )
 from app.core.leads.encryption import LeadDecryptionError
 from app.core.leads.encryption import decrypt as decrypt_lead_field
+from app.core.leads.encryption import decrypt as fernet_decrypt
 from app.infrastructure.postgres.models import (
     AdminCredentials,
     Application,
+    ApplicationPhoto,
+    ApplicationTextFile,
     Consent,
     Feedback,
     Lead,
@@ -385,15 +391,23 @@ async def admin_api_app_detail(
     application_id: uuid.UUID,
     _admin: Annotated[AdminSession, Depends(require_admin)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    fernet: Annotated[MultiFernet, Depends(get_lead_fernet)],
 ) -> dict[str, Any]:
+    """App Detail — full payload including photos + text-files + decrypted
+    customer_contact for photo-mode apps.
+
+    canon 0.3.0: per the brief §1 «customer_contact decryption policy»,
+    `customer_contact_value_enc` is decrypted inline (admin session +
+    TOTP at login is sufficient — no per-view TOTP re-prompt). The value
+    IS PII but is also rendered publicly on the customer-site CTA so it
+    has weaker privacy expectations than leads.
+    """
     row = (
         await session.execute(select(Application).where(Application.id == application_id))
     ).scalar_one_or_none()
     if row is None:
         raise HTTPException(status_code=404, detail="application_not_found")
 
-    # Resolve user + consent for context. Both are SET-NULL on user delete
-    # per SECURITY.md §9.3, so we tolerate `None` here.
     user = (
         (await session.execute(select(User).where(User.id == row.user_id))).scalar_one_or_none()
         if row.user_id
@@ -407,12 +421,155 @@ async def admin_api_app_detail(
         else None
     )
 
+    # Photo-mode extras: load photo manifest + text-file manifest + decrypt
+    # customer_contact_value.
+    photos: list[dict[str, Any]] = []
+    text_files: list[dict[str, Any]] = []
+    customer_contact_value: str | None = None
+    if row.mode == "photo":
+        photo_rows = (
+            (
+                await session.execute(
+                    select(ApplicationPhoto)
+                    .where(ApplicationPhoto.application_id == row.id)
+                    .order_by(ApplicationPhoto.index)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        photos = [
+            {
+                "id": str(p.id),
+                "index": p.index,
+                "filename": p.filename,
+                "mime": p.mime,
+                "size_bytes": p.size_bytes,
+                "photo_type": p.photo_type,
+                # Download URL via admin file-proxy endpoint (defined below).
+                "download_url": f"/admin/api/apps/{row.id}/photos/{p.id}",
+            }
+            for p in photo_rows
+        ]
+
+        text_rows = (
+            (
+                await session.execute(
+                    select(ApplicationTextFile)
+                    .where(ApplicationTextFile.application_id == row.id)
+                    .order_by(ApplicationTextFile.index)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        text_files = [
+            {
+                "id": str(t.id),
+                "index": t.index,
+                "filename": t.filename,
+                "mime": t.mime,
+                "size_bytes": t.size_bytes,
+                "download_url": f"/admin/api/apps/{row.id}/text-files/{t.id}",
+            }
+            for t in text_rows
+        ]
+
+        if row.customer_contact_value_enc:
+            try:
+                customer_contact_value = fernet_decrypt(
+                    row.customer_contact_value_enc,
+                    fernet=fernet,
+                )
+            except LeadDecryptionError:
+                customer_contact_value = "[decryption_failed]"
+
     return _envelope_ok(
         {
             "application": _app_row(row),
+            "photo_details": (
+                {
+                    "description": row.description,
+                    "city": row.city,
+                    "customer_contact_type": row.customer_contact_type,
+                    "customer_contact_value": customer_contact_value,
+                    "photos": photos,
+                    "text_files": text_files,
+                }
+                if row.mode == "photo"
+                else None
+            ),
             "user": _user_row(user) if user else None,
             "consent": _consent_row(consent) if consent else None,
         }
+    )
+
+
+# ---------------------------------------------------------------------------
+# Admin file-proxy — stream photos + text files from UPLOADS_DIR to admin UI
+# ---------------------------------------------------------------------------
+
+
+@router.get("/apps/{application_id}/photos/{photo_id}", status_code=200)
+async def admin_api_app_photo(
+    application_id: uuid.UUID,
+    photo_id: uuid.UUID,
+    _admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> FileResponse:
+    """Stream a photo file from UPLOADS_DIR to the admin UI.
+
+    Admin-session-gated. Returns 404 for unknown IDs without revealing
+    whether they exist on disk vs in DB (consistent 404 surface).
+    """
+    photo = (
+        await session.execute(
+            select(ApplicationPhoto).where(
+                ApplicationPhoto.id == photo_id,
+                ApplicationPhoto.application_id == application_id,
+            )
+        )
+    ).scalar_one_or_none()
+    if photo is None:
+        raise HTTPException(status_code=404, detail="photo_not_found")
+    path = Path(photo.disk_path)
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404, detail="photo_disk_missing")
+    return FileResponse(
+        path=str(path),
+        media_type=photo.mime,
+        filename=photo.filename,
+    )
+
+
+@router.get(
+    "/apps/{application_id}/text-files/{text_file_id}",
+    status_code=200,
+)
+async def admin_api_app_text_file(
+    application_id: uuid.UUID,
+    text_file_id: uuid.UUID,
+    _admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> FileResponse:
+    """Stream a text file (PDF / DOCX / TXT / RTF) from UPLOADS_DIR."""
+    tf = (
+        await session.execute(
+            select(ApplicationTextFile).where(
+                ApplicationTextFile.id == text_file_id,
+                ApplicationTextFile.application_id == application_id,
+            )
+        )
+    ).scalar_one_or_none()
+    if tf is None:
+        raise HTTPException(status_code=404, detail="text_file_not_found")
+    path = Path(tf.disk_path)
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404, detail="text_file_disk_missing")
+    return FileResponse(
+        path=str(path),
+        media_type=tf.mime,
+        filename=tf.filename,
     )
 
 
@@ -927,10 +1084,21 @@ async def admin_api_settings(
 
 
 def _app_row(row: Application) -> dict[str, Any]:
+    """Application row for /apps list — mode + base fields. Photo-branch
+    details (description, photos, text files) only loaded in /apps/{id}.
+
+    canon 0.3.0: `mode` discriminates link vs photo branches.
+    """
     return {
         "id": str(row.id),
+        "mode": row.mode,
         "source_type": row.source_type,
         "source_url": row.source_url,
+        # Photo-branch summary fields (NULL on link mode)
+        "city": row.city,
+        "description_preview": (row.description[:140] + "…")
+        if row.description and len(row.description) > 140
+        else row.description,
         "contact_type": row.contact_type,
         "contact_value_masked": _mask_contact_value(row.contact_value, row.contact_type),
         "status": row.status,

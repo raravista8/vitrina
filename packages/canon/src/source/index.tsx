@@ -84,15 +84,13 @@ const STATES = [
     api: 'Timeout fallback — UI не блокирует submit',
   },
   {
-    id: 'ig-waitlist',
-    label: '5 · ℹ️ Instagram — waitlist + photo CTA',
-    kind: 'info',
+    id: 'ig-success',
+    label: '5 · ✓ Instagram',
+    kind: 'success',
     url: 'instagram.com/master.nails.spb',
-    badge: <StateBadge kind="info" icon={<span style={{fontSize: 14}}>ℹ️</span>}>Instagram скоро будет — оставьте email</StateBadge>,
-    waitlist: true,
-    photoCta: true,
-    note: 'ADR-0009: known waitlist source. Параллельная CTA закрывает 80% IG-юзеров через S4 (фото).',
-    api: 'POST /api/feedback { type:"source_request", source_name:"instagram" }',
+    badge: <StateBadge kind="success" icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>}>Instagram</StateBadge>,
+    note: '0.3.0: Instagram теперь обычный ok-источник. Заявка идёт в общую очередь, ручная обработка решит что вытаскивать.',
+    api: 'GET /api/preview → {source:"instagram", status:"ok"}',
   },
   {
     id: 'vk-waitlist',
@@ -266,7 +264,7 @@ function S2_Desktop() {
 
 function S2_Mobile() {
   // Mobile shows the same states stacked, badge wraps under input
-  const mobile = STATES.filter(s => ['loading','tg-success','ig-waitlist','unknown-url'].includes(s.id));
+  const mobile = STATES.filter(s => ['loading','tg-success','ig-success','unknown-url'].includes(s.id));
   return (
     <div style={{
       width: '100%', minHeight: '100%', background: VT.bg, color: VT.ink,

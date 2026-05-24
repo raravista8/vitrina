@@ -937,6 +937,25 @@ function HeroBlock({ mobile }) {
         BRAND.name
       ] })
     ] }),
+    /* @__PURE__ */ jsx2("div", { style: {
+      marginTop: mobile ? 12 : 14,
+      textAlign: mobile ? "left" : "center"
+    }, children: /* @__PURE__ */ jsxs2("a", { href: "#hero-photo", "data-open-submit-modal": "photo", style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      color: VT.accent,
+      fontSize: mobile ? 14.5 : 15,
+      textDecoration: "underline",
+      textUnderlineOffset: 4,
+      textDecorationColor: VT.accentSoft,
+      textDecorationThickness: "1.5px",
+      fontWeight: 500
+    }, children: [
+      /* @__PURE__ */ jsx2("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx2("path", { d: "M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" }) }),
+      "\u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442, \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E",
+      /* @__PURE__ */ jsx2("span", { "aria-hidden": "true", children: "\u2192" })
+    ] }) }),
     /* @__PURE__ */ jsx2(HeroPlatformStrip, { mobile }),
     /* @__PURE__ */ jsx2("div", { style: {
       marginTop: mobile ? 16 : 22,

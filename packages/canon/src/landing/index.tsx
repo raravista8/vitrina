@@ -778,6 +778,27 @@ function HeroBlock({ mobile }) {
         </Btn>
       </div>
 
+      {/* Photo-upload companion link — opens SubmitModal on Step 1 mode='photo'.
+          0.3.0: link OR photo flow — never both (см. canon/intake CHANGELOG). */}
+      <div style={{
+        marginTop: mobile ? 12 : 14,
+        textAlign: mobile ? 'left' : 'center',
+      }}>
+        <a href="#hero-photo" data-open-submit-modal="photo" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          color: VT.accent, fontSize: mobile ? 14.5 : 15,
+          textDecoration: 'underline', textUnderlineOffset: 4,
+          textDecorationColor: VT.accentSoft, textDecorationThickness: '1.5px',
+          fontWeight: 500,
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+          </svg>
+          или загрузите фото работ, буклета или меню
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
       {/* Из чего мы можем сделать сайт — вынесено в <HeroPlatformStrip /> */}
       <HeroPlatformStrip mobile={mobile} />
 

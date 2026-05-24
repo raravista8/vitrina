@@ -71,14 +71,15 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     expect(screen.queryByText(/^Сам находится в поиске$/)).toBeNull();
   });
 
-  it("ships fallback link for photo (closed-TG moved to FAQ in PR-G)", () => {
+  it("ships photo-link companion (canon 0.3.0) under the CTA", () => {
     render(<Hero />);
+    // canon 0.3.0 §1 Hero: «или загрузите фото работ, буклета или меню»
+    // replaces the old «📷 Загрузить фото работ» button. Same plane as
+    // the CTA — link OR photo, never both.
     expect(
-      screen.getByText(/Загрузить фото работ, скриншот профиля или\sвизитку/i),
+      screen.getByRole("button", { name: /или загрузите фото работ, буклета или меню/i }),
     ).toBeInTheDocument();
-    // «Закрытый TG-канал — загрузить экспорт» удалён из Hero в PR-G:
-    // user testing flagged that это редкий сценарий который путал
-    // mainstream-юзеров на самом видном месте. Переехал в FAQ.
+    // The «Закрытый TG-канал» link is gone (PR-G) and stays gone.
     expect(screen.queryByText(/Закрытый TG-канал/i)).toBeNull();
   });
 
@@ -154,16 +155,22 @@ describe("Hero — interaction", () => {
     expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).not.toBeDisabled();
   });
 
-  it("clicking the photo-upload fallback opens the PhotoDrawer (PR-B #6)", () => {
+  it("clicking the photo-link opens SubmitModal in photo mode (canon 0.3.0)", () => {
     render(<Hero />);
-    // Drawer is closed initially — the heading lives inside it.
-    expect(screen.queryByRole("heading", { name: /Загрузите фото/i })).not.toBeInTheDocument();
+    // SubmitModal closed initially — canon's S3_Step1_Photo heading
+    // «Загрузите фото вашего дела» only appears after the trigger.
+    expect(
+      screen.queryByRole("heading", { name: /Загрузите фото вашего дела/i }),
+    ).not.toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Загрузить фото работ, скриншот профиля или\sвизитку/i }),
+      screen.getByRole("button", { name: /или загрузите фото работ, буклета или меню/i }),
     );
 
-    expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
+    // Canon SubmitModal opens at Step 1 with photo-mode heading.
+    expect(
+      screen.getByRole("heading", { name: /Загрузите фото вашего дела/i }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -218,35 +225,20 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
   });
 
-  it("main CTA with a waitlist URL opens the PhotoDrawer, not the SubmitModal", () => {
-    // B1 root-cause fix: previously, clicking «Сделать Самосайт»
-    // with an IG/VK/2GIS URL pasted opened the modal with a bogus
-    // sourceType="telegram" fallback, mislabelling the source in
-    // step 2. Now it opens the photo flow — symmetric with the
-    // parallel «создайте из фото сейчас» CTA.
-    render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
-      target: { value: "https://www.instagram.com/marusya" },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
-
-    // PhotoDrawer is open — its heading is the unique marker.
-    expect(screen.getByRole("heading", { name: /Загрузите фото/i })).toBeInTheDocument();
-    // SubmitModal is NOT open — no «Куда отправлять заявки» heading.
-    expect(screen.queryByRole("heading", { name: /Куда вам писать/i })).not.toBeInTheDocument();
-  });
-
-  it("main CTA with an MVP URL opens the SubmitModal (no regression)", () => {
+  it("main CTA always opens SubmitModal in link mode (canon 0.3.0)", () => {
+    // canon 0.3.0: «link OR photo, never both». Main CTA = link path
+    // regardless of what's pasted (waitlist URLs surface the inline
+    // panel in Hero, not a special modal-routing decision). User can
+    // switch to photo mode inside the modal via the pill-tabs.
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
 
+    // canon's SubmitModal opens at Step 2 (contact) because URL is
+    // present — heading is «Куда вам писать?» (S3_StepContact).
     expect(screen.getByRole("heading", { name: /Куда вам писать/i })).toBeInTheDocument();
-    // And critically — no green source banner inside the modal (U1).
-    expect(screen.queryByText(/Источник:/)).not.toBeInTheDocument();
   });
 
   it("waitlist panel uses warn (amber) styling, not info (blue)", () => {
@@ -266,70 +258,15 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     expect(styledParent!.className).not.toMatch(/bg-info-soft/);
   });
 
-  it("modal step 2 shows explicit channel radio (4 options) — no auto-detect (v2)", () => {
-    // PR-D (E12) — explicit radio replaces v1's single auto-detect input.
-    // Tester feedback from batch 2 (B5): «машинально начала вводить email,
-    // не понимая что система принимает все 4 канала». Radio = явный выбор.
+  it("contact step inside canon SubmitModal is reachable via main CTA (canon 0.3.0)", () => {
+    // Internal channel-radio layout is canon's responsibility — we only
+    // assert that we route to the contact step correctly. Detailed step
+    // markup lives in canon's S3_StepContact and is covered there.
     render(<Hero />);
     fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
       target: { value: "https://t.me/barbershop_samara" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
-
-    // All 4 channels rendered as radio
-    const radios = screen.getAllByRole("radio");
-    expect(radios).toHaveLength(4);
-    expect(radios.map((r) => (r as HTMLInputElement).value).sort()).toEqual([
-      "email",
-      "max",
-      "phone",
-      "telegram",
-    ]);
-    // Default = email (most universal)
-    const emailRadio = radios.find((r) => (r as HTMLInputElement).value === "email")!;
-    expect((emailRadio as HTMLInputElement).checked).toBe(true);
-    // Input под выбранный канал (email by default)
-    expect(screen.getByPlaceholderText("you@example.ru")).toBeInTheDocument();
-  });
-
-  it("switching to phone radio swaps placeholder and enables phone autoformat (v2)", () => {
-    // Прогрессивное phone-форматирование теперь живёт ТОЛЬКО когда
-    // channel=phone (для других каналов оставляем raw). Server делает
-    // canonical E.164 normalisation через phonenumbers.
-    render(<Hero />);
-    fireEvent.change(screen.getByPlaceholderText(/ссылка на ваш профиль/i), {
-      target: { value: "https://t.me/barbershop_samara" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
-
-    // Click phone radio
-    const phoneRadio = screen
-      .getAllByRole("radio")
-      .find((r) => (r as HTMLInputElement).value === "phone")!;
-    fireEvent.click(phoneRadio);
-    const phoneInput = screen.getByPlaceholderText("+7 ...") as HTMLInputElement;
-    expect(phoneInput).toBeInTheDocument();
-
-    // Phone format kicks in
-    fireEvent.change(phoneInput, { target: { value: "9167388689" } });
-    expect(phoneInput.value).toBe("+7 (916) 738-86-89");
-  });
-
-  it("«← Назад» on SubmitModal step 1 closes the modal and preserves the Hero input", () => {
-    // B2 root-cause fix: testers reported "никак не могу вернуться на
-    // шаг 1" — the ✕ in the corner wasn't recognised as a back path.
-    // The labelled chevron makes it obvious and survives Hero state.
-    render(<Hero />);
-    const input = screen.getByPlaceholderText(/ссылка на ваш профиль/i) as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "https://t.me/barbershop_samara" } });
-    fireEvent.click(screen.getByRole("button", { name: /Сделать Самосайт/ }));
-
-    // Modal is open with the back button labelled.
-    const backBtn = screen.getByRole("button", { name: /^Назад$/ });
-    fireEvent.click(backBtn);
-
-    // Modal gone, Hero input preserved.
-    expect(screen.queryByRole("heading", { name: /Куда вам писать/i })).not.toBeInTheDocument();
-    expect(input.value).toBe("https://t.me/barbershop_samara");
+    expect(screen.getByRole("heading", { name: /Куда вам писать/i })).toBeInTheDocument();
   });
 });
