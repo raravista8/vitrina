@@ -6,6 +6,22 @@ import { Mono, Card, Btn, Input, IconLink, IconArrow, BrandMark } from '../primi
 
 
 // ─────────────────────────────────────────────────────────────
+// Section horizontal padding — single source of truth.
+//
+// 0.2.6 — every top-level section / hero / footer self-pads via this helper.
+// Same philosophy as <StickyHeader> in 0.2.4: don't rely on a parent wrapper
+// to provide horizontal padding, because in prod the sections are composed
+// outside <SamosaytLanding> and the wrapper's padding doesn't apply — making
+// every section flush against the viewport on iPhone-class screens.
+//
+// Mobile pad = 20, desktop pad = 80 — matches the old SamosaytLanding wrapper.
+function sectionPad(mobile) {
+  const v = mobile ? 20 : 80;
+  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' as const };
+}
+
+
+// ─────────────────────────────────────────────────────────────
 // Reusable: glyph illustrations for "how it works"
 // Hand-tuned simple geometric SVG — paper/scissor vibe, no clip-art.
 
@@ -678,35 +694,45 @@ function HeroPlatformStrip({ mobile }) {
 }
 
 function HeroBlock({ mobile }) {
+  // 0.2.6 — self-padded outer wrapper + H1 overflow fix on mobile.
   return (
+    <div style={{ ...sectionPad(mobile), width: '100%', paddingTop: mobile ? 18 : 28, position: 'relative' }}>
     <div style={{
       position: 'relative', zIndex: 1,
       maxWidth: mobile ? '100%' : 1100,
       margin: mobile ? '28px 0 0' : '52px auto 0',
       textAlign: mobile ? 'left' : 'center',
     }}>
-      {/* H1 — три «сам», без eyebrow, без точки */}
+      {/* H1 — три «сам», без eyebrow, без точки.
+          0.2.6: on mobile the accent phrases use display:inline (not inline-block).
+          inline-block made each whole phrase an atomic line-breaking unit, so
+          «и сам приведёт клиентов» overflowed on iPhone-class viewports (~390px).
+          With inline each word can wrap independently. Underline highlight on the
+          first accent is desktop-only — inline has no containing block for the
+          absolute child. */}
       <h1 style={{
         fontSize: mobile ? 38 : 88,
         lineHeight: mobile ? 1.08 : 1.02,
         fontWeight: 700,
         letterSpacing: '-0.035em',
         margin: 0,
-        textWrap: 'balance',
+        textWrap: mobile ? 'pretty' : 'balance',
       }}>
         Сайт, который{mobile ? ' ' : <br />}
-        <span style={{ position: 'relative', display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>
+        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
           сам себя соберёт,
-          <span aria-hidden="true" style={{
-            position: 'absolute', left: 4, right: 14, bottom: mobile ? 3 : 8,
-            height: mobile ? 8 : 14, background: VT.accentSoft, opacity: 0.7,
-            zIndex: -1, borderRadius: 3,
-          }} />
+          {!mobile && (
+            <span aria-hidden="true" style={{
+              position: 'absolute', left: 4, right: 14, bottom: 8,
+              height: 14, background: VT.accentSoft, opacity: 0.7,
+              zIndex: -1, borderRadius: 3,
+            }} />
+          )}
         </span>
         {mobile ? ' ' : <br />}
-        <span style={{ display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>сам обновит</span>
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>сам обновит</span>
         {' '}
-        <span style={{ display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>и сам приведёт клиентов</span>
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>и сам приведёт клиентов</span>
       </h1>
 
       <p style={{
@@ -789,6 +815,7 @@ function HeroBlock({ mobile }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -923,7 +950,7 @@ function ExamplesSection({ mobile }) {
   );
 
   return (
-    <section style={{ marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>через несколько минут</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1190,7 +1217,7 @@ function StorySection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>От вас — одно действие,<br/>всё остальное {BRAND.name} сделает сам</SectionTitle>
       </div>
@@ -1225,7 +1252,7 @@ function PlatformsSection({ mobile }) {
   const [featured, ...rest] = PLATFORMS_OK;
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="sources">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="sources">
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Что подойдёт<br/>для создания {BRAND.name}а</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1453,7 +1480,7 @@ function BigFeaturesSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 800, margin: '0 auto' }}>
         <SectionTitle mobile={mobile}>Восемь «сам» —<br/>поэтому он {BRAND.name}</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1662,8 +1689,9 @@ function AnalyticsSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 64 : 110}px auto 0`,
     }}>
       <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
@@ -1810,8 +1838,9 @@ function OwnershipSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 56 : 96, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 56 : 96}px auto 0`,
     }}>
       <div style={{
@@ -2016,7 +2045,7 @@ function SocialProofSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="proof">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="proof">
       <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 820, margin: '0 auto' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -2093,7 +2122,7 @@ function PricingSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Один тариф —<br/>без сюрпризов</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -2289,7 +2318,7 @@ function FaqSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="faq">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="faq">
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Что чаще всего<br/>спрашивают</SectionTitle>
       </div>
@@ -2319,9 +2348,10 @@ function FreeMonthSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 64 : 110,
       position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 64 : 110}px auto 0`,
     }} id="cta">
       <div style={{
@@ -2613,11 +2643,9 @@ function SamosaytLanding({ mobile = false }) {
 
       <StickyHeader mobile={mobile} padX={padX} />
 
-      <div style={{
-        paddingLeft: padX, paddingRight: padX,
-        paddingTop: mobile ? 18 : 28,
-        position: 'relative',
-      }}>
+      {/* 0.2.6 — no more padX wrapper around content. Each section / hero /
+          footer self-pads via sectionPad(mobile) so the layout works the same
+          when sections are composed individually in prod. */}
       <div id="hero" />
       <HeroBlock mobile={mobile} />
       <div id="examples" />
@@ -2633,8 +2661,9 @@ function SamosaytLanding({ mobile = false }) {
       <FaqSection mobile={mobile} />
       <FreeMonthSection mobile={mobile} />
 
-      {/* slim footer */}
+      {/* slim footer — self-padded */}
       <div style={{
+        ...sectionPad(mobile),
         marginTop: mobile ? 40 : 64,
         paddingTop: mobile ? 22 : 28,
         borderTop: `1px solid ${VT.line}`,
@@ -2653,7 +2682,6 @@ function SamosaytLanding({ mobile = false }) {
           <a style={{ color: 'inherit' }}>Оферта</a>
           <a style={{ color: 'inherit' }}>Обратная связь</a>
         </div>
-      </div>
       </div>
     </div>
     </>

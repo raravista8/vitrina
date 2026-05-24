@@ -1,5 +1,73 @@
 # Changelog
 
+## 0.2.6 — Section side-paddings + hero H1 overflow (mobile hotfix) · 2026-05-24
+
+Hotfix. Two related mobile-only defects reported from prod on iPhone 17 Pro. **No API changes.** Drop-in over 0.2.5.
+
+### What was broken on prod
+
+Two symptoms, one root cause.
+
+1. **Every section below the hero rendered flush against the viewport edges.** The «Что чаще всего спрашивают», «Один тариф — без сюрпризов», «Восемь "сам"», story steps, platforms list, examples carousel — all of them had their cards touching x=0 / x=W. Only the sticky header and the hero itself were padded.
+2. **The hero H1 «и сам приведёт клиентов» overflowed the right edge** — the last word was cut off at the viewport boundary (`...и сам приведёт клиен` visible, the rest pushed off-canvas).
+
+Reproduced verbatim from prod screenshots taken on iPhone 17 Pro Safari at samosite.online.
+
+### Root cause
+
+Same architectural mistake in two places.
+
+**Symptom 1 (section paddings):** in 0.2.5 only `<SamosaytLanding>` applied horizontal padding — via an outer `<div paddingLeft={padX} paddingRight={padX}>` wrapper around all body sections. When prod composed sections individually outside `<SamosaytLanding>` (which it does — the app shell builds its own layout and imports `<HeroBlock />`, `<ExamplesSection />`, etc. directly from `@samosite/canon/landing`), the wrapper wasn't present and each section rendered full-bleed. This is the exact same class of bug as 0.2.4 fixed for `<StickyHeader>` — but 0.2.4 only fixed the header, not the rest.
+
+**Symptom 2 (hero H1 overflow):** the accent phrases in the H1 («сам себя соберёт,», «сам обновит», «и сам приведёт клиентов») were `display: 'inline-block'` with `white-space: 'normal'`. inline-block makes each whole phrase an atomic line-breaking unit — the browser will try to fit the entire phrase on one line, and only wrap **the whole phrase** to the next line if it doesn't fit. Individual words inside an inline-block can wrap, but in practice with `text-wrap: balance` on the parent and only one phrase per inline-block, the browser sized each phrase at `max-content` and the longest one (~340px at 38px font + letter-spacing) didn't fit in a 350px content area on iPhone-class viewports.
+
+### Fix
+
+**Symptom 1 — every section/hero/footer is now self-padded.** Introduced one helper at module scope:
+
+```tsx
+function sectionPad(mobile) {
+  const v = mobile ? 20 : 80;
+  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' };
+}
+```
+
+Spread into every top-level element that used to depend on the parent wrapper:
+
+- `<HeroBlock>` — outer wrapper now self-pads + applies the old wrapper's `paddingTop`
+- `<ExamplesSection>`, `<StorySection>`, `<PlatformsSection>`, `<BigFeaturesSection>`, `<SocialProofSection>`, `<PricingSection>`, `<FaqSection>` — outer `<section>` self-pads
+- `<OwnershipSection>`, `<AnalyticsSection>`, `<FreeMonthSection>` — outer `<section>` self-pads; their desktop `maxWidth` bumped from `1200` → `1360` to preserve the previous content width (the old `maxWidth: 1200` lived inside the 80-padded wrapper, so the effective content width was 1200; now with section padding on a 1200-bound element, content shrinks to 1040, so we widen by 2 × 80 = 160 to compensate)
+- Footer inside `<SamosaytLanding>` — self-pads
+
+Inside `<SamosaytLanding>` the outer `<div paddingLeft={padX} paddingRight={padX}>` wrapper around content is now removed. `<SamosaytLanding>`'s visual output is unchanged — sections produce the same layout because the padding moved into them.
+
+**Symptom 2 — H1 spans use `display: inline` on mobile.** On mobile each accent phrase is now an inline span (not inline-block), so each word breaks independently and «и сам приведёт клиентов» wraps cleanly inside the 350px content area. The yellow underline highlight on «сам себя соберёт,» is desktop-only — inline has no containing block for the absolute child anyway. `textWrap` switches from `balance` to `pretty` on mobile (balance fought the new inline behaviour on narrow viewports).
+
+### Visual diff
+
+| Element | 0.2.5 (broken outside `<SamosaytLanding>`) | 0.2.6 |
+|---|---|---|
+| All non-header sections on mobile prod | content at x=0..W, no side gutter | content padded 20 each side |
+| Hero H1 «и сам приведёт клиентов» on iPhone 17 Pro | last word cut off at right edge | wraps cleanly inside viewport |
+| Desktop `<SamosaytLanding>` full composition | (unchanged) | identical to 0.2.5 |
+| Desktop dark CTA block max-width | 1200 (inside 80px wrapper) | 1360 (with own 80px pad → effective 1200, same) |
+
+### Migration
+
+None. `npm i @samosite/canon@0.2.6` and rebuild.
+
+If your prod app composes sections individually (which is exactly the case that motivated this fix), you can now drop any of the local horizontal-padding overrides you may have added as a workaround in 0.2.5 — the sections handle their own padding.
+
+If your prod app uses `<SamosaytLanding>` as a whole, nothing changes visually.
+
+### Back-compat
+
+- All component signatures unchanged. Zero new props, zero removed props.
+- `padX` prop on `<StickyHeader>` still works the same way (header was already self-padded in 0.2.4).
+- Footer is still slim and lives inside `<SamosaytLanding>`. Section list and order in `<SamosaytLanding>` is unchanged.
+
+---
+
 ## 0.2.5 — Hero→Examples spacing + removed duplicate free-month microcopy · 2026-05-24
 
 Visual polish release. Two targeted copy/spacing fixes reported from prod review. No API changes. Drop-in over 0.2.4.
