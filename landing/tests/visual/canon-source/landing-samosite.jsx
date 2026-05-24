@@ -917,7 +917,7 @@ function ExamplesSection({ mobile }) {
   );
 
   return (
-    <section style={{ marginTop: mobile ? 60 : 96, position: 'relative', zIndex: 1 }}>
+    <section style={{ marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>через несколько минут</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -2387,13 +2387,8 @@ function FreeMonthSection({ mobile }) {
             </Btn>
           </div>
 
-          {/* Microcopy */}
-          <div style={{
-            marginTop: 12,
-            fontSize: mobile ? 13 : 14, color: 'oklch(0.82 0.014 60)', textWrap: 'pretty',
-          }}>
-            Первый месяц — бесплатно. {BRAND.name} сам напомнит, когда подойдёт срок.
-          </div>
+          {/* Microcopy removed per canon 0.2.5 — duplicate of Hero pill /
+              Pricing chip / Pricing bullets. */}
 
           {/* Alt path */}
           <div style={{

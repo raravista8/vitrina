@@ -52,11 +52,17 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // brand only inside copy strings (CTA «Сделать Самосайт», microcopy
     // «Самосайт сам напомнит»). Assertion lives in SiteHeader.test.tsx.
 
-    // CTA + microcopy.
+    // CTA + free-month risk-reversal pill. The dedicated «Самосайт сам
+    // напомнит» microcopy line under the badge was removed per canon
+    // 0.2.5 (duplicated three other surfaces). The free-month pill
+    // remains and carries the same promise via «Первый месяц —
+    // бесплатно» + «далее 990 ₽/мес».
     expect(screen.getByRole("button", { name: /Сделать Самосайт/ })).toBeInTheDocument();
-    expect(
-      screen.getByText(/Первый месяц — бесплатно\. Самосайт сам напомнит/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Первый месяц — бесплатно/i)).toBeInTheDocument();
+    expect(screen.getByText(/990 ₽\/мес/)).toBeInTheDocument();
+    // Reassurance microcopy «Самосайт сам напомнит» MUST be gone from
+    // Hero (canon 0.2.5 fix). Guards against accidental re-introduction.
+    expect(screen.queryByText(/Самосайт сам напомнит/i)).toBeNull();
 
     // Benefits stack удалён из Hero в v2 — теперь живёт в <BigFeatures />
     // секцией ниже. Здесь убеждаемся что в Hero его нет.

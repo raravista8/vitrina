@@ -1,5 +1,73 @@
 # Changelog
 
+## 0.2.5 — Hero→Examples spacing + removed duplicate free-month microcopy · 2026-05-24
+
+Visual polish release. Two targeted copy/spacing fixes reported from prod review. No API changes. Drop-in over 0.2.4.
+
+### 1. Reduced gap between Hero and Examples section
+
+**File:** `src/landing/index.tsx` · `<ExamplesSection>` opening `<section>` tag.
+
+```diff
+- <section style={{ marginTop: mobile ? 60 : 96, position: 'relative', zIndex: 1 }}>
++ <section style={{ marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
+```
+
+**Why:** prod review showed ~400px of whitespace between the Hero «Первый месяц — бесплатно» pill and the «Вот какой сайт вы получите...» heading. The Examples section is a direct continuation of the Hero promise («вот что вы получите») rather than a standalone section break, so it should sit closer.
+
+**Impact:**
+- Desktop: 96px → **48px** (–50%)
+- Mobile: 60px → **32px** (–47%)
+
+Other inter-section gaps (`StorySection`, `PlatformsSection`, etc.) are intentionally **unchanged** at 96–110px — they remain proper section breaks. Only this specific Hero→Examples seam was tightened.
+
+### 2. Removed duplicate free-month microcopy from `<FreeMonthSection>`
+
+**File:** `src/landing/index.tsx` · `<FreeMonthSection>` (final dark CTA block).
+
+Removed the microcopy line that appeared under the main CTA on the dark block:
+
+```diff
+  <div style={{ marginTop: mobile ? 24 : 32, display: 'inline-flex' }}>
+    <Btn iconRight={<IconArrow />} ...>Сделать {BRAND.name}</Btn>
+  </div>
+
+- {/* Microcopy */}
+- <div style={{
+-   marginTop: 12,
+-   fontSize: mobile ? 13 : 14, color: 'oklch(0.82 0.014 60)', textWrap: 'pretty',
+- }}>
+-   Первый месяц — бесплатно. {BRAND.name} сам напомнит, когда подойдёт срок.
+- </div>
+
+  {/* Alt path */}
+```
+
+**Why:** the same «Первый месяц — бесплатно» promise is already communicated three other times on the page:
+1. The Hero pill with gift icon and «далее 990 ₽/мес»
+2. The Pricing card chip with check icon
+3. The Pricing card bullet list
+
+A fourth restating on the final dark CTA was redundant and added visual noise to a block that's supposed to be a clean, focused conversion moment.
+
+**If prod has another «...напомнит, если решите продолжить» variant** rendered elsewhere on the page (e.g. as a `🛡` shield-icon line under the Hero pill) — that copy does not exist in canon. It's a prod-only override; remove it on the prod side or open an issue.
+
+### Migration
+
+None. `npm i @samosite/canon@0.2.5` and rebuild. Both changes are pure visual/copy diffs inside the existing `<Landing />` composition — no prop signatures changed, no exports added or removed.
+
+### Visual diff summary
+
+| Block | Before (0.2.4) | After (0.2.5) |
+|---|---|---|
+| Hero → Examples gap (desktop) | 96px | **48px** |
+| Hero → Examples gap (mobile) | 60px | **32px** |
+| FreeMonthSection microcopy under CTA | shown | **removed** |
+| Other section gaps | 96–110px | unchanged |
+| StickyHeader, all other components | — | unchanged |
+
+---
+
 ## 0.2.4 — StickyHeader self-contained + nav hovers (hotfix) · 2026-05-24
 
 Hotfix. `<StickyHeader>` no longer relies on parent padding to render correctly, and nav links now have hover states. **No API changes.** Drop-in over 0.2.3.
