@@ -407,6 +407,26 @@ export function Hero() {
             {CTA_MICROCOPY}
           </div>
 
+          {/* Photo-link companion — canon 0.5.0 has this INSIDE its
+              HeroBlock (line 793-810), so it must be inside
+              `data-section-body="hero"` for the visual-regression
+              screenshot to match the canon baseline (was outside in
+              v2.1.3, missed when canon 0.3.0 moved it inside — caught
+              by hero-1440 height-shortfall on PR #142). The
+              SourceDetectionBadge stays outside (prod-only API
+              widget, no canon equivalent). */}
+          <div className="mt-3 flex justify-start text-sm sm:mt-[14px] sm:justify-center">
+            <button
+              type="button"
+              onClick={handlePhotoCta}
+              className="inline-flex items-center gap-2 text-accent underline decoration-accent-soft decoration-[1.5px] underline-offset-4 hover:decoration-accent"
+            >
+              <Paperclip aria-hidden className="h-3.5 w-3.5" strokeWidth={1.9} />
+              Нет ссылки? Загрузите фото буклета, меню или работ
+              <span aria-hidden>→</span>
+            </button>
+          </div>
+
           {/* Compact platform list — canon `<HeroPlatformStrip>` drop-in
               (canon 0.2.2, replaces our drifted hand-roll). Strip shows
               7 supported sources (Я.Карты / Telegram / Instagram / 2ГИС /
@@ -450,52 +470,27 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Hero extras — UX-essential prod additions NOT in canon
-            HeroBlock and therefore living OUTSIDE `data-section-body=
-            "hero"` so they don't enter the visual-regression
-            screenshot. Same `max-w-[1100px] mx-auto` centering as
-            the canon body above — visually continuous, but excluded
-            from pixel comparison.
+        {/* Hero extras — prod-only additions NOT in canon HeroBlock,
+            living OUTSIDE `data-section-body="hero"` so they don't
+            enter the visual-regression screenshot. Same
+            `max-w-[1100px] mx-auto` centering as the canon body above
+            — visually continuous, but excluded from pixel comparison.
 
-            Why moved out (vs deleted): UX batch 1 testing kept each.
-              • ShieldCheck microcopy — soft "сам напомнит" reassurance
-                for risk-averse users.
-              • SourceDetectionBadge — live API badge reacting to what
-                was pasted (canon's static prototype has no notion).
-              • Photo-drawer fallback — link to S4 photo upload flow
-                for users without an online source (FR-093 / ADR-0009).
+            Currently only SourceDetectionBadge — a live API widget
+            (POST /api/preview) reacting to what was pasted. Canon's
+            static prototype has no notion of debounced classification.
+
+            Note: the photo-link companion moved INSIDE the section as
+            of canon 0.5.0 (canon put it inside HeroBlock — see line
+            793-810 of packages/canon/src/landing/index.tsx).
          */}
         <div className="relative z-[1] mx-auto max-w-[1100px] text-left sm:text-center">
-          {/* Reassurance microcopy «Первый месяц — бесплатно. Самосайт
-              сам напомнит, если решите продолжить» удалена per canon
-              0.2.5 CHANGELOG note: то же обещание уже несут (1) Hero
-              free-month pill выше, (2) Pricing card chip, (3) Pricing
-              card bullets. Четвёртое повторение визуально шумило, у
-              канона его нет вообще. */}
-
           <SourceDetectionBadge
             detection={detection}
             rawInput={raw}
             preview={preview}
             onOpenPhotoUpload={handlePhotoCta}
           />
-
-          {/* Photo-link companion (canon 0.5.0 §Hero photo path):
-              «Нет ссылки? Загрузите фото буклета, меню или работ». Direct
-              question→action — was «или загрузите фото…» which read as
-              a secondary CTA. One plane with main CTA above — link OR
-              photo, never both. */}
-          <div className="mt-5 flex justify-start text-sm sm:mt-7 sm:justify-center">
-            <button
-              type="button"
-              onClick={handlePhotoCta}
-              className="inline-flex items-center gap-2 text-accent underline decoration-accent-soft decoration-[1.5px] underline-offset-4 hover:decoration-accent"
-            >
-              <Paperclip aria-hidden className="h-3.5 w-3.5" strokeWidth={1.9} />
-              Нет ссылки? Загрузите фото буклета, меню или работ
-              <span aria-hidden>→</span>
-            </button>
-          </div>
         </div>
 
         {/* Benefits stack removed in v2 — see docs/COPY.md §2.2 self-critique. */}
