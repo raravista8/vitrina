@@ -2759,50 +2759,85 @@ function StickyHeader({
     " ",
     /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
   ] });
-  return /* @__PURE__ */ jsx3("div", { style: {
+  return /* @__PURE__ */ jsxs2("div", { className: "ss-sticky-header", style: {
     position: "sticky",
     top: 0,
     zIndex: 10,
-    marginLeft: -px,
-    marginRight: -px,
+    width: "100%",
     paddingLeft: px,
     paddingRight: px,
     paddingTop: mobile ? 10 : 14,
     paddingBottom: mobile ? 10 : 14,
     background: "oklch(0.972 0.012 80 / 0.92)",
     backdropFilter: "blur(12px)",
-    borderBottom: `1px solid ${VT.lineSoft}`
-  }, children: /* @__PURE__ */ jsxs2("div", { style: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 16
+    WebkitBackdropFilter: "blur(12px)",
+    borderBottom: `1px solid ${VT.lineSoft}`,
+    boxSizing: "border-box"
   }, children: [
-    /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }),
-    !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14, color: VT.inkSoft }, children: [
-      /* @__PURE__ */ jsx3("a", { href: "#how", style: { color: "inherit", textDecoration: "none" }, children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
-      /* @__PURE__ */ jsx3("a", { href: "#examples", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
-      /* @__PURE__ */ jsx3("a", { href: "#pricing", style: { color: "inherit", textDecoration: "none" }, children: "\u0426\u0435\u043D\u044B" }),
-      /* @__PURE__ */ jsx3("a", { href: "#faq", style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
-        color: VT.inkSoft,
-        fontWeight: 500,
-        fontSize: 14,
-        padding: "8px 16px",
-        textDecoration: "none"
-      }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-      PrimaryCta
-    ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-      /* @__PURE__ */ jsx3("a", { href: loginHref, style: {
-        color: VT.inkSoft,
-        fontWeight: 500,
-        fontSize: 13.5,
-        padding: "8px 12px",
-        textDecoration: "none"
-      }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-      PrimaryCta
+    /* @__PURE__ */ jsx3("style", { children: `
+        .ss-sticky-header a.ss-nav-link {
+          color: ${VT.inkSoft};
+          text-decoration: none;
+          position: relative;
+          padding: 6px 2px;
+          transition: color .15s ease;
+        }
+        .ss-sticky-header a.ss-nav-link::after {
+          content: '';
+          position: absolute;
+          left: 2px; right: 2px; bottom: 2px;
+          height: 1px;
+          background: ${VT.accent};
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform .18s ease;
+        }
+        .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
+        .ss-sticky-header a.ss-nav-link:hover::after { transform: scaleX(1); }
+        .ss-sticky-header a.ss-login-link {
+          color: ${VT.inkSoft};
+          text-decoration: none;
+          border-radius: 999px;
+          transition: color .15s ease, background-color .15s ease;
+        }
+        .ss-sticky-header a.ss-login-link:hover {
+          color: ${VT.ink};
+          background: ${VT.bgSoft || "oklch(0.94 0.018 80)"};
+        }
+        .ss-sticky-header .ss-brand-hover {
+          display: inline-flex; align-items: center;
+          transition: opacity .15s ease;
+        }
+        .ss-sticky-header .ss-brand-hover:hover { opacity: 0.78; }
+      ` }),
+    /* @__PURE__ */ jsxs2("div", { style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 16
+    }, children: [
+      /* @__PURE__ */ jsx3("a", { href: "#hero", className: "ss-brand-hover", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
+      !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
+        /* @__PURE__ */ jsx3("a", { href: "#how", className: "ss-nav-link", children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
+        /* @__PURE__ */ jsx3("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+        /* @__PURE__ */ jsx3("a", { href: "#pricing", className: "ss-nav-link", children: "\u0426\u0435\u043D\u044B" }),
+        /* @__PURE__ */ jsx3("a", { href: "#faq", className: "ss-nav-link", children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
+        /* @__PURE__ */ jsx3("a", { href: loginHref, className: "ss-login-link", style: {
+          fontWeight: 500,
+          fontSize: 14,
+          padding: "8px 16px"
+        }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+        PrimaryCta
+      ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+        /* @__PURE__ */ jsx3("a", { href: loginHref, className: "ss-login-link", style: {
+          fontWeight: 500,
+          fontSize: 13.5,
+          padding: "8px 12px"
+        }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+        PrimaryCta
+      ] })
     ] })
-  ] }) });
+  ] });
 }
 function SamosaytLanding({ mobile = false }) {
   const padX = mobile ? 20 : 80;
@@ -2858,9 +2893,7 @@ function SamosaytLanding({ mobile = false }) {
       background: VT.bg,
       color: VT.ink,
       fontFamily: VT.font.sans,
-      paddingLeft: padX,
-      paddingRight: padX,
-      paddingTop: mobile ? 18 : 28,
+      paddingTop: 0,
       paddingBottom: mobile ? 32 : 64,
       position: "relative",
       overflow: "hidden",
@@ -2889,46 +2922,53 @@ function SamosaytLanding({ mobile = false }) {
         pointerEvents: "none"
       } }),
       /* @__PURE__ */ jsx3(StickyHeader, { mobile, padX }),
-      /* @__PURE__ */ jsx3("div", { id: "hero" }),
-      /* @__PURE__ */ jsx3(HeroBlock, { mobile }),
-      /* @__PURE__ */ jsx3("div", { id: "examples" }),
-      /* @__PURE__ */ jsx3(ExamplesSection, { mobile }),
-      /* @__PURE__ */ jsx3("div", { id: "how" }),
-      /* @__PURE__ */ jsx3(StorySection, { mobile }),
-      /* @__PURE__ */ jsx3(PlatformsSection, { mobile }),
-      /* @__PURE__ */ jsx3(BigFeaturesSection, { mobile }),
-      /* @__PURE__ */ jsx3(OwnershipSection, { mobile }),
-      /* @__PURE__ */ jsx3(AnalyticsSection, { mobile }),
-      /* @__PURE__ */ jsx3("div", { id: "pricing" }),
-      /* @__PURE__ */ jsx3(PricingSection, { mobile }),
-      /* @__PURE__ */ jsx3(FaqSection, { mobile }),
-      /* @__PURE__ */ jsx3(FreeMonthSection, { mobile }),
       /* @__PURE__ */ jsxs2("div", { style: {
-        marginTop: mobile ? 40 : 64,
-        paddingTop: mobile ? 22 : 28,
-        borderTop: `1px solid ${VT.line}`,
-        display: "flex",
-        flexDirection: mobile ? "column" : "row",
-        gap: mobile ? 14 : 18,
-        justifyContent: "space-between",
-        alignItems: mobile ? "flex-start" : "center",
-        fontSize: 12.5,
-        color: VT.inkFaint,
-        position: "relative",
-        zIndex: 1
+        paddingLeft: padX,
+        paddingRight: padX,
+        paddingTop: mobile ? 18 : 28,
+        position: "relative"
       }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
-          /* @__PURE__ */ jsx3(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
-          /* @__PURE__ */ jsxs2("span", { children: [
-            "\xA9 2026 \xB7 ",
-            BRAND.domain,
-            " \xB7 \u0432\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432\xA0\u0420\u0424"
+        /* @__PURE__ */ jsx3("div", { id: "hero" }),
+        /* @__PURE__ */ jsx3(HeroBlock, { mobile }),
+        /* @__PURE__ */ jsx3("div", { id: "examples" }),
+        /* @__PURE__ */ jsx3(ExamplesSection, { mobile }),
+        /* @__PURE__ */ jsx3("div", { id: "how" }),
+        /* @__PURE__ */ jsx3(StorySection, { mobile }),
+        /* @__PURE__ */ jsx3(PlatformsSection, { mobile }),
+        /* @__PURE__ */ jsx3(BigFeaturesSection, { mobile }),
+        /* @__PURE__ */ jsx3(OwnershipSection, { mobile }),
+        /* @__PURE__ */ jsx3(AnalyticsSection, { mobile }),
+        /* @__PURE__ */ jsx3("div", { id: "pricing" }),
+        /* @__PURE__ */ jsx3(PricingSection, { mobile }),
+        /* @__PURE__ */ jsx3(FaqSection, { mobile }),
+        /* @__PURE__ */ jsx3(FreeMonthSection, { mobile }),
+        /* @__PURE__ */ jsxs2("div", { style: {
+          marginTop: mobile ? 40 : 64,
+          paddingTop: mobile ? 22 : 28,
+          borderTop: `1px solid ${VT.line}`,
+          display: "flex",
+          flexDirection: mobile ? "column" : "row",
+          gap: mobile ? 14 : 18,
+          justifyContent: "space-between",
+          alignItems: mobile ? "flex-start" : "center",
+          fontSize: 12.5,
+          color: VT.inkFaint,
+          position: "relative",
+          zIndex: 1
+        }, children: [
+          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
+            /* @__PURE__ */ jsx3(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
+            /* @__PURE__ */ jsxs2("span", { children: [
+              "\xA9 2026 \xB7 ",
+              BRAND.domain,
+              " \xB7 \u0432\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432\xA0\u0420\u0424"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
+            /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
+            /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
+            /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
           ] })
-        ] }),
-        /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
-          /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
-          /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
-          /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
         ] })
       ] })
     ] })

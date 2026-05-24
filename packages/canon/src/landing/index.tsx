@@ -2433,6 +2433,10 @@ function FreeMonthSection({ mobile }) {
 // 0.2.3 — added loginHref + onMakeSiteClick props for prod-routing flexibility.
 //         Defaults preserve back-compat: loginHref = 'https://samosite.online/login',
 //         no onMakeSiteClick → fallback to <a href="#hero"> as in canvas demo.
+// 0.2.4 — self-contained: full-bleed background, internal padding only. Removed
+//         negative-margin escape from parent padding — now works in any wrapper,
+//         not just inside SamosaytLanding's padX-padded container.
+//         Added explicit hovers on nav links / login link / brand mark.
 function StickyHeader({
   mobile = false,
   padX,
@@ -2461,37 +2465,75 @@ function StickyHeader({
         {primaryLabel} <span aria-hidden="true">→</span>
       </a>;
   return (
-    <div style={{
+    <div className="ss-sticky-header" style={{
       position: 'sticky', top: 0, zIndex: 10,
-      marginLeft: -px, marginRight: -px,
+      width: '100%',
       paddingLeft: px, paddingRight: px,
       paddingTop: mobile ? 10 : 14, paddingBottom: mobile ? 10 : 14,
       background: 'oklch(0.972 0.012 80 / 0.92)',
       backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       borderBottom: `1px solid ${VT.lineSoft}`,
+      boxSizing: 'border-box',
     }}>
+      <style>{`
+        .ss-sticky-header a.ss-nav-link {
+          color: ${VT.inkSoft};
+          text-decoration: none;
+          position: relative;
+          padding: 6px 2px;
+          transition: color .15s ease;
+        }
+        .ss-sticky-header a.ss-nav-link::after {
+          content: '';
+          position: absolute;
+          left: 2px; right: 2px; bottom: 2px;
+          height: 1px;
+          background: ${VT.accent};
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform .18s ease;
+        }
+        .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
+        .ss-sticky-header a.ss-nav-link:hover::after { transform: scaleX(1); }
+        .ss-sticky-header a.ss-login-link {
+          color: ${VT.inkSoft};
+          text-decoration: none;
+          border-radius: 999px;
+          transition: color .15s ease, background-color .15s ease;
+        }
+        .ss-sticky-header a.ss-login-link:hover {
+          color: ${VT.ink};
+          background: ${VT.bgSoft || 'oklch(0.94 0.018 80)'};
+        }
+        .ss-sticky-header .ss-brand-hover {
+          display: inline-flex; align-items: center;
+          transition: opacity .15s ease;
+        }
+        .ss-sticky-header .ss-brand-hover:hover { opacity: 0.78; }
+      `}</style>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         gap: 16,
       }}>
-        <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
+        <a href="#hero" className="ss-brand-hover" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
+        </a>
         {!mobile ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14, color: VT.inkSoft }}>
-            <a href="#how" style={{ color: 'inherit', textDecoration: 'none' }}>Как это работает</a>
-            <a href="#examples" style={{ color: 'inherit', textDecoration: 'none' }}>Примеры</a>
-            <a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Цены</a>
-            <a href="#faq" style={{ color: 'inherit', textDecoration: 'none' }}>Помощь</a>
-            <a href={loginHref} style={{
-              color: VT.inkSoft, fontWeight: 500, fontSize: 14,
-              padding: '8px 16px', textDecoration: 'none',
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14 }}>
+            <a href="#how" className="ss-nav-link">Как это работает</a>
+            <a href="#examples" className="ss-nav-link">Примеры</a>
+            <a href="#pricing" className="ss-nav-link">Цены</a>
+            <a href="#faq" className="ss-nav-link">Помощь</a>
+            <a href={loginHref} className="ss-login-link" style={{
+              fontWeight: 500, fontSize: 14, padding: '8px 16px',
             }}>Войти</a>
             {PrimaryCta}
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <a href={loginHref} style={{
-              color: VT.inkSoft, fontWeight: 500, fontSize: 13.5,
-              padding: '8px 12px', textDecoration: 'none',
+            <a href={loginHref} className="ss-login-link" style={{
+              fontWeight: 500, fontSize: 13.5, padding: '8px 12px',
             }}>Войти</a>
             {PrimaryCta}
           </div>
@@ -2553,8 +2595,7 @@ function SamosaytLanding({ mobile = false }) {
     <div style={{
       width: '100%', minHeight: '100%', background: VT.bg, color: VT.ink,
       fontFamily: VT.font.sans,
-      paddingLeft: padX, paddingRight: padX,
-      paddingTop: mobile ? 18 : 28,
+      paddingTop: 0,
       paddingBottom: mobile ? 32 : 64,
       position: 'relative', overflow: 'hidden',
       letterSpacing: '-0.01em',
@@ -2580,6 +2621,11 @@ function SamosaytLanding({ mobile = false }) {
 
       <StickyHeader mobile={mobile} padX={padX} />
 
+      <div style={{
+        paddingLeft: padX, paddingRight: padX,
+        paddingTop: mobile ? 18 : 28,
+        position: 'relative',
+      }}>
       <div id="hero" />
       <HeroBlock mobile={mobile} />
       <div id="examples" />
@@ -2615,6 +2661,7 @@ function SamosaytLanding({ mobile = false }) {
           <a style={{ color: 'inherit' }}>Оферта</a>
           <a style={{ color: 'inherit' }}>Обратная связь</a>
         </div>
+      </div>
       </div>
     </div>
     </>

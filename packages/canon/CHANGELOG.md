@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.2.4 — StickyHeader self-contained + nav hovers (hotfix) · 2026-05-24
+
+Hotfix. `<StickyHeader>` no longer relies on parent padding to render correctly, and nav links now have hover states. **No API changes.** Drop-in over 0.2.3.
+
+### Why
+
+Prod-build report: when `<StickyHeader>` was rendered outside `<SamosaytLanding>` (i.e. on the real production page where the page shell does not match canvas padding), the bar lost its inner side paddings — the logo glued itself to the left edge of the viewport and «Сделать сайт» glued itself to the right. Reproduced verbatim from the screenshot reported in chat.
+
+### Root cause
+
+0.2.2/0.2.3 implemented full-bleed background by escaping the parent's `padX` with negative margins, then re-applying internal padding:
+
+```tsx
+// 0.2.3 (BROKEN outside SamosaytLanding)
+marginLeft: -px, marginRight: -px,
+paddingLeft: px, paddingRight: px,
+```
+
+This cancels out cleanly **only** when the parent has matching `padX` padding. Prod page shell doesn't — the negative margins pulled the bar off-canvas on both sides and content ended up flush against the viewport edges (0 → W).
+
+### Fix
+
+`<StickyHeader>` is now self-contained:
+
+```tsx
+// 0.2.4
+width: '100%',
+paddingLeft: px, paddingRight: px,
+boxSizing: 'border-box',
+```
+
+No negative margins, no parent-padding dependency. Renders correctly in any wrapper — prod shell, canvas, Storybook, isolated test page.
+
+`<SamosaytLanding>` was updated to match: the outer container no longer applies `padX` (the header now does it for itself); body content is wrapped in an inner `padX`-padded div. Visual output of `<Landing />` is identical to 0.2.3.
+
+### Hovers
+
+Added explicit hover states inside the header (previously the global `a[href="#hero"]:hover` rule only matched the CTA — the four nav anchors and «Войти» were inert):
+
+- Nav links (`#how`, `#examples`, `#pricing`, `#faq`) — ink color darkens + accent underline slides in left→right
+- «Войти» — ink color darkens + soft pill background (`VT.bgSoft`)
+- Brand mark — subtle opacity fade; now also wrapped in `<a href="#hero">` so clicking it scrolls home
+
+All hover styles are scoped to `.ss-sticky-header` — zero risk of bleeding into the rest of the landing.
+
+### Back-compat
+
+- Same props, same exports, same defaults. Drop-in over 0.2.3.
+- `loginHref` and `onMakeSiteClick` from 0.2.3 unchanged.
+- Visual diff inside `<Landing />`: none.
+- Visual diff for standalone `<StickyHeader />` in non-padded shells: paddings now appear (this is the fix).
+
+### Migration
+
+None. `npm i @samosite/canon@0.2.4` and rebuild.
+
+---
+
 ## 0.2.3 — StickyHeader props for prod-routing · 2026-05-23
 
 Additive minor release. Two new optional props on `<StickyHeader>` so prod apps can wire it without dropping into custom forks. Zero visual diff in zero-prop / canvas mode.
