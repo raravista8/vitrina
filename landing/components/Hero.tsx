@@ -298,7 +298,20 @@ export function Hero() {
               flagged in «дизайн на проде сильно отличается от этого». */}
           <h1
             id="hero-title"
-            className="mt-5 text-balance text-[38px] font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:text-[88px] sm:leading-[1.02]"
+            // Per canon 0.2.7: mobile font-size is clamp(28px, 8.6vw, 38px)
+            // not a flat 38px — fluid scaling so «и сам приведёт клиентов»
+            // wraps inside the ~350px content area on iPhone-class screens
+            // (Safari iOS measured ~360px at flat 38px, overflowing the
+            // viewport). overflow-wrap + word-break + max-width are defensive
+            // floors so any future content edit can't reintroduce overflow.
+            // Tailwind can't express clamp() cleanly → inline style on mobile.
+            style={{
+              fontSize: "clamp(28px, 8.6vw, 38px)",
+              overflowWrap: "break-word",
+              wordBreak: "normal",
+              maxWidth: "100%",
+            }}
+            className="mt-5 text-balance font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:!text-[88px] sm:leading-[1.02]"
           >
             Сайт, который
             <br className="hidden sm:block" />
