@@ -665,8 +665,8 @@ function HeroBlock({ mobile }) {
     }}>
       {/* H1 — три «сам», без eyebrow, без точки */}
       <h1 style={{
-        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 88,
-        lineHeight: mobile ? 1.08 : 1.02,
+        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 76,
+        lineHeight: mobile ? 1.08 : 1.04,
         fontWeight: 700,
         letterSpacing: '-0.035em',
         margin: 0,
@@ -675,29 +675,29 @@ function HeroBlock({ mobile }) {
         wordBreak: 'normal',
         maxWidth: '100%',
       }}>
-        Сайт, который{mobile ? ' ' : <br />}
-        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
-          сам себя соберёт,
+        Сайт, который{' '}
+        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
+          соберётся из вашей ссылки
           {!mobile && (
             <span aria-hidden="true" style={{
-              position: 'absolute', left: 4, right: 14, bottom: 8,
+              position: 'absolute', left: 4, right: 14, bottom: 6,
               height: 14, background: VT.accentSoft, opacity: 0.7,
               zIndex: -1, borderRadius: 3,
             }} />
           )}
         </span>
-        {mobile ? ' ' : <br />}
-        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>сам обновит</span>
-        {' '}
-        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>и сам приведёт клиентов</span>
+        {' — '}
+        {mobile ? null : <br />}
+        и дальше{' '}
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>работает сам</span>
       </h1>
 
       <p style={{
         fontSize: mobile ? 17 : 20, lineHeight: 1.45, color: VT.inkSoft,
-        margin: mobile ? '20px 0 0' : '32px auto 0',
-        maxWidth: mobile ? '100%' : 760, textWrap: 'pretty',
+        margin: mobile ? '20px 0 0' : '28px auto 0',
+        maxWidth: mobile ? '100%' : 820, textWrap: 'pretty',
       }}>
-        Покажите ссылку — карты, Telegram или визитку. <b style={{ color: VT.ink }}>{BRAND.name} на базе ИИ соберёт сайт за 2 часа</b> и дальше <b style={{ color: VT.ink }}>делает всё сам</b>: обновляет цены, ловит заявки, ведёт аналитику и публикует лучшие отзывы
+        {BRAND.name} на базе ИИ <b style={{ color: VT.ink }}>соберёт сайт за 2 часа</b> из того, что у вас уже есть — карточки на Яндекс.Картах, Telegram-канала, профиля на Avito, фото буклета или меню. После запуска не бросит — <b style={{ color: VT.ink }}>сам обновляет цены, отбирает отзывы и ловит заявки в мессенджер</b>.
       </p>
 
       {/* Input + CTA */}
@@ -721,8 +721,38 @@ function HeroBlock({ mobile }) {
           </span>
         </div>
         <Btn style={{ padding: mobile ? '14px 20px' : '14px 26px', borderRadius: mobile ? 10 : 999 }} iconRight={<IconArrow />}>
-          Сделать {BRAND.name}
+          Собрать сайт
         </Btn>
+      </div>
+
+      {/* 0.5.0 — microcopy под кнопкой (COPY.md §1.7). */}
+      <div style={{
+        marginTop: mobile ? 10 : 12,
+        textAlign: mobile ? 'left' : 'center',
+        fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12,
+        letterSpacing: '0.04em', color: VT.inkSoft,
+      }}>
+        Без карты · Первый месяц бесплатно · Сайт через 2 часа
+      </div>
+
+      {/* Photo-upload companion link — 0.5.0 «Нет ссылки?…» */}
+      <div style={{
+        marginTop: mobile ? 12 : 14,
+        textAlign: mobile ? 'left' : 'center',
+      }}>
+        <a href="#hero-photo" data-open-submit-modal="photo" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          color: VT.accent, fontSize: mobile ? 14.5 : 15,
+          textDecoration: 'underline', textUnderlineOffset: 4,
+          textDecorationColor: VT.accentSoft, textDecorationThickness: '1.5px',
+          fontWeight: 500,
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+          </svg>
+          Нет ссылки? Загрузите фото буклета, меню или работ
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
 
       {/* Из чего мы можем сделать сайт — compact list of supported sources */}
