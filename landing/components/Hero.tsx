@@ -8,11 +8,14 @@
  * Inline-styled canvas → Tailwind classes; tokens live in
  * `tailwind.config.ts` (paper / ink / accent / line).
  *
- * Copy anchors (locked to COPY.md v2):
- *   - H1 "Сайт, который сам себя ведёт и приносит вам заявки" (без eyebrow)
+ * Copy anchors (locked to canon 0.5.0 / packages/canon/docs/COPY.md):
+ *   - H1 "Сайт, который соберётся из вашей ссылки — и дальше работает сам"
+ *     (две акцент-фразы, без eyebrow)
  *   - Single input + one primary CTA — zero-friction Hero (PRD §4)
- *   - Microcopy "Первый месяц бесплатно — без карты при регистрации"
- *   - Below: two text links (📷 photo upload, 📨 closed TG export)
+ *   - CTA «Собрать сайт» + microcopy «Без карты · Первый месяц
+ *     бесплатно · Сайт через 2 часа» (mono, прямо под кнопкой)
+ *   - Below: photo-link companion «Нет ссылки? Загрузите фото буклета,
+ *     меню или работ» (canon 0.3.0 link OR photo flow)
  *   - Benefits stack удалён из Hero в v2 — теперь живёт ниже как
  *     самостоятельная <BigFeatures /> секция
  *
@@ -48,24 +51,18 @@ import { SAMOSITE_OPEN_SUBMIT } from "./SiteHeader";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal, type SubmitMode } from "./SubmitModal";
 
-// Placeholder — user batch 1 testing flagged that the original copy
-// ("ссылка на соцсеть, Яндекс.Карты или сайт") truncated mid-word on
-// 320–390 px iPhone viewports. We swap to a shorter string everywhere
-// (avoids a hydration flicker we'd get from a window-width hook) and
-// move the full source list into a separate microcopy line below.
-const PLACEHOLDER = "ссылка на ваш профиль или сайт";
-// v2.1.3 §1.1 — «Собрать мой Самосайт» переименован в «Сделать Самосайт».
-// Глагол «сделать» проще, прямее и короче в mobile-CTA («Сделать →»).
-const CTA_TEXT = "Сделать Самосайт";
-// Old `MICROCOPY` («Первый месяц — бесплатно. Самосайт сам напомнит,
-// если решите продолжить») removed per canon 0.2.5 CHANGELOG: same
-// promise is already rendered in (1) Hero free-month pill, (2) Pricing
-// card chip, (3) Pricing card bullets. Fourth restating is visual
-// noise on a focused conversion surface.
-// One canonical, scannable list of what we accept today (UX batch 1
-// "U2" — testers asked for an explicit list, not just placeholder
-// hints). Lives directly under the input.
-const SUPPORTED_SOURCES = "Поддерживаем: Telegram-канал · Яндекс.Карты · фото";
+// Placeholder — synced to canon 0.5.0 (packages/canon/src/landing/index.tsx
+// line 773): «Вставьте ссылку: Яндекс.Карты, Telegram, Avito…». 0.5.0
+// CHANGELOG: tells the user *what to do* (action verb) + lists three of
+// the most common sources, instead of describing the input shape.
+const PLACEHOLDER = "Вставьте ссылку: Яндекс.Карты, Telegram, Avito…";
+// canon 0.5.0 §Hero CTA — «Сделать Самосайт» → «Собрать сайт». Shorter,
+// imperative, no brand inside the button (brand lives in the mark).
+const CTA_TEXT = "Собрать сайт";
+// canon 0.5.0 §1.7 — microcopy line directly below the CTA (mono, ink-
+// soft). Replaces no-line / old shield-icon copy. Three deltas the user
+// needs to know BEFORE clicking «Собрать сайт».
+const CTA_MICROCOPY = "Без карты · Первый месяц бесплатно · Сайт через 2 часа";
 
 type PreviewState =
   | { phase: "idle" }
@@ -293,40 +290,45 @@ export function Hero() {
               wordBreak: "normal",
               maxWidth: "100%",
             }}
-            className="mt-5 text-balance font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:!text-[88px] sm:leading-[1.02]"
+            className="mt-5 text-balance font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:!text-[76px] sm:leading-[1.04]"
           >
-            Сайт, который
-            <br className="hidden sm:block" />
-            {/* Phrase 1 — keeps the underline highlight. Comma lives
-                INSIDE the span so it never starts a new line. */}
-            <span className="relative inline-block whitespace-nowrap px-1 text-accent">
-              сам себя соберёт,
+            {/* canon 0.5.0 H1 — «соберётся из вашей ссылки → дальше работает
+                сам». Two accent spans (was three), no comma-inside-nowrap
+                trick, single em-dash bridge with desktop-only <br /> after.
+                Underline highlight kept on first accent on desktop only —
+                mobile drops it (canon source line 734 `!mobile && ...`). */}
+            Сайт, который{" "}
+            <span className="relative whitespace-normal px-1 text-accent sm:inline-block">
+              соберётся из вашей ссылки
               <span
                 aria-hidden="true"
-                className="absolute inset-x-1 bottom-1 -z-10 h-2 rounded-[3px] bg-accent-soft opacity-65 sm:bottom-2.5 sm:h-3.5"
+                className="absolute inset-x-1 bottom-1 -z-10 hidden h-3.5 rounded-[3px] bg-accent-soft opacity-70 sm:bottom-1.5 sm:block"
               />
             </span>
-            <br className="hidden sm:block" />
-            <span className="inline-block whitespace-nowrap text-accent">сам обновит</span>{" "}
-            <span className="inline-block whitespace-nowrap text-accent">
-              и сам приведёт клиентов
-            </span>
+            {" — "}
+            <br className="hidden sm:block" />и дальше{" "}
+            <span className="whitespace-normal px-1 text-accent sm:inline-block">работает сам</span>
           </h1>
 
-          {/* Sub — v2.1.3 §1.1 redesign:
-              • «за пару/две минуты» → «за 2 часа» (реальный SLA — мануальная
-                модерация первых 20 сайтов; обещание «2 минуты» порождало
-                разочарование). Везде в копи лендинга — единый timing.
-              • Bold-акценты на «Самосайт на базе ИИ соберёт сайт за 2 часа»
-                (раскрытие что под капотом — AI, не magic) и «делает всё сам»
-                (повторение трёх «сам» рефреном на body level).
-              • Финал «Вам остаётся только работать с клиентами» удалён —
-                достаточно главного обещания. */}
-          <p className="mt-4 max-w-full text-pretty text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-8 sm:max-w-[760px] sm:text-[20px]">
-            Покажите ссылку — карты, Telegram или визитку.{" "}
-            <b className="font-bold text-ink">Самосайт на базе ИИ соберёт сайт за 2 часа</b> и
-            дальше <b className="font-bold text-ink">делает всё сам</b>: обновляет цены, ловит
-            заявки, ведёт аналитику и публикует лучшие отзывы
+          {/* Sub — canon 0.5.0 (packages/canon/src/landing/index.tsx
+              line 753). New shape:
+              • Opens with «{BRAND} на базе ИИ» + «соберёт сайт за 2 часа»
+                (single SLA across the page since 0.5.0 — old «за пару
+                минут» / «несколько минут» / «2 часа» trio collapsed
+                to one).
+              • Lists the four most common sources inline so the user
+                sees the promise scoped to *their* situation.
+              • Closes with the autonomous-after-launch promise:
+                «сам обновляет цены, отбирает отзывы и ловит заявки
+                в мессенджер» — three concrete verbs, no jargon. */}
+          <p className="mt-4 max-w-full text-pretty text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[820px] sm:text-[20px]">
+            Самосайт на базе ИИ <b className="font-bold text-ink">соберёт сайт за 2 часа</b>{" "}
+            из того, что у вас уже есть — карточки на Яндекс.Картах, Telegram-канала, профиля
+            на Avito, фото буклета или меню. После запуска не бросит —{" "}
+            <b className="font-bold text-ink">
+              сам обновляет цены, отбирает отзывы и ловит заявки в мессенджер
+            </b>
+            .
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
@@ -395,6 +397,15 @@ export function Hero() {
               </span>
             </button>
           </form>
+
+          {/* canon 0.5.0 §1.7 microcopy — mono, tight tracking, sits
+              directly under the CTA pill. Three deltas the visitor must
+              know BEFORE clicking «Собрать сайт»: no card, free month,
+              SLA. Replaces the old shield-icon reassurance line which
+              testers said «выглядит как disclaimer, не вижу». */}
+          <div className="mt-2.5 text-left font-mono text-[11.5px] leading-tight tracking-[0.04em] text-ink-soft sm:mt-3 sm:text-center sm:text-[12px]">
+            {CTA_MICROCOPY}
+          </div>
 
           {/* Compact platform list — canon `<HeroPlatformStrip>` drop-in
               (canon 0.2.2, replaces our drifted hand-roll). Strip shows
@@ -469,10 +480,11 @@ export function Hero() {
             onOpenPhotoUpload={handlePhotoCta}
           />
 
-          {/* Photo-link companion (canon 0.3.0 §1 Hero): «или загрузите фото
-              работ, буклета или меню». One plane with CTA above — link OR
-              photo, never both. Replaces the old "📷 Загрузить фото работ"
-              button which routed to the now-deleted PhotoDrawer. */}
+          {/* Photo-link companion (canon 0.5.0 §Hero photo path):
+              «Нет ссылки? Загрузите фото буклета, меню или работ». Direct
+              question→action — was «или загрузите фото…» which read as
+              a secondary CTA. One plane with main CTA above — link OR
+              photo, never both. */}
           <div className="mt-5 flex justify-start text-sm sm:mt-7 sm:justify-center">
             <button
               type="button"
@@ -480,7 +492,7 @@ export function Hero() {
               className="inline-flex items-center gap-2 text-accent underline decoration-accent-soft decoration-[1.5px] underline-offset-4 hover:decoration-accent"
             >
               <Paperclip aria-hidden className="h-3.5 w-3.5" strokeWidth={1.9} />
-              или загрузите фото работ, буклета или меню
+              Нет ссылки? Загрузите фото буклета, меню или работ
               <span aria-hidden>→</span>
             </button>
           </div>

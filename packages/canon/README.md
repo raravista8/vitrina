@@ -2,6 +2,8 @@
 
 > Canonical UI for **Самосайт** (samosite.online). Single source of truth for visual design — same React render that the dev canvas uses, packaged as a real npm module.
 
+**Canonical messaging** — see [`docs/COPY.md`](./docs/COPY.md). All landing + SubmitModal copy lives there as the single source of truth; edits go to `COPY.md` first, then ripple into `src/landing/index.tsx` and `src/intake/index.tsx`. See `CHANGELOG.md §0.5.0` for the latest copy rewrite.
+
 **Current version: `0.3.0`** — **BREAKING.** Intake flow rewrite: link/photo branches with mode-switcher, Step 2 photo (description + city + customer_contact + opt. text_files), inline Confirmation. `S5_Confirmation` / `S3_Step3_TgBot` / `S4_TGBotInvite` removed; Instagram `ok-instagram` tier removed; `CaptchaNotice` no longer carries `· невидимо`. See [CHANGELOG](./CHANGELOG.md#030--intake-flow-rewrite-breaking--2026-05-24) for the full migration guide and backend checklist for hand-rolled consumers.
 
 ## Why this exists

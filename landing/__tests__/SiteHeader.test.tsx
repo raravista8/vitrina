@@ -11,7 +11,7 @@ import { SAMOSITE_OPEN_SUBMIT, SiteHeader } from "@/components/SiteHeader";
 // behaviours that the wrapper owns:
 //   1. The «Войти» link points to our `/admin/login` (canon's default
 //      is `https://samosite.online/login`, wrong path on our infra).
-//   2. The «Сделать сайт» CTA dispatches the SAMOSITE_OPEN_SUBMIT
+//   2. The «Собрать сайт» CTA dispatches the SAMOSITE_OPEN_SUBMIT
 //      custom event (Hero listens for it to open SubmitModal).
 
 describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
@@ -49,13 +49,13 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     }
   });
 
-  it("«Сделать сайт» CTA dispatches samosite:open-submit event", () => {
+  it("«Собрать сайт» CTA dispatches samosite:open-submit event", () => {
     render(<SiteHeader />);
     const listener = vi.fn();
     window.addEventListener(SAMOSITE_OPEN_SUBMIT, listener);
-    // Canon labels: desktop «Сделать сайт», mobile «Сделать». Both
+    // Canon labels: desktop «Собрать сайт», mobile «Собрать». Both
     // are rendered (one hidden via CSS) so we pick the desktop one.
-    const ctas = screen.getAllByRole("button", { name: /^Сделать сайт/ });
+    const ctas = screen.getAllByRole("button", { name: /^Собрать сайт/ });
     expect(ctas.length).toBeGreaterThan(0);
     fireEvent.click(ctas[0]!);
     expect(listener).toHaveBeenCalledTimes(1);
@@ -68,7 +68,7 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     // be <button> — guards against accidental href-anchor regression
     // that would bypass openSubmitModal entirely.
     render(<SiteHeader />);
-    const ctas = screen.getAllByRole("button", { name: /^Сделать/ });
+    const ctas = screen.getAllByRole("button", { name: /^Собрать/ });
     expect(ctas.length).toBeGreaterThan(0);
     for (const cta of ctas) {
       expect(cta.tagName).toBe("BUTTON");
