@@ -95,8 +95,14 @@ async def post_customer_login(
     ttl = await redis.ttl(lockout_key)
     if ttl > 0:
         log.info("customer_login_rate_limited", login=body.login, ip=ip, retry_after=ttl)
-        response.headers["Retry-After"] = str(ttl)
-        raise HTTPException(status_code=429, detail="rate_limited")
+        # NB: `response.headers[...]` doesn't survive `raise HTTPException(...)`
+        # — FastAPI builds a fresh JSONResponse from the exception. Headers
+        # must be passed via the constructor for them to reach the client.
+        raise HTTPException(
+            status_code=429,
+            detail="rate_limited",
+            headers={"Retry-After": str(ttl)},
+        )
 
     # 2. Look up user by login.
     row = (await session.execute(select(User).where(User.login == body.login))).scalar_one_or_none()
