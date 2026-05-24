@@ -923,7 +923,7 @@ function ExamplesSection({ mobile }) {
   );
 
   return (
-    <section style={{ marginTop: mobile ? 60 : 96, position: 'relative', zIndex: 1 }}>
+    <section style={{ marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>через несколько минут</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -2391,14 +2391,6 @@ function FreeMonthSection({ mobile }) {
             <Btn iconRight={<IconArrow />} style={{ padding: mobile ? '14px 24px' : '18px 32px', fontSize: mobile ? 16 : 18 }}>
               Сделать {BRAND.name}
             </Btn>
-          </div>
-
-          {/* Microcopy */}
-          <div style={{
-            marginTop: 12,
-            fontSize: mobile ? 13 : 14, color: 'oklch(0.82 0.014 60)', textWrap: 'pretty',
-          }}>
-            Первый месяц — бесплатно. {BRAND.name} сам напомнит, когда подойдёт срок.
           </div>
 
           {/* Alt path */}

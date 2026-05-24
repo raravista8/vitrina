@@ -35,7 +35,7 @@
  * the public brand strictly.
  */
 
-import { Gift, Link as LinkIcon, ShieldCheck, X } from "lucide-react";
+import { Gift, Link as LinkIcon, X } from "lucide-react";
 import { HeroPlatformStrip } from "@samosite/canon/landing";
 
 import { useDeferredValue, useEffect, useId, useState } from "react";
@@ -58,11 +58,11 @@ const PLACEHOLDER = "ссылка на ваш профиль или сайт";
 // v2.1.3 §1.1 — «Собрать мой Самосайт» переименован в «Сделать Самосайт».
 // Глагол «сделать» проще, прямее и короче в mobile-CTA («Сделать →»).
 const CTA_TEXT = "Сделать Самосайт";
-// Microcopy under CTA — v2.1.3 §1.1 убрал «Карта не нужна» (повторяется
-// 4× на разных секциях, выглядело тревожно — Pricing card теперь несёт
-// этот pacification). Hero оставляет risk-reversal «Самосайт сам
-// напомнит» как достаточный sigh of relief.
-const MICROCOPY = "Первый месяц — бесплатно. Самосайт сам напомнит, если решите продолжить";
+// Old `MICROCOPY` («Первый месяц — бесплатно. Самосайт сам напомнит,
+// если решите продолжить») removed per canon 0.2.5 CHANGELOG: same
+// promise is already rendered in (1) Hero free-month pill, (2) Pricing
+// card chip, (3) Pricing card bullets. Fourth restating is visual
+// noise on a focused conversion surface.
 // One canonical, scannable list of what we accept today (UX batch 1
 // "U2" — testers asked for an explicit list, not just placeholder
 // hints). Lives directly under the input.
@@ -460,17 +460,12 @@ export function Hero() {
                 for users without an online source (FR-093 / ADR-0009).
          */}
         <div className="relative z-[1] mx-auto max-w-[1100px] text-left sm:text-center">
-          {/* Old MICROCOPY (ShieldCheck + «Первый месяц…») и
-              SUPPORTED_SOURCES — заменены free-month плашкой + compact
-              list выше. Reminder про «сам напомнит» — тонкая строка для
-              risk-averse юзеров. */}
-          <p className="mt-3 text-[12px] text-ink-faint sm:mt-4 sm:text-[13px]">
-            <ShieldCheck
-              aria-hidden
-              className="mr-1 inline-block h-[12px] w-[12px] -translate-y-px"
-            />
-            {MICROCOPY}
-          </p>
+          {/* Reassurance microcopy «Первый месяц — бесплатно. Самосайт
+              сам напомнит, если решите продолжить» удалена per canon
+              0.2.5 CHANGELOG note: то же обещание уже несут (1) Hero
+              free-month pill выше, (2) Pricing card chip, (3) Pricing
+              card bullets. Четвёртое повторение визуально шумило, у
+              канона его нет вообще. */}
 
           <SourceDetectionBadge
             detection={detection}

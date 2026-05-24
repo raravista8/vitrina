@@ -1207,7 +1207,7 @@ function ExamplesSection({ mobile }) {
     ] }),
     /* @__PURE__ */ jsx3("div", { style: { flex: 1, minHeight: 0, display: "flex" }, children: /* @__PURE__ */ jsx3(SiteCard, { ...ex, mobile }) })
   ] }, ex.name);
-  return /* @__PURE__ */ jsxs2("section", { style: { marginTop: mobile ? 60 : 96, position: "relative", zIndex: 1 }, children: [
+  return /* @__PURE__ */ jsxs2("section", { style: { marginTop: mobile ? 32 : 48, position: "relative", zIndex: 1 }, children: [
     /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
       /* @__PURE__ */ jsxs2(SectionTitle, { mobile, children: [
         "\u0412\u043E\u0442 \u043A\u0430\u043A\u043E\u0439 \u0441\u0430\u0439\u0442 \u0432\u044B \u043F\u043E\u043B\u0443\u0447\u0438\u0442\u0435",
@@ -2674,16 +2674,6 @@ function FreeMonthSection({ mobile }) {
         "\u0421\u0434\u0435\u043B\u0430\u0442\u044C ",
         BRAND.name
       ] }) }),
-      /* @__PURE__ */ jsxs2("div", { style: {
-        marginTop: 12,
-        fontSize: mobile ? 13 : 14,
-        color: "oklch(0.82 0.014 60)",
-        textWrap: "pretty"
-      }, children: [
-        "\u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E. ",
-        BRAND.name,
-        " \u0441\u0430\u043C \u043D\u0430\u043F\u043E\u043C\u043D\u0438\u0442, \u043A\u043E\u0433\u0434\u0430 \u043F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u0441\u0440\u043E\u043A."
-      ] }),
       /* @__PURE__ */ jsxs2("div", { style: {
         marginTop: mobile ? 22 : 30,
         paddingTop: mobile ? 18 : 22,
