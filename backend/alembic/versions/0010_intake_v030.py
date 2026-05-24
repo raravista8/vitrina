@@ -109,7 +109,6 @@ def upgrade() -> None:
             sa.dialects.postgresql.UUID(as_uuid=True),
             sa.ForeignKey("applications.id", ondelete="CASCADE"),
             nullable=False,
-            index=True,
         ),
         sa.Column("index", sa.Integer(), nullable=False),
         sa.Column("filename", sa.Text(), nullable=False),
