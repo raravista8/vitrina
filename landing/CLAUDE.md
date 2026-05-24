@@ -29,7 +29,9 @@ Per `docs/handoff/VISUAL_COVERAGE.md` and `landing/app/page.tsx`:
 
 - **`Hero`** (`landing/components/Hero.tsx`) — canon's `HeroBlock` is read-only (input is `<span>` placeholder, CTA is `<a href="#hero">`). Replacing breaks the entire signup conversion funnel (paste URL → debounced live preview → SubmitModal wizard → POST `/api/submit-application`). Stays hand-rolled until canon ships interactive variant (canon 0.2.x).
 - **`Footer`** (`landing/components/Footer.tsx`) — canon doesn't export standalone (inlined in `<SamosaytLanding>`). Already matches canon's slim footer pattern; canon-side extraction pending.
-- **`SubmitModal`**, **`PhotoDrawer`**, **`SourceDetectionBadge`**, **`FeedbackForm`**, **`ApplicationForm`** — interactive, same compromise as Hero.
+- **`SubmitModal`** — canon 0.3.0 controlled-API wrapper around `@samosite/canon/intake::SubmitModal`. Owns state (mode='link'|'photo', step 1-4) + backend wiring. Renders canon's step components for the actual UI.
+- **`SourceDetectionBadge`**, **`FeedbackForm`**, **`ApplicationForm`** — interactive, same compromise as Hero.
+- ~~`PhotoDrawer`~~ — deleted in 0.3.0; absorbed into `SubmitModal` mode='photo' (Step 1 photos + Step 2 description+files).
 
 **Update these two lists in the same commit when migrating a component.**
 

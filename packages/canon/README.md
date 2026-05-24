@@ -2,7 +2,7 @@
 
 > Canonical UI for **Самосайт** (samosite.online). Single source of truth for visual design — same React render that the dev canvas uses, packaged as a real npm module.
 
-**Current version: `0.2.3`** — `<StickyHeader>` accepts `loginHref` + `onMakeSiteClick` props so it can wire to your real auth route and submission modal instead of canvas-demo hardcoded URLs. 0.2.2 added `StickyHeader` and `HeroPlatformStrip` as named exports from `/landing`. 0.2.0 admin interactive variants complete: all 10 admin screens drop-in for production. See [CHANGELOG](./CHANGELOG.md).
+**Current version: `0.3.0`** — **BREAKING.** Intake flow rewrite: link/photo branches with mode-switcher, Step 2 photo (description + city + customer_contact + opt. text_files), inline Confirmation. `S5_Confirmation` / `S3_Step3_TgBot` / `S4_TGBotInvite` removed; Instagram `ok-instagram` tier removed; `CaptchaNotice` no longer carries `· невидимо`. See [CHANGELOG](./CHANGELOG.md#030--intake-flow-rewrite-breaking--2026-05-24) for the full migration guide and backend checklist for hand-rolled consumers.
 
 ## Why this exists
 
@@ -103,7 +103,7 @@ Your custom Tailwind classes now share token names with the canon (`bg-accent`, 
 | `@samosite/canon/tokens` | `VT`, `BRAND`, flat `tokens` object, `Tokens` type |
 | `@samosite/canon/primitives` | `Eyebrow`, `Mono`, `Card`, `Btn`, `Input`, `Badge`, `Checkbox`, `Logo`, `BrandMark`, `IconArrow`, `IconLink`, `Spinner` |
 | `@samosite/canon/landing` | `Landing`, `HeroSection`, `ExamplesSection`, `StorySection`, `PlatformsSection`, `BigFeaturesSection`, `OwnershipSection`, `AnalyticsSection`, `PricingSection`, `FaqSection`, `FreeMonthSection`, `SectionTitle`, `SectionSub`, `SiteCard`, `FeatureCard`, `PlatformCard`, `StoryStepColorful`, `FeatureGlyph`, `PlatformLogo` |
-| `@samosite/canon/intake` | `SubmitModal`, `Confirmation`, `PhotoDrawer` + raw `S3_*`, `S5_*`, `S6_*` aliases |
+| `@samosite/canon/intake` | `SubmitModal`, `Confirmation`, `PhotoDrawer` (back-compat) + step components `S3_Step1_Link`, `S3_Step1_Photo`, `S3_Step2_PhotoDesc`, `S3_StepContact`, `S3_FinalConfirm` + constants `SOURCE_LIB`, `PHOTO_LIMITS` |
 | `@samosite/canon/customer` | `CustomerSite`, `LeadForm`, `FeedbackPage` + `S7_SchemeSwatches` |
 | `@samosite/canon/source` | `SourceDetectionBadge` (desktop catalog) + `S2_Desktop`, `S2_Mobile` |
 | `@samosite/canon/admin-demo` | `ClientAdminDemo` — `/admin-demo` page |
@@ -190,6 +190,159 @@ export default function LoginPage() {
 ```
 
 More examples (Dashboard, AppsList, AppDetail) — same pattern: parent owns state, hands `data` + callbacks. See [CHANGELOG](./CHANGELOG.md#020-alpha1) for full prop list per component.
+
+## SubmitModal — 2-branch flow (0.3.0)
+
+Single component, fully controlled. Consumer owns `mode` + `step` + per-step state, hands them in via props and provides `on*Change` callbacks. The modal renders the right step for `(mode, step)` and emits navigation events you wire to your local state machine.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { SubmitModal, SOURCE_LIB } from '@samosite/canon/intake';
+
+type Mode = 'link' | 'photo';
+type Channel = 'telegram' | 'phone' | 'email' | 'max';
+type CustomerContactType = 'phone' | 'telegram';
+
+export function SubmitFlow() {
+  // mode + step
+  const [mode, setMode] = useState<Mode>('link');
+  const [step, setStep] = useState<number>(1);
+
+  // link branch
+  const [url, setUrl] = useState('');
+  const [source, setSource] = useState<keyof typeof SOURCE_LIB | null>(null);
+  const [counts, setCounts] = useState<string | null>(null);
+
+  // photo branch
+  const [files, setFiles] = useState<File[]>([]);
+  const [description, setDescription] = useState('');
+  const [city, setCity] = useState('');
+  const [customerContact, setCustomerContact] = useState('');
+  const [customerContactType, setCustomerContactType] = useState<CustomerContactType>('phone');
+  const [textFiles, setTextFiles] = useState<File[]>([]);
+
+  // contact step
+  const [channel, setChannel] = useState<Channel>('telegram');
+  const [contact, setContact] = useState('');
+  const [consent, setConsent] = useState(true);
+
+  // submission
+  const [submitting, setSubmitting] = useState(false);
+
+  async function submit() {
+    setSubmitting(true);
+    const body = new FormData();
+    body.append('mode', mode);
+    body.append('channel', channel);
+    body.append('contact', contact);
+    body.append('consent', String(consent));
+    if (mode === 'link') {
+      body.append('url', url);
+    } else {
+      files.forEach(f => body.append('files[]', f));
+      body.append('description', description);
+      body.append('city', city);
+      body.append('customer_contact', customerContact);
+      body.append('customer_contact_type', customerContactType);
+      textFiles.forEach(f => body.append('text_files[]', f));
+    }
+    await fetch('/api/submit-application', { method: 'POST', body });
+    setSubmitting(false);
+    setStep(mode === 'photo' ? 4 : 3); // advance to confirm
+  }
+
+  return (
+    <SubmitModal
+      mode={mode}
+      step={step}
+      onModeChange={setMode}
+
+      // link
+      url={url} onUrlChange={setUrl}
+      source={source} counts={counts}
+      onCorrect={() => setSource(null)}
+
+      // photo
+      files={files}
+      onPickPhoto={() => pickFiles().then(setFiles)}
+      onRemovePhoto={(i) => setFiles(prev => prev.filter((_, k) => k !== i))}
+
+      // photo step 2
+      description={description} onDescriptionChange={setDescription}
+      city={city} onCityChange={setCity}
+      customerContact={customerContact} onCustomerContactChange={setCustomerContact}
+      customerContactType={customerContactType} onCustomerContactTypeChange={setCustomerContactType}
+      textFiles={textFiles}
+      onPickTextFile={() => pickFiles({ types: 'text' }).then(f => setTextFiles(prev => [...prev, ...f]))}
+      onRemoveTextFile={(i) => setTextFiles(prev => prev.filter((_, k) => k !== i))}
+
+      // contact
+      channel={channel} onChannelChange={setChannel}
+      contact={contact} onContactChange={setContact}
+      consent={consent} onConsentChange={setConsent}
+
+      // navigation
+      onContinue={() => setStep(s => s + 1)}
+      onBack={() => setStep(s => Math.max(1, s - 1))}
+      onSubmit={submit}
+      onClose={() => setStep(1) /* or close handler */}
+    />
+  );
+}
+```
+
+### Opening from the Hero
+
+The Hero pill emits a synthetic click on the photo-link companion when the user wants the photo flow. Wire both entry points the same way — they only differ in the initial `mode`:
+
+```tsx
+function HeroWithModal() {
+  const [open, setOpen] = useState(false);
+  const [initialMode, setInitialMode] = useState<Mode>('link');
+
+  // From the input + "Сделать Самосайт" CTA — defaults to link with current url.
+  function openLink(urlSeed: string) {
+    setInitialMode('link');
+    // …seed url state in your store…
+    setOpen(true);
+  }
+
+  // From the "или загрузите фото…" link directly under the input pill.
+  function openPhoto() {
+    setInitialMode('photo');
+    setOpen(true);
+  }
+
+  return open ? <SubmitFlow /* …with initialMode wiring… */ /> : <Hero onLinkSubmit={openLink} onPhotoUpload={openPhoto} />;
+}
+```
+
+### Backend contract
+
+`POST /api/submit-application` accepts both branches in one endpoint:
+
+| Field | Branch | Required | Notes |
+|---|---|---|---|
+| `mode` | both | yes | `'link' \| 'photo'` |
+| `url` | link | yes | URL string, server-side `detect_source()` for analytics |
+| `files[]` | photo | yes (5..60) | JPEG / PNG / WebP / HEIC, ≤15 MB each, ≤200 MB total |
+| `description` | photo | yes (≥30 chars) | wrap in `<user_content>` for LLM prompt |
+| `city` | photo | yes | TEXT |
+| `customer_contact` | photo | yes | **public** — rendered on customer site CTA |
+| `customer_contact_type` | photo | yes | `'phone' \| 'telegram'` |
+| `text_files[]` | photo | no (0..10) | PDF / DOCX / TXT / RTF; magic-byte validated |
+| `channel` | both | yes | `'telegram' \| 'phone' \| 'email' \| 'max'` |
+| `contact` | both | yes | **private** — notify channel for ops |
+| `consent` | both | yes | bool; copy must cover BOTH `contact` and `customer_contact` purposes |
+
+Endpoints removed in 0.3.0 — delete them server-side:
+
+- `GET /api/tg-bot-personal-status`
+- `POST /api/submit-application/finalize-via-email`
+- (verify) `GET /api/tg-bot-status?app_id=…` if only personal-bot
+
+See [CHANGELOG `0.3.0`](./CHANGELOG.md#030--intake-flow-rewrite-breaking--2026-05-24) for the full backend + security checklist.
 
 ## Build
 

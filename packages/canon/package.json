@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.2.7",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. Drop-in React components that match canon/index.html byte-for-byte. 0.2 adds interactive admin variants.",
+  "version": "0.3.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.3.0: intake flow rewrite (link/photo branches with inline confirmation).",
   "type": "module",
   "sideEffects": [
     "*.css"

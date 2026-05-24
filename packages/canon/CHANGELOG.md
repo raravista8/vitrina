@@ -1,5 +1,119 @@
 # Changelog
 
+## 0.3.0 — Intake flow rewrite (BREAKING) · 2026-05-24
+
+> **BREAKING.** Hard cut-over. No `@deprecated` period — vitrina prod is pre-launch so consumers migrate at lockstep with the version bump. Bumped from `0.2.7 → 0.3.0` (skipping `0.2.8`).
+
+### Why
+
+Fake-door MVP: every application — link or photos — should be accepted and routed to manual handling. The old 3-step modal (link → contact → personal-bot onboarding) hard-coupled the funnel to Telegram automation that doesn't exist yet, special-cased Instagram with a screenshot-upload nag, and rendered Confirmation as a separate full-screen route. Three friction points the new flow removes.
+
+### What changed at the funnel level
+
+```
+0.2.x:   Hero (link only) → Modal Step 1 (link) → Step 2 (contact) → Step 3 (open @SamositeBot) → /confirm route
+              Photo path lived in a separate <PhotoDrawer> reached from "нет ничего онлайн" footer link.
+
+0.3.0:   Hero (link input + "or upload photo" companion link, same plane)
+           ├ link path  → Modal Step 1 (link, mode-switcher) → Step 2 (contact) → Step 3 (confirm inline)
+           └ photo path → Modal Step 1 (photos, mode-switcher) → Step 2 (description + city +
+                                                                          customer_contact + opt. text_files)
+                                                              → Step 3 (contact) → Step 4 (confirm inline)
+```
+
+Hero & modal share the same source-selection plane. User picks ONE path — link OR photo, never both. Mode-switcher pill-tabs on Step 1 in both branches let the user change their mind without closing the modal; partial state per branch is the consumer's responsibility to preserve.
+
+### Breaking changes
+
+1. **`SubmitModal` — full controlled-API rewrite.**
+   - New props: `mode` (`'link' | 'photo'`), `step` (1..4), `onModeChange`, `onStepChange`, `onBack`, `onContinue`, `onSubmit`, `onClose`.
+   - Link branch state: `url`, `source`, `counts`, `onUrlChange`, `onCorrect`.
+   - Photo branch state: `files`, `onPickPhoto`, `onRemovePhoto`, `description`, `city`, `customerContact`, `customerContactType` (`'phone' | 'telegram'`), `textFiles`, plus matching `on*Change` callbacks.
+   - Contact step (shared): `channel`, `contact`, `consent`, plus matching `on*Change` callbacks.
+   - Final step: `summary` (auto-derived from props if omitted).
+   - Old prop names (`sourceUrl`, `contact` as positional) removed.
+2. **`S5_Confirmation` — removed.** Confirmation is now `S3_FinalConfirm`, rendered as the final step inside `SubmitModal`. Re-export alias `Confirmation` points at the inline component for back-compat naming, but it expects the new summary-prop shape, not the old `contactType` prop.
+3. **`S3_Step3_TgBot` — removed.** Personal-notification onboarding (`@SamositeBot` invite) deferred to post-approval email flow. **Note:** this is NOT the same as `@SamositeIntakeBot` (the private-channel parser bot) — that one was on a separate code path and is out of scope for 0.3.0.
+4. **`S4_TGBotInvite` — removed.** Private TG-channel invite (`@SamositeIntakeBot` admin add) was a dead path on the canvas — no consumer was rendering it.
+5. **`PhotoDrawer` — back-compat shim only.** Old `<S6_PhotoDrawer>` had its own contact form + business-name fields. The new flow integrates photo selection as Step 1 of `SubmitModal` and pushes business details to Step 2. The `PhotoDrawer` export now resolves to `S3_Step1_Photo` for callers that haven't migrated yet. Schedule for removal at 0.4.0.
+6. **`SOURCE_LIB.instagram` — `ok-instagram` tier removed.** Instagram is now a regular `ok` source. `<SourceBadge source="instagram" />` no longer renders the "нужен скриншот профиля + фото работ" CTA. Consumers must drop any special-case rendering of an IG hint.
+7. **`CaptchaNotice` — `· невидимо` suffix removed everywhere.** Renders as `🛡 Защищено Yandex SmartCaptcha` across both intake (modal) and customer-site (LeadForm + `customer-site.html.j2`). Localized assertions on `· невидимо` will fail; remove them.
+8. **Photo limits softened.** Hard caps (`≤30 files`, `≤10 MB/file`, `≤100 MB total`) replaced with soft fake-door limits (`5..60 files`, `≤15 MB/file`, `≤200 MB total`). New named export `PHOTO_LIMITS` carries the numbers.
+9. **Hero adds a photo-link companion** under the link-input pill. The link carries `data-open-submit-modal="photo"` — wire it to your modal-opener with `mode='photo'`. The Hero CTA itself still opens with `mode='link'` (or `mode='photo'` if it bubbles up from the photo-link click — your routing decision).
+
+### New / changed exports
+
+| Module | Added | Removed |
+|---|---|---|
+| `@samosite/canon/intake` | `S3_Step1_Link`, `S3_Step1_Photo`, `S3_Step2_PhotoDesc`, `S3_StepContact`, `S3_FinalConfirm`, `SOURCE_LIB`, `PHOTO_LIMITS` | `S3_Step2_Contact` (renamed to `S3_StepContact`), `S3_Step3_TgBot`, `S4_TGBotInvite`, `S5_Confirmation` (renamed to `S3_FinalConfirm`) |
+| `@samosite/canon/landing` | photo-link in `HeroBlock` (no new export) | — |
+| `@samosite/canon/source` | — | Instagram from `WAITLIST_KINDS` and `PHOTO_FALLBACK_KINDS` (in the hand-rolled `code/SourceDetectionBadge.tsx` mirror — only relevant if you copied that file) |
+
+### For hand-rolled consumers (vitrina/landing)
+
+Your `SubmitModal.tsx`, `Hero.tsx`, `PhotoDrawer.tsx`, and `SourceDetectionBadge.tsx` are hand-rolled per the prod-map in your brief §2 — canon changes don't reach them automatically. You need to mirror the new flow on your side.
+
+**Frontend diff:**
+- Delete `PhotoDrawer.tsx`. Its UI lives in `SubmitModal` Step 1 (`mode='photo'`) + Step 2 (description + city + customer_contact + text_files).
+- Rewrite `Hero.tsx` to render the input pill + photo-link companion (same plane). Empty CTA opens modal with `mode='link'`; photo-link opens with `mode='photo'`.
+- Rewrite `SubmitModal.tsx` against the new API contract above. Owns `mode`/`step`/per-step state. Mirror visual baselines from `screens-intake.jsx` artboards (16 states listed in §6.3 of your brief).
+- `SourceDetectionBadge.tsx`: drop `instagram` from `WAITLIST_KINDS` and from any photo-fallback CTA branch.
+- Visual regression baselines need regeneration — 40 PNG.
+
+**Backend diff:**
+- `POST /api/submit-application` schema migration:
+  - Add `mode: 'link' | 'photo'`.
+  - Under `mode='photo'`, require `description` (TEXT, ≥30 chars after trim), `city` (TEXT), `customer_contact` (TEXT), `customer_contact_type` (ENUM `'phone' | 'telegram'`).
+  - Optional `text_files[]` — multipart attachments, PDF / DOCX / TXT / RTF, up to 10 files.
+- Delete endpoints: `GET /api/tg-bot-personal-status`, `POST /api/submit-application/finalize-via-email`, `GET /api/tg-bot-status?app_id=…` (the personal-bot one — verify before deleting the private-channel variant).
+- Magic-byte file validation for the new attachment types (FR-015 extension):
+  - PDF: `%PDF-` (0x25 0x50 0x44 0x46 0x2D).
+  - DOCX: ZIP signature `PK\x03\x04` + entry path starts with `word/`.
+  - TXT / RTF: header check + UTF-8 / Windows-1251 / `{\rtf1` respectively.
+- PDF hardening: strip embedded JS, form-field actions, OLE objects (FR-019 extension).
+- LLM safety: wrap `description` + extracted text-file content inside `<user_content>` tags before sending to YandexGPT (existing FR-020 — applies to the new fields).
+
+**Security / FZ-152 checklist for vitrina:**
+- `customer_contact` is **public** (rendered on the customer site CTA) — distinct from `contact` (private, the notify channel). The consent checkbox text must cover both purposes. Re-review consent copy with counsel before launch.
+- New attachment types add new threat surfaces — see magic-byte + PDF hardening above. Treat text-file content as untrusted user input in the LLM prompt.
+- At-rest encryption for `text_files[]` if they're stored before LLM extraction (they may contain PII like price lists with phone numbers).
+
+### What's NOT in this release
+
+- Canon-import for `SubmitModal` into vitrina prod. Vitrina stays hand-rolled until 0.4.x with a proven feature-flag-driven migration plan.
+- ADRs — that's your side, not canon's.
+- Backend code changes — your migration.
+- Changes to `landing` sections 2–10, `admin-*`, `customer`, `primitives`, `tokens`. Only `intake`, `source`, and the Hero block of `landing` are touched.
+
+### Acceptance criteria (per your brief §7)
+
+- [x] `S5_Confirmation`, `S3_Step3_TgBot`, `S4_TGBotInvite` removed from `export {}` in `intake/index.tsx`.
+- [x] `SOURCE_LIB.instagram.tier === 'ok'` (no `ok-instagram`).
+- [x] `CaptchaNotice` source has no `· невидимо` token.
+- [x] `<SubmitModal>` accepts both `mode` values; step indicator scales 3-dot vs 4-dot.
+- [x] Mode-switcher pill-tabs render on Step 1 in both branches.
+- [x] Step 2 photo: `Продолжить` gated on `description.length >= 30 && city && customerContact`.
+- [x] Final step shows the full summary (link or photo path, varying fields).
+- [x] 16 visual baseline artboards present on `index.html` (`s3-*` IDs).
+- [x] Canvas `index.html` — old sections `#5` (confirmation), `#6` (photo drawer) removed; no orphan references in active code.
+- [x] CHANGELOG has explicit «For hand-rolled consumers» section with backend checklist (this section).
+
+### Migration
+
+```bash
+npm i @samosite/canon@0.3.0
+# rebuild your app
+npm run build
+```
+
+No automatic codemod. The API contract change is too large to migrate mechanically — every consumer needs to read the new `<SubmitModal>` props and rewire its parent state. Expected migration time on vitrina/landing: ~6-8 h in one session (per your brief §10).
+
+### Back-compat
+
+None. This is a controlled rip-and-replace. If you're consuming `intake/`, you re-implement against the new API.
+
+---
+
 ## 0.2.7 — Hero H1 mobile clip (still) + FreeMonth→footer gap (hotfix) · 2026-05-24
 
 Hotfix on top of 0.2.6. Two prod-reported defects on samosite.online. **No API changes.** Drop-in over 0.2.6.

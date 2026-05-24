@@ -855,7 +855,7 @@ function CustomerBooking({ s, confirmed = false }) {
                 }}>Записаться <IconArrow size={16} /></a>
               </div>
               <Mono style={{ display: 'block', fontSize: 11, color: s.sub, marginTop: 10, textAlign: 'center' }}>
-                Защищено Yandex SmartCaptcha · невидимо
+                Защищено Yandex SmartCaptcha
               </Mono>
 
               {/* alt messengers */}

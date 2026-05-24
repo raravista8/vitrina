@@ -235,15 +235,13 @@ var STATES = [
     api: "Timeout fallback \u2014 UI \u043D\u0435 \u0431\u043B\u043E\u043A\u0438\u0440\u0443\u0435\u0442 submit"
   },
   {
-    id: "ig-waitlist",
-    label: "5 \xB7 \u2139\uFE0F Instagram \u2014 waitlist + photo CTA",
-    kind: "info",
+    id: "ig-success",
+    label: "5 \xB7 \u2713 Instagram",
+    kind: "success",
     url: "instagram.com/master.nails.spb",
-    badge: /* @__PURE__ */ jsx2(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx2("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "Instagram \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
-    waitlist: true,
-    photoCta: true,
-    note: "ADR-0009: known waitlist source. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u0435\u0442 80% IG-\u044E\u0437\u0435\u0440\u043E\u0432 \u0447\u0435\u0440\u0435\u0437 S4 (\u0444\u043E\u0442\u043E).",
-    api: 'POST /api/feedback { type:"source_request", source_name:"instagram" }'
+    badge: /* @__PURE__ */ jsx2(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx2("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx2("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
+    note: "0.3.0: Instagram \u0442\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044B\u0447\u043D\u044B\u0439 ok-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u0417\u0430\u044F\u0432\u043A\u0430 \u0438\u0434\u0451\u0442 \u0432 \u043E\u0431\u0449\u0443\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C, \u0440\u0443\u0447\u043D\u0430\u044F \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u0440\u0435\u0448\u0438\u0442 \u0447\u0442\u043E \u0432\u044B\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0442\u044C.",
+    api: 'GET /api/preview \u2192 {source:"instagram", status:"ok"}'
   },
   {
     id: "vk-waitlist",
@@ -388,7 +386,7 @@ function S2_Desktop() {
   ] });
 }
 function S2_Mobile() {
-  const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-waitlist", "unknown-url"].includes(s.id));
+  const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-success", "unknown-url"].includes(s.id));
   return /* @__PURE__ */ jsxs2("div", { style: {
     width: "100%",
     minHeight: "100%",

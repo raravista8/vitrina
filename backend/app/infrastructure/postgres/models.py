@@ -318,12 +318,35 @@ class AdminAction(Base):
 # =============================================================================
 
 APPLICATION_STATUSES = ("pending", "approved", "rejected", "fulfilled")
+APPLICATION_MODES = ("link", "photo")
+CUSTOMER_CONTACT_TYPES = ("phone", "telegram")
 
 
 class Application(UUIDPrimaryKey, Timestamped, Base):
+    # 0.3.0 — `mode` discriminates the two intake branches. `link` keeps the
+    # legacy fields (source_url/source_type); `photo` adds description/city/
+    # customer_contact_* + multipart attachments (application_photos +
+    # application_text_files). DB-level CHECK in migration 0010 guards the
+    # photo-mode invariants.
+    mode: Mapped[str] = mapped_column(String(16), nullable=False, server_default="link")
+
+    # Link-branch fields (nullable on photo-branch)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     source_type: Mapped[str] = mapped_column(String(16), nullable=False)
 
+    # Photo-branch fields (nullable on link-branch; required on photo per
+    # CHECK constraint in 0010)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    city: Mapped[str | None] = mapped_column(Text, nullable=True)
+    customer_contact_type: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # Fernet-encrypted (rendered publicly on the customer-site CTA — distinct
+    # from contact_value which is the private notify channel to the master).
+    customer_contact_value_enc: Mapped[bytes | None] = mapped_column(
+        LargeBinary,
+        nullable=True,
+    )
+
+    # Shared: notify channel (private — how WE reach the master).
     contact_type: Mapped[str] = mapped_column(String(16), nullable=False)
     contact_value: Mapped[str] = mapped_column(Text, nullable=False)  # PII
 
@@ -356,6 +379,24 @@ class Application(UUIDPrimaryKey, Timestamped, Base):
         CheckConstraint(
             f"status IN {APPLICATION_STATUSES!r}",
             name="applications_status_valid",
+        ),
+        CheckConstraint(
+            f"mode IN {APPLICATION_MODES!r}",
+            name="applications_mode_valid",
+        ),
+        CheckConstraint(
+            "customer_contact_type IS NULL OR customer_contact_type IN "
+            f"{CUSTOMER_CONTACT_TYPES!r}",
+            name="applications_customer_contact_type_valid",
+        ),
+        CheckConstraint(
+            "(mode = 'link') OR ("
+            "  description IS NOT NULL"
+            "  AND city IS NOT NULL"
+            "  AND customer_contact_type IS NOT NULL"
+            "  AND customer_contact_value_enc IS NOT NULL"
+            ")",
+            name="applications_photo_mode_required_fields",
         ),
         Index("applications_created_at_idx", "created_at"),
     )
@@ -413,6 +454,62 @@ class ApplicationPhoto(UUIDPrimaryKey, Base):
             "application_id",
             "index",
             name="uq_application_photos_app_index",
+        ),
+    )
+
+
+# =============================================================================
+# application_text_files (canon 0.3.0 — photo-branch optional text attachments)
+# =============================================================================
+
+# Mirror of ApplicationPhoto but for text material (price-lists, service
+# descriptions, FAQs) the master uploads alongside photos in the photo flow.
+# Bytes live on disk under UPLOADS_DIR/<application_id>/text/ — magic-byte
+# validation + size limits enforced at the API boundary (FR-015 extension).
+APPLICATION_TEXT_FILE_MIMES = (
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+    "text/plain",
+    "application/rtf",
+)
+
+
+class ApplicationTextFile(UUIDPrimaryKey, Base):
+    """One uploaded text file for a `mode='photo'` Application.
+
+    PDF / DOCX / TXT / RTF only — see APPLICATION_TEXT_FILE_MIMES + the
+    magic-byte validators in core/parsing/file_validators.py.
+    """
+
+    __tablename__ = "application_text_files"
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+    application_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("applications.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    index: Mapped[int] = mapped_column(Integer, nullable=False)
+    filename: Mapped[str] = mapped_column(Text, nullable=False)
+    mime: Mapped[str] = mapped_column(String(64), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    disk_path: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("index >= 0", name="application_text_files_index_nonneg"),
+        CheckConstraint(
+            "size_bytes > 0",
+            name="application_text_files_size_positive",
+        ),
+        UniqueConstraint(
+            "application_id",
+            "index",
+            name="uq_application_text_files_app_index",
         ),
     )
 

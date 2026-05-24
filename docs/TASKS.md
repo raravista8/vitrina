@@ -799,9 +799,11 @@ All 8 PR серии A→H + hotfix #71 — **merged в main + deployed on samosi
 
 ### v2.1.3 deferred per user decision
 
-- **Phase 6** — Intake 3→2 шага + удаление 3 backend endpoints (`/api/tg-bot-personal-status`,
-  `/api/submit-application/finalize-via-email`, `/api/tg-bot-status`). RISKY:
-  затрагивает live customer flows. Откладывается до подготовленного downtime.
+- ~~**Phase 6** — Intake 3→2 шага + удаление 3 backend endpoints~~ — **DONE
+  in canon 0.3.0 refresh** (PR following #136). Endpoints `/api/tg-bot-
+  personal-status`, `/api/submit-application/finalize-via-email`,
+  `/api/applications/{id}/tg-bot-status` removed. Pre-launch — no live
+  flows to break. Intake fully restructured to link OR photo branches.
 
 ### Operator action required (post-merge)
 
