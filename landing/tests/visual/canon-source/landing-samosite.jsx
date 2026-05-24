@@ -596,6 +596,14 @@ function PlatformSoonPill({ p, mobile }) {
 // ─────────────────────────────────────────────────────────────
 // SECTION wrappers
 
+// sectionPad — Mobile pad = 20, desktop pad = 80. Per canon 0.2.6: every
+// section self-pads so it renders correctly outside the SamosaytLanding
+// wrapper (i.e. on prod where sections are composed individually).
+function sectionPad(mobile) {
+  const v = mobile ? 20 : 80;
+  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' };
+}
+
 function SectionEyebrow({ children, mobile }) {
   return (
     <div style={{
@@ -638,6 +646,16 @@ function SectionSub({ children, mobile, align = 'center' }) {
 // HERO
 
 function HeroBlock({ mobile }) {
+  // 0.2.6: canon's prod-facing HeroBlock has an outer sectionPad wrapper
+  // (so the section self-pads when consumed outside <SamosaytLanding>).
+  // That outer wrapper is INTENTIONALLY NOT mirrored in canon-source —
+  // this file feeds the baseline generator (`_visual-host.html` tags
+  // children by index), and our prod Hero (`landing/components/Hero.tsx`)
+  // is hand-rolled with its own `<section px-5 sm:px-16>` padding around
+  // a `max-w-[1100px] mx-auto` body marked `data-section-body="hero"`.
+  // Baseline must measure the inner block so prod's locator captures
+  // the same DOM subtree (width = 1100 on desktop). H1 mobile-overflow
+  // fixes BELOW are still synced because they affect inner rendering.
   return (
     <div style={{
       position: 'relative', zIndex: 1,
@@ -652,21 +670,23 @@ function HeroBlock({ mobile }) {
         fontWeight: 700,
         letterSpacing: '-0.035em',
         margin: 0,
-        textWrap: 'balance',
+        textWrap: mobile ? 'pretty' : 'balance',
       }}>
         Сайт, который{mobile ? ' ' : <br />}
-        <span style={{ position: 'relative', display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>
+        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
           сам себя соберёт,
-          <span aria-hidden="true" style={{
-            position: 'absolute', left: 4, right: 14, bottom: mobile ? 3 : 8,
-            height: mobile ? 8 : 14, background: VT.accentSoft, opacity: 0.7,
-            zIndex: -1, borderRadius: 3,
-          }} />
+          {!mobile && (
+            <span aria-hidden="true" style={{
+              position: 'absolute', left: 4, right: 14, bottom: 8,
+              height: 14, background: VT.accentSoft, opacity: 0.7,
+              zIndex: -1, borderRadius: 3,
+            }} />
+          )}
         </span>
         {mobile ? ' ' : <br />}
-        <span style={{ display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>сам обновит</span>
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>сам обновит</span>
         {' '}
-        <span style={{ display: 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: '0 2px' }}>и сам приведёт клиентов</span>
+        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: mobile ? 'normal' : 'nowrap', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>и сам приведёт клиентов</span>
       </h1>
 
       <p style={{
@@ -917,7 +937,7 @@ function ExamplesSection({ mobile }) {
   );
 
   return (
-    <section style={{ marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>через несколько минут</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1184,7 +1204,7 @@ function StorySection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>От вас — одно действие,<br/>всё остальное {BRAND.name} сделает сам</SectionTitle>
       </div>
@@ -1219,7 +1239,7 @@ function PlatformsSection({ mobile }) {
   const [featured, ...rest] = PLATFORMS_OK;
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="sources">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="sources">
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Что подойдёт<br/>для создания {BRAND.name}а</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1447,7 +1467,7 @@ function BigFeaturesSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 800, margin: '0 auto' }}>
         <SectionTitle mobile={mobile}>Восемь «сам» —<br/>поэтому он {BRAND.name}</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -1656,8 +1676,9 @@ function AnalyticsSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 64 : 110}px auto 0`,
     }}>
       <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
@@ -1804,8 +1825,9 @@ function OwnershipSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 56 : 96, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 56 : 96}px auto 0`,
     }}>
       <div style={{
@@ -2010,7 +2032,7 @@ function SocialProofSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="proof">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="proof">
       <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 820, margin: '0 auto' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -2087,7 +2109,7 @@ function PricingSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Один тариф —<br/>без сюрпризов</SectionTitle>
         <SectionSub mobile={mobile}>
@@ -2283,7 +2305,7 @@ function FaqSection({ mobile }) {
   ];
 
   return (
-    <section style={{ marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="faq">
+    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="faq">
       <div style={{ textAlign: 'center' }}>
         <SectionTitle mobile={mobile}>Что чаще всего<br/>спрашивают</SectionTitle>
       </div>
@@ -2313,9 +2335,10 @@ function FreeMonthSection({ mobile }) {
 
   return (
     <section style={{
+      ...sectionPad(mobile),
       marginTop: mobile ? 64 : 110,
       position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1200,
+      maxWidth: mobile ? '100%' : 1360,
       margin: `${mobile ? 64 : 110}px auto 0`,
     }} id="cta">
       <div style={{
@@ -2469,7 +2492,6 @@ function SamosaytLanding({ mobile = false }) {
     <div style={{
       width: '100%', minHeight: '100%', background: VT.bg, color: VT.ink,
       fontFamily: VT.font.sans,
-      paddingLeft: padX, paddingRight: padX,
       paddingTop: mobile ? 18 : 28,
       paddingBottom: mobile ? 32 : 64,
       position: 'relative', overflow: 'hidden',
