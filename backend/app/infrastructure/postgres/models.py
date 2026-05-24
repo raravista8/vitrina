@@ -64,6 +64,16 @@ class User(UUIDPrimaryKey, Timestamped, Base):
     plan: Mapped[str] = mapped_column(String(16), nullable=False, server_default="trial")
     plan_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
+    # canon 0.4.0 — customer auth fields. Provisioned by founder via runbook
+    # when publishing a customer-site:
+    #   login = subdomain (e.g. 'studia-anna')
+    #   password_hash = bcrypt(plaintext_password)
+    # The master receives {login, password} in TG/email and logs in at /login.
+    # Optional — pre-launch a User row exists from intake before any site is
+    # published, so login/password_hash stay NULL until provisioning happens.
+    login: Mapped[str | None] = mapped_column(Text, nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     __table_args__ = (
         CheckConstraint(
             f"contact_type IN {CONTACT_TYPES!r}",
@@ -74,6 +84,7 @@ class User(UUIDPrimaryKey, Timestamped, Base):
             name="users_plan_valid",
         ),
         UniqueConstraint("contact_type", "contact_value", name="users_contact_uq"),
+        UniqueConstraint("login", name="users_login_uq"),
     )
 
 

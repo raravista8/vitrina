@@ -2647,6 +2647,7 @@ function StickyHeader({
   mobile = false,
   padX,
   loginHref = "https://samosite.online/login",
+  homeHref = "#hero",
   onMakeSiteClick
 }) {
   const px = padX ?? (mobile ? 20 : 80);
@@ -2747,7 +2748,7 @@ function StickyHeader({
       justifyContent: "space-between",
       gap: 16
     }, children: [
-      /* @__PURE__ */ jsx2("a", { href: "#hero", className: "ss-brand-hover", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx2(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
+      /* @__PURE__ */ jsx2("a", { href: homeHref, className: "ss-brand-hover", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx2(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
       !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
         /* @__PURE__ */ jsx2("a", { href: "#how", className: "ss-nav-link", children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442" }),
         /* @__PURE__ */ jsx2("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),

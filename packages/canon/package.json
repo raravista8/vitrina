@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.3.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.3.0: intake flow rewrite (link/photo branches with inline confirmation).",
+  "version": "0.4.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.4.0: customer login (S20_CustomerLogin) + StickyHeader homeHref prop.",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -47,6 +47,10 @@
     "./admin-ops": {
       "types": "./dist/admin-ops/index.d.ts",
       "import": "./dist/admin-ops/index.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "import": "./dist/auth/index.js"
     },
     "./source": {
       "types": "./dist/source/index.d.ts",

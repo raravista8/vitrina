@@ -27,6 +27,7 @@ from app.api.middleware import (
     register_exception_handlers,
 )
 from app.api.routers.applications import router as applications_router
+from app.api.routers.auth import router as auth_router
 from app.api.routers.billing import router as billing_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
@@ -233,6 +234,7 @@ async def _lifespan(app: FastAPI) -> Any:
 
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
+    from app.core.auth.customer import CustomerSessionStore
     from app.core.auth.login_challenge import LoginChallengeStore
     from app.core.auth.sessions import AdminSessionStore
 
@@ -243,10 +245,16 @@ async def _lifespan(app: FastAPI) -> Any:
         # Two-step login challenge store (PR-E). Same lifespan gate as the
         # session store — no Redis means no admin login at all.
         app.state.login_challenge_store = LoginChallengeStore(redis_client)
+        # canon 0.4.0 customer login (T-Auth). Same Redis instance,
+        # different cookie/prefix per CustomerSessionStore.
+        app.state.customer_session_store = CustomerSessionStore(
+            redis_client, secret_key=settings.session_secret_key
+        )
         log.info("admin_session_store_ready")
     else:
         app.state.admin_session_store = None
         app.state.login_challenge_store = None
+        app.state.customer_session_store = None
         log.warning("admin_session_store_disabled", reason="redis_unavailable")
 
     try:
@@ -278,6 +286,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
 
     app.include_router(applications_router)
+    app.include_router(auth_router)
     app.include_router(feedback_router)
     app.include_router(billing_router)
     app.include_router(leads_router)

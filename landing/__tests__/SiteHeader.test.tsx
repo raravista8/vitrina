@@ -3,14 +3,6 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-// Mock next/navigation for useRouter — SiteHeader needs router.push()
-// to redirect logo clicks to '/' (canon's brand link is hardcoded to
-// `#hero`, we override via delegated click listener).
-const pushMock = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock, replace: pushMock }),
-}));
-
 import { SAMOSITE_OPEN_SUBMIT, SiteHeader } from "@/components/SiteHeader";
 
 // SiteHeader is a thin wrapper around canon 0.2.3 <StickyHeader>. We
@@ -31,17 +23,29 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     expect(brand.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("«Войти» link points to /admin-demo — master's site-management ЛК", () => {
-    // Public-facing «Войти» = master's customer admin (canon's
-    // ClientAdminDemo drop-in at /admin-demo). Operator admin lives at
-    // /admin/login but is NOT surfaced on the public landing. Canon's
-    // default `loginHref` is `https://samosite.online/login` (canvas
-    // demo URL) — must be overridden on our side.
+  it("«Войти» link points to /login — master's customer-login page (canon 0.4.0)", () => {
+    // Public-facing «Войти» now leads to canon's <CustomerLogin> at
+    // /login (canon 0.4.0). Before 0.4.0 it was /admin-demo placeholder;
+    // founder/operator admin at /admin/login is NOT surfaced here.
     render(<SiteHeader />);
     const loginLinks = screen.getAllByRole("link", { name: /Войти/i });
     expect(loginLinks.length).toBeGreaterThan(0);
     for (const link of loginLinks) {
-      expect(link).toHaveAttribute("href", "/admin-demo");
+      expect(link).toHaveAttribute("href", "/login");
+    }
+  });
+
+  it("brand-mark link points to / (canon 0.4.0 homeHref)", () => {
+    // Canon 0.4.0 added `<StickyHeader homeHref>` so brand-mark is a
+    // proper <a href> instead of needing the 0.3.x click-delegation
+    // patch (PR #138 — now removed).
+    render(<SiteHeader />);
+    const brandAnchors = document.querySelectorAll<HTMLAnchorElement>(
+      ".ss-sticky-header .ss-brand-hover",
+    );
+    expect(brandAnchors.length).toBeGreaterThanOrEqual(2);
+    for (const a of Array.from(brandAnchors)) {
+      expect(a.getAttribute("href")).toBe("/");
     }
   });
 
@@ -56,20 +60,6 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     fireEvent.click(ctas[0]!);
     expect(listener).toHaveBeenCalledTimes(1);
     window.removeEventListener(SAMOSITE_OPEN_SUBMIT, listener);
-  });
-
-  it("brand-link click goes to / via router.push (canon 0.3.0 patch)", () => {
-    pushMock.mockClear();
-    render(<SiteHeader />);
-    // canon's BrandMark is wrapped in <a class="ss-brand-hover" href="#hero">
-    // — our delegated listener intercepts and routes to '/'. There are
-    // two brand anchors (desktop + mobile via Tailwind sm: toggle).
-    const brandAnchors = document.querySelectorAll<HTMLAnchorElement>(
-      ".ss-sticky-header .ss-brand-hover",
-    );
-    expect(brandAnchors.length).toBeGreaterThanOrEqual(2);
-    fireEvent.click(brandAnchors[0]!);
-    expect(pushMock).toHaveBeenCalledWith("/");
   });
 
   it("falls back to <button>, not <a href=#hero>, when handler is wired", () => {
