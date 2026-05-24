@@ -3,6 +3,14 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+// Mock next/navigation for useRouter — SiteHeader needs router.push()
+// to redirect logo clicks to '/' (canon's brand link is hardcoded to
+// `#hero`, we override via delegated click listener).
+const pushMock = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock, replace: pushMock }),
+}));
+
 import { SAMOSITE_OPEN_SUBMIT, SiteHeader } from "@/components/SiteHeader";
 
 // SiteHeader is a thin wrapper around canon 0.2.3 <StickyHeader>. We
@@ -43,6 +51,20 @@ describe("SiteHeader — prod wiring around canon StickyHeader 0.2.3", () => {
     fireEvent.click(ctas[0]!);
     expect(listener).toHaveBeenCalledTimes(1);
     window.removeEventListener(SAMOSITE_OPEN_SUBMIT, listener);
+  });
+
+  it("brand-link click goes to / via router.push (canon 0.3.0 patch)", () => {
+    pushMock.mockClear();
+    render(<SiteHeader />);
+    // canon's BrandMark is wrapped in <a class="ss-brand-hover" href="#hero">
+    // — our delegated listener intercepts and routes to '/'. There are
+    // two brand anchors (desktop + mobile via Tailwind sm: toggle).
+    const brandAnchors = document.querySelectorAll<HTMLAnchorElement>(
+      ".ss-sticky-header .ss-brand-hover",
+    );
+    expect(brandAnchors.length).toBeGreaterThanOrEqual(2);
+    fireEvent.click(brandAnchors[0]!);
+    expect(pushMock).toHaveBeenCalledWith("/");
   });
 
   it("falls back to <button>, not <a href=#hero>, when handler is wired", () => {

@@ -40,6 +40,8 @@
  */
 
 import { StickyHeader } from "@samosite/canon/landing";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 /** Custom event name shared between SiteHeader (emit) and Hero (listen). */
 export const SAMOSITE_OPEN_SUBMIT = "samosite:open-submit";
@@ -50,6 +52,36 @@ function openSubmitModal() {
 }
 
 export function SiteHeader() {
+  const router = useRouter();
+
+  // Brand-logo navigation patch. Canon's <StickyHeader> hardcodes the
+  // brand anchor to `<a href="#hero">` (see canon/src/landing/index.tsx
+  // line 2576). That works on the canvas demo (single-page composition)
+  // and on / (where #hero exists in Hero.tsx), but only as a fragment
+  // scroll — the URL gains `#hero`, not a real route. We want clicks on
+  // the brand to behave like «go to the main page», even from a sub-route.
+  //
+  // Delegated listener catches clicks on `.ss-brand-hover` inside the
+  // sticky header → preventDefault → router.push('/').
+  //
+  // Proper fix is canon 0.3.1 adding a `homeHref` prop (analogous to the
+  // 0.2.3 `loginHref` addition); flagged in CHANGELOG follow-ups. Once
+  // shipped, this effect drops out and we set `homeHref="/"`.
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      const a = (e.target as Element | null)?.closest?.(
+        ".ss-sticky-header .ss-brand-hover",
+      ) as HTMLAnchorElement | null;
+      if (!a) return;
+      // Allow modifier-clicks to behave naturally (open-in-new-tab etc.)
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      router.push("/");
+    }
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [router]);
+
   return (
     <>
       <div className="hidden sm:block">
