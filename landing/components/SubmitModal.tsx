@@ -384,10 +384,22 @@ export function SubmitModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        {/* Backdrop: opacity 65 (was 45) — modal was «сливалась с
-            контентом» при 45 (user feedback). +20 pp gives the card
-            enough separation while keeping the blur soft. */}
-        <DialogOverlay className="bg-ink/65 fixed inset-0 z-[60] backdrop-blur-sm" />
+        {/* Backdrop — inline style instead of `bg-ink/N` Tailwind
+            class because our `ink` token is defined as a plain
+            oklch() string (no `<alpha-value>` placeholder), so
+            Tailwind silently drops the `/N` opacity modifier and
+            no rule ends up in the generated CSS. Inline style
+            bypasses the JIT entirely.
+            65% opacity gives the modal card enough separation from
+            the page (user: «модалка сливается с контентом»).
+            Adding `<alpha-value>` to tailwind.config.ts would fix
+            this for all classes but risks visual diffs across the
+            other 100+ `bg-ink` callsites — out of scope for this
+            hot-fix. */}
+        <DialogOverlay
+          className="fixed inset-0 z-[60] backdrop-blur-sm"
+          style={{ backgroundColor: "oklch(0.215 0.018 60 / 0.65)" }}
+        />
         <DialogContent
           aria-describedby={undefined}
           /* Positioning + sizing only — visual chrome (background,
