@@ -495,15 +495,23 @@ async def test_photo_application_happy_path(
         assert row.mime == "image/jpeg"
 
 
-async def test_photo_too_few_files_returns_413(client: httpx.AsyncClient) -> None:
-    """< 5 files → 413 too_few_files (design canvas screen #6 minimum)."""
+async def test_photo_single_file_accepted(client: httpx.AsyncClient) -> None:
+    """Single photo is now enough to start an application (canon's
+    canvas asks for 5, the actual minimum on prod is 1 — relaxed
+    per consumer request «пусть будет хоть одно»).
+
+    Zero-files case is handled by FastAPI's File() binding which
+    returns 422 before our explicit `len(files) < _MIN_PHOTO_FILES`
+    check runs — so we don't test the 413 path; there's no input
+    in our shipping schema that produces zero files and reaches
+    the application logic."""
     resp = await client.post(
         "/api/submit-application/photo",
         data=_photo_form_fields(),
-        files=_photo_files_payload(count=3),
+        files=_photo_files_payload(count=1),
     )
-    assert resp.status_code == 413
-    assert resp.json()["error"] == "too_few_files"
+    assert resp.status_code == 202, resp.text
+    assert resp.json()["data"]["contact_type"] == "email"
 
 
 async def test_photo_bad_magic_bytes_returns_400(client: httpx.AsyncClient) -> None:
