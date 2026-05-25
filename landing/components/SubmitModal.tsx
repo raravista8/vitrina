@@ -26,7 +26,7 @@
 
 import { Dialog, DialogContent, DialogOverlay, DialogPortal } from "@radix-ui/react-dialog";
 import { SubmitModal as CanonSubmitModal } from "@samosite/canon/intake";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { reachGoal } from "@/lib/metrika";
 import type { SourceDetection } from "@/lib/source-detect";
@@ -164,6 +164,45 @@ export function SubmitModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Hidden file-input refs. Canon's PhotoDropZone / TextFilesDropZone
+  // render «Выбрать файлы» as a presentational <button onClick={onPick}>
+  // — the click handler receives no arguments. The consumer (this file)
+  // is expected to own the actual file picker. We mount a hidden
+  // <input type="file" multiple> per branch and trigger .click() from
+  // the canon callbacks; the input's onChange feeds File[] back into
+  // state.
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const textFileInputRef = useRef<HTMLInputElement>(null);
+
+  function openPhotoPicker() {
+    // Reset value first so picking the same file twice still fires
+    // onChange — by default `<input type=file>` doesn't re-emit
+    // change for identical selections.
+    if (photoInputRef.current) {
+      photoInputRef.current.value = "";
+      photoInputRef.current.click();
+    }
+  }
+
+  function openTextFilePicker() {
+    if (textFileInputRef.current) {
+      textFileInputRef.current.value = "";
+      textFileInputRef.current.click();
+    }
+  }
+
+  function handlePhotoInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const picked = Array.from(event.target.files ?? []);
+    if (picked.length === 0) return;
+    setFiles((prev) => [...prev, ...picked]);
+  }
+
+  function handleTextFileInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const picked = Array.from(event.target.files ?? []);
+    if (picked.length === 0) return;
+    setTextFiles((prev) => [...prev, ...picked]);
+  }
+
   // Reset to initial state every time the modal re-opens. setState in
   // effect is the React-recommended pattern for "reset on prop change"
   // when the prop is `open` (not a derivable state).
@@ -270,6 +309,30 @@ export function SubmitModal({
           aria-describedby={undefined}
           className="fixed left-1/2 top-1/2 z-[70] w-full max-w-[640px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[20px] bg-paper shadow-xl outline-none focus:outline-none sm:max-h-[90vh]"
         >
+          {/* Hidden file inputs — opened from canon PhotoDropZone /
+              TextFilesDropZone «Выбрать файлы» buttons via the refs
+              above. accept= matches canon's published limits
+              (intake §PHOTO_LIMITS / TextFilesDropZone). */}
+          <input
+            ref={photoInputRef}
+            type="file"
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={handlePhotoInputChange}
+          />
+          <input
+            ref={textFileInputRef}
+            type="file"
+            multiple
+            accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,application/rtf,.pdf,.docx,.txt,.rtf"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={handleTextFileInputChange}
+          />
           <CanonSubmitModal
             mode={mode}
             step={step}
@@ -281,7 +344,9 @@ export function SubmitModal({
               /* override popover — handled by SourceDetectionBadge in Hero */
             }}
             files={files}
-            onPickPhoto={(picked: File[]) => setFiles([...files, ...picked])}
+            // Canon calls onPick() with no args — consumer triggers
+            // the hidden <input type=file> below.
+            onPickPhoto={openPhotoPicker}
             onRemovePhoto={(index: number) => setFiles(files.filter((_, i) => i !== index))}
             onModeChange={(m: SubmitMode) => {
               setMode(m);
@@ -296,7 +361,9 @@ export function SubmitModal({
             onCityChange={setCity}
             onCustomerContactChange={setCustomerContact}
             onCustomerContactTypeChange={setCustomerContactType}
-            onPickTextFile={(picked: File[]) => setTextFiles([...textFiles, ...picked])}
+            // Same pattern as onPickPhoto — canon dispatches a click,
+            // hidden input below actually opens the OS file picker.
+            onPickTextFile={openTextFilePicker}
             onRemoveTextFile={(index: number) =>
               setTextFiles(textFiles.filter((_, i) => i !== index))
             }
