@@ -35,27 +35,33 @@ import { type SourceDetection, detectSource } from "@/lib/source-detect";
  * Map our `detectSource()` output to canon's `SOURCE_LIB` key (see
  * packages/canon/src/intake/index.tsx §SOURCE_LIB).
  *
- * Canon's `<LinkInput loading={!!url && !source} />` shows a green
- * spinner whenever url is set but source is null — without this
- * mapping the spinner runs forever as soon as the user types
- * arbitrary text into the modal's URL field. Returning 'unknown'
- * for not_url + unknown_url tells canon to render the warn-pill
- * «Не узнали источник» instead.
+ * Canon's `<LinkInput loading={!!url && !source}>` shows a green
+ * spinner whenever url is set but source is null. To avoid an
+ * infinite-spinner state, this function returns a non-null value for
+ * EVERY non-empty input — empty input is handled separately by the
+ * caller (returns `null` directly to suppress the badge).
+ *
+ *   - mvp/ymaps             → 'yandex_maps'  → ✓ Распознали: Яндекс.Карты
+ *   - mvp/telegram          → 'telegram'     → ✓ Распознали: Telegram-канал
+ *   - waitlist (vk/wa/yt)   → source key     → ⚠️  скоро поддержим
+ *   - unknown_url / not_url → 'unknown'      → ⚠️  Не узнали источник
  */
-function detectionToCanonSource(d: SourceDetection): string | null {
+function detectionToCanonSource(d: SourceDetection): string {
   switch (d.kind) {
     case "mvp":
-      // detectSource() uses 'ymaps', canon uses 'yandex_maps'.
       return d.type === "ymaps" ? "yandex_maps" : d.type;
     case "waitlist":
       return d.source;
     case "unknown_url":
-      return "unknown";
     case "not_url":
-      // empty input → no badge; non-empty non-URL → warn pill
-      return null;
+      return "unknown";
   }
 }
+
+/** Debounce window before the URL is classified — fast enough to feel
+ * live, slow enough that typing «https://t.m» doesn't briefly flash
+ * «Не узнали источник» before the user finishes «https://t.me/...». */
+const URL_DEBOUNCE_MS = 300;
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -187,17 +193,28 @@ export function SubmitModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Live source detection for the URL input. Canon's LinkInput shows
-  // a forever-spinning green loader when url is set but source is null
-  // — without re-classifying on every keystroke, typing arbitrary text
-  // (or even editing a previously-recognised URL) keeps the spinner
-  // running. detectionToCanonSource() maps our `detectSource()` to
-  // canon's SOURCE_LIB keys; empty input → null (no badge), unknown /
-  // non-URL → 'unknown' (warn pill «Не узнали источник»).
-  const canonSource = useMemo<string | null>(
-    () => detectionToCanonSource(detectSource(url)),
-    [url],
-  );
+  // Debounced URL — drives canon's source badge. While the user is
+  // actively typing, debouncedUrl lags the live `url` state by
+  // URL_DEBOUNCE_MS; canon's `<LinkInput loading={!!url && !source}>`
+  // sees an `!source` for that window because the previous-stable
+  // classification doesn't match the new typed text → shows the green
+  // spinner briefly (intended UX: «still classifying, give us a sec»).
+  // After 300 ms of inactivity the source resolves to one of:
+  //   ✓ mvp (yandex_maps/telegram)         → green «Распознали» pill
+  //   ⚠️  waitlist (vk/whatsapp/youtube)    → blue «скоро поддержим»
+  //   ⚠️  unknown_url / not_url             → orange «Не узнали источник»
+  // The detectionToCanonSource() helper never returns null for
+  // non-empty input — that's how we prevent the «spinner forever» bug
+  // reported after canon 0.5.0.
+  const [debouncedUrl, setDebouncedUrl] = useState(url);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedUrl(url), URL_DEBOUNCE_MS);
+    return () => clearTimeout(t);
+  }, [url]);
+  const canonSource = useMemo<string | null>(() => {
+    if (debouncedUrl.trim().length === 0) return null;
+    return detectionToCanonSource(detectSource(debouncedUrl));
+  }, [debouncedUrl]);
 
   // Hidden file-input refs. Canon's PhotoDropZone / TextFilesDropZone
   // render «Выбрать файлы» as a presentational <button onClick={onPick}>
@@ -351,10 +368,14 @@ export function SubmitModal({
              we don't double-layer. The «ss-submit-modal-host» class
              scopes the CSS override that neutralises canon's outer
              ModalShell backdrop (the `rgba(0,0,0,0.32)` layer that
-             canon ships for standalone use) — without it that layer
-             would show as a gray ring between Radix DialogContent
-             and canon's inner card. See landing/app/globals.css. */
-          className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[640px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
+             canon ships for standalone use).
+
+             Width: canon's steps use `ModalShell width={540|560}` —
+             clamping DialogContent at 540 means the wider 560-step
+             card gets its own `maxWidth: '100%'` to shrink to 540,
+             eliminating the left/right gap that previously rendered
+             as a translucent gray ring. See globals.css. */
+          className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[540px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
         >
           {/* Hidden file inputs — opened from canon PhotoDropZone /
               TextFilesDropZone «Выбрать файлы» buttons via the refs
