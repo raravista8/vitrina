@@ -105,7 +105,12 @@ body {
  *
  * `!important` is required because canon ships inline styles.
  * ─────────────────────────────────────────────────────────────── */
-.ss-submit-modal-host > div:first-child {
+/* `:first-of-type` (not `:first-child`) so the rule still matches when
+ * the SubmitModal mounts hidden file inputs ahead of canon's div in
+ * DOM order. `:first-child` requires the *very* first child node to
+ * be a div; with <input> siblings preceding, that selector matched
+ * nothing — leaving canon's outer ModalShell visible as a gray ring. */
+.ss-submit-modal-host > div:first-of-type {
   background: transparent !important;
   padding: 0 !important;
   min-height: 0 !important;
