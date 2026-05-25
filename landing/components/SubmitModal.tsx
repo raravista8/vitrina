@@ -255,43 +255,28 @@ export function SubmitModal({
     setTextFiles((prev) => [...prev, ...picked]);
   }
 
-  // Canon hardcodes PHOTO_LIMITS.minFiles=5 (packages/canon/src/intake/
-  // index.tsx §275): it renders a «Загрузите ещё N — нужно минимум 5»
-  // warn pill AND dims the «Продолжить» button to opacity 0.55 below
-  // the threshold. We want:
-  //   1. min photo count is 1 (user request «пусть будет хоть одно»)
-  //   2. Continue button is ALWAYS visually active — never dimmed
-  //      (user request: «кнопка Продолжить всегда в active state»)
-  // The Continue *click* is still gated — see the event-delegation
-  // handler below: 1..4 files → we force handleContinue(), 0 files →
-  // canon's own onClick=undefined keeps the click a no-op. So
-  // unconditionally setting opacity=1 doesn't break the gate, only
-  // the visual signal.
+  // Canon's PHOTO_LIMITS.minFiles=5 (packages/canon/src/intake/index.tsx
+  // §275) renders a «Загрузите ещё N — нужно минимум 5» warn pill below
+  // the threshold. Our actual minimum is 1 (user: «пусть будет хоть
+  // одно»). This effect hides that warn pill via text-content match —
+  // canon ships no classes / data-attrs, and the warn pill shares its
+  // background colour (`VT.warnSoft`) with the SourceBadge unknown
+  // tier so a CSS selector by inline-style would over-match.
   //
-  // Text-content match is the only stable hook — canon ships no
-  // classes / data-attrs on these elements.
+  // Button opacity is forced separately via the CSS rule
+  // `.ss-submit-modal-host button[data-ss-cta] { opacity: 1 !important }`
+  // in globals.css — CSS with !important survives canon's re-renders,
+  // which kept overwriting an earlier JS approach.
   useEffect(() => {
-    if (!open) return;
+    if (!open || mode !== "photo" || step !== 1) return;
     const host = document.querySelector(".ss-submit-modal-host");
     if (!host) return;
-    if (mode === "photo" && step === 1) {
-      // Hide canon's «Загрузите ещё N» warn pill — irrelevant now
-      // that our minimum is 1.
-      for (const el of host.querySelectorAll("div")) {
-        if (el.textContent?.trimStart().startsWith("Загрузите ещё ")) {
-          (el as HTMLElement).style.display = files.length >= 1 ? "none" : "";
-        }
+    for (const el of host.querySelectorAll("div")) {
+      if (el.textContent?.trimStart().startsWith("Загрузите ещё ")) {
+        (el as HTMLElement).style.display = files.length >= 1 ? "none" : "";
       }
     }
-    // Force any «Продолжить» button (every step) to full opacity.
-    // Canon dims it across multiple steps via different gates; we
-    // override visually so the button always looks pressable.
-    for (const btn of host.querySelectorAll("button")) {
-      if (btn.textContent?.trim().startsWith("Продолжить")) {
-        btn.style.opacity = "1";
-      }
-    }
-  }, [open, mode, step, files.length, url, description, city, customerContact]);
+  }, [open, mode, step, files.length]);
 
   // Reset to initial state every time the modal re-opens. setState in
   // effect is the React-recommended pattern for "reset on prop change"
