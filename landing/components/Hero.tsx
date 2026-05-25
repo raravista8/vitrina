@@ -500,7 +500,6 @@ export function Hero() {
         onOpenChange={setModalOpen}
         initialMode={modalMode}
         initialUrl={modalMode === "link" ? modalUrl : ""}
-        initialDetection={detection}
       />
     </>
   );

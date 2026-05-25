@@ -85,3 +85,28 @@ body {
     }
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────
+ * SubmitModal — neutralise canon's outer ModalShell backdrop.
+ *
+ * Canon's `<ModalShell>` (packages/canon/src/intake/index.tsx §34)
+ * renders an outer div with `background: rgba(0,0,0,0.32)` and
+ * `padding: 24` — intended as a standalone full-page modal backdrop.
+ * We render canon's <SubmitModal> inside a Radix `<Dialog>` (for
+ * focus trap, ESC handling, scroll lock) which already provides its
+ * own DialogOverlay backdrop. The two stacked make canon's outer
+ * layer show as a gray ring between Radix DialogContent and canon's
+ * inner card.
+ *
+ * Targets the first-child div of `.ss-submit-modal-host`, which is
+ * canon's ModalShell outer wrapper. The next-level div is canon's
+ * inner card (background: VT.bg, padding: 28, rounded, shadow) — left
+ * untouched, becomes the visible modal surface.
+ *
+ * `!important` is required because canon ships inline styles.
+ * ─────────────────────────────────────────────────────────────── */
+.ss-submit-modal-host > div:first-child {
+  background: transparent !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
