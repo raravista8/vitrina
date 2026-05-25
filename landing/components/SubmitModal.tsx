@@ -193,6 +193,13 @@ export function SubmitModal({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Inline validation messages shown when the user clicks
+  // «Продолжить» with required fields empty. Separate from the
+  // backend `error` so the two can coexist (e.g. validation on
+  // step 1, network error on submit). Cleared automatically when
+  // the relevant state changes — see effect below.
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   // Debounced URL — drives canon's source badge. While the user is
   // actively typing, debouncedUrl lags the live `url` state by
   // URL_DEBOUNCE_MS; canon's `<LinkInput loading={!!url && !source}>`
@@ -247,6 +254,7 @@ export function SubmitModal({
     const picked = Array.from(event.target.files ?? []);
     if (picked.length === 0) return;
     setFiles((prev) => [...prev, ...picked]);
+    setValidationError(null);
   }
 
   function handleTextFileInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -298,6 +306,7 @@ export function SubmitModal({
     setConsent(true);
     setSubmitting(false);
     setError(null);
+    setValidationError(null);
   }, [open, initialMode, initialUrl]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -419,10 +428,14 @@ export function SubmitModal({
              1. × close: canon's <ModalShell> renders <button
                 aria-label="Закрыть"> with no onClick — call
                 onOpenChange(false).
-             2. «Продолжить» on photo step 1: canon gates this on
-                files.length >= 5 (PHOTO_LIMITS.minFiles). We allow
-                ≥1, so when files.length is 1..4 the button has
-                onClick=undefined → call handleContinue() ourselves.
+             2. «Продолжить» on step 1: canon's CSS shows the button
+                as always pressable (PR #149), but the click is still
+                gated. We surface inline validation messages instead
+                of canon's silent no-op:
+                  • link mode, empty URL    → «Заполните ссылку»
+                  • photo mode, 0 files     → «Выберите фото»
+                  • photo mode, 1..4 files  → manually call
+                    handleContinue() (canon gates at ≥5).
              Radix's own ESC + overlay-click paths still work for close. */
           onClick={(event) => {
             const target = event.target as HTMLElement;
@@ -430,11 +443,19 @@ export function SubmitModal({
               onOpenChange(false);
               return;
             }
+            const btn = target.closest("button");
+            if (!btn || !btn.textContent?.trim().startsWith("Продолжить")) return;
+            if (step === 1 && mode === "link" && url.trim().length === 0) {
+              setValidationError("Заполните ссылку");
+              return;
+            }
+            if (step === 1 && mode === "photo" && files.length === 0) {
+              setValidationError("Выберите фото");
+              return;
+            }
             if (mode === "photo" && step === 1 && files.length >= 1 && files.length < 5) {
-              const btn = target.closest("button");
-              if (btn && btn.textContent?.trim().startsWith("Продолжить")) {
-                handleContinue();
-              }
+              // Canon gates at ≥5; advance manually for 1..4.
+              handleContinue();
             }
           }}
         >
@@ -468,7 +489,10 @@ export function SubmitModal({
             url={url}
             source={canonSource}
             counts={null}
-            onUrlChange={setUrl}
+            onUrlChange={(v: string) => {
+              setUrl(v);
+              if (validationError) setValidationError(null);
+            }}
             onCorrect={() => {
               /* override popover — handled by SourceDetectionBadge in Hero */
             }}
@@ -480,6 +504,7 @@ export function SubmitModal({
             onModeChange={(m: SubmitMode) => {
               setMode(m);
               setStep(1);
+              setValidationError(null);
             }}
             description={description}
             city={city}
@@ -508,6 +533,14 @@ export function SubmitModal({
             onClose={handleClose}
             summary={summary}
           />
+          {validationError && (
+            <div
+              role="alert"
+              className="text-warn-ink mx-6 mb-4 rounded-lg bg-warn-soft px-4 py-3 text-sm"
+            >
+              {validationError}
+            </div>
+          )}
           {error && (
             <div
               role="alert"
