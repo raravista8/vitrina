@@ -376,6 +376,18 @@ export function SubmitModal({
              eliminating the left/right gap that previously rendered
              as a translucent gray ring. See globals.css. */
           className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[540px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
+          /* Wire canon's ModalShell × button (rendered with
+             `aria-label="Закрыть"` and NO onClick — purely
+             decorative in the canvas, see packages/canon/src/intake/
+             index.tsx line 46) by event-delegating clicks here.
+             Without this the × silently does nothing. Radix's own
+             close paths (ESC + overlay-click) keep working too. */
+          onClick={(event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('button[aria-label="Закрыть"]')) {
+              onOpenChange(false);
+            }
+          }}
         >
           {/* Hidden file inputs — opened from canon PhotoDropZone /
               TextFilesDropZone «Выбрать файлы» buttons via the refs
