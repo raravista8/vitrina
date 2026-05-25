@@ -115,3 +115,15 @@ body {
   padding: 0 !important;
   min-height: 0 !important;
 }
+
+/* Force every canon CTA button («Продолжить», «Назад», «Подать заявку»,
+ * «Ок, жду», etc.) to full opacity. Canon's <Btn> component (packages/
+ * canon/src/primitives/index.tsx §32) ships `data-ss-cta` on every
+ * action button and inline-styles `opacity: 0.55` when its gate fails
+ * (PHOTO_LIMITS.minFiles=5, source-tier=!ok, description<30, etc.).
+ * User request: «кнопка Продолжить всегда должна быть в active state».
+ * CSS with !important wins over inline style and survives canon's
+ * re-renders (which kept overwriting our previous JS-based override). */
+.ss-submit-modal-host button[data-ss-cta] {
+  opacity: 1 !important;
+}
