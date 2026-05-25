@@ -173,7 +173,8 @@ _PHOTO_TYPE_DEFAULT = "unknown"
 _ALLOWED_PHOTO_TYPES_FOR_DB = frozenset(
     {"work", "profile_screenshot", "business_card", "booklet", "unknown"}
 )
-_MIN_PHOTO_FILES = 5  # design canvas screen #6 — CTA disabled below 5
+_MIN_PHOTO_FILES = 1  # user can submit with just 1 photo (was 5 per
+# canvas — relaxed at consumer request «пусть будет хоть одно»).
 _MIN_DESCRIPTION_CHARS = 30
 
 

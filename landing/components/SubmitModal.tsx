@@ -255,6 +255,30 @@ export function SubmitModal({
     setTextFiles((prev) => [...prev, ...picked]);
   }
 
+  // Canon hardcodes PHOTO_LIMITS.minFiles=5 (packages/canon/src/intake/
+  // index.tsx §275): it renders a «Загрузите ещё N — нужно минимум 5»
+  // warn pill AND dims the «Продолжить» button to opacity 0.55 below
+  // the threshold. Our actual minimum is 1 (user request «пусть будет
+  // хоть одно»). The Continue click is forced via event delegation
+  // above; this effect handles the visuals — hide the warning when
+  // we have ≥1 file, restore the button's full opacity. Text-content
+  // match is the only stable hook (canon ships no classes / data-attrs).
+  useEffect(() => {
+    if (!open || mode !== "photo" || step !== 1) return;
+    const host = document.querySelector(".ss-submit-modal-host");
+    if (!host) return;
+    for (const el of host.querySelectorAll("div")) {
+      if (el.textContent?.trimStart().startsWith("Загрузите ещё ")) {
+        (el as HTMLElement).style.display = files.length >= 1 ? "none" : "";
+      }
+    }
+    for (const btn of host.querySelectorAll("button")) {
+      if (btn.textContent?.trim().startsWith("Продолжить")) {
+        btn.style.opacity = files.length >= 1 ? "1" : "0.55";
+      }
+    }
+  }, [open, mode, step, files.length]);
+
   // Reset to initial state every time the modal re-opens. setState in
   // effect is the React-recommended pattern for "reset on prop change"
   // when the prop is `open` (not a derivable state).
@@ -360,7 +384,10 @@ export function SubmitModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        <DialogOverlay className="bg-ink/45 fixed inset-0 z-[60] backdrop-blur-sm" />
+        {/* Backdrop: opacity 65 (was 45) — modal was «сливалась с
+            контентом» при 45 (user feedback). +20 pp gives the card
+            enough separation while keeping the blur soft. */}
+        <DialogOverlay className="bg-ink/65 fixed inset-0 z-[60] backdrop-blur-sm" />
         <DialogContent
           aria-describedby={undefined}
           /* Positioning + sizing only — visual chrome (background,
@@ -376,16 +403,27 @@ export function SubmitModal({
              eliminating the left/right gap that previously rendered
              as a translucent gray ring. See globals.css. */
           className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[540px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
-          /* Wire canon's ModalShell × button (rendered with
-             `aria-label="Закрыть"` and NO onClick — purely
-             decorative in the canvas, see packages/canon/src/intake/
-             index.tsx line 46) by event-delegating clicks here.
-             Without this the × silently does nothing. Radix's own
-             close paths (ESC + overlay-click) keep working too. */
+          /* Event delegation for canon-shipped buttons that need to
+             be wired up on the consumer side:
+             1. × close: canon's <ModalShell> renders <button
+                aria-label="Закрыть"> with no onClick — call
+                onOpenChange(false).
+             2. «Продолжить» on photo step 1: canon gates this on
+                files.length >= 5 (PHOTO_LIMITS.minFiles). We allow
+                ≥1, so when files.length is 1..4 the button has
+                onClick=undefined → call handleContinue() ourselves.
+             Radix's own ESC + overlay-click paths still work for close. */
           onClick={(event) => {
             const target = event.target as HTMLElement;
             if (target.closest('button[aria-label="Закрыть"]')) {
               onOpenChange(false);
+              return;
+            }
+            if (mode === "photo" && step === 1 && files.length >= 1 && files.length < 5) {
+              const btn = target.closest("button");
+              if (btn && btn.textContent?.trim().startsWith("Продолжить")) {
+                handleContinue();
+              }
             }
           }}
         >
