@@ -26,10 +26,36 @@
 
 import { Dialog, DialogContent, DialogOverlay, DialogPortal } from "@radix-ui/react-dialog";
 import { SubmitModal as CanonSubmitModal } from "@samosite/canon/intake";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { reachGoal } from "@/lib/metrika";
-import type { SourceDetection } from "@/lib/source-detect";
+import { type SourceDetection, detectSource } from "@/lib/source-detect";
+
+/**
+ * Map our `detectSource()` output to canon's `SOURCE_LIB` key (see
+ * packages/canon/src/intake/index.tsx §SOURCE_LIB).
+ *
+ * Canon's `<LinkInput loading={!!url && !source} />` shows a green
+ * spinner whenever url is set but source is null — without this
+ * mapping the spinner runs forever as soon as the user types
+ * arbitrary text into the modal's URL field. Returning 'unknown'
+ * for not_url + unknown_url tells canon to render the warn-pill
+ * «Не узнали источник» instead.
+ */
+function detectionToCanonSource(d: SourceDetection): string | null {
+  switch (d.kind) {
+    case "mvp":
+      // detectSource() uses 'ymaps', canon uses 'yandex_maps'.
+      return d.type === "ymaps" ? "yandex_maps" : d.type;
+    case "waitlist":
+      return d.source;
+    case "unknown_url":
+      return "unknown";
+    case "not_url":
+      // empty input → no badge; non-empty non-URL → warn pill
+      return null;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -44,8 +70,6 @@ export interface SubmitModalProps {
   initialMode?: SubmitMode;
   /** Pre-filled URL when opened from Hero with a non-empty input. */
   initialUrl?: string;
-  /** Live source detection from Hero (only meaningful in link mode). */
-  initialDetection?: SourceDetection;
 }
 
 type Step = 1 | 2 | 3 | 4;
@@ -138,7 +162,6 @@ export function SubmitModal({
   onOpenChange,
   initialMode = "link",
   initialUrl = "",
-  initialDetection,
 }: SubmitModalProps) {
   const [mode, setMode] = useState<SubmitMode>(initialMode);
   const [step, setStep] = useState<Step>(1);
@@ -163,6 +186,18 @@ export function SubmitModal({
   // Submit lifecycle
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Live source detection for the URL input. Canon's LinkInput shows
+  // a forever-spinning green loader when url is set but source is null
+  // — without re-classifying on every keystroke, typing arbitrary text
+  // (or even editing a previously-recognised URL) keeps the spinner
+  // running. detectionToCanonSource() maps our `detectSource()` to
+  // canon's SOURCE_LIB keys; empty input → null (no badge), unknown /
+  // non-URL → 'unknown' (warn pill «Не узнали источник»).
+  const canonSource = useMemo<string | null>(
+    () => detectionToCanonSource(detectSource(url)),
+    [url],
+  );
 
   // Hidden file-input refs. Canon's PhotoDropZone / TextFilesDropZone
   // render «Выбрать файлы» as a presentational <button onClick={onPick}>
@@ -255,7 +290,11 @@ export function SubmitModal({
 
     let result: SubmitResult;
     if (mode === "link") {
-      const sourceType = initialDetection?.kind === "mvp" ? initialDetection.type : "photo";
+      // Re-classify on submit (not initialDetection from Hero) — the
+      // user may have edited the URL inside the modal. Falls back to
+      // 'photo' for unknown/non-URL inputs to match the prior shape.
+      const liveDetection = detectSource(url);
+      const sourceType = liveDetection.kind === "mvp" ? liveDetection.type : "photo";
       result = await submitLink({
         url,
         source_type: sourceType,
@@ -307,7 +346,15 @@ export function SubmitModal({
         <DialogOverlay className="bg-ink/45 fixed inset-0 z-[60] backdrop-blur-sm" />
         <DialogContent
           aria-describedby={undefined}
-          className="fixed left-1/2 top-1/2 z-[70] w-full max-w-[640px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[20px] bg-paper shadow-xl outline-none focus:outline-none sm:max-h-[90vh]"
+          /* Positioning + sizing only — visual chrome (background,
+             rounded corners, shadow) lives on canon's inner card so
+             we don't double-layer. The «ss-submit-modal-host» class
+             scopes the CSS override that neutralises canon's outer
+             ModalShell backdrop (the `rgba(0,0,0,0.32)` layer that
+             canon ships for standalone use) — without it that layer
+             would show as a gray ring between Radix DialogContent
+             and canon's inner card. See landing/app/globals.css. */
+          className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[640px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
         >
           {/* Hidden file inputs — opened from canon PhotoDropZone /
               TextFilesDropZone «Выбрать файлы» buttons via the refs
@@ -337,7 +384,7 @@ export function SubmitModal({
             mode={mode}
             step={step}
             url={url}
-            source={initialDetection?.kind === "mvp" ? initialDetection.type : null}
+            source={canonSource}
             counts={null}
             onUrlChange={setUrl}
             onCorrect={() => {
