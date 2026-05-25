@@ -258,26 +258,40 @@ export function SubmitModal({
   // Canon hardcodes PHOTO_LIMITS.minFiles=5 (packages/canon/src/intake/
   // index.tsx §275): it renders a «Загрузите ещё N — нужно минимум 5»
   // warn pill AND dims the «Продолжить» button to opacity 0.55 below
-  // the threshold. Our actual minimum is 1 (user request «пусть будет
-  // хоть одно»). The Continue click is forced via event delegation
-  // above; this effect handles the visuals — hide the warning when
-  // we have ≥1 file, restore the button's full opacity. Text-content
-  // match is the only stable hook (canon ships no classes / data-attrs).
+  // the threshold. We want:
+  //   1. min photo count is 1 (user request «пусть будет хоть одно»)
+  //   2. Continue button is ALWAYS visually active — never dimmed
+  //      (user request: «кнопка Продолжить всегда в active state»)
+  // The Continue *click* is still gated — see the event-delegation
+  // handler below: 1..4 files → we force handleContinue(), 0 files →
+  // canon's own onClick=undefined keeps the click a no-op. So
+  // unconditionally setting opacity=1 doesn't break the gate, only
+  // the visual signal.
+  //
+  // Text-content match is the only stable hook — canon ships no
+  // classes / data-attrs on these elements.
   useEffect(() => {
-    if (!open || mode !== "photo" || step !== 1) return;
+    if (!open) return;
     const host = document.querySelector(".ss-submit-modal-host");
     if (!host) return;
-    for (const el of host.querySelectorAll("div")) {
-      if (el.textContent?.trimStart().startsWith("Загрузите ещё ")) {
-        (el as HTMLElement).style.display = files.length >= 1 ? "none" : "";
+    if (mode === "photo" && step === 1) {
+      // Hide canon's «Загрузите ещё N» warn pill — irrelevant now
+      // that our minimum is 1.
+      for (const el of host.querySelectorAll("div")) {
+        if (el.textContent?.trimStart().startsWith("Загрузите ещё ")) {
+          (el as HTMLElement).style.display = files.length >= 1 ? "none" : "";
+        }
       }
     }
+    // Force any «Продолжить» button (every step) to full opacity.
+    // Canon dims it across multiple steps via different gates; we
+    // override visually so the button always looks pressable.
     for (const btn of host.querySelectorAll("button")) {
       if (btn.textContent?.trim().startsWith("Продолжить")) {
-        btn.style.opacity = files.length >= 1 ? "1" : "0.55";
+        btn.style.opacity = "1";
       }
     }
-  }, [open, mode, step, files.length]);
+  }, [open, mode, step, files.length, url, description, city, customerContact]);
 
   // Reset to initial state every time the modal re-opens. setState in
   // effect is the React-recommended pattern for "reset on prop change"
@@ -384,10 +398,22 @@ export function SubmitModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        {/* Backdrop: opacity 65 (was 45) — modal was «сливалась с
-            контентом» при 45 (user feedback). +20 pp gives the card
-            enough separation while keeping the blur soft. */}
-        <DialogOverlay className="bg-ink/65 fixed inset-0 z-[60] backdrop-blur-sm" />
+        {/* Backdrop — inline style instead of `bg-ink/N` Tailwind
+            class because our `ink` token is defined as a plain
+            oklch() string (no `<alpha-value>` placeholder), so
+            Tailwind silently drops the `/N` opacity modifier and
+            no rule ends up in the generated CSS. Inline style
+            bypasses the JIT entirely.
+            65% opacity gives the modal card enough separation from
+            the page (user: «модалка сливается с контентом»).
+            Adding `<alpha-value>` to tailwind.config.ts would fix
+            this for all classes but risks visual diffs across the
+            other 100+ `bg-ink` callsites — out of scope for this
+            hot-fix. */}
+        <DialogOverlay
+          className="fixed inset-0 z-[60] backdrop-blur-sm"
+          style={{ backgroundColor: "oklch(0.215 0.018 60 / 0.65)" }}
+        />
         <DialogContent
           aria-describedby={undefined}
           /* Positioning + sizing only — visual chrome (background,
