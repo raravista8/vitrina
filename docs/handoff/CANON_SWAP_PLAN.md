@@ -1,21 +1,50 @@
 # Canon swap plan — risky / deferred screens
 
-> **Status as of PRs #119–#124:** 9 landing visual sections + 2 demo
-> pages (`/admin-demo`, `/customer-demo`) consume canon directly with
-> drift = 0. **3 surfaces remain hand-rolled** because canon's variants
-> are read-only / decorative and the surfaces have live behaviour we
-> can't drop. This doc captures the path forward for each, with the
-> hybrid pattern that any future swap needs to follow.
+> **Status as of PRs #152–#153 (canon 0.6.0 v3 refresh):** 10 landing
+> visual sections + 2 demo pages (`/admin-demo`, `/customer-demo`)
+> consume canon directly with drift = 0. **3 surfaces remain
+> hand-rolled** because canon's variants are read-only / decorative and
+> the surfaces have live behaviour we can't drop. Phase 6 (intake 3→2
+> steps) shipped via canon 0.3.0 refresh — no longer a swap concern.
+> This doc captures the path forward for each remaining surface, with
+> the hybrid pattern that any future swap needs to follow.
 
 ## TL;DR risk table
 
 | Surface | Canon variant | Live behaviour | Risk if swapped naively | Status |
 |---|---|---|---|---|
-| `Hero` | `HeroBlock` | URL paste → debounced preview → CTA → SubmitModal → POST /api/submit-application | **Signup conversion = 0** | ⛔ deferred until canon 0.2.x interactive variant |
-| Admin chrome (10 screens) | `AdminLogin`, `AdminDashboard`, `AppsList`, …, `Settings` | password+TOTP, real fetch, session cookies, CSRF | **Founder locked out of admin** | ⛔ deferred until canon 0.2.x |
-| Intake (SubmitModal, PhotoDrawer, SourceDetectionBadge, LeadForm, FeedbackForm) | `SubmitModal`, `PhotoDrawer`, … | POST /api/submit-application, captcha, polling, multipart upload, lead Fernet encryption | **Signup + lead intake broken** | ⛔ deferred until canon 0.2.x |
+| `Hero` | `HeroBlock` | URL paste → debounced preview → CTA → SubmitModal → POST /api/submit-application | **Signup conversion = 0** | ⛔ deferred until canon 0.7.x interactive variant (canon 0.6.0 still read-only) |
+| `StickyHeader` | `StickyHeader` (canon 0.6.0) | Login link → `/login`, brand-mark → `/`, primary CTA opens SubmitModal | **Login + signup links break** | 🟢 mitigated via DOM-mutation pattern (`landing/components/SiteHeader.tsx::useEffect`) until canon restores `loginHref` / `homeHref` / `onMakeSiteClick` props |
+| Admin chrome (10 screens) | `AdminLogin`, `AdminDashboard`, `AppsList`, …, `Settings` | password+TOTP, real fetch, session cookies, CSRF | **Founder locked out of admin** | ⛔ deferred until canon 0.7.x props-based variant |
+| Intake (`SubmitModal`, `SourceDetectionBadge`, `LeadForm`, `FeedbackForm`) | `SubmitModal` (canon 0.3.0 controlled-API), … | POST /api/submit-application, captcha, polling, multipart upload, lead Fernet encryption | **Signup + lead intake broken** | 🟢 `SubmitModal` partially swapped via canon 0.3.0 controlled-API wrapper (PRs #135+). Remaining surfaces (`Confirmation`, `LeadForm`, `FeedbackPage`) — defer until canon ships interactive variants |
 | Customer-site Jinja → React-canon SSR | `CustomerSite` | rendered server-side per master into S3 at publish time | **Published customer-sites stop refreshing** | ⏸ feasible but ~3 days backend lift, not blocking |
-| Phase 6 — Intake 3→2 steps + backend endpoint deletions | n/a (own-code) | live TG-source submissions still use 3-step + /api/tg-bot-personal-status polling | **TG submissions silently dropped** | 🟡 ~2 days + prepared downtime |
+| ~~Phase 6 — Intake 3→2 steps~~ | ~~n/a~~ | ~~live TG-source submissions still use 3-step + /api/tg-bot-personal-status polling~~ | — | ✅ resolved via canon 0.3.0 refresh — endpoints removed, flow restructured to link/photo branches |
+
+## 490 vs 990 ₽ — known frontend-only promise
+
+Canon 0.6.0 introduces «990 ₽/мес · для первой сотни 490 ₽ навсегда» as
+a cohort-discount promise in Hero microcopy + FinalCta. Backend ЮKassa
+is still configured at 99000 копеек (990 ₽) per
+`docs/runbooks/yookassa-pricing-update.md`. Frontend ships the promise;
+backend enforcement of the "первая сотня" cohort is **out of scope** of
+the canon 0.6.0 vendoring PRs (#152-#153) per explicit decision during
+the night-run handoff.
+
+**What this means operationally:**
+
+- For the first ~100 paying users, founder must manually adjust their
+  charged amount in ЮKassa dashboard OR honor the discount as a manual
+  refund after billing.
+- After cohort cap (100 paid signups), refresh canon to a copy that
+  drops the discount line, OR ship backend cohort enforcement.
+- Until ship a tracker (`users.cohort_discount_eligible` flag +
+  ЮKassa amount override per-user) — keep the manual workaround.
+
+**Future swap to canon-side dynamic pricing:** when canon ships
+`PricingSection` with a `discountedAmount?: number` prop AND backend
+endpoint `/api/me/pricing` returns per-user pricing, switch the
+frontend microcopy to a server-rendered value. Until then, the canon
+0.6.0 string is hard-coded into the visual.
 
 ## Why canon-side variants are «read-only»
 
@@ -172,39 +201,37 @@ re-publish to pick up the canon visual. Not auto-migrating until
 master clicks «обновить сайт» on their own (no risk of breaking what's
 live). Doable per-site as a soft launch.
 
-### Phase 6 — Intake 3→2 steps + backend endpoint deletions
+### ✅ Phase 6 — Intake 3→2 steps (resolved via canon 0.3.0)
 
-Independent of canon — pure UX simplification.
+Done in canon 0.3.0 refresh (`packages/canon/CHANGELOG.md §0.3.0`). The
+flow was restructured to two branches (link OR photo) instead of the
+old 3-step (link → channel → bot-start). Endpoints
+`/api/tg-bot-personal-status`, `/api/submit-application/finalize-via-email`,
+`/api/applications/{id}/tg-bot-status` removed. Personal-bot
+notification (`@SamositeBot /start`) deferred to post-approval email
+flow per canon 0.3.0 «Breaking changes» section.
 
-**What's pending:**
-- Frontend: collapse `SubmitModal` from 3 steps (link → channel →
-  bot-start) to 2 (link → channel; bot-start moves to post-submission
-  email).
-- Backend: delete unused endpoints
-  `/api/tg-bot-personal-status`, `/api/submit-application/finalize-via-email`,
-  `/api/tg-bot-status?app_id=...`.
-- Delete `core/parsing/adapters/tg_bot_api.py` if only used for the
-  private-channel flow (verify — also used for public channel parse).
+### StickyHeader href regression (canon 0.6.0)
 
-**Pre-requisites:**
-1. **Analytics check** — how many active TG-channel submissions in
-   the last 7 days? If <5, low-risk window. If >20, prepared downtime
-   needed.
-2. **Email-onboarding flow** — replacement for the «click /start in
-   `@SamositeBot`» step. Operator must send a one-shot welcome email
-   after master gets approved.
-3. **Endpoint deprecation header** — add `Deprecation: true`
-   response header for 1 week before delete, so any external client
-   sees warnings.
+Canon 0.6.0 **regressed** the prop interface — `loginHref`, `homeHref`,
+`onMakeSiteClick` (all shipped in canon 0.4.0 + consumed in PR #140)
+are gone. Canon 0.6.0 hard-codes:
 
-**Execution plan:**
-- PR 1 (frontend): collapse SubmitModal to 2 steps, keep all backend
-  endpoints alive. Ship behind feature flag.
-- PR 2 (backend, +7 days): remove polling endpoint + finalize-via-email.
-- PR 3 (canon): if 3-step UI is gone from prod, ask design to remove
-  it from canon's `S3_SubmitModal` (currently exports a 3-step shell).
+  - brand-mark → `<a href="#hero">`  (we need `/`)
+  - «Войти»    → `<a href="#login">` (we need `/login`)
+  - primary CTA → `<a href="#hero">` (we need to open SubmitModal)
 
-**Time:** ~2 days code + 1 week deprecation window + 1 day cleanup.
+**Mitigation (in production now):** `landing/components/SiteHeader.tsx`
+runs a `useEffect` after mount that walks `.ss-sticky-header` DOM,
+overrides the broken hrefs, and binds a `click` delegation handler on
+the primary CTA. A scoped `MutationObserver` re-applies the fix when
+canon re-renders (mobile-toggle, hover, etc.). Same pattern as the
+`SubmitModal` × close-button workaround (PR #146).
+
+**Future swap:** when canon 0.7.x restores `loginHref` / `homeHref` /
+`onMakeSiteClick` props, delete the `useEffect` block in
+`SiteHeader.tsx` and pass props directly. Document this as the
+deprecation trigger when watching canon CHANGELOG diffs.
 
 ## What to monitor after any swap
 
