@@ -58,17 +58,21 @@
      stable id. The canon's render tree puts sections as direct children of
      the outermost wrapper div, in order. Mapping by index keeps this robust
      against future canon edits as long as the section ORDER is preserved. */
+  /* canon 0.6.0 v3 narrative order (11 sections). Matches
+   * `landing/app/page.tsx::HomePage` JSX order and the canvas
+   * `SamosaytLandingV3` render. */
   const SECTION_IDS = [
     'hero',
     'examples',
-    'story',
-    'platforms',
-    'big-features',
+    'cycle',
+    'monday',
+    'base-work',
+    'sources',
     'ownership',
     'analytics',
     'pricing',
     'faq',
-    'free-month',
+    'final-cta',
   ];
 
   /* Wait two RAFs — first commits the tree, second lets fonts settle. */
