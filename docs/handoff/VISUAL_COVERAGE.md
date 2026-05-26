@@ -3,31 +3,42 @@
 > **Цель:** pixel-perfect 1:1 канона на 4 viewports (1440 / 768 / 390 / 375) для всех 19 экранов.
 > 390 = iPhone 12-15 Pro standard (типичный современный iPhone).
 > 375 = iPhone SE / mini / Reachability mode (минимальная безопасная ширина — если макет выживает здесь, выживает везде).
-> **Сейчас:** landing секции 2-10 импортированы из `@samosite/canon/landing` напрямую (PR #119) — drift = 0 by construction. `/admin-demo` shipped (PR #122). `/customer-demo` shipped (PR #124) — preview-палитры customer site через canon. Hero, deployed `*.samosite.online` customer sites, admin chrome, intake — остаются hand-rolled (см. `CANON_SWAP_PLAN.md` для пути forward).
+> **Сейчас:** canon 0.6.0 v3 narrative (PR #152) — landing рендерит 10 секций через canon (Examples → Cycle → Monday → BaseWork → Sources → Ownership → Analytics → Pricing → FAQ → FinalCta), drift = 0 by construction. Canvas mirror v3 + Linux baselines regenerированы (PR #153). `/admin-demo` shipped (PR #122). `/customer-demo` shipped (PR #124) — preview-палитры customer site через canon. Hero (interactive), `*.samosite.online` customer sites, admin chrome, intake — остаются hand-rolled (см. `CANON_SWAP_PLAN.md` для пути forward).
 > Обновляй этот файл при каждом изменении coverage — это единственный трекер прогресса.
 
 Легенда: 🟢 pixel-audited (diff ≤ 2%) · 🔵 canon-import (drift=0 by construction) · 🟡 baseline есть, smoke-only · 🔴 нет baseline · ⚫ компонент не построен
 
 ---
 
-## P0 Landing — `landing-samosite.jsx`
+## P0 Landing — canon 0.6.0 v3 narrative (11 blocks)
 
-| # | Section | 1440 | 768 | 390 | 375 | Spec |
-|---|---|---|---|---|---|---|
-| L1 | Hero | 🟢 | 🟡 | 🟡 | 🟡 | `specs/01 §3` |
-| L2 | Examples | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §5` |
-| L3 | Story | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §6` |
-| L4 | Platforms | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §7` |
-| L5 | BigFeatures | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §8` |
-| L6 | Ownership | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
-| L7 | Analytics | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
-| L8 | Pricing | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §10` |
-| L9 | FAQ | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §11` |
-| L10 | FreeMonth | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §11` |
+`landing/app/page.tsx::HomePage` renders 11 blocks in fixed order — block #1 (Hero) hand-rolled, blocks #2-#11 dropped in from `@samosite/canon/landing`.
 
-**Landing итого:** 1 pixel-audited (Hero@1440) + 36 canon-import drift=0 (sections 2-10 × 4vp) + 3 smoke (Hero@768/390/375) = **40 / 40 covered**.
+| # | Section | Source | 1440 | 768 | 390 | 375 | Spec |
+|---|---|---|---|---|---|---|---|
+| L1 | Hero | hand-rolled `components/Hero.tsx` | 🟡 | 🟡 | 🟡 | 🟡 | `specs/01 §3` |
+| L2 | Examples | canon `ExamplesSection` | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §5` |
+| L3 | Cycle (NEW) | canon `CycleSection` | 🔵 | 🔵 | 🔵 | 🔵 | canon 0.6.0 §3 |
+| L4 | Monday (NEW) | canon `MondaySection` | 🔵 | 🔵 | 🔵 | 🔵 | canon 0.6.0 §3 |
+| L5 | BaseWork (NEW) | canon `BaseWorkSection` | 🔵 | 🔵 | 🔵 | 🔵 | canon 0.6.0 §3 |
+| L6 | Sources (NEW) | canon `SourcesSection` | 🔵 | 🔵 | 🔵 | 🔵 | canon 0.6.0 §3 |
+| L7 | Ownership | canon `OwnershipSection` | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
+| L8 | Analytics | canon `AnalyticsSection` | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §9` |
+| L9 | Pricing | canon `PricingSection` | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §10` |
+| L10 | FAQ | canon `FaqSection` | 🔵 | 🔵 | 🔵 | 🔵 | `specs/01 §11` |
+| L11 | FinalCta (NEW) | canon `FinalCtaSection` | 🔵 | 🔵 | 🔵 | 🔵 | canon 0.6.0 §3 |
 
-Hero — рендерится через `landing/components/Hero.tsx` (наш hand-rolled, с интерактивным input + SubmitModal flow). Canon's `HeroBlock` ship'нут в `@samosite/canon/landing` но read-only — заменим когда canon добавит interactive variant (см. canon 0.2.x в README package).
+**Landing итого (v3 narrative):** 40 canon-import drift=0 (sections 2-11 × 4vp) + 4 smoke (Hero × 4vp) = **44 / 44 covered**.
+
+**Что выпало из canon 0.5.x:**
+- Story (6-step zigzag) — removed в canon 0.6.0, narrative заменён на Cycle + Monday + BaseWork
+- Platforms (явные 2 списка) — заменён на Sources (новая копи под цикл «искра → дисциплина»)
+- BigFeatures (8 «сам») — растворены в Cycle (фокус на «5 моментов цикла») + Monday («каждый понедельник Самосайт работает за вас»)
+- FreeMonth → FinalCta — sister CTA в самом низу с переписанным сообщением и микрокопией под кнопку
+
+Hero (L1) — рендерится через `landing/components/Hero.tsx` (наш hand-rolled, с интерактивным input + SubmitModal flow). Canon's `HeroBlock` ship'нут в `@samosite/canon/landing` но read-only — заменим когда canon добавит interactive variant (см. `CANON_SWAP_PLAN.md` §Hero для статуса).
+
+**Note на 490 ₽:** Hero microcopy + FinalCta содержат строку «990 ₽/мес · для первой сотни 490 ₽ навсегда» из canon 0.6.0 — это frontend-only promise (cohort-discount messaging). Backend ЮKassa остаётся на 990 ₽ — cohort enforcement out of scope этой итерации. См. `CANON_SWAP_PLAN.md` §«490 vs 990».
 
 ---
 
@@ -118,14 +129,14 @@ Admin — desktop-first (founder-side). Mobile (768/375) только для log
 
 | Категория | Coverage | Note |
 |---|---|---|
-| Landing — Hero | 1 audited @ 1440 + 3 smoke (768/390/375) | hand-rolled (interactive) |
-| Landing — sections 2-10 | **36 / 36 canon-import drift=0** | via `@samosite/canon/landing` (PR #119); 4 viewports |
+| Landing — Hero | 4 smoke (1440/768/390/375) | hand-rolled (interactive) — pixel-audit @ 1440 stale, regenerated в PR #153 как smoke до next canon interactive variant |
+| Landing — sections 2-11 (v3) | **40 / 40 canon-import drift=0** | via `@samosite/canon/landing` (PR #152 canon 0.6.0); 10 sections × 4 viewports |
 | Public intake (2–9) | 0 / 32 | hand-rolled, no baselines |
 | Customer site (#7) | 0 / 45 | hand-rolled (sites-template Jinja), no baselines |
 | Admin demo (#7b) | **24 / 24 canon-import drift=0** | `/admin-demo` shipped (PR #122), 4 viewports |
 | Customer demo on landing (#7) | **34 / 34 canon-import drift=0** | `/customer-demo` shipped (PR #124), drop-in `<CustomerSite scheme={...} />` — covers 12 sections × ~3 viewports (palette via `?scheme=cream\|slate\|sage`). The deployed `*.samosite.online` Jinja sites remain hand-rolled until customer-SSR swap. |
 | Admin (10–19) | 0 / 19 | hand-rolled, no baselines |
-| **Итого** | **98 / 158 covered** | 94 of them via canon drift=0 |
+| **Итого** | **102 / 158 covered** | 98 of them via canon drift=0 |
 
 ---
 
@@ -133,12 +144,13 @@ Admin — desktop-first (founder-side). Mobile (768/375) только для log
 
 PR #119 закрыл Landing sections 2-10 одним махом (canon import = drift=0).
 PR #122 закрыл `/admin-demo`. PR #124 закрыл `/customer-demo` (palette preview).
-Дальше — surfaces из `CANON_SWAP_PLAN.md`, все требуют canon 0.2.x interactive variants:
+PR #152 + #153 закрыли canon 0.6.0 v3 narrative refresh (10 секций × 4 viewport = 40 surfaces).
+Дальше — surfaces из `CANON_SWAP_PLAN.md`, все требуют canon 0.7.x interactive variants (props-based handlers per `CANON_SWAP_PLAN.md` §Hybrid pattern Option A):
 
-1. **Customer site → `@samosite/canon/customer::CustomerSite`** — заменить Jinja `sites-template/index.html.j2` рендер на React-canon. Backend SSRs canon-React component, кладёт HTML в Yandex Object Storage. Cовместимость: canon-импорт = ровно canon. Hand-rolled drift = 0.
-2. **Admin core → `@samosite/canon/admin-core`** — `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail` в качестве drop-in для `landing/app/admin/*`. Founder-side UI, не критичен для конверсии.
-3. **Admin ops → `@samosite/canon/admin-ops`** — `SitesList`, `SiteDetail`, `Leads`, `Waitlist`, `FeedbackInbox`, `Settings`. Same.
-4. **`/admin-demo` (#7b) → `@samosite/canon/admin-demo::ClientAdminDemo`** — новая страница, drop-in import. 5 дней по `BASELINES_PLAN §Tier 3` schedule → теперь 1 день (canon-import = тот же React-рендер).
-5. **Intake → `@samosite/canon/intake`** — `SubmitModal`, `Confirmation`, `PhotoDrawer`, `LeadForm`, `FeedbackPage`. Но **большинство interactive** — потребуется тот же compromise, что с Hero (canon read-only). Defer до canon 0.2.x с hook-варианты.
+1. **Hero → `@samosite/canon/landing::HeroSection`** — canon's HeroBlock остаётся read-only в 0.6.0. Swap unblocked когда canon ships interactive HeroSection (props: `value, onChange, onSubmit, badge, freeMonth`). 0.7.x cadence ~1-2 weeks per `CANON_SWAP_PLAN.md` §Hero.
+2. **Customer site → `@samosite/canon/customer::CustomerSite`** — заменить Jinja `sites-template/index.html.j2` рендер на React-canon. Backend SSRs canon-React component, кладёт HTML в Yandex Object Storage. Cовместимость: canon-импорт = ровно canon. Hand-rolled drift = 0.
+3. **Admin core → `@samosite/canon/admin-core`** — `AdminLogin`, `AdminDashboard`, `AppsList`, `AppDetail` в качестве drop-in для `landing/app/admin/*`. Founder-side UI, не критичен для конверсии.
+4. **Admin ops → `@samosite/canon/admin-ops`** — `SitesList`, `SiteDetail`, `Leads`, `Waitlist`, `FeedbackInbox`, `Settings`. Same.
+5. **Intake → `@samosite/canon/intake`** — `SubmitModal` уже частично swapped (PR #135+ — canon 0.3.0 controlled-API wrapper). Остаются `Confirmation`, `LeadForm`, `FeedbackPage`. Большинство interactive — компромисс через DOM-mutation pattern (см. `landing/components/SiteHeader.tsx` для шаблона).
 
 Pipeline и команды для оставшихся (если решим всё-таки делать pixel-diff): в `PIXEL_PERFECT_SETUP.md`. Но честное замечание: если canon-import = drift=0, pixel-diff избыточен. Тесты остаются только как smoke (проверка что DOM селекторы резолвятся).

@@ -7,11 +7,14 @@
 ## P0 — Public (1–9)
 
 ### #1 · Landing — `samosite.online`
-- **Канон:** `canon/landing-samosite.jsx` (компоненты `SamosaytLanding_Desktop` / `SamosaytLanding_Mobile`)
-- **HTML preview:** `canon/landing.html`
-- **Прод:** создать `code/landing/page.tsx` (Next.js App Router) + секционные компоненты
-- **Спека:** `specs/01_landing_v2.1.md` (полная) + `specs/03_session_v2.1.3.md` (последние правки копирайта)
-- **Viewports:** 1440 / 768 / 390
+- **Канон:** `@samosite/canon/landing` package — canon 0.6.0 v3 narrative (11 blocks). Source `packages/canon/src/landing/index.tsx`.
+- **HTML preview:** `packages/canon/canon-source/landing.html` (dev canvas) · canvas mirror `landing/tests/visual/canon-source/landing-samosite.jsx`
+- **Прод:** `landing/app/page.tsx` рендерит:
+  - L1 Hero — hand-rolled `landing/components/Hero.tsx` (interactive)
+  - L2-L11 — canon dropins: `ExamplesSection` · `CycleSection` (new) · `MondaySection` (new) · `BaseWorkSection` (new) · `SourcesSection` (new) · `OwnershipSection` · `AnalyticsSection` · `PricingSection` · `FaqSection` · `FinalCtaSection` (new)
+- **Спека:** `specs/01_landing_v2.1.md` (legacy v2.1 layout) + `specs/03_session_v2.1.3.md` (v2.1.3 copy) + `packages/canon/CHANGELOG.md` 0.6.0 (v3 narrative)
+- **Viewports:** 1440 / 768 / 390 / 375
+- **Note:** canon 0.6.0 dropped `Story` / `Platforms` / `BigFeatures` / `FreeMonthSection`, added 5 new sections (`Cycle` / `Monday` / `BaseWork` / `Sources` / `FinalCta`). Old `specs/01` paragraphs referencing those старые секции — out-of-date; v3 narrative описан в `CHANGELOG.md` 0.6.0.
 
 ### #2 · Source detection states
 - **Канон:** `canon/screen-02-source.jsx` (`S2_Desktop`, `S2_Mobile`) — 9 состояний бейджа
