@@ -1,5 +1,234 @@
 # Changelog
 
+## 0.6.0 — Landing rewrite v3 (BREAKING) · 2026-05-26
+
+> **BREAKING.** Full structural rewrite of the landing. Old internal sections (`StorySection`, `PlatformsSection`, `BigFeaturesSection`, `FreeMonthSection`) are removed. The page composition behind `<SamosaytLanding>` is replaced — 11 blocks instead of 9, new narrative built around the **«цикл 4 сам»** loop and **«каждый понедельник — три предложения»** as the headline feature.
+>
+> Public top-level exports (`SamosaytLanding`, `SamosaytLanding_Desktop`, `SamosaytLanding_Mobile`, `StickyHeader`, `HeroBlock`, `ExamplesSection`, `OwnershipSection`, `AnalyticsSection`, `PricingSection`, `FaqSection`) still resolve and back-compat-render — but their internal markup and child sections changed. Anything that imports the removed inner exports will fail at type-check (intentional).
+
+### Why
+
+The 0.5.x landing told the story «соберётся из ссылки → дальше работает сам», which was right shape-wise but didn't hold under cold-read scrutiny:
+
+1. **«Восемь сам»** read as a feature list, not as a story. The eight cards were a flat catalogue — owners couldn't tell which of the eight was the **point of the product** and which were table-stakes hygiene.
+2. **«Дальше работает сам»** had no mechanism behind it. The site supposedly «обновляется», «отбирает отзывы», «попадает в поиск» — but how, and why does that grow over time? Nothing in the page made the asymmetry «one-time setup vs ongoing improvement» visible.
+3. **No mention of weekly recommendations** — the killer feature that distinguishes Самосайт from a static AI sitebuilder. In 0.5.x it was tucked into FAQ.
+4. **Pricing didn't reflect pre-launch reality.** «990 ₽/мес. первый месяц бесплатно» — generic. No urgency, no early-adopter ladder, no «we're launching, jump in now».
+
+### What the new narrative does
+
+Two anchors carry the page:
+
+- **Block 3 · Цикл «4 сам»** — the page's narrative spine. Four nodes: **01 Собирает** (one-off setup) → **02 Обновляет** → **03 Наблюдает** → **04 Предлагает**, with a return arc from 04 back to 02 («и снова — каждую неделю»). 01 sits apart as the one-time step. Owners read this and finally get the **mechanism**: «один раз показали — дальше сайт сам становится лучше через цикл».
+- **Block 4 · По понедельникам — три предложения** — the killer feature, hoisted from FAQ to its own block. Three example messenger-card-style notifications (автосервис / кофейня / клиника) with **concrete numbers** («312 человек зашли, 224 закрыли», «98 нажали, 4 заказали», «68% долистывают, 19% доходят»), each ending with an explicit suggestion and three buttons («Применить / Другой вариант / Не надо»). The line under the block hard-codes the trust contract: **«Никаких правок без вашего согласования»**.
+
+Pricing reorients around the pre-launch ladder:
+
+- **490 ₽ / месяц для первой сотни — навсегда**. Big number, tilted «МЫ ЗАПУСКАЕМСЯ» ribbon on the card.
+- Reverts to 990 ₽ for everyone else.
+- First month free, **без карты привязки** — distinct visual block inside the card, not microcopy under the CTA.
+
+### 11 blocks (new structure)
+
+| # | Block | Component | Role |
+|---|---|---|---|
+| 01 | Hero | `HeroBlock` | Главное обещание: 2 часа + цикл |
+| 02 | Примеры сайтов | `ExamplesSection` | Снимает «получится стыдно» |
+| 03 | Цикл «4 сам» | `CycleSection` *(new)* | **Смысловое сердце** |
+| 04 | По понедельникам — 3 предложения | `MondaySection` *(new)* | **Главная новая фича** |
+| 05 | Базовая работа | `BaseWorkSection` *(new)* | Остальные «сам» компактно |
+| 06 | Источники + врезка про Я.Карты | `SourcesSection` *(new)* | Снимает «у меня нечего показать» |
+| 07 | Вы — главный | `OwnershipSection` *(rewritten)* | Снимает страх «ИИ переделает за меня» |
+| 08 | Аналитика | `AnalyticsSection` *(rewritten)* | Источник данных для понедельников |
+| 09 | Цена + предзапуск-оффер | `PricingSection` *(rewritten)* | Финансовый аргумент + срочность |
+| 10 | FAQ | `FaqSection` *(rewritten)* | Группа 1 «про рекомендации» + остальные |
+| 11 | Финальный CTA | `FinalCtaSection` *(new)* | Лестница 2 часа → неделя → месяц |
+
+5 CTA-points on the page: Hero · Monday (mid-page) · Ownership («Демо ЛК») · Pricing · Final.
+
+### New exports
+
+```tsx
+import {
+  // New top-level — these are the canonical names going forward
+  SamosaytLandingV3,
+  SamosaytLandingV3_Desktop,
+  SamosaytLandingV3_Mobile,
+
+  // New section components
+  CycleSection,
+  MondaySection,
+  BaseWorkSection,
+  SourcesSection,
+  FinalCtaSection,
+} from '@samosite/canon/landing';
+```
+
+### Removed exports (BREAKING)
+
+| Removed | Why | Replacement |
+|---|---|---|
+| `StorySection` | 6-step «Как это работает» — folded into `CycleSection` (4 nodes, тighter) | `CycleSection` |
+| `PlatformsSection` | Full-section platform catalogue — replaced by compact Hero chips + new `SourcesSection` card grid | `SourcesSection` |
+| `BigFeaturesSection` (8 «сам») | Flat catalogue, no story. The cycle (4 сам) + `BaseWorkSection` (4 hygiene cards) carry the same content with narrative structure | `CycleSection` + `BaseWorkSection` |
+| `FreeMonthSection` | Generic «Дайте Самосайту собрать себя» — replaced by ladder CTA «2 часа → неделя → месяц» | `FinalCtaSection` |
+| `HeroPlatformStrip` | Was a dedicated standalone export for the platform chips under hero input. In v3, chips are inlined into `HeroBlock` and the rendered platforms changed | — *(use `SourcesSection` if you need a standalone source list)* |
+| `SectionTitle`, `SectionSub` | Internal title primitives. v3 uses its own `H2` / `Sub` helpers, not exported | — *(write directly, see `HeroBlock` source)* |
+| `FeatureGlyph` | Glyph variant set tied to old `BigFeaturesSection` | — *(no replacement, base-work cards bring their own SVGs)* |
+| `StoryStepColorful`, `PlatformLogo`, `PlatformCard`, `FeatureCard`, `SiteCard` | Internal pieces of the removed sections | — |
+
+### Back-compat aliases (still resolve)
+
+```tsx
+// These still resolve from @samosite/canon/landing — but they point at v3 now,
+// so visual output is the new 11-block landing, not the 0.5.x 9-section one.
+SamosaytLanding         // → SamosaytLandingV3
+SamosaytLanding_Desktop // → SamosaytLandingV3_Desktop
+SamosaytLanding_Mobile  // → SamosaytLandingV3_Mobile
+Landing                 // → SamosaytLandingV3
+ConceptA_Desktop        // → SamosaytLandingV3_Desktop
+ConceptA_Mobile         // → SamosaytLandingV3_Mobile
+HeroBlock               // → v3 HeroBlock (new copy, same shape)
+HeroSection             // → HeroBlock
+ExamplesSection         // → v3 ExamplesSection (3 demo cards, new copy)
+OwnershipSection        // → v3 OwnershipSection (4 points, new copy)
+AnalyticsSection        // → v3 AnalyticsSection (rewritten dashboard)
+PricingSection          // → v3 PricingSection (490 ₽ tier)
+FaqSection              // → v3 FaqSection (13 questions, grouped)
+StickyHeader            // → v3 StickyHeader (new nav links)
+```
+
+### What's new in components (per-block)
+
+#### `HeroBlock`
+- **H1**: «Соберём за 2 часа сайт, который ловит заявки. Дальше он сам становится лучше каждую неделю» (с акцентом на «сам становится лучше»).
+- **Sub**: новый текст, упоминающий **«по понедельникам подсказывает, что поправить»** — задаёт ожидание блока 04.
+- **Placeholder**: «Вставьте ссылку: Я.Карты, Telegram, Avito…»
+- **CTA**: «Собрать сайт за 2 часа →» — единая формулировка для всех 5 CTA-точек.
+- **Microcopy**: двумя строками с акцентом на «первая сотня» — «Первый месяц бесплатно. Карту привязывать не надо.\nДля первой сотни — 490 ₽ в месяц навсегда».
+- **Chips**: Я.Карты · Telegram-канал · Instagram · 2ГИС · Avito · ваш старый сайт · фото буклета или меню. (Раньше отдельный `HeroPlatformStrip` — теперь inline.)
+
+#### `ExamplesSection` (rewritten)
+- 3 demo-карточки (не «реальные сайты»): кофейня (из Telegram) · автосервис (из Я.Карт) · школа танцев (из старого сайта).
+- Подпись каждой: `Собран из {src}`.
+- Mobile — горизонтальная карусель с равной высотой карточек (`alignItems: stretch`).
+- CTA внизу: «Собрать такой же из моей ссылки →».
+
+#### `CycleSection` *(new)*
+- **Desktop**: 4 узла в ряд (01-04), горизонтальный поток слева направо. Под 02-03-04 — пунктирная дуга возврата с подписью «и снова — каждую неделю». 01 стоит отдельно как разовая настройка.
+- **Mobile**: вертикальный список с стрелками между узлами. Дуга возврата убрана — на мобиле это ломалось визуально.
+- Карточки одинаковой высоты (`height: 100%`), каждая в своём цвете (paper-stack аesthetic — `5px 5px 0 0` shadow в цвет border).
+
+#### `MondaySection` *(new — главная фича)*
+- Eyebrow «ГЛАВНАЯ ФИЧА» (red accent).
+- Заголовок «Каждый понедельник — три предложения, что улучшить».
+- 3 карточки-уведомления в стиле мессенджер-чата: от «Самосайт · понедельник, 09:00». Каждая — со своим цветом (оранжевый / сине-фиолетовый / зелёный).
+- Внутри каждой карточки: эyebrow-тег (ЦЕННОСТНОЕ ПРЕДЛОЖЕНИЕ / КОНТЕНТ / СТРУКТУРА) · case-label (автосервис / кофейня / клиника) · заголовок «проблемы» · 2-3 абзаца с конкретикой (живые цифры) · suggestion-блок · 3 кнопки.
+- Подпись под блоком: **«Никаких правок без вашего согласования»**.
+- CTA внизу: «Собрать сайт за 2 часа →».
+
+#### `BaseWorkSection` *(new)*
+- 4 карточки в grid 2×2 (desktop) / vertical (mobile).
+- Каждая карточка визуально цветная (плашка-заголовок с большой метрикой + body): оранж (4 канала) / жёлтый (4–6 отзывов) / зелёный (Яндекс+Google) / фиолет (0 ботов).
+- Иконка в обведённом квадрате с offset-shadow под цвет.
+
+#### `SourcesSection` *(new)*
+- Я.Карты — большая featured-карточка (col-span 2 на desktop).
+- 6 остальных платформ — стандартные карточки.
+- Справа — отдельная **врезка** «Зачем мне сайт, если у меня уже есть страница в Я.Картах?» — снимает главное возражение этого сегмента.
+- Снизу — soon-strip «ВКонтакте · Ozon · YouTube».
+
+#### `OwnershipSection` (rewritten)
+- Заголовок: «Сайт ваш. Кнопка всегда у вас».
+- 4 пункта контроля с явной отсылкой к рекомендациям («Не понравилась — отклоните»).
+- CTA: «▶ Посмотреть демо личного кабинета ↗» → `client-admin-demo.html`.
+
+#### `AnalyticsSection` (rewritten)
+- Светлый мок-дашборда (был тёмным в первой итерации — заменён на светлый, чтобы соответствовать остальной admin/customer-палитре).
+- Окно с traffic-light, URL-bar `app.samosite.online/analytics`, LIVE-индикатор.
+- KPI (4): посетителей · просмотры услуг · **заявок 47** *(акцент)* · конверсия. **Цифры внутренне согласованы:** график по дням 5+6+8+7+9+7+5 = 47.
+- «Откуда пришли» (5 источников включая «Другое») — сумма ровно **100%**.
+- Топ-услуги с дельтами (+34% / +8% / +2% / −12%).
+- Кнопка «Посмотреть демо личного кабинета ↗» под блоком.
+
+#### `PricingSection` (rewritten)
+- Tilted ribbon «**МЫ ЗАПУСКАЕМСЯ**» (rotate 8°) в углу карточки.
+- Eyebrow внутри: «ПЕРВОЙ СОТНЕ — НАВСЕГДА».
+- **490 ₽** в месяц (большая цифра 84-88px). Потом 990 ₽ для всех остальных.
+- Отдельный блок «Первый месяц — вообще бесплатно. Карту привязывать не надо» — в accentSoft фоне с иконкой подарка.
+- 7 bullets «ВХОДИТ ВСЁ» (см. `docs/COPY.md` §9).
+- CTA + сноска «Оплату подключите потом».
+- Под карточкой — аргумент про SMM-щика, переписан **без тире** (через двоеточие — это сознательная стилистическая правка).
+
+#### `FaqSection` (rewritten)
+- **13 вопросов**, разделены на 2 группы.
+- **Группа 1 (3 вопроса)** — «ПРО ЕЖЕНЕДЕЛЬНЫЕ РЕКОМЕНДАЦИИ», выделена accent border. Первый раскрыт по умолчанию.
+- **Группа 2 (10 вопросов)** — обычные. «Что НЕ умеет» — последний (13-й), как catharsis.
+
+#### `FinalCtaSection` *(new)*
+- Тёмная карточка с декоративными blob-радиалами в углах.
+- 3-строчный заголовок: «Через 2 часа — сайт. Через неделю — первые предложения. Через месяц — сайт, который вы сами бы не догадались собрать».
+- Лестница из 3 ступеней (ШАГ 1/2/3).
+- CTA: «Собрать сайт за 2 часа →».
+- Сноска: «Остались вопросы? Напишите нам →».
+
+#### `StickyHeader` (new nav)
+- Навигация (desktop): «Цикл 4 сам · Понедельник · Примеры · Цена · Помощь» (вместо старой «Как · Примеры · Цена · FAQ»).
+- CTA: «Собрать за 2 часа» (mobile: «Собрать»).
+- Brand mark wrap в `<a href={homeHref}>` (carry-over from 0.4.0).
+
+### Runtime typography pass
+
+`SamosaytLandingV3` mounts a one-shot effect that walks the rendered DOM and applies two rules:
+
+1. **Short prepositions / conjunctions** (и, в, о, к, с, у, а, не, по, за, до, от, из) — pinned to the following word via `nbsp`. Stops them from dangling at the end of a line.
+2. **Trailing dots** — stripped from `h1–h6`, `p`, `li`, `button`, `summary`, `blockquote` *unless* the text ends in ellipsis or `..`.
+
+Both pass over both desktop and mobile root via `useRef` (the first attempt used `document.querySelector` and only caught the first root — fixed). Performance: single pass on mount, O(N) over text nodes inside `.ss-v3-root`.
+
+### Visual deltas (canvas baselines need regeneration)
+
+Every artboard under `#s1 · Landing v3` in `index.html` changed:
+
+| Artboard | 0.5.0 height | 0.6.0 height |
+|---|---|---|
+| `s1-d` (Desktop 1440) | 10 300 px | **11 900 px** |
+| `s1-m` (Mobile 390) | 13 000 px | **15 200 px** |
+
+40+ pixel-diff baselines will need to be regenerated. Token surface unchanged — VT.* tokens are identical to 0.5.x.
+
+### Migration
+
+```bash
+npm i @samosite/canon@0.6.0
+# rebuild your app — top-level <SamosaytLanding /> still renders, but you'll see
+# the new 11-block landing
+npm run build
+```
+
+**If you've been composing sections individually** (vitrina/landing prod): you'll need to remove imports of the deleted components (`StorySection`, `PlatformsSection`, `BigFeaturesSection`, `FreeMonthSection`) and add the new ones (`CycleSection`, `MondaySection`, `BaseWorkSection`, `SourcesSection`, `FinalCtaSection`). See **`CLAUDE_CODE_TZ_landing_v0.6.0.md`** in the project root for the prod migration plan.
+
+**If you've been using `<SamosaytLanding>` as a whole**: nothing to remove, but the entire visual diff is the new landing.
+
+### Back-compat
+
+- Top-level `<SamosaytLanding>` still resolves and renders. Same prop signature (`{ mobile?: boolean }`).
+- Token surface (`VT`, `BRAND`) — zero changes.
+- Primitives (`Btn`, `IconArrow`, `IconLink`, `BrandMark`) — zero changes.
+- `intake/`, `customer/`, `admin-core/`, `admin-ops/`, `auth/`, `source/` — zero changes.
+- Removed inner exports — gone, no `@deprecated` cycle.
+
+### What this release does NOT do
+
+- **SubmitModal copy** — unchanged. Will sync to v3 narrative in a follow-up (planned 0.6.x).
+- **Customer-site** (`/code/customer-site.html.j2`) — unchanged.
+- **Backend / schema** — zero changes. v3 is purely landing copy + composition.
+- **`HeroPlatformStrip` standalone export** — removed. If you need the platform strip outside HeroBlock, copy the markup from `HeroBlock` source or wait for a follow-up.
+
+---
+
+# Changelog
+
 ## 0.5.0 — Copy rewrite per docs/COPY.md · 2026-05-24
 
 Text-only release. **No visual or prop-signature changes.** All updates live inside `landing/index.tsx` and `intake/index.tsx`; the new canonical messaging doc is `docs/COPY.md` (single source of truth for landing + modal copy from now on).
