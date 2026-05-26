@@ -20,7 +20,7 @@
 
 Per `docs/handoff/VISUAL_COVERAGE.md` and `landing/app/page.tsx`:
 
-- `landing/app/page.tsx` — 9 sections via `<ResponsiveCanonSection>` (Examples → FreeMonth), each renders BOTH mobile and desktop variants, CSS media query picks one
+- `landing/app/page.tsx` — 10 sections via `<ResponsiveCanonSection>` (canon 0.6.0 v3 narrative: Examples → Cycle → Monday → BaseWork → Sources → Ownership → Analytics → Pricing → FAQ → FinalCta), each renders BOTH mobile and desktop variants, CSS media query picks one
 - `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`
 - `landing/app/admin-demo/page.tsx` — `<ClientAdminDemo />` drop-in (PR #122)
 - `landing/app/customer-demo/page.tsx` — customer-site palette preview through canon (PR #124)

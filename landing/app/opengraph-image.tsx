@@ -18,7 +18,8 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Самосайт — сайт, который соберётся из вашей ссылки и дальше работает сам";
+export const alt =
+  "Самосайт — соберём за 2 часа сайт, который ловит заявки, и дальше он сам становится лучше";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,28 +62,28 @@ export default async function Image() {
         <span style={{ fontSize: 40, fontWeight: 700, color: "#2d1b14" }}>Самосайт</span>
       </div>
 
-      {/* H1 — canon 0.5.0, synced with Hero.tsx visible H1. Two
-          terracotta accent phrases («соберётся из вашей ссылки»,
-          «работает сам»), em-dash bridge between lines. No trailing
-          period — matches visible H1. */}
+      {/* H1 — canon 0.6.0, synced with Hero.tsx visible H1. Two
+          terracotta accent phrases («2 часа», «сам становится лучше»),
+          period at the end matches visible H1. */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          fontSize: 76,
+          fontSize: 64,
           fontWeight: 700,
           lineHeight: 1.06,
-          letterSpacing: -3,
+          letterSpacing: -2.5,
           color: "#2d1b14",
         }}
       >
-        <span>Сайт, который</span>
         <span>
-          <span style={{ color: "#c66333" }}>соберётся из вашей ссылки</span> —
+          Соберём за <span style={{ color: "#c66333" }}>2 часа</span>
         </span>
+        <span>сайт, который ловит заявки.</span>
         <span>
-          и дальше <span style={{ color: "#c66333" }}>работает сам</span>
+          Дальше он <span style={{ color: "#c66333" }}>сам становится лучше</span>
         </span>
+        <span>каждую неделю.</span>
       </div>
 
       {/* Bottom microcopy */}

@@ -1,423 +1,329 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// @samosite/canon · landing v3 — 11 blocks · canon 0.6.0
+// Single-file port of landing-v3-{a,b,c,d}.jsx + landing-v3.jsx from the canvas project.
+// See docs/COPY.md for canonical messaging and CHANGELOG 0.6.0 for what changed.
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { VT, BRAND } from '../tokens';
-import { Mono, Card, Btn, Input, IconLink, IconArrow, BrandMark } from '../primitives';
+import { Btn, IconArrow, IconLink, BrandMark } from '../primitives';
 
+// ── from landing-v3-a.jsx ──
+// ───────── helpers ─────────
 
-// ─────────────────────────────────────────────────────────────
-// Section horizontal padding — single source of truth.
-//
-// 0.2.6 — every top-level section / hero / footer self-pads via this helper.
-// Same philosophy as <StickyHeader> in 0.2.4: don't rely on a parent wrapper
-// to provide horizontal padding, because in prod the sections are composed
-// outside <SamosaytLanding> and the wrapper's padding doesn't apply — making
-// every section flush against the viewport on iPhone-class screens.
-//
-// Mobile pad = 20, desktop pad = 80 — matches the old SamosaytLanding wrapper.
 function sectionPad(mobile) {
   const v = mobile ? 20 : 80;
-  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' as const };
+  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' };
 }
 
-
-// ─────────────────────────────────────────────────────────────
-// Reusable: glyph illustrations for "how it works"
-// Hand-tuned simple geometric SVG — paper/scissor vibe, no clip-art.
-
-const G_BG = VT.accentSoft;     // pale peach
-const G_INK = VT.accent;
-const G_INK_DARK = 'oklch(0.32 0.14 35)';
-
-function Glyph({ size = 88, children, tint }) {
+function Eyebrow({ children, mobile, kind = 'accent' }) {
+  const palette = kind === 'accent'
+    ? { bg: VT.accentSoft, fg: VT.accent, dot: VT.accent }
+    : { bg: VT.bgSoft, fg: VT.inkSoft, dot: VT.inkFaint };
   return (
     <div style={{
-      width: size, height: size, borderRadius: 18,
-      background: tint || G_BG, color: G_INK_DARK,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      flex: '0 0 auto', position: 'relative', overflow: 'hidden',
-    }}>{children}</div>
-  );
-}
-
-function GlyphLink({ size = 88 }) {
-  // a link/chain
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.65} height={size * 0.65} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3"/>
-        <path d="M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphAI({ size = 88 }) {
-  // sparkles / ai
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="currentColor">
-        <path d="M32 8 L36 24 L52 28 L36 32 L32 48 L28 32 L12 28 L28 24 Z"/>
-        <circle cx="50" cy="50" r="4"/>
-        <circle cx="14" cy="48" r="2.5"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphGlobe({ size = 88 }) {
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-        <circle cx="32" cy="32" r="22"/>
-        <ellipse cx="32" cy="32" rx="10" ry="22"/>
-        <path d="M10 32h44"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphRefresh({ size = 88 }) {
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 32 a18 18 0 0 1 30 -13"/>
-        <path d="M44 12 L44 22 L34 22"/>
-        <path d="M50 32 a18 18 0 0 1 -30 13"/>
-        <path d="M20 52 L20 42 L30 42"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphInbox({ size = 88 }) {
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round">
-        <rect x="10" y="14" width="44" height="36" rx="5"/>
-        <path d="M10 34 L22 34 L26 40 L38 40 L42 34 L54 34"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphChart({ size = 88 }) {
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M10 48 L24 30 L34 38 L54 14"/>
-        <path d="M44 14 L54 14 L54 24"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-function GlyphGift({ size = 88 }) {
-  return (
-    <Glyph size={size}>
-      <svg viewBox="0 0 64 64" width={size * 0.7} height={size * 0.7} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="10" y="24" width="44" height="28" rx="3"/>
-        <path d="M10 24 L54 24"/>
-        <path d="M32 24 L32 52"/>
-        <path d="M22 24 C 22 14, 32 14, 32 24"/>
-        <path d="M42 24 C 42 14, 32 14, 32 24"/>
-      </svg>
-    </Glyph>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Example site preview cards — REAL selling-page mock
-// (hero photo, services with prices, curated reviews, gallery, CTA)
-
-// Photo-like placeholder OR a real Unsplash URL.
-// `src` wins if provided — falls back to gradient if missing/loading.
-function PhotoBlock({ tone = 'peach', src, children, style, label }) {
-  const tones = {
-    peach: ['oklch(0.84 0.07 50)', 'oklch(0.62 0.09 35)', 'oklch(0.46 0.07 30)'],
-    sage:  ['oklch(0.82 0.06 145)', 'oklch(0.58 0.08 145)', 'oklch(0.38 0.06 145)'],
-    slate: ['oklch(0.80 0.04 240)', 'oklch(0.55 0.06 240)', 'oklch(0.35 0.04 240)'],
-    warm:  ['oklch(0.88 0.05 70)', 'oklch(0.70 0.10 50)', 'oklch(0.48 0.10 35)'],
-    rose:  ['oklch(0.86 0.06 25)', 'oklch(0.65 0.10 20)', 'oklch(0.40 0.08 18)'],
-  };
-  const [c1, c2, c3] = tones[tone] || tones.peach;
-  return (
-    <div style={{
-      position: 'relative', overflow: 'hidden',
-      background: src ? '#222' : `
-        radial-gradient(120% 80% at 30% 20%, ${c1} 0%, transparent 55%),
-        radial-gradient(110% 70% at 80% 90%, ${c3} 0%, transparent 55%),
-        linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3} 100%)
-      `,
-      ...style,
+      display: 'inline-flex', alignItems: 'center', gap: 8,
+      fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5, letterSpacing: '0.14em',
+      color: palette.fg, fontWeight: 500,
+      padding: '6px 12px', background: palette.bg, borderRadius: 6,
     }}>
-      {src && (
-        <img
-          src={src}
-          alt=""
-          loading="lazy"
-          style={{
-            position: 'absolute', inset: 0,
-            width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center',
-            display: 'block',
-          }}
-        />
-      )}
-      {!src && (
-        <div aria-hidden="true" style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: `
-            radial-gradient(60% 30% at 20% 5%, rgba(255,255,255,0.18) 0%, transparent 60%),
-            radial-gradient(40% 20% at 80% 95%, rgba(0,0,0,0.15) 0%, transparent 60%)
-          `,
-        }} />
-      )}
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: palette.dot }} />
       {children}
-      {label && !src && (
-        <span style={{
-          position: 'absolute', left: 8, bottom: 6,
-          fontFamily: VT.font.mono, fontSize: 9, color: 'rgba(255,255,255,0.7)',
-          letterSpacing: '0.08em',
-        }}>{label}</span>
-      )}
     </div>
   );
 }
 
-// Tiny SVG star
-function Star({ filled = true, size = 11 }) {
+function H2({ children, mobile, align = 'center' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill={filled ? '#f4a93b' : 'none'} stroke={filled ? '#f4a93b' : '#ccc'} strokeWidth="1.5" strokeLinejoin="round">
+    <h2 style={{
+      fontSize: mobile ? 30 : 52,
+      lineHeight: mobile ? 1.1 : 1.05,
+      fontWeight: 700, letterSpacing: '-0.03em',
+      margin: '14px 0 0', textWrap: 'balance', textAlign: align,
+    }}>{children}</h2>
+  );
+}
+
+function Sub({ children, mobile, align = 'center', maxWidth = 720 }) {
+  return (
+    <p style={{
+      fontSize: mobile ? 16 : 19, lineHeight: 1.45,
+      color: VT.inkSoft, margin: '14px auto 0',
+      maxWidth: mobile ? '100%' : maxWidth, textWrap: 'pretty',
+      textAlign: align,
+    }}>{children}</p>
+  );
+}
+
+// ───────── BLOCK 1 · HERO ─────────
+
+const SOURCE_ICONS = [
+  { id: 'yandex', name: 'Яндекс.Карты',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D"/><circle cx="12" cy="10" r="3.2" fill="#fff"/></svg> },
+  { id: 'tg', name: 'Telegram',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#229ED9"/><path d="M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z" fill="#fff"/></svg> },
+  { id: '2gis', name: '2ГИС',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#19BB4F"/><text x="12" y="17" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="14" fill="#fff">2</text></svg> },
+  { id: 'avito', name: 'Avito',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#0AF"/><circle cx="18" cy="7.5" r="3" fill="#FF9C00"/><text x="9" y="17" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" fill="#fff">A</text></svg> },
+  { id: 'ig', name: 'Instagram',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><defs><linearGradient id="iggr3a" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stopColor="#FEDA77"/><stop offset="30%" stopColor="#F58529"/><stop offset="60%" stopColor="#DD2A7B"/><stop offset="100%" stopColor="#8134AF"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#iggr3a)"/><rect x="6" y="6" width="12" height="12" rx="3.5" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="16" cy="8" r="0.9" fill="#fff"/></svg> },
+  { id: 'site', name: 'старый сайт',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.40 0.04 250)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" strokeWidth="1.5"/><ellipse cx="12" cy="12" rx="2.8" ry="6" fill="none" stroke="#fff" strokeWidth="1.5"/><path d="M6 12h12" stroke="#fff" strokeWidth="1.5"/></svg> },
+  { id: 'card', name: 'фото меню или буклета',
+    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.74 0.08 70)"/><rect x="6" y="8" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.4"/><path d="M8 11.5h4M8 14h6" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/></svg> },
+];
+
+function HeroBlock({ mobile }) {
+  return (
+    <section id="hero" style={{ ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: 'relative', zIndex: 1 }}>
+      <div style={{
+        maxWidth: mobile ? '100%' : 1120, margin: '0 auto',
+        textAlign: mobile ? 'left' : 'center',
+      }}>
+        <h1 style={{
+          fontSize: mobile ? 'clamp(32px, 8.8vw, 44px)' : 76,
+          lineHeight: mobile ? 1.06 : 1.04,
+          fontWeight: 700, letterSpacing: '-0.035em',
+          margin: 0,
+          textWrap: 'balance',
+        }}>
+          Соберём за{' '}
+          <span style={{ position: 'relative', color: VT.accent, whiteSpace: 'nowrap' }}>
+            2 часа
+            {!mobile && <span aria-hidden="true" style={{
+              position: 'absolute', left: 2, right: 6, bottom: 6, height: 14,
+              background: VT.accentSoft, opacity: 0.7, zIndex: -1, borderRadius: 3,
+            }} />}
+          </span>{' '}
+          сайт, который ловит заявки.<br/>Дальше&nbsp;он <span style={{ color: VT.accent }}>сам становится лучше</span> каждую неделю.
+        </h1>
+
+        <p style={{
+          fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
+          margin: mobile ? '20px 0 0' : '28px auto 0',
+          maxWidth: mobile ? '100%' : 860, textWrap: 'pretty',
+        }}>
+          Покажите Самосайту, где вы сейчас ведёте свои дела: Яндекс.Карты, Telegram, 2ГИС, Avito или Instagram. Если ничего этого нет — просто сфотографируйте меню или буклет.
+        </p>
+        <p style={{
+          fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
+          margin: mobile ? '10px 0 0' : '12px auto 0',
+          maxWidth: mobile ? '100%' : 860, textWrap: 'pretty',
+        }}>
+          Через <b style={{ color: VT.ink }}>2 часа сайт принимает заявки</b>. Дальше работает сам: обновляет, по понедельникам подсказывает, что поправить ради новых заявок.
+        </p>
+
+        <div className="ss-hero-pill" style={{
+          marginTop: mobile ? 22 : 32,
+          display: 'flex', flexDirection: mobile ? 'column' : 'row',
+          gap: mobile ? 10 : 8,
+          maxWidth: mobile ? '100%' : 680,
+          marginLeft: mobile ? 0 : 'auto', marginRight: mobile ? 0 : 'auto',
+          background: VT.white,
+          padding: mobile ? 10 : 8,
+          borderRadius: mobile ? 14 : 999,
+          border: `1px solid ${VT.line}`,
+          boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)',
+          alignItems: mobile ? 'stretch' : 'center',
+        }}>
+          <div style={{
+            flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+            padding: mobile ? '12px 14px' : '0 18px', minWidth: 0,
+          }}>
+            <IconLink />
+            <span style={{
+              color: VT.inkFaint, fontSize: mobile ? 15 : 16,
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>Вставьте ссылку или загрузите фото</span>
+          </div>
+          <Btn style={{
+            padding: mobile ? '14px 20px' : '14px 26px',
+            borderRadius: mobile ? 10 : 999,
+          }} iconRight={<IconArrow />}>
+            Собрать сайт за 2 часа
+          </Btn>
+        </div>
+
+        <div style={{
+          marginTop: mobile ? 10 : 12,
+          textAlign: mobile ? 'left' : 'center',
+          fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12.5,
+          letterSpacing: '0.03em', color: VT.inkSoft, lineHeight: 1.45,
+        }}>
+          990 ₽/мес · для первой сотни <b style={{ color: VT.accent }}>490 ₽ навсегда</b> · первый месяц бесплатно, карту привязывать не надо
+        </div>
+
+        <div style={{
+          marginTop: mobile ? 14 : 18,
+          textAlign: mobile ? 'left' : 'center',
+        }}>
+          <a href="#examples" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            color: VT.inkSoft, fontSize: mobile ? 14 : 15,
+            textDecoration: 'underline', textUnderlineOffset: 4,
+            textDecorationColor: VT.line,
+          }}>
+            Сначала посмотреть примеры
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+
+        <div style={{
+          marginTop: mobile ? 22 : 36,
+          display: 'flex', flexDirection: 'column', gap: 10,
+          alignItems: mobile ? 'flex-start' : 'center',
+        }}>
+          <div style={{
+            fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+            color: VT.inkFaint, fontWeight: 600,
+          }}>СОБИРАЕМ ИЗ</div>
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: 8,
+            justifyContent: mobile ? 'flex-start' : 'center',
+          }}>
+            {SOURCE_ICONS.map(s => (
+              <span key={s.id} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '5px 14px 5px 5px',
+                background: VT.white, border: `1px solid ${VT.line}`,
+                borderRadius: 999,
+                fontSize: 13, color: VT.ink, fontWeight: 500,
+              }}>
+                {s.icon}
+                {s.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ───────── BLOCK 2 · EXAMPLES ─────────
+
+function Star({ filled = true, size = 10 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20"
+         fill={filled ? '#f4a93b' : 'none'} stroke={filled ? '#f4a93b' : '#ccc'}
+         strokeWidth="1.5" strokeLinejoin="round">
       <path d="M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z"/>
     </svg>
   );
 }
 
-function ReviewCard({ author, text, rating = 5, curated = false }) {
+function PhotoFill({ tone = 'peach', src, style }) {
+  const tones = {
+    peach: ['oklch(0.84 0.07 50)', 'oklch(0.62 0.09 35)', 'oklch(0.46 0.07 30)'],
+    sage:  ['oklch(0.82 0.06 145)', 'oklch(0.58 0.08 145)', 'oklch(0.38 0.06 145)'],
+    slate: ['oklch(0.80 0.04 240)', 'oklch(0.55 0.06 240)', 'oklch(0.35 0.04 240)'],
+    warm:  ['oklch(0.88 0.05 70)', 'oklch(0.70 0.10 50)', 'oklch(0.48 0.10 35)'],
+  };
+  const [c1, c2, c3] = tones[tone] || tones.peach;
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.85)',
-      border: '1px solid rgba(0,0,0,0.06)',
-      borderRadius: 10, padding: '10px 12px',
-      fontSize: 12, lineHeight: 1.45,
+      position: 'relative', overflow: 'hidden',
+      background: src ? '#222' : `radial-gradient(120% 80% at 30% 20%, ${c1} 0%, transparent 55%), radial-gradient(110% 70% at 80% 90%, ${c3} 0%, transparent 55%), linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3} 100%)`,
+      ...style,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div style={{ display: 'flex', gap: 1 }}>
-          {Array.from({ length: 5 }).map((_, i) => <Star key={i} filled={i < rating} size={11} />)}
-        </div>
-        {curated && (
-          <span style={{
-            marginLeft: 'auto',
-            fontFamily: VT.font.mono, fontSize: 9, letterSpacing: '0.08em',
-            color: 'oklch(0.42 0.14 35)', background: 'oklch(0.92 0.045 40)',
-            padding: '2px 6px', borderRadius: 4, fontWeight: 600,
-          }}>★ ЛУЧШИЙ</span>
-        )}
-      </div>
-      <div style={{ marginTop: 6, color: 'oklch(0.22 0.018 60)' }}>
-        «{text}»
-      </div>
-      <div style={{ marginTop: 4, fontSize: 10.5, color: 'oklch(0.55 0.02 60)' }}>{author}</div>
+      {src && <img src={src} alt="" loading="lazy" style={{
+        position: 'absolute', inset: 0, width: '100%', height: '100%',
+        objectFit: 'cover', objectPosition: 'center', display: 'block',
+      }} />}
     </div>
   );
 }
 
-// Tiny avatar for review preview cards in landing examples
-function MiniAvatar({ name, tone = 'peach', size = 26 }) {
-  const initial = (name || '?').trim().charAt(0).toUpperCase();
-  const tones = {
-    peach: ['oklch(0.78 0.10 50)',  'oklch(0.55 0.12 35)'],
-    rose:  ['oklch(0.80 0.09 25)',  'oklch(0.56 0.11 18)'],
-    sage:  ['oklch(0.78 0.08 145)', 'oklch(0.52 0.10 145)'],
-    slate: ['oklch(0.78 0.05 240)', 'oklch(0.52 0.06 240)'],
-  };
-  const [c1, c2] = tones[tone] || tones.peach;
-  return (
-    <span style={{
-      width: size, height: size, borderRadius: '50%', flex: '0 0 auto',
-      background: `linear-gradient(140deg, ${c1}, ${c2})`,
-      color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 700, fontSize: Math.round(size * 0.46),
-    }}>{initial}</span>
-  );
-}
-
-function SiteCard({ name, category, city, palette = 'peach', tone, mobile = false,
-                    services = [], reviews = [], gallery = [], heroPhoto,
-                    handle = 'studia',
-                    heroFormula = null, // optional override; falls back to name
-                    rating = '4.9',
-                    reviewCount = 38,
-                    clientsCount = '1 200+',
-                    phone = '+7 999 111-11-11',
-                    logo = null }) {
-  const palettes = {
-    peach: { bg: 'oklch(0.98 0.012 60)',  bgAlt: 'oklch(0.95 0.014 60)',  ink: 'oklch(0.22 0.018 60)',  sub: 'oklch(0.48 0.018 60)',  ac: VT.accent,              acSoft: 'oklch(0.93 0.05 40)' },
-    sage:  { bg: 'oklch(0.98 0.012 145)', bgAlt: 'oklch(0.95 0.014 145)', ink: 'oklch(0.20 0.015 145)', sub: 'oklch(0.42 0.018 145)', ac: 'oklch(0.50 0.13 145)', acSoft: 'oklch(0.93 0.06 145)' },
-    slate: { bg: 'oklch(0.98 0.005 250)', bgAlt: 'oklch(0.95 0.008 250)', ink: 'oklch(0.20 0.012 250)', sub: 'oklch(0.45 0.015 250)', ac: 'oklch(0.50 0.12 250)', acSoft: 'oklch(0.93 0.045 250)' },
-  };
-  const p = palettes[palette] || palettes.peach;
-  const ph = tone || palette;
-  const h1 = heroFormula || `${category} в ${city}`;
-  const reviewTones = ['peach', 'rose', 'sage', 'slate'];
-
+function MiniSiteCard({ ex }) {
   return (
     <div className="ss-card-lift" style={{
-      background: p.bg, color: p.ink,
+      background: VT.white, color: VT.ink,
       border: `1px solid ${VT.line}`,
-      borderRadius: 18,
-      overflow: 'hidden',
+      borderRadius: 18, overflow: 'hidden',
       boxShadow: '0 18px 36px -18px rgba(120,60,30,0.22)',
-      display: 'flex', flexDirection: 'column',
-      width: '100%',
+      display: 'flex', flexDirection: 'column', width: '100%',
     }}>
-      {/* browser chrome */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 6,
-        padding: '8px 12px',
-        background: VT.bgSoft, borderBottom: `1px solid ${VT.line}`,
+        padding: '8px 12px', background: VT.bgSoft,
+        borderBottom: `1px solid ${VT.line}`,
       }}>
         <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.line }} />
         <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.line }} />
         <span style={{ marginLeft: 8, fontFamily: VT.font.mono, fontSize: 10, color: VT.inkFaint }}>
-          {handle}.{BRAND.domain}
+          {ex.handle}.{BRAND.domain}
         </span>
       </div>
 
-      {/* sticky-like header */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '9px 12px',
-        background: 'rgba(255,255,255,0.96)',
+        padding: '9px 12px', background: '#fff',
         borderBottom: `1px solid ${VT.line}`,
       }}>
-        {logo && (
-          <span style={{
-            width: 24, height: 24, flex: '0 0 auto',
-            borderRadius: 7,
-            background: logo.bg || p.ac,
-            color: logo.fg || '#fff',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: 13, letterSpacing: '-0.04em', lineHeight: 1,
-          }}>{logo.letter}</span>
-        )}
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: p.ink, letterSpacing: '-0.015em' }}>
-          {name}
-        </span>
+        <span style={{
+          width: 24, height: 24, flex: '0 0 auto', borderRadius: 7,
+          background: ex.accent, color: '#fff',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          fontWeight: 800, fontSize: 13,
+        }}>{ex.letter}</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: '-0.015em' }}>{ex.name}</span>
         <span style={{
           marginLeft: 'auto',
-          fontFamily: VT.font.mono, fontSize: 10.5, color: p.sub,
-          whiteSpace: 'nowrap',
-        }}>{phone}</span>
+          fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkSoft,
+        }}>телефон</span>
         <span style={{
           padding: '4px 10px', borderRadius: 999,
-          background: p.ac, color: '#fff', fontSize: 10.5, fontWeight: 600,
+          background: ex.accent, color: '#fff', fontSize: 10.5, fontWeight: 600,
         }}>Записаться</span>
       </div>
 
-      {/* Hero — formula H1 + dual CTA + trust pill */}
-      <div style={{
-        padding: '14px 14px 12px',
-        borderBottom: `1px solid ${VT.line}`,
-      }}>
+      <div style={{ padding: '14px 14px 12px', borderBottom: `1px solid ${VT.line}` }}>
         <div style={{
           fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
-          color: p.ac, fontWeight: 600,
-        }}>
-          {category.toUpperCase()} · {city.toUpperCase()}
-        </div>
+          color: ex.accent, fontWeight: 600,
+        }}>{ex.category.toUpperCase()} · {ex.city.toUpperCase()}</div>
         <h3 style={{
-          fontSize: 18, fontWeight: 700, letterSpacing: '-0.025em',
-          margin: '6px 0 0', lineHeight: 1.1, color: p.ink,
-          textWrap: 'balance',
-        }}>{h1}</h3>
-
-        {/* trust pill */}
+          fontSize: 17, fontWeight: 700, letterSpacing: '-0.025em',
+          margin: '6px 0 0', lineHeight: 1.15, textWrap: 'balance', whiteSpace: 'pre-line',
+        }}>{ex.heroLine}</h3>
         <div style={{
-          marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '5px 10px', background: p.bgAlt, border: `1px solid ${VT.line}`,
-          borderRadius: 999, fontSize: 11,
+          marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '4px 10px', background: VT.bgSoft,
+          border: `1px solid ${VT.line}`, borderRadius: 999, fontSize: 11,
         }}>
           <span style={{ display: 'inline-flex', gap: 1 }}>
             {[0,1,2,3,4].map(i => <Star key={i} filled size={10} />)}
           </span>
-          <b style={{ color: p.ink }}>{rating} ★</b>
-          <span style={{ color: p.sub }}>· {reviewCount} отзывов</span>
+          <b>{ex.rating} ★</b>
+          <span style={{ color: VT.inkSoft }}>· {ex.reviewCount} отзывов</span>
         </div>
-
-        {/* hero photo */}
         <div style={{ marginTop: 10 }}>
-          <PhotoBlock tone={ph} src={heroPhoto} style={{
+          <PhotoFill tone={ex.tone} src={ex.heroPhoto} style={{
             aspectRatio: '16 / 9', borderRadius: 8, border: `1px solid ${VT.line}`,
           }} />
         </div>
-
-        {/* dual CTA */}
-        <div style={{ marginTop: 10, display: 'flex', gap: 6 }}>
-          <span style={{
-            flex: 1, textAlign: 'center',
-            padding: '8px 10px', borderRadius: 8,
-            background: p.ac, color: '#fff',
-            fontSize: 12, fontWeight: 600,
-          }}>Записаться →</span>
-          <span style={{
-            padding: '8px 10px', borderRadius: 8,
-            background: 'transparent', color: p.ink,
-            border: `1px solid ${VT.line}`,
-            fontFamily: VT.font.mono, fontSize: 11,
-            whiteSpace: 'nowrap', flex: '0 0 auto',
-          }} aria-label={phone}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-          </span>
-        </div>
       </div>
 
-      {/* Social proof bar */}
-      <div style={{
-        padding: '8px 14px',
-        background: p.bgAlt,
-        borderBottom: `1px solid ${VT.line}`,
-        display: 'flex', alignItems: 'center', gap: 8,
-        fontFamily: VT.font.mono, fontSize: 10, letterSpacing: '0.06em', color: p.sub,
-      }}>
-        <span>НАС ВЫБРАЛИ</span>
-        <b style={{ fontFamily: VT.font.sans, fontSize: 13, color: p.ink, letterSpacing: '-0.02em' }}>{clientsCount}</b>
-        <span>ЧЕЛОВЕК</span>
-        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          <span style={{
-            fontSize: 8, fontWeight: 800, color: '#fff', background: '#FFCC00',
-            width: 14, height: 14, borderRadius: 4,
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          }}>Я</span>
-          <b style={{ fontFamily: VT.font.sans, color: p.ink }}>{rating} ★</b>
-        </span>
-      </div>
-
-      {/* Services — cards (not list rows) */}
       <div style={{ padding: '12px 14px' }}>
         <div style={{
           fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
-          color: p.ac, fontWeight: 600, marginBottom: 8,
-        }}>
-          УСЛУГИ И ЦЕНЫ
-        </div>
+          color: ex.accent, fontWeight: 600, marginBottom: 8,
+        }}>УСЛУГИ И ЦЕНЫ</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {services.slice(0, 3).map(([n, pr], i) => (
+          {ex.services.map(([n, pr]) => (
             <div key={n} style={{
               background: VT.white, border: `1px solid ${VT.line}`,
               borderRadius: 10, padding: '8px 10px',
               display: 'flex', alignItems: 'center', gap: 8,
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: p.ink, letterSpacing: '-0.01em' }}>{n}</div>
-                <div style={{ fontFamily: VT.font.mono, fontSize: 11, color: p.ink, marginTop: 1 }}>{pr}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '-0.01em' }}>{n}</div>
+                <div style={{ fontFamily: VT.font.mono, fontSize: 11, marginTop: 1 }}>{pr}</div>
               </div>
               <span style={{
                 padding: '4px 8px', borderRadius: 999,
-                background: p.acSoft, color: p.ac,
+                background: ex.accentSoft, color: ex.accent,
                 fontSize: 10, fontWeight: 600,
               }}>Записаться →</span>
             </div>
@@ -425,617 +331,168 @@ function SiteCard({ name, category, city, palette = 'peach', tone, mobile = fals
         </div>
       </div>
 
-      {/* Reviews — cards with avatars + ★ ЛУЧШИЙ badge */}
-      <div style={{ padding: '12px 14px', background: p.bgAlt, borderTop: `1px solid ${VT.line}` }}>
+      <div style={{ padding: '12px 14px', background: VT.bgSoft, borderTop: `1px solid ${VT.line}` }}>
         <div style={{
-          display: 'flex', alignItems: 'baseline',
-          marginBottom: 8,
+          fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
+          color: ex.accent, fontWeight: 600, marginBottom: 8,
+        }}>ОТЗЫВ</div>
+        <div style={{
+          background: VT.white, border: `1px solid ${VT.line}`,
+          borderRadius: 10, padding: '8px 10px',
         }}>
-          <div style={{
-            fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
-            color: p.ac, fontWeight: 600,
-          }}>ОТЗЫВЫ</div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {reviews.slice(0, 2).map((r, i) => (
-            <div key={i} style={{
-              background: VT.white, border: `1px solid ${VT.line}`,
-              borderRadius: 10, padding: '8px 10px',
-              position: 'relative',
-            }}>
-              {i === 0 && (
-                <span style={{
-                  position: 'absolute', top: 7, right: 8,
-                  fontFamily: VT.font.mono, fontSize: 8, letterSpacing: '0.08em',
-                  background: p.acSoft, color: p.ac,
-                  padding: '2px 5px', borderRadius: 3, fontWeight: 700,
-                }}>★ ЛУЧШИЙ</span>
-              )}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <MiniAvatar name={r.author} tone={reviewTones[i % reviewTones.length]} size={22} />
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: p.ink, lineHeight: 1.1 }}>{r.author}</div>
-                  <div style={{ display: 'flex', gap: 1, marginTop: 1 }}>
-                    {Array.from({ length: 5 }).map((_, j) => <Star key={j} filled size={8} />)}
-                  </div>
-                </div>
-              </div>
-              <p style={{
-                margin: '6px 0 0', fontSize: 11.5, lineHeight: 1.4, color: p.ink,
-                display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}>«{r.text}»</p>
-            </div>
-          ))}
+          <div style={{ display: 'flex', gap: 1, marginBottom: 4 }}>
+            {Array.from({ length: 5 }).map((_, j) => <Star key={j} filled size={9} />)}
+          </div>
+          <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.4 }}>«{ex.review}»</p>
+          <div style={{ marginTop: 4, fontSize: 10, color: VT.inkSoft }}>{ex.reviewAuthor}</div>
         </div>
       </div>
 
-      {/* Mini gallery */}
       <div style={{ padding: '12px 14px' }}>
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3,
-        }}>
-          {gallery.slice(0, 4).map((g, i) => (
-            <PhotoBlock key={i} tone={g.tone || ph} src={g.src}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}>
+          {ex.gallery.map((g, i) => (
+            <PhotoFill key={i} tone={g.tone || ex.tone} src={g.src}
               style={{ aspectRatio: '1 / 1', borderRadius: 4 }} />
           ))}
         </div>
       </div>
 
-      {/* Final CTA */}
       <div style={{ padding: '0 14px 14px', marginTop: 'auto' }}>
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
           padding: '11px 14px', borderRadius: 10,
-          background: p.ac, color: '#fff',
+          background: ex.accent, color: '#fff',
           fontSize: 13, fontWeight: 700,
-        }}>
-          Записаться онлайн →
-        </div>
+        }}>Записаться онлайн →</div>
       </div>
     </div>
   );
 }
-
-// ─────────────────────────────────────────────────────────────
-// Platform chip — supported sources
-
-// Real brand colors so each platform reads as itself, not as a generic chip.
-const PLATFORMS_OK = [
-  { id: 'yandex',   name: 'Яндекс.Карты',           bg: 'transparent', fg: '#000', logo: <YandexIcon />,
-    pull: 'отзывы · услуги · цены · фото · режим работы', featured: true },
-  { id: 'telegram', name: 'Telegram-канал',         bg: '#229ED9', fg: '#fff',    logo: <PlaneIcon />,
-    pull: 'посты · фото работ · контакты' },
-  { id: 'instagram', name: 'Instagram',             bg: 'linear-gradient(135deg, #FEDA77 0%, #F58529 30%, #DD2A7B 60%, #8134AF 100%)', fg: '#fff', logo: <CameraIcon />,
-    pull: 'скриншот профиля' },
-  { id: '2gis',     name: '2ГИС',                   bg: 'transparent', fg: '#fff', logo: <TwoGisIcon />,
-    pull: 'услуги · отзывы · контакты' },
-  { id: 'avito',    name: 'Avito',                  bg: 'transparent', fg: '#fff', logo: <AvitoIcon />,
-    pull: 'услуги · цены · отзывы' },
-  { id: 'site',     name: 'Ваш старый сайт',        bg: 'oklch(0.42 0.04 250)', fg: '#fff', logo: <GlobeMini />,
-    pull: 'тексты · фото · услуги' },
-  { id: 'card',     name: 'Фото буклета или меню', bg: 'oklch(0.78 0.07 70)', fg: '#3a2410', logo: <CardIcon />,
-    pull: 'распознаём услуги · контакты' },
-];
-
-const PLATFORMS_SOON = [
-  { id: 'vk',        name: 'VK-страница',      bg: '#0077FF', logo: 'V' },
-  { id: 'ozon',      name: 'Ozon-витрина',     bg: '#005BFF', logo: 'O' },
-  { id: 'youtube',   name: 'YouTube-канал',    bg: '#FF0033', logo: <PlayIcon /> },
-];
-
-function PlaneIcon()    { return <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 3 L1.5 11 L8 13.5 L17 7 L11 14 L11.5 20 L15 16 L20 19 Z"/></svg>; }
-function GlobeMini()    { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>; }
-function CardIcon()     { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 11h6M7 14h4"/></svg>; }
-function CameraIcon()   { return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M9 6l1-2h4l1 2"/></svg>; }
-function WhatsAppIcon() { return <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2 A10 10 0 0 0 3 17 L2 22 L7 21 A10 10 0 1 0 12 2 Z"/></svg>; }
-
-function YandexIcon() { return <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D"/><circle cx="12" cy="10" r="3.2" fill="#fff"/></svg>; }
-function TwoGisIcon() { return <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#19BB4F"/><text x="12" y="17" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="14" fill="#fff">2</text></svg>; }
-function AvitoIcon() { return <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#0AF"/><circle cx="18" cy="7.5" r="3" fill="#FF9C00"/><text x="9" y="17" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" fill="#fff">A</text></svg>; }
-
-function PlayIcon()     { return <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7 4 L20 12 L7 20 Z"/></svg>; }
-
-function PlatformLogo({ size = 48, p }) {
-  return (
-    <span style={{
-      width: size, height: size, borderRadius: Math.round(size * 0.27),
-      background: p.bg, color: p.fg || '#fff',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 800, fontSize: Math.round(size * 0.46), letterSpacing: '-0.04em',
-      flex: '0 0 auto',
-      boxShadow: '0 1px 0 rgba(0,0,0,0.04)',
-    }}>{p.logo}</span>
-  );
-}
-
-function PlatformCard({ p, mobile, featured }) {
-  return (
-    <div className="ss-card-lift" style={{
-      display: 'flex', alignItems: 'center', gap: mobile ? 14 : 18,
-      padding: mobile ? '16px 16px' : (featured ? '22px 24px' : '18px 20px'),
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 18,
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      <PlatformLogo size={featured ? (mobile ? 52 : 60) : (mobile ? 44 : 50)} p={p} />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontSize: featured ? (mobile ? 17 : 19) : (mobile ? 15.5 : 17),
-          fontWeight: 700, color: VT.ink, letterSpacing: '-0.022em', lineHeight: 1.2,
-        }}>{p.name}</div>
-        <div style={{
-          marginTop: 4,
-          fontFamily: VT.font.mono, fontSize: mobile ? 11 : 12, letterSpacing: '0.03em',
-          color: VT.inkSoft,
-        }}>забираем: {p.pull}</div>
-      </div>
-      {/* corner accent */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', right: -30, top: -30,
-        width: 80, height: 80, borderRadius: '50%',
-        background: p.bg,
-        opacity: 0.07,
-      }} />
-    </div>
-  );
-}
-
-function PlatformSoonPill({ p, mobile }) {
-  return (
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 10,
-      padding: '10px 14px 10px 10px',
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 999,
-    }}>
-      <span style={{
-        width: 24, height: 24, borderRadius: 7,
-        background: p.bg, color: '#fff',
-        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        fontWeight: 800, fontSize: 11, letterSpacing: '-0.04em', flex: '0 0 auto',
-      }}>{p.logo}</span>
-      <span style={{ fontSize: 13.5, fontWeight: 500, color: VT.ink }}>{p.name}</span>
-      <span style={{
-        fontFamily: VT.font.mono, fontSize: 10, letterSpacing: '0.1em',
-        color: VT.inkFaint,
-      }}>СКОРО</span>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// SECTION wrappers
-
-function SectionEyebrow({ children, mobile }) {
-  return (
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 8,
-      fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5, letterSpacing: '0.14em',
-      color: VT.accent, fontWeight: 500,
-      padding: '6px 12px', background: VT.accentSoft, borderRadius: 6,
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: VT.accent }} />
-      {children}
-    </div>
-  );
-}
-
-function SectionTitle({ children, mobile, align = 'center' }) {
-  return (
-    <h2 style={{
-      fontSize: mobile ? 30 : 52,
-      lineHeight: mobile ? 1.1 : 1.05,
-      fontWeight: 700,
-      letterSpacing: '-0.03em',
-      margin: '14px 0 0', textWrap: 'balance',
-      textAlign: align,
-    }}>{children}</h2>
-  );
-}
-
-function SectionSub({ children, mobile, align = 'center' }) {
-  return (
-    <p style={{
-      fontSize: mobile ? 16 : 19, lineHeight: 1.45,
-      color: VT.inkSoft, margin: '14px auto 0',
-      maxWidth: mobile ? '100%' : 680, textWrap: 'pretty',
-      textAlign: align,
-    }}>{children}</p>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// HERO
-
-// Strip «ИЗ ЧЕГО» в hero — вынесен в отдельный компонент, чтобы можно было
-// импортировать отдельно из @samosite/canon/landing.
-function HeroPlatformStrip({ mobile }) {
-  return (
-    <div style={{
-      marginTop: mobile ? 14 : 18,
-      display: 'flex', flexDirection: 'column', gap: 8,
-      alignItems: mobile ? 'flex-start' : 'center',
-    }}>
-      <div style={{
-        fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.1em',
-        color: VT.inkFaint, fontWeight: 600,
-      }}>
-        ПОДДЕРЖИВАЕМ
-      </div>
-      <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: 8,
-        justifyContent: mobile ? 'flex-start' : 'center',
-      }}>
-        {PLATFORMS_OK.map(p => (
-          <span key={p.id} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '4px 12px 4px 4px',
-            background: VT.white, border: `1px solid ${VT.line}`,
-            borderRadius: 999,
-            fontSize: 12.5, color: VT.ink, fontWeight: 500,
-          }}>
-            <span style={{
-              width: 22, height: 22, borderRadius: 7,
-              background: p.bg, color: p.fg || '#fff',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 11, fontWeight: 800, letterSpacing: '-0.04em',
-              flex: '0 0 auto', overflow: 'hidden',
-            }}>{p.logo}</span>
-            {p.name}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HeroBlock({ mobile }) {
-  // 0.2.6 — self-padded outer wrapper + H1 overflow fix on mobile.
-  return (
-    <div style={{ ...sectionPad(mobile), width: '100%', paddingTop: mobile ? 18 : 28, position: 'relative' }}>
-    <div style={{
-      position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1100,
-      margin: mobile ? '28px 0 0' : '52px auto 0',
-      textAlign: mobile ? 'left' : 'center',
-    }}>
-      {/* H1 — три «сам», без eyebrow, без точки.
-          0.2.6: on mobile the accent phrases use display:inline (not inline-block).
-          inline-block made each whole phrase an atomic line-breaking unit, so
-          «и сам приведёт клиентов» overflowed on iPhone-class viewports (~390px).
-          With inline each word can wrap independently. Underline highlight on the
-          first accent is desktop-only — inline has no containing block for the
-          absolute child.
-          0.2.7: on mobile font-size uses clamp() so it scales down on narrow
-          devices (~360–390 CSS px). 0.2.6's flat 38 px still clipped
-          «приведёт клиентов» on iPhone-class viewports because the accent
-          span's `position: relative` was being promoted by Safari iOS into a
-          block-level-ish containing context, defeating intra-phrase word-wrap.
-          Also: overflowWrap/wordBreak floor so even on a sub-320-px viewport
-          no single word can punch through the content box. */}
-      <h1 style={{
-        fontSize: mobile ? 'clamp(28px, 8.6vw, 38px)' : 76,
-        lineHeight: mobile ? 1.08 : 1.04,
-        fontWeight: 700,
-        letterSpacing: '-0.035em',
-        margin: 0,
-        textWrap: mobile ? 'pretty' : 'balance',
-        overflowWrap: 'break-word',
-        wordBreak: 'normal',
-        maxWidth: '100%',
-      }}>
-        Сайт, который{' '}
-        <span style={{ position: 'relative', display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>
-          соберётся из вашей ссылки
-          {!mobile && (
-            <span aria-hidden="true" style={{
-              position: 'absolute', left: 4, right: 14, bottom: 6,
-              height: 14, background: VT.accentSoft, opacity: 0.7,
-              zIndex: -1, borderRadius: 3,
-            }} />
-          )}
-        </span>
-        {' — '}
-        {mobile ? null : <br />}
-        и дальше{' '}
-        <span style={{ display: mobile ? 'inline' : 'inline-block', whiteSpace: 'normal', color: VT.accent, padding: mobile ? 0 : '0 2px' }}>работает сам</span>
-      </h1>
-
-      <p style={{
-        fontSize: mobile ? 17 : 20, lineHeight: 1.45, color: VT.inkSoft,
-        margin: mobile ? '20px 0 0' : '28px auto 0',
-        maxWidth: mobile ? '100%' : 820, textWrap: 'pretty',
-      }}>
-        {BRAND.name} на базе ИИ <b style={{ color: VT.ink }}>соберёт сайт за 2 часа</b> из того, что у вас уже есть — карточки на Яндекс.Картах, Telegram-канала, профиля на Avito, фото буклета или меню. После запуска не бросит — <b style={{ color: VT.ink }}>сам обновляет цены, отбирает отзывы и ловит заявки в мессенджер</b>.
-      </p>
-
-      {/* Input + CTA */}
-      <div className="ss-hero-pill" style={{
-        marginTop: mobile ? 24 : 36,
-        display: 'flex', flexDirection: mobile ? 'column' : 'row',
-        gap: mobile ? 10 : 8,
-        maxWidth: mobile ? '100%' : 680,
-        marginLeft: mobile ? 0 : 'auto', marginRight: mobile ? 0 : 'auto',
-        background: VT.white,
-        padding: mobile ? 10 : 8,
-        borderRadius: mobile ? 14 : 999,
-        border: `1px solid ${VT.line}`,
-        boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)',
-        alignItems: mobile ? 'stretch' : 'center',
-      }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: mobile ? '12px 14px' : '0 18px', minWidth: 0 }}>
-          <IconLink />
-          <span style={{ color: VT.inkFaint, fontSize: mobile ? 15 : 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            Вставьте ссылку: Яндекс.Карты, Telegram, Avito…
-          </span>
-        </div>
-        <Btn style={{ padding: mobile ? '14px 20px' : '14px 26px', borderRadius: mobile ? 10 : 999 }} iconRight={<IconArrow />}>
-          Собрать сайт
-        </Btn>
-      </div>
-
-      {/* 0.5.0 — microcopy под кнопкой (COPY.md §1.7). */}
-      <div style={{
-        marginTop: mobile ? 10 : 12,
-        textAlign: mobile ? 'left' : 'center',
-        fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12,
-        letterSpacing: '0.04em', color: VT.inkSoft,
-      }}>
-        Без карты · Первый месяц бесплатно · Сайт через 2 часа
-      </div>
-
-      {/* Photo-upload companion link — opens SubmitModal on Step 1 mode='photo'.
-          0.3.0: link OR photo flow — never both (см. canon/intake CHANGELOG). */}
-      <div style={{
-        marginTop: mobile ? 12 : 14,
-        textAlign: mobile ? 'left' : 'center',
-      }}>
-        <a href="#hero-photo" data-open-submit-modal="photo" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          color: VT.accent, fontSize: mobile ? 14.5 : 15,
-          textDecoration: 'underline', textUnderlineOffset: 4,
-          textDecorationColor: VT.accentSoft, textDecorationThickness: '1.5px',
-          fontWeight: 500,
-        }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-          </svg>
-          Нет ссылки? Загрузите фото буклета, меню или работ
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
-
-      {/* Из чего мы можем сделать сайт — вынесено в <HeroPlatformStrip /> */}
-      <HeroPlatformStrip mobile={mobile} />
-
-      {/* Free-month + price badge — clear stacked layout */}
-      <div style={{
-        marginTop: mobile ? 16 : 22,
-        display: 'flex', justifyContent: mobile ? 'flex-start' : 'center',
-      }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 12,
-          padding: mobile ? '10px 16px 10px 12px' : '12px 22px 12px 14px',
-          background: VT.white,
-          border: `1.5px solid ${VT.accent}`,
-          borderRadius: 999,
-          maxWidth: '100%',
-          flexWrap: 'nowrap',
-        }}>
-          {/* gift icon pill */}
-          <span style={{
-            width: mobile ? 32 : 36, height: mobile ? 32 : 36, borderRadius: '50%',
-            background: VT.accent, color: '#fff',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            flex: '0 0 auto',
-          }}>
-            <svg width={mobile ? 16 : 18} height={mobile ? 16 : 18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 12 V22 H4 V12"/>
-              <rect x="2" y="7" width="20" height="5" rx="1"/>
-              <path d="M12 22 V7"/>
-              <path d="M12 7 C 12 3.5, 7.5 3.5, 7.5 7 C 7.5 7, 9.5 7, 12 7 Z"/>
-              <path d="M12 7 C 12 3.5, 16.5 3.5, 16.5 7 C 16.5 7, 14.5 7, 12 7 Z"/>
-            </svg>
-          </span>
-          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <span style={{
-              fontSize: mobile ? 15 : 16, fontWeight: 700, color: VT.ink,
-              letterSpacing: '-0.01em', lineHeight: 1.1,
-            }}>
-              Первый месяц — бесплатно
-            </span>
-            <span style={{
-              fontSize: mobile ? 12.5 : 13.5, color: VT.inkSoft, marginTop: 2, lineHeight: 1.3,
-            }}>
-              далее <b style={{ color: VT.ink }}>990 ₽/мес</b>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// EXAMPLES SECTION
 
 function ExamplesSection({ mobile }) {
-  // Real Unsplash photos — chosen to match each business category.
-  // Crop params (w / fit / crop) keep file size light and aspect stable.
-  const U = (id, w = 800) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
-
+  const U = (id, w = 600) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
   const examples = [
     {
-      handle: 'studia-anna',
-      name: 'Студия Анны',
-      category: 'Маникюр',
-      city: 'Петрозаводск',
-      palette: 'peach', tone: 'peach',
-      src: 'Telegram-канала',
-      logo: { letter: 'А', bg: 'oklch(0.55 0.13 30)' },
-      heroPhoto: U('photo-1604654894610-df63bc536371'),
-      heroFormula: 'Маникюр — без боли,\nдержится 3 недели',
-      rating: '4.9',
-      reviewCount: 38,
-      clientsCount: '1 200+',
-      phone: '+7 (111) 111-11-11',
+      handle: 'morning-coffee', name: 'Утро у Лены',
+      category: 'Кофейня', city: 'Воронеж',
+      tone: 'warm', accent: 'oklch(0.55 0.13 30)', accentSoft: 'oklch(0.93 0.05 40)',
+      letter: 'У', src: 'Telegram-канала',
+      heroLine: 'Кофе и завтраки\nпо адресу Платонова, 12',
+      heroPhoto: U('photo-1495474472287-4d71bcdd2085'),
+      rating: '4.9', reviewCount: 28,
       services: [
-        ['Маникюр аппаратный', '1 500 ₽'],
-        ['Маникюр + гель-лак', '2 200 ₽'],
-        ['Педикюр', '2 800 ₽'],
-        ['Дизайн (за ноготь)', 'от 150 ₽'],
+        ['Капучино / латте', '180 ₽'],
+        ['Сырник со сметаной', '220 ₽'],
+        ['Завтрак выходного дня', '450 ₽'],
       ],
-      reviews: [
-        { author: 'Наталья К.', text: 'Очень аккуратно и бережно, форма держится 3 недели. Записываюсь только сюда!', rating: 5 },
-        { author: 'Мария Л.', text: 'Чисто, спокойно, всегда вовремя. Кофе тоже вкусный 🙂', rating: 5 },
-      ],
+      review: 'Лучший раф в городе, и ребята всегда помнят моё «то же, что обычно».',
+      reviewAuthor: 'Алина К.',
       gallery: [
-        { src: U('photo-1607779097040-26e80aa78e66', 300) },
-        { src: U('photo-1610992015732-2449b76344bc', 300) },
-        { src: U('photo-1632345031435-8727f6897d53', 300) },
-        { src: U('photo-1604902396830-aca29e19b067', 300) },
+        { src: U('photo-1509042239860-f550ce710b93', 300) },
+        { src: U('photo-1572442388796-11668a67e53d', 300) },
+        { src: U('photo-1554118811-1e0d58224f24', 300) },
+        { src: U('photo-1497636577773-f1231844b336', 300) },
       ],
     },
     {
-      handle: 'brest-barber',
-      name: 'Барбер Brest',
-      category: 'Барбершоп',
-      city: 'Самара',
-      palette: 'slate', tone: 'slate',
-      src: 'Яндекс.Карт',
-      logo: { letter: 'B', bg: 'oklch(0.32 0.04 250)' },
-      heroPhoto: U('photo-1503951914875-452162b0f3f1'),
-      heroFormula: 'Стрижки за час —\nкак вы любите',
-      rating: '5.0',
-      reviewCount: 47,
-      clientsCount: '850+',
-      phone: '+7 (111) 111-11-11',
+      handle: 'avto-park', name: 'Автосервис Park',
+      category: 'Автосервис', city: 'Самара',
+      tone: 'slate', accent: 'oklch(0.40 0.06 250)', accentSoft: 'oklch(0.93 0.045 250)',
+      letter: 'P', src: 'Яндекс.Карт',
+      heroLine: 'Автосервис,\nгде сначала объясняют, потом чинят',
+      heroPhoto: U('photo-1486262715619-67b85e0b08d3'),
+      rating: '5.0', reviewCount: 56,
       services: [
-        ['Стрижка машинкой', '1 200 ₽'],
-        ['Ножницы + укладка', '1 800 ₽'],
-        ['Борода', '900 ₽'],
-        ['Папа + сын', '2 200 ₽'],
+        ['Диагностика', '1 500 ₽'],
+        ['Замена масла', '900 ₽'],
+        ['Развал-схождение', '2 400 ₽'],
       ],
-      reviews: [
-        { author: 'Артём В.', text: 'Стригусь второй год — Дима всегда чувствует, чего хочется, даже когда сам не знаю.', rating: 5 },
-        { author: 'Иван П.', text: 'Удобная запись через сайт, музыка норм, кофе ждёт. Цена адекватная.', rating: 5 },
-      ],
+      review: 'Сначала позвонили, всё объяснили, по какой причине что меняем. Ничего лишнего не навязали.',
+      reviewAuthor: 'Дмитрий В.',
       gallery: [
-        { src: U('photo-1599351431202-1e0f0137899a', 300) },
-        { src: U('photo-1585747860715-2ba37e788b70', 300) },
-        { src: U('photo-1622286342621-4bd786c2447c', 300) },
-        { src: U('photo-1521490683312-b1aa64c1e0e2', 300) },
+        { src: U('photo-1632823471565-1ecdf5c69f4d', 300) },
+        { src: U('photo-1530046339160-ce3e530c7d2f', 300) },
+        { src: U('photo-1487754180451-c456f719a1fc', 300) },
+        { src: U('photo-1493238792000-8113da705763', 300) },
       ],
     },
     {
-      handle: 'lotos-yoga',
-      name: 'Школа йоги Лотос',
-      category: 'Хатха-йога',
-      city: 'Краснодар',
-      palette: 'sage', tone: 'sage',
-      src: 'фото буклета',
-      logo: { letter: 'Л', bg: 'oklch(0.45 0.11 145)' },
-      heroPhoto: U('photo-1545205597-3d9d02c29597'),
-      heroFormula: 'Хатха-йога —\nдля тех, у кого болит спина',
-      rating: '4.8',
-      reviewCount: 14,
-      clientsCount: '320+',
-      phone: '+7 (111) 111-11-11',
+      handle: 'flow-dance', name: 'Школа танцев Flow',
+      category: 'Танцы', city: 'Краснодар',
+      tone: 'sage', accent: 'oklch(0.45 0.11 145)', accentSoft: 'oklch(0.93 0.06 145)',
+      letter: 'F', src: 'старого сайта',
+      heroLine: 'Современная хореография\nс нуля — для взрослых',
+      heroPhoto: U('photo-1547153760-18fc86324498'),
+      rating: '4.8', reviewCount: 19,
       services: [
-        ['Утренняя практика · 60м', '700 ₽'],
-        ['Глубокая · 90м', '1 100 ₽'],
-        ['Парная · 90м', '1 600 ₽'],
-        ['Абонемент 8 занятий', '5 200 ₽'],
+        ['Пробное занятие', '500 ₽'],
+        ['Абонемент 4 занятия', '3 200 ₽'],
+        ['Абонемент 8 занятий', '5 600 ₽'],
       ],
-      reviews: [
-        { author: 'Анна С.', text: 'После занятий тело другое — спина наконец-то расслабилась. Олег очень внимательный.', rating: 5 },
-        { author: 'Дарья Н.', text: 'Атмосфера тёплая, без эзотерики. Группы маленькие, всё видно.', rating: 5 },
-      ],
+      review: 'Без эзотерики и оценок. Преподаватели терпеливо объясняют движения, группа дружная.',
+      reviewAuthor: 'Олеся Н.',
       gallery: [
-        { src: U('photo-1575052814086-f385e2e2ad1b', 300) },
-        { src: U('photo-1599901860904-17e6ed7083a0', 300) },
-        { src: U('photo-1506126613408-eca07ce68773', 300) },
-        { src: U('photo-1532798442725-41036acc7489', 300) },
+        { src: U('photo-1535525153412-5a42439a210d', 300) },
+        { src: U('photo-1518609878373-06d740f60d8b', 300) },
+        { src: U('photo-1508700115892-45ecd05ae2ad', 300) },
+        { src: U('photo-1518611012118-696072aa579a', 300) },
       ],
     },
   ];
 
-  // shared bit: caption above + card
-  const CardWithCaption = ({ ex, isCarousel = false }) => (
-    <div key={ex.name} style={{
-      display: 'flex', flexDirection: 'column', height: '100%',
-      ...(isCarousel ? { flex: '0 0 86%', scrollSnapAlign: 'start' } : {}),
-    }}>
-      {/* Caption — placed ABOVE the card */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        marginBottom: 14,
-      }}>
-        <span style={{
-          width: 8, height: 8, borderRadius: '50%', background: VT.accent, flex: '0 0 auto',
-        }} />
-        <span style={{
-          fontSize: mobile ? 14.5 : 16, fontWeight: 600, color: VT.ink,
-          letterSpacing: '-0.015em',
-        }}>Собран из {ex.src}</span>
+  const Caption = ({ ex }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.accent, flex: '0 0 auto' }} />
+        <span style={{ fontSize: mobile ? 14.5 : 16, fontWeight: 600, letterSpacing: '-0.015em' }}>
+          Собран из {ex.src}
+        </span>
       </div>
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
-        <SiteCard {...ex} mobile={mobile} />
+        <MiniSiteCard ex={ex} />
       </div>
     </div>
   );
 
   return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 32 : 48, position: 'relative', zIndex: 1 }}>
+    <section id="examples" style={{ ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>Вот какой сайт вы получите<br/>сегодня же</SectionTitle>
-        <SectionSub mobile={mobile}>
-          Реальные сайты, которые {BRAND.name} собрал из разных источников — с вашими фото, услугами и лучшими отзывами
-        </SectionSub>
+        <H2 mobile={mobile}>Вот как будет<br/>выглядеть ваш сайт</H2>
+        <Sub mobile={mobile}>
+          Три примера из разных дел. Все собраны автоматически — со своими услугами, ценами, отзывами и фотографиями работ.
+        </Sub>
       </div>
 
       {mobile ? (
         <div style={{
-          marginTop: 28,
-          marginLeft: -20, marginRight: -20,
-          overflowX: 'auto', overflowY: 'visible',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollPaddingLeft: 20,
+          marginTop: 28, marginLeft: -20, marginRight: -20,
+          overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory', scrollPaddingLeft: 20,
           scrollbarWidth: 'none',
         }}>
-          <style>{`.ss-carousel::-webkit-scrollbar { display: none; }`}</style>
-          <div className="ss-carousel" style={{
-            display: 'flex', gap: 14, padding: '0 20px 24px', alignItems: 'flex-start',
+          <style>{`.ss-v3-carousel::-webkit-scrollbar{display:none}`}</style>
+          <div className="ss-v3-carousel" style={{
+            display: 'flex', gap: 14, padding: '0 20px 24px', alignItems: 'stretch',
           }}>
-            {examples.map(ex => <CardWithCaption key={ex.name} ex={ex} isCarousel />)}
-            <div style={{ flex: '0 0 6px' }} aria-hidden="true" />
+            {examples.map(ex => (
+              <div key={ex.name} style={{ flex: '0 0 86%', scrollSnapAlign: 'start', display: 'flex' }}>
+                <Caption ex={ex} />
+              </div>
+            ))}
           </div>
         </div>
       ) : (
         <div style={{
           marginTop: 48,
           display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-          gridAutoRows: '1fr',
-          gap: 24, maxWidth: 1280,
-          margin: '48px auto 0',
-          alignItems: 'stretch',
+          gridAutoRows: '1fr', gap: 24, maxWidth: 1280,
+          margin: '48px auto 0', alignItems: 'stretch',
         }}>
-          {examples.map(ex => <CardWithCaption key={ex.name} ex={ex} />)}
+          {examples.map(ex => <Caption key={ex.name} ex={ex} />)}
         </div>
       )}
 
-      {/* Single big CTA below all 3 cards */}
-      <div style={{
-        marginTop: mobile ? 28 : 44,
-        textAlign: 'center',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-      }}>
+      <div style={{ marginTop: mobile ? 28 : 44, textAlign: 'center' }}>
         <a href="#hero" style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: VT.accent, color: '#fff', fontWeight: 700,
@@ -1043,1262 +500,1387 @@ function ExamplesSection({ mobile }) {
           borderRadius: 999, fontSize: mobile ? 16 : 17,
           textDecoration: 'none',
           boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
-          letterSpacing: '-0.005em',
-        }}>Собрать такой же из моей ссылки <span aria-hidden="true">→</span></a>
+        }}>Собрать такой же из моего источника →</a>
       </div>
     </section>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-// STORY SECTION — colorful, playful zig-zag layout
-// Each step gets its own tint + decoration; layout alternates left/right on
-// desktop; wavy connector ties them together.
 
-const STEP_PALETTES = [
-  { bg: 'oklch(0.95 0.05 40)',  ink: 'oklch(0.32 0.14 35)',  dec: 'oklch(0.86 0.10 40)'  }, // peach
-  { bg: 'oklch(0.94 0.06 95)',  ink: 'oklch(0.36 0.12 85)',  dec: 'oklch(0.84 0.12 90)'  }, // butter
-  { bg: 'oklch(0.94 0.05 200)', ink: 'oklch(0.34 0.10 220)', dec: 'oklch(0.82 0.08 210)' }, // sky
-  { bg: 'oklch(0.94 0.05 145)', ink: 'oklch(0.32 0.11 145)', dec: 'oklch(0.82 0.08 145)' }, // sage
-  { bg: 'oklch(0.94 0.06 25)',  ink: 'oklch(0.36 0.13 22)',  dec: 'oklch(0.82 0.10 22)'  }, // rose
-  { bg: 'oklch(0.94 0.05 285)', ink: 'oklch(0.34 0.10 285)', dec: 'oklch(0.82 0.08 285)' }, // lavender
+// ── from landing-v3-b.jsx ──
+// ───────── BLOCK 3 · CYCLE 4 САМ ─────────
+
+const CYCLE_STEPS = [
+  {
+    n: '01', title: 'Собирает', cadence: 'один раз',
+    body: 'Покажете источник — за 2 часа Самосайт соберёт сайт со всеми услугами, ценами, отзывами и галереей работ. Тексты пишет сам.',
+    palette: { bg: 'oklch(0.95 0.05 40)', ink: 'oklch(0.32 0.14 35)', dec: 'oklch(0.86 0.10 40)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3"/>
+        <path d="M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3"/>
+      </svg>
+    ),
+  },
+  {
+    n: '02', title: 'Обновляет', cadence: 'каждую неделю',
+    body: 'Раз в неделю заглядывает в источник. Новые цены, посты или фото — перенесёт на сайт. От вас ничего не нужно.',
+    palette: { bg: 'oklch(0.94 0.06 95)', ink: 'oklch(0.36 0.12 85)', dec: 'oklch(0.84 0.12 90)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 32 a18 18 0 0 1 30 -13"/>
+        <path d="M44 12 L44 22 L34 22"/>
+        <path d="M50 32 a18 18 0 0 1 -30 13"/>
+        <path d="M20 52 L20 42 L30 42"/>
+      </svg>
+    ),
+  },
+  {
+    n: '03', title: 'Наблюдает', cadence: 'каждый день',
+    body: 'Смотрит, как ведут себя посетители: кто что нажал, до чего долистал, где закрыл вкладку. Считает заявки и откуда они приходят.',
+    palette: { bg: 'oklch(0.94 0.05 200)', ink: 'oklch(0.34 0.10 220)', dec: 'oklch(0.82 0.08 210)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 32 C 14 18, 50 18, 60 32"/>
+        <path d="M4 32 C 14 46, 50 46, 60 32"/>
+        <circle cx="32" cy="32" r="8"/>
+        <circle cx="32" cy="32" r="3" fill="currentColor"/>
+      </svg>
+    ),
+  },
+  {
+    n: '04', title: 'Предлагает', cadence: 'каждый понедельник',
+    body: 'По понедельникам присылает три предложения, как сделать сайт сильнее. Применить, переделать иначе или отказаться — решаете вы.',
+    palette: { bg: 'oklch(0.94 0.05 145)', ink: 'oklch(0.32 0.11 145)', dec: 'oklch(0.82 0.08 145)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 14 L52 14 L52 44 L36 44 L28 54 L28 44 L12 44 Z"/>
+        <path d="M22 26 L42 26 M22 34 L36 34"/>
+      </svg>
+    ),
+  },
 ];
 
-function StepGlyph({ palette, kind, size }) {
-  const stroke = palette.ink;
-  const fill = palette.dec;
-  const sz = size * 0.62;
-  const wrap = (kids) => (
-    <div style={{
-      width: size, height: size, borderRadius: '50%',
-      background: '#fff',
-      border: `2px solid ${palette.ink}`,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      color: palette.ink,
-      boxShadow: `4px 4px 0 0 ${palette.ink}`,
-    }}>{kids}</div>
-  );
-  switch (kind) {
-    case 'link':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3"/>
-          <path d="M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3"/>
-        </svg>
-      );
-    case 'ai':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="currentColor">
-          <path d="M32 8 L36 24 L52 28 L36 32 L32 48 L28 32 L12 28 L28 24 Z"/>
-          <circle cx="50" cy="50" r="3.5"/>
-          <circle cx="15" cy="48" r="2.5"/>
-        </svg>
-      );
-    case 'globe':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-          <circle cx="32" cy="32" r="22"/>
-          <ellipse cx="32" cy="32" rx="10" ry="22"/>
-          <path d="M10 32h44"/>
-        </svg>
-      );
-    case 'refresh':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 32 a18 18 0 0 1 30 -13"/>
-          <path d="M44 12 L44 22 L34 22"/>
-          <path d="M50 32 a18 18 0 0 1 -30 13"/>
-          <path d="M20 52 L20 42 L30 42"/>
-        </svg>
-      );
-    case 'inbox':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round">
-          <rect x="10" y="14" width="44" height="36" rx="5"/>
-          <path d="M10 34 L22 34 L26 40 L38 40 L42 34 L54 34"/>
-        </svg>
-      );
-    case 'chart':
-      return wrap(
-        <svg viewBox="0 0 64 64" width={sz} height={sz} fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 48 L24 30 L34 38 L54 14"/>
-          <path d="M44 14 L54 14 L54 24"/>
-        </svg>
-      );
-  }
-}
-
-// Decorative dots/shapes scattered around a card
-function StepDecor({ palette, side }) {
-  const dot = (style) => (
-    <span style={{
-      position: 'absolute', borderRadius: '50%', background: palette.dec, ...style,
-    }} />
-  );
-  const ring = (style) => (
-    <span style={{
-      position: 'absolute', borderRadius: '50%',
-      border: `2.5px solid ${palette.ink}`, ...style,
-    }} />
-  );
-  return (
-    <>
-      {dot({ width: 16, height: 16, top: -8, right: 24, opacity: 0.9 })}
-      {ring({ width: 22, height: 22, bottom: -10, left: 30 })}
-      {dot({ width: 10, height: 10, top: 40, right: -6, opacity: 0.7 })}
-      <svg width="20" height="20" viewBox="0 0 20 20" style={{ position: 'absolute', top: -10, left: side === 'left' ? 60 : 'auto', right: side === 'right' ? 60 : 'auto' }}>
-        <path d="M10 1 L12 8 L19 10 L12 12 L10 19 L8 12 L1 10 L8 8 Z" fill={palette.dec} stroke={palette.ink} strokeWidth="1.2" strokeLinejoin="round"/>
-      </svg>
-    </>
-  );
-}
-
-function StoryStepColorful({ idx, total, title, body, kind, mobile, palette }) {
-  const side = idx % 2 === 0 ? 'right' : 'left';
-  const glyphSize = mobile ? 84 : 108;
-  const last = idx === total - 1;
-
-  return (
-    <div style={{ position: 'relative' }}>
-      {/* Card */}
-      <div className="ss-story-card" style={{
-        background: palette.bg,
-        border: `2px solid ${palette.ink}`,
-        borderRadius: 22,
-        padding: mobile ? '22px 20px' : '32px 36px',
-        display: 'flex',
-        flexDirection: mobile ? 'row' : (side === 'left' ? 'row' : 'row-reverse'),
-        gap: mobile ? 18 : 32,
-        alignItems: 'center',
-        position: 'relative',
-        boxShadow: `6px 6px 0 0 ${palette.ink}`,
-        maxWidth: mobile ? '100%' : 760,
-        marginLeft: mobile ? 0 : (side === 'left' ? 0 : 'auto'),
-        marginRight: mobile ? 0 : (side === 'left' ? 'auto' : 0),
-      }}>
-        <StepDecor palette={palette} side={side} />
-
-        {/* Glyph + sticker number */}
-        <div style={{ position: 'relative', flex: '0 0 auto' }}>
-          <StepGlyph palette={palette} kind={kind} size={glyphSize} />
-          {/* sticker number — rotated tag */}
-          <div style={{
-            position: 'absolute',
-            top: -10, left: -14,
-            transform: 'rotate(-12deg)',
-            background: palette.ink, color: '#fff',
-            fontFamily: VT.font.mono, fontSize: 12, fontWeight: 600,
-            padding: '4px 10px', borderRadius: 999,
-            letterSpacing: '0.08em',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-          }}>ШАГ {idx + 1}</div>
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-          <h3 style={{
-            fontSize: mobile ? 19 : 24,
-            fontWeight: 700, letterSpacing: '-0.022em',
-            margin: 0, lineHeight: 1.15,
-            color: palette.ink,
-          }}>{title}</h3>
-          <p style={{
-            fontSize: mobile ? 14.5 : 16,
-            lineHeight: 1.5, color: 'oklch(0.32 0.02 60)',
-            margin: '8px 0 0', textWrap: 'pretty',
-          }}>{body}</p>
-        </div>
-      </div>
-
-      {/* Wavy connector to next step (skipped on last) */}
-      {!last && (
-        <div style={{
-          position: 'relative', height: mobile ? 36 : 56,
-          display: 'flex', justifyContent: 'center',
-        }}>
-          <svg
-            viewBox="0 0 80 60" preserveAspectRatio="none"
-            width={mobile ? 50 : 70} height="100%"
-            style={{ overflow: 'visible' }}
-          >
-            <path
-              d="M40 0 C 20 20, 60 40, 40 60"
-              fill="none"
-              stroke={palette.ink}
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray="2 8"
-            />
-            {/* tiny arrowhead at end */}
-            <path
-              d="M34 52 L40 60 L46 52"
-              fill="none" stroke={palette.ink} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StorySection({ mobile }) {
-  const steps = [
-    { kind: 'link',    title: 'Дайте ссылку на ваше дело',
-      body: 'Карточка на Яндекс.Картах, ваш Telegram-канал, профиль на Avito или фото буклета. Подойдёт всё, что у вас уже есть.' },
-    { kind: 'ai',      title: 'ИИ соберёт сайт за 2 часа',
-      body: 'Найдёт услуги, цены, отзывы и фото. Сам напишет тексты, подберёт цвета и шрифты под стилистику вашего дела, сложит всё в готовый сайт.' },
-    { kind: 'globe',   title: 'Сайт появится на своём адресе',
-      body: <>На <Mono style={{ fontSize: mobile ? 14 : 15, color: VT.ink }}>{`ваше-имя.${BRAND.domain}`}</Mono> или подключите свой домен. Защищённый https, индексация в Яндексе и Google — из коробки.</> },
-    { kind: 'refresh', title: 'Сам обновляется — или вы добавляете',
-      body: 'Раз в неделю забирает свежие посты из источника. А если добавили новую услугу — просто пришлите фото и текст в личном кабинете, сайт обновится.' },
-    { kind: 'inbox',   title: 'Заявки летят к вам в мессенджер',
-      body: 'Клиент жмёт «Записаться» — вам приходит уведомление в Telegram, MAX или на почту. Никакого CRM — всё там, где вы и так читаете.' },
-    { kind: 'chart',   title: 'Аналитика и полный контроль',
-      body: 'Сколько людей зашли, откуда и сколько оставили заявок. В личном кабинете можно поправить, поставить на паузу или удалить сайт — в одно нажатие.' },
-  ];
-
-  return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
-      <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>От вас — одно действие,<br/>всё остальное {BRAND.name} сделает сам</SectionTitle>
-      </div>
-
-      <div style={{
-        marginTop: mobile ? 32 : 56,
-        maxWidth: mobile ? '100%' : 960,
-        margin: `${mobile ? 32 : 56}px auto 0`,
-        display: 'flex', flexDirection: 'column',
-      }}>
-        {steps.map((s, i) => (
-          <StoryStepColorful
-            key={s.title}
-            idx={i}
-            total={steps.length}
-            kind={s.kind}
-            title={s.title}
-            body={s.body}
-            mobile={mobile}
-            palette={STEP_PALETTES[i % STEP_PALETTES.length]}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// PLATFORMS SECTION
-
-function PlatformsSection({ mobile }) {
-  const [featured, ...rest] = PLATFORMS_OK;
-
-  return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="sources">
-      <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>Что подойдёт<br/>для создания {BRAND.name}а</SectionTitle>
-        <SectionSub mobile={mobile}>
-          Подойдёт всё, где про вас уже что-то написано или показано — в интернете или на бумаге
-        </SectionSub>
-      </div>
-
-      <div style={{
-        marginTop: mobile ? 28 : 56,
-        maxWidth: mobile ? '100%' : 1080,
-        margin: `${mobile ? 28 : 56}px auto 0`,
-      }}>
-        {/* featured platform — Я.Карты full-width */}
-        <PlatformCard p={featured} featured mobile={mobile} />
-
-        {/* rest — 5 cards in 3-2 grid */}
-        <div style={{
-          marginTop: mobile ? 10 : 14,
-          display: 'grid',
-          gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)',
-          gap: mobile ? 10 : 14,
-        }}>
-          {rest.slice(0, 3).map(p => <PlatformCard key={p.id} p={p} mobile={mobile} />)}
-        </div>
-        <div style={{
-          marginTop: mobile ? 10 : 14,
-          display: 'grid',
-          gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
-          gap: mobile ? 10 : 14,
-        }}>
-          {rest.slice(3).map(p => <PlatformCard key={p.id} p={p} mobile={mobile} />)}
-        </div>
-
-        {/* soon — inline pills with light email capture */}
-        <div style={{
-          marginTop: mobile ? 28 : 36,
-          padding: mobile ? '20px 18px' : '22px 24px',
-          background: VT.bgSoft,
-          border: `1px dashed ${VT.line}`,
-          borderRadius: 18,
-        }}>
-          <div style={{
-            display: 'flex', alignItems: mobile ? 'flex-start' : 'center',
-            justifyContent: 'space-between', gap: 16,
-            flexDirection: mobile ? 'column' : 'row',
-            flexWrap: 'wrap',
-          }}>
-            <div style={{
-              fontFamily: VT.font.mono, fontSize: 11.5, letterSpacing: '0.14em',
-              color: VT.inkSoft, fontWeight: 600,
-            }}>
-              СКОРО ПОДКЛЮЧИМ
-            </div>
-            <a style={{
-              fontSize: 13, color: VT.accent, textDecoration: 'underline',
-              textUnderlineOffset: 3, cursor: 'pointer',
-            }}>Нет вашей? Напишите →</a>
-          </div>
-          <div style={{
-            marginTop: 14,
-            display: 'flex', flexWrap: 'wrap', gap: 8,
-          }}>
-            {PLATFORMS_SOON.map(p => <PlatformSoonPill key={p.id} p={p} mobile={mobile} />)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// BIG FEATURES — 8 «сам» cards in 4×2 grid + tall «А вы — хозяин» closer
-
-function FeatureGlyph({ kind, size = 44, tint }) {
-  const color = tint?.fg || VT.accentInk;
-  const bg    = tint?.bg || VT.accentSoft;
-  const wrap = (kids) => (
-    <div style={{
-      width: size, height: size, borderRadius: 14,
-      background: bg, color,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      flex: '0 0 auto',
-    }}>{kids}</div>
-  );
-  const s = size * 0.6;
-  switch (kind) {
-    case 'sparkles':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="currentColor">
-          <path d="M12 2 L13.5 8.5 L20 10 L13.5 11.5 L12 18 L10.5 11.5 L4 10 L10.5 8.5 Z"/>
-          <circle cx="19" cy="19" r="1.6"/>
-          <circle cx="5" cy="17" r="1.2"/>
-        </svg>
-      );
-    case 'refresh':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 12 a9 9 0 0 1 15 -6.5"/>
-          <path d="M18 3 v4 h-4"/>
-          <path d="M21 12 a9 9 0 0 1 -15 6.5"/>
-          <path d="M6 21 v-4 h4"/>
-        </svg>
-      );
-    case 'star':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="currentColor">
-          <path d="M12 2 L14.6 8.6 L21.6 9.3 L16.4 14 L17.9 21 L12 17.4 L6.1 21 L7.6 14 L2.4 9.3 L9.4 8.6 Z"/>
-        </svg>
-      );
-    case 'inbox':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
-          <rect x="3" y="5" width="18" height="14" rx="2"/>
-          <path d="M3 14 h5 l1.5 2 h5 L16 14 h5"/>
-        </svg>
-      );
-    case 'bar':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-          <path d="M4 20 V12"/>
-          <path d="M10 20 V6"/>
-          <path d="M16 20 V14"/>
-          <path d="M22 20 V9"/>
-        </svg>
-      );
-    case 'search':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-          <circle cx="11" cy="11" r="6.5"/>
-          <path d="M16 16 L21 21"/>
-        </svg>
-      );
-    case 'phone':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
-          <rect x="6" y="2.5" width="12" height="19" rx="2.5"/>
-          <path d="M11 18.5 h2"/>
-        </svg>
-      );
-    case 'pen':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 20 L4 16 L16 4 L20 8 L8 20 Z"/>
-          <path d="M14 6 L18 10"/>
-        </svg>
-      );
-    case 'shield':
-      return wrap(
-        <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
-          <path d="M12 2 L20 5 V11 C20 16.5 16.5 20.5 12 22 C7.5 20.5 4 16.5 4 11 V5 Z"/>
-          <path d="M8.5 12 L11 14.5 L15.5 9.5"/>
-        </svg>
-      );
-  }
-}
-
-function FeatureCard({ heading, subtitle, body, kind, mobile, tint, idx }) {
-  return (
-    <div className="ss-card-lift" style={{
-      background: tint?.cardBg || VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 22,
-      padding: mobile ? 22 : 28,
-      display: 'flex', flexDirection: 'column', gap: 14,
-      height: '100%',
-      position: 'relative', overflow: 'hidden',
-    }}>
-      {/* Big translucent index number — decorative */}
-      <span aria-hidden="true" style={{
-        position: 'absolute', top: -14, right: -4,
-        fontFamily: VT.font.mono, fontSize: 96, fontWeight: 800,
-        color: tint?.fg, opacity: 0.22,
-        letterSpacing: '-0.06em', lineHeight: 1, pointerEvents: 'none',
-        zIndex: 0,
-      }}>0{idx + 1}</span>
-
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <FeatureGlyph kind={kind} size={mobile ? 56 : 64} tint={tint} />
-      </div>
-
-      <h3 style={{
-        fontSize: mobile ? 24 : 28, fontWeight: 800, letterSpacing: '-0.032em',
-        margin: '6px 0 0', lineHeight: 1.05, color: VT.ink,
-        position: 'relative', zIndex: 1,
-      }}>{heading}</h3>
-
-      <div style={{
-        fontSize: mobile ? 14.5 : 15.5, fontWeight: 700, color: tint?.fg || VT.accent,
-        lineHeight: 1.35, letterSpacing: '-0.005em',
-        position: 'relative', zIndex: 1,
-      }}>{subtitle}</div>
-
-      <p style={{
-        fontSize: mobile ? 14 : 14.5, lineHeight: 1.55, color: VT.inkSoft,
-        margin: 0, textWrap: 'pretty',
-        position: 'relative', zIndex: 1,
-      }}>{body}</p>
-    </div>
-  );
-}
-
-// per-icon palette so 8 cards have rhythm without being a carnival
-const FEATURE_TINTS = {
-  sparkles: { bg: 'oklch(0.93 0.05 40)',  fg: 'oklch(0.42 0.14 35)',  cardBg: VT.white },
-  refresh:  { bg: 'oklch(0.93 0.06 95)',  fg: 'oklch(0.42 0.12 80)',  cardBg: VT.bgSoft },
-  star:     { bg: 'oklch(0.93 0.05 60)',  fg: 'oklch(0.45 0.13 55)',  cardBg: VT.white },
-  inbox:    { bg: 'oklch(0.93 0.05 200)', fg: 'oklch(0.36 0.10 220)', cardBg: VT.bgSoft },
-  bar:      { bg: 'oklch(0.93 0.05 145)', fg: 'oklch(0.35 0.11 145)', cardBg: VT.bgSoft },
-  search:   { bg: 'oklch(0.92 0.05 285)', fg: 'oklch(0.38 0.11 285)', cardBg: VT.white },
-  phone:    { bg: 'oklch(0.92 0.05 25)',  fg: 'oklch(0.40 0.13 22)',  cardBg: VT.white },
-  shield:   { bg: 'oklch(0.92 0.06 145)', fg: 'oklch(0.35 0.11 145)', cardBg: VT.bgSoft },
-  pen:      { bg: 'oklch(0.93 0.06 285)', fg: 'oklch(0.38 0.11 285)', cardBg: VT.white },
-};
-
-function BigFeaturesSection({ mobile }) {
-  // 0.5.0 — 8 «сам» rewritten per COPY.md §5.
-  // Removed duplicates with "Как это работает" (old 01 «соберётся», old 04 «поймает» were repeats of steps 2 & 5).
-  // Added differentiators: «подберёт стиль», «напишет тексты», «себя улучшит».
-  const features = [
-    { kind: 'sparkles', heading: 'Сам подберёт стиль',     subtitle: 'Цвета и шрифты — из ваших материалов, а не из шаблона',
-      body: 'ИИ читает не только тексты, но и визуальный язык: цвета вашего логотипа, тон фотографий, атмосферу постов в Telegram. Сайт собирается в стилистике вашего дела — не похож на тысячу других на той же платформе.' },
-    { kind: 'search',   heading: 'Сам соберёт сайт за 2 часа', subtitle: 'Из любой ссылки или фото — от первого экрана до отзывов',
-      body: <>Дайте карточку на Яндекс.Картах, Telegram-канал, профиль на Avito или просто фото буклета — за 2 часа найдёт услуги, цены, отзывы и фото. Сложит в готовый сайт с приёмом заявок.</> },
-    { kind: 'pen',      heading: 'Сам напишет тексты',     subtitle: 'В вашей интонации, а не «инновационные решения»',
-      body: 'ИИ читает ваши посты и отзывы клиентов, понимает, как вы говорите, и пишет тексты в этой же интонации. Никаких корпоративных штампов.' },
-    { kind: 'star',     heading: 'Сам отберёт лучшие отзывы', subtitle: 'Только тёплые и конкретные на сайте',
-      body: 'Прочитает все отзывы клиентов, отсеет «норм», тройки и троллей. Поставит 4–6 самых тёплых. Появился сильнее — заменит.' },
-    { kind: 'refresh',  heading: 'Сам обновится',          subtitle: 'Каждую неделю — свежие посты, фото и цены',
-      body: 'Забирает свежие посты, новые цены и фото из источника. Поменяли прайс в Яндекс.Картах — на сайте уже новый.' },
-    { kind: 'inbox',    heading: 'Сам поймает заявки',     subtitle: 'В Telegram, MAX, SMS или почту — без CRM',
-      body: 'Клиент жмёт «Записаться» — уведомление падает туда, где вам удобно читать. Без CRM, без отдельных приложений, без забытых заявок.' },
-    { kind: 'bar',      heading: 'Сам себя улучшит',       subtitle: 'Смотрит, где люди уходят — предлагает что поправить',
-      body: <>{BRAND.name} следит за поведением посетителей: какие блоки читают, на чём закрывают вкладку. Раз в неделю присылает короткие подсказки: «фото на первом экране слабое — замените», «формулировка цены отпугивает — попробуйте другую». Применить — одна кнопка. Отклонить — тоже.</> },
-    { kind: 'shield',   heading: 'Сам пройдёт техминимум', subtitle: 'Индексация в поиске, мобильная вёрстка, защита от спама',
-      body: 'Индексация в Яндексе и Google, https, разметка для карт, мобильная вёрстка, антибот-проверка на форме. Ничего настраивать не нужно — всё работает из коробки.' },
-  ];
-
-  return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
-      <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 800, margin: '0 auto' }}>
-        <SectionTitle mobile={mobile}>Восемь «сам» —<br/>поэтому он {BRAND.name}</SectionTitle>
-        <SectionSub mobile={mobile}>
-          {BRAND.name} — это не один трюк, а восемь вещей, которые он делает сам — от первого «давайте посмотрим» до недельного отчёта по конверсии
-        </SectionSub>
-      </div>
-
-      <div style={{
-        marginTop: mobile ? 28 : 56,
-        maxWidth: mobile ? '100%' : 1240,
-        margin: `${mobile ? 28 : 56}px auto 0`,
-        display: 'grid',
-        gridTemplateColumns: mobile ? '1fr' : 'repeat(4, 1fr)',
-        gap: mobile ? 14 : 18,
-      }}>
-        {features.map((f, i) => (
-          <FeatureCard key={f.heading} {...f} idx={i} mobile={mobile} tint={FEATURE_TINTS[f.kind]} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// OWNERSHIP — flip from «product does it» to «what stays with you»
-// Real visual mock of the user's control panel + portability bullets.
-
-function ControlPanelMock({ mobile }) {
+function CycleCard({ step, size = 240 }) {
+  const p = step.palette;
   return (
     <div style={{
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
+      width: size, padding: 18,
+      boxSizing: 'border-box',
+      background: p.bg,
+      border: `2px solid ${p.ink}`,
       borderRadius: 18,
-      overflow: 'hidden',
-      boxShadow: '0 24px 48px -24px rgba(120,60,30,0.25)',
+      boxShadow: `5px 5px 0 0 ${p.ink}`,
+      color: p.ink,
+      height: '100%',
+      display: 'flex', flexDirection: 'column',
     }}>
-      {/* faux window chrome */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '10px 14px',
-        background: VT.bgSoft, borderBottom: `1px solid ${VT.line}`,
-      }}>
-        <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.74 0.13 25)' }} />
-        <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.82 0.13 85)' }} />
-        <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.78 0.13 145)' }} />
-        <span style={{ marginLeft: 10, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }}>
-          Личный кабинет — {BRAND.domain}
-        </span>
-      </div>
-
-      <div style={{ padding: mobile ? 18 : 22 }}>
-        {/* site row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 12,
-            background: `repeating-linear-gradient(135deg, ${VT.accentSoft} 0 8px, ${VT.bgSoft} 8px 16px)`,
-            border: `1px solid ${VT.line}`,
-          }} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 700, color: VT.ink, letterSpacing: '-0.01em' }}>
-              студия-анны.{BRAND.domain}
-            </div>
-            <div style={{
-              fontSize: 12, color: VT.success,
-              display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 2,
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: VT.success }} />
-              опубликован · обновлён сегодня в 14:02
-            </div>
-          </div>
-        </div>
-
-        {/* mini stats */}
-        <div style={{
-          marginTop: 18,
-          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10,
-        }}>
-          {[
-            { num: '347', lbl: 'посетителей', tone: 'ink' },
-            { num: '14',  lbl: 'заявок',      tone: 'accent' },
-            { num: '4.9', lbl: 'оценка',      tone: 'ink' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              padding: '12px 12px',
-              background: VT.bgSoft,
-              borderRadius: 12,
-            }}>
-              <div style={{
-                fontSize: 22, fontWeight: 700, letterSpacing: '-0.025em',
-                color: s.tone === 'accent' ? VT.accent : VT.ink, lineHeight: 1,
-              }}>{s.num}</div>
-              <div style={{ fontSize: 11.5, color: VT.inkFaint, marginTop: 3 }}>{s.lbl}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* recent leads */}
-        <div style={{
-          marginTop: 16,
-          fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.1em',
-          color: VT.inkFaint, fontWeight: 600,
-        }}>ПОСЛЕДНИЕ ЗАЯВКИ</div>
-        <div style={{
-          marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6,
-        }}>
-          {[
-            ['Анна П.',  '+7 999 111-11-11', '14:32 · TG'],
-            ['Юлия В.',  '@example_user',     '12:18 · TG'],
-            ['Михаил С.', '+7 999 222-22-22', 'вчера · телефон'],
-          ].map(([nm, contact, time], i) => (
-            <div key={i} style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '8px 10px',
-              background: VT.white, border: `1px solid ${VT.lineSoft}`, borderRadius: 8,
-              fontSize: 12.5,
-            }}>
-              <span style={{ fontWeight: 600, color: VT.ink, minWidth: 70 }}>{nm}</span>
-              <span style={{ fontFamily: VT.font.mono, color: VT.inkSoft, flex: 1 }}>{contact}</span>
-              <span style={{ fontFamily: VT.font.mono, color: VT.inkFaint, fontSize: 11 }}>{time}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* action chips */}
-        <div style={{
-          marginTop: 16,
-          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8,
-        }}>
-          {[
-            ['✎  Редактировать тексты',    VT.accent, VT.accentSoft, true],
-            ['🖼  Заменить фото',          VT.ink,    VT.bgSoft,     false],
-            ['⏸  Поставить на паузу',     VT.inkSoft, VT.bgSoft,    false],
-            ['↓  Скачать архив',          VT.inkSoft, VT.bgSoft,    false],
-          ].map(([label, fg, bg, primary], i) => (
-            <div key={i} style={{
-              padding: '10px 12px',
-              borderRadius: 10,
-              background: bg,
-              color: fg,
-              border: primary ? `1px solid ${VT.accent}` : `1px solid ${VT.line}`,
-              fontSize: 13, fontWeight: primary ? 600 : 500,
-            }}>{label}</div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// ANALYTICS — preview of the dashboard analytics + delivery note
-
-function AnalyticsSection({ mobile }) {
-  const stats = [
-    { num: '2 847', delta: '+18%', label: 'посещений за 30 дней', tone: 'ink', color: VT.accent,
-      sparkline: [210, 198, 215, 240, 232, 260, 275, 290, 280, 295, 310, 325, 345, 360] },
-    { num: '78',    delta: '+34%', label: 'заявок принято',       tone: 'accent', color: 'oklch(0.55 0.12 145)',
-      sparkline: [2, 3, 4, 3, 5, 4, 5, 6, 5, 7, 6, 8, 7, 9] },
-    { num: '2.7%',  delta: '+0.4пп', label: 'конверсия в заявку', tone: 'ink', color: 'oklch(0.55 0.15 35)',
-      sparkline: [2.1, 2.2, 2.3, 2.2, 2.4, 2.3, 2.5, 2.5, 2.6, 2.6, 2.7, 2.7, 2.7, 2.8] },
-    { num: '4.9★',  delta: '+0.1',   label: 'средняя оценка',     tone: 'ink', color: 'oklch(0.55 0.15 75)',
-      sparkline: [4.5, 4.6, 4.6, 4.7, 4.7, 4.7, 4.8, 4.8, 4.9, 4.9, 4.9, 4.9, 4.9, 4.9] },
-  ];
-
-  // Big traffic chart
-  const days = 30;
-  const visits = Array.from({ length: days }, (_, i) =>
-    Math.round(80 + 40 * Math.sin(i * 0.6) + 60 * (i / days) + (i % 7 === 0 ? 30 : 0))
-  );
-  const leads = visits.map(v => Math.round(v * (0.04 + (Math.sin(v) + 1) * 0.02)));
-  const W = 720, H = 220, PAD = { top: 16, right: 16, bottom: 28, left: 36 };
-  const inner = { w: W - PAD.left - PAD.right, h: H - PAD.top - PAD.bottom };
-  const maxV = Math.max(...visits) * 1.15;
-  const xFor = i => PAD.left + (i / (days - 1)) * inner.w;
-  const yFor = v => PAD.top + inner.h - (v / maxV) * inner.h;
-  const visitsPath = visits.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i)} ${yFor(v)}`).join(' ');
-  const visitsArea = `${visitsPath} L ${xFor(days - 1)} ${yFor(0)} L ${xFor(0)} ${yFor(0)} Z`;
-  const xLabels = [0, 7, 14, 21, 29];
-  const xLabelText = ['1 мая', '8 мая', '15 мая', '22 мая', '30 мая'];
-
-  // Sources
-  const sources = [
-    { name: 'Яндекс.Карты', share: 45, color: '#FFCC00' },
-    { name: 'Telegram',     share: 28, color: '#229ED9' },
-    { name: 'Прямые',       share: 15, color: VT.accent },
-    { name: '2ГИС',         share:  8, color: '#19BB4F' },
-    { name: 'Google',       share:  4, color: 'oklch(0.55 0.18 25)' },
-  ];
-
-  // Mini sparkline render fn
-  function Sparkline({ points, color }) {
-    const w = 100, h = 28;
-    const min = Math.min(...points), max = Math.max(...points);
-    const range = (max - min) || 1;
-    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
-    const ys = points.map(p => h - ((p - min) / range) * (h - 4) - 2);
-    const path = xs.map((x, i) => `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(' ');
-    const area = `${path} L ${w} ${h} L 0 ${h} Z`;
-    return (
-      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} preserveAspectRatio="none">
-        <path d={area} fill={color} fillOpacity="0.12" />
-        <path d={path} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-
-  return (
-    <section style={{
-      ...sectionPad(mobile),
-      marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1360,
-      margin: `${mobile ? 64 : 110}px auto 0`,
-    }}>
-      <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
-        <SectionTitle mobile={mobile}>Видите всё,<br/>что происходит с сайтом</SectionTitle>
-        <SectionSub mobile={mobile}>
-          Сколько людей зашли, откуда пришли и сколько оставили заявок — в одном экране. {BRAND.name} ещё пришлёт сводку куда скажете — в Telegram, MAX или на почту
-        </SectionSub>
-      </div>
-
-      {/* analytics card */}
-      <div className="ss-card-lift" style={{
-        marginTop: mobile ? 28 : 48,
-        background: VT.white, border: `1px solid ${VT.line}`,
-        borderRadius: 22, padding: mobile ? 20 : 28,
-        boxShadow: '0 24px 48px -24px rgba(120,60,30,0.18)',
-      }}>
-        {/* faux window chrome */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          paddingBottom: 14, borderBottom: `1px solid ${VT.lineSoft}`, marginBottom: 18,
-        }}>
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.74 0.13 25)' }} />
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.82 0.13 85)' }} />
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'oklch(0.78 0.13 145)' }} />
-          <span style={{ marginLeft: 10, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }}>
-            Личный кабинет · аналитика
-          </span>
-        </div>
-
-        {/* 4 stat cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-          gap: 12,
-        }}>
-          {stats.map(s => (
-            <div key={s.label} style={{
-              padding: 14, background: VT.bgSoft, borderRadius: 14,
-              display: 'flex', flexDirection: 'column', gap: 6,
-            }}>
-              <div style={{ fontSize: 12, color: VT.inkFaint, fontWeight: 500 }}>{s.label}</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.025em', color: s.tone === 'accent' ? VT.accent : VT.ink, lineHeight: 1 }}>{s.num}</span>
-                <span style={{ fontFamily: VT.font.mono, fontSize: 12, fontWeight: 600, color: VT.success }}>↑ {s.delta}</span>
-              </div>
-              <Sparkline points={s.sparkline} color={s.color} />
-            </div>
-          ))}
-        </div>
-
-        {/* big chart + source breakdown */}
-        <div style={{
-          marginTop: 18,
-          display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1.6fr 1fr', gap: 16,
-        }}>
-          {/* chart */}
-          <div style={{ background: VT.bgSoft, borderRadius: 14, padding: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 10, flexWrap: 'wrap' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: VT.ink }}>Трафик за 30 дней</div>
-              <div style={{ display: 'inline-flex', gap: 12, fontSize: 11.5, color: VT.inkSoft, marginLeft: 'auto' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.accent }} />посещения
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <span style={{ width: 8, height: 2, background: 'oklch(0.5 0.13 240)' }} />заявки
-                </span>
-              </div>
-            </div>
-            <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={mobile ? 180 : H} preserveAspectRatio="none" style={{ display: 'block' }}>
-              {[0, 0.25, 0.5, 0.75, 1].map((t, i) => (
-                <g key={i}>
-                  <line x1={PAD.left} x2={W - PAD.right} y1={PAD.top + inner.h * t} y2={PAD.top + inner.h * t}
-                        stroke={VT.lineSoft} strokeWidth="1" />
-                  <text x={PAD.left - 8} y={PAD.top + inner.h * t + 4} fontSize="10" fill={VT.inkFaint} textAnchor="end" fontFamily={VT.font.mono}>
-                    {Math.round(maxV * (1 - t))}
-                  </text>
-                </g>
-              ))}
-              <path d={visitsArea} fill={VT.accent} fillOpacity="0.10" />
-              <path d={visitsPath} fill="none" stroke={VT.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              {leads.map((l, i) => (
-                <rect key={i} x={xFor(i) - 2} y={yFor(l * 10)} width="4" height={PAD.top + inner.h - yFor(l * 10)} fill="oklch(0.5 0.13 240)" opacity="0.5" rx="1" />
-              ))}
-              {xLabels.map((i, k) => (
-                <text key={k} x={xFor(i)} y={H - 8} fontSize="11" fill={VT.inkFaint} textAnchor="middle">{xLabelText[k]}</text>
-              ))}
-            </svg>
-          </div>
-
-          {/* source breakdown */}
-          <div style={{ background: VT.bgSoft, borderRadius: 14, padding: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: VT.ink, marginBottom: 4 }}>Откуда приходят</div>
-            <div style={{ fontSize: 11.5, color: VT.inkFaint, marginBottom: 14 }}>{BRAND.name} держит карточки свежими — поэтому Я.Карты #1</div>
-            <div style={{ display: 'flex', height: 12, borderRadius: 6, overflow: 'hidden', marginBottom: 12 }}>
-              {sources.map(s => <span key={s.name} style={{ width: `${s.share}%`, background: s.color }} />)}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {sources.map(s => (
-                <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12.5, color: VT.ink }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flex: '0 0 auto' }} />
-                  <span style={{ flex: 1 }}>{s.name}</span>
-                  <b style={{ fontFamily: VT.font.mono, color: VT.ink }}>{s.share}%</b>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Delivery note */}
-      <div style={{
-        marginTop: mobile ? 18 : 24,
-        display: 'flex', flexDirection: mobile ? 'column' : 'row',
-        alignItems: mobile ? 'flex-start' : 'center',
-        gap: mobile ? 10 : 14,
-        padding: mobile ? '14px 16px' : '14px 20px',
-        background: VT.accentSoft, borderRadius: 14,
-        maxWidth: 760, margin: `${mobile ? 18 : 24}px auto 0`,
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{
-          width: 36, height: 36, borderRadius: 10,
-          background: VT.accent, color: '#fff',
-          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto',
-        }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
-            <path d="M22 2 L11 13"/><path d="M22 2 L15 22 L11 13 L2 9 L22 2 Z"/>
-          </svg>
-        </span>
-        <div style={{ fontSize: mobile ? 13.5 : 14.5, color: VT.accentInk, lineHeight: 1.45, flex: 1 }}>
-          <b style={{ color: VT.accentInk }}>Кратко и регулярно</b> — {BRAND.name} пришлёт сводку, куда скажете: в Telegram, MAX или на почту. Не нужно заходить в кабинет, чтобы знать, как идут дела
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function OwnershipSection({ mobile }) {
-  const bullets = [
-    ['Полный контроль', 'Правьте тексты, заменяйте фото, ставьте на паузу — в одно нажатие.'],
-    ['Сайт ваш',        'Заберёте файлы или унесёте на другой домен — в любой момент.'],
-    ['Аналитика тоже',  'Видите кто пришёл, откуда и сколько оставил заявок.'],
-    ['Удалить за секунду', 'Передумали — нажали «удалить». Никаких звонков в поддержку.'],
-  ];
-
-  return (
-    <section style={{
-      ...sectionPad(mobile),
-      marginTop: mobile ? 56 : 96, position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1360,
-      margin: `${mobile ? 56 : 96}px auto 0`,
-    }}>
-      <div style={{
-        background: VT.white,
-        border: `1px solid ${VT.line}`,
-        borderRadius: mobile ? 22 : 28,
-        padding: mobile ? '32px 22px' : '56px 56px',
-        display: 'grid',
-        gridTemplateColumns: mobile ? '1fr' : '1fr 1.1fr',
-        gap: mobile ? 28 : 56,
-        alignItems: 'center',
-        position: 'relative', overflow: 'hidden',
-      }}>
-        {/* decorative bg */}
-        <div aria-hidden="true" style={{
-          position: 'absolute', right: -120, top: -100,
-          width: 360, height: 360, borderRadius: '50%',
-          background: `radial-gradient(circle, ${VT.accentSoft} 0%, transparent 65%)`,
-          opacity: 0.5,
-        }} />
-
-        {/* text side */}
-        <div style={{ position: 'relative' }}>
-          <h2 style={{
-            fontSize: mobile ? 30 : 44, fontWeight: 700, letterSpacing: '-0.03em',
-            margin: '14px 0 0', lineHeight: 1.05, textWrap: 'balance',
-          }}>
-            {BRAND.name} делает рутину — но кнопка всегда у вас
-          </h2>
-          <p style={{
-            fontSize: mobile ? 16 : 18, lineHeight: 1.5, color: VT.inkSoft,
-            margin: '14px 0 0', maxWidth: 480, textWrap: 'pretty',
-          }}>
-            {BRAND.name} делает рутину, но решения — за вами. В личном кабинете видна аналитика и доступны все действия с сайтом.
-          </p>
-
-          <ul style={{
-            listStyle: 'none', margin: '24px 0 0', padding: 0,
-            display: 'flex', flexDirection: 'column', gap: 14,
-          }}>
-            {bullets.map(([title, body]) => (
-              <li key={title} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <span style={{
-                  flex: '0 0 auto', width: 24, height: 24, borderRadius: '50%',
-                  background: VT.accent, color: '#fff',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  marginTop: 2,
-                }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12 l4 4 10 -10"/>
-                  </svg>
-                </span>
-                <div>
-                  <div style={{ fontSize: mobile ? 15.5 : 17, fontWeight: 700, color: VT.ink, letterSpacing: '-0.015em' }}>{title}</div>
-                  <div style={{ fontSize: mobile ? 14 : 14.5, color: VT.inkSoft, lineHeight: 1.5, marginTop: 2 }}>{body}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA to open interactive admin demo */}
-          <a href="client-admin-demo.html" target="_blank" rel="noopener" style={{
-            marginTop: 24, display: 'inline-flex', alignItems: 'center', gap: 10,
-            padding: mobile ? '12px 20px' : '14px 24px', borderRadius: 999,
-            background: VT.ink, color: '#fff', fontWeight: 600, fontSize: mobile ? 14 : 15,
-            textDecoration: 'none',
-            boxShadow: '0 14px 28px -14px rgba(0,0,0,0.4)',
-          }}>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              width: 22, height: 22, borderRadius: '50%',
-              background: VT.accent, color: '#fff', fontSize: 13,
-            }}>▶</span>
-            Посмотреть демо личного кабинета
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-
-        {/* visual side */}
-        <div style={{ position: 'relative' }}>
-          <ControlPanelMock mobile={mobile} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// SOCIAL PROOF — 3 number badges + 4 testimonials (v2.1, PR-H)
-
-function NumberBadge({ value, label, sub, mobile, tint }) {
-  return (
-    <div style={{
-      background: tint?.bg || VT.white,
-      border: `1px solid ${tint?.border || VT.line}`,
-      borderRadius: 22, padding: mobile ? '24px 18px' : '36px 24px',
-      textAlign: 'center', position: 'relative', overflow: 'hidden',
-    }}>
-      {tint?.deco && (
-        <div aria-hidden="true" style={{
-          position: 'absolute', right: -50, top: -50,
-          width: 160, height: 160, borderRadius: '50%',
-          background: tint.deco, opacity: 0.5, pointerEvents: 'none',
-        }} />
-      )}
-      <div style={{ position: 'relative' }}>
-        <div style={{
-          fontSize: mobile ? 52 : 76, fontWeight: 800, letterSpacing: '-0.04em',
-          color: tint?.fg || VT.accent, lineHeight: 1,
-        }}>{value}</div>
-        <div style={{
-          marginTop: 10, fontSize: mobile ? 14.5 : 16, color: VT.ink, fontWeight: 600,
-        }}>{label}</div>
-        {sub && (
+          width: 48, height: 48, borderRadius: '50%',
+          background: '#fff', border: `2px solid ${p.ink}`,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          color: p.ink, flex: '0 0 auto',
+        }}>{step.icon}</span>
+        <div style={{ minWidth: 0 }}>
           <div style={{
-            marginTop: 4, fontFamily: VT.font.mono, fontSize: 11.5,
-            color: VT.inkFaint, letterSpacing: '0.04em',
-          }}>{sub}</div>
-        )}
+            fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.08em',
+            color: p.ink, opacity: 0.7, fontWeight: 600,
+          }}>{step.n}</div>
+          <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: '-0.022em', lineHeight: 1.1 }}>
+            {step.title}
+          </div>
+        </div>
       </div>
+      <div style={{
+        marginTop: 6,
+        fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.06em',
+        color: p.ink, opacity: 0.75, fontStyle: 'italic',
+      }}>{step.cadence}</div>
+      <p style={{
+        margin: '10px 0 0', fontSize: 13.5, lineHeight: 1.4,
+        color: p.ink, textWrap: 'pretty',
+      }}>{step.body}</p>
     </div>
   );
 }
 
-function TestimonialCard({ author, role, monthly, text, mobile, tone = 'peach' }) {
-  const tones = {
-    peach: ['oklch(0.78 0.10 50)',  'oklch(0.55 0.12 35)'],
-    rose:  ['oklch(0.80 0.09 25)',  'oklch(0.56 0.11 18)'],
-    sage:  ['oklch(0.78 0.08 145)', 'oklch(0.52 0.10 145)'],
-    slate: ['oklch(0.78 0.05 240)', 'oklch(0.52 0.06 240)'],
-  };
-  const [c1, c2] = tones[tone] || tones.peach;
+function DesktopCycle() {
+  // Horizontal flow: 01 (setup, one-off) → 02 → 03 → 04, with a return arc from 04 back to 02.
+  // Reads naturally left-to-right. 01 sits apart with «один раз»; the rest is the weekly loop.
+  const cardW = 250, cardH = 230;
+  const gap = 40;
+  const W = cardW * 4 + gap * 3;          // 4 cards in a row
+  const arcH = 100;                        // space below for return arc
+  const H = cardH + arcH + 60;
+
+  // x positions of card centers
+  const cx = (i) => i * (cardW + gap) + cardW / 2;
+
+  return (
+    <div style={{ position: 'relative', width: '100%', maxWidth: W, margin: '0 auto' }}>
+      {/* row of cards */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(4, ${cardW}px)`,
+        columnGap: gap,
+        alignItems: 'stretch',
+        position: 'relative',
+        zIndex: 1,
+      }}>
+        {CYCLE_STEPS.map((step, i) => (
+          <div key={step.n} style={{ position: 'relative', display: 'flex' }}>
+            <CycleCard step={step} size={cardW} />
+            {/* between-card forward arrow */}
+            {i < 3 && (
+              <div aria-hidden="true" style={{
+                position: 'absolute',
+                top: 56, right: -gap, width: gap, height: 24,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: VT.accent,
+              }}>
+                <svg width={gap} height="24" viewBox={`0 0 ${gap} 24`} fill="none">
+                  <path d={`M 2 12 L ${gap - 8} 12`} stroke={VT.accent}
+                        strokeWidth="2.5" strokeLinecap="round" />
+                  <path d={`M ${gap - 12} 6 L ${gap - 4} 12 L ${gap - 12} 18`}
+                        stroke={VT.accent} strokeWidth="2.5"
+                        strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* return arc 04 → 02 (signals the weekly loop) */}
+      <svg width="100%" viewBox={`0 0 ${W} ${arcH + 60}`}
+           preserveAspectRatio="none"
+           style={{ display: 'block', marginTop: -8, height: arcH + 60 }}>
+        <defs>
+          <marker id="v3retArr" viewBox="0 0 10 10" refX="8" refY="5"
+                  markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill={VT.accent}/>
+          </marker>
+        </defs>
+        {/* arc from bottom of card 04 (right-most) up to bottom of card 02 (second from left) */}
+        <path d={`M ${cx(3)} 8 C ${cx(3)} ${arcH + 30}, ${cx(1)} ${arcH + 30}, ${cx(1)} 8`}
+              fill="none" stroke={VT.accent} strokeWidth="2.5"
+              strokeDasharray="6 5" markerEnd="url(#v3retArr)" />
+        {/* label */}
+        <foreignObject x={(cx(1) + cx(3)) / 2 - 130} y={arcH + 6} width="260" height="40">
+          <div xmlns="http://www.w3.org/1999/xhtml" style={{
+            textAlign: 'center',
+            fontFamily: VT.font.mono, fontSize: 12, letterSpacing: '0.06em',
+            color: VT.accent, fontWeight: 700,
+          }}>и снова — каждую неделю</div>
+        </foreignObject>
+      </svg>
+    </div>
+  );
+}
+
+function MobileCycle() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {CYCLE_STEPS.map((step, idx) => {
+        const p = step.palette;
+        const isLast = idx === CYCLE_STEPS.length - 1;
+        return (
+          <div key={step.n}>
+            <div style={{
+              background: p.bg, border: `2px solid ${p.ink}`, borderRadius: 18,
+              boxShadow: `4px 4px 0 0 ${p.ink}`,
+              padding: 18, color: p.ink,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{
+                  width: 48, height: 48, borderRadius: '50%',
+                  background: '#fff', border: `2px solid ${p.ink}`,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  flex: '0 0 auto', color: p.ink,
+                }}>{step.icon}</span>
+                <div>
+                  <div style={{
+                    fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.08em',
+                    opacity: 0.7, fontWeight: 600,
+                  }}>{step.n} · {step.cadence}</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.022em', lineHeight: 1.1 }}>
+                    {step.title}
+                  </div>
+                </div>
+              </div>
+              <p style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.45, textWrap: 'pretty' }}>{step.body}</p>
+            </div>
+            {!isLast && (
+              <div style={{
+                textAlign: 'center', height: 20,
+                color: p.ink, fontSize: 18, lineHeight: '20px',
+              }}>↓</div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CycleSection({ mobile }) {
+  return (
+    <section id="cycle" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>
+          Это не сайт, который вы делаете один раз.<br/>
+          Это сайт, который работает каждый день.
+        </H2>
+        <Sub mobile={mobile} maxWidth={760}>
+          Один раз показали Самосайту, что у вас уже есть. Дальше он сам ходит по кругу: обновляет, смотрит на посетителей, приходит к вам с предложениями. Что применить — решаете вы.
+        </Sub>
+      </div>
+
+      <div style={{
+        marginTop: mobile ? 36 : 56,
+        maxWidth: mobile ? '100%' : 1200,
+        margin: `${mobile ? 36 : 56}px auto 0`,
+      }}>
+        {!mobile ? <DesktopCycle /> : <MobileCycle />}
+      </div>
+
+      <div style={{
+        marginTop: mobile ? 28 : 44, textAlign: 'center',
+        maxWidth: mobile ? '100%' : 720, margin: `${mobile ? 28 : 44}px auto 0`,
+      }}>
+        <p style={{
+          fontSize: mobile ? 15 : 17, lineHeight: 1.5, color: VT.inkSoft,
+          margin: 0, textWrap: 'pretty', fontStyle: 'italic',
+        }}>
+          Сайт получается не как готовый файл — это процесс. Каждую неделю он немного другой. Каждую неделю чуть лучше, чем был.
+        </p>
+      </div>
+
+      <div style={{ marginTop: mobile ? 24 : 32, textAlign: 'center' }}>
+        <a href="#hero" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          background: VT.accent, color: '#fff', fontWeight: 700,
+          padding: mobile ? '14px 24px' : '16px 32px',
+          borderRadius: 999, fontSize: mobile ? 16 : 17,
+          textDecoration: 'none',
+          boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
+        }}>Запустить цикл — собрать мой сайт →</a>
+      </div>
+    </section>
+  );
+}
+
+// ───────── BLOCK 4 · MONDAY CARDS ─────────
+
+const MONDAY_CARDS = [
+  {
+    accent: 'oklch(0.605 0.155 35)', accentBg: 'oklch(0.94 0.04 40)',
+    eyebrow: 'ЦЕННОСТНОЕ ПРЕДЛОЖЕНИЕ',
+    caseLabel: 'Пример: автосервис',
+    title: 'Заголовок проходит мимо',
+    body: [
+      <span>За неделю на сайт зашли <b>312 человек</b>. <b>224</b> закрыли его, до услуг даже не долистав.</span>,
+      <span>В ваших отзывах люди постоянно пишут: «всё объяснили перед тем, как чинить» и «ничего лишнего не навязывали». Вот ваша сильная сторона. В заголовке её сейчас нет.</span>,
+    ],
+    suggestion: <>Предлагаю: <b>«Автосервис, где сначала объясняют, потом чинят»</b></>,
+    actions: ['Применить', 'Другой вариант', 'Не надо'],
+  },
+  {
+    accent: 'oklch(0.50 0.16 270)', accentBg: 'oklch(0.94 0.04 270)',
+    eyebrow: 'КОНТЕНТ',
+    caseLabel: 'Пример: кофейня',
+    title: '«Завтраки» не работают',
+    body: [
+      <span>Из <b>156 человек</b>, открывших меню, <b>98</b> нажали на «Кофе и десерты». На «Завтраки» посмотрели <b>72</b> и только <b>4</b> заказали.</span>,
+      <span>У завтраков нет фотографий и нет состава. Только цена и название. Человек просто не понимает, что там в сете и стоит ли оно того.</span>,
+    ],
+    suggestion: <>Предлагаю: добавить <b>3–4 фото</b> и расписать, что входит.</>,
+    actions: ['Загрузить фото', 'Сгенерировать описание', 'Пропустить'],
+  },
+  {
+    accent: 'oklch(0.45 0.11 145)', accentBg: 'oklch(0.93 0.06 145)',
+    eyebrow: 'СТРУКТУРА',
+    caseLabel: 'Пример: частная клиника',
+    title: 'Отзывы читают. «О клинике» — нет',
+    body: [
+      <span><b>68%</b> посетителей долистывают до отзывов и сидят на них в среднем <b>22 секунды</b>. До блока «о клинике» доходят только <b>19%</b>. Почти все уходят за <b>4 секунды</b>.</span>,
+      <span>Сейчас «о клинике» идёт раньше отзывов и съедает им внимание.</span>,
+    ],
+    suggestion: <>Предлагаю: <b>отзывы поднять выше</b>, «о клинике» сократить до абзаца и убрать вниз.</>,
+    actions: ['Применить', 'Посмотреть, как будет', 'Не надо'],
+  },
+];
+
+function MondayCard({ card, n, mobile }) {
   return (
     <div style={{
       background: VT.white, border: `1px solid ${VT.line}`,
-      borderRadius: 20, padding: mobile ? 22 : 28,
-      display: 'flex', flexDirection: 'column', gap: 16,
-      position: 'relative',
-      boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -20px rgba(120,60,30,0.18)',
+      borderRadius: 18, overflow: 'hidden',
+      boxShadow: '0 18px 36px -18px rgba(120,60,30,0.22)',
+      display: 'flex', flexDirection: 'column', height: '100%',
     }}>
-      {/* huge open-quote */}
-      <span aria-hidden="true" style={{
-        position: 'absolute', top: 14, right: 22,
-        fontFamily: 'Georgia, serif', fontSize: 80, lineHeight: 1,
-        color: VT.accentSoft, fontWeight: 700,
-        pointerEvents: 'none',
-      }}>«</span>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative' }}>
-        <div style={{ display: 'flex', gap: 2 }}>
-          {Array.from({ length: 5 }).map((_, i) => <Star key={i} filled size={15} />)}
+      <div style={{
+        padding: '12px 16px',
+        background: VT.bgSoft,
+        borderBottom: `1px solid ${VT.line}`,
+        display: 'flex', alignItems: 'center', gap: 10,
+      }}>
+        <span style={{
+          width: 32, height: 32, borderRadius: '50%',
+          background: card.accent, color: '#fff',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 14, fontWeight: 800, letterSpacing: '-0.04em',
+        }}>С</span>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: VT.ink, lineHeight: 1.15 }}>
+            Самосайт
+          </div>
+          <div style={{ fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, letterSpacing: '0.04em' }}>
+            понедельник · 9:14
+          </div>
         </div>
         <span style={{
           marginLeft: 'auto',
-          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.08em',
-          color: VT.accentInk, background: VT.accentSoft,
-          padding: '4px 10px', borderRadius: 6, fontWeight: 700,
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-        }}>
-          <span style={{
-            width: 16, height: 16, borderRadius: '50%',
-            background: VT.accent, color: '#fff',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 800,
-          }}>↑</span>
-          {monthly} ЗАЯВОК/МЕС
-        </span>
+          fontFamily: VT.font.mono, fontSize: 10, letterSpacing: '0.1em',
+          color: card.accent, background: card.accentBg,
+          padding: '4px 8px', borderRadius: 6, fontWeight: 700,
+        }}>{n} / 3</span>
       </div>
-      <p style={{
-        margin: 0, fontSize: mobile ? 16 : 18, lineHeight: 1.5,
-        color: VT.ink, textWrap: 'pretty', fontWeight: 500, letterSpacing: '-0.005em',
-      }}>{text}</p>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12, marginTop: 'auto',
-        paddingTop: 14, borderTop: `1px solid ${VT.lineSoft}`,
-      }}>
-        <span style={{
-          width: 40, height: 40, borderRadius: '50%', flex: '0 0 auto',
-          background: `linear-gradient(140deg, ${c1}, ${c2})`,
-          color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          fontWeight: 700, fontSize: 16,
-        }}>{author.trim().charAt(0)}</span>
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 14.5, fontWeight: 700, color: VT.ink, letterSpacing: '-0.01em' }}>{author}</div>
-          <div style={{ fontSize: 12.5, color: VT.inkSoft, marginTop: 1 }}>{role}</div>
+
+      <div style={{ padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+        <div style={{
+          fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.12em',
+          color: card.accent, fontWeight: 700,
+          display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
+        }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: card.accent }} />
+          <span>{card.eyebrow}</span>
+          <span style={{ marginLeft: 'auto', fontStyle: 'italic', fontWeight: 500, color: VT.inkFaint, letterSpacing: '0.02em' }}>{card.caseLabel}</span>
         </div>
+        <h3 style={{
+          fontSize: mobile ? 19 : 22, fontWeight: 700, letterSpacing: '-0.025em',
+          margin: 0, lineHeight: 1.2, color: VT.ink,
+        }}>{card.title}</h3>
+
+        {card.body.map((p, i) => (
+          <p key={i} style={{
+            margin: 0, fontSize: mobile ? 14 : 15, lineHeight: 1.5,
+            color: VT.inkSoft, textWrap: 'pretty',
+          }}>{p}</p>
+        ))}
+
+        <div style={{
+          marginTop: 4, padding: '12px 14px',
+          background: card.accentBg, borderRadius: 12,
+        }}>
+          <div style={{
+            fontFamily: VT.font.mono, fontSize: 10, letterSpacing: '0.12em',
+            fontWeight: 700, opacity: 0.8, color: card.accent,
+          }}>ПРЕДЛОЖЕНИЕ</div>
+          <div style={{
+            marginTop: 4, fontSize: mobile ? 14.5 : 15.5, lineHeight: 1.45,
+            color: VT.ink,
+          }}>{card.suggestion}</div>
+        </div>
+      </div>
+
+      <div style={{
+        padding: 10, borderTop: `1px solid ${VT.line}`, background: '#fff',
+        display: 'grid',
+        gridTemplateColumns: `1fr auto auto`,
+        gap: 6,
+      }}>
+        <button type="button" style={{
+          padding: '10px 14px', borderRadius: 10, border: 'none',
+          background: card.accent, color: '#fff',
+          fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
+        }}>{card.actions[0]}</button>
+        <button type="button" style={{
+          padding: '10px 12px', borderRadius: 10,
+          background: '#fff', color: VT.ink,
+          border: `1px solid ${VT.line}`,
+          fontSize: 12.5, fontWeight: 500, cursor: 'pointer',
+        }}>{card.actions[1]}</button>
+        <button type="button" style={{
+          padding: '10px 12px', borderRadius: 10,
+          background: '#fff', color: VT.inkSoft,
+          border: `1px solid ${VT.line}`,
+          fontSize: 12.5, fontWeight: 500, cursor: 'pointer',
+        }}>{card.actions[2]}</button>
       </div>
     </div>
   );
 }
 
-function SocialProofSection({ mobile }) {
-  const testimonials = [
-    { author: 'Анна И.',   role: 'Маникюр · Петрозаводск',  monthly: 32, tone: 'peach',
-      text: `Раньше клиенты приходили только из Яндекс.Карт. За месяц на ${BRAND.name}е — больше заявок чем за полгода с одной карточки. И я ничего для этого не делала.` },
-    { author: 'Сергей К.', role: 'Барбершоп · Самара',      monthly: 47, tone: 'slate',
-      text: 'Самое ценное — записи приходят прямо в Telegram, я их не пропускаю. Раньше теряла половину звонков пока стригу клиента. Сейчас все заявки фиксируются.' },
-    { author: 'Марина Л.', role: 'Психолог · Москва',       monthly: 18, tone: 'rose',
-      text: 'Боялась, что ИИ напишет какую-то ерунду про мою работу. Открыла сайт — нормальные тёплые тексты, моими словами. Только отзывы клиентов и услуги, без «команды профессионалов».' },
-    { author: 'Лена Ф.',   role: 'Фотограф · Казань',       monthly: 14, tone: 'sage',
-      text: 'Сделала за 2 часа из своего Telegram-канала. Думала — выйдет шаблон, а получился сайт. Через неделю первый клиент пришёл из Яндекса.' },
-  ];
-
+function MondaySection({ mobile }) {
   return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="proof">
-      <div style={{ textAlign: 'center', maxWidth: mobile ? '100%' : 820, margin: '0 auto' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          padding: '6px 14px', background: VT.successSoft,
-          color: 'oklch(0.32 0.12 145)', borderRadius: 999,
-          fontFamily: VT.font.mono, fontSize: 12, letterSpacing: '0.08em', fontWeight: 600,
-          marginBottom: 18,
-        }}>
-          <span style={{
-            width: 8, height: 8, borderRadius: '50%', background: VT.success,
-            animation: 'vt-pulse 2s ease-in-out infinite',
-          }} />
-          47 МАСТЕРОВ УЖЕ ПОЛЬЗУЮТСЯ
-        </div>
-        <style>{`
-          @keyframes vt-pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
-        `}</style>
-        <SectionTitle mobile={mobile}>Работает —<br/>и приносит заявки</SectionTitle>
-        <SectionSub mobile={mobile}>
-          {BRAND.name} запущен пилотом для 47 мастеров. Вот результаты за первый месяц.
-        </SectionSub>
+    <section id="monday" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>
+          По понедельникам — три предложения,<br/>как сделать сайт сильнее
+        </H2>
+        <Sub mobile={mobile} maxWidth={820}>
+          Всю неделю Самосайт смотрит, что происходит у вас на сайте. В понедельник присылает разбор: где что просело и что с этим делать. Не общими фразами — конкретно.
+        </Sub>
       </div>
 
-      {/* 3 big number badges */}
       <div style={{
         marginTop: mobile ? 36 : 56,
-        maxWidth: mobile ? '100%' : 1100,
-        margin: `${mobile ? 36 : 56}px auto 0`,
-        display: 'grid',
-        gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)',
-        gap: mobile ? 12 : 18,
+        maxWidth: mobile ? '100%' : 1280, margin: `${mobile ? 36 : 56}px auto 0`,
       }}>
-        <NumberBadge value="47"     label="сайтов работает"
-          sub="С августа 2025"
-          tint={{ bg: VT.white, border: VT.line, fg: VT.accent, deco: VT.accentSoft }}
-          mobile={mobile} />
-        <NumberBadge value="1 284"  label="заявок собрано"
-          sub="≈ 27 на каждого мастера"
-          tint={{ bg: VT.accent, border: VT.accent, fg: '#fff', deco: 'rgba(255,255,255,0.15)' }}
-          mobile={mobile} />
-        <NumberBadge value="4.9★"   label="средняя оценка"
-          sub="из 38 отзывов в Я.Картах"
-          tint={{ bg: VT.white, border: VT.line, fg: 'oklch(0.55 0.15 75)', deco: 'oklch(0.92 0.10 80)' }}
-          mobile={mobile} />
+        {mobile ? (
+          <div style={{
+            marginLeft: -20, marginRight: -20,
+            overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+            scrollSnapType: 'x mandatory', scrollPaddingLeft: 20,
+            scrollbarWidth: 'none',
+          }}>
+            <style>{`.ss-v3-monday::-webkit-scrollbar{display:none}`}</style>
+            <div className="ss-v3-monday" style={{
+              display: 'flex', gap: 14, padding: '4px 20px 24px', alignItems: 'stretch',
+            }}>
+              {MONDAY_CARDS.map((c, i) => (
+                <div key={i} style={{ flex: '0 0 88%', scrollSnapAlign: 'start', display: 'flex' }}>
+                  <MondayCard card={c} n={i + 1} mobile={mobile} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 24, alignItems: 'stretch',
+          }}>
+            {MONDAY_CARDS.map((c, i) => <MondayCard key={i} card={c} n={i + 1} mobile={mobile} />)}
+          </div>
+        )}
       </div>
 
-      {/* 4 testimonials */}
       <div style={{
-        marginTop: mobile ? 14 : 18,
-        maxWidth: mobile ? '100%' : 1100,
-        margin: `${mobile ? 14 : 18}px auto 0`,
-        display: 'grid',
-        gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
-        gap: mobile ? 12 : 18,
+        marginTop: mobile ? 28 : 44, textAlign: 'center',
+        maxWidth: mobile ? '100%' : 720, margin: `${mobile ? 28 : 44}px auto 0`,
       }}>
-        {testimonials.map(t => <TestimonialCard key={t.author} {...t} mobile={mobile} />)}
+        <p style={{
+          fontSize: mobile ? 14.5 : 16, lineHeight: 1.5, color: VT.inkSoft,
+          margin: 0, textWrap: 'pretty',
+        }}>
+          Никаких правок без вашего согласования. Уведомления приходят туда, где удобно: в Telegram, MAX, на почту или SMS.
+        </p>
+      </div>
+
+      <div style={{ marginTop: mobile ? 24 : 32, textAlign: 'center' }}>
+        <a href="#hero" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          background: VT.accent, color: '#fff', fontWeight: 700,
+          padding: mobile ? '14px 24px' : '16px 32px',
+          borderRadius: 999, fontSize: mobile ? 16 : 17,
+          textDecoration: 'none',
+          boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
+        }}>Хочу такие рекомендации для своего сайта →</a>
       </div>
     </section>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-// PRICING — single 299 ₽/мес tariff (v2.1, PR-H)
 
-function PricingSection({ mobile }) {
-  const bullets = [
-    'Сам соберёт сайт за 2 часа',
-    'Сам подберёт стиль и напишет тексты под ваше дело',
-    'Сам обновляет 4 раза в месяц из источника',
-    'Сам ловит заявки в Telegram / MAX / SMS / Email',
-    'Сам отбирает лучшие отзывы каждую неделю',
-    'Сам подскажет, что улучшить — по поведению ваших посетителей',
-    'Индексация в Яндексе и Google, https, мобильная вёрстка',
-    'Личный кабинет с аналитикой и полным контролем',
-    'Данные хранятся в РФ',
-  ];
+// ── from landing-v3-c.jsx ──
+// ───────── BLOCK 5 · BASE WORK ─────────
 
+const BASE_ITEMS = [
+  {
+    title: 'Ловит заявки',
+    body: 'Клиент нажал «Записаться» — уведомление падает туда, где вам удобно: в Telegram, MAX, на почту или SMS. Без CRM и без отдельных кабинетов.',
+    metric: '4 канала',
+    metricNote: 'на выбор',
+    palette: { bg: 'oklch(0.94 0.045 40)', ink: 'oklch(0.42 0.16 35)', stroke: 'oklch(0.85 0.08 40)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="10" y="14" width="44" height="36" rx="5"/>
+        <path d="M10 22 L32 36 L54 22"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Отбирает отзывы',
+    body: 'Читает все отзывы из источника. На сайт ставит 4–6 самых тёплых и конкретных. Появился отзыв сильнее — заменит сам.',
+    metric: '4–6',
+    metricNote: 'лучших в неделю',
+    palette: { bg: 'oklch(0.94 0.045 80)', ink: 'oklch(0.42 0.13 70)', stroke: 'oklch(0.86 0.08 80)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="currentColor">
+        <path d="M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Попадает в поиск',
+    body: 'Сразу в индексе Яндекса и Google. Защищённое соединение, разметка для карт и сниппетов. Работает из коробки.',
+    metric: 'Яндекс',
+    metricNote: '+ Google',
+    palette: { bg: 'oklch(0.94 0.04 145)', ink: 'oklch(0.40 0.11 145)', stroke: 'oklch(0.86 0.07 145)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="27" cy="27" r="14"/>
+        <path d="M38 38 L54 54"/>
+      </svg>
+    ),
+  },
+  {
+    title: 'Отсекает спам',
+    body: 'Антибот-проверка, которую живой человек не замечает. Боты получают тишину. До вас доходят только настоящие заявки.',
+    metric: '0',
+    metricNote: 'ботов в день',
+    palette: { bg: 'oklch(0.94 0.04 270)', ink: 'oklch(0.42 0.15 270)', stroke: 'oklch(0.85 0.08 270)' },
+    icon: (
+      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z"/>
+        <path d="M22 32 L29 39 L42 24"/>
+      </svg>
+    ),
+  },
+];
+
+function BaseWorkSection({ mobile }) {
   return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }}>
+    <section id="base" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>Один тариф —<br/>без сюрпризов</SectionTitle>
-        <SectionSub mobile={mobile}>
-          Не надо выбирать пакеты, считать апселы и читать «звёздочки». 990 ₽ в месяц — и весь {BRAND.name} в вашем распоряжении
-        </SectionSub>
+        <H2 mobile={mobile}>Базовая работа — тоже на нём</H2>
+        <Sub mobile={mobile} maxWidth={720}>
+          Это то, что на других сайтах надо настраивать руками или платить SMM-щику. Здесь работает из коробки, без вашего участия.
+        </Sub>
       </div>
 
       <div style={{
         marginTop: mobile ? 28 : 48,
-        maxWidth: mobile ? '100%' : 640,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 28 : 48}px auto 0`,
+        display: 'grid',
+        gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
+        gap: mobile ? 14 : 22,
+      }}>
+        {BASE_ITEMS.map((item, i) => {
+          const pal = item.palette;
+          return (
+            <div key={item.title} style={{
+              position: 'relative',
+              background: VT.white, borderRadius: 20,
+              border: `1px solid ${VT.line}`,
+              boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 18px 40px -24px rgba(120,60,30,0.18)',
+              overflow: 'hidden',
+              display: 'flex', flexDirection: 'column',
+            }}>
+              {/* colored band on top */}
+              <div style={{
+                background: pal.bg,
+                padding: mobile ? '22px 22px 18px' : '26px 28px 22px',
+                borderBottom: `1px solid ${pal.stroke}`,
+                display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16,
+              }}>
+                <div style={{
+                  flex: '0 0 auto', width: mobile ? 56 : 64, height: mobile ? 56 : 64,
+                  borderRadius: 16,
+                  background: VT.white, color: pal.ink,
+                  border: `2px solid ${pal.ink}`,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `3px 3px 0 0 ${pal.ink}`,
+                }}>{item.icon}</div>
+                <div style={{
+                  textAlign: 'right', minWidth: 0,
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0,
+                }}>
+                  <div style={{
+                    fontSize: mobile ? 26 : 34, fontWeight: 800,
+                    letterSpacing: '-0.035em', lineHeight: 1, color: pal.ink,
+                  }}>{item.metric}</div>
+                  <div style={{
+                    marginTop: 4,
+                    fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5,
+                    letterSpacing: '0.08em', color: pal.ink, opacity: 0.75,
+                    fontWeight: 600, textTransform: 'uppercase',
+                  }}>{item.metricNote}</div>
+                </div>
+              </div>
+
+              {/* body */}
+              <div style={{
+                padding: mobile ? '18px 22px 22px' : '22px 28px 26px',
+                display: 'flex', flexDirection: 'column', flex: 1,
+              }}>
+                <h3 style={{
+                  fontSize: mobile ? 20 : 23, fontWeight: 700, letterSpacing: '-0.025em',
+                  margin: 0, lineHeight: 1.2, color: VT.ink,
+                }}>{item.title}</h3>
+                <p style={{
+                  margin: '8px 0 0', fontSize: mobile ? 14.5 : 15.5, lineHeight: 1.5,
+                  color: VT.inkSoft, textWrap: 'pretty',
+                }}>{item.body}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// ───────── BLOCK 6 · SOURCES + Я.Карты ─────────
+
+const SOURCES_LIST = [
+  { id: 'yandex',   name: 'Яндекс.Карты',          pull: 'отзывы · услуги · цены · фото · режим работы', featured: true,
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D"/><circle cx="12" cy="10" r="3.2" fill="#fff"/></svg> },
+  { id: 'tg',       name: 'Telegram-канал',         pull: 'посты · фото работ · контакты',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><rect width="24" height="24" rx="6" fill="#229ED9"/><path d="M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z" fill="#fff"/></svg> },
+  { id: 'ig',       name: 'Instagram',              pull: 'скриншот профиля',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><defs><linearGradient id="iggrC" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stopColor="#FEDA77"/><stop offset="30%" stopColor="#F58529"/><stop offset="60%" stopColor="#DD2A7B"/><stop offset="100%" stopColor="#8134AF"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#iggrC)"/><rect x="6" y="6" width="12" height="12" rx="3.5" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="16" cy="8" r="0.9" fill="#fff"/></svg> },
+  { id: '2gis',     name: '2ГИС',                   pull: 'услуги · отзывы · контакты',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><rect width="24" height="24" rx="6" fill="#19BB4F"/><text x="12" y="17" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="14" fill="#fff">2</text></svg> },
+  { id: 'avito',    name: 'Avito',                  pull: 'услуги · цены · отзывы',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><rect width="24" height="24" rx="6" fill="#0AF"/><circle cx="18" cy="7.5" r="3" fill="#FF9C00"/><text x="9" y="17" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" fill="#fff">A</text></svg> },
+  { id: 'site',     name: 'Ваш старый сайт',        pull: 'тексты · фото · услуги',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><rect width="24" height="24" rx="6" fill="oklch(0.40 0.04 250)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" strokeWidth="1.5"/><ellipse cx="12" cy="12" rx="2.8" ry="6" fill="none" stroke="#fff" strokeWidth="1.5"/><path d="M6 12h12" stroke="#fff" strokeWidth="1.5"/></svg> },
+  { id: 'card',     name: 'Фото меню или буклета',  pull: 'распознаём услуги · контакты',
+    logo: <svg viewBox="0 0 24 24" width="30" height="30"><rect width="24" height="24" rx="6" fill="oklch(0.74 0.08 70)"/><rect x="6" y="8" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.4"/><path d="M8 11.5h4M8 14h6" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/></svg> },
+];
+
+const SOURCES_SOON = ['ВКонтакте', 'Ozon', 'YouTube'];
+
+function SourcesSection({ mobile }) {
+  return (
+    <section id="sources" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>У вас уже всё есть для сайта</H2>
+        <Sub mobile={mobile} maxWidth={720}>
+          Подойдёт всё, где о вашем деле уже что-то написано. Если ничего нет — хватит фото меню или буклета.
+        </Sub>
+      </div>
+
+      {/* sources grid */}
+      <div style={{
+        marginTop: mobile ? 28 : 48,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 28 : 48}px auto 0`,
+        display: 'grid',
+        gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
+        gap: mobile ? 10 : 14,
+      }}>
+        {SOURCES_LIST.map(s => (
+          <div key={s.id} style={{
+            display: 'flex', alignItems: 'center', gap: mobile ? 14 : 18,
+            padding: s.featured ? (mobile ? '18px 18px' : '22px 24px') : (mobile ? '14px 16px' : '18px 22px'),
+            background: VT.white, border: `1px solid ${s.featured ? VT.accent : VT.line}`,
+            borderRadius: 14, position: 'relative',
+          }}>
+            {s.featured && (
+              <span style={{
+                position: 'absolute', top: -10, right: 16,
+                fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
+                color: '#fff', background: VT.accent,
+                padding: '3px 8px', borderRadius: 6, fontWeight: 700,
+              }}>ЧАЩЕ ВСЕГО</span>
+            )}
+            <span style={{ flex: '0 0 auto' }}>{s.logo}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: mobile ? 15.5 : 17, fontWeight: 700,
+                color: VT.ink, letterSpacing: '-0.022em', lineHeight: 1.2,
+              }}>{s.name}</div>
+              <div style={{
+                marginTop: 3,
+                fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12.5, letterSpacing: '0.02em',
+                color: VT.inkSoft,
+              }}>забираем: {s.pull}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* soon */}
+      <div style={{
+        marginTop: mobile ? 20 : 28,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 20 : 28}px auto 0`,
+        display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10,
+        justifyContent: mobile ? 'flex-start' : 'center',
+      }}>
+        <span style={{
+          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+          color: VT.inkFaint, fontWeight: 600,
+        }}>СКОРО ПОДКЛЮЧИМ</span>
+        {SOURCES_SOON.map(n => (
+          <span key={n} style={{
+            padding: '6px 14px',
+            background: VT.bgSoft, border: `1px solid ${VT.line}`,
+            borderRadius: 999, fontSize: 13, color: VT.inkSoft, fontWeight: 500,
+          }}>{n}</span>
+        ))}
+        <a style={{
+          fontSize: 13.5, color: VT.accent, textDecoration: 'underline',
+          textUnderlineOffset: 4, marginLeft: mobile ? 0 : 6,
+        }}>Не нашли свою? Напишите →</a>
+      </div>
+
+      {/* Я.Карты sidebar */}
+      <div style={{
+        marginTop: mobile ? 32 : 56,
+        maxWidth: mobile ? '100%' : 1100, margin: `${mobile ? 32 : 56}px auto 0`,
+        background: VT.white,
+        border: `1px solid ${VT.line}`, borderRadius: 18,
+        padding: mobile ? '24px 22px' : '36px 44px',
+        display: 'flex', flexDirection: mobile ? 'column' : 'row',
+        gap: mobile ? 18 : 32, alignItems: mobile ? 'flex-start' : 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* big Я-pin decoration */}
+        <span style={{
+          flex: '0 0 auto',
+          width: mobile ? 64 : 88, height: mobile ? 64 : 88,
+        }}>
+          <svg viewBox="0 0 88 88" width="100%" height="100%">
+            <path d="M44 4 C 24 4, 10 18, 10 38 C 10 60, 44 84, 44 84 C 44 84, 78 60, 78 38 C 78 18, 64 4, 44 4 Z" fill="#FC3F1D"/>
+            <text x="44" y="48" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="32" fill="#fff">Я</text>
+          </svg>
+        </span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h3 style={{
+            margin: 0, fontSize: mobile ? 21 : 26,
+            fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.2,
+            color: VT.ink, textWrap: 'balance',
+          }}>«У меня же есть страница в Яндекс.Картах. Зачем мне ещё сайт?»</h3>
+          <p style={{
+            margin: '10px 0 0', fontSize: mobile ? 14.5 : 16, lineHeight: 1.5,
+            color: VT.inkSoft, textWrap: 'pretty',
+          }}>
+            Страница в Картах показывает вас тем, кто и так ищет именно вас. <b style={{ color: VT.ink }}>Сайт принимает заявки напрямую и попадает в поиск по широким запросам</b> — туда, куда страница не дотягивается. Самосайт берёт оттуда данные и делает из них то, чего страница в Картах не умеет.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ───────── BLOCK 7 · OWNERSHIP ─────────
+
+const OWNER_POINTS = [
+  {
+    title: 'Не понравилась рекомендация — отклоните, и она исчезнет.',
+    body: 'Никаких «нейросеть знает лучше».',
+  },
+  {
+    title: 'Текст и фото правите в один клик',
+    body: 'прямо на сайте, без отдельных редакторов.',
+  },
+  {
+    title: 'Сайт ваш — заберёте в любой момент.',
+    body: 'Архив HTML и фотографий скачивается одной кнопкой.',
+  },
+  {
+    title: 'Удаляется в одно нажатие.',
+    body: 'Никаких звонков в поддержку и никаких «дайте подумать».',
+  },
+];
+
+function OwnershipSection({ mobile }) {
+  return (
+    <section id="ownership" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>Самосайт делает рутину.<br/>Решения остаются за вами</H2>
+        <Sub mobile={mobile} maxWidth={760}>
+          Всё, что предлагает ИИ — только через ваше «да». Всё, что собрал — можно поправить. Захотели уйти — забрали и ушли.
+        </Sub>
+      </div>
+
+      <div style={{
+        marginTop: mobile ? 28 : 48,
+        maxWidth: mobile ? '100%' : 980, margin: `${mobile ? 28 : 48}px auto 0`,
+        display: 'grid',
+        gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
+        gap: mobile ? 10 : 14,
+      }}>
+        {OWNER_POINTS.map((pt, i) => (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'flex-start', gap: 14,
+            padding: mobile ? '18px 18px' : '22px 24px',
+            background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 14,
+          }}>
+            <span style={{
+              flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%',
+              background: VT.accentSoft, color: VT.accent,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              marginTop: 2,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12 l4 4 10 -10"/>
+              </svg>
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{
+                fontSize: mobile ? 15.5 : 16.5, fontWeight: 700,
+                color: VT.ink, letterSpacing: '-0.015em', lineHeight: 1.3,
+              }}>{pt.title}</div>
+              <div style={{
+                marginTop: 4, fontSize: mobile ? 14 : 15, lineHeight: 1.45,
+                color: VT.inkSoft,
+              }}>{pt.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: mobile ? 22 : 30, textAlign: 'center' }}>
+        <a href="client-admin-demo.html" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 10,
+          padding: mobile ? '12px 22px' : '14px 28px',
+          background: VT.white, color: VT.ink,
+          border: `1px solid ${VT.line}`,
+          borderRadius: 999, fontSize: mobile ? 14.5 : 15, fontWeight: 600,
+          textDecoration: 'none',
+        }}>
+          <span style={{
+            width: 22, height: 22, borderRadius: '50%',
+            background: VT.accent, color: '#fff',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 10,
+          }}>▶</span>
+          Посмотреть демо личного кабинета
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  );
+}
+
+// ───────── BLOCK 8 · ANALYTICS ─────────
+
+function AnalyticsSection({ mobile }) {
+  // 47 заявок за неделю · по дням пн–вс
+  const days = [5, 6, 8, 7, 9, 7, 5];
+  const dayLabels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const peakIdx = 4; // Пятница
+  const max = Math.max(...days);
+
+  const observations = [
+    {
+      tag: 'ПИК',
+      tagColor: 'oklch(0.60 0.15 35)',
+      text: <>В <b>пятницу</b> заявок в два раза больше, чем в воскресенье. Похоже на привычку «решить дела перед выходными».</>,
+    },
+    {
+      tag: 'РОСТ',
+      tagColor: 'oklch(0.50 0.13 145)',
+      text: <>Замена масла <b>+34%</b> за неделю. После того, как подняли блок наверх главной.</>,
+    },
+    {
+      tag: 'ПРОВАЛ',
+      tagColor: 'oklch(0.50 0.16 270)',
+      text: <>«Шиномонтаж» открывают, но <b>не нажимают</b>. Возможно, нет цен — посмотрите в понедельник.</>,
+    },
+  ];
+
+  return (
+    <section id="analytics" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>Те же данные, что видит Самосайт,<br/>у вас перед глазами</H2>
+        <Sub mobile={mobile} maxWidth={760}>
+          Сколько зашли, откуда пришли, что нажали, сколько оставили заявок. Применил Самосайт правку — на следующей неделе видите, как изменились цифры.
+        </Sub>
+      </div>
+
+      {/* Dashboard mock — dark, product-feeling */}
+      <div style={{
+        marginTop: mobile ? 28 : 48,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 28 : 48}px auto 0`,
+        background: VT.white, color: VT.ink,
+        borderRadius: 22, overflow: 'hidden',
+        boxShadow: '0 24px 50px -28px rgba(120,60,30,0.25), 0 0 0 1px rgba(0,0,0,0.02)',
+        position: 'relative',
+      }}>
+        {/* window chrome */}
+        <div style={{
+          padding: mobile ? '12px 16px' : '14px 22px',
+          borderBottom: `1px solid ${VT.line}`,
+          display: 'flex', alignItems: 'center', gap: 14,
+          background: VT.bgSoft,
+        }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#FF5F57' }} />
+            <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#FEBC2E' }} />
+            <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#28C840' }} />
+          </div>
+          <div style={{
+            flex: 1, padding: '5px 12px',
+            background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 6,
+            fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkSoft,
+            letterSpacing: '0.02em',
+            display: mobile ? 'none' : 'flex', alignItems: 'center', gap: 8,
+          }}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11 V7 a5 5 0 0 1 10 0 V11"/>
+            </svg>
+            app.samosite.online/analytics
+          </div>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.08em',
+            color: VT.ink, fontWeight: 600,
+          }}>
+            <span style={{
+              width: 8, height: 8, borderRadius: '50%', background: 'oklch(0.65 0.18 145)',
+              boxShadow: '0 0 0 3px oklch(0.65 0.18 145 / 0.25)',
+            }} />
+            LIVE
+          </span>
+        </div>
+
+        {/* sub-toolbar */}
+        <div style={{
+          padding: mobile ? '12px 16px' : '14px 26px',
+          display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
+          borderBottom: `1px solid ${VT.line}`,
+        }}>
+          <span style={{ fontSize: mobile ? 14 : 16, fontWeight: 700, letterSpacing: '-0.02em' }}>
+            Автосервис Park · аналитика
+          </span>
+          <span style={{ flex: 1 }} />
+          {['7 дней', '30 дней', 'Всё время'].map((p, i) => (
+            <button key={p} type="button" style={{
+              padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              fontSize: 12.5, fontWeight: 600,
+              background: i === 0 ? VT.accent : 'transparent',
+              color: i === 0 ? '#fff' : VT.inkSoft,
+              fontFamily: 'inherit',
+            }}>{p}</button>
+          ))}
+        </div>
+
+        <div style={{ padding: mobile ? '18px 16px' : '24px 26px' }}>
+          {/* KPI row */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: mobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            gap: mobile ? 10 : 14,
+          }}>
+            {[
+              { label: 'посетителей',     value: '1 284', delta: '+18%' },
+              { label: 'просмотры услуг', value: '892',   delta: '+24%' },
+              { label: 'заявок',          value: '47',    delta: '+12%', accent: true },
+              { label: 'конверсия',       value: '3.7%',  delta: '+0.4 п.п.' },
+            ].map((k, i) => (
+              <div key={i} style={{
+                padding: mobile ? 14 : 16, borderRadius: 12,
+                background: k.accent ? VT.accentSoft : VT.bgSoft,
+                border: `1px solid ${k.accent ? VT.accent : VT.line}`,
+                position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{
+                  fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.08em',
+                  color: VT.inkFaint, fontWeight: 600, textTransform: 'uppercase',
+                }}>{k.label}</div>
+                <div style={{
+                  marginTop: 8, fontSize: mobile ? 26 : 32, fontWeight: 700,
+                  letterSpacing: '-0.03em', color: VT.ink, lineHeight: 1, fontFamily: VT.font.mono,
+                }}>{k.value}</div>
+                <div style={{
+                  marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: 5,
+                  fontSize: 11.5, color: 'oklch(0.50 0.13 145)', fontWeight: 600,
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1 L9 7 L1 7 Z"/></svg>
+                  {k.delta} <span style={{ color: VT.inkFaint, fontWeight: 500 }}>за неделю</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chart */}
+          <div style={{
+            marginTop: 18,
+            padding: 18, borderRadius: 14,
+            background: VT.bgSoft,
+            border: `1px solid ${VT.line}`,
+            position: 'relative',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 600, color: VT.ink }}>Заявки по дням</span>
+              <span style={{ fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }}>пн – вс</span>
+              <span style={{ marginLeft: 'auto', fontFamily: VT.font.mono, fontSize: 11, color: VT.inkSoft }}>
+                всего <b style={{ color: VT.ink }}>47</b>
+              </span>
+            </div>
+
+            <div style={{
+              marginTop: 22, position: 'relative',
+              display: 'grid', gridTemplateColumns: `repeat(${days.length}, 1fr)`,
+              gap: 12, alignItems: 'end', height: mobile ? 140 : 180,
+            }}>
+              <div aria-hidden="true" style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
+                {[0, 1, 2, 3].map(i => (
+                  <div key={i} style={{ borderTop: `1px dashed ${VT.line}` }} />
+                ))}
+              </div>
+
+              {days.map((d, i) => (
+                <div key={i} style={{
+                  height: `${(d / max) * 100}%`,
+                  background: i === peakIdx
+                    ? `linear-gradient(180deg, ${VT.accent}, oklch(0.50 0.16 35))`
+                    : 'oklch(0.84 0.06 50)',
+                  borderRadius: '6px 6px 0 0',
+                  position: 'relative',
+                  boxShadow: i === peakIdx ? '0 -2px 16px rgba(217, 119, 87, 0.4)' : 'none',
+                }}>
+                  <span style={{
+                    position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)',
+                    fontFamily: VT.font.mono, fontSize: 11,
+                    color: i === peakIdx ? VT.accent : VT.inkSoft,
+                    fontWeight: i === peakIdx ? 700 : 500,
+                  }}>{d}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{
+              marginTop: 6,
+              display: 'grid', gridTemplateColumns: `repeat(${days.length}, 1fr)`,
+              gap: 12, fontFamily: VT.font.mono, fontSize: 10.5,
+              color: VT.inkFaint, textAlign: 'center', letterSpacing: '0.04em',
+            }}>
+              {dayLabels.map((l, i) => (
+                <span key={l} style={{
+                  color: i === peakIdx ? VT.accentSoft : 'inherit',
+                  fontWeight: i === peakIdx ? 700 : 500,
+                }}>{l}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Sources + Top services */}
+          <div style={{
+            marginTop: 16,
+            display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr',
+            gap: mobile ? 12 : 16,
+          }}>
+            <div style={{
+              padding: 18, borderRadius: 14,
+              background: VT.bgSoft,
+              border: `1px solid ${VT.line}`,
+            }}>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }}>Откуда пришли</div>
+              {[
+                ['Яндекс',         48, 'oklch(0.55 0.14 30)'],
+                ['Google',         22, 'oklch(0.48 0.13 240)'],
+                ['Прямые заходы',  12, 'oklch(0.50 0.12 145)'],
+                ['Соцсети',        11, 'oklch(0.55 0.10 280)'],
+                ['Другое',          7, 'oklch(0.60 0.04 60)'],
+              ].map(([label, v, color]) => (
+                <div key={label} style={{ marginBottom: 9 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', fontSize: 12.5 }}>
+                    <span style={{ color: VT.ink }}>{label}</span>
+                    <span style={{ fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600 }}>{v}%</span>
+                  </div>
+                  <div style={{ marginTop: 5, height: 6, background: VT.line, borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{ width: `${v}%`, height: '100%', background: color }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              padding: 18, borderRadius: 14,
+              background: VT.bgSoft,
+              border: `1px solid ${VT.line}`,
+            }}>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }}>Самые кликабельные услуги</div>
+              {[
+                ['Замена масла',      142, '+34%'],
+                ['Диагностика',        98,  '+8%'],
+                ['Развал-схождение',   64,  '+2%'],
+                ['Шиномонтаж',         41, '−12%'],
+              ].map(([n, v, delta]) => (
+                <div key={n} style={{
+                  display: 'flex', alignItems: 'baseline', gap: 10,
+                  padding: '8px 0', borderBottom: `1px dashed ${VT.line}`,
+                }}>
+                  <span style={{ color: VT.ink, fontSize: 13 }}>{n}</span>
+                  <span style={{
+                    fontFamily: VT.font.mono, fontSize: 11, fontWeight: 600,
+                    color: String(delta).startsWith('+') ? 'oklch(0.75 0.16 145)' : 'oklch(0.70 0.14 30)',
+                  }}>{delta}</span>
+                  <span style={{ flex: 1 }} />
+                  <span style={{ fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600, fontSize: 13 }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Caption */}
+      <p style={{
+        marginTop: mobile ? 22 : 30,
+        maxWidth: mobile ? '100%' : 720, margin: `${mobile ? 22 : 30}px auto 0`,
+        fontSize: mobile ? 14.5 : 15.5, lineHeight: 1.5, color: VT.inkSoft,
+        textAlign: 'center', textWrap: 'pretty',
+      }}>
+        Сводка приходит раз в неделю туда же, куда и всё остальное: в Telegram, MAX, на почту или SMS. В кабинет заходить необязательно, данные сами найдут вас.
+      </p>
+
+      {/* Demo CTA */}
+      <div style={{ marginTop: mobile ? 20 : 28, textAlign: 'center' }}>
+        <a href="client-admin-demo.html" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 10,
+          padding: mobile ? '13px 22px' : '15px 28px',
+          background: VT.white, color: VT.ink,
+          border: `1px solid ${VT.line}`,
+          borderRadius: 999, fontSize: mobile ? 14.5 : 15.5, fontWeight: 600,
+          textDecoration: 'none',
+          boxShadow: '0 6px 18px -10px rgba(120,60,30,0.20)',
+        }}>
+          <span style={{
+            width: 22, height: 22, borderRadius: '50%',
+            background: VT.accent, color: VT.ink,
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 9,
+          }}>▶</span>
+          Посмотреть демо личного кабинета
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+
+// ── from landing-v3-d.jsx ──
+// ───────── BLOCK 9 · PRICING ─────────
+
+const PRICING_BULLETS = [
+  'Соберём сайт за 2 часа из вашего источника',
+  'Обновляем раз в неделю',
+  'По понедельникам присылаем три предложения, что улучшить',
+  'Принимаем заявки туда, где удобно: в Telegram, MAX, на почту или SMS',
+  'Аналитика в кабинете и сводка раз в неделю',
+  'Защищённое соединение, попадает в Яндекс и Google',
+  'Данные хранятся в России, по ФЗ-152',
+];
+
+function PricingSection({ mobile }) {
+  return (
+    <section id="pricing" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
+      <div style={{ textAlign: 'center' }}>
+        <H2 mobile={mobile}>Один тариф.<br/>Без апселов и звёздочек</H2>
+      </div>
+
+      <div style={{
+        marginTop: mobile ? 28 : 48,
+        maxWidth: mobile ? '100%' : 720,
         margin: `${mobile ? 28 : 48}px auto 0`,
       }}>
         <div className="ss-pricing-card" style={{
           background: VT.white,
-          border: `1px solid ${VT.line}`,
+          border: `2px solid ${VT.accent}`,
           borderRadius: 22,
-          padding: mobile ? '28px 22px' : '44px 40px',
-          boxShadow: VT.shadow.card,
+          padding: mobile ? '28px 22px' : '44px 44px',
+          boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 24px 60px -24px rgba(120,60,30,0.30)',
           position: 'relative', overflow: 'hidden',
         }}>
-          {/* corner accent ribbon */}
+          {/* tilted "МЫ ЗАПУСКАЕМСЯ" sticker */}
           <div style={{
-            position: 'absolute', top: mobile ? 18 : 24, right: mobile ? 18 : 24,
-            fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.14em',
-            color: VT.accentInk, background: VT.accentSoft,
-            padding: '4px 10px', borderRadius: 999, fontWeight: 600,
-          }}>
-            ОДИН ТАРИФ
+            position: 'absolute',
+            top: mobile ? 12 : 18, right: mobile ? -28 : -24,
+            transform: 'rotate(8deg)',
+            background: VT.accent, color: '#fff',
+            padding: mobile ? '5px 28px' : '6px 32px',
+            fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 12,
+            letterSpacing: '0.12em', fontWeight: 700,
+            boxShadow: '0 4px 12px rgba(120,60,30,0.3)',
+          }}>МЫ ЗАПУСКАЕМСЯ</div>
+
+          {/* Headline price for первая сотня */}
+          <div style={{ marginTop: mobile ? 28 : 16 }}>
+            <div style={{
+              fontFamily: VT.font.mono, fontSize: mobile ? 11 : 12.5,
+              letterSpacing: '0.14em', color: VT.accent, fontWeight: 700,
+            }}>ПЕРВОЙ СОТНЕ — НАВСЕГДА</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
+              <span style={{
+                fontSize: mobile ? 56 : 88, fontWeight: 700, letterSpacing: '-0.04em',
+                lineHeight: 1, color: VT.ink,
+              }}>490&nbsp;₽</span>
+              <span style={{ fontSize: mobile ? 16 : 20, color: VT.inkSoft, fontWeight: 500 }}>
+                в месяц
+              </span>
+            </div>
+            <div style={{
+              marginTop: 6,
+              fontSize: mobile ? 13.5 : 14.5, color: VT.inkSoft,
+            }}>
+              потом <b style={{ color: VT.ink }}>990 ₽ / месяц</b> для всех остальных
+            </div>
           </div>
 
-          {/* Price */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {/* Free month — visually distinct */}
+          <div style={{
+            marginTop: mobile ? 18 : 22,
+            padding: mobile ? '14px 16px' : '16px 22px',
+            background: VT.accentSoft,
+            borderRadius: 14,
+            display: 'flex', alignItems: 'center', gap: 14,
+          }}>
             <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              fontFamily: VT.font.mono, fontSize: 11.5, letterSpacing: '0.12em',
-              color: VT.accentInk, fontWeight: 700,
-              textTransform: 'uppercase',
+              flex: '0 0 auto', width: 36, height: 36, borderRadius: '50%',
+              background: VT.accent, color: '#fff',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <span style={{
-                width: 18, height: 18, borderRadius: '50%',
-                background: VT.accent, color: '#fff',
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12 l4 4 10 -10"/>
-                </svg>
-              </span>
-              Первый месяц — бесплатно
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 12 V22 H4 V12"/>
+                <rect x="2" y="7" width="20" height="5" rx="1"/>
+                <path d="M12 22 V7"/>
+                <path d="M12 7 C 12 3.5, 7.5 3.5, 7.5 7 C 7.5 7, 9.5 7, 12 7 Z"/>
+                <path d="M12 7 C 12 3.5, 16.5 3.5, 16.5 7 C 16.5 7, 14.5 7, 12 7 Z"/>
+              </svg>
             </span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
-              <span style={{ fontSize: mobile ? 16 : 20, color: VT.inkSoft, fontWeight: 500 }}>
-                потом
-              </span>
-              <span style={{
-                fontSize: mobile ? 56 : 76, fontWeight: 700, letterSpacing: '-0.04em',
-                lineHeight: 1, color: VT.ink,
-              }}>990&nbsp;₽</span>
-              <span style={{ fontSize: mobile ? 16 : 18, color: VT.inkSoft }}>/ месяц</span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{
+                fontSize: mobile ? 15.5 : 17, fontWeight: 700, color: VT.ink,
+                letterSpacing: '-0.015em', lineHeight: 1.2,
+              }}>Первый месяц — вообще бесплатно</div>
+              <div style={{
+                marginTop: 2, fontSize: mobile ? 13 : 14, color: VT.accent, fontWeight: 500,
+              }}>Карту привязывать не надо</div>
             </div>
           </div>
 
           {/* Bullets */}
-          <ul style={{
-            listStyle: 'none', margin: '22px 0 0', padding: 0,
-            display: 'flex', flexDirection: 'column', gap: 10,
-          }}>
-            {bullets.map(b => (
-              <li key={b} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                fontSize: mobile ? 14.5 : 15.5, color: VT.ink, lineHeight: 1.45,
-              }}>
-                <span style={{
-                  flex: '0 0 auto', width: 22, height: 22, borderRadius: '50%',
-                  background: VT.successSoft, color: VT.success,
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  marginTop: 1,
+          <div style={{ marginTop: mobile ? 20 : 26 }}>
+            <div style={{
+              fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+              color: VT.inkFaint, fontWeight: 600, marginBottom: 10,
+            }}>ВХОДИТ ВСЁ</div>
+            <ul style={{
+              listStyle: 'none', margin: 0, padding: 0,
+              display: 'flex', flexDirection: 'column', gap: 10,
+            }}>
+              {PRICING_BULLETS.map(b => (
+                <li key={b} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  fontSize: mobile ? 14.5 : 15.5, color: VT.ink, lineHeight: 1.45,
                 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12 l4 4 10 -10"/>
-                  </svg>
-                </span>
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
+                  <span style={{
+                    flex: '0 0 auto', width: 22, height: 22, borderRadius: '50%',
+                    background: VT.successSoft, color: VT.success,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    marginTop: 1,
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12 l4 4 10 -10"/>
+                    </svg>
+                  </span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* CTA */}
           <div style={{ marginTop: mobile ? 24 : 32 }}>
-            <Btn style={{ width: '100%', padding: mobile ? '14px 22px' : '16px 26px', fontSize: mobile ? 15 : 16 }} iconRight={<IconArrow />}>
-              Собрать {BRAND.name}
+            <Btn style={{
+              width: '100%',
+              padding: mobile ? '14px 22px' : '16px 26px',
+              fontSize: mobile ? 15 : 16,
+            }} iconRight={<IconArrow />}>
+              Собрать сайт за 2 часа
             </Btn>
           </div>
           <div style={{
             marginTop: 12, textAlign: 'center',
-            fontFamily: VT.font.mono, fontSize: 11.5, letterSpacing: '0.08em',
-            color: VT.inkFaint,
+            fontSize: 12.5, color: VT.inkSoft, fontStyle: 'italic',
           }}>
-            Первый месяц бесплатно
+            Оплату подключите потом, если решите остаться после первого месяца.
           </div>
         </div>
 
-        {/* Value anchor */}
+        {/* Side note */}
         <p style={{
-          margin: `${mobile ? 18 : 24}px auto 0`, maxWidth: 560,
-          fontSize: mobile ? 13.5 : 14.5, lineHeight: 1.55,
+          margin: `${mobile ? 22 : 30}px auto 0`,
+          maxWidth: 600,
+          fontSize: mobile ? 14 : 15, lineHeight: 1.55,
           color: VT.inkSoft, textAlign: 'center', textWrap: 'pretty',
         }}>
-          <b style={{ color: VT.ink }}>Стоимость подписки окупается с первой заявки.</b> Сравните: вёрстка простого сайта у подрядчика — от 30 000 ₽, поддержка — ещё столько же в год. {BRAND.name} делает обе эти работы за 11 880 ₽ в год — и не пропадает после запуска.
+          Час работы SMM-щика стоит дороже. День в агентстве в десятки раз. Самосайт делает то же самое: без зарплаты, без отпусков, без забытых задач.
         </p>
       </div>
     </section>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// FAQ — 10 questions through «Самосайт сам …» (v2.1, PR-H)
+// ───────── BLOCK 10 · FAQ ─────────
 
-function FaqItem({ q, a, defaultOpen, mobile }) {
+const FAQ_NEW = [
+  {
+    q: '«Самосайт сам предлагает улучшения» — он что, переделает мой сайт без меня?',
+    a: 'Нет. Каждая рекомендация — это предложение. Сначала вы видите, как будет выглядеть. Дальше выбираете: применить, переделать иначе или отказаться. Без вашего «да» ничего не меняется. Не нужны рекомендации — отключите в настройках.',
+  },
+  {
+    q: 'На каких данных он строит рекомендации?',
+    a: 'На том, как вели себя посетители вашего сайта за прошлую неделю: что открыли, где закрыли, что нажали, откуда пришли. Никаких догадок, только реальные клики. Если данных мало (первая неделя или редко заходят) — рекомендаций просто не будет. Чтобы не выдумывать.',
+  },
+  {
+    q: 'А отменить уже применённую рекомендацию можно?',
+    a: 'Да, любую правку откатываем в один клик. История правок хранится 90 дней.',
+  },
+];
+
+const FAQ_REST = [
+  {
+    q: 'А сам тексты править смогу?',
+    a: 'Да. Откройте сайт, нажмите на любой блок — правьте прямо там. Так же замените фото, скроете услугу или поправите цену. Сайт ваш.',
+  },
+  {
+    q: 'У меня нет ни Telegram-канала, ни страницы в Яндекс.Картах. Что делать?',
+    a: 'Загрузите 5–10 фото работ, скриншот шапки профиля или просто фото меню или буклета. Самосайт соберёт сайт из этого. На стартовой странице есть кнопка «Загрузить фото».',
+  },
+  {
+    q: 'А если Самосайт напишет что-то не то?',
+    a: 'Поправите в кабинете, пара кликов. Если совсем не нравится — нажмите «пересобрать», Самосайт напишет заново с другим тоном или акцентом.',
+  },
+  {
+    q: 'Мой Telegram-канал закрытый. Самосайт его прочитает?',
+    a: 'Да. На время сборки добавьте бота @SamositeIntakeBot админом в свой канал на пять минут. Прочитаем посты и сразу выйдем. Бот не пишет в канал и не видит подписчиков.',
+  },
+  {
+    q: 'Как Самосайт понимает, какие отзывы лучшие?',
+    a: 'Читает все отзывы из источника, отбрасывает односложные («норм», «-», «ок»), тройки, спам и токсичные. Из оставшихся выбирает 4–6 самых тёплых и конкретных. Раз в неделю проверяет: появился отзыв сильнее — заменит.',
+  },
+  {
+    q: 'Куда Самосайт отправит заявку, если у меня нет Telegram?',
+    a: 'Выбираете один канал из четырёх: Telegram, MAX (российский мессенджер от VK), email или SMS на телефон. Заявка падает туда. Никаких CRM и отдельных приложений.',
+  },
+  {
+    q: 'А мой домен подключить можно?',
+    a: 'Если домен уже есть — пришлите, поможем настроить DNS. Если нет — сайт сразу живёт на адресе ваш-сайт.samosite.online со всем тем же самым. Бесплатно.',
+  },
+  {
+    q: 'Что с моими данными, если я откажусь от подписки?',
+    a: 'Сайт перестаёт показываться сразу. Тексты, фото и заявки удаляются в течение 10 дней. До удаления скачаете архив (HTML и фотографии) одной кнопкой. По ФЗ-152, все данные хранятся в России.',
+  },
+  {
+    q: 'А если клиент пожалуется на сайт — кто отвечает?',
+    a: 'За контент отвечаете вы как владелец дела. Мы проверяем, что текст не нарушает закон. Фактическая точность — на вас. «Стерильные инструменты», «гарантия 14 дней» — это ваши обещания. Если клиент пишет про техническую проблему сайта — напишите нам, поправим.',
+  },
+  {
+    q: 'Чего Самосайт НЕ умеет?',
+    a: 'Не сделает сайт «из ничего» — нужна хотя бы одна ссылка или фото. Не редактирует фото и не подбирает чужие. Не отвечает клиентам в чатах — только присылает заявки. Не покупает домен и не настраивает корпоративную почту. Не делает интернет-магазины с оплатой — только заявки.',
+  },
+];
+
+function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
   return (
     <details open={defaultOpen} style={{
-      background: VT.white, border: `1px solid ${VT.line}`,
+      background: VT.white, border: `1px solid ${highlight ? VT.accent : VT.line}`,
       borderRadius: 14, padding: 0, overflow: 'hidden',
+      position: 'relative',
     }}>
       <summary style={{
         listStyle: 'none', cursor: 'pointer',
@@ -2307,9 +1889,7 @@ function FaqItem({ q, a, defaultOpen, mobile }) {
         fontSize: mobile ? 15.5 : 16.5, fontWeight: 600, color: VT.ink,
         lineHeight: 1.35,
       }}>
-        <style>{`
-          details > summary::-webkit-details-marker { display: none; }
-        `}</style>
+        <style>{`details > summary::-webkit-details-marker { display: none; }`}</style>
         <span style={{ flex: 1 }}>{q}</span>
         <span style={{
           flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%',
@@ -2328,114 +1908,68 @@ function FaqItem({ q, a, defaultOpen, mobile }) {
 }
 
 function FaqSection({ mobile }) {
-  // 0.5.0 — FAQ reordered per COPY.md §9:
-  //   • «Что НЕ умеет» moved to position 4 (was last) — honesty up front.
-  //   • Two new questions about «подбирает стиль» and «себя улучшит»
-  //     (the new differentiators in BigFeatures).
-  //   • «нет Telegram-канала» answer references «фото буклета или меню»
-  //     instead of legacy «фото визитки».
-  //   • «Может ли подключить домен» uses literal «ваше-имя.…» instead of
-  //     angle-bracket syntax.
-  const faqs = [
-    {
-      q: `А если ${BRAND.name} сам напишет что-то не то?`,
-      a: <>Все тексты можно поправить в личном кабинете — пара кликов. Если совсем не нравится — нажмите «пересобрать», и {BRAND.name} напишет заново с другим тоном или акцентом.</>
-    },
-    {
-      q: 'Я могу сам править тексты после сборки?',
-      a: 'Да. В личном кабинете прямо на сайте — клик по любому блоку, правите текст. Также можно заменить фото, скрыть услугу, поправить цену. Сайт ваш.'
-    },
-    {
-      q: 'Что если у меня нет Telegram-канала и нет карточки в Яндекс.Картах?',
-      a: <>Загрузите 5–10 фото работ, скриншот шапки профиля или фото буклета или меню — {BRAND.name} соберёт сайт из этого. На стартовой странице есть ссылка «Нет ссылки? Загрузите фото буклета, меню или работ».</>
-    },
-    {
-      q: `Что ${BRAND.name} сам НЕ умеет?`,
-      a: <>
-        Не пишет сайт «с нуля без источника» — нужна хотя бы одна ссылка или фото.<br/>
-        Не редактирует фото и не подбирает чужие.<br/>
-        Не отвечает клиентам в чатах за вас — только присылает заявки.<br/>
-        Не покупает домен и не настраивает корпоративную почту.<br/>
-        Не делает интернет-магазины с оплатой — только заявки.<br/>
-        Не применяет улучшения автоматически — только предлагает, решаете вы.<br/>
-        Не гарантирует уникальность стиля на 100% — два бизнеса в одной нише с похожими источниками могут получить похожие палитры.
-      </>
-    },
-    {
-      q: `Что значит «${BRAND.name} сам подбирает стиль»? Сайт получится непохожим на чужие?`,
-      a: 'Да. ИИ смотрит на ваш визуальный язык: цвета логотипа, фотографии, тон постов. Подбирает палитру, шрифты и расположение блоков под вашу стилистику, а не из десятка стандартных шаблонов. Два сайта от разных мастеров маникюра будут выглядеть по-разному — даже если оба собраны из Telegram-канала.'
-    },
-    {
-      q: `Как ${BRAND.name} понимает, что улучшить на сайте?`,
-      a: 'Смотрит на поведение посетителей: какие блоки люди читают, а какие пролистывают, на чём закрывают вкладку, какие услуги кликают, какие нет. Раз в неделю присылает короткий разбор: «замените фото на первом экране», «цена услуги Х отпугивает — попробуйте другую формулировку», «отзыв номер 3 работает лучше всех — добавьте ещё похожих». Применить правку — одна кнопка. Отклонить — тоже. Решает всегда владелец.'
-    },
-    {
-      q: `Мой Telegram-канал закрытый. ${BRAND.name} его прочитает?`,
-      a: <>Да. На время сбора добавьте бота <Mono style={{ fontSize: 13, color: VT.ink }}>{BRAND.bot}</Mono> админом в свой канал на 5 минут — мы прочитаем посты и сразу выйдем. Это безопасно: бот не пишет в канал и не видит ваших подписчиков.</>
-    },
-    {
-      q: `Как ${BRAND.name} сам понимает, какие отзывы лучшие?`,
-      a: 'Читает все отзывы из источника, отбрасывает односложные («норм», «-», «ок»), тройки, спам и токсичные. Из оставшихся выбирает 4–6 самых тёплых и конкретных — тех, что прямо рассказывают, что понравилось. Каждую неделю проверяет: появился отзыв сильнее — заменит.'
-    },
-    {
-      q: `Куда ${BRAND.name} сам отправит заявку, если у меня нет Telegram?`,
-      a: 'Выбираете один канал из четырёх: Telegram, телефон (SMS), email или MAX (российский мессенджер от VK). Заявка падает туда. Никаких CRM и отдельных приложений — только то, что вы и так читаете.'
-    },
-    {
-      q: `Может ли ${BRAND.name} сам подключить мой домен?`,
-      a: <>Если у вас уже есть домен — пришлите его, мы поможем настроить DNS. Если нет — сайт сразу живёт на адресе <Mono style={{ fontSize: 13, color: VT.ink }}>{`ваше-имя.${BRAND.domain}`}</Mono> со всем тем же самым, бесплатно.</>
-    },
-    {
-      q: 'Что с моими данными, если я откажусь от подписки?',
-      a: 'Сайт перестаёт показываться сразу. Все ваши данные — тексты, фото, заявки клиентов — удаляются в течение 10 дней. До удаления можно скачать архив (HTML + фото) одной кнопкой. По ФЗ-152 — все данные хранятся в РФ.'
-    },
-    {
-      q: 'А если клиент жалуется на сайт — кто отвечает?',
-      a: 'Ответственность за контент несёте вы как владелец дела. Мы проверяем, что текст не нарушает закон, но не контролируем фактическую точность («стерильные инструменты», «гарантия 14 дней» — это ваши обещания). Если клиент пишет про техническую проблему сайта — пишите нам, поправим.'
-    },
-  ];
-
   return (
-    <section style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 110, position: 'relative', zIndex: 1 }} id="faq">
+    <section id="faq" style={{ ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
-        <SectionTitle mobile={mobile}>Что чаще всего<br/>спрашивают</SectionTitle>
+        <H2 mobile={mobile}>Что обычно хотят уточнить</H2>
       </div>
 
       <div style={{
         marginTop: mobile ? 28 : 48,
-        maxWidth: mobile ? '100%' : 820,
+        maxWidth: mobile ? '100%' : 860,
         margin: `${mobile ? 28 : 48}px auto 0`,
-        display: 'flex', flexDirection: 'column', gap: 10,
       }}>
-        {faqs.map((f, i) => <FaqItem key={f.q} q={f.q} a={f.a} mobile={mobile} defaultOpen={i === 0} />)}
+        {/* new (top) */}
+        <div style={{
+          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+          color: VT.accent, fontWeight: 700, marginBottom: 12,
+          display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: VT.accent }} />
+          ПРО ЕЖЕНЕДЕЛЬНЫЕ РЕКОМЕНДАЦИИ
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {FAQ_NEW.map((f, i) => (
+            <FaqItem key={f.q} q={f.q} a={f.a} defaultOpen={i === 0} mobile={mobile} highlight />
+          ))}
+        </div>
+
+        {/* the rest */}
+        <div style={{
+          marginTop: 28,
+          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+          color: VT.inkFaint, fontWeight: 600, marginBottom: 12,
+        }}>
+          ОСТАЛЬНЫЕ ВОПРОСЫ
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {FAQ_REST.map(f => (
+            <FaqItem key={f.q} q={f.q} a={f.a} mobile={mobile} />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// FINAL FREE-MONTH CTA — Dojim block (v2.1)
+// ───────── BLOCK 11 · FINAL CTA ─────────
 
-function FreeMonthSection({ mobile }) {
-  const bullets = [
-    <>Сайт на адресе <Mono style={{ fontSize: 13, color: '#fff' }}>{`ваше-имя.${BRAND.domain}`}</Mono></>,
-    'Кнопка «Записаться» и приём заявок в мессенджер',
-    'Свежие отзывы и фото каждую неделю',
-    'Аналитика посещений и заявок в личном кабинете',
+function FinalCtaSection({ mobile }) {
+  // ladder data: 2 часа / неделя / месяц
+  const ladder = [
+    { when: 'Через 2 часа', what: 'у вас сайт, который принимает заявки' },
+    { when: 'Через неделю', what: 'Самосайт пришлёт первые предложения, что улучшить' },
+    { when: 'Через месяц', what: 'сайт, который вы сами бы не догадались собрать' },
   ];
 
   return (
-    <section style={{
+    <section id="cta" style={{
       ...sectionPad(mobile),
+      marginTop: mobile ? 64 : 130,
       position: 'relative', zIndex: 1,
       maxWidth: mobile ? '100%' : 1360,
-      // 0.2.7 — explicit marginBottom so prod compositions that append their
-      // own footer immediately after <FreeMonthSection /> get visible air
-      // between the dark CTA block and the footer. Without this the section
-      // had `margin-bottom: 0` and prod's footer rendered flush against the
-      // bottom edge of the dark block on desktop (reported on samosite.online).
-      margin: `${mobile ? 64 : 110}px auto ${mobile ? 48 : 96}px`,
-    }} id="cta">
+      margin: `${mobile ? 64 : 130}px auto 0`,
+    }}>
       <div style={{
         background: 'oklch(0.20 0.020 60)', color: VT.bg,
         borderRadius: mobile ? 22 : 28,
@@ -2450,78 +1984,87 @@ function FreeMonthSection({ mobile }) {
           position: 'absolute', left: -100, bottom: -120, width: 320, height: 320, borderRadius: '50%',
           background: `radial-gradient(circle, oklch(0.6 0.10 50) 0%, transparent 65%)`, opacity: 0.3,
         }} />
-        <div style={{ position: 'relative', maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', marginBottom: mobile ? 14 : 20 }}>
-            <GlyphGift size={mobile ? 58 : 76} />
-          </div>
+
+        <div style={{ position: 'relative', maxWidth: 920, margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{
-            fontSize: mobile ? 30 : 54, fontWeight: 700, letterSpacing: '-0.03em',
-            margin: 0, lineHeight: 1.05, textWrap: 'balance',
+            fontSize: mobile ? 28 : 50, fontWeight: 700, letterSpacing: '-0.03em',
+            margin: 0, lineHeight: 1.08, textWrap: 'balance',
           }}>
-            Покажите ссылку — получите сайт за 2 часа
+            Через 2 часа — сайт.<br/>
+            Через неделю — первые предложения.<br/>
+            Через месяц — сайт, который вы сами<br/>бы не догадались собрать.
           </h2>
           <p style={{
             fontSize: mobile ? 16 : 19, lineHeight: 1.5, color: 'oklch(0.85 0.014 60)',
-            margin: '14px auto 0', maxWidth: 640, textWrap: 'pretty',
+            margin: `${mobile ? 16 : 22}px auto 0`, maxWidth: 720, textWrap: 'pretty',
           }}>
-            Через 2 часа у вас будет работающий сайт с услугами, ценами и отзывами. Через неделю — первые заявки в мессенджер.
+            Покажите Самосайту, где вы сейчас ведёте свои дела: Яндекс.Карты, Telegram, 2ГИС, Avito или Instagram. Или просто сфотографируйте меню или буклет. Дальше работает Самосайт.
+          </p>
+          <p style={{
+            fontSize: mobile ? 15 : 17, lineHeight: 1.5, color: 'oklch(0.92 0.012 60)',
+            margin: `${mobile ? 12 : 14}px auto 0`, maxWidth: 720, textWrap: 'pretty',
+            fontWeight: 500,
+          }}>
+            Первый месяц бесплатно. Для первой сотни — <b style={{ color: VT.accentSoft }}>490 ₽ в месяц навсегда</b>.
           </p>
 
-          {/* 4 bullets */}
+          {/* Ladder */}
           <div style={{
-            marginTop: mobile ? 24 : 36,
-            display: 'grid', gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
+            marginTop: mobile ? 26 : 36,
+            display: 'grid',
+            gridTemplateColumns: mobile ? '1fr' : 'repeat(3, 1fr)',
             gap: mobile ? 10 : 14,
             textAlign: 'left',
-            maxWidth: 680, margin: `${mobile ? 24 : 36}px auto 0`,
+            maxWidth: 880, margin: `${mobile ? 26 : 36}px auto 0`,
+            position: 'relative',
           }}>
-            {bullets.map((b, i) => (
+            {ladder.map((rung, i) => (
               <div key={i} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                padding: '12px 14px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
+                padding: mobile ? '16px 16px' : '20px 20px',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.10)',
+                borderRadius: 14,
+                display: 'flex', flexDirection: 'column', gap: 6,
+                position: 'relative',
               }}>
                 <span style={{
-                  flex: '0 0 auto', width: 20, height: 20, borderRadius: '50%',
-                  background: VT.accent, color: '#fff',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  marginTop: 1,
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.12em',
+                  color: VT.accentSoft, fontWeight: 700,
                 }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12 l4 4 10 -10"/>
-                  </svg>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: VT.accent }} />
+                  ШАГ {i + 1}
                 </span>
-                <span style={{ fontSize: mobile ? 14 : 15, color: 'oklch(0.92 0.012 60)', lineHeight: 1.4 }}>{b}</span>
+                <div style={{
+                  fontSize: mobile ? 18 : 21, fontWeight: 700, color: '#fff',
+                  letterSpacing: '-0.025em', lineHeight: 1.15,
+                }}>{rung.when}</div>
+                <div style={{
+                  fontSize: mobile ? 14 : 14.5, color: 'oklch(0.85 0.014 60)',
+                  lineHeight: 1.4, textWrap: 'pretty',
+                }}>{rung.what}</div>
               </div>
             ))}
           </div>
 
           {/* CTA */}
-          <div style={{ marginTop: mobile ? 24 : 32, display: 'inline-flex' }}>
-            <Btn iconRight={<IconArrow />} style={{ padding: mobile ? '14px 24px' : '18px 32px', fontSize: mobile ? 16 : 18 }}>
-              Собрать {BRAND.name}
+          <div style={{ marginTop: mobile ? 28 : 36, display: 'inline-flex' }}>
+            <Btn iconRight={<IconArrow />} style={{
+              padding: mobile ? '14px 24px' : '18px 32px', fontSize: mobile ? 16 : 18,
+            }}>
+              Собрать сайт за 2 часа
             </Btn>
           </div>
 
-          {/* Alt path */}
           <div style={{
-            marginTop: mobile ? 22 : 30,
-            paddingTop: mobile ? 18 : 22,
+            marginTop: mobile ? 20 : 26,
+            paddingTop: mobile ? 16 : 22,
             borderTop: '1px solid rgba(255,255,255,0.10)',
             fontSize: mobile ? 13.5 : 14.5, color: 'oklch(0.82 0.014 60)',
-            display: 'inline-flex', flexWrap: 'wrap', justifyContent: 'center',
-            gap: mobile ? 4 : 8, width: '100%',
           }}>
-            <span>Есть вопросы?</span>
-            <a style={{
+            Остались вопросы? <a style={{
               color: VT.accentSoft, textDecoration: 'underline', textUnderlineOffset: 3,
-            }}>Посмотрите ответы ↓</a>
-            <span>или</span>
-            <a style={{
-              color: VT.accentSoft, textDecoration: 'underline', textUnderlineOffset: 3,
-            }}>напишите нам →</a>
+            }}>Напишите нам →</a>
           </div>
         </div>
       </div>
@@ -2530,50 +2073,22 @@ function FreeMonthSection({ mobile }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// MAIN
 
-// StickyHeader — top nav bar.
-// 0.2.2 — extracted from SamosaytLanding as standalone export.
-// 0.2.3 — added loginHref + onMakeSiteClick props for prod-routing flexibility.
-//         Defaults preserve back-compat: loginHref = 'https://samosite.online/login',
-//         no onMakeSiteClick → fallback to <a href="#hero"> as in canvas demo.
-// 0.2.4 — self-contained: full-bleed background, internal padding only. Removed
-//         negative-margin escape from parent padding — now works in any wrapper,
-//         not just inside SamosaytLanding's padX-padded container.
-//         Added explicit hovers on nav links / login link / brand mark.
-// 0.4.0 — added homeHref prop (default '#hero'). Brand <BrandMark> wraps in
-//         <a href={homeHref}>. Lets prod consumers point the brand at their
-//         canonical landing route ('/') instead of patching click delegation
-//         themselves (see vitrina PR #138). Same additive shape as loginHref
-//         in 0.2.3 — zero visual diff for canvas / zero-prop callers.
-function StickyHeader({
-  mobile = false,
-  padX,
-  loginHref = 'https://samosite.online/login',
-  homeHref = '#hero',
-  onMakeSiteClick,
-}) {
-  const px = padX ?? (mobile ? 20 : 80);
-  const primaryCtaStyle = mobile
+// ── from landing-v3.jsx ──
+// Standalone sticky header (избегаем зависимости от landing-samosite.jsx,
+// чтобы v3-превью могло жить отдельно).
+function StickyHeader({ mobile = false }) {
+  const px = mobile ? 20 : 80;
+  const primaryStyle = mobile
     ? { background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
         padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
-        display: 'inline-flex', alignItems: 'center', gap: 4,
-        border: 'none', cursor: 'pointer', fontFamily: 'inherit' }
+        display: 'inline-flex', alignItems: 'center', gap: 4, border: 'none' }
     : { background: VT.accent, color: '#fff', fontWeight: 600,
         padding: '10px 20px', borderRadius: 999, fontSize: 14,
-        textDecoration: 'none',
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)',
-        border: 'none', cursor: 'pointer', fontFamily: 'inherit' };
-  const primaryLabel = mobile ? 'Собрать' : 'Собрать сайт';
-  // <button> if handler supplied, else fall back to <a href="#hero"> (canvas demo).
-  const PrimaryCta = onMakeSiteClick
-    ? <button type="button" onClick={onMakeSiteClick} style={primaryCtaStyle}>
-        {primaryLabel} <span aria-hidden="true">→</span>
-      </button>
-    : <a href="#hero" style={primaryCtaStyle}>
-        {primaryLabel} <span aria-hidden="true">→</span>
-      </a>;
+        textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6,
+        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)', border: 'none' };
+  const primaryLabel = mobile ? 'Собрать' : 'Собрать за 2 часа';
+
   return (
     <div className="ss-sticky-header" style={{
       position: 'sticky', top: 0, zIndex: 10,
@@ -2587,65 +2102,33 @@ function StickyHeader({
       boxSizing: 'border-box',
     }}>
       <style>{`
-        .ss-sticky-header a.ss-nav-link {
-          color: ${VT.inkSoft};
-          text-decoration: none;
-          position: relative;
-          padding: 6px 2px;
-          transition: color .15s ease;
-        }
-        .ss-sticky-header a.ss-nav-link::after {
-          content: '';
-          position: absolute;
-          left: 2px; right: 2px; bottom: 2px;
-          height: 1px;
-          background: ${VT.accent};
-          transform: scaleX(0);
-          transform-origin: left center;
-          transition: transform .18s ease;
-        }
+        .ss-sticky-header a.ss-nav-link { color: ${VT.inkSoft}; text-decoration: none; padding: 6px 2px; transition: color .15s ease; }
         .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
-        .ss-sticky-header a.ss-nav-link:hover::after { transform: scaleX(1); }
-        .ss-sticky-header a.ss-login-link {
-          color: ${VT.inkSoft};
-          text-decoration: none;
-          border-radius: 999px;
-          transition: color .15s ease, background-color .15s ease;
-        }
-        .ss-sticky-header a.ss-login-link:hover {
-          color: ${VT.ink};
-          background: ${VT.bgSoft || 'oklch(0.94 0.018 80)'};
-        }
-        .ss-sticky-header .ss-brand-hover {
-          display: inline-flex; align-items: center;
-          transition: opacity .15s ease;
-        }
-        .ss-sticky-header .ss-brand-hover:hover { opacity: 0.78; }
+        .ss-sticky-header a.ss-login-link { color: ${VT.inkSoft}; text-decoration: none; border-radius: 999px; }
+        .ss-sticky-header a.ss-login-link:hover { color: ${VT.ink}; background: ${VT.bgSoft}; }
       `}</style>
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 16,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
       }}>
-        <a href={homeHref} className="ss-brand-hover" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <a href="#hero" style={{ textDecoration: 'none', color: 'inherit' }}>
           <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
         </a>
         {!mobile ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14 }}>
-            <a href="#how" className="ss-nav-link">Как это работает</a>
+            <a href="#cycle" className="ss-nav-link">Цикл 4 сам</a>
+            <a href="#monday" className="ss-nav-link">Понедельник</a>
             <a href="#examples" className="ss-nav-link">Примеры</a>
-            <a href="#pricing" className="ss-nav-link">Цены</a>
+            <a href="#pricing" className="ss-nav-link">Цена</a>
             <a href="#faq" className="ss-nav-link">Помощь</a>
-            <a href={loginHref} className="ss-login-link" style={{
+            <a href="#login" className="ss-login-link" style={{
               fontWeight: 500, fontSize: 14, padding: '8px 16px',
             }}>Войти</a>
-            {PrimaryCta}
+            <a href="#hero" style={primaryStyle}>{primaryLabel} <span aria-hidden="true">→</span></a>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <a href={loginHref} className="ss-login-link" style={{
-              fontWeight: 500, fontSize: 13.5, padding: '8px 12px',
-            }}>Войти</a>
-            {PrimaryCta}
+            <a href="#login" className="ss-login-link" style={{ fontWeight: 500, fontSize: 13.5, padding: '8px 12px' }}>Войти</a>
+            <a href="#hero" style={primaryStyle}>{primaryLabel} <span aria-hidden="true">→</span></a>
           </div>
         )}
       </div>
@@ -2653,8 +2136,77 @@ function StickyHeader({
   );
 }
 
-function SamosaytLanding({ mobile = false }) {
-  const padX = mobile ? 20 : 80;
+function Footer({ mobile }) {
+  return (
+    <div style={{
+      ...sectionPad(mobile),
+      marginTop: mobile ? 40 : 64,
+      paddingTop: mobile ? 22 : 28,
+      borderTop: `1px solid ${VT.line}`,
+      display: 'flex', flexDirection: mobile ? 'column' : 'row',
+      gap: mobile ? 14 : 18,
+      justifyContent: 'space-between',
+      alignItems: mobile ? 'flex-start' : 'center',
+      fontSize: 12.5, color: VT.inkFaint, position: 'relative', zIndex: 1,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+        <BrandMark size={20} fontSize={15} color={VT.inkSoft} />
+        <span>© 2026 · {BRAND.domain} · все данные хранятся в РФ</span>
+      </div>
+      <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+        <a style={{ color: 'inherit' }}>Политика конфиденциальности</a>
+        <a style={{ color: 'inherit' }}>Оферта</a>
+        <a style={{ color: 'inherit' }}>Обратная связь</a>
+      </div>
+    </div>
+  );
+}
+
+function SamosaytLandingV3({ mobile = false }) {
+  const rootRef = React.useRef(null);
+  // Russian typography: don't leave 1-letter prepositions/conjunctions at the end of a line.
+  // Stitch them to the next word with nbsp at runtime.
+  React.useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const PREPS = /(^|[\s\u00A0(])([иваоксуяАИВОКСУЯ]|[Нн][еаио]|[Пп]о|[Зз]а|[Дд]о|[Оо]т|[Ии]з)(\s)/g;
+    const SKIP = new Set(['SCRIPT', 'STYLE', 'CODE', 'SVG', 'PATH', 'INPUT', 'TEXTAREA']);
+    const walk = (node) => {
+      if (!node) return;
+      if (node.nodeType === 3) {
+        const t = node.nodeValue;
+        if (!t || t.length < 3) return;
+        const nt = t.replace(PREPS, (_, pre, w, sp) => `${pre}${w}\u00A0`);
+        if (nt !== t) node.nodeValue = nt;
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      if (SKIP.has(node.tagName)) return;
+      const cs = node.getAttribute && node.getAttribute('data-mono');
+      if (cs === 'true') return;
+      for (let c = node.firstChild; c; c = c.nextSibling) walk(c);
+    };
+    walk(root);
+
+    // Strip trailing periods from headings, paragraphs, list items, buttons & summaries.
+    // (UI rule: no period after a heading or at the end of a single-purpose block.)
+    const STRIP = root.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, button, summary, blockquote');
+    STRIP.forEach(el => {
+      // last non-empty text node
+      const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      let last = null, n;
+      while ((n = tw.nextNode())) {
+        if (n.nodeValue && n.nodeValue.replace(/\s/g, '')) last = n;
+      }
+      if (!last) return;
+      const v = last.nodeValue;
+      const trimmed = v.replace(/[\s\u00A0]+$/, '');
+      // skip ellipsis or .. ; preserve ? !
+      if (!trimmed.endsWith('.') || trimmed.endsWith('...') || trimmed.endsWith('..')) return;
+      last.nodeValue = v.replace(/\.[\s\u00A0]*$/, '');
+    });
+  }, [mobile]);
+
   return (
     <>
       <style>{`
@@ -2662,156 +2214,102 @@ function SamosaytLanding({ mobile = false }) {
           border-color: ${VT.accent} !important;
           box-shadow: 0 0 0 4px ${VT.accentSoft}, 0 12px 32px -16px rgba(120,60,30,0.25) !important;
         }
-        .ss-hero-pill input::placeholder { color: ${VT.inkFaint}; opacity: 1; }
-        .ss-card-lift {
-          transition: transform .2s ease-out, box-shadow .2s ease-out;
-        }
-        .ss-card-lift:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 10px 20px -14px rgba(120,60,30,0.18);
-        }
-        .ss-story-card { transition: transform .2s ease-out; }
-        .ss-story-card:hover { transform: translateY(-1px); }
+        .ss-card-lift { transition: transform .2s ease-out, box-shadow .2s ease-out; }
+        .ss-card-lift:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -14px rgba(120,60,30,0.18); }
         .ss-pricing-card { transition: transform .2s ease-out, box-shadow .2s ease-out; }
-        .ss-pricing-card:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 14px 24px -16px rgba(120,60,30,0.22);
-        }
-
-        a[href="#hero"], a[href="#book"], a[href="/admin-demo"],
-        a[href*="samosite.online/login"], a[href="client-admin-demo.html"],
-        button {
-          transition: transform .15s ease, box-shadow .15s ease, filter .15s ease, background-color .15s ease;
-        }
-        a[href="#hero"]:hover, a[href="#book"]:hover,
-        a[href="/admin-demo"]:hover, a[href="client-admin-demo.html"]:hover,
-        a[href*="samosite.online/login"]:hover,
-        button:hover:not(:disabled) {
-          transform: translateY(-1px);
-          filter: brightness(0.95);
-          box-shadow: 0 16px 32px -14px rgba(120,60,30,0.45);
-        }
-        a:focus-visible, button:focus-visible {
-          outline: 2px solid ${VT.accent};
-          outline-offset: 3px;
-          border-radius: 6px;
-        }
-
+        .ss-pricing-card:hover { transform: translateY(-1px); box-shadow: 0 24px 60px -24px rgba(120,60,30,0.35); }
         details summary { transition: background-color .15s ease; }
         details summary:hover { background-color: ${VT.bgSoft}; }
-
         html { scroll-behavior: smooth; }
       `}</style>
-    <div style={{
-      width: '100%', minHeight: '100%', background: VT.bg, color: VT.ink,
-      fontFamily: VT.font.sans,
-      paddingTop: 0,
-      paddingBottom: mobile ? 32 : 64,
-      position: 'relative', overflow: 'hidden',
-      letterSpacing: '-0.01em',
-    }}>
-      {/* decorative blobs */}
-      <div aria-hidden="true" style={{
-        position: 'absolute',
-        right: mobile ? -120 : -180, top: mobile ? -100 : -160,
-        width: mobile ? 380 : 720, height: mobile ? 380 : 720,
-        borderRadius: '50%',
-        background: `radial-gradient(circle at 30% 30%, ${VT.accentSoft} 0%, transparent 65%)`,
-        opacity: 0.85, pointerEvents: 'none',
-      }} />
-      <div aria-hidden="true" style={{
-        position: 'absolute',
-        left: mobile ? -100 : -120,
-        top: mobile ? 700 : 600,
-        width: mobile ? 280 : 480, height: mobile ? 280 : 480,
-        borderRadius: '50%',
-        background: `radial-gradient(circle, oklch(0.94 0.020 90) 0%, transparent 70%)`,
-        opacity: 0.7, pointerEvents: 'none',
-      }} />
 
-      <StickyHeader mobile={mobile} padX={padX} />
-
-      {/* 0.2.6 — no more padX wrapper around content. Each section / hero /
-          footer self-pads via sectionPad(mobile) so the layout works the same
-          when sections are composed individually in prod. */}
-      <div id="hero" />
-      <HeroBlock mobile={mobile} />
-      <div id="examples" />
-      <ExamplesSection mobile={mobile} />
-      <div id="how" />
-      <StorySection mobile={mobile} />
-      <PlatformsSection mobile={mobile} />
-      <BigFeaturesSection mobile={mobile} />
-      <OwnershipSection mobile={mobile} />
-      <AnalyticsSection mobile={mobile} />
-      <div id="pricing" />
-      <PricingSection mobile={mobile} />
-      <FaqSection mobile={mobile} />
-      <FreeMonthSection mobile={mobile} />
-
-      {/* slim footer — self-padded */}
-      <div style={{
-        ...sectionPad(mobile),
-        marginTop: mobile ? 40 : 64,
-        paddingTop: mobile ? 22 : 28,
-        borderTop: `1px solid ${VT.line}`,
-        display: 'flex', flexDirection: mobile ? 'column' : 'row',
-        gap: mobile ? 14 : 18,
-        justifyContent: 'space-between',
-        alignItems: mobile ? 'flex-start' : 'center',
-        fontSize: 12.5, color: VT.inkFaint, position: 'relative', zIndex: 1,
+      <div ref={rootRef} className="ss-v3-root" style={{
+        width: '100%', minHeight: '100%', background: VT.bg, color: VT.ink,
+        fontFamily: VT.font.sans, paddingTop: 0,
+        paddingBottom: mobile ? 32 : 64,
+        position: 'relative', overflow: 'hidden',
+        letterSpacing: '-0.01em',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          <BrandMark size={20} fontSize={15} color={VT.inkSoft} />
-          <span>© 2026 · {BRAND.domain} · все данные хранятся в РФ</span>
-        </div>
-        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
-          <a style={{ color: 'inherit' }}>Политика конфиденциальности</a>
-          <a style={{ color: 'inherit' }}>Оферта</a>
-          <a style={{ color: 'inherit' }}>Обратная связь</a>
-        </div>
+        {/* decorative blobs */}
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          right: mobile ? -120 : -180, top: mobile ? -100 : -160,
+          width: mobile ? 380 : 720, height: mobile ? 380 : 720,
+          borderRadius: '50%',
+          background: `radial-gradient(circle at 30% 30%, ${VT.accentSoft} 0%, transparent 65%)`,
+          opacity: 0.85, pointerEvents: 'none',
+        }} />
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          left: mobile ? -100 : -120,
+          top: mobile ? 700 : 600,
+          width: mobile ? 280 : 480, height: mobile ? 280 : 480,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, oklch(0.94 0.020 90) 0%, transparent 70%)`,
+          opacity: 0.7, pointerEvents: 'none',
+        }} />
+
+        <StickyHeader mobile={mobile} />
+        <HeroBlock        mobile={mobile} />
+        <ExamplesSection  mobile={mobile} />
+        <CycleSection     mobile={mobile} />
+        <MondaySection    mobile={mobile} />
+        <BaseWorkSection  mobile={mobile} />
+        <SourcesSection   mobile={mobile} />
+        <OwnershipSection mobile={mobile} />
+        <AnalyticsSection mobile={mobile} />
+        <PricingSection   mobile={mobile} />
+        <FaqSection       mobile={mobile} />
+        <FinalCtaSection  mobile={mobile} />
+        <Footer mobile={mobile} />
       </div>
-    </div>
     </>
   );
 }
 
-function SamosaytLanding_Desktop() { return <SamosaytLanding mobile={false} />; }
-function SamosaytLanding_Mobile()  { return <SamosaytLanding mobile={true} />; }
+function SamosaytLandingV3_Desktop() { return <SamosaytLandingV3 mobile={false} />; }
+function SamosaytLandingV3_Mobile()  { return <SamosaytLandingV3 mobile={true} />; }
 
-const Landing = SamosaytLanding;
+// ─────────────────────────────────────────────────────────────
+// Public exports — canon 0.6.0
+// ─────────────────────────────────────────────────────────────
+// Back-compat aliases (kept so 0.5.x consumers still resolve, but visually point
+// at the new v3 components — see CHANGELOG 0.6.0 "BREAKING" notes).
+const SamosaytLanding = SamosaytLandingV3;
+const Landing = SamosaytLandingV3;
+const ConceptA_Desktop = SamosaytLandingV3_Desktop;
+const ConceptA_Mobile = SamosaytLandingV3_Mobile;
+const SamosaytLanding_Desktop = SamosaytLandingV3_Desktop;
+const SamosaytLanding_Mobile = SamosaytLandingV3_Mobile;
+// HeroBlock & HeroSection — same component (v3 HeroBlock).
 const HeroSection = HeroBlock;
 
-const ConceptA_Desktop = SamosaytLanding_Desktop;
-const ConceptA_Mobile = SamosaytLanding_Mobile;
-
 export {
+  // v3 landing (canonical names)
+  SamosaytLandingV3,
+  SamosaytLandingV3_Desktop,
+  SamosaytLandingV3_Mobile,
+
+  // Back-compat aliases — visually point at v3
   SamosaytLanding,
   SamosaytLanding_Desktop,
   SamosaytLanding_Mobile,
-  StickyHeader,
-  HeroPlatformStrip,
+  Landing,
   ConceptA_Desktop,
   ConceptA_Mobile,
-  Landing,
-  HeroSection,
+
+  // Sections — composable
+  StickyHeader,
   HeroBlock,
+  HeroSection,
   ExamplesSection,
-  StorySection,
-  PlatformsSection,
-  BigFeaturesSection,
+  CycleSection,
+  MondaySection,
+  BaseWorkSection,
+  SourcesSection,
   OwnershipSection,
   AnalyticsSection,
   PricingSection,
   FaqSection,
-  FreeMonthSection,
-  SectionTitle,
-  SectionSub,
-  FeatureGlyph,
-  StoryStepColorful,
-  PlatformLogo,
-  PlatformCard,
-  FeatureCard,
-  SiteCard
+  FinalCtaSection,
 };
-

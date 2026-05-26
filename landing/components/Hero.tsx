@@ -8,16 +8,19 @@
  * Inline-styled canvas → Tailwind classes; tokens live in
  * `tailwind.config.ts` (paper / ink / accent / line).
  *
- * Copy anchors (locked to canon 0.5.0 / packages/canon/docs/COPY.md):
- *   - H1 "Сайт, который соберётся из вашей ссылки — и дальше работает сам"
- *     (две акцент-фразы, без eyebrow)
- *   - Single input + one primary CTA — zero-friction Hero (PRD §4)
- *   - CTA «Собрать сайт» + microcopy «Без карты · Первый месяц
- *     бесплатно · Сайт через 2 часа» (mono, прямо под кнопкой)
- *   - Below: photo-link companion «Нет ссылки? Загрузите фото буклета,
- *     меню или работ» (canon 0.3.0 link OR photo flow)
- *   - Benefits stack удалён из Hero в v2 — теперь живёт ниже как
- *     самостоятельная <BigFeatures /> секция
+ * Copy anchors (locked to canon 0.6.0 / packages/canon/docs/COPY.md):
+ *   - H1 «Соберём за 2 часа сайт, который ловит заявки. Дальше он
+ *     сам становится лучше каждую неделю.» (two accent phrases:
+ *     «2 часа» + «сам становится лучше»)
+ *   - Two sub-paragraphs (sources list + 2-hour timeline + monday
+ *     recommendations foreshadow)
+ *   - CTA «Собрать сайт за 2 часа» + microcopy «990 ₽/мес · для
+ *     первой сотни 490 ₽ навсегда · первый месяц бесплатно, карту
+ *     привязывать не надо» (mono, прямо под кнопкой)
+ *   - Secondary link «Сначала посмотреть примеры ↓» (anchor to
+ *     #examples — Hero CTA skipper)
+ *   - Photo-link companion (prod-only — canon 0.6.0 merges photo
+ *     into the single input via placeholder hint)
  *
  * Behaviour — owned by this component (NOT in the design canvas):
  *   - URL paste is debounced via `useDeferredValue` then classified.
@@ -38,8 +41,7 @@
  * the public brand strictly.
  */
 
-import { Gift, Link as LinkIcon, Paperclip, X } from "lucide-react";
-import { HeroPlatformStrip } from "@samosite/canon/landing";
+import { Link as LinkIcon, Paperclip, X } from "lucide-react";
 
 import { useDeferredValue, useEffect, useId, useState } from "react";
 
@@ -51,18 +53,19 @@ import { SAMOSITE_OPEN_SUBMIT } from "./SiteHeader";
 import { SourceDetectionBadge } from "./SourceDetectionBadge";
 import { SubmitModal, type SubmitMode } from "./SubmitModal";
 
-// Placeholder — synced to canon 0.5.0 (packages/canon/src/landing/index.tsx
-// line 773): «Вставьте ссылку: Яндекс.Карты, Telegram, Avito…». 0.5.0
-// CHANGELOG: tells the user *what to do* (action verb) + lists three of
-// the most common sources, instead of describing the input shape.
-const PLACEHOLDER = "Вставьте ссылку: Яндекс.Карты, Telegram, Avito…";
-// canon 0.5.0 §Hero CTA — «Сделать Самосайт» → «Собрать сайт». Shorter,
-// imperative, no brand inside the button (brand lives in the mark).
-const CTA_TEXT = "Собрать сайт";
-// canon 0.5.0 §1.7 — microcopy line directly below the CTA (mono, ink-
-// soft). Replaces no-line / old shield-icon copy. Three deltas the user
-// needs to know BEFORE clicking «Собрать сайт».
-const CTA_MICROCOPY = "Без карты · Первый месяц бесплатно · Сайт через 2 часа";
+// canon 0.6.0 Hero copy (packages/canon/src/landing/index.tsx §HeroBlock).
+// Placeholder hints at BOTH paths supported in one input — keep parity
+// with canon's input pill copy.
+const PLACEHOLDER = "Вставьте ссылку или загрузите фото";
+// canon 0.6.0 CTA — «Собрать сайт» → «Собрать сайт за 2 часа». Adds
+// the SLA into the button label itself; same CTA copy appears in 4 more
+// places on the page (Cycle, Monday, Pricing, FinalCta).
+const CTA_TEXT = "Собрать сайт за 2 часа";
+// canon 0.6.0 microcopy under CTA — combines pricing + free-month promise.
+// «490 ₽ навсегда» is a frontend-only promise per TZ §5 (backend still on
+// 990 via ЮKassa). «карту привязывать не надо» replaces «без карты».
+const CTA_MICROCOPY =
+  "990 ₽/мес · для первой сотни 490 ₽ навсегда · первый месяц бесплатно, карту привязывать не надо";
 
 type PreviewState =
   | { phase: "idle" }
@@ -292,43 +295,38 @@ export function Hero() {
             }}
             className="mt-5 text-balance font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:!text-[76px] sm:leading-[1.04]"
           >
-            {/* canon 0.5.0 H1 — «соберётся из вашей ссылки → дальше работает
-                сам». Two accent spans (was three), no comma-inside-nowrap
-                trick, single em-dash bridge with desktop-only <br /> after.
-                Underline highlight kept on first accent on desktop only —
-                mobile drops it (canon source line 734 `!mobile && ...`). */}
-            Сайт, который{" "}
-            <span className="relative whitespace-normal px-1 text-accent sm:inline-block">
-              соберётся из вашей ссылки
+            {/* canon 0.6.0 H1 — «Соберём за 2 часа сайт, который ловит
+                заявки. Дальше он сам становится лучше каждую неделю.»
+                Two terracotta accents: «2 часа» (with underline highlight
+                on desktop) + «сам становится лучше». Period at the end
+                is intentional per canon. */}
+            Соберём за{" "}
+            <span className="relative whitespace-nowrap text-accent">
+              2 часа
               <span
                 aria-hidden="true"
                 className="absolute inset-x-1 bottom-1 -z-10 hidden h-3.5 rounded-[3px] bg-accent-soft opacity-70 sm:bottom-1.5 sm:block"
               />
-            </span>
-            {" — "}
-            <br className="hidden sm:block" />и дальше{" "}
-            <span className="whitespace-normal px-1 text-accent sm:inline-block">работает сам</span>
+            </span>{" "}
+            сайт, который ловит заявки.
+            <br className="hidden sm:block" /> Дальше он{" "}
+            <span className="text-accent">сам становится лучше</span> каждую неделю.
           </h1>
 
-          {/* Sub — canon 0.5.0 (packages/canon/src/landing/index.tsx
-              line 753). New shape:
-              • Opens with «{BRAND} на базе ИИ» + «соберёт сайт за 2 часа»
-                (single SLA across the page since 0.5.0 — old «за пару
-                минут» / «несколько минут» / «2 часа» trio collapsed
-                to one).
-              • Lists the four most common sources inline so the user
-                sees the promise scoped to *their* situation.
-              • Closes with the autonomous-after-launch promise:
-                «сам обновляет цены, отбирает отзывы и ловит заявки
-                в мессенджер» — three concrete verbs, no jargon. */}
-          <p className="mt-4 max-w-full text-pretty text-[17px] leading-[1.45] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[820px] sm:text-[20px]">
-            Самосайт на базе ИИ <b className="font-bold text-ink">соберёт сайт за 2 часа</b>{" "}
-            из того, что у вас уже есть — карточки на Яндекс.Картах, Telegram-канала, профиля
-            на Avito, фото буклета или меню. После запуска не бросит —{" "}
-            <b className="font-bold text-ink">
-              сам обновляет цены, отбирает отзывы и ловит заявки в мессенджер
-            </b>
-            .
+          {/* Sub — canon 0.6.0 splits the old single paragraph into TWO:
+              (1) «Покажите Самосайту, где вы сейчас ведёте свои дела…»
+                  — lists the 5 source families inline so the user sees
+                  the promise scoped to their situation.
+              (2) «Через 2 часа сайт принимает заявки. Дальше работает
+                  сам…» — sets the timeline + introduces the «monday
+                  recommendations» killer-feature foreshadowed below. */}
+          <p className="mt-4 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[860px] sm:text-[20px]">
+            Покажите Самосайту, где вы сейчас ведёте свои дела: Яндекс.Карты, Telegram, 2ГИС, Avito
+            или Instagram. Если ничего этого нет — просто сфотографируйте меню или буклет.
+          </p>
+          <p className="mt-2.5 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-3 sm:max-w-[860px] sm:text-[20px]">
+            Через <b className="font-bold text-ink">2 часа сайт принимает заявки</b>. Дальше
+            работает сам: обновляет, по понедельникам подсказывает, что поправить ради новых заявок.
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
@@ -427,47 +425,25 @@ export function Hero() {
             </button>
           </div>
 
-          {/* Compact platform list — canon `<HeroPlatformStrip>` drop-in
-              (canon 0.2.2, replaces our drifted hand-roll). Strip shows
-              7 supported sources (Я.Карты / Telegram / Instagram / 2ГИС /
-              Avito / Ваш старый сайт / Фото буклета или меню) with
-              canon brand-icons + center-aligned chips on desktop,
-              left-aligned on mobile. Canon ships a `mobile` bool prop;
-              we render BOTH variants and CSS toggles via Tailwind sm:
-              (same pattern as `ResponsiveCanonSection` on landing page).
-              Drift vs canon = 0 by construction. */}
-          <div className="hidden sm:block">
-            <HeroPlatformStrip mobile={false} />
-          </div>
-          <div className="sm:hidden">
-            <HeroPlatformStrip mobile={true} />
+          {/* «Сначала посмотреть примеры ↓» — canon 0.6.0 secondary
+              link under the microcopy. Skips Hero CTA, scrolls to the
+              Examples section. */}
+          <div className="mt-3 flex justify-start text-sm sm:mt-4 sm:justify-center">
+            <a
+              href="#examples"
+              className="inline-flex items-center gap-1.5 text-ink-soft underline decoration-line underline-offset-4 hover:text-ink"
+            >
+              Сначала посмотреть примеры
+              <span aria-hidden>↓</span>
+            </a>
           </div>
 
-          {/* Free-month плашка (v2.1.3 §1.3). Terracotta pill сразу под
-              формой — главное risk-reversal сообщение. Gift-icon +
-              «Первый месяц — бесплатно» (bold) + «далее 990 ₽/мес»
-              (тоньше). Полностью заменяет старую MICROCOPY-строку:
-              ShieldCheck-микрокопия была слабее визуально, юзеры её не
-              замечали. */}
-          <div className="mt-3 flex justify-start sm:mt-[22px] sm:justify-center">
-            <div className="inline-flex max-w-full flex-nowrap items-center gap-3 rounded-full border-[1.5px] border-accent bg-white px-4 py-2.5 sm:px-[14px] sm:py-3">
-              {/* Gift icon — circular terracotta bubble matching canon
-                  HeroBlock (line 757). 36×36 desktop, 32×32 mobile. */}
-              <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white sm:h-9 sm:w-9">
-                <Gift aria-hidden className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={2.2} />
-              </span>
-              {/* Stacked text column — title bold + sub muted. Canon
-                  HeroBlock lines 771-783. */}
-              <div className="flex min-w-0 flex-col">
-                <span className="text-[15px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[16px]">
-                  Первый месяц — бесплатно
-                </span>
-                <span className="mt-0.5 text-[12.5px] leading-[1.3] text-ink-soft sm:text-[13.5px]">
-                  далее <b className="font-semibold tabular-nums text-ink">990 ₽/мес</b>
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* HeroPlatformStrip + free-month pill removed in canon 0.6.0:
+              the platform chip-strip is now the standalone <SourcesSection>
+              right below in the page composition, and the free-month
+              promise lives inside CTA_MICROCOPY above («первый месяц
+              бесплатно, карту привязывать не надо»). Keeping any of
+              the old blocks here would double up the messaging. */}
         </div>
 
         {/* Hero extras — prod-only additions NOT in canon HeroBlock,
