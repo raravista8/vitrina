@@ -70,17 +70,18 @@ const SEO_KEYWORDS = [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  // Copy from docs/COPY.md §2.2 (v2.1 «три сам» H1) — single source of truth.
-  // Когда обновляешь visible H1 в `Hero.tsx`, синхронизируй ВСЕ четыре копии
+  // Copy synced to canon 0.5.0 / packages/canon/docs/COPY.md. Когда
+  // обновляешь visible H1 в `Hero.tsx`, синхронизируй ВСЕ четыре копии
   // ниже: SEO `title`, `description`, OG `title/description`, Twitter
-  // `title/description`. Иначе расхождение между SERP-snippet'ом и
-  // landing-страницей даёт «not what I expected» bounce.
+  // `title/description` + `opengraph-image.tsx` alt + body. Иначе
+  // расхождение между SERP-snippet'ом / соц-шерингом и landing-
+  // страницей даёт «not what I expected» bounce.
   title: {
-    default: "Самосайт — сайт, который сам себя соберёт и приведёт клиентов",
+    default: "Самосайт — соберёт сайт из вашей ссылки за 2 часа",
     template: "%s · Самосайт",
   },
   description:
-    "Самосайт — сайт-канал заявок для частных мастеров и малых услуг. ИИ собирает сайт из вашего источника (Telegram-канал, Яндекс.Карты, фото буклета или меню) за 2 часа и сам обновляет его каждую неделю.",
+    "Самосайт на базе ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт, профиля на Avito или фото буклета. Сам обновляет цены и ловит заявки в мессенджер.",
   applicationName: "Самосайт",
   authors: [{ name: "Самосайт" }],
   keywords: SEO_KEYWORDS,
@@ -90,14 +91,15 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: SITE_URL,
     siteName: "Самосайт",
-    title: "Сайт, который сам себя соберёт, сам обновит и сам приведёт клиентов",
+    title: "Сайт, который соберётся из вашей ссылки — и дальше работает сам",
     description:
-      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт или фото буклета или меню за 2 часа — и сам обновляет его каждую неделю.",
+      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт, профиля на Avito или фото буклета за 2 часа — и сам обновляет цены, отбирает отзывы, ловит заявки в мессенджер.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Самосайт — сайт, который сам себя соберёт",
-    description: "ИИ собирает сайт за 2 часа и сам ловит заявки. Первый месяц бесплатно.",
+    title: "Самосайт — соберёт сайт из вашей ссылки за 2 часа",
+    description:
+      "ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт или фото. Первый месяц бесплатно.",
   },
   robots: { index: true, follow: true },
   // Y.Webmaster ownership verification. Conditionally included — when
