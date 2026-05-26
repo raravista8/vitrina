@@ -18,7 +18,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Самосайт — сайт, который сам себя соберёт, сам обновит и сам приведёт клиентов";
+export const alt = "Самосайт — сайт, который соберётся из вашей ссылки и дальше работает сам";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,9 +61,10 @@ export default async function Image() {
         <span style={{ fontSize: 40, fontWeight: 700, color: "#2d1b14" }}>Самосайт</span>
       </div>
 
-      {/* H1 — v2.1 «три сам» pattern, synced with Hero.tsx visible H1.
-          Без trailing period (visible H1 тоже без точки), терракотовая
-          фраза = visual anchor. */}
+      {/* H1 — canon 0.5.0, synced with Hero.tsx visible H1. Two
+          terracotta accent phrases («соберётся из вашей ссылки»,
+          «работает сам»), em-dash bridge between lines. No trailing
+          period — matches visible H1. */}
       <div
         style={{
           display: "flex",
@@ -77,13 +78,10 @@ export default async function Image() {
       >
         <span>Сайт, который</span>
         <span>
-          <span style={{ color: "#c66333" }}>сам себя соберёт,</span>
+          <span style={{ color: "#c66333" }}>соберётся из вашей ссылки</span> —
         </span>
         <span>
-          <span style={{ color: "#c66333" }}>сам обновит</span> и
-        </span>
-        <span>
-          <span style={{ color: "#c66333" }}>сам приведёт клиентов</span>
+          и дальше <span style={{ color: "#c66333" }}>работает сам</span>
         </span>
       </div>
 
