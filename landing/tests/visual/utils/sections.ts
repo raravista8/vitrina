@@ -94,38 +94,25 @@ export const LANDING_SECTIONS: VisualSection[] = [
     id: "hero",
     selector: "[data-section-body='hero']",
     label: "Hero (#1)",
-    /* Hero @ 1440 audited (passes <2 % on Linux CI; ~2.44 % locally
-       due to macOS-vs-Linux AA drift — documented). 768/390 still
-       smoke-only: Hero's mobile reflow rearranges H1+free-month+
-       platform-list block enough to need its own tuning pass. */
-    auditedViewports: ["1440"],
+    /* canon 0.6.0 v3 H1 + structure differ from 0.5.x — old baseline
+       PNG is stale. Smoke-only until PR-B regenerates baselines from
+       the new canvas mirror. */
+    auditedViewports: [],
   },
-  /* Sections 2-10 — replaced by `@samosite/canon/landing` imports in
-     `landing/app/page.tsx::HomePage`. Each canon component is wrapped
-     in `<div data-section="<id>">` (see `ResponsiveCanonSection`) so
-     the visual spec selector `[data-section='<id>']` still resolves
-     on the canon-using prod.
-
-     Why all entries are smoke-only after the canon swap:
-     baselines in `tests/visual/baselines/*-*.png` were generated from
-     hand-rolled prod sections (pre-canon-package). Switching prod to
-     canon means the baselines are now STALE — they describe a layout
-     no longer rendered. Re-running pixel-diff would be a meaningless
-     comparison of canon dimensions vs old hand-rolled dimensions.
-
-     Two correct unlock paths (separate follow-up PR):
-       1. Regenerate baselines from the canon-using prod build itself
-          — pixel-diff becomes a regression gate ("did we accidentally
-          break our canon import?"). Loses ability to detect drift
-          between canon-source and what we render.
-       2. Regenerate baselines from canon-source directly via the
-          canon-host iframe, render prod-side, diff. This keeps the
-          "canon = truth" semantic and catches our consumption bugs.
-
-     Path 2 is the design intent (see `docs/handoff/PIXEL_PERFECT_SETUP.md`)
-     but requires updating `generate-baselines.ts` to render canon
-     components inside the consumer's React context rather than the
-     Babel-standalone canvas. Tracked as canon-integration follow-up. */
+  /* Sections 2-11 — canon 0.6.0 v3 narrative composition. Section ids
+     match `landing/app/page.tsx::HomePage` (the `<ResponsiveCanonSection
+     id="...">` wrapper id). All entries are smoke-only — baselines in
+     `tests/visual/baselines/*-*.png` were generated from canon 0.5.x
+     canvas-mirror sections. canon 0.6.0 removed 5 sections and added 5
+     — the old PNGs are now meaningless (different selectors AND
+     different rendered content). PR-B follow-up:
+       1. Rewrite `landing/tests/visual/canon-source/landing-samosite.jsx`
+          for v3 (canon 0.6.0 — 5 new sections, 5 removed).
+       2. Regenerate baselines in Linux Playwright container via
+          `infra/scripts/generate-canon-baselines-linux.sh`.
+       3. Re-enable audited viewports per the new section list.
+     Until PR-B lands, visual regression runs as a structural smoke
+     check — selector existence on prod, no pixel comparison. */
   {
     id: "examples",
     selector: "[data-section='examples']",
@@ -133,51 +120,57 @@ export const LANDING_SECTIONS: VisualSection[] = [
     auditedViewports: [],
   },
   {
-    id: "story",
-    selector: "[data-section='story']",
-    label: "Story (#3)",
+    id: "cycle",
+    selector: "[data-section='cycle']",
+    label: "Cycle (#3)",
     auditedViewports: [],
   },
   {
-    id: "platforms",
-    selector: "[data-section='platforms']",
-    label: "Platforms (#4)",
+    id: "monday",
+    selector: "[data-section='monday']",
+    label: "Monday (#4)",
     auditedViewports: [],
   },
   {
-    id: "big-features",
-    selector: "[data-section='big-features']",
-    label: "BigFeatures (#5)",
+    id: "base-work",
+    selector: "[data-section='base-work']",
+    label: "BaseWork (#5)",
+    auditedViewports: [],
+  },
+  {
+    id: "sources",
+    selector: "[data-section='sources']",
+    label: "Sources (#6)",
     auditedViewports: [],
   },
   {
     id: "ownership",
     selector: "[data-section='ownership']",
-    label: "Ownership (#6)",
+    label: "Ownership (#7)",
     auditedViewports: [],
   },
   {
     id: "analytics",
     selector: "[data-section='analytics']",
-    label: "Analytics (#7)",
+    label: "Analytics (#8)",
     auditedViewports: [],
   },
   {
     id: "pricing",
     selector: "[data-section='pricing']",
-    label: "Pricing (#8)",
+    label: "Pricing (#9)",
     auditedViewports: [],
   },
   {
     id: "faq",
     selector: "[data-section='faq']",
-    label: "FAQ (#9)",
+    label: "FAQ (#10)",
     auditedViewports: [],
   },
   {
-    id: "free-month",
-    selector: "[data-section='free-month']",
-    label: "FreeMonth CTA (#10)",
+    id: "final-cta",
+    selector: "[data-section='final-cta']",
+    label: "Final CTA (#11)",
     auditedViewports: [],
   },
 ];
