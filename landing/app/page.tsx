@@ -81,12 +81,20 @@ function ResponsiveCanonSection({
 }: {
   Component: (props: { mobile: boolean }) => React.JSX.Element;
   /** Identifier used by visual-regression spec selector
-   *  `[data-section=<id>]`. Stays stable across canon refreshes (the
-   *  wrapper is ours, the rendered canon variant inside is theirs). */
+   *  `[data-section=<id>]` AND by in-page anchor navigation
+   *  (`<a href="#examples">` in Hero, canon StickyHeader nav, etc.).
+   *  Stays stable across canon refreshes (the wrapper is ours, the
+   *  rendered canon variant inside is theirs).
+   *
+   *  `scroll-mt-20` (Tailwind = `scroll-margin-top: 5rem` = 80 px)
+   *  offsets anchor-scrolls so the section's top sits BELOW the
+   *  sticky header instead of being hidden behind it. Canon's
+   *  StickyHeader is ~64-72 px tall — 80 px gives comfortable
+   *  breathing room. */
   id: string;
 }) {
   return (
-    <div data-section={id}>
+    <div id={id} data-section={id} className="scroll-mt-20">
       <div className="hidden sm:block">
         <Component mobile={false} />
       </div>
