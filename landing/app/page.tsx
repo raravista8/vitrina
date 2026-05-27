@@ -56,6 +56,7 @@ import {
   SourcesSection,
 } from "@samosite/canon/landing";
 
+import { CanonCtaBindings } from "@/components/CanonCtaBindings";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -110,6 +111,14 @@ export default function HomePage() {
   return (
     <main id="top">
       <SiteHeader />
+      {/* CanonCtaBindings — DOM-mutation wiring for canon body CTAs.
+          Marks Monday/Pricing/FinalCta accent buttons with
+          `data-ss-primary-cta` so SiteHeader's existing global click
+          delegation opens SubmitModal. Rewrites Ownership demo link
+          from canon's relative `client-admin-demo.html` to `/admin-demo`.
+          Must mount AFTER SiteHeader so its click handler is wired
+          first; relative order to Hero doesn't matter. */}
+      <CanonCtaBindings />
       <Hero />
       <ResponsiveCanonSection id="examples" Component={ExamplesSection} />
       <ResponsiveCanonSection id="cycle" Component={CycleSection} />
