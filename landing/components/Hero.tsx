@@ -296,10 +296,13 @@ export function Hero() {
             className="mt-5 text-balance font-bold leading-[1.08] tracking-tightest sm:mt-7 sm:!text-[76px] sm:leading-[1.04]"
           >
             {/* canon 0.6.0 H1 — «Соберём за 2 часа сайт, который ловит
-                заявки. Дальше он сам становится лучше каждую неделю.»
+                заявки. Дальше он сам становится лучше каждую неделю»
                 Two terracotta accents: «2 часа» (with underline highlight
-                on desktop) + «сам становится лучше». Period at the end
-                is intentional per canon. */}
+                on desktop) + «сам становится лучше». Trailing period
+                stripped per `docs/handoff/specs/04_typography.md §1`
+                (no period at end of headings) — canon's runtime
+                typography pass strips it from canon-rendered H1/H2 too,
+                this hand-rolled Hero needs to match by hand. */}
             Соберём за{" "}
             <span className="relative whitespace-nowrap text-accent">
               2 часа
@@ -310,7 +313,7 @@ export function Hero() {
             </span>{" "}
             сайт, который ловит заявки.
             <br className="hidden sm:block" /> Дальше он{" "}
-            <span className="text-accent">сам становится лучше</span> каждую неделю.
+            <span className="text-accent">сам становится лучше</span> каждую неделю
           </h1>
 
           {/* Sub — canon 0.6.0 splits the old single paragraph into TWO:
@@ -322,11 +325,11 @@ export function Hero() {
                   recommendations» killer-feature foreshadowed below. */}
           <p className="mt-4 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[860px] sm:text-[20px]">
             Покажите Самосайту, где вы сейчас ведёте свои дела: Яндекс.Карты, Telegram, 2ГИС, Avito
-            или Instagram. Если ничего этого нет — просто сфотографируйте меню или буклет.
+            или Instagram. Если ничего этого нет — просто сфотографируйте меню или буклет
           </p>
           <p className="mt-2.5 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-3 sm:max-w-[860px] sm:text-[20px]">
             Через <b className="font-bold text-ink">2 часа сайт принимает заявки</b>. Дальше
-            работает сам: обновляет, по понедельникам подсказывает, что поправить ради новых заявок.
+            работает сам: обновляет, по понедельникам подсказывает, что поправить ради новых заявок
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
