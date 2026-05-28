@@ -2892,41 +2892,41 @@ function MondaySection({ mobile }) {
 var BASE_ITEMS = [
   {
     title: "\u041B\u043E\u0432\u0438\u0442 \u0437\u0430\u044F\u0432\u043A\u0438",
-    body: "\u041A\u043B\u0438\u0435\u043D\u0442 \u043D\u0430\u0436\u0430\u043B \xAB\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F\xBB \u2014 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043F\u0430\u0434\u0430\u0435\u0442 \u0442\u0443\u0434\u0430, \u0433\u0434\u0435 \u0432\u0430\u043C \u0443\u0434\u043E\u0431\u043D\u043E: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS. \u0411\u0435\u0437 CRM \u0438 \u0431\u0435\u0437 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u043E\u0432.",
+    body: "\u041A\u043B\u0438\u0435\u043D\u0442 \u043D\u0430\u0436\u0430\u043B \xAB\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F\xBB, \u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u043F\u0430\u0434\u0430\u0435\u0442 \u0442\u0443\u0434\u0430, \u0433\u0434\u0435 \u0432\u0430\u043C \u0443\u0434\u043E\u0431\u043D\u043E: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS. \u0411\u0435\u0437 CRM \u0438 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u043E\u0432.",
     metric: "4 \u043A\u0430\u043D\u0430\u043B\u0430",
     metricNote: "\u043D\u0430 \u0432\u044B\u0431\u043E\u0440",
-    palette: { bg: "oklch(0.94 0.045 40)", ink: "oklch(0.42 0.16 35)", stroke: "oklch(0.85 0.08 40)" },
-    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+    palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
       /* @__PURE__ */ jsx4("rect", { x: "10", y: "14", width: "44", height: "36", rx: "5" }),
       /* @__PURE__ */ jsx4("path", { d: "M10 22 L32 36 L54 22" })
     ] })
   },
   {
     title: "\u041E\u0442\u0431\u0438\u0440\u0430\u0435\u0442 \u043E\u0442\u0437\u044B\u0432\u044B",
-    body: "\u0427\u0438\u0442\u0430\u0435\u0442 \u0432\u0441\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430. \u041D\u0430 \u0441\u0430\u0439\u0442 \u0441\u0442\u0430\u0432\u0438\u0442 4\u20136 \u0441\u0430\u043C\u044B\u0445 \u0442\u0451\u043F\u043B\u044B\u0445 \u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0445. \u041F\u043E\u044F\u0432\u0438\u043B\u0441\u044F \u043E\u0442\u0437\u044B\u0432 \u0441\u0438\u043B\u044C\u043D\u0435\u0435 \u2014 \u0437\u0430\u043C\u0435\u043D\u0438\u0442 \u0441\u0430\u043C.",
+    body: "\u0427\u0438\u0442\u0430\u0435\u0442 \u0432\u0441\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430, \u043D\u0430 \u0441\u0430\u0439\u0442 \u0441\u0442\u0430\u0432\u0438\u0442 4\u20136 \u0441\u0430\u043C\u044B\u0445 \u0442\u0451\u043F\u043B\u044B\u0445 \u0438 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u044B\u0445. \u041F\u0440\u0438\u0434\u0451\u0442 \u043E\u0442\u0437\u044B\u0432 \u0441\u0438\u043B\u044C\u043D\u0435\u0435 \u043F\u0440\u0435\u0436\u043D\u0438\u0445 \u2014 \u0437\u0430\u043C\u0435\u043D\u0438\u0442 \u0441\u0430\u043C.",
     metric: "4\u20136",
     metricNote: "\u043B\u0443\u0447\u0448\u0438\u0445 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E",
-    palette: { bg: "oklch(0.94 0.045 80)", ink: "oklch(0.42 0.13 70)", stroke: "oklch(0.86 0.08 80)" },
-    icon: /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
+    palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
+    icon: /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
   },
   {
-    title: "\u041F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A",
-    body: "\u0421\u0440\u0430\u0437\u0443 \u0432 \u0438\u043D\u0434\u0435\u043A\u0441\u0435 \u042F\u043D\u0434\u0435\u043A\u0441\u0430 \u0438 Google. \u0417\u0430\u0449\u0438\u0449\u0451\u043D\u043D\u043E\u0435 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435, \u0440\u0430\u0437\u043C\u0435\u0442\u043A\u0430 \u0434\u043B\u044F \u043A\u0430\u0440\u0442 \u0438 \u0441\u043D\u0438\u043F\u043F\u0435\u0442\u043E\u0432. \u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438.",
+    title: "\u0413\u043E\u0442\u043E\u0432 \u043A \u043F\u043E\u0438\u0441\u043A\u0443",
+    body: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0432\u0441\u0451 \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0435\u0442 \u0434\u043B\u044F \u042F\u043D\u0434\u0435\u043A\u0441\u0430 \u0438 Google: \u0437\u0430\u0449\u0438\u0449\u0451\u043D\u043D\u043E\u0435 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435, \u043A\u0430\u0440\u0442\u0430 \u0441\u0430\u0439\u0442\u0430, \u0440\u0430\u0437\u043C\u0435\u0442\u043A\u0430 \u0446\u0435\u043D \u0438 \u0447\u0430\u0441\u043E\u0432. \u0414\u0430\u043B\u044C\u0448\u0435 \u043F\u043E\u0438\u0441\u043A\u043E\u0432\u0438\u043A\u0438 \u043F\u043E\u0434\u0445\u0432\u0430\u0442\u044B\u0432\u0430\u044E\u0442 \u0441\u0430\u0439\u0442 \u0441\u0430\u043C\u0438, \u043E\u0431\u044B\u0447\u043D\u043E \u0437\u0430 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0434\u043D\u0435\u0439.",
     metric: "\u042F\u043D\u0434\u0435\u043A\u0441",
     metricNote: "+ Google",
-    palette: { bg: "oklch(0.94 0.04 145)", ink: "oklch(0.40 0.11 145)", stroke: "oklch(0.86 0.07 145)" },
-    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+    palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
       /* @__PURE__ */ jsx4("circle", { cx: "27", cy: "27", r: "14" }),
       /* @__PURE__ */ jsx4("path", { d: "M38 38 L54 54" })
     ] })
   },
   {
     title: "\u041E\u0442\u0441\u0435\u043A\u0430\u0435\u0442 \u0441\u043F\u0430\u043C",
-    body: "\u0410\u043D\u0442\u0438\u0431\u043E\u0442-\u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430, \u043A\u043E\u0442\u043E\u0440\u0443\u044E \u0436\u0438\u0432\u043E\u0439 \u0447\u0435\u043B\u043E\u0432\u0435\u043A \u043D\u0435 \u0437\u0430\u043C\u0435\u0447\u0430\u0435\u0442. \u0411\u043E\u0442\u044B \u043F\u043E\u043B\u0443\u0447\u0430\u044E\u0442 \u0442\u0438\u0448\u0438\u043D\u0443. \u0414\u043E \u0432\u0430\u0441 \u0434\u043E\u0445\u043E\u0434\u044F\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0438\u0435 \u0437\u0430\u044F\u0432\u043A\u0438.",
+    body: "\u0410\u043D\u0442\u0438\u0431\u043E\u0442-\u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430, \u043A\u043E\u0442\u043E\u0440\u0443\u044E \u0436\u0438\u0432\u043E\u0439 \u0447\u0435\u043B\u043E\u0432\u0435\u043A \u043D\u0435 \u0437\u0430\u043C\u0435\u0447\u0430\u0435\u0442. \u0411\u043E\u0442\u044B \u0443\u043F\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0432 \u0441\u0442\u0435\u043D\u0443, \u0434\u043E \u0432\u0430\u0441 \u0434\u043E\u0445\u043E\u0434\u044F\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0438\u0435 \u0437\u0430\u044F\u0432\u043A\u0438.",
     metric: "0",
     metricNote: "\u0431\u043E\u0442\u043E\u0432 \u0432 \u0437\u0430\u044F\u0432\u043A\u0430\u0445",
-    palette: { bg: "oklch(0.94 0.04 270)", ink: "oklch(0.42 0.15 270)", stroke: "oklch(0.85 0.08 270)" },
-    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+    palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
       /* @__PURE__ */ jsx4("path", { d: "M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z" }),
       /* @__PURE__ */ jsx4("path", { d: "M22 32 L29 39 L42 24" })
     ] })
@@ -2936,7 +2936,7 @@ function BaseWorkSection({ mobile }) {
   return /* @__PURE__ */ jsxs3("section", { id: "base", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
     /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
       /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2014 \u0442\u043E\u0436\u0435 \u043D\u0430 \u043D\u0451\u043C" }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438, \u0431\u0435\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0443\u0447\u0430\u0441\u0442\u0438\u044F." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438." })
     ] }),
     /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 48,
@@ -2968,16 +2968,16 @@ function BaseWorkSection({ mobile }) {
         }, children: [
           /* @__PURE__ */ jsx4("div", { style: {
             flex: "0 0 auto",
-            width: mobile ? 56 : 64,
-            height: mobile ? 56 : 64,
-            borderRadius: 16,
+            width: mobile ? 52 : 58,
+            height: mobile ? 52 : 58,
+            borderRadius: 14,
             background: VT.white,
             color: pal.ink,
-            border: `2px solid ${pal.ink}`,
+            border: `1px solid ${VT.line}`,
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: `3px 3px 0 0 ${pal.ink}`
+            boxShadow: "0 1px 2px rgba(40,28,18,0.04)"
           }, children: item.icon }),
           /* @__PURE__ */ jsxs3("div", { style: {
             textAlign: "right",
@@ -2988,9 +2988,9 @@ function BaseWorkSection({ mobile }) {
             gap: 0
           }, children: [
             /* @__PURE__ */ jsx4("div", { style: {
-              fontSize: mobile ? 26 : 34,
-              fontWeight: 800,
-              letterSpacing: "-0.035em",
+              fontSize: mobile ? 22 : 28,
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
               lineHeight: 1,
               color: pal.ink
             }, children: item.metric }),
