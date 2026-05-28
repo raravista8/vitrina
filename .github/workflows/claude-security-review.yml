@@ -1,0 +1,71 @@
+name: claude security review
+
+# Agentic security review (Anthropic's claude-code-security-review) on
+# every PR — complements the deterministic security.yml gates
+# (bandit / pip-audit / npm audit / gitleaks) with an LLM pass that
+# understands intent: SSRF, prompt-injection, PII/FZ-152 leaks,
+# raw-SQL, banned LLM imports. Project threat model lives in
+# .github/security-scan-instructions.md.
+#
+# Requires repo secret CLAUDE_API_KEY (Settings → Secrets and
+# variables → Actions). Until it's set the job no-ops with a notice
+# instead of red-X-ing every PR (see the gate step below).
+#
+# Action pinned to @main per Anthropic's documented usage. To harden
+# supply chain (SECURITY.md A03) pin to a commit SHA once a release
+# tag exists.
+
+on:
+  pull_request:
+
+# The action posts review findings as PR comments.
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: claude-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: security / claude review
+    runs-on: ubuntu-24.04
+    steps:
+      # Graceful gate: the review needs CLAUDE_API_KEY. Secrets can't be
+      # read in a job-level `if:`, so we check inside a step and skip the
+      # rest of the job when the key is absent — green check + notice,
+      # never a hard fail that would block merges before the operator
+      # wires the secret.
+      - name: Check for CLAUDE_API_KEY
+        id: gate
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+        run: |
+          if [ -z "${CLAUDE_API_KEY}" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Claude security review skipped::CLAUDE_API_KEY secret not set. Add it in Settings → Secrets and variables → Actions to enable AI security review on PRs."
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.gate.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+        with:
+          # Review the PR head; fetch a little history so the action can
+          # diff head against base.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Claude Code security review
+        if: steps.gate.outputs.enabled == 'true'
+        uses: anthropics/claude-code-security-review@main
+        with:
+          claude-api-key: ${{ secrets.CLAUDE_API_KEY }}
+          comment-pr: true
+          # Not our code / pure noise — vendored canon build output,
+          # committed PNG baselines + canvas mirror, deps, Next build.
+          exclude-directories: packages/canon/dist,landing/tests/visual/baselines,landing/tests/visual/canon-source,node_modules,landing/.next
+          # Vitrina threat model — focuses the audit on what matters here.
+          custom-security-scan-instructions: .github/security-scan-instructions.md
