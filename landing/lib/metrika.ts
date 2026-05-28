@@ -12,21 +12,38 @@
  *      `NEXT_PUBLIC_YANDEX_METRIKA_ID`, baked в build (см. `landing/Dockerfile`).
  *
  * Goals list (мейнтейним в одном месте — runbook `docs/runbooks/
- * yandex-metrika-goals.md` ссылается на эти имена):
+ * yandex-metrika-goals.md` ссылается на эти имена). Структура под canon
+ * 0.7.x landing (11 блоков). Каждое имя нужно завести руками на
+ * metrika.yandex.ru → «Цели» (тип «JavaScript-событие», идентификатор =
+ * строка ниже). См. runbook.
  *
+ * ── Воронка конверсии (P0) ──
  *   hero_paste            — юзер paste'ил что-то в Hero input
- *   hero_submit_attempt   — клик по «Сделать Самосайт» (frontend pre-API)
- *   hero_submit_success   — backend ответил 200 на submit (post-modal flow)
- *   pricing_view          — Pricing секция попала во viewport
- *   faq_open              — юзер открыл любой <details> в FAQ
- *   free_month_cta_click  — клик по CTA в финальном Dojim-блоке
+ *   cta_click             — клик по любой «Собрать сайт за 2 часа»;
+ *                           param `source`: header | hero | monday |
+ *                           pricing | final
+ *   hero_submit_attempt   — клик по CTA именно в Hero (+ detection/mode)
+ *   submit_modal_open     — модалка добавления сайта открылась (любой вход)
+ *   submit_photo_mode     — выбран режим загрузки фото
+ *   submit_contact_step   — дошёл до шага «куда писать»
+ *   hero_submit_success   — backend ответил 200 на submit
  *
- * Removed in v2.1.3 §1.2:
- *   socialproof_view      — SocialProof секция удалена из лендинга. Goal
- *                           НЕ удалять в metrika.yandex.ru (исторические
- *                           метрики остаются), но больше не fires.
+ * ── Вовлечённость по секциям (P1, scroll-into-view) ──
+ *   examples_view · cycle_view · monday_view · pricing_view ·
+ *   final_cta_view        — секция попала во viewport (по разу)
+ *   faq_open              — раскрыт любой <details> в FAQ (param `question`)
  *
- * Каждое имя нужно завести руками на metrika.yandex.ru → «Цели». См. runbook.
+ * ── Вторичные действия (P2) ──
+ *   examples_anchor_click — «Сначала посмотреть примеры ↓» в Hero
+ *   login_click           — «Войти» в шапке (→ /login)
+ *   feedback_open         — вход в фидбек; param `source`: fab | sources |
+ *                           footer | final
+ *   analytics_demo_click  — «Посмотреть демо ЛК» под аналитикой (→ /admin-demo)
+ *
+ * Removed (секций больше нет в canon 0.7.x — НЕ удалять в metrika.yandex.ru,
+ * исторические метрики остаются, но больше не fires):
+ *   socialproof_view      — SocialProof удалён (canon 0.6.0)
+ *   free_month_cta_click  — FreeMonth → FinalCta (canon 0.6.0)
  *
  * Пример usage:
  *   import { reachGoal } from "@/lib/metrika";
@@ -34,13 +51,26 @@
  */
 
 export type MetrikaGoal =
+  // ── Воронка (P0) ──
   | "hero_paste"
+  | "cta_click"
   | "hero_submit_attempt"
+  | "submit_modal_open"
+  | "submit_photo_mode"
+  | "submit_contact_step"
   | "hero_submit_success"
-  | "socialproof_view"
+  // ── Секции (P1) ──
+  | "examples_view"
+  | "cycle_view"
+  | "monday_view"
   | "pricing_view"
+  | "final_cta_view"
   | "faq_open"
-  | "free_month_cta_click";
+  // ── Вторичные (P2) ──
+  | "examples_anchor_click"
+  | "login_click"
+  | "feedback_open"
+  | "analytics_demo_click";
 
 const METRIKA_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";
 

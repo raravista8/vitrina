@@ -27,6 +27,8 @@
 import { StickyHeader } from "@samosite/canon/landing";
 import { useEffect } from "react";
 
+import { reachGoal } from "@/lib/metrika";
+
 /** Custom event name shared between SiteHeader (emit) and Hero (listen). */
 export const SAMOSITE_OPEN_SUBMIT = "samosite:open-submit";
 
@@ -73,6 +75,12 @@ export function SiteHeader() {
       );
       if (!target) return;
       e.preventDefault();
+      // Я.Метрика — unified CTA-click attribution across the canon body
+      // CTAs this handler covers (header + Monday/Pricing/FinalCta). Hero's
+      // own CTA fires `cta_click{source:hero}` separately in Hero.tsx.
+      const section = target.closest("[data-section]")?.getAttribute("data-section");
+      const source = section === "final-cta" ? "final" : (section ?? "header");
+      reachGoal("cta_click", { source });
       window.dispatchEvent(new CustomEvent(SAMOSITE_OPEN_SUBMIT));
     };
 

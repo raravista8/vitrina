@@ -118,8 +118,9 @@ export function Hero() {
   const modalUrl = detection.kind === "mvp" ? detection.canonical : raw;
 
   function handlePrimaryCta() {
-    // Я.Метрика goal — fires on every CTA click regardless of detection
-    // state. This is the "intent to submit" event.
+    // Я.Метрика — unified CTA attribution (source: hero) + the richer
+    // Hero-only «intent to submit» goal with paste-detection detail.
+    reachGoal("cta_click", { source: "hero" });
     reachGoal("hero_submit_attempt", {
       mode: "link",
       detection: detection.kind,
@@ -134,7 +135,9 @@ export function Hero() {
   }
 
   function handlePhotoCta() {
+    reachGoal("cta_click", { source: "hero" });
     reachGoal("hero_submit_attempt", { mode: "photo" });
+    reachGoal("submit_photo_mode");
     setModalMode("photo");
     setModalOpen(true);
   }
@@ -164,6 +167,13 @@ export function Hero() {
     return () => controller.abort();
   }, [previewType, canonical]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  /* Я.Метрика — `submit_modal_open` fires once per open, regardless of
+     which CTA opened it (Hero, header, Monday, Pricing, FinalCta, or the
+     e2e hook). Keyed on the open transition only. */
+  useEffect(() => {
+    if (modalOpen) reachGoal("submit_modal_open");
+  }, [modalOpen]);
 
   /* Cross-component "open SubmitModal" trigger.
      Listens for the DOM custom event `samosite:open-submit` that
@@ -437,6 +447,7 @@ export function Hero() {
           <div className="mt-3 flex justify-start text-sm sm:mt-4 sm:justify-center">
             <a
               href="#examples"
+              onClick={() => reachGoal("examples_anchor_click")}
               className="inline-flex items-center gap-1.5 text-ink-soft underline decoration-line underline-offset-4 hover:text-ink"
             >
               Сначала посмотреть примеры
