@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.7.3",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.7.3: пресетная архитектура (5 семейств × 16 тем), синхронизированные цены, фикс хедера, ChipStrip отдельным экспортом, обновлён блок «Базовая работа» (тексты + сдержанный визуал).",
+  "version": "0.8.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.8.0: витрина-карусель с компактными превью (5 семейств), полная тарифная сетка (5 планов), редизайн блоков «Базовая работа» и «Вы — главный».",
   "type": "module",
   "sideEffects": [
     "*.css"

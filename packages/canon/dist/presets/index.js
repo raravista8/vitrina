@@ -512,73 +512,22 @@ function getTheme(themeId) {
   return t;
 }
 function EditorialFamily({ theme, content }) {
-  const c = theme.colors;
-  const f = theme.fonts;
-  const r = theme.radii;
-  const v = theme.voice;
-  const withEm = (text) => {
-    const parts = text.split(/\[\[(.+?)\]\]/g);
-    return parts.map(
-      (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: {
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        color: c.accent,
-        fontWeight: v.displayWeight
-      }, children: p }, i)
-    );
-  };
-  const hr = { borderBottom: `1px solid ${c.line}` };
-  return /* @__PURE__ */ jsxs("div", { style: {
-    background: c.bg,
-    color: c.ink,
-    fontFamily: f.body,
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    fontVariantNumeric: "tabular-nums"
-  }, children: [
-    /* @__PURE__ */ jsxs("header", { style: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "13px 16px 11px",
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsx("div", { style: {
-        fontFamily: f.display,
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        fontSize: 15,
-        fontWeight: v.displayWeight,
-        letterSpacing: "-0.01em",
-        color: c.ink
-      }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx("a", { style: {
-        background: c.accent,
-        color: c.accentInk,
-        padding: "6px 12px",
-        fontFamily: f.mono,
-        fontSize: 9,
-        fontWeight: 700,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        borderRadius: r.btn,
-        cursor: "pointer"
-      }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { style: {
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "9px 16px",
-      fontFamily: f.mono,
-      fontSize: 9,
-      color: c.inkSoft,
-      textTransform: "uppercase",
-      letterSpacing: "0.08em",
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsxs("span", { children: [
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const accentEm = (text) => text.split(/\[\[(.+?)\]\]/g).map(
+    (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: { fontStyle: v.italicAccent ? "italic" : "normal", color: c.accent }, children: p }, i)
+  );
+  const rule = `1px solid ${c.line}`;
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { padding: "11px 16px 9px", borderBottom: `2px solid ${c.ink}`, textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: c.inkSoft, marginBottom: 4 }, children: [
         "\u0441 ",
-        content.meta.since
+        content.meta.since,
+        " \xB7 ",
+        content.meta.category
       ] }),
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 27, fontWeight: v.displayWeight, letterSpacing: "-0.02em", lineHeight: 1 }, children: content.meta.brand })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", padding: "5px 16px", borderBottom: rule, fontFamily: f.mono, fontSize: 8, letterSpacing: "0.1em", textTransform: "uppercase", color: c.inkSoft }, children: [
       /* @__PURE__ */ jsxs("span", { children: [
         "\u2605\u2605\u2605\u2605\u2605 ",
         content.meta.rating
@@ -588,204 +537,20 @@ function EditorialFamily({ theme, content }) {
         " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
       ] })
     ] }),
-    /* @__PURE__ */ jsx("section", { style: { padding: "16px 16px 18px", ...hr }, children: /* @__PURE__ */ jsx("h1", { style: {
-      fontFamily: f.display,
-      fontSize: 34,
-      fontWeight: v.displayWeight,
-      lineHeight: 0.94,
-      letterSpacing: "-0.025em",
-      color: c.ink,
-      margin: 0
-    }, children: content.hero.headingLines.map((line, i) => /* @__PURE__ */ jsxs(React.Fragment, { children: [
-      withEm(line),
+    /* @__PURE__ */ jsx("div", { style: { padding: "14px 16px 12px", borderBottom: rule }, children: /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 30, fontWeight: v.displayWeight, lineHeight: 0.95, letterSpacing: "-0.03em", margin: 0 }, children: content.hero.headingLines.map((l, i) => /* @__PURE__ */ jsxs(React.Fragment, { children: [
+      accentEm(l),
       i < content.hero.headingLines.length - 1 && /* @__PURE__ */ jsx("br", {})
     ] }, i)) }) }),
-    content.hero.leadParagraph && /* @__PURE__ */ jsxs("div", { style: { padding: "14px 16px", ...hr }, children: [
-      v.dropCap && /* @__PURE__ */ jsx("span", { style: {
-        fontFamily: f.display,
-        fontSize: 44,
-        fontWeight: v.displayWeight,
-        float: "left",
-        lineHeight: 0.85,
-        margin: "4px 8px 0 0",
-        color: c.accent
-      }, children: content.hero.leadParagraph[0] }),
-      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.55, color: c.ink, margin: 0 }, children: v.dropCap ? content.hero.leadParagraph.slice(1) : content.hero.leadParagraph })
+    /* @__PURE__ */ jsxs("div", { style: { flex: 1, minHeight: 0, position: "relative", overflow: "hidden", borderBottom: rule }, children: [
+      /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }),
+      /* @__PURE__ */ jsx("div", { style: { position: "absolute", left: 0, bottom: 0, padding: "4px 10px", background: c.bg, borderTop: rule, borderRight: rule, fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.06em", color: c.inkSoft }, children: content.hero.photoCaption || content.meta.address })
     ] }),
-    /* @__PURE__ */ jsxs("div", { style: { aspectRatio: "4 / 3", overflow: "hidden", position: "relative", ...hr }, children: [
-      /* @__PURE__ */ jsx(
-        "img",
-        {
-          src: content.hero.photoSrc,
-          alt: "",
-          loading: "lazy",
-          style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" }
-        }
-      ),
-      content.hero.photoCaption && /* @__PURE__ */ jsx("div", { style: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: "5px 10px",
-        background: c.bg,
-        fontFamily: f.mono,
-        fontSize: 9,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-        borderTop: `1px solid ${c.line}`
-      }, children: content.hero.photoCaption })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { style: {
-      padding: "12px 16px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 6,
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsxs("a", { style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: c.accent,
-        color: c.accentInk,
-        padding: "13px 16px",
-        borderRadius: r.btn,
-        fontSize: 13,
-        fontWeight: 700,
-        letterSpacing: "0.04em",
-        textTransform: "uppercase",
-        cursor: "pointer"
-      }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsxs("a", { style: { flex: 1, background: c.accent, color: c.accentInk, padding: "12px 16px", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }, children: [
         content.cta.primary.label,
-        /* @__PURE__ */ jsx("span", { style: {
-          fontFamily: f.display,
-          fontSize: 22,
-          fontStyle: v.italicAccent ? "italic" : "normal"
-        }, children: "\u2192" })
+        /* @__PURE__ */ jsx("span", { style: { fontFamily: f.display, fontSize: 18, fontStyle: v.italicAccent ? "italic" : "normal" }, children: "\u2192" })
       ] }),
-      content.cta.phone && /* @__PURE__ */ jsx("a", { style: {
-        textAlign: "center",
-        padding: "10px 16px",
-        border: `1px solid ${c.ink}`,
-        borderRadius: r.btn,
-        fontSize: 12,
-        fontFamily: f.mono,
-        letterSpacing: "0.05em",
-        color: c.ink,
-        cursor: "pointer"
-      }, children: content.cta.phone })
-    ] }),
-    /* @__PURE__ */ jsx("div", { style: {
-      display: "grid",
-      gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
-      ...hr
-    }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs("div", { style: {
-      padding: "12px 8px",
-      textAlign: "center",
-      borderRight: i < content.stats.length - 1 ? `1px solid ${c.line}` : void 0
-    }, children: [
-      /* @__PURE__ */ jsxs("div", { style: {
-        fontFamily: f.display,
-        fontSize: 22,
-        fontWeight: v.displayWeight,
-        color: c.accent,
-        lineHeight: 1,
-        marginBottom: 3
-      }, children: [
-        s.num,
-        s.unit && /* @__PURE__ */ jsx("span", { style: { fontSize: 12, color: c.inkSoft }, children: s.unit })
-      ] }),
-      /* @__PURE__ */ jsx("div", { style: {
-        fontFamily: f.mono,
-        fontSize: 8,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em"
-      }, children: s.label })
-    ] }, i)) }),
-    content.menu && /* @__PURE__ */ jsxs("section", { style: { padding: "18px 16px", ...hr }, children: [
-      /* @__PURE__ */ jsxs("div", { style: {
-        fontFamily: f.mono,
-        fontSize: 9,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.1em",
-        marginBottom: 10,
-        display: "flex",
-        alignItems: "center",
-        gap: 8
-      }, children: [
-        /* @__PURE__ */ jsx("span", { style: { height: 1, background: c.inkSoft, flex: 1 } }),
-        content.menu.eyebrow,
-        /* @__PURE__ */ jsx("span", { style: { height: 1, background: c.inkSoft, flex: 1 } })
-      ] }),
-      /* @__PURE__ */ jsx("h3", { style: {
-        fontFamily: f.display,
-        fontSize: 20,
-        fontWeight: v.displayWeight,
-        lineHeight: 1,
-        letterSpacing: "-0.015em",
-        marginBottom: 12,
-        color: c.ink
-      }, children: withEm(content.menu.title) }),
-      content.menu.items.slice(0, 3).map((it, i, arr) => /* @__PURE__ */ jsxs("div", { style: {
-        display: "grid",
-        gridTemplateColumns: "auto 1fr auto",
-        gap: 10,
-        alignItems: "baseline",
-        padding: "9px 0",
-        borderBottom: i < arr.length - 1 ? `1px dotted ${c.lineSoft}` : void 0
-      }, children: [
-        /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.accent }, children: it.num }),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: v.displayWeight, color: c.ink }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx("span", { style: {
-          fontFamily: f.display,
-          fontStyle: v.italicAccent ? "italic" : "normal",
-          fontSize: 14,
-          color: c.ink
-        }, children: it.price })
-      ] }, i))
-    ] }),
-    /* @__PURE__ */ jsxs("section", { style: { padding: "14px 16px", ...hr }, children: [
-      /* @__PURE__ */ jsx("p", { style: {
-        fontFamily: f.display,
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        fontSize: 15,
-        lineHeight: 1.3,
-        margin: 0,
-        color: c.ink
-      }, children: content.quote.text.split(/\[\[(.+?)\]\]/g).map(
-        (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: { color: c.accent, fontStyle: "normal" }, children: p }, i)
-      ) }),
-      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.inkSoft, marginTop: 8 }, children: [
-        content.quote.authorName,
-        " \xB7 ",
-        content.quote.authorSource
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs("footer", { style: {
-      padding: "11px 16px",
-      background: c.invBg,
-      color: c.invInk,
-      display: "flex",
-      justifyContent: "space-between",
-      fontFamily: f.mono,
-      fontSize: 9,
-      textTransform: "uppercase",
-      letterSpacing: "0.08em",
-      opacity: 0.7
-    }, children: [
-      /* @__PURE__ */ jsx("span", { children: content.meta.address }),
-      /* @__PURE__ */ jsxs("span", { children: [
-        content.meta.host,
-        ".",
-        BRAND.domain
-      ] })
+      /* @__PURE__ */ jsx("div", { style: { padding: "0 14px", display: "flex", alignItems: "center", fontFamily: f.mono, fontSize: 10, color: c.accentInk, background: c.ink, whiteSpace: "nowrap" }, children: content.cta.phone })
     ] })
   ] });
 }
@@ -796,239 +561,112 @@ function renderEm(text, color, italic) {
 }
 function BentoFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const card = {
-    background: c.bgAlt,
-    borderRadius: r.card,
-    padding: 14,
-    border: `1px solid ${c.line}`,
-    overflow: "hidden"
-  };
-  const label = {
-    fontFamily: f.mono,
-    fontSize: 9,
-    color: c.inkFaint,
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    marginBottom: 8
-  };
   const s = content.stats;
-  const m = content.menu;
-  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, padding: 14, fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, padding: "0 2px" }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 8, fontFamily: f.display, fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em" }, children: [
-        /* @__PURE__ */ jsx("span", { style: { width: 22, height: 22, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12 }, children: content.meta.brand[0] }),
+  const tile = { background: c.bgAlt, borderRadius: r.card, border: `1px solid ${c.line}`, padding: 12, overflow: "hidden" };
+  const lbl = { fontFamily: f.mono, fontSize: 8, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.06em" };
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", padding: 12, gap: 8, fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 7, fontFamily: f.display, fontWeight: 700, fontSize: 13, letterSpacing: "-0.02em" }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 20, height: 20, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }, children: content.meta.brand[0] }),
         content.meta.brand
       ] }),
-      /* @__PURE__ */ jsxs("span", { style: { fontFamily: f.mono, fontSize: 10, color: c.inkSoft }, children: [
+      /* @__PURE__ */ jsxs("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft }, children: [
         "\u2605 ",
         content.meta.rating
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4", background: c.accent, color: c.accentInk, border: "none", padding: "20px 16px" }, children: [
-        /* @__PURE__ */ jsxs("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.accent, padding: "5px 9px", borderRadius: 999, fontSize: 9, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14 }, children: [
-          /* @__PURE__ */ jsx("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
+    /* @__PURE__ */ jsxs("div", { style: { flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto 1fr", gap: 8 }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { ...tile, gridColumn: "span 2", background: c.accent, color: c.accentInk, border: "none", display: "flex", flexDirection: "column", justifyContent: "space-between" }, children: [
+        /* @__PURE__ */ jsxs("span", { style: { alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 5, background: c.bg, color: c.accent, padding: "4px 8px", borderRadius: 999, fontSize: 8, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em" }, children: [
+          /* @__PURE__ */ jsx("span", { style: { width: 4, height: 4, background: c.accent, borderRadius: "50%" } }),
           "\u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F"
         ] }),
-        /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: 800, lineHeight: 0.96, letterSpacing: "-0.035em", margin: 0 }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
+        /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.035em", margin: "10px 0 0" }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
       ] }),
-      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx("div", { style: label, children: "\u0441\u0435\u0433\u043E\u0434\u043D\u044F" }),
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }, children: "14:00 \xB7 16:30" }),
-        /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: content.cta.primary.label.toLowerCase() })
-      ] }),
-      s[0] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx("div", { style: label, children: s[0].label }),
-        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+      s[0] && /* @__PURE__ */ jsxs("div", { style: tile, children: [
+        /* @__PURE__ */ jsx("div", { style: lbl, children: s[0].label }),
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4 }, children: [
           s[0].num,
-          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[0].unit })
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 13, color: c.inkFaint }, children: s[0].unit })
         ] })
       ] }),
-      s[1] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx("div", { style: label, children: s[1].label }),
-        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.accent }, children: [
+      s[1] && /* @__PURE__ */ jsxs("div", { style: tile, children: [
+        /* @__PURE__ */ jsx("div", { style: lbl, children: s[1].label }),
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4, color: c.accent }, children: [
           s[1].num,
-          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[1].unit })
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 13, color: c.inkFaint }, children: s[1].unit })
         ] })
       ] }),
-      s[2] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx("div", { style: label, children: s[2].label }),
-        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
-          s[2].num,
-          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[2].unit })
-        ] })
+      /* @__PURE__ */ jsx("div", { style: { gridColumn: "span 2", borderRadius: r.card, overflow: "hidden", minHeight: 0 }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { ...tile, flex: "0 0 auto", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px" }, children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("div", { style: { fontSize: 13, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invInkSoft, marginTop: 1 }, children: content.cta.phone })
       ] }),
-      /* @__PURE__ */ jsx("div", { style: { gridColumn: "span 4", borderRadius: r.card, overflow: "hidden", aspectRatio: "16/9" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", padding: "16px 18px" }, children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { style: { fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
-          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 10, color: c.invInkSoft, marginTop: 2 }, children: content.cta.phone })
-        ] }),
-        /* @__PURE__ */ jsx("span", { style: { width: 32, height: 32, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }, children: "\u2192" })
-      ] }),
-      m && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4" }, children: [
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 12 }, children: m.title.replace(/\[\[|\]\]/g, "") }),
-        m.items.map((it, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0 }, children: [
-          /* @__PURE__ */ jsx("span", { style: { fontSize: 12 }, children: it.name }),
-          /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 12, color: c.accent, fontWeight: 500 }, children: it.price })
-        ] }, i))
-      ] }),
-      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4" }, children: [
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 15, fontWeight: 500, marginBottom: 4 }, children: content.cta.phone }),
-        /* @__PURE__ */ jsxs("div", { style: { fontSize: 10, color: c.inkSoft }, children: [
-          content.meta.address,
-          " \xB7 ",
-          content.meta.host,
-          ".",
-          BRAND.domain
-        ] })
-      ] })
+      /* @__PURE__ */ jsx("span", { style: { width: 28, height: 28, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }, children: "\u2192" })
     ] })
   ] });
 }
 function DisplayFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
   const lines = content.hero.headingLines;
-  const m = content.menu;
-  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px" }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em" }, children: [
-        /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, background: c.accent, borderRadius: "50%" } }),
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 7, fontSize: 12, fontWeight: 600 }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
         content.meta.brand
       ] }),
-      /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "6px 12px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: content.cta.phone })
-    ] }),
-    /* @__PURE__ */ jsxs("section", { style: { padding: "16px 18px 22px" }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", fontFamily: f.mono, fontSize: 9, color: c.inkSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${c.line}` }, children: [
-        /* @__PURE__ */ jsxs("span", { children: [
-          "\u0441 ",
-          content.meta.since,
-          " \xB7 ",
-          content.meta.address
-        ] }),
-        /* @__PURE__ */ jsxs("span", { children: [
-          "\u2605\u2605\u2605\u2605\u2605 ",
-          content.meta.rating
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 60, fontWeight: v.displayWeight, lineHeight: 0.85, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((line, i) => /* @__PURE__ */ jsx("span", { style: {
-        display: "block",
-        color: i === 1 ? c.accent : c.ink,
-        fontStyle: i === 1 && v.italicAccent ? "italic" : "normal",
-        textIndent: i === 1 ? 20 : 0,
-        textAlign: i === 2 ? "right" : "left"
-      }, children: renderEm(line, c.accent, v.italicAccent) }, i)) }),
-      content.stats[0] && /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", marginTop: 18, paddingTop: 18, borderTop: `1px solid ${c.line}` }, children: [
-        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 46, fontWeight: v.displayWeight, lineHeight: 0.85, color: c.accent, fontStyle: v.italicAccent ? "italic" : "normal", whiteSpace: "nowrap" }, children: [
-          content.stats[0].num,
-          /* @__PURE__ */ jsx("span", { style: { fontSize: 22 }, children: content.stats[0].unit })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, lineHeight: 1.45, color: c.inkSoft }, children: [
-          /* @__PURE__ */ jsx("b", { style: { color: c.ink }, children: content.stats[0].label }),
-          /* @__PURE__ */ jsx("br", {}),
-          content.hero.leadParagraph?.split(".")[0],
-          "."
-        ] })
+      /* @__PURE__ */ jsxs("span", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "5px 10px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: [
+        "\u2605 ",
+        content.meta.rating
       ] })
     ] }),
-    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 6, padding: "0 14px 18px" }, children: [
-      /* @__PURE__ */ jsx("div", { style: { gridColumn: "1 / 2", gridRow: "1 / 3", borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx("img", { src: content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx("img", { src: content.hero.gallery?.[1] ?? content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { style: { padding: "0 14px 22px", display: "flex", flexDirection: "column", gap: 7 }, children: [
-      /* @__PURE__ */ jsxs("a", { style: { background: c.invBg, color: c.invInk, padding: 15, borderRadius: r.btn, textAlign: "center", fontSize: 12, fontWeight: 600, letterSpacing: "0.02em", cursor: "pointer" }, children: [
+    /* @__PURE__ */ jsx("div", { style: { padding: "2px 16px 14px", flex: "0 0 auto" }, children: /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 50, fontWeight: v.displayWeight, lineHeight: 0.84, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((l, i) => /* @__PURE__ */ jsx("span", { style: { display: "block", color: i === 1 ? c.accent : c.ink, fontStyle: i === 1 && v.italicAccent ? "italic" : "normal", textIndent: i === 1 ? 16 : 0, textAlign: i === 2 ? "right" : "left" }, children: renderEm(l, c.accent, v.italicAccent) }, i)) }) }),
+    /* @__PURE__ */ jsx("div", { style: { flex: 1, minHeight: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "11px 16px", background: c.invBg, color: c.invInk, flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.06em", color: c.invInkSoft }, children: content.meta.address }),
+      /* @__PURE__ */ jsxs("a", { style: { background: c.invAccent, color: c.invBg, padding: "9px 16px", borderRadius: r.btn, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }, children: [
         content.cta.primary.label,
         " \u2192"
-      ] }),
-      /* @__PURE__ */ jsxs("a", { style: { padding: 12, border: `1px solid ${c.ink}`, borderRadius: r.btn, textAlign: "center", fontSize: 11, fontWeight: 500 }, children: [
-        content.meta.reviewsN,
-        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \xB7 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
       ] })
-    ] }),
-    m && /* @__PURE__ */ jsxs("section", { style: { background: c.invBg, color: c.invInk, padding: "20px 18px" }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invAccent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx("span", { style: { width: 20, height: 1, background: c.invAccent } }),
-        m.eyebrow
-      ] }),
-      m.items.slice(0, 2).map((it, i, arr) => /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "baseline", padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1.05 }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.invInkSoft, marginTop: 3 }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, color: c.invAccent }, children: it.price })
-      ] }, i))
-    ] }),
-    /* @__PURE__ */ jsxs("footer", { style: { padding: 18, textAlign: "center", background: c.bg }, children: [
-      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, marginBottom: 6 }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.08em" }, children: content.meta.address })
     ] })
   ] });
 }
 function SplitFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
+  const s = content.stats;
   const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
-  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 15, fontWeight: 700, letterSpacing: "-0.02em" }, children: [
-        content.meta.brand,
-        /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "." })
-      ] }),
-      /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 14px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: content.cta.primary.label.split(" ")[0] })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx("div", { style: { aspectRatio: "4/3", overflow: "hidden", borderRight: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 14, background: c.bgAlt }, children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: c.accent, marginBottom: 8 }, children: content.meta.category }),
-          /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading })
+  const div = `1px solid ${c.invInkSoft}55`;
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsx("div", { style: { width: "42%", minHeight: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs("div", { style: { flex: 1, minWidth: 0, background: c.invBg, color: c.invInk, display: "flex", flexDirection: "column" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flex: "0 0 auto" }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: [
+          content.meta.brand,
+          /* @__PURE__ */ jsx("span", { style: { color: c.invAccent }, children: "." })
         ] }),
-        /* @__PURE__ */ jsx("p", { style: { fontSize: 11, lineHeight: 1.5, color: c.inkSoft, margin: 0 }, children: content.hero.leadParagraph?.slice(0, 110) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", background: c.invBg, color: c.invInk }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs("div", { style: { padding: "14px 10px", textAlign: "center", borderRight: i < content.stats.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.invAccent, marginBottom: 4 }, children: [
-        s.num,
-        /* @__PURE__ */ jsx("span", { style: { fontSize: 12 }, children: s.unit })
+        /* @__PURE__ */ jsxs("span", { style: { fontFamily: f.mono, fontSize: 8, opacity: 0.7 }, children: [
+          "\u2605 ",
+          content.meta.rating
+        ] })
       ] }),
-      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.75 }, children: s.label })
-    ] }, i)) }),
-    /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.accent, marginBottom: 8 }, children: "\u043A\u0430\u043A \u043C\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u043C" }),
-      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 17, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", margin: 0 }, children: content.quote.text.replace(/[«»"\[\]]/g, "") }),
-      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft, marginTop: 8 }, children: [
-        content.quote.authorName,
-        " \xB7 ",
-        content.quote.authorSource
-      ] })
-    ] }),
-    m && /* @__PURE__ */ jsxs("div", { style: { padding: "20px 14px", background: c.bgAlt, borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 14 }, children: m.eyebrow }),
-      /* @__PURE__ */ jsx("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: m.items.slice(0, 3).map((it, i) => /* @__PURE__ */ jsxs("div", { style: {
-        background: i === 1 ? c.accent : c.bg,
-        color: i === 1 ? c.accentInk : c.ink,
-        border: `1px solid ${i === 1 ? c.accent : c.line}`,
-        borderRadius: r.card,
-        padding: 14,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 12
-      }, children: [
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: it.name }),
-          /* @__PURE__ */ jsx("div", { style: { fontSize: 10, opacity: 0.8, marginTop: 2 }, children: it.desc })
+      /* @__PURE__ */ jsxs("div", { style: { flex: 1, minHeight: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 16px" }, children: [
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.12em", color: c.invAccent, marginBottom: 8 }, children: content.meta.category }),
+        /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 25, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading }),
+        /* @__PURE__ */ jsxs("p", { style: { fontSize: 11, lineHeight: 1.5, opacity: 0.82, margin: "10px 0 0" }, children: [
+          content.hero.leadParagraph?.slice(0, 88),
+          "\u2026"
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: `repeat(${s.length}, 1fr)`, borderTop: div, flex: "0 0 auto" }, children: s.map((st, i) => /* @__PURE__ */ jsxs("div", { style: { padding: "9px 6px", textAlign: "center", borderRight: i < s.length - 1 ? div : void 0 }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 16, fontWeight: 800, color: c.invAccent, lineHeight: 1 }, children: [
+          st.num,
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 10 }, children: st.unit })
         ] }),
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }, children: it.price })
-      ] }, i)) })
-    ] }),
-    /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 13, fontWeight: 500 }, children: content.cta.phone }),
-        /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft }, children: content.meta.address })
-      ] }),
-      /* @__PURE__ */ jsxs("a", { style: { background: c.invBg, color: c.invInk, padding: "11px 16px", borderRadius: r.btn, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }, children: [
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 7, textTransform: "uppercase", letterSpacing: "0.06em", opacity: 0.65, marginTop: 3 }, children: st.label })
+      ] }, i)) }),
+      /* @__PURE__ */ jsxs("a", { style: { background: c.accent, color: c.accentInk, padding: "12px 16px", textAlign: "center", fontSize: 12, fontWeight: 700, flex: "0 0 auto" }, children: [
         content.cta.primary.label.split(" ")[0],
         " \u2192"
       ] })
@@ -1037,65 +675,35 @@ function SplitFamily({ theme, content }) {
 }
 function StackedFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
-  const cardBox = { background: c.bgAlt, border: `1px solid ${c.line}`, borderRadius: r.card };
   const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
-  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 16px", borderBottom: `1px solid ${c.line}`, flex: "0 0 auto" }, children: [
       /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.015em" }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: "8px 14px", borderRadius: r.btn, fontSize: 12, fontWeight: 600 }, children: "\u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F" })
+      /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 13px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
     ] }),
-    /* @__PURE__ */ jsxs("section", { style: { padding: "18px 16px 20px" }, children: [
-      /* @__PURE__ */ jsxs("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 11, fontWeight: 500, marginBottom: 12 }, children: [
-        /* @__PURE__ */ jsx("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
+    /* @__PURE__ */ jsxs("div", { style: { padding: "18px 18px 12px", textAlign: "center", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 10, fontWeight: 500, marginBottom: 10 }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
         content.meta.category,
         " \xB7 ",
         content.meta.address.split(",").pop()?.trim()
       ] }),
-      /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: v.displayWeight, lineHeight: 1.05, letterSpacing: "-0.025em", margin: "0 0 10px" }, children: heading }),
-      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.5, color: c.inkSoft, marginBottom: 14 }, children: content.hero.leadParagraph }),
-      /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, fontSize: 12, color: c.inkSoft, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }, children: [
+      /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 25, fontWeight: v.displayWeight, lineHeight: 1.04, letterSpacing: "-0.025em", margin: "0 auto", maxWidth: "94%" }, children: heading }),
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "center", gap: 8, fontSize: 11, color: c.inkSoft, marginTop: 10, alignItems: "center" }, children: [
         /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" }),
         /* @__PURE__ */ jsx("b", { children: content.meta.rating }),
         /* @__PURE__ */ jsx("span", { style: { color: c.inkFaint }, children: "\xB7" }),
         /* @__PURE__ */ jsxs("span", { children: [
           content.meta.reviewsN,
           " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
-        ] }),
-        /* @__PURE__ */ jsx("span", { style: { color: c.inkFaint }, children: "\xB7" }),
-        /* @__PURE__ */ jsxs("span", { children: [
-          "\u0441 ",
-          content.meta.since
         ] })
-      ] }),
-      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "16/10", marginBottom: 14 }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
-        /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: 14, borderRadius: r.btn, textAlign: "center", fontSize: 14, fontWeight: 600 }, children: content.cta.primary.label }),
-        /* @__PURE__ */ jsx("a", { style: { padding: 12, border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 13 }, children: content.cta.phone })
       ] })
     ] }),
-    m && /* @__PURE__ */ jsxs("section", { style: { padding: "22px 16px", borderTop: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438 \u0446\u0435\u043D\u044B" }),
-      /* @__PURE__ */ jsx("p", { style: { fontSize: 11, color: c.inkSoft, marginBottom: 14 }, children: m.eyebrow }),
-      /* @__PURE__ */ jsx("div", { style: { ...cardBox, padding: 14 }, children: m.items.map((it, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0, gap: 12 }, children: [
-        /* @__PURE__ */ jsxs("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: c.inkSoft }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }, children: it.price })
-      ] }, i)) })
-    ] }),
-    /* @__PURE__ */ jsx("section", { style: { padding: "18px 16px", borderTop: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsxs("div", { style: { background: c.accentSoft, borderRadius: r.card, padding: "14px 16px" }, children: [
-      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.5, margin: 0, color: c.ink }, children: content.quote.text.replace(/\[\[|\]\]/g, "") }),
-      /* @__PURE__ */ jsxs("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 8, display: "flex", justifyContent: "space-between" }, children: [
-        /* @__PURE__ */ jsxs("span", { children: [
-          content.quote.authorName,
-          " \xB7 ",
-          content.quote.authorSource
-        ] }),
-        /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" })
-      ] })
-    ] }) })
+    /* @__PURE__ */ jsx("div", { style: { flex: 1, minHeight: 0, margin: "0 18px", borderRadius: r.photo, overflow: "hidden" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs("div", { style: { padding: "14px 18px", display: "flex", gap: 8, flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsx("a", { style: { flex: 1, background: c.accent, color: c.accentInk, padding: "12px", borderRadius: r.btn, textAlign: "center", fontSize: 13, fontWeight: 600 }, children: content.cta.primary.label }),
+      /* @__PURE__ */ jsx("a", { style: { padding: "12px 16px", border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 12, whiteSpace: "nowrap", display: "flex", alignItems: "center", color: c.ink }, children: content.cta.phone })
+    ] })
   ] });
 }
 var FAMILIES = {
@@ -1115,7 +723,7 @@ function PresetRenderer({ preset, content }) {
   }
   return /* @__PURE__ */ jsx(Family, { theme, content });
 }
-function MiniChrome({ host, children }) {
+function MiniChrome({ host, children, height = 460 }) {
   return /* @__PURE__ */ jsxs("div", { style: {
     overflow: "hidden",
     borderRadius: 12,
@@ -1124,28 +732,14 @@ function MiniChrome({ host, children }) {
     flexDirection: "column",
     width: "100%",
     minWidth: 0,
-    height: "100%",
-    background: VT.white,
-    alignSelf: "flex-start"
+    height,
+    background: VT.white
   }, children: [
-    /* @__PURE__ */ jsxs("div", { style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "7px 10px",
-      background: "#fff",
-      borderBottom: `1px solid ${VT.line}`,
-      flex: "0 0 auto"
-    }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", background: "#fff", borderBottom: `1px solid ${VT.line}`, flex: "0 0 auto" }, children: [
       /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
       /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
       /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
-      /* @__PURE__ */ jsxs("span", { style: {
-        marginLeft: 10,
-        fontFamily: VT.font.mono,
-        fontSize: 11,
-        color: VT.inkFaint
-      }, children: [
+      /* @__PURE__ */ jsxs("span", { style: { marginLeft: 10, fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: [
         host,
         ".",
         BRAND.domain

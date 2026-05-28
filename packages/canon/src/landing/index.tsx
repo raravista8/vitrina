@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// @samosite/canon · landing v3 — 11 blocks · canon 0.6.0
+// @samosite/canon · landing v3 — 11 blocks · canon 0.8.0
 // Single-file port of landing-v3-{a,b,c,d}.jsx + landing-v3.jsx from the canvas project.
-// See docs/COPY.md for canonical messaging and CHANGELOG 0.6.0 for what changed.
+// See docs/COPY.md for canonical messaging and CHANGELOG 0.8.0 for what changed.
 
 import React from 'react';
 import { VT, BRAND } from '../tokens';
@@ -13,213 +13,167 @@ import {
 } from '../presets';
 
 // ── from landing-v3-a.jsx ──
-// ───────── helpers ─────────
+// Самосайт · Landing v3 — part A (helpers + blocks 1-2: Hero, Examples)
+// Use tokens from tokens.jsx (VT, BRAND, BrandMark, Btn, IconArrow, IconLink).
+//
+// [vitrina] Upstream 0.8.0 preview→package conversion leaked one stray
+// IIFE opener here; removed it to balance braces so the ESM module builds.
+// Pure de-wrapping, no markup/logic change.
 
-function sectionPad(mobile) {
-  const v = mobile ? 20 : 80;
-  return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' };
-}
+    // ───────── helpers ─────────
 
-function Eyebrow({ children, mobile, kind = 'accent' }) {
-  const palette = kind === 'accent'
-    ? { bg: VT.accentSoft, fg: VT.accent, dot: VT.accent }
-    : { bg: VT.bgSoft, fg: VT.inkSoft, dot: VT.inkFaint };
-  return (
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 8,
-      fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5, letterSpacing: '0.14em',
-      color: palette.fg, fontWeight: 500,
-      padding: '6px 12px', background: palette.bg, borderRadius: 6,
-    }}>
+    function sectionPad(mobile) {
+      const v = mobile ? 20 : 80;
+      return { paddingLeft: v, paddingRight: v, boxSizing: 'border-box' };
+    }
+
+    function Eyebrow({ children, mobile, kind = 'accent' }) {
+      const palette = kind === 'accent' ?
+      { bg: VT.accentSoft, fg: VT.accent, dot: VT.accent } :
+      { bg: VT.bgSoft, fg: VT.inkSoft, dot: VT.inkFaint };
+      return (
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5, letterSpacing: '0.14em',
+          color: palette.fg, fontWeight: 500,
+          padding: '6px 12px', background: palette.bg, borderRadius: 6
+        }}>
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: palette.dot }} />
       {children}
-    </div>
-  );
-}
+    </div>);
 
-function H2({ children, mobile, align = 'center' }) {
-  return (
-    <h2 style={{
-      fontSize: mobile ? 30 : 52,
-      lineHeight: mobile ? 1.1 : 1.05,
-      fontWeight: 700, letterSpacing: '-0.03em',
-      margin: '14px 0 0', textWrap: 'balance', textAlign: align,
-    }}>{children}</h2>
-  );
-}
+    }
 
-function Sub({ children, mobile, align = 'center', maxWidth = 720 }) {
-  return (
-    <p style={{
-      fontSize: mobile ? 16 : 19, lineHeight: 1.45,
-      color: VT.inkSoft, margin: '14px auto 0',
-      maxWidth: mobile ? '100%' : maxWidth, textWrap: 'pretty',
-      textAlign: align,
-    }}>{children}</p>
-  );
-}
+    function H2({ children, mobile, align = 'center' }) {
+      return (
+        <h2 style={{
+          fontSize: mobile ? 30 : 52,
+          lineHeight: mobile ? 1.1 : 1.05,
+          fontWeight: 700, letterSpacing: '-0.03em',
+          margin: '14px 0 0', textWrap: 'balance', textAlign: align
+        }}>{children}</h2>);
 
-// ───────── BLOCK 1 · HERO ─────────
+    }
 
-export const SOURCE_ICONS = [
-  { id: 'yandex', name: 'Яндекс.Карты',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D"/><circle cx="12" cy="10" r="3.2" fill="#fff"/></svg> },
-  { id: 'tg', name: 'Telegram',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#229ED9"/><path d="M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z" fill="#fff"/></svg> },
-  { id: '2gis', name: '2ГИС',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#19BB4F"/><text x="12" y="17" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="14" fill="#fff">2</text></svg> },
-  { id: 'avito', name: 'Avito',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#0AF"/><circle cx="18" cy="7.5" r="3" fill="#FF9C00"/><text x="9" y="17" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" fill="#fff">A</text></svg> },
-  { id: 'ig', name: 'Instagram',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><defs><linearGradient id="iggr3a" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stopColor="#FEDA77"/><stop offset="30%" stopColor="#F58529"/><stop offset="60%" stopColor="#DD2A7B"/><stop offset="100%" stopColor="#8134AF"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#iggr3a)"/><rect x="6" y="6" width="12" height="12" rx="3.5" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" strokeWidth="1.6"/><circle cx="16" cy="8" r="0.9" fill="#fff"/></svg> },
-  { id: 'site', name: 'старый сайт',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.40 0.04 250)"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" strokeWidth="1.5"/><ellipse cx="12" cy="12" rx="2.8" ry="6" fill="none" stroke="#fff" strokeWidth="1.5"/><path d="M6 12h12" stroke="#fff" strokeWidth="1.5"/></svg> },
-  { id: 'card', name: 'фото меню или буклета',
-    icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.74 0.08 70)"/><rect x="6" y="8" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.4"/><path d="M8 11.5h4M8 14h6" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/></svg> },
-];
+    function Sub({ children, mobile, align = 'center', maxWidth = 720 }) {
+      return (
+        <p style={{
+          fontSize: mobile ? 16 : 19, lineHeight: 1.45,
+          color: VT.inkSoft, margin: '14px auto 0',
+          maxWidth: mobile ? '100%' : maxWidth, textWrap: 'pretty',
+          textAlign: align
+        }}>{children}</p>);
 
-// ───────── ChipStrip · переиспользуемый стрип «СОБИРАЕМ ИЗ» ─────────
-// Вынесен из inline-кода Hero (0.7.2), чтобы внешние страницы подключали
-// его как <ChipStrip/> без транскрипции canon-JSX в hand-rolled-разметку.
-// Значения 1:1 с прежним inline-вариантом Hero.
-export interface ChipStripItem { id: string; name: string; icon: React.ReactNode; }
+    }
 
-export function ChipStrip({
-  mobile = false,
-  label = 'СОБИРАЕМ ИЗ',
-  items = SOURCE_ICONS as ChipStripItem[],
-  align,
-}: {
-  mobile?: boolean;
-  label?: string;
-  items?: ChipStripItem[];
-  align?: 'start' | 'center';
-}) {
-  const alignItems = (align ?? (mobile ? 'start' : 'center')) === 'center' ? 'center' : 'flex-start';
-  const justify = alignItems === 'center' ? 'center' : 'flex-start';
-  return (
-    <div style={{
-      marginTop: mobile ? 22 : 36,
-      display: 'flex', flexDirection: 'column', gap: 10,
-      alignItems,
-    }}>
-      {label && (
-        <div style={{
-          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
-          color: VT.inkFaint, fontWeight: 600,
-        }}>{label}</div>
-      )}
+    // ───────── BLOCK 1 · HERO ─────────
+
+    const SOURCE_ICONS = [
+    { id: 'yandex', name: 'Яндекс.Карты',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D" /><circle cx="12" cy="10" r="3.2" fill="#fff" /></svg> },
+    { id: 'tg', name: 'Telegram',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#229ED9" /><path d="M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z" fill="#fff" /></svg> },
+    { id: '2gis', name: '2ГИС',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#19BB4F" /><text x="12" y="17" textAnchor="middle" fontFamily="Arial Black, Helvetica, sans-serif" fontWeight="900" fontSize="14" fill="#fff">2</text></svg> },
+    { id: 'avito', name: 'Avito',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="#0AF" /><circle cx="18" cy="7.5" r="3" fill="#FF9C00" /><text x="9" y="17" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" fill="#fff">A</text></svg> },
+    { id: 'ig', name: 'Instagram',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><defs><linearGradient id="iggr3a" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stopColor="#FEDA77" /><stop offset="30%" stopColor="#F58529" /><stop offset="60%" stopColor="#DD2A7B" /><stop offset="100%" stopColor="#8134AF" /></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#iggr3a)" /><rect x="6" y="6" width="12" height="12" rx="3.5" fill="none" stroke="#fff" strokeWidth="1.6" /><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" strokeWidth="1.6" /><circle cx="16" cy="8" r="0.9" fill="#fff" /></svg> },
+    { id: 'site', name: 'старый сайт',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.40 0.04 250)" /><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" strokeWidth="1.5" /><ellipse cx="12" cy="12" rx="2.8" ry="6" fill="none" stroke="#fff" strokeWidth="1.5" /><path d="M6 12h12" stroke="#fff" strokeWidth="1.5" /></svg> },
+    { id: 'card', name: 'фото меню или буклета',
+      icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.74 0.08 70)" /><rect x="6" y="8" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.4" /><path d="M8 11.5h4M8 14h6" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" /></svg> }];
+
+    function HeroBlock({ mobile }) {
+      return (
+        <section id="hero" style={{ ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: 'relative', zIndex: 1 }}>
       <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: 8,
-        justifyContent: justify,
-      }}>
-        {items.map(s => (
-          <span key={s.id} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '5px 14px 5px 5px',
-            background: VT.white, border: `1px solid ${VT.line}`,
-            borderRadius: 999,
-            fontSize: 13, color: VT.ink, fontWeight: 500,
+            maxWidth: mobile ? '100%' : 1200, margin: '0 auto',
+            textAlign: mobile ? 'left' : 'center'
           }}>
-            {s.icon}
-            {s.name}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HeroBlock({ mobile }) {
-  return (
-    <section id="hero" style={{ ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: 'relative', zIndex: 1 }}>
-      <div style={{
-        maxWidth: mobile ? '100%' : 1120, margin: '0 auto',
-        textAlign: mobile ? 'left' : 'center',
-      }}>
         <h1 style={{
-          fontSize: mobile ? 'clamp(32px, 8.8vw, 44px)' : 76,
-          lineHeight: mobile ? 1.06 : 1.04,
-          fontWeight: 700, letterSpacing: '-0.035em',
-          margin: 0,
-          textWrap: 'balance',
-        }}>
+              fontSize: mobile ? 'clamp(32px, 8.8vw, 44px)' : 76,
+              lineHeight: mobile ? 1.06 : 1.04,
+              fontWeight: 700, letterSpacing: '-0.035em',
+              margin: 0,
+              textWrap: 'balance'
+            }}>
           Соберём за{' '}
           <span style={{ position: 'relative', color: VT.accent, whiteSpace: 'nowrap' }}>
             2 часа
             {!mobile && <span aria-hidden="true" style={{
-              position: 'absolute', left: 2, right: 6, bottom: 6, height: 14,
-              background: VT.accentSoft, opacity: 0.7, zIndex: -1, borderRadius: 3,
-            }} />}
+                  position: 'absolute', left: 2, right: 6, bottom: 6, height: 14,
+                  background: VT.accentSoft, opacity: 0.7, zIndex: -1, borderRadius: 3
+                }} />}
           </span>{' '}
-          сайт, который ловит заявки.<br/>Дальше&nbsp;он <span style={{ color: VT.accent }}>сам становится лучше</span> каждую неделю.
+          сайт, который ловит заявки.<br />Дальше&nbsp;он <span style={{ color: VT.accent }}>сам становится лучше</span> каждую неделю.
         </h1>
 
         <p style={{
-          fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
-          margin: mobile ? '20px 0 0' : '28px auto 0',
-          maxWidth: mobile ? '100%' : 860, textWrap: 'pretty',
-        }}>
+              fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
+              margin: mobile ? '20px 0 0' : '28px auto 0',
+              maxWidth: mobile ? '100%' : 860, textWrap: 'pretty'
+            }}>
           Покажите Самосайту, где вы ведёте дела: Яндекс.Карты, Telegram, 2ГИС, Avito или Instagram. Если ничего нет, сфотографируйте меню или буклет.
         </p>
         <p style={{
-          fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
-          margin: mobile ? '10px 0 0' : '12px auto 0',
-          maxWidth: mobile ? '100%' : 860, textWrap: 'pretty',
-        }}>
+              fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
+              margin: mobile ? '10px 0 0' : '12px auto 0',
+              maxWidth: mobile ? '100%' : 860, textWrap: 'pretty'
+            }}>
           Самосайт соберёт сайт со всеми услугами, ценами, отзывами и фото. Тексты напишет сам. Когда придут первые посетители, начнёт подсказывать, что поправить ради новых заявок.
         </p>
 
         <div className="ss-hero-pill" style={{
-          marginTop: mobile ? 22 : 32,
-          display: 'flex', flexDirection: mobile ? 'column' : 'row',
-          gap: mobile ? 10 : 8,
-          maxWidth: mobile ? '100%' : 680,
-          marginLeft: mobile ? 0 : 'auto', marginRight: mobile ? 0 : 'auto',
-          background: VT.white,
-          padding: mobile ? 10 : 8,
-          borderRadius: mobile ? 14 : 999,
-          border: `1px solid ${VT.line}`,
-          boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)',
-          alignItems: mobile ? 'stretch' : 'center',
-        }}>
+              marginTop: mobile ? 22 : 32,
+              display: 'flex', flexDirection: mobile ? 'column' : 'row',
+              gap: mobile ? 10 : 8,
+              maxWidth: mobile ? '100%' : 680,
+              marginLeft: mobile ? 0 : 'auto', marginRight: mobile ? 0 : 'auto',
+              background: VT.white,
+              padding: mobile ? 10 : 8,
+              borderRadius: mobile ? 14 : 999,
+              border: `1px solid ${VT.line}`,
+              boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)',
+              alignItems: mobile ? 'stretch' : 'center'
+            }}>
           <div style={{
-            flex: 1, display: 'flex', alignItems: 'center', gap: 10,
-            padding: mobile ? '12px 14px' : '0 18px', minWidth: 0,
-          }}>
+                flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+                padding: mobile ? '12px 14px' : '0 18px', minWidth: 0
+              }}>
             <IconLink />
             <span style={{
-              color: VT.inkFaint, fontSize: mobile ? 15 : 16,
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>Вставьте ссылку или загрузите фото</span>
+                  color: VT.inkFaint, fontSize: mobile ? 15 : 16,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                }}>Вставьте ссылку или загрузите фото</span>
           </div>
           <Btn style={{
-            padding: mobile ? '14px 20px' : '14px 26px',
-            borderRadius: mobile ? 10 : 999,
-          }} iconRight={<IconArrow />}>
+                padding: mobile ? '14px 20px' : '14px 26px',
+                borderRadius: mobile ? 10 : 999
+              }} iconRight={<IconArrow />}>
             Собрать сайт за 2 часа
           </Btn>
         </div>
 
         <div style={{
-          marginTop: mobile ? 10 : 12,
-          textAlign: mobile ? 'left' : 'center',
-          fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12.5,
-          letterSpacing: '0.03em', color: VT.inkSoft, lineHeight: 1.45,
-        }}>
+              marginTop: mobile ? 10 : 12,
+              textAlign: mobile ? 'left' : 'center',
+              fontFamily: VT.font.mono, fontSize: mobile ? 11.5 : 12.5,
+              letterSpacing: '0.03em', color: VT.inkSoft, lineHeight: 1.45
+            }}>
           Тариф «Старт» — бесплатно навсегда. Платные <b style={{ color: VT.accent }}>от 690 ₽/мес</b> · первый месяц на платном бесплатно, карту привязывать не надо
         </div>
 
         <div style={{
-          marginTop: mobile ? 14 : 18,
-          textAlign: mobile ? 'left' : 'center',
-        }}>
+              marginTop: mobile ? 14 : 18,
+              textAlign: mobile ? 'left' : 'center'
+            }}>
           <a href="#examples" style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            color: VT.inkSoft, fontSize: mobile ? 14 : 15,
-            textDecoration: 'underline', textUnderlineOffset: 4,
-            textDecorationColor: VT.line,
-          }}>
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                color: VT.inkSoft, fontSize: mobile ? 14 : 15,
+                textDecoration: 'underline', textUnderlineOffset: 4,
+                textDecorationColor: VT.line
+              }}>
             Сначала посмотреть примеры
             <span aria-hidden="true">↓</span>
           </a>
@@ -227,1167 +181,567 @@ function HeroBlock({ mobile }) {
 
         <ChipStrip mobile={mobile} />
       </div>
-    </section>
-  );
-}
+    </section>);
 
-// ───────── BLOCK 2 · EXAMPLES ─────────
+    }
 
-function Star({ filled = true, size = 10 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20"
-         fill={filled ? '#f4a93b' : 'none'} stroke={filled ? '#f4a93b' : '#ccc'}
-         strokeWidth="1.5" strokeLinejoin="round">
-      <path d="M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z"/>
-    </svg>
-  );
-}
-
-function PhotoFill({ tone = 'peach', src, style }: any) {
-  const tones: Record<string, [string, string, string]> = {
-    peach: ['oklch(0.84 0.07 50)', 'oklch(0.62 0.09 35)', 'oklch(0.46 0.07 30)'],
-    sage:  ['oklch(0.82 0.06 145)', 'oklch(0.58 0.08 145)', 'oklch(0.38 0.06 145)'],
-    slate: ['oklch(0.80 0.04 240)', 'oklch(0.55 0.06 240)', 'oklch(0.35 0.04 240)'],
-    warm:  ['oklch(0.88 0.05 70)', 'oklch(0.70 0.10 50)', 'oklch(0.48 0.10 35)'],
-  };
-  const [c1, c2, c3] = tones[tone] || tones.peach;
-  // Always render the colored gradient as background; if src exists, layer the
-  // photo on top and remove it on error so the gradient remains visible.
-  return (
-    <div style={{
-      position: 'relative', overflow: 'hidden',
-      background: `radial-gradient(120% 80% at 30% 20%, ${c1} 0%, transparent 55%), radial-gradient(110% 70% at 80% 90%, ${c3} 0%, transparent 55%), linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3} 100%)`,
-      ...style,
-    }}>
-      {src && <img src={src} alt="" loading="lazy"
-        onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
-        style={{
-          position: 'absolute', inset: 0, width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'center', display: 'block',
-        }} />}
-    </div>
-  );
-}
-
-// ───────── BLOCK 2 · EXAMPLES — Soft Bento 2026 ─────────
-//
-// Three client-site mockups. One unified system: cream surface, white bento
-// cards, warm diffuse shadows, single Geist family, conversational headlines.
-// Only ACCENT + content change per site. Hero composition differs per niche
-// (stacked / photo-status / photo-strip) so the three don't read as clones.
-
-const EX_T = {
-  bg: '#FAF8F3',
-  card: '#FFFFFF',
-  cardLine: 'rgba(0,0,0,0.06)',
-  ink: '#1A1612',
-  inkSoft: '#6B6359',
-  inkFaint: '#9B9388',
-  font: "'Geist', 'Inter', system-ui, -apple-system, sans-serif",
-  radiusLg: 24,
-  radiusMd: 20,
-  radiusSm: 16,
-  radiusBtn: 12,
-  radiusChip: 100,
-  shadowSm: '0 1px 2px rgba(60,30,15,0.04)',
-  shadowCta: '0 4px 12px rgba(60,30,15,0.10)',
-};
-
-function MiniChrome({ host, children }: any) {
-  return (
-    <div style={{
-      overflow: 'hidden', borderRadius: 10,
-      border: `1px solid ${VT.line}`,
-      display: 'flex', flexDirection: 'column', width: '100%', height: '100%',
-      minWidth: 0, background: EX_T.bg, fontFamily: EX_T.font,
-      color: EX_T.ink, fontVariantNumeric: 'tabular-nums',
-    }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '7px 10px', background: '#fff',
-        borderBottom: `1px solid ${VT.line}`, flex: '0 0 auto',
-      }}>
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
-        <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
-        <span style={{
-          marginLeft: 10, fontSize: 10, fontWeight: 500,
-          color: EX_T.inkFaint,
-        }}>{host}.{BRAND.domain}</span>
-      </div>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function EX_Chip({ accent, accentSoft, children }: any) {
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 6,
-      padding: '5px 10px', borderRadius: EX_T.radiusChip,
-      background: accentSoft, color: accent,
-      fontSize: 11, fontWeight: 500, letterSpacing: '-0.005em',
-      lineHeight: 1.2, maxWidth: '100%',
-      overflow: 'hidden', whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis', minWidth: 0,
-    }}>{children}</span>
-  );
-}
-
-function EX_Card({ children, style, tinted, accentSoft }: any) {
-  return (
-    <div style={{
-      background: tinted ? accentSoft : EX_T.card,
-      borderRadius: EX_T.radiusMd,
-      boxShadow: tinted ? 'none' : EX_T.shadowSm,
-      padding: 16,
-      ...style,
-    }}>{children}</div>
-  );
-}
-
-function EX_CTA({ accent, color = '#fff', children }: any) {
-  return (
-    <div style={{
-      width: '100%', textAlign: 'center',
-      padding: '12px 14px', borderRadius: EX_T.radiusBtn,
-      background: accent, color,
-      fontSize: 14, fontWeight: 600, letterSpacing: '-0.005em',
-      boxShadow: EX_T.shadowCta,
-    }}>{children}</div>
-  );
-}
-
-function EX_CTAGhost({ children, color = EX_T.ink }: any) {
-  return (
-    <div style={{
-      width: '100%', textAlign: 'center',
-      padding: '11px 14px', borderRadius: EX_T.radiusBtn,
-      background: 'transparent', color,
-      fontSize: 14, fontWeight: 500, letterSpacing: '-0.005em',
-      border: `1px solid ${EX_T.cardLine}`,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-    }}>{children}</div>
-  );
-}
-
-function EX_PhoneIcon({ size = 14, color = EX_T.ink }: any) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-function EX_PinIcon({ size = 14, color = EX_T.inkSoft }: any) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  );
-}
-
-function EX_ClockIcon({ size = 14, color = EX_T.inkSoft }: any) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-      stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-
-function EX_StarRow({ count = 5, color, size = 11 }: any) {
-  return (
-    <div style={{ display: 'inline-flex', gap: 1 }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill={color}>
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
-function EX_Avatar({ accent, accentSoft, size = 32, src, initial }: any) {
-  if (src) {
-    return (
-      <PhotoFill tone="peach" src={src} style={{
-        width: size, height: size, borderRadius: '50%', flex: '0 0 auto',
-      }} />
-    );
-  }
-  return (
-    <span style={{
-      width: size, height: size, borderRadius: '50%', flex: '0 0 auto',
-      background: accentSoft, color: accent,
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: size * 0.42, fontWeight: 600,
-    }}>{initial}</span>
-  );
-}
-
-function EX_MiniHeader({ name, accent }: any) {
-  return (
-    <div style={{
-      position: 'sticky', top: 0, zIndex: 5,
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      gap: 10, padding: '10px 14px',
-      background: 'rgba(250,248,243,0.85)',
-      backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-      borderBottom: `1px solid ${EX_T.cardLine}`,
-      flex: '0 0 auto', minWidth: 0,
-    }}>
-      <span style={{
-        fontSize: 13.5, fontWeight: 600, letterSpacing: '-0.01em', color: EX_T.ink,
-        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        flex: '1 1 auto', minWidth: 0,
-      }}>{name}</span>
-      <span style={{
-        padding: '6px 11px', borderRadius: 10,
-        background: accent, color: '#fff',
-        fontSize: 11.5, fontWeight: 600, letterSpacing: '-0.005em',
-        whiteSpace: 'nowrap', boxShadow: EX_T.shadowCta, flex: '0 0 auto',
-      }}>Записаться</span>
-    </div>
-  );
-}
-
-function EX_TrustRow({ rating, reviewsN, since, accent }: any) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 8,
-      marginTop: 12, fontSize: 12.5, color: EX_T.inkSoft, flexWrap: 'wrap',
-    }}>
-      <EX_StarRow color={accent} size={12} />
-      <span style={{ fontWeight: 600, color: EX_T.ink }}>{rating}</span>
-      <span style={{ color: EX_T.inkFaint }}>·</span>
-      <span>{reviewsN} отзывов</span>
-      <span style={{ color: EX_T.inkFaint }}>·</span>
-      <span>с {since}</span>
-    </div>
-  );
-}
-
-function EX_HeroStacked({ category, address, heading, sub, photoSrc, photoTone, rating, reviewsN, since, phone, ctaText, accent, accentSoft }: any) {
-  return (
-    <EX_Card>
-      <EX_Chip accent={accent} accentSoft={accentSoft}>
-        <span style={{ width: 6, height: 6, borderRadius: '50%', background: accent }} />
-        {category} · {address}
-      </EX_Chip>
-      <h2 style={{
-        margin: '12px 0 6px', fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em',
-        lineHeight: 1.05, color: EX_T.ink, textWrap: 'balance',
-      }}>{heading}</h2>
-      <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.45, color: EX_T.inkSoft, letterSpacing: '-0.005em' }}>{sub}</p>
-      <EX_TrustRow rating={rating} reviewsN={reviewsN} since={since} accent={accent} />
-      <div style={{ marginTop: 14 }}>
-        <PhotoFill tone={photoTone} src={photoSrc}
-          style={{ aspectRatio: '4 / 3', borderRadius: EX_T.radiusSm }} />
-      </div>
-      <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <EX_CTA accent={accent}>{ctaText}</EX_CTA>
-        <EX_CTAGhost><EX_PhoneIcon size={14} color={EX_T.ink} />{phone}</EX_CTAGhost>
-      </div>
-    </EX_Card>
-  );
-}
-
-function EX_HeroStatus({ category, address, heading, sub, photoSrc, photoTone, statusText, statusSub, rating, reviewsN, since, phone, ctaText, accent, accentSoft }: any) {
-  return (
-    <EX_Card style={{ padding: 0, overflow: 'hidden' }}>
-      <PhotoFill tone={photoTone} src={photoSrc} style={{ aspectRatio: '16 / 9' }} />
-      <div style={{ padding: 16 }}>
-        <EX_Chip accent={accent} accentSoft={accentSoft}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: accent }} />
-          {category} · {address}
-        </EX_Chip>
-        <h2 style={{
-          margin: '12px 0 6px', fontSize: 26, fontWeight: 600, letterSpacing: '-0.025em',
-          lineHeight: 1.05, color: EX_T.ink, textWrap: 'balance',
-        }}>{heading}</h2>
-        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.45, color: EX_T.inkSoft }}>{sub}</p>
+    // ───────── ChipStrip · переиспользуемый стрип «СОБИРАЕМ ИЗ» ─────────
+    // Вынесен из inline-кода Hero (canon 0.7.2), чтобы стрип можно было
+    // переиспользовать без транскрипции разметки.
+    function ChipStrip({ mobile = false, label = 'СОБИРАЕМ ИЗ', items = SOURCE_ICONS, align }) {
+      const a = align ?? (mobile ? 'start' : 'center');
+      const alignItems = a === 'center' ? 'center' : 'flex-start';
+      const justify = alignItems === 'center' ? 'center' : 'flex-start';
+      return (
         <div style={{
-          marginTop: 14, padding: '10px 12px', background: accentSoft, borderRadius: 12,
-          display: 'flex', alignItems: 'center', gap: 10,
+          marginTop: mobile ? 22 : 36,
+          display: 'flex', flexDirection: 'column', gap: 10,
+          alignItems
         }}>
-          <span style={{
-            width: 8, height: 8, borderRadius: '50%', background: accent,
-            boxShadow: `0 0 0 4px ${accent}22`, flex: '0 0 auto',
-          }} />
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: accent, lineHeight: 1.2 }}>{statusText}</div>
-            <div style={{ fontSize: 11.5, color: EX_T.ink, marginTop: 2, lineHeight: 1.3 }}>{statusSub}</div>
-          </div>
-        </div>
-        <EX_TrustRow rating={rating} reviewsN={reviewsN} since={since} accent={accent} />
-        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <EX_CTA accent={accent}>{ctaText}</EX_CTA>
-          <EX_CTAGhost><EX_PhoneIcon size={14} color={EX_T.ink} />{phone}</EX_CTAGhost>
-        </div>
+      {label &&
+          <div style={{
+            fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+            color: VT.inkFaint, fontWeight: 600
+          }}>{label}</div>
+          }
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: justify }}>
+        {items.map((s) =>
+            <span key={s.id} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '5px 14px 5px 5px',
+              background: VT.white, border: `1px solid ${VT.line}`,
+              borderRadius: 999,
+              fontSize: 13, color: VT.ink, fontWeight: 500
+            }}>
+            {s.icon}
+            {s.name}
+          </span>
+            )}
       </div>
-    </EX_Card>
-  );
-}
+    </div>);
 
-function EX_HeroStrip({ category, address, heading, sub, stripPhotos, photoTone, rating, reviewsN, since, phone, ctaText, accent, accentSoft }: any) {
-  return (
-    <EX_Card>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
-        {stripPhotos.map((src: string, i: number) => (
-          <PhotoFill key={i} tone={photoTone} src={src} style={{ aspectRatio: '1 / 1', borderRadius: 10 }} />
-        ))}
-      </div>
-      <div style={{ marginTop: 14 }}>
-        <EX_Chip accent={accent} accentSoft={accentSoft}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: accent }} />
-          {category} · {address}
-        </EX_Chip>
-      </div>
-      <h2 style={{
-        margin: '12px 0 6px', fontSize: 26, fontWeight: 600, letterSpacing: '-0.025em',
-        lineHeight: 1.05, color: EX_T.ink, textWrap: 'balance',
-      }}>{heading}</h2>
-      <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.45, color: EX_T.inkSoft }}>{sub}</p>
-      <EX_TrustRow rating={rating} reviewsN={reviewsN} since={since} accent={accent} />
-      <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <EX_CTA accent={accent}>{ctaText}</EX_CTA>
-        <EX_CTAGhost><EX_PhoneIcon size={14} color={EX_T.ink} />{phone}</EX_CTAGhost>
-      </div>
-    </EX_Card>
-  );
-}
+    }
 
-function EX_ReviewBento({ name, source, body, rating, accent, accentSoft, initial, when, photo }: any) {
-  return (
-    <EX_Card>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <EX_Avatar initial={initial} accent={accent} accentSoft={accentSoft} src={photo} />
-        <div style={{ minWidth: 0, flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 600, color: EX_T.ink, letterSpacing: '-0.005em' }}>{name}</div>
-          <div style={{ fontSize: 11.5, color: EX_T.inkSoft, marginTop: 1 }}>{source}</div>
-        </div>
-        <EX_StarRow count={rating} color={accent} size={11} />
-      </div>
-      <p style={{ margin: '10px 0 0', fontSize: 14, lineHeight: 1.5, color: EX_T.ink, letterSpacing: '-0.005em' }}>{body}</p>
-      <div style={{ marginTop: 8, fontSize: 11, color: EX_T.inkFaint }}>{when}</div>
-    </EX_Card>
-  );
-}
+    // ───────── BLOCK 2 · EXAMPLES ─────────
 
-function EX_SectionTitle({ children, sub }: any) {
-  return (
-    <div style={{ padding: '4px 4px' }}>
-      <h3 style={{ margin: 0, fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em', color: EX_T.ink, lineHeight: 1.15 }}>{children}</h3>
-      {sub && <p style={{ margin: '4px 0 0', fontSize: 13, color: EX_T.inkSoft, lineHeight: 1.4 }}>{sub}</p>}
-    </div>
-  );
-}
+    function Star({ filled = true, size = 10 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 20 20"
+        fill={filled ? '#f4a93b' : 'none'} stroke={filled ? '#f4a93b' : '#ccc'}
+        strokeWidth="1.5" strokeLinejoin="round">
+      <path d="M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z" />
+    </svg>);
 
-function EX_FeaturedService({ title, hint, price, photoSrc, photoTone, accent }: any) {
-  return (
-    <EX_Card style={{ padding: 0, overflow: 'hidden' }}>
-      <PhotoFill tone={photoTone} src={photoSrc} style={{ aspectRatio: '16 / 9' }} />
-      <div style={{ padding: 16 }}>
-        <h4 style={{
-          margin: 0, fontSize: 16, fontWeight: 600, letterSpacing: '-0.015em',
-          color: EX_T.ink, lineHeight: 1.2, textWrap: 'balance',
-        }}>{title}</h4>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 6 }}>
-          <p style={{ margin: 0, fontSize: 12.5, color: EX_T.inkSoft, lineHeight: 1.4, flex: 1, minWidth: 0 }}>{hint}</p>
-          <span style={{ fontSize: 18, fontWeight: 600, color: EX_T.ink, whiteSpace: 'nowrap', letterSpacing: '-0.01em', flex: '0 0 auto' }}>{price}</span>
-        </div>
-        <div style={{ marginTop: 14 }}>
-          <EX_CTA accent={accent}>Записаться</EX_CTA>
-        </div>
-      </div>
-    </EX_Card>
-  );
-}
+    }
 
-function EX_SmallService({ title, hint, price }: any) {
-  return (
-    <EX_Card style={{ padding: 14, display: 'flex', flexDirection: 'column' }}>
-      <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em', color: EX_T.ink, lineHeight: 1.25 }}>{title}</h4>
-      {hint && <p style={{ margin: '4px 0 0', fontSize: 12, color: EX_T.inkSoft, lineHeight: 1.35 }}>{hint}</p>}
-      <div style={{ marginTop: 'auto', paddingTop: 10 }}>
-        <span style={{ fontSize: 16, fontWeight: 600, color: EX_T.ink, letterSpacing: '-0.01em' }}>{price}</span>
-      </div>
-    </EX_Card>
-  );
-}
-
-function EX_ServiceList({ items, accent }: any) {
-  return (
-    <EX_Card>
-      {items.map((it: any, i: number) => (
-        <div key={i} style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 12, padding: '10px 0',
-          borderBottom: i === items.length - 1 ? 'none' : `1px solid ${EX_T.cardLine}`,
+    function PhotoFill({ tone = 'peach', src, style }) {
+      const tones = {
+        peach: ['oklch(0.84 0.07 50)', 'oklch(0.62 0.09 35)', 'oklch(0.46 0.07 30)'],
+        sage: ['oklch(0.82 0.06 145)', 'oklch(0.58 0.08 145)', 'oklch(0.38 0.06 145)'],
+        slate: ['oklch(0.80 0.04 240)', 'oklch(0.55 0.06 240)', 'oklch(0.35 0.04 240)'],
+        warm: ['oklch(0.88 0.05 70)', 'oklch(0.70 0.10 50)', 'oklch(0.48 0.10 35)']
+      };
+      const [c1, c2, c3] = tones[tone] || tones.peach;
+      // Always render the colored gradient as background; if src exists, layer the photo
+      // on top and remove it on error so the gradient remains visible.
+      return (
+        <div style={{
+          position: 'relative', overflow: 'hidden',
+          background: `radial-gradient(120% 80% at 30% 20%, ${c1} 0%, transparent 55%), radial-gradient(110% 70% at 80% 90%, ${c3} 0%, transparent 55%), linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3} 100%)`,
+          ...style
         }}>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 500, color: EX_T.ink, letterSpacing: '-0.005em' }}>{it.name}</div>
-            {it.hint && <div style={{ fontSize: 11.5, color: EX_T.inkSoft, marginTop: 1, lineHeight: 1.3 }}>{it.hint}</div>}
-          </div>
-          <span style={{ fontSize: 13.5, fontWeight: 600, color: EX_T.ink, whiteSpace: 'nowrap' }}>{it.price}</span>
-        </div>
-      ))}
-      <div style={{ marginTop: 12 }}>
-        <EX_CTA accent={accent}>Все услуги · записаться</EX_CTA>
-      </div>
-    </EX_Card>
-  );
-}
+      {src && <img src={src} alt="" loading="lazy"
+          onError={(e) => {e.currentTarget.style.display = 'none';}}
+          style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center', display: 'block'
+          }} />}
+    </div>);
 
-function EX_StatsRow({ stats }: any) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-      {stats.map((s: any, i: number) => (
-        <EX_Card key={i} style={{ padding: 12, textAlign: 'left' }}>
-          <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.025em', color: EX_T.ink, lineHeight: 1 }}>{s.big}</div>
-          <div style={{ fontSize: 11.5, color: EX_T.inkSoft, marginTop: 6, lineHeight: 1.3, letterSpacing: '-0.005em' }}>{s.text}</div>
-        </EX_Card>
-      ))}
-    </div>
-  );
-}
+    }
 
-function EX_Gallery({ photos, tone }: any) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-      <div style={{ gridColumn: '1 / -1' }}>
-        <PhotoFill tone={tone} src={photos[0]} style={{ aspectRatio: '16 / 10', borderRadius: EX_T.radiusMd, boxShadow: EX_T.shadowSm }} />
-      </div>
-      <PhotoFill tone={tone} src={photos[1]} style={{ aspectRatio: '1 / 1', borderRadius: EX_T.radiusMd, boxShadow: EX_T.shadowSm }} />
-      <PhotoFill tone={tone} src={photos[2]} style={{ aspectRatio: '1 / 1', borderRadius: EX_T.radiusMd, boxShadow: EX_T.shadowSm }} />
-    </div>
-  );
-}
-
-function EX_Contact({ address, hours, phone, accent, photoSrc, photoTone }: any) {
-  return (
-    <EX_Card>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <EX_PinIcon size={15} color={accent} />
-        <span style={{ fontSize: 14, fontWeight: 600, color: EX_T.ink, letterSpacing: '-0.005em' }}>{address}</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8, fontSize: 12.5, color: EX_T.inkSoft, flexWrap: 'wrap' }}>
-        <EX_ClockIcon size={13} color={EX_T.inkSoft} />
-        <span>{hours}</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginLeft: 4 }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: '50%', background: '#3FB66A',
-            boxShadow: '0 0 0 3px rgba(63,182,106,0.18)',
-          }} />
-          <span style={{ color: '#2A8A4D', fontWeight: 500 }}>открыто</span>
+    function MiniSiteCard({ ex }) {
+      return (
+        <div className="ss-card-lift" style={{
+          background: VT.white, color: VT.ink,
+          border: `1px solid ${VT.line}`,
+          borderRadius: 18, overflow: 'hidden',
+          boxShadow: '0 18px 36px -18px rgba(120,60,30,0.22)',
+          display: 'flex', flexDirection: 'column', width: '100%'
+        }}>
+      <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '8px 12px', background: VT.bgSoft,
+            borderBottom: `1px solid ${VT.line}`
+          }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.line }} />
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.line }} />
+        <span style={{ marginLeft: 8, fontFamily: VT.font.mono, fontSize: 10, color: VT.inkFaint }}>
+          {ex.handle}.{BRAND.domain}
         </span>
       </div>
-      <div style={{ marginTop: 12 }}>
-        <PhotoFill tone={photoTone} src={photoSrc} style={{ aspectRatio: '16 / 7', borderRadius: EX_T.radiusSm }} />
-      </div>
-      <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <EX_CTA accent={accent}>Записаться</EX_CTA>
-        <EX_CTAGhost><EX_PhoneIcon size={14} color={EX_T.ink} />{phone}</EX_CTAGhost>
-      </div>
-    </EX_Card>
-  );
-}
 
-function EX_FinalCTA({ heading, sub, ctaText, hint, accent, accentSoft }: any) {
-  return (
-    <EX_Card tinted accentSoft={accentSoft} style={{ padding: 22, textAlign: 'center' }}>
-      <h3 style={{ margin: 0, fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', color: EX_T.ink, lineHeight: 1.1, textWrap: 'balance' }}>{heading}</h3>
-      <p style={{ margin: '6px 0 16px', fontSize: 13, color: EX_T.inkSoft, lineHeight: 1.45 }}>{sub}</p>
-      <EX_CTA accent={accent}>{ctaText}</EX_CTA>
-      <div style={{ marginTop: 10, fontSize: 11.5, color: EX_T.inkSoft }}>{hint}</div>
-    </EX_Card>
-  );
-}
-
-function EX_Footer({ host }: any) {
-  return (
-    <div style={{
-      padding: '12px 16px 14px', flex: '0 0 auto',
-      borderTop: `1px solid ${EX_T.cardLine}`,
-      fontSize: 11, color: EX_T.inkFaint, lineHeight: 1.4, letterSpacing: '-0.005em',
-    }}>{host}.{BRAND.domain} · собран на Самосайте · обновлён сегодня</div>
-  );
-}
-
-const EX_U = (id: string, w = 600) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=72`;
-
-function EX_renderSite(cfg: any) {
-  const HeroComp =
-    cfg.heroVariant === 'status' ? EX_HeroStatus :
-    cfg.heroVariant === 'strip'  ? EX_HeroStrip  : EX_HeroStacked;
-  const heroProps: any = {
-    category: cfg.category, address: cfg.address,
-    heading: cfg.heroHeading, sub: cfg.heroSub,
-    photoTone: cfg.heroTone,
-    rating: cfg.rating, reviewsN: cfg.reviewsN, since: cfg.since,
-    phone: cfg.phone, ctaText: cfg.heroCta,
-    accent: cfg.accent, accentSoft: cfg.accentSoft,
-  };
-  if (cfg.heroVariant === 'strip') heroProps.stripPhotos = cfg.stripPhotos;
-  else heroProps.photoSrc = cfg.heroPhoto;
-  if (cfg.heroVariant === 'status') {
-    heroProps.statusText = cfg.statusText;
-    heroProps.statusSub  = cfg.statusSub;
-  }
-  return (
-    <MiniChrome host={cfg.host}>
-      <EX_MiniHeader name={cfg.brand} accent={cfg.accent} />
-      <div style={{ flex: 1, padding: '14px 14px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <HeroComp {...heroProps} />
-        <EX_ReviewBento {...cfg.review} accent={cfg.accent} accentSoft={cfg.accentSoft} />
-        <EX_SectionTitle sub="Цены за май">Услуги и&nbsp;цены</EX_SectionTitle>
-        <EX_FeaturedService {...cfg.featured} accent={cfg.accent} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <EX_SmallService {...cfg.smalls[0]} />
-          <EX_SmallService {...cfg.smalls[1]} />
-        </div>
-        <EX_ServiceList items={cfg.listItems} accent={cfg.accent} />
-        <div style={{ marginTop: 4 }}><EX_SectionTitle>Цифры</EX_SectionTitle></div>
-        <EX_StatsRow stats={cfg.stats} />
-        <div style={{ marginTop: 4 }}><EX_SectionTitle sub="обновлено на этой неделе">Последние работы</EX_SectionTitle></div>
-        <EX_Gallery photos={cfg.gallery} tone={cfg.galleryTone} />
-        <div style={{ marginTop: 4 }}><EX_SectionTitle>Где найти</EX_SectionTitle></div>
-        <EX_Contact address={cfg.address} hours={cfg.hours} phone={cfg.phone} accent={cfg.accent} photoSrc={cfg.mapPhoto} photoTone={cfg.mapTone} />
-        <EX_FinalCTA heading={cfg.finalHeading} sub={cfg.finalSub} ctaText={cfg.finalCta} hint={cfg.finalHint} accent={cfg.accent} accentSoft={cfg.accentSoft} />
-      </div>
-      <EX_Footer host={cfg.host} />
-    </MiniChrome>
-  );
-}
-
-function EX_CoffeeSite() {
-  return EX_renderSite({
-    brand: 'Утро у Лены', host: 'lena',
-    accent: '#D97757', accentSoft: 'rgba(217,119,87,0.10)',
-    category: 'Кофейня', address: 'Платонова 12',
-    heroHeading: 'Кофе и завтраки в центре Воронежа',
-    heroSub: 'Зерно недельной обжарки. Альт.молоко без доплат. Вынос за 3 минуты до работы.',
-    heroPhoto: EX_U('photo-1453614512568-c4024d13c247', 720), heroTone: 'warm',
-    heroCta: 'Записаться · заказать к приходу', phone: '+7 (473) 220-12-12',
-    rating: '4.9', reviewsN: 128, since: '2019',
-    review: {
-      name: 'Алина К.', source: '2ГИС · 8 отзывов', rating: 5,
-      body: 'Лучший раф в городе. И ребята помнят моё «как обычно» с третьего раза. Захожу каждое утро по дороге на работу.',
-      initial: 'А', when: '2 недели назад',
-      photo: EX_U('photo-1494790108377-be9c29b29330', 120),
-    },
-    featured: {
-      title: 'Завтрак выходного дня',
-      hint: 'Сырник, авокадо-тост, кофе на выбор. Готовим только по сб–вс.',
-      price: '450 ₽',
-      photoSrc: EX_U('photo-1525351484163-7529414344d8', 600), photoTone: 'warm',
-    },
-    smalls: [
-      { title: 'Капучино · альт.молоко', hint: 'без доплат', price: '220 ₽' },
-      { title: 'Сырник со сметаной', hint: 'до 15:00', price: '220 ₽' },
-    ],
-    listItems: [
-      { name: 'Латте', hint: 'двойной шот', price: '240 ₽' },
-      { name: 'Раф ванильный', price: '260 ₽' },
-      { name: 'Авокадо-тост', hint: 'на бородинском', price: '380 ₽' },
-      { name: 'Гранола с йогуртом', price: '290 ₽' },
-    ],
-    stats: [
-      { big: 'с 2019', text: 'на Платонова — седьмой год' },
-      { big: '3 мин', text: 'средний вынос на работу' },
-      { big: '0 ₽', text: 'доплата за альт.молоко' },
-    ],
-    gallery: [
-      EX_U('photo-1559925393-8be0ec4767c8', 600),
-      EX_U('photo-1559496417-e7f25cb247f3', 360),
-      EX_U('photo-1494314671902-399b18174975', 360),
-    ],
-    galleryTone: 'warm',
-    hours: 'пн–вс · 7:00–22:00',
-    mapPhoto: EX_U('photo-1524350876685-274059332603', 600), mapTone: 'warm',
-    finalHeading: 'Приходите на капучино',
-    finalSub: 'Сегодня открыты до 22:00. Дойдёт ваш заказ за 3 минуты.',
-    finalCta: 'Заказать с собой',
-    finalHint: 'Или просто заходите · мы на Платонова, 12',
-  });
-}
-
-function EX_AutoSite() {
-  return EX_renderSite({
-    brand: 'Park · автосервис', host: 'park-auto',
-    accent: '#3B5876', accentSoft: 'rgba(59,88,118,0.10)',
-    heroVariant: 'status',
-    category: 'Автосервис', address: 'Промышленная 14',
-    statusText: 'Свободно сегодня',
-    statusSub: '14:00 и 16:30 · диагностика бесплатно',
-    heroHeading: 'Диагностика за 30 минут. Чиним только нужное.',
-    heroSub: 'Сначала звонок и расчёт. После «да» начинаем — без сюрпризов в чеке.',
-    heroPhoto: EX_U('photo-1486262715619-67b85e0b08d3', 720), heroTone: 'slate',
-    heroCta: 'Записаться · диагностика бесплатно', phone: '+7 (846) 333-08-08',
-    rating: '4.8', reviewsN: 214, since: '2013',
-    review: {
-      name: 'Дмитрий В.', source: 'Яндекс.Карты · 23 отзыва', rating: 5,
-      body: 'Сначала позвонили, объяснили, что и зачем меняем. Ничего лишнего не навязали, дали выбрать между оригиналом и аналогом.',
-      initial: 'Д', when: '6 дней назад',
-      photo: EX_U('photo-1500648767791-00dcc994a43e', 120),
-    },
-    featured: {
-      title: 'Компьютерная диагностика',
-      hint: 'Ходовая, тормоза, ошибки ЭБУ, уровни жидкостей. 30 минут.',
-      price: 'бесплатно',
-      photoSrc: EX_U('photo-1492144534655-ae79c964c9d7', 600), photoTone: 'slate',
-    },
-    smalls: [
-      { title: 'Замена масла + фильтр', hint: '40 минут', price: 'от 900 ₽' },
-      { title: 'Развал-схождение 3D', hint: 'гарантия 6 мес', price: 'от 2 400 ₽' },
-    ],
-    listItems: [
-      { name: 'Тормозные колодки', hint: 'оригинал и аналоги', price: 'от 1 800 ₽' },
-      { name: 'Замена сцепления', price: 'от 9 000 ₽' },
-      { name: 'Ремонт подвески', hint: 'с гарантией 1 год', price: 'договорная' },
-      { name: 'Шиномонтаж R13–R20', price: 'от 700 ₽' },
-    ],
-    stats: [
-      { big: '12 лет', text: 'в одном боксе на Промышленной' },
-      { big: '1 200', text: 'авто проходит через нас в год' },
-      { big: '1 год', text: 'гарантия на любую работу' },
-    ],
-    gallery: [
-      EX_U('photo-1487754180451-c456f719a1fc', 600),
-      EX_U('photo-1503376780353-7e6692767b70', 360),
-      EX_U('photo-1493238792000-8113da705763', 360),
-    ],
-    galleryTone: 'slate',
-    hours: 'пн–сб · 9:00–20:00',
-    mapPhoto: EX_U('photo-1450101499163-c8848c66ca85', 600), mapTone: 'slate',
-    finalHeading: 'Заезжайте на диагностику',
-    finalSub: 'Сегодня свободны окна 14:00 и 16:30. Диагностика бесплатно.',
-    finalCta: 'Записаться на сегодня',
-    finalHint: 'Ответим в WhatsApp или перезвоним за 10 минут',
-  });
-}
-
-function EX_NailsSite() {
-  return EX_renderSite({
-    brand: 'Студия Анны', host: 'anna-nails',
-    accent: '#8C4A5E', accentSoft: 'rgba(140,74,94,0.10)',
-    heroVariant: 'strip',
-    stripPhotos: [
-      EX_U('photo-1607779097040-26e80aa78e66', 240),
-      EX_U('photo-1632345031435-8727f6897d53', 240),
-      EX_U('photo-1604902396830-aca29e19b067', 240),
-    ],
-    category: 'Маникюр', address: 'Куйбышева 8',
-    heroHeading: 'Аппаратный маникюр, держится 21 день',
-    heroSub: 'Работает одна Анна, не конвейер. Запись через Telegram, без звонков и CRM.',
-    heroTone: 'peach',
-    heroCta: 'Записаться в Telegram', phone: '@anna_studio',
-    rating: '5.0', reviewsN: 86, since: '2017',
-    review: {
-      name: 'Олеся Н.', source: 'Яндекс · постоянный клиент', rating: 5,
-      body: 'Анна спокойная, объясняет, что делает. Маникюр держится ровно до следующей записи — три недели. Никогда не было сколов.',
-      initial: 'О', when: '3 дня назад',
-      photo: EX_U('photo-1438761681033-6461ffad8d80', 120),
-    },
-    featured: {
-      title: 'Маникюр + покрытие гель-лак',
-      hint: 'Без обрезания, аппаратный. 1 ч 40 мин. Дизайн на 2 ногтя — в подарок.',
-      price: '3 200 ₽',
-      photoSrc: EX_U('photo-1607779097040-26e80aa78e66', 600), photoTone: 'peach',
-    },
-    smalls: [
-      { title: 'Маникюр аппаратный', hint: 'без покрытия', price: '2 000 ₽' },
-      { title: 'Дизайн от 1 ногтя', hint: 'линии · втирка · френч', price: 'от 150 ₽' },
-    ],
-    listItems: [
-      { name: 'Снятие чужого покрытия', price: '500 ₽' },
-      { name: 'Укрепление гелем', hint: 'без наращивания', price: '+ 800 ₽' },
-      { name: 'Френч / лунный', price: '+ 400 ₽' },
-      { name: 'Японский маникюр', hint: 'p-shine, без покрытия', price: '1 800 ₽' },
-    ],
-    stats: [
-      { big: '9 лет', text: 'опыта · обучалась у О. Соколовой' },
-      { big: '21 день', text: 'средняя носка покрытия' },
-      { big: '86', text: 'постоянных клиентов с 2017' },
-    ],
-    gallery: [
-      EX_U('photo-1632345031435-8727f6897d53', 600),
-      EX_U('photo-1604902396830-aca29e19b067', 360),
-      EX_U('photo-1601612628452-9e99ced43524', 360),
-    ],
-    galleryTone: 'peach',
-    hours: 'пн–пт · 10:00–20:00',
-    mapPhoto: EX_U('photo-1522337360788-8b13dee7a37e', 600), mapTone: 'peach',
-    finalHeading: 'Запишитесь на эту неделю',
-    finalSub: 'Сегодня свободны вторник и четверг после 16:00.',
-    finalCta: 'Записаться в Telegram',
-    finalHint: 'Отвечаю в течение 30 минут',
-  });
-}
-
-function ExamplesSection({ mobile }: any) {
-  // Curated list of presets to showcase variety. Pulled from the canon preset
-  // library (currently 3 themes of the editorial family; more families ship
-  // in subsequent versions).
-  //
-  // CRO note: 6+ items in a carousel signals "lots of options"; a 3-column
-  // grid would lock in "only three". The carousel is the message.
-  const showcase = samplePresets;
-
-  const ExampleCard = ({
-    item,
-  }: { item: typeof showcase[number] }) => {
-    const [hover, setHover] = React.useState(false);
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 }}>
       <div style={{
-        display: 'flex', alignItems: 'center',
-        gap: 10, marginBottom: 14, minHeight: 28,
-        minWidth: 0,
-      }}>
-        <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.accent, flex: '0 0 auto' }} />
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '9px 12px', background: '#fff',
+            borderBottom: `1px solid ${VT.line}`
+          }}>
         <span style={{
-          fontSize: mobile ? 14 : 15, fontWeight: 600,
-          letterSpacing: '-0.015em',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          minWidth: 0,
-        }}>{item.tagline}</span>
+              width: 24, height: 24, flex: '0 0 auto', borderRadius: 7,
+              background: ex.accent, color: '#fff',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 800, fontSize: 13
+            }}>{ex.letter}</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: '-0.015em' }}>{ex.name}</span>
+        <span style={{
+              marginLeft: 'auto',
+              fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkSoft
+            }}>телефон</span>
+        <span style={{
+              padding: '4px 10px', borderRadius: 999,
+              background: ex.accent, color: '#fff', fontSize: 10.5, fontWeight: 600
+            }}>Записаться</span>
       </div>
-      <div
-        onMouseEnter={() => !mobile && setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          display: 'flex',
-          borderRadius: 12,
-          position: 'relative',
-          transform: hover ? 'translateY(-2px)' : 'translateY(0)',
-          boxShadow: hover
-            ? '0 1px 2px rgba(40,28,18,0.04), 0 10px 24px -14px rgba(120,70,40,0.20), 0 4px 10px -8px rgba(40,28,18,0.08)'
-            : '0 1px 2px rgba(40,28,18,0.03), 0 6px 16px -12px rgba(120,70,40,0.14), 0 2px 6px -6px rgba(40,28,18,0.05)',
-          transition: 'transform .22s cubic-bezier(0.22,0.61,0.36,1), box-shadow .22s ease',
-        }}
-      >
-        <PresetMiniChrome host={item.content.meta.host}>
-          <PresetRenderer preset={item.preset} content={item.content} />
-        </PresetMiniChrome>
-      </div>
-    </div>
-    );
-  };
 
-  return (
-    <section id="examples" style={{ ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: '14px 14px 12px', borderBottom: `1px solid ${VT.line}` }}>
+        <div style={{
+              fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
+              color: ex.accent, fontWeight: 600
+            }}>{ex.category.toUpperCase()} · {ex.city.toUpperCase()}</div>
+        <h3 style={{
+              fontSize: 17, fontWeight: 700, letterSpacing: '-0.025em',
+              margin: '6px 0 0', lineHeight: 1.15, textWrap: 'balance', whiteSpace: 'pre-line'
+            }}>{ex.heroLine}</h3>
+        <div style={{
+              marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '4px 10px', background: VT.bgSoft,
+              border: `1px solid ${VT.line}`, borderRadius: 999, fontSize: 11
+            }}>
+          <span style={{ display: 'inline-flex', gap: 1 }}>
+            {[0, 1, 2, 3, 4].map((i) => <Star key={i} filled size={10} />)}
+          </span>
+          <b>{ex.rating} ★</b>
+          <span style={{ color: VT.inkSoft }}>· {ex.reviewCount} отзывов</span>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <PhotoFill tone={ex.tone} src={ex.heroPhoto} style={{
+                aspectRatio: '16 / 9', borderRadius: 8, border: `1px solid ${VT.line}`
+              }} />
+        </div>
+      </div>
+
+      <div style={{ padding: '12px 14px' }}>
+        <div style={{
+              fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
+              color: ex.accent, fontWeight: 600, marginBottom: 8
+            }}>УСЛУГИ И ЦЕНЫ</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {ex.services.map(([n, pr]) =>
+              <div key={n} style={{
+                background: VT.white, border: `1px solid ${VT.line}`,
+                borderRadius: 10, padding: '8px 10px',
+                display: 'flex', alignItems: 'center', gap: 8
+              }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '-0.01em' }}>{n}</div>
+                <div style={{ fontFamily: VT.font.mono, fontSize: 11, marginTop: 1 }}>{pr}</div>
+              </div>
+              <span style={{
+                  padding: '4px 8px', borderRadius: 999,
+                  background: ex.accentSoft, color: ex.accent,
+                  fontSize: 10, fontWeight: 600
+                }}>Записаться →</span>
+            </div>
+              )}
+        </div>
+      </div>
+
+      <div style={{ padding: '12px 14px', background: VT.bgSoft, borderTop: `1px solid ${VT.line}` }}>
+        <div style={{
+              fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
+              color: ex.accent, fontWeight: 600, marginBottom: 8
+            }}>ОТЗЫВ</div>
+        <div style={{
+              background: VT.white, border: `1px solid ${VT.line}`,
+              borderRadius: 10, padding: '8px 10px'
+            }}>
+          <div style={{ display: 'flex', gap: 1, marginBottom: 4 }}>
+            {Array.from({ length: 5 }).map((_, j) => <Star key={j} filled size={9} />)}
+          </div>
+          <p style={{ margin: 0, fontSize: 11.5, lineHeight: 1.4 }}>«{ex.review}»</p>
+          <div style={{ marginTop: 4, fontSize: 10, color: VT.inkSoft }}>{ex.reviewAuthor}</div>
+        </div>
+      </div>
+
+      <div style={{ padding: '12px 14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}>
+          {ex.gallery.map((g, i) =>
+              <PhotoFill key={i} tone={g.tone || ex.tone} src={g.src}
+              style={{ aspectRatio: '1 / 1', borderRadius: 4 }} />
+              )}
+        </div>
+      </div>
+
+      <div style={{ padding: '0 14px 14px', marginTop: 'auto' }}>
+        <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              padding: '11px 14px', borderRadius: 10,
+              background: ex.accent, color: '#fff',
+              fontSize: 13, fontWeight: 700
+            }}>Записаться онлайн →</div>
+      </div>
+    </div>);
+
+    }
+
+    function ExamplesSection({ mobile }) {
+      const showcase = samplePresets || [];
+      // [vitrina] Upstream converter emitted `const PresetRenderer =
+      // PresetRenderer;` here (was `window.PresetRenderer` in the preview)
+      // — a self-referential TDZ that crashed SSR. Removed; the JSX below
+      // uses the `PresetRenderer` imported from '../presets' at the top.
+      const MiniChrome = PresetMiniChrome;
+
+      const ExampleCard = ({ item }) => {
+        const [hover, setHover] = React.useState(false);
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%', minWidth: 0 }}>
+        <div style={{
+              display: 'flex', alignItems: 'center',
+              gap: 10, marginBottom: 14, minHeight: 28, minWidth: 0
+            }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: VT.accent, flex: '0 0 auto' }} />
+          <span style={{
+                fontSize: mobile ? 14 : 15, fontWeight: 600, letterSpacing: '-0.015em',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0
+              }}>{item.tagline}</span>
+        </div>
+        <div
+              onMouseEnter={() => !mobile && setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              style={{
+                display: 'flex', borderRadius: 12, position: 'relative',
+                transform: hover ? 'translateY(-2px)' : 'translateY(0)',
+                boxShadow: hover ?
+                '0 1px 2px rgba(40,28,18,0.04), 0 10px 24px -14px rgba(120,70,40,0.20), 0 4px 10px -8px rgba(40,28,18,0.08)' :
+                '0 1px 2px rgba(40,28,18,0.03), 0 6px 16px -12px rgba(120,70,40,0.14), 0 2px 6px -6px rgba(40,28,18,0.05)',
+                transition: 'transform .22s cubic-bezier(0.22,0.61,0.36,1), box-shadow .22s ease'
+              }}>
+              
+          <MiniChrome host={item.content.meta.host}>
+            <PresetRenderer preset={item.preset} content={item.content} />
+          </MiniChrome>
+        </div>
+      </div>);
+
+      };
+
+      return (
+        <section id="examples" style={{ ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: 'relative', zIndex: 1 }}>
       <div style={{ textAlign: 'center' }}>
-        <H2 mobile={mobile}>Вот как будет<br/>выглядеть ваш сайт</H2>
+        <H2 mobile={mobile}>Вот как будет<br />выглядеть ваш сайт</H2>
         <Sub mobile={mobile}>
           Стилистик много — Самосайт подбирает её под нишу и контент. Если не зайдёт — поменяете в один клик из библиотеки.
         </Sub>
       </div>
 
-      {/* Carousel: same component on mobile and desktop, just with different
-          flex-basis. Desktop shows 3 visible + scroll, mobile shows 1 +
-          snap. The variety lives in the scrolled-off cards. */}
       <ExamplesCarousel mobile={mobile} items={showcase} renderCard={(item) => <ExampleCard item={item} />} />
 
-      {/* How AI picks — пояснение под каруселью */}
       <HowItPicks mobile={mobile} />
 
       <div style={{ marginTop: mobile ? 28 : 44, textAlign: 'center' }}>
         <a href="#hero" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap',
-          background: VT.accent, color: '#fff', fontWeight: 700,
-          padding: mobile ? '13px 22px' : '16px 32px',
-          borderRadius: 999, fontSize: mobile ? 15 : 17,
-          lineHeight: 1.2, textDecoration: 'none',
-          boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
-          maxWidth: '100%', boxSizing: 'border-box',
-        }}>
+              display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap',
+              background: VT.accent, color: '#fff', fontWeight: 700,
+              padding: mobile ? '13px 22px' : '16px 32px',
+              borderRadius: 999, fontSize: mobile ? 15 : 17, lineHeight: 1.2,
+              textDecoration: 'none',
+              boxShadow: '0 12px 28px -12px rgba(120,60,30,0.45)',
+              maxWidth: '100%', boxSizing: 'border-box'
+            }}>
           <span>Собрать такой&nbsp;же из&nbsp;моего источника&nbsp;→</span>
         </a>
         <div style={{
-          marginTop: 14, fontFamily: VT.font.mono, fontSize: 12,
-          color: VT.inkFaint, letterSpacing: '0.02em',
-        }}>Самосайт сам подберёт стиль — потом можно поменять</div>
+              marginTop: 14, fontFamily: VT.font.mono, fontSize: 12,
+              color: VT.inkFaint, letterSpacing: '0.02em'
+            }}>Самосайт сам подберёт стиль — потом можно поменять</div>
       </div>
-    </section>
-  );
-}
+    </section>);
 
-// ─────────────────────────────────────────────────────────────
-// ExamplesCarousel — горизонтальный скролл с навигационными стрелками
-// ─────────────────────────────────────────────────────────────
+    }
 
-function ExamplesCarousel<T>({
-  mobile, items, renderCard,
-}: {
-  mobile: boolean;
-  items: T[];
-  renderCard: (item: T, i: number) => React.ReactNode;
-}) {
-  const scrollerRef = React.useRef<HTMLDivElement | null>(null);
-  const wrapRef = React.useRef<HTMLDivElement | null>(null);
-  const [atStart, setAtStart] = React.useState(true);
-  const [atEnd, setAtEnd] = React.useState(false);
-  const [activeIdx, setActiveIdx] = React.useState(0);
-  const [hoverPrev, setHoverPrev] = React.useState(false);
-  const [hoverNext, setHoverNext] = React.useState(false);
+    // ───── ExamplesCarousel — горизонтальный скролл с дотами/стрелками ─────
+    function ExamplesCarousel({ mobile, items, renderCard }) {
+      const scrollerRef = React.useRef(null);
+      const [atStart, setAtStart] = React.useState(true);
+      const [atEnd, setAtEnd] = React.useState(false);
+      const [activeIdx, setActiveIdx] = React.useState(0);
+      const [hoverPrev, setHoverPrev] = React.useState(false);
+      const [hoverNext, setHoverNext] = React.useState(false);
 
-  // Recompute scroll position state on scroll / resize.
-  const updateBounds = React.useCallback(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    setAtStart(el.scrollLeft <= 1);
-    setAtEnd(el.scrollLeft >= maxScroll - 1);
-    // Active slide = nearest card to the left edge (accounts for the scroll padding).
-    const firstChild = el.firstElementChild?.firstElementChild as HTMLElement | undefined;
-    const step = firstChild ? firstChild.getBoundingClientRect().width + 14 : el.clientWidth;
-    const idx = Math.round(el.scrollLeft / step);
-    const maxIdx = (el.firstElementChild?.childElementCount ?? 1) - 1;
-    setActiveIdx(Math.max(0, Math.min(idx, maxIdx)));
-  }, []);
+      const updateBounds = React.useCallback(() => {
+        const el = scrollerRef.current;
+        if (!el) return;
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        setAtStart(el.scrollLeft <= 1);
+        setAtEnd(el.scrollLeft >= maxScroll - 1);
+        const firstChild = el.firstElementChild && el.firstElementChild.firstElementChild;
+        const step = firstChild ? firstChild.getBoundingClientRect().width + 14 : el.clientWidth;
+        const idx = Math.round(el.scrollLeft / step);
+        const maxIdx = (el.firstElementChild && el.firstElementChild.childElementCount || 1) - 1;
+        setActiveIdx(Math.max(0, Math.min(idx, maxIdx)));
+      }, []);
 
-  React.useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    updateBounds();
-    el.addEventListener('scroll', updateBounds, { passive: true });
-    window.addEventListener('resize', updateBounds);
-    return () => {
-      el.removeEventListener('scroll', updateBounds);
-      window.removeEventListener('resize', updateBounds);
-    };
-  }, [updateBounds]);
+      React.useEffect(() => {
+        const el = scrollerRef.current;
+        if (!el) return;
+        updateBounds();
+        el.addEventListener('scroll', updateBounds, { passive: true });
+        window.addEventListener('resize', updateBounds);
+        return () => {
+          el.removeEventListener('scroll', updateBounds);
+          window.removeEventListener('resize', updateBounds);
+        };
+      }, [updateBounds]);
 
-  const scrollBy = (direction: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    // Scroll by approximately one card-width (one third of viewport on desktop).
-    const step = Math.max(280, el.clientWidth / 3);
-    el.scrollBy({ left: step * direction, behavior: 'smooth' });
-  };
+      const scrollBy = (direction) => {
+        const el = scrollerRef.current;
+        if (!el) return;
+        const step = Math.max(280, el.clientWidth / 3);
+        el.scrollBy({ left: step * direction, behavior: 'smooth' });
+      };
 
-  // Arrow button style — big circle, white background, soft shadow, lifts on hover.
-  const arrowStyle = (disabled: boolean, hovered: boolean, direction: 1 | -1): React.CSSProperties => ({
-    position: 'absolute', top: '50%',
-    [direction === -1 ? 'left' : 'right']: -28,
-    transform: `translateY(-50%) ${hovered && !disabled ? `translateX(${direction * 2}px) scale(1.05)` : ''}`.trim(),
-    width: 56, height: 56, borderRadius: '50%',
-    border: 'none',
-    background: VT.white,
-    color: disabled ? VT.inkMuted : VT.ink,
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    cursor: disabled ? 'default' : 'pointer',
-    opacity: disabled ? 0 : 1,
-    pointerEvents: disabled ? 'none' : 'auto',
-    transition: 'opacity .2s ease, transform .2s ease, box-shadow .2s ease',
-    boxShadow: hovered && !disabled
-      ? '0 16px 40px -12px rgba(120,60,30,0.30), 0 4px 12px -4px rgba(0,0,0,0.10)'
-      : '0 8px 24px -8px rgba(120,60,30,0.20), 0 2px 6px -2px rgba(0,0,0,0.06)',
-    padding: 0,
-    fontFamily: 'inherit',
-    zIndex: 5,
-  } as React.CSSProperties);
+      const arrowStyle = (disabled, hovered, direction) => ({
+        position: 'absolute', top: '50%',
+        [direction === -1 ? 'left' : 'right']: -28,
+        transform: `translateY(-50%) ${hovered && !disabled ? `translateX(${direction * 2}px) scale(1.05)` : ''}`.trim(),
+        width: 56, height: 56, borderRadius: '50%', border: 'none',
+        background: VT.white,
+        color: disabled ? VT.inkMuted : VT.ink,
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0 : 1,
+        pointerEvents: disabled ? 'none' : 'auto',
+        transition: 'opacity .2s ease, transform .2s ease, box-shadow .2s ease',
+        boxShadow: hovered && !disabled ?
+        '0 16px 40px -12px rgba(120,60,30,0.30), 0 4px 12px -4px rgba(0,0,0,0.10)' :
+        '0 8px 24px -8px rgba(120,60,30,0.20), 0 2px 6px -2px rgba(0,0,0,0.06)',
+        padding: 0, fontFamily: 'inherit', zIndex: 5
+      });
 
-  const ArrowIcon = ({ direction }: { direction: 1 | -1 }) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2"
+      const ArrowIcon = ({ direction }) =>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
       strokeLinecap="round" strokeLinejoin="round"
       style={{ transform: direction === -1 ? 'scaleX(-1)' : undefined }}>
       <path d="M5 12 H19" />
       <path d="M13 6 L19 12 L13 18" />
-    </svg>
-  );
+    </svg>;
 
-  return (
-    <div
-      ref={wrapRef}
-      style={{
-        position: 'relative',
-        marginTop: mobile ? 28 : 56,
-        maxWidth: mobile ? 'none' : 1344,
-        marginLeft: mobile ? undefined : 'auto',
-        marginRight: mobile ? undefined : 'auto',
-      }}
-    >
-      {/* Mobile dots — над каруселью (карточки высокие, снизу не видно) */}
-      {mobile && items.length > 1 && (
+      return (
         <div style={{
-          display: 'flex', justifyContent: 'center', gap: 7,
-          marginBottom: 14,
+          position: 'relative',
+          marginTop: mobile ? 28 : 56,
+          maxWidth: mobile ? 'none' : 1200,
+          marginLeft: mobile ? undefined : 'auto',
+          marginRight: mobile ? undefined : 'auto'
         }}>
+      {mobile && items.length > 1 &&
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 7, marginBottom: 14 }}>
           {items.map((_, i) => {
-            const active = i === activeIdx;
-            return (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Слайд ${i + 1}`}
-                onClick={() => {
-                  const el = scrollerRef.current;
-                  if (!el) return;
-                  const child = el.firstElementChild?.children[i] as HTMLElement | undefined;
-                  if (child) el.scrollTo({ left: child.offsetLeft - 20, behavior: 'smooth' });
-                }}
-                style={{
-                  width: active ? 20 : 7, height: 7, borderRadius: 999,
-                  background: active ? VT.accent : VT.line,
-                  border: 'none', padding: 0, cursor: 'pointer',
-                  transition: 'width .25s ease, background .25s ease',
-                }}
-              />
-            );
-          })}
+              const active = i === activeIdx;
+              return (
+                <button
+                  key={i} type="button" aria-label={`Слайд ${i + 1}`}
+                  onClick={() => {
+                    const el = scrollerRef.current;
+                    if (!el) return;
+                    const child = el.firstElementChild && el.firstElementChild.children[i];
+                    if (child) el.scrollTo({ left: child.offsetLeft - 20, behavior: 'smooth' });
+                  }}
+                  style={{
+                    width: active ? 20 : 7, height: 7, borderRadius: 999,
+                    background: active ? VT.accent : VT.line,
+                    border: 'none', padding: 0, cursor: 'pointer',
+                    transition: 'width .25s ease, background .25s ease'
+                  }} />);
+
+            })}
         </div>
-      )}
+          }
 
       <div
-        ref={scrollerRef}
-        style={{
-          marginLeft: mobile ? -16 : 0,
-          marginRight: mobile ? -16 : 0,
-          overflowX: 'auto', WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollPaddingLeft: mobile ? 16 : 32,
-          scrollbarWidth: 'none',
-          // Fade-out mask — soft edges that hint at off-screen content.
-          // Mask is symmetric and toggled per-side via stops collapsing to 0px.
-          // Left side fades only when scrolled away from start; right fades only when more content awaits.
-          ['--ss-fade-w' as any]: mobile ? '44px' : '64px',
-          ['--ss-fade-l' as any]: atStart ? '0px' : 'var(--ss-fade-w)',
-          ['--ss-fade-r' as any]: atEnd ? '0px' : 'var(--ss-fade-w)',
-          maskImage: 'linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)',
-          transition: 'mask-image .25s ease, -webkit-mask-image .25s ease',
-        }}
-      >
+            ref={scrollerRef}
+            style={{
+              marginLeft: mobile ? -16 : -32,
+              marginRight: mobile ? -16 : -32,
+              overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+              scrollSnapType: 'x mandatory',
+              scrollPaddingLeft: mobile ? 16 : 32,
+              scrollbarWidth: 'none',
+              '--ss-fade-w': mobile ? '44px' : '64px',
+              '--ss-fade-l': atStart ? '0px' : 'var(--ss-fade-w)',
+              '--ss-fade-r': atEnd ? '0px' : 'var(--ss-fade-w)',
+              maskImage: 'linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)',
+              transition: 'mask-image .25s ease, -webkit-mask-image .25s ease'
+            }}>
+            
         <style>{`.ss-preset-carousel::-webkit-scrollbar{display:none}`}</style>
         <div className="ss-preset-carousel" style={{
-          display: 'flex',
-          gap: mobile ? 12 : 24,
-          padding: mobile ? '0 56px 16px 16px' : '0 32px 16px',
-          alignItems: 'flex-start',
-        }}>
-          {items.map((item, i) => (
-            <div key={i} style={{
-              flex: mobile ? '0 0 94%' : '0 0 calc((100% - 80px) / 3)',
-              scrollSnapAlign: 'start',
-              display: 'flex', minWidth: 0,
+              display: 'flex',
+              gap: mobile ? 12 : 24,
+              padding: mobile ? '0 56px 16px 16px' : '0 32px 16px',
+              alignItems: 'flex-start'
             }}>
+          {items.map((item, i) =>
+              <div key={i} style={{
+                flex: mobile ? '0 0 94%' : '0 0 calc((100% - 80px) / 3)',
+                scrollSnapAlign: 'start',
+                display: 'flex', minWidth: 0
+              }}>
               {renderCard(item, i)}
             </div>
-          ))}
+              )}
         </div>
       </div>
 
-      {/* Arrow controls — desktop only, side-mounted, big circles */}
-      {!mobile && (
-        <>
-          <button
-            type="button"
-            aria-label="Предыдущий пример"
-            disabled={atStart}
+      {!mobile &&
+          <>
+          <button type="button" aria-label="Предыдущий пример" disabled={atStart}
             onClick={() => scrollBy(-1)}
-            onMouseEnter={() => setHoverPrev(true)}
-            onMouseLeave={() => setHoverPrev(false)}
-            style={arrowStyle(atStart, hoverPrev, -1)}
-          >
+            onMouseEnter={() => setHoverPrev(true)} onMouseLeave={() => setHoverPrev(false)}
+            style={arrowStyle(atStart, hoverPrev, -1)}>
             <ArrowIcon direction={-1} />
           </button>
-          <button
-            type="button"
-            aria-label="Следующий пример"
-            disabled={atEnd}
+          <button type="button" aria-label="Следующий пример" disabled={atEnd}
             onClick={() => scrollBy(1)}
-            onMouseEnter={() => setHoverNext(true)}
-            onMouseLeave={() => setHoverNext(false)}
-            style={arrowStyle(atEnd, hoverNext, 1)}
-          >
+            onMouseEnter={() => setHoverNext(true)} onMouseLeave={() => setHoverNext(false)}
+            style={arrowStyle(atEnd, hoverNext, 1)}>
             <ArrowIcon direction={1} />
           </button>
         </>
-      )}
+          }
+    </div>);
 
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// HowItPicks — объяснение, как ИИ выбирает стиль
-// ─────────────────────────────────────────────────────────────
-
-function HowItPicks({ mobile }: { mobile: boolean }) {
-  const items = [
-    {
-      n: '01',
-      title: 'Если стиль уже есть, повторит его',
-      body: 'Загрузите буклет, визитку или вывеску. Самосайт распознает шрифт и фирменные цвета, поставит на сайт такие же. Ваш стиль никуда не денется.',
-      demo: 'swatches' as const,
-    },
-    {
-      n: '02',
-      title: 'Если стиля нет, соберёт сам',
-      body: 'Цвета возьмёт с ваших фотографий: у тёплой кофейни — молочные и терракотовые, у маникюра на розовом фоне — пыльно-розовые и бордо. Шрифт подберёт под тон текста: для личного, авторского — мягкий с засечками, для сухого и точного — строгий и ровный.',
-      demo: 'fonts' as const,
-    },
-    {
-      n: '03',
-      title: 'Раскладку выберет под ваш контент',
-      body: 'Много цифр, цен и гарантий — соберёт из плиток. Меню, истории, отзывы — разложит как журнал. Упор на атмосферу — поставит крупные фото в две колонки.',
-      demo: 'grids' as const,
-    },
-    {
-      n: '04',
-      title: 'Не понравилось — поменяете в один клик',
-      body: 'В кабинете лежит библиотека готовых стилей. Откройте, выберите другой, и сайт перестроится за секунды. Тексты и фотографии останутся на местах.',
-      demo: 'switch' as const,
-    },
-  ];
-
-  const accent = VT.accent;
-
-  // Small visual demos under each point — turns dry text into a show, not a tell.
-  // Each demo sits on a white tray so it reads as a deliberate sample, not stray bits.
-  const tray = (children: React.ReactNode) => (
-    <div style={{
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.md,
-      padding: '14px 16px',
-      display: 'flex', alignItems: 'center', gap: 12,
-      minHeight: 56,
-    }}>{children}</div>
-  );
-
-  const Demo = ({ kind }: { kind: 'swatches' | 'fonts' | 'grids' | 'switch' }) => {
-    if (kind === 'swatches') {
-      const sets = [
-        ['#FAF6F0', '#A8412E', '#211C17'],
-        ['#0E0F10', '#C2D94A', '#9A9B98'],
-        ['#F6E7E3', '#8C4A52', '#2A1820'],
-      ];
-      return tray(
-        <>
-          {sets.map((set, i) => (
-            <div key={i} style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 3px rgba(40,28,18,0.08)' }}>
-              {set.map((col, j) => <span key={j} style={{ width: 22, height: 30, background: col }} />)}
-            </div>
-          ))}
-        </>
-      );
     }
-    if (kind === 'fonts') {
-      return tray(
-        <>
-          <span style={{ fontFamily: "'Fraunces', serif", fontSize: 22, fontStyle: 'italic', color: VT.ink }}>Аа</span>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 22, fontWeight: 700, color: VT.ink }}>Аа</span>
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 19, color: VT.ink }}>Аа</span>
-          <span style={{ fontFamily: "'Instrument Serif', serif", fontSize: 23, color: VT.ink }}>Аа</span>
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 700, color: VT.ink }}>Аа</span>
-        </>
-      );
-    }
-    if (kind === 'grids') {
-      const cell = (style: React.CSSProperties) => <span style={{ background: VT.accentSoft, borderRadius: 3, ...style }} />;
-      const frame: React.CSSProperties = { width: 52, height: 44, padding: 5, border: `1px solid ${VT.line}`, borderRadius: 7, background: VT.bg };
-      return tray(
-        <>
-          {/* bento mini */}
-          <div style={{ ...frame, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 3 }}>
-            {cell({ gridColumn: 'span 2' })}{cell({})}{cell({})}
-          </div>
-          {/* editorial mini */}
-          <div style={{ ...frame, display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {cell({ height: 8 })}{cell({ flex: 1 })}{cell({ height: 5, width: '60%' })}
-          </div>
-          {/* split mini */}
-          <div style={{ ...frame, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-            {cell({})}{cell({})}
-          </div>
-        </>
-      );
-    }
-    // switch
-    return tray(
-      <>
-        {['#A8412E', '#2D5B8E', '#356E60', '#8C4A52'].map((col, i) => (
-          <span key={i} style={{
-            width: 26, height: 26, borderRadius: '50%', background: col,
-            border: i === 0 ? `2px solid ${VT.ink}` : `2px solid transparent`,
-            boxShadow: i === 0 ? `0 0 0 2px ${VT.white}, 0 0 0 3px ${VT.ink}` : 'none',
-          }} />
-        ))}
-        <span style={{ fontFamily: VT.font.mono, fontSize: 12, color: VT.inkFaint, marginLeft: 'auto' }}>→ 1 клик</span>
-      </>
-    );
-  };
 
-  return (
-    <div style={{
-      marginTop: 0,
-      maxWidth: 1100,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      padding: mobile ? '24px 20px' : '40px 44px',
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.lg,
-    }}>
-      <h3 style={{
-        fontSize: mobile ? 22 : 28, fontWeight: 700,
-        lineHeight: 1.12, letterSpacing: '-0.025em',
-        color: VT.ink, marginBottom: 12,
-        maxWidth: 720,
-      }}>Самосайт собирает дизайн из ваших материалов, а не подставляет из шаблона</h3>
-      <p style={{
-        fontSize: mobile ? 14 : 16, lineHeight: 1.5,
-        color: VT.inkSoft, marginBottom: mobile ? 20 : 28,
-        maxWidth: 680,
-      }}>Если фирменный стиль уже есть, Самосайт его повторит. Если нет, соберёт сам из ваших фото и текстов. Поэтому сайт кофейни не похож на сайт автосервиса, даже если оба собраны одной кнопкой.</p>
+    // ───── HowItPicks — как Самосайт собирает дизайн из ваших материалов ─────
+    function HowItPicks({ mobile }) {
+      const EU = (id, w = 480) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+      // «Извлечение»: реальное фото → выведенная палитра + шрифт. Доказывает тезис.
+      const extractions = [
+      {
+        niche: 'Кофейня', photo: EU('photo-1495474472287-4d71bcdd2085'),
+        filter: 'saturate(1.02)',
+        palette: ['#FAF6F0', '#C9A57B', '#A8412E', '#211C17'],
+        fontName: 'Fraunces', fontCss: "'Fraunces', Georgia, serif", italic: true,
+        note: 'тёплое, бумажное'
+      },
+      {
+        niche: 'Маникюр', photo: EU('photo-1604654894610-df63bc536371'),
+        filter: 'saturate(1.0)',
+        palette: ['#F6E7E3', '#D99CA0', '#8C4A52', '#2A1820'],
+        fontName: 'Instrument Serif', fontCss: "'Instrument Serif', Georgia, serif", italic: true,
+        note: 'мягкое, бьюти'
+      },
+      {
+        niche: 'Автосервис', photo: EU('photo-1486262715619-67b85e0b08d3'),
+        filter: 'contrast(1.05) saturate(0.9)',
+        palette: ['#0E0F10', '#9A9B98', '#C2D94A', '#F2F0EC'],
+        fontName: 'Space Grotesk', fontCss: "'Space Grotesk', sans-serif", italic: false,
+        note: 'строгое, техничное'
+      }];
+
+      const mechanics = [
+      { n: '01', title: 'Есть фирстиль — повторит', body: 'Распознаёт шрифт и цвета с буклета, визитки или вывески.' },
+      { n: '02', title: 'Нет — соберёт сам', body: 'Палитру берёт с ваших фото, шрифт — под тон текста.' },
+      { n: '03', title: 'Раскладка под контент', body: 'Цифры — в плитки, меню — в журнал, атмосфера — в крупные фото.' },
+      { n: '04', title: 'Не зашло — клик', body: 'Библиотека готовых стилей, тексты и фото остаются на местах.' }];
+
+      const ExtractionCard = ({ ex }) =>
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
-        gap: mobile ? 14 : 18,
-        alignItems: 'stretch',
+        background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md,
+        overflow: 'hidden', display: 'flex', flexDirection: 'column'
       }}>
-        {items.map((it, i) => (
-          <div key={i} style={{
-            background: VT.bg,
-            border: `1px solid ${VT.line}`,
-            borderRadius: VT.r.lg,
-            padding: mobile ? 22 : 28,
-            display: 'flex', flexDirection: 'column',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <span style={{
-                fontFamily: VT.font.mono, fontSize: 13, fontWeight: 700,
-                color: '#fff', background: accent,
-                width: 32, height: 32, borderRadius: 9,
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                letterSpacing: '0.02em', flex: '0 0 auto',
-              }}>{it.n}</span>
-              <div style={{ fontSize: mobile ? 18 : 19, fontWeight: 700, letterSpacing: '-0.015em', color: VT.ink, lineHeight: 1.2 }}>{it.title}</div>
-            </div>
-            <p style={{ fontSize: mobile ? 14.5 : 15, lineHeight: 1.55, color: VT.inkSoft, margin: 0 }}>{it.body}</p>
-            <div style={{ marginTop: 'auto', paddingTop: 18 }}>
-              <Demo kind={it.demo} />
-            </div>
-          </div>
-        ))}
+      <div style={{ position: 'relative', height: mobile ? 96 : 88, overflow: 'hidden' }}>
+        <img src={ex.photo} alt="" loading="lazy" style={{
+            width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: ex.filter
+          }} />
+        <span style={{
+            position: 'absolute', top: 8, left: 8,
+            fontFamily: VT.font.mono, fontSize: 9, letterSpacing: '0.06em', fontWeight: 700,
+            color: VT.ink, background: 'rgba(250,246,240,0.92)',
+            padding: '3px 8px', borderRadius: 999, textTransform: 'uppercase',
+            backdropFilter: 'blur(4px)'
+          }}>{ex.niche}</span>
       </div>
-    </div>
-  );
-}
 
+      <div style={{ padding: '10px 12px 12px' }}>
+        <div style={{ fontFamily: VT.font.mono, fontSize: 9, letterSpacing: '0.06em', color: VT.inkFaint, fontWeight: 600, marginBottom: 6 }}>
+          ЦВЕТА ИЗ ФОТО
+        </div>
+        <div style={{ display: 'flex', borderRadius: 7, overflow: 'hidden', boxShadow: `0 1px 2px rgba(40,28,18,0.10)` }}>
+          {ex.palette.map((c, i) =>
+            <span key={i} style={{ flex: 1, height: 22, background: c }} />
+            )}
+        </div>
+        <div style={{ marginTop: 9, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+          <span style={{
+              fontFamily: ex.fontCss, fontStyle: ex.italic ? 'italic' : 'normal',
+              fontSize: 20, color: VT.ink, lineHeight: 1
+            }}>Аа Бб</span>
+          <span style={{ fontFamily: VT.font.mono, fontSize: 9.5, color: VT.inkSoft, textAlign: 'right' }}>{ex.fontName}</span>
+        </div>
+      </div>
+    </div>;
 
-// ─────────────────────────────────────────────────────────────
+      return (
+        <div style={{
+          marginTop: 0, maxWidth: 1200, marginLeft: 'auto', marginRight: 'auto',
+          padding: mobile ? '20px 18px' : '26px 30px',
+          background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.lg
+        }}>
+      <h3 style={{
+            fontSize: mobile ? 23 : 30, fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.032em',
+            color: VT.ink, marginBottom: 8, maxWidth: 720, marginLeft: 'auto', marginRight: 'auto', textAlign: 'center', textWrap: 'balance'
+          }}>Дизайн собирается из ваших материалов — <span style={{ color: VT.accent }}>а не из шаблона</span></h3>
+      <p style={{
+            fontSize: mobile ? 13.5 : 15, lineHeight: 1.45, color: VT.inkSoft,
+            marginBottom: mobile ? 16 : 20, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto', textAlign: 'center', textWrap: 'pretty'
+          }}>Палитру Самосайт вытягивает из ваших фото, а шрифт подбирает под тон. Поэтому сайт кофейни не похож на сайт автосервиса.</p>
+
+      {/* EXTRACTION SHOWCASE — фото → палитра + шрифт */}
+      <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: mobile ? 8 : 12
+          }}>
+        {extractions.map((ex, i) => <ExtractionCard key={i} ex={ex} />)}
+      </div>
+
+      {/* MECHANICS STRIP */}
+      <div style={{
+            marginTop: mobile ? 16 : 20,
+            paddingTop: mobile ? 16 : 20,
+            borderTop: `1px solid ${VT.line}`,
+            display: 'grid',
+            gridTemplateColumns: mobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+            gap: mobile ? 12 : 18
+          }}>
+        {mechanics.map((m, i) =>
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{ fontFamily: VT.font.mono, fontSize: 11, fontWeight: 700, color: VT.accent }}>{m.n}</span>
+              <div style={{ fontSize: mobile ? 13.5 : 14.5, fontWeight: 700, letterSpacing: '-0.015em', color: VT.ink, lineHeight: 1.2 }}>{m.title}</div>
+            </div>
+            <p style={{ fontSize: mobile ? 12 : 12.5, lineHeight: 1.45, color: VT.inkSoft, margin: 0 }}>{m.body}</p>
+          </div>
+            )}
+      </div>
+    </div>);
+
+    }
 
 // ── from landing-v3-b.jsx ──
 // ───────── BLOCK 3 · CYCLE 4 САМ ─────────
@@ -1809,7 +1163,7 @@ function MondaySection({ mobile }) {
 
       <div style={{
         marginTop: mobile ? 36 : 56,
-        maxWidth: mobile ? '100%' : 1280, margin: `${mobile ? 36 : 56}px auto 0`,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 36 : 56}px auto 0`,
       }}>
         {mobile ? (
           <div style={{
@@ -1864,8 +1218,6 @@ function MondaySection({ mobile }) {
     </section>
   );
 }
-
-// ─────────────────────────────────────────────────────────────
 
 // ── from landing-v3-c.jsx ──
 // ───────── BLOCK 5 · BASE WORK ─────────
@@ -1941,66 +1293,45 @@ function BaseWorkSection({ mobile }) {
         gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
         gap: mobile ? 14 : 22,
       }}>
-        {BASE_ITEMS.map((item, i) => {
-          const pal = item.palette;
-          return (
-            <div key={item.title} style={{
-              position: 'relative',
-              background: VT.white, borderRadius: 20,
-              border: `1px solid ${VT.line}`,
-              boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 18px 40px -24px rgba(120,60,30,0.18)',
-              overflow: 'hidden',
-              display: 'flex', flexDirection: 'column',
-            }}>
-              {/* colored band on top */}
-              <div style={{
-                background: pal.bg,
-                padding: mobile ? '22px 22px 18px' : '26px 28px 22px',
-                borderBottom: `1px solid ${pal.stroke}`,
-                display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16,
-              }}>
-                <div style={{
-                  flex: '0 0 auto', width: mobile ? 52 : 58, height: mobile ? 52 : 58,
-                  borderRadius: 14,
-                  background: VT.white, color: pal.ink,
-                  border: `1px solid ${VT.line}`,
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 1px 2px rgba(40,28,18,0.04)',
-                }}>{item.icon}</div>
-                <div style={{
-                  textAlign: 'right', minWidth: 0,
-                  display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0,
-                }}>
-                  <div style={{
-                    fontSize: mobile ? 22 : 28, fontWeight: 700,
-                    letterSpacing: '-0.03em', lineHeight: 1, color: pal.ink,
-                  }}>{item.metric}</div>
-                  <div style={{
-                    marginTop: 4,
-                    fontFamily: VT.font.mono, fontSize: mobile ? 10.5 : 11.5,
-                    letterSpacing: '0.08em', color: pal.ink, opacity: 0.75,
-                    fontWeight: 600, textTransform: 'uppercase',
-                  }}>{item.metricNote}</div>
-                </div>
-              </div>
-
-              {/* body */}
-              <div style={{
-                padding: mobile ? '18px 22px 22px' : '22px 28px 26px',
-                display: 'flex', flexDirection: 'column', flex: 1,
-              }}>
-                <h3 style={{
-                  fontSize: mobile ? 20 : 23, fontWeight: 700, letterSpacing: '-0.025em',
-                  margin: 0, lineHeight: 1.2, color: VT.ink,
-                }}>{item.title}</h3>
-                <p style={{
-                  margin: '8px 0 0', fontSize: mobile ? 14.5 : 15.5, lineHeight: 1.5,
-                  color: VT.inkSoft, textWrap: 'pretty',
-                }}>{item.body}</p>
-              </div>
+        {BASE_ITEMS.map((item) => (
+          <div key={item.title} style={{
+            background: VT.white, borderRadius: 18,
+            border: `1px solid ${VT.line}`,
+            boxShadow: '0 1px 2px rgba(40,28,18,0.03), 0 14px 34px -26px rgba(120,60,30,0.16)',
+            padding: mobile ? '22px 22px' : '28px 30px',
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
+              <span style={{
+                flex: '0 0 auto', width: 46, height: 46, borderRadius: 12,
+                background: VT.accentSoft, color: VT.accent,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              }}>{item.icon}</span>
+              <h3 style={{
+                fontSize: mobile ? 20 : 22, fontWeight: 800, letterSpacing: '-0.025em',
+                margin: 0, lineHeight: 1.15, color: VT.ink,
+              }}>{item.title}</h3>
             </div>
-          );
-        })}
+            <p style={{
+              margin: 0, fontSize: mobile ? 14.5 : 15.5, lineHeight: 1.5,
+              color: VT.inkSoft, textWrap: 'pretty',
+            }}>{item.body}</p>
+            <div style={{
+              marginTop: 'auto', paddingTop: 18,
+              borderTop: `1px solid ${VT.lineSoft}`,
+              display: 'flex', alignItems: 'baseline', gap: 9,
+            }}>
+              <span style={{
+                fontSize: mobile ? 22 : 26, fontWeight: 800, letterSpacing: '-0.03em',
+                color: VT.accent, lineHeight: 1,
+              }}>{item.metric}</span>
+              <span style={{
+                fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.07em',
+                textTransform: 'uppercase', color: VT.inkFaint, fontWeight: 600,
+              }}>{item.metricNote}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -2052,14 +1383,6 @@ function SourcesSection({ mobile }) {
             background: VT.white, border: `1px solid ${s.featured ? VT.accent : VT.line}`,
             borderRadius: 14, position: 'relative',
           }}>
-            {s.featured && (
-              <span style={{
-                position: 'absolute', top: -10, right: 16,
-                fontFamily: VT.font.mono, fontSize: 9.5, letterSpacing: '0.12em',
-                color: '#fff', background: VT.accent,
-                padding: '3px 8px', borderRadius: 6, fontWeight: 700,
-              }}>ЧАЩЕ ВСЕГО</span>
-            )}
             <span style={{ flex: '0 0 auto' }}>{s.logo}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
@@ -2103,7 +1426,7 @@ function SourcesSection({ mobile }) {
       {/* Я.Карты sidebar */}
       <div style={{
         marginTop: mobile ? 32 : 56,
-        maxWidth: mobile ? '100%' : 1100, margin: `${mobile ? 32 : 56}px auto 0`,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 32 : 56}px auto 0`,
         background: VT.white,
         border: `1px solid ${VT.line}`, borderRadius: 18,
         padding: mobile ? '24px 22px' : '36px 44px',
@@ -2143,22 +1466,108 @@ function SourcesSection({ mobile }) {
 
 const OWNER_POINTS = [
   {
-    title: 'Не понравилась рекомендация — отклоните, и она исчезнет.',
+    title: 'Не понравилась рекомендация — отклоните, и она исчезнет',
     body: 'Никаких «нейросеть знает лучше».',
+    demo: 'approve',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 12l2.2 2.2 4.8-4.8"/>
+      </svg>
+    ),
   },
   {
     title: 'Текст и фото правите в один клик',
-    body: 'прямо на сайте, без отдельных редакторов.',
+    body: 'Прямо на сайте, без отдельных редакторов.',
+    demo: 'edit',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+      </svg>
+    ),
   },
   {
-    title: 'Сайт ваш — заберёте в любой момент.',
-    body: 'Архив HTML и фотографий скачивается одной кнопкой — пока аккаунт активен и ещё 10 дней после отказа.',
+    title: 'Сайт ваш, заберёте в любой момент',
+    body: 'Архив HTML и фотографий скачивается одной кнопкой. Доступ к нему — пока активен аккаунт и ещё 10 дней, если решите уйти.',
+    demo: 'export',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+      </svg>
+    ),
   },
   {
-    title: 'Удаляется в одно нажатие.',
-    body: 'Никаких звонков в поддержку и никаких «дайте подумать».',
+    title: 'Удаляется в одно нажатие',
+    body: 'Без звонков в поддержку и уговоров «подумайте ещё».',
+    demo: 'delete',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/>
+      </svg>
+    ),
   },
 ];
+
+function OwnerDemo({ kind, mobile }) {
+  const pill = (label, opts = {}) => (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+      whiteSpace: 'nowrap', ...opts,
+    }}>{label}</span>
+  );
+  if (kind === 'approve') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        {pill(<><span style={{ fontSize: 14 }}>✓</span>Применить</>, { background: VT.accent, color: '#fff' })}
+        {pill('Иначе', { background: VT.white, color: VT.ink, border: `1px solid ${VT.line}` })}
+        {pill('Отклонить', { background: VT.white, color: VT.inkSoft, border: `1px solid ${VT.line}` })}
+      </div>
+    );
+  }
+  if (kind === 'edit') {
+    return (
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '8px 12px', borderRadius: 10,
+        border: `1.5px dashed ${VT.accent}`, background: VT.accentSoft,
+        fontSize: 13, color: VT.ink, fontWeight: 500,
+      }}>
+        Капучино на овсяном<span style={{ width: 1.5, height: 16, background: VT.accent, animation: 'none' }} />
+        <span style={{ fontFamily: VT.font.mono, fontSize: 11, color: VT.accent }}>правка</span>
+      </div>
+    );
+  }
+  if (kind === 'export') {
+    return (
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 10,
+        padding: '8px 14px', borderRadius: 10,
+        background: VT.white, border: `1px solid ${VT.line}`,
+      }}>
+        <span style={{ fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }}>сайт.zip</span>
+        <span style={{ fontSize: 11, color: VT.inkFaint }}>HTML + фото</span>
+        <span style={{
+          width: 24, height: 24, borderRadius: 7, background: VT.accent, color: '#fff',
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+        }}>↓</span>
+      </div>
+    );
+  }
+  // delete
+  return (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 7,
+        padding: '8px 14px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+        background: VT.white, color: VT.ink, border: `1px solid ${VT.line}`,
+      }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Удалить сайт
+      </span>
+      <span style={{ fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }}>1 клик</span>
+    </div>
+  );
+}
 
 function OwnershipSection({ mobile }) {
   return (
@@ -2166,66 +1575,45 @@ function OwnershipSection({ mobile }) {
       <div style={{ textAlign: 'center' }}>
         <H2 mobile={mobile}>Самосайт делает рутину.<br/>Решения остаются за вами</H2>
         <Sub mobile={mobile} maxWidth={760}>
-          Всё, что предлагает ИИ — только через ваше «да». Всё, что собрал — можно поправить. Захотели уйти — забрали и ушли.
+          Всё, что предлагает Самосайт, идёт через ваше «да». Всё, что собрал, поправите. Захотите уйти — заберёте и уйдёте.
         </Sub>
       </div>
 
       <div style={{
         marginTop: mobile ? 28 : 48,
-        maxWidth: mobile ? '100%' : 980, margin: `${mobile ? 28 : 48}px auto 0`,
+        maxWidth: mobile ? '100%' : 1200, margin: `${mobile ? 28 : 48}px auto 0`,
         display: 'grid',
         gridTemplateColumns: mobile ? '1fr' : 'repeat(2, 1fr)',
-        gap: mobile ? 10 : 14,
+        gap: mobile ? 12 : 16,
       }}>
         {OWNER_POINTS.map((pt, i) => (
           <div key={i} style={{
-            display: 'flex', alignItems: 'flex-start', gap: 14,
-            padding: mobile ? '18px 18px' : '22px 24px',
-            background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 14,
+            display: 'flex', flexDirection: 'column',
+            padding: mobile ? '20px 20px' : '26px 28px',
+            background: VT.white, border: `1px solid ${VT.line}`, borderRadius: 18,
           }}>
-            <span style={{
-              flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%',
-              background: VT.accentSoft, color: VT.accent,
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              marginTop: 2,
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12 l4 4 10 -10"/>
-              </svg>
-            </span>
-            <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 13, marginBottom: 12 }}>
+              <span style={{
+                flex: '0 0 auto', width: 44, height: 44, borderRadius: 12,
+                background: VT.accent, color: '#fff',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              }}>{pt.icon}</span>
               <div style={{
-                fontSize: mobile ? 15.5 : 16.5, fontWeight: 700,
-                color: VT.ink, letterSpacing: '-0.015em', lineHeight: 1.3,
+                fontSize: mobile ? 19 : 22, fontWeight: 800,
+                color: VT.ink, letterSpacing: '-0.025em', lineHeight: 1.12,
               }}>{pt.title}</div>
-              <div style={{
-                marginTop: 4, fontSize: mobile ? 14 : 15, lineHeight: 1.45,
-                color: VT.inkSoft,
-              }}>{pt.body}</div>
+            </div>
+            <p style={{
+              margin: 0, fontSize: mobile ? 14 : 15, lineHeight: 1.5,
+              color: VT.inkSoft, textWrap: 'pretty',
+            }}>{pt.body}</p>
+            <div style={{ marginTop: 'auto', paddingTop: 18 }}>
+              <OwnerDemo kind={pt.demo} mobile={mobile} />
             </div>
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: mobile ? 22 : 30, textAlign: 'center' }}>
-        <a href="client-admin-demo.html" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 10,
-          padding: mobile ? '12px 22px' : '14px 28px',
-          background: VT.white, color: VT.ink,
-          border: `1px solid ${VT.line}`,
-          borderRadius: 999, fontSize: mobile ? 14.5 : 15, fontWeight: 600,
-          textDecoration: 'none',
-        }}>
-          <span style={{
-            width: 22, height: 22, borderRadius: '50%',
-            background: VT.accent, color: '#fff',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10,
-          }}>▶</span>
-          Посмотреть демо личного кабинета
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
     </section>
   );
 }
@@ -2531,8 +1919,6 @@ function AnalyticsSection({ mobile }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-
 // ── from landing-v3-d.jsx ──
 // ───────── BLOCK 9 · PRICING ─────────
 
@@ -2546,72 +1932,99 @@ const PRICING_BULLETS = [
   'Данные хранятся в России, по ФЗ-152',
 ];
 
-// ───────── PRICING MATRIX · полная тарифная сетка ─────────
-
-type CellVal = string | boolean;
+// ───── PRICING MATRIX · полная тарифная сетка ─────
 
 const PLANS = ['Старт', 'Личный', 'Бизнес', 'Компания', 'Студия'];
-const PLAN_HILITE = -1; // подсветка отключена
+const PLAN_HILITE = 2; // «Бизнес» — рекомендуемый
 
-interface PriceRow { label: string; vals: CellVal[]; note?: string; }
-interface PriceGroup { title?: string; rows: PriceRow[]; }
+// Цены вынесены в шапку-банд — в теле таблицы только характеристики.
+const PLAN_META = [
+  { name: 'Старт',    price: '0',     unit: '₽',      sub: 'бесплатно навсегда' },
+  { name: 'Личный',   price: '690',   unit: '₽/мес', sub: '6 620 ₽/год' },
+  { name: 'Бизнес',   price: '1 490', unit: '₽/мес', sub: '14 300 ₽/год', hot: true },
+  { name: 'Компания', price: '2 990', unit: '₽/мес', sub: '28 700 ₽/год' },
+  { name: 'Студия',   price: '6 990', unit: '₽/мес', sub: '67 100 ₽/год' },
+];
 
-const PRICING_MATRIX: PriceGroup[] = [
+const PRICING_MATRIX = [
   {
     rows: [
-      { label: 'Цена / мес', vals: ['0 ₽', '690 ₽', '1 490 ₽', '2 990 ₽', '6 990 ₽'] },
-      { label: 'Цена / год', vals: ['0 ₽', '6 620 ₽', '14 300 ₽', '28 700 ₽', '67 100 ₽'] },
       { label: 'Выгода годового', vals: ['—', '−20%', '−20%', '−20%', '−20%'] },
-      { label: 'Для кого', vals: ['Попробовать', 'Самозанятые, личные сайты', 'Малый бизнес, фриланс', 'Инфобизнес, малые агентства', 'Студии, белые метки'] },
+      { label: 'Для кого', vals: ['Попробовать', 'Самозанятые, личные сайты', 'Малый бизнес', 'Несколько брендов, инфобизнес', 'Студии и агентства'] },
     ],
   },
   {
     title: 'Сайты и хостинг',
     rows: [
-      { label: 'Сайтов в аккаунте', vals: ['1', '1', '3', '10', '30'] },
-      { label: 'Свой домен', vals: [false, false, '3', '10', '30'] },
-      { label: 'Страниц на сайт', vals: ['3', '10', '50', 'без ограничений', 'без ограничений'] },
+      { label: 'Сайтов в аккаунте', vals: ['1', '1', '2', '8', '30'] },
+      { label: 'Свой домен', vals: [false, '1', '2', '8', '30'] },
+      { label: 'Поддомен samosite', vals: [true, true, true, true, true] },
+      { label: 'Страниц на сайт', vals: ['3', '15', '50', 'без ограничений', 'без ограничений'] },
       { label: 'Хранилище медиа', vals: ['500 МБ', '5 ГБ', '20 ГБ', '100 ГБ', '500 ГБ'] },
+      { label: 'Месячный трафик', vals: ['5 ГБ', '50 ГБ', '200 ГБ', '1 ТБ', '5 ТБ'] },
       { label: 'Сертификат безопасности (SSL)', vals: [true, true, true, true, true] },
-      { label: 'Удаление брендинга Samosite', vals: [false, true, true, true, true] },
+      { label: 'Удаление брендинга samosite', vals: [false, true, true, true, true] },
     ],
   },
   {
     title: 'ИИ-операции (в месяц)',
     rows: [
-      { label: 'Генерация сайта целиком', vals: ['1 (разово)', '2', '10', '40', '150'] },
-      { label: 'Перегенерация блоков', vals: ['10', '30', '150', '600', '2 000'] },
-      { label: 'Анализ источников', vals: ['1', '5', '25', '100', '400'] },
-      { label: 'ИИ-рекомендации (продвижение / контент)', vals: [false, '10', '50', '200', 'без ограничений*'] },
       { label: 'Качество ИИ-модели', vals: ['Yandex', 'Claude', 'Claude', 'Claude', 'Claude'] },
+      { label: 'Генерация сайта целиком', vals: ['1 (разово)', '2', '8', '30', '120'] },
+      { label: 'Перегенерация блоков', vals: ['10', '30', '120', '500', '1 800'] },
+      { label: 'Анализ источников', vals: ['1', '5', '20', '80', '350'] },
+      { label: 'ИИ-рекомендации (продвижение / контент)', vals: [false, '10', '40', '180', 'без ограничений*'] },
       { label: 'При превышении лимита', vals: ['блокировка', 'упрощённый режим', 'упрощённый режим', 'упрощённый режим', 'мягкий лимит'] },
+      { label: 'Докупка операций сверх лимита', vals: [false, true, true, true, true] },
     ],
   },
   {
-    title: 'Возможности',
+    title: 'Возможности сайта',
     rows: [
-      { label: 'Шаблоны', vals: ['базовые', 'все', 'все', 'все + премиум', 'все + премиум'] },
-      { label: 'Формы и заявки', vals: ['1 форма', true, true, true, true] },
-      { label: 'Аналитика', vals: [false, 'базовая', 'расширенная', 'расширенная', 'расширенная'] },
-      { label: 'Экспорт кода', vals: [false, false, false, true, true] },
-      { label: 'Работа под бренд клиента', vals: [false, false, false, false, true] },
+      { label: 'Шаблоны', vals: ['базовые', 'все базовые', 'все базовые', 'все + премиум', 'все + премиум'] },
+      { label: 'Формы и заявки', vals: ['1 форма', 'без ограничений', 'без ограничений', 'без ограничений', 'без ограничений'] },
+      { label: 'Уведомления на почту / в Telegram', vals: [false, true, true, true, true] },
+      { label: 'Виджеты соцсетей и мессенджеров', vals: [false, true, true, true, true] },
+      { label: 'Подключение Я.Метрики и пикселей', vals: [false, true, true, true, true] },
+      { label: 'Приём платежей (ЮKassa, Тинькофф)', vals: [false, false, true, true, true] },
+      { label: 'Корзина и каталог товаров', vals: [false, false, 'до 50 поз.', 'до 500 поз.', 'без ограничений'] },
+      { label: 'SEO-настройки страниц', vals: ['базовые', 'расширенные', 'расширенные', 'расширенные', 'расширенные'] },
+      { label: 'Подключение домен-зоны (*.brand.ru)', vals: [false, false, false, true, true] },
+      { label: 'Экспорт кода сайта', vals: [false, false, false, false, true] },
+    ],
+  },
+  {
+    title: 'Аналитика',
+    rows: [
+      { label: 'Просмотры и посетители', vals: [false, true, true, true, true] },
+      { label: 'Источники трафика', vals: [false, false, true, true, true] },
+      { label: 'Воронка заявок и конверсии', vals: [false, false, true, true, true] },
+      { label: 'Сравнение версий сайта', vals: [false, false, false, true, true] },
+      { label: 'Экспорт отчётов (CSV / Excel)', vals: [false, false, false, true, true] },
+    ],
+  },
+  {
+    title: 'Команда и клиенты',
+    rows: [
       { label: 'Командный доступ', vals: [false, false, '2 чел.', '5 чел.', '15 чел.'] },
+      { label: 'Роли и права доступа', vals: [false, false, 'базовые', 'расширенные', 'расширенные'] },
+      { label: 'Работа под брендом клиента', vals: [false, false, false, false, true] },
+      { label: 'Передача сайта в аккаунт клиента', vals: [false, false, false, false, true] },
+      { label: 'Биллинг от имени студии', vals: [false, false, false, false, true] },
     ],
   },
   {
     title: 'Поддержка',
     rows: [
-      { label: 'Канал', vals: ['база знаний', 'чат', 'чат', 'приоритетный чат', 'персональный менеджер'] },
+      { label: 'База знаний и видеоуроки', vals: [true, true, true, true, true] },
+      { label: 'Канал поддержки', vals: ['—', 'чат', 'чат', 'приоритетный чат', 'персональный менеджер'] },
       { label: 'Время ответа', vals: ['—', '24 ч', '12 ч', '4 ч', '1 ч'] },
+      { label: 'Обучение команды (онлайн)', vals: [false, false, false, false, true] },
     ],
   },
 ];
 
-function MatrixCell({ v, hi }: { v: CellVal; hi: boolean }) {
-  const base: React.CSSProperties = {
-    fontSize: 13.5, lineHeight: 1.35, color: VT.ink,
-    textAlign: 'center', fontVariantNumeric: 'tabular-nums',
-  };
+function MatrixCell({ v, hi }) {
   if (v === true) {
     return <span style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: '50%', background: VT.successSoft, color: VT.success, alignItems: 'center', justifyContent: 'center' }}>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12 l4 4 10 -10"/></svg>
@@ -2620,103 +2033,157 @@ function MatrixCell({ v, hi }: { v: CellVal; hi: boolean }) {
   if (v === false) {
     return <span style={{ color: VT.inkFaint, fontSize: 16 }}>—</span>;
   }
-  // price-like emphasis for first group handled by caller via hi
-  return <span style={{ ...base, fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }}>{v}</span>;
+  return <span style={{ fontSize: 13.5, lineHeight: 1.35, textAlign: 'center', fontVariantNumeric: 'tabular-nums', fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }}>{v}</span>;
 }
 
-function PricingMatrix({ mobile }: { mobile: boolean }) {
-  // Column widths: first column wide (label), 5 plan columns equal.
+function PricingMatrix({ mobile }) {
   const firstCol = mobile ? 132 : 240;
-  const planCol = mobile ? 96 : 150;
+  const planCol = mobile ? 116 : 192; // desktop: 240 + 5×192 = 1200, aligns with the page grid
   const totalW = firstCol + planCol * 5;
-
   const cellPad = mobile ? '10px 8px' : '12px 14px';
+  const cols = `${firstCol}px repeat(5, ${planCol}px)`;
+
+  // Continuous vertical highlight for the recommended column.
+  const hiBg = (ci) => ci === PLAN_HILITE ? VT.accentSoft : 'transparent';
+  const hiSide = (ci) => ci === PLAN_HILITE
+    ? { boxShadow: `inset 1px 0 0 ${VT.accent}33, inset -1px 0 0 ${VT.accent}33` }
+    : {};
 
   return (
     <div style={{
       marginTop: mobile ? 24 : 40,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 18,
-      overflow: 'hidden',
+      border: `1px solid ${VT.line}`, borderRadius: 20, overflow: 'hidden',
       background: VT.white,
-      boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 18px 48px -28px rgba(120,60,30,0.20)',
+      boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 24px 60px -30px rgba(120,60,30,0.28)',
     }}>
       <div style={mobile ? { overflowX: 'auto', WebkitOverflowScrolling: 'touch' } : { overflow: 'visible' }}>
         <div style={{ minWidth: mobile ? totalW : 0 }}>
-          {/* Header row: plan names + prices */}
+
+          {/* PRICE HEADER BAND */}
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
+            display: 'grid', gridTemplateColumns: cols,
             position: 'sticky', top: 0, zIndex: 2,
-            background: VT.white,
-            borderBottom: `2px solid ${VT.line}`,
+            background: VT.white, borderBottom: `1px solid ${VT.line}`,
           }}>
-            <div style={{ padding: cellPad, position: 'sticky', left: 0, background: VT.white, zIndex: 4 }} />
-            {PLANS.map((p, i) => (
-              <div key={p} style={{
-                padding: cellPad, textAlign: 'center',
-                background: i === PLAN_HILITE ? VT.accentSoft : 'transparent',
-                borderTopLeftRadius: i === PLAN_HILITE ? 12 : 0,
-                borderTopRightRadius: i === PLAN_HILITE ? 12 : 0,
-              }}>
-                {i === PLAN_HILITE && (
-                  <div style={{
-                    fontFamily: VT.font.mono, fontSize: 9, letterSpacing: '0.1em',
-                    color: VT.accent, fontWeight: 700, marginBottom: 4, textTransform: 'uppercase',
-                  }}>Популярный</div>
-                )}
-                <div style={{
-                  fontSize: mobile ? 15 : 17, fontWeight: 700, letterSpacing: '-0.015em',
-                  color: i === PLAN_HILITE ? VT.accent : VT.ink,
-                }}>{p}</div>
+            <div style={{
+              padding: mobile ? '14px 10px' : '20px 18px',
+              position: 'sticky', left: 0, background: VT.white, zIndex: 4,
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            }}>
+              <div style={{
+                fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.1em',
+                color: VT.inkFaint, fontWeight: 700, textTransform: 'uppercase',
+              }}>5 тарифов</div>
+              <div style={{ marginTop: 4, fontSize: mobile ? 11.5 : 13, color: VT.inkSoft, lineHeight: 1.35 }}>
+                первый месяц платного — бесплатно
               </div>
-            ))}
+            </div>
+            {PLAN_META.map((p, i) => {
+              const hot = i === PLAN_HILITE;
+              return (
+                <div key={p.name} style={{
+                  padding: mobile ? '14px 8px 14px' : `${hot ? 14 : 20}px 12px 18px`,
+                  textAlign: 'center', position: 'relative',
+                  background: hot ? VT.accentSoft : 'transparent',
+                  ...hiSide(i),
+                }}>
+                  {hot && (
+                    <div style={{
+                      display: 'inline-block', marginBottom: 8,
+                      fontFamily: VT.font.mono, fontSize: 9, letterSpacing: '0.1em', fontWeight: 700,
+                      color: '#fff', background: VT.accent,
+                      padding: '3px 9px', borderRadius: 999, textTransform: 'uppercase',
+                    }}>популярный</div>
+                  )}
+                  <div style={{
+                    fontSize: mobile ? 13.5 : 15, fontWeight: 700, letterSpacing: '-0.015em',
+                    color: hot ? VT.accent : VT.ink,
+                  }}>{p.name}</div>
+                  <div style={{
+                    marginTop: 6, display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 3,
+                    fontVariantNumeric: 'tabular-nums',
+                  }}>
+                    <span style={{
+                      fontSize: mobile ? 19 : 26, fontWeight: 800, letterSpacing: '-0.03em',
+                      color: VT.ink, lineHeight: 1,
+                    }}>{p.price}</span>
+                    <span style={{ fontSize: mobile ? 10.5 : 12, fontWeight: 600, color: VT.inkSoft }}>{p.unit}</span>
+                  </div>
+                  <div style={{
+                    marginTop: 4, fontSize: mobile ? 9.5 : 11, color: VT.inkFaint, lineHeight: 1.3,
+                  }}>{p.sub}</div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Groups */}
           {PRICING_MATRIX.map((group, gi) => (
             <div key={gi}>
               {group.title && (
                 <div style={{
                   gridColumn: '1 / -1',
-                  padding: mobile ? '10px 10px' : '11px 14px',
+                  padding: mobile ? '9px 10px' : '10px 18px',
                   background: VT.bgSoft,
                   fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: '0.1em',
                   color: VT.inkFaint, fontWeight: 700, textTransform: 'uppercase',
                   borderTop: `1px solid ${VT.line}`, borderBottom: `1px solid ${VT.line}`,
                 }}>{group.title}</div>
               )}
-              {group.rows.map((row, ri) => {
-                const isPriceMonth = gi === 0 && ri === 0;
-                return (
-                  <div key={ri} style={{
-                    display: 'grid',
-                    gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
-                    borderBottom: `1px solid ${VT.lineSoft}`,
-                    alignItems: 'center',
-                  }}>
-                    <div style={{
-                      padding: cellPad,
-                      fontSize: mobile ? 12 : 13.5, color: VT.ink,
-                      fontWeight: isPriceMonth ? 600 : 400,
-                      position: 'sticky', left: 0, background: VT.white, zIndex: 3,
-                      borderRight: `1px solid ${VT.line}`,
-                      boxShadow: mobile ? '6px 0 8px -6px rgba(40,28,18,0.12)' : 'none',
-                    }}>{row.label}</div>
-                    {row.vals.map((v, ci) => (
-                      <div key={ci} style={{
-                        padding: cellPad, textAlign: 'center',
-                        background: ci === PLAN_HILITE ? VT.accentSoft : 'transparent',
-                        height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        <MatrixCell v={v} hi={isPriceMonth || ci === PLAN_HILITE} />
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
+              {group.rows.map((row, ri) => (
+                <div key={ri} style={{
+                  display: 'grid', gridTemplateColumns: cols,
+                  borderBottom: `1px solid ${VT.lineSoft}`, alignItems: 'stretch',
+                  background: ri % 2 === 1 ? VT.bgSoft + '80' : 'transparent',
+                }}>
+                  <div style={{
+                    padding: cellPad, fontSize: mobile ? 12 : 13.5, color: VT.inkSoft,
+                    position: 'sticky', left: 0, zIndex: 3,
+                    background: ri % 2 === 1 ? VT.bg : VT.white,
+                    borderRight: `1px solid ${VT.line}`,
+                    boxShadow: mobile ? '6px 0 8px -6px rgba(40,28,18,0.12)' : 'none',
+                    display: 'flex', alignItems: 'center',
+                  }}>{row.label}</div>
+                  {row.vals.map((v, ci) => (
+                    <div key={ci} style={{
+                      padding: cellPad, textAlign: 'center',
+                      background: hiBg(ci),
+                      ...hiSide(ci),
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <MatrixCell v={v} hi={ci === PLAN_HILITE} />
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           ))}
+
+          {/* CTA FOOTER ROW */}
+          <div style={{ display: 'grid', gridTemplateColumns: cols, alignItems: 'stretch' }}>
+            <div style={{
+              position: 'sticky', left: 0, zIndex: 3, background: VT.white,
+              borderRight: `1px solid ${VT.line}`,
+            }} />
+            {PLAN_META.map((p, i) => {
+              const hot = i === PLAN_HILITE;
+              return (
+                <div key={p.name} style={{
+                  padding: mobile ? '12px 6px' : '16px 10px', textAlign: 'center',
+                  background: hot ? VT.accentSoft : 'transparent', ...hiSide(i),
+                }}>
+                  <a href="#hero" style={{
+                    display: 'inline-block', width: '100%', boxSizing: 'border-box',
+                    padding: mobile ? '8px 4px' : '9px 10px',
+                    fontSize: mobile ? 11.5 : 13, fontWeight: 700,
+                    borderRadius: 999, textDecoration: 'none', whiteSpace: 'nowrap',
+                    background: hot ? VT.accent : 'transparent',
+                    color: hot ? '#fff' : VT.accent,
+                    border: hot ? 'none' : `1px solid ${VT.accent}`,
+                  }}>{i === 0 ? 'Начать' : 'Выбрать'}</a>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
       {mobile && (
@@ -2736,39 +2203,32 @@ function PricingSection({ mobile }) {
       <div style={{ textAlign: 'center' }}>
         <H2 mobile={mobile}>Тариф под ваш масштаб</H2>
         <p style={{
-          margin: `${mobile ? 14 : 18}px auto 0`,
-          maxWidth: 600,
-          fontSize: mobile ? 15 : 17, lineHeight: 1.5,
-          color: VT.inkSoft, textWrap: 'pretty',
+          margin: `${mobile ? 14 : 18}px auto 0`, maxWidth: 600,
+          fontSize: mobile ? 15 : 17, lineHeight: 1.5, color: VT.inkSoft, textWrap: 'pretty',
         }}>
           От бесплатного старта до студийного. Первый месяц на любом платном — бесплатно, карту привязывать не надо.
         </p>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <PricingMatrix mobile={mobile} />
 
-        {/* CTA under the matrix */}
-        <div style={{ marginTop: mobile ? 24 : 32, textAlign: 'center' }}>
-          <Btn style={{
-            padding: mobile ? '14px 26px' : '16px 36px',
-            fontSize: mobile ? 15 : 16,
-          }} iconRight={<IconArrow />}>
+        <div style={{ marginTop: 10, fontSize: 12, color: VT.inkFaint, textAlign: mobile ? 'left' : 'center' }}>
+          * без ограничений в рамках честного использования
+        </div>
+
+        <div style={{ marginTop: mobile ? 18 : 28, textAlign: 'center' }}>
+          <Btn style={{ padding: mobile ? '14px 26px' : '16px 36px', fontSize: mobile ? 15 : 16 }} iconRight={<IconArrow />}>
             Собрать сайт за 2 часа
           </Btn>
-          <div style={{
-            marginTop: 12, fontSize: 12.5, color: VT.inkSoft, fontStyle: 'italic',
-          }}>
+          <div style={{ marginTop: 12, fontSize: 12.5, color: VT.inkSoft, fontStyle: 'italic' }}>
             Начните на бесплатном тарифе — оплату подключите потом, если решите расти.
           </div>
         </div>
 
-        {/* Side note */}
         <p style={{
-          margin: `${mobile ? 22 : 30}px auto 0`,
-          maxWidth: 600,
-          fontSize: mobile ? 14 : 15, lineHeight: 1.55,
-          color: VT.inkSoft, textAlign: 'center', textWrap: 'pretty',
+          margin: `${mobile ? 22 : 30}px auto 0`, maxWidth: 600,
+          fontSize: mobile ? 14 : 15, lineHeight: 1.55, color: VT.inkSoft, textAlign: 'center', textWrap: 'pretty',
         }}>
           Час работы SMM-щика стоит дороже. День в агентстве в десятки раз. Самосайт делает то же самое: без зарплаты, без отпусков, без забытых задач.
         </p>
@@ -2929,7 +2389,7 @@ function FinalCtaSection({ mobile }) {
       ...sectionPad(mobile),
       marginTop: mobile ? 64 : 130,
       position: 'relative', zIndex: 1,
-      maxWidth: mobile ? '100%' : 1360,
+      maxWidth: mobile ? '100%' : 1200,
       margin: `${mobile ? 64 : 130}px auto 0`,
     }}>
       <div style={{
@@ -3034,14 +2494,12 @@ function FinalCtaSection({ mobile }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-
 // ── from landing-v3.jsx ──
 // Standalone sticky header (избегаем зависимости от landing-samosite.jsx,
 // чтобы v3-превью могло жить отдельно).
 function StickyHeader({ mobile = false }) {
-  // Боковые поля сужаются на средних экранах через clamp, чтобы в зоне ~720–1000px
-  // ряд (лого + меню + CTA) не переполнялся и кнопка не обрезалась.
+  // Боковые поля сужаются на средних экранах через clamp (canon 0.7.2 фикс),
+  // чтобы в зоне ~720–1000px ряд не переполнялся и CTA не обрезалась.
   const px = mobile ? 20 : 'clamp(24px, 4vw, 80px)';
   const primaryStyle = mobile
     ? { background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
@@ -3095,6 +2553,43 @@ function StickyHeader({ mobile = false }) {
         )}
       </div>
     </div>
+  );
+}
+
+function FloatingFeedback({ mobile }) {
+  return (
+    <a
+      href="#feedback"
+      aria-label="Чего не хватает?"
+      style={{
+        position: 'fixed',
+        right: mobile ? 16 : 24,
+        bottom: mobile ? 16 : 24,
+        zIndex: 40,
+        display: 'inline-flex', alignItems: 'center', gap: 10,
+        padding: mobile ? '12px 16px' : '13px 20px',
+        background: VT.white,
+        color: VT.ink,
+        border: `1px solid ${VT.line}`,
+        borderRadius: 999,
+        fontFamily: VT.font.sans, fontSize: mobile ? 14 : 14.5, fontWeight: 600,
+        letterSpacing: '-0.01em',
+        textDecoration: 'none',
+        boxShadow: '0 1px 0 rgba(0,0,0,0.02), 0 14px 32px -12px rgba(120,60,30,0.30), 0 4px 12px -6px rgba(40,28,18,0.12)',
+        cursor: 'pointer',
+      }}
+    >
+      <span style={{
+        flex: '0 0 auto', width: 26, height: 26, borderRadius: '50%',
+        background: VT.accent, color: '#fff',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z"/>
+        </svg>
+      </span>
+      Чего не хватает?
+    </a>
   );
 }
 
@@ -3218,12 +2713,13 @@ function SamosaytLandingV3({ mobile = false }) {
         <MondaySection    mobile={mobile} />
         <BaseWorkSection  mobile={mobile} />
         <SourcesSection   mobile={mobile} />
-        <OwnershipSection mobile={mobile} />
         <AnalyticsSection mobile={mobile} />
+        <OwnershipSection mobile={mobile} />
         <PricingSection   mobile={mobile} />
         <FaqSection       mobile={mobile} />
         <FinalCtaSection  mobile={mobile} />
         <Footer mobile={mobile} />
+        <FloatingFeedback mobile={mobile} />
       </div>
     </>
   );
@@ -3233,35 +2729,28 @@ function SamosaytLandingV3_Desktop() { return <SamosaytLandingV3 mobile={false} 
 function SamosaytLandingV3_Mobile()  { return <SamosaytLandingV3 mobile={true} />; }
 
 // ─────────────────────────────────────────────────────────────
-// Public exports — canon 0.6.0
+// Public exports — canon 0.8.0
 // ─────────────────────────────────────────────────────────────
-// Back-compat aliases (kept so 0.5.x consumers still resolve, but visually point
-// at the new v3 components — see CHANGELOG 0.6.0 "BREAKING" notes).
 const SamosaytLanding = SamosaytLandingV3;
 const Landing = SamosaytLandingV3;
 const ConceptA_Desktop = SamosaytLandingV3_Desktop;
 const ConceptA_Mobile = SamosaytLandingV3_Mobile;
 const SamosaytLanding_Desktop = SamosaytLandingV3_Desktop;
 const SamosaytLanding_Mobile = SamosaytLandingV3_Mobile;
-// HeroBlock & HeroSection — same component (v3 HeroBlock).
 const HeroSection = HeroBlock;
 
 export {
-  // v3 landing (canonical names)
   SamosaytLandingV3,
   SamosaytLandingV3_Desktop,
   SamosaytLandingV3_Mobile,
-
-  // Back-compat aliases — visually point at v3
   SamosaytLanding,
   SamosaytLanding_Desktop,
   SamosaytLanding_Mobile,
   Landing,
   ConceptA_Desktop,
   ConceptA_Mobile,
-
-  // Sections — composable
   StickyHeader,
+  ChipStrip,
   HeroBlock,
   HeroSection,
   ExamplesSection,

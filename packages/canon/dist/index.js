@@ -679,73 +679,22 @@ function getTheme(themeId) {
   return t;
 }
 function EditorialFamily({ theme, content }) {
-  const c = theme.colors;
-  const f = theme.fonts;
-  const r = theme.radii;
-  const v = theme.voice;
-  const withEm = (text) => {
-    const parts = text.split(/\[\[(.+?)\]\]/g);
-    return parts.map(
-      (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: {
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        color: c.accent,
-        fontWeight: v.displayWeight
-      }, children: p }, i)
-    );
-  };
-  const hr = { borderBottom: `1px solid ${c.line}` };
-  return /* @__PURE__ */ jsxs2("div", { style: {
-    background: c.bg,
-    color: c.ink,
-    fontFamily: f.body,
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    fontVariantNumeric: "tabular-nums"
-  }, children: [
-    /* @__PURE__ */ jsxs2("header", { style: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "13px 16px 11px",
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsx3("div", { style: {
-        fontFamily: f.display,
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        fontSize: 15,
-        fontWeight: v.displayWeight,
-        letterSpacing: "-0.01em",
-        color: c.ink
-      }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx3("a", { style: {
-        background: c.accent,
-        color: c.accentInk,
-        padding: "6px 12px",
-        fontFamily: f.mono,
-        fontSize: 9,
-        fontWeight: 700,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        borderRadius: r.btn,
-        cursor: "pointer"
-      }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "9px 16px",
-      fontFamily: f.mono,
-      fontSize: 9,
-      color: c.inkSoft,
-      textTransform: "uppercase",
-      letterSpacing: "0.08em",
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsxs2("span", { children: [
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const accentEm = (text) => text.split(/\[\[(.+?)\]\]/g).map(
+    (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: { fontStyle: v.italicAccent ? "italic" : "normal", color: c.accent }, children: p }, i)
+  );
+  const rule = `1px solid ${c.line}`;
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "11px 16px 9px", borderBottom: `2px solid ${c.ink}`, textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: c.inkSoft, marginBottom: 4 }, children: [
         "\u0441 ",
-        content.meta.since
+        content.meta.since,
+        " \xB7 ",
+        content.meta.category
       ] }),
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 27, fontWeight: v.displayWeight, letterSpacing: "-0.02em", lineHeight: 1 }, children: content.meta.brand })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", padding: "5px 16px", borderBottom: rule, fontFamily: f.mono, fontSize: 8, letterSpacing: "0.1em", textTransform: "uppercase", color: c.inkSoft }, children: [
       /* @__PURE__ */ jsxs2("span", { children: [
         "\u2605\u2605\u2605\u2605\u2605 ",
         content.meta.rating
@@ -755,204 +704,20 @@ function EditorialFamily({ theme, content }) {
         " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("section", { style: { padding: "16px 16px 18px", ...hr }, children: /* @__PURE__ */ jsx3("h1", { style: {
-      fontFamily: f.display,
-      fontSize: 34,
-      fontWeight: v.displayWeight,
-      lineHeight: 0.94,
-      letterSpacing: "-0.025em",
-      color: c.ink,
-      margin: 0
-    }, children: content.hero.headingLines.map((line, i) => /* @__PURE__ */ jsxs2(React.Fragment, { children: [
-      withEm(line),
+    /* @__PURE__ */ jsx3("div", { style: { padding: "14px 16px 12px", borderBottom: rule }, children: /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 30, fontWeight: v.displayWeight, lineHeight: 0.95, letterSpacing: "-0.03em", margin: 0 }, children: content.hero.headingLines.map((l, i) => /* @__PURE__ */ jsxs2(React.Fragment, { children: [
+      accentEm(l),
       i < content.hero.headingLines.length - 1 && /* @__PURE__ */ jsx3("br", {})
     ] }, i)) }) }),
-    content.hero.leadParagraph && /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 16px", ...hr }, children: [
-      v.dropCap && /* @__PURE__ */ jsx3("span", { style: {
-        fontFamily: f.display,
-        fontSize: 44,
-        fontWeight: v.displayWeight,
-        float: "left",
-        lineHeight: 0.85,
-        margin: "4px 8px 0 0",
-        color: c.accent
-      }, children: content.hero.leadParagraph[0] }),
-      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.55, color: c.ink, margin: 0 }, children: v.dropCap ? content.hero.leadParagraph.slice(1) : content.hero.leadParagraph })
+    /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minHeight: 0, position: "relative", overflow: "hidden", borderBottom: rule }, children: [
+      /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }),
+      /* @__PURE__ */ jsx3("div", { style: { position: "absolute", left: 0, bottom: 0, padding: "4px 10px", background: c.bg, borderTop: rule, borderRight: rule, fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.06em", color: c.inkSoft }, children: content.hero.photoCaption || content.meta.address })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { aspectRatio: "4 / 3", overflow: "hidden", position: "relative", ...hr }, children: [
-      /* @__PURE__ */ jsx3(
-        "img",
-        {
-          src: content.hero.photoSrc,
-          alt: "",
-          loading: "lazy",
-          style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" }
-        }
-      ),
-      content.hero.photoCaption && /* @__PURE__ */ jsx3("div", { style: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: "5px 10px",
-        background: c.bg,
-        fontFamily: f.mono,
-        fontSize: 9,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.05em",
-        borderTop: `1px solid ${c.line}`
-      }, children: content.hero.photoCaption })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
-      padding: "12px 16px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 6,
-      ...hr
-    }, children: [
-      /* @__PURE__ */ jsxs2("a", { style: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: c.accent,
-        color: c.accentInk,
-        padding: "13px 16px",
-        borderRadius: r.btn,
-        fontSize: 13,
-        fontWeight: 700,
-        letterSpacing: "0.04em",
-        textTransform: "uppercase",
-        cursor: "pointer"
-      }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsxs2("a", { style: { flex: 1, background: c.accent, color: c.accentInk, padding: "12px 16px", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }, children: [
         content.cta.primary.label,
-        /* @__PURE__ */ jsx3("span", { style: {
-          fontFamily: f.display,
-          fontSize: 22,
-          fontStyle: v.italicAccent ? "italic" : "normal"
-        }, children: "\u2192" })
+        /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.display, fontSize: 18, fontStyle: v.italicAccent ? "italic" : "normal" }, children: "\u2192" })
       ] }),
-      content.cta.phone && /* @__PURE__ */ jsx3("a", { style: {
-        textAlign: "center",
-        padding: "10px 16px",
-        border: `1px solid ${c.ink}`,
-        borderRadius: r.btn,
-        fontSize: 12,
-        fontFamily: f.mono,
-        letterSpacing: "0.05em",
-        color: c.ink,
-        cursor: "pointer"
-      }, children: content.cta.phone })
-    ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
-      display: "grid",
-      gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
-      ...hr
-    }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs2("div", { style: {
-      padding: "12px 8px",
-      textAlign: "center",
-      borderRight: i < content.stats.length - 1 ? `1px solid ${c.line}` : void 0
-    }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
-        fontFamily: f.display,
-        fontSize: 22,
-        fontWeight: v.displayWeight,
-        color: c.accent,
-        lineHeight: 1,
-        marginBottom: 3
-      }, children: [
-        s.num,
-        s.unit && /* @__PURE__ */ jsx3("span", { style: { fontSize: 12, color: c.inkSoft }, children: s.unit })
-      ] }),
-      /* @__PURE__ */ jsx3("div", { style: {
-        fontFamily: f.mono,
-        fontSize: 8,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em"
-      }, children: s.label })
-    ] }, i)) }),
-    content.menu && /* @__PURE__ */ jsxs2("section", { style: { padding: "18px 16px", ...hr }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
-        fontFamily: f.mono,
-        fontSize: 9,
-        color: c.inkSoft,
-        textTransform: "uppercase",
-        letterSpacing: "0.1em",
-        marginBottom: 10,
-        display: "flex",
-        alignItems: "center",
-        gap: 8
-      }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { height: 1, background: c.inkSoft, flex: 1 } }),
-        content.menu.eyebrow,
-        /* @__PURE__ */ jsx3("span", { style: { height: 1, background: c.inkSoft, flex: 1 } })
-      ] }),
-      /* @__PURE__ */ jsx3("h3", { style: {
-        fontFamily: f.display,
-        fontSize: 20,
-        fontWeight: v.displayWeight,
-        lineHeight: 1,
-        letterSpacing: "-0.015em",
-        marginBottom: 12,
-        color: c.ink
-      }, children: withEm(content.menu.title) }),
-      content.menu.items.slice(0, 3).map((it, i, arr) => /* @__PURE__ */ jsxs2("div", { style: {
-        display: "grid",
-        gridTemplateColumns: "auto 1fr auto",
-        gap: 10,
-        alignItems: "baseline",
-        padding: "9px 0",
-        borderBottom: i < arr.length - 1 ? `1px dotted ${c.lineSoft}` : void 0
-      }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.accent }, children: it.num }),
-        /* @__PURE__ */ jsxs2("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: v.displayWeight, color: c.ink }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx3("span", { style: {
-          fontFamily: f.display,
-          fontStyle: v.italicAccent ? "italic" : "normal",
-          fontSize: 14,
-          color: c.ink
-        }, children: it.price })
-      ] }, i))
-    ] }),
-    /* @__PURE__ */ jsxs2("section", { style: { padding: "14px 16px", ...hr }, children: [
-      /* @__PURE__ */ jsx3("p", { style: {
-        fontFamily: f.display,
-        fontStyle: v.italicAccent ? "italic" : "normal",
-        fontSize: 15,
-        lineHeight: 1.3,
-        margin: 0,
-        color: c.ink
-      }, children: content.quote.text.split(/\[\[(.+?)\]\]/g).map(
-        (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: { color: c.accent, fontStyle: "normal" }, children: p }, i)
-      ) }),
-      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.inkSoft, marginTop: 8 }, children: [
-        content.quote.authorName,
-        " \xB7 ",
-        content.quote.authorSource
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs2("footer", { style: {
-      padding: "11px 16px",
-      background: c.invBg,
-      color: c.invInk,
-      display: "flex",
-      justifyContent: "space-between",
-      fontFamily: f.mono,
-      fontSize: 9,
-      textTransform: "uppercase",
-      letterSpacing: "0.08em",
-      opacity: 0.7
-    }, children: [
-      /* @__PURE__ */ jsx3("span", { children: content.meta.address }),
-      /* @__PURE__ */ jsxs2("span", { children: [
-        content.meta.host,
-        ".",
-        BRAND.domain
-      ] })
+      /* @__PURE__ */ jsx3("div", { style: { padding: "0 14px", display: "flex", alignItems: "center", fontFamily: f.mono, fontSize: 10, color: c.accentInk, background: c.ink, whiteSpace: "nowrap" }, children: content.cta.phone })
     ] })
   ] });
 }
@@ -963,239 +728,112 @@ function renderEm(text, color, italic) {
 }
 function BentoFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const card = {
-    background: c.bgAlt,
-    borderRadius: r.card,
-    padding: 14,
-    border: `1px solid ${c.line}`,
-    overflow: "hidden"
-  };
-  const label = {
-    fontFamily: f.mono,
-    fontSize: 9,
-    color: c.inkFaint,
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    marginBottom: 8
-  };
   const s = content.stats;
-  const m = content.menu;
-  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, padding: 14, fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, padding: "0 2px" }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, fontFamily: f.display, fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em" }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 22, height: 22, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12 }, children: content.meta.brand[0] }),
+  const tile = { background: c.bgAlt, borderRadius: r.card, border: `1px solid ${c.line}`, padding: 12, overflow: "hidden" };
+  const lbl = { fontFamily: f.mono, fontSize: 8, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.06em" };
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", padding: 12, gap: 8, fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 7, fontFamily: f.display, fontWeight: 700, fontSize: 13, letterSpacing: "-0.02em" }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 20, height: 20, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }, children: content.meta.brand[0] }),
         content.meta.brand
       ] }),
-      /* @__PURE__ */ jsxs2("span", { style: { fontFamily: f.mono, fontSize: 10, color: c.inkSoft }, children: [
+      /* @__PURE__ */ jsxs2("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft }, children: [
         "\u2605 ",
         content.meta.rating
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4", background: c.accent, color: c.accentInk, border: "none", padding: "20px 16px" }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.accent, padding: "5px 9px", borderRadius: 999, fontSize: 9, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14 }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
+    /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minHeight: 0, display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto 1fr", gap: 8 }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { ...tile, gridColumn: "span 2", background: c.accent, color: c.accentInk, border: "none", display: "flex", flexDirection: "column", justifyContent: "space-between" }, children: [
+        /* @__PURE__ */ jsxs2("span", { style: { alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 5, background: c.bg, color: c.accent, padding: "4px 8px", borderRadius: 999, fontSize: 8, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em" }, children: [
+          /* @__PURE__ */ jsx3("span", { style: { width: 4, height: 4, background: c.accent, borderRadius: "50%" } }),
           "\u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F"
         ] }),
-        /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: 800, lineHeight: 0.96, letterSpacing: "-0.035em", margin: 0 }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
+        /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.035em", margin: "10px 0 0" }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
       ] }),
-      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: label, children: "\u0441\u0435\u0433\u043E\u0434\u043D\u044F" }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }, children: "14:00 \xB7 16:30" }),
-        /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: content.cta.primary.label.toLowerCase() })
-      ] }),
-      s[0] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: label, children: s[0].label }),
-        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+      s[0] && /* @__PURE__ */ jsxs2("div", { style: tile, children: [
+        /* @__PURE__ */ jsx3("div", { style: lbl, children: s[0].label }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4 }, children: [
           s[0].num,
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[0].unit })
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: c.inkFaint }, children: s[0].unit })
         ] })
       ] }),
-      s[1] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: label, children: s[1].label }),
-        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.accent }, children: [
+      s[1] && /* @__PURE__ */ jsxs2("div", { style: tile, children: [
+        /* @__PURE__ */ jsx3("div", { style: lbl, children: s[1].label }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4, color: c.accent }, children: [
           s[1].num,
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[1].unit })
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 13, color: c.inkFaint }, children: s[1].unit })
         ] })
       ] }),
-      s[2] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: label, children: s[2].label }),
-        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
-          s[2].num,
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[2].unit })
-        ] })
+      /* @__PURE__ */ jsx3("div", { style: { gridColumn: "span 2", borderRadius: r.card, overflow: "hidden", minHeight: 0 }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { ...tile, flex: "0 0 auto", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invInkSoft, marginTop: 1 }, children: content.cta.phone })
       ] }),
-      /* @__PURE__ */ jsx3("div", { style: { gridColumn: "span 4", borderRadius: r.card, overflow: "hidden", aspectRatio: "16/9" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", padding: "16px 18px" }, children: [
-        /* @__PURE__ */ jsxs2("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 10, color: c.invInkSoft, marginTop: 2 }, children: content.cta.phone })
-        ] }),
-        /* @__PURE__ */ jsx3("span", { style: { width: 32, height: 32, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }, children: "\u2192" })
-      ] }),
-      m && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 12 }, children: m.title.replace(/\[\[|\]\]/g, "") }),
-        m.items.map((it, i) => /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0 }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 12 }, children: it.name }),
-          /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 12, color: c.accent, fontWeight: 500 }, children: it.price })
-        ] }, i))
-      ] }),
-      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 15, fontWeight: 500, marginBottom: 4 }, children: content.cta.phone }),
-        /* @__PURE__ */ jsxs2("div", { style: { fontSize: 10, color: c.inkSoft }, children: [
-          content.meta.address,
-          " \xB7 ",
-          content.meta.host,
-          ".",
-          BRAND.domain
-        ] })
-      ] })
+      /* @__PURE__ */ jsx3("span", { style: { width: 28, height: 28, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }, children: "\u2192" })
     ] })
   ] });
 }
 function DisplayFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
   const lines = content.hero.headingLines;
-  const m = content.menu;
-  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px" }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em" }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, background: c.accent, borderRadius: "50%" } }),
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 7, fontSize: 12, fontWeight: 600 }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
         content.meta.brand
       ] }),
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "6px 12px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: content.cta.phone })
-    ] }),
-    /* @__PURE__ */ jsxs2("section", { style: { padding: "16px 18px 22px" }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", fontFamily: f.mono, fontSize: 9, color: c.inkSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${c.line}` }, children: [
-        /* @__PURE__ */ jsxs2("span", { children: [
-          "\u0441 ",
-          content.meta.since,
-          " \xB7 ",
-          content.meta.address
-        ] }),
-        /* @__PURE__ */ jsxs2("span", { children: [
-          "\u2605\u2605\u2605\u2605\u2605 ",
-          content.meta.rating
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 60, fontWeight: v.displayWeight, lineHeight: 0.85, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((line, i) => /* @__PURE__ */ jsx3("span", { style: {
-        display: "block",
-        color: i === 1 ? c.accent : c.ink,
-        fontStyle: i === 1 && v.italicAccent ? "italic" : "normal",
-        textIndent: i === 1 ? 20 : 0,
-        textAlign: i === 2 ? "right" : "left"
-      }, children: renderEm(line, c.accent, v.italicAccent) }, i)) }),
-      content.stats[0] && /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", marginTop: 18, paddingTop: 18, borderTop: `1px solid ${c.line}` }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 46, fontWeight: v.displayWeight, lineHeight: 0.85, color: c.accent, fontStyle: v.italicAccent ? "italic" : "normal", whiteSpace: "nowrap" }, children: [
-          content.stats[0].num,
-          /* @__PURE__ */ jsx3("span", { style: { fontSize: 22 }, children: content.stats[0].unit })
-        ] }),
-        /* @__PURE__ */ jsxs2("div", { style: { fontSize: 13, lineHeight: 1.45, color: c.inkSoft }, children: [
-          /* @__PURE__ */ jsx3("b", { style: { color: c.ink }, children: content.stats[0].label }),
-          /* @__PURE__ */ jsx3("br", {}),
-          content.hero.leadParagraph?.split(".")[0],
-          "."
-        ] })
+      /* @__PURE__ */ jsxs2("span", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "5px 10px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: [
+        "\u2605 ",
+        content.meta.rating
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 6, padding: "0 14px 18px" }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { gridColumn: "1 / 2", gridRow: "1 / 3", borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.gallery?.[1] ?? content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "0 14px 22px", display: "flex", flexDirection: "column", gap: 7 }, children: [
-      /* @__PURE__ */ jsxs2("a", { style: { background: c.invBg, color: c.invInk, padding: 15, borderRadius: r.btn, textAlign: "center", fontSize: 12, fontWeight: 600, letterSpacing: "0.02em", cursor: "pointer" }, children: [
+    /* @__PURE__ */ jsx3("div", { style: { padding: "2px 16px 14px", flex: "0 0 auto" }, children: /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 50, fontWeight: v.displayWeight, lineHeight: 0.84, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((l, i) => /* @__PURE__ */ jsx3("span", { style: { display: "block", color: i === 1 ? c.accent : c.ink, fontStyle: i === 1 && v.italicAccent ? "italic" : "normal", textIndent: i === 1 ? 16 : 0, textAlign: i === 2 ? "right" : "left" }, children: renderEm(l, c.accent, v.italicAccent) }, i)) }) }),
+    /* @__PURE__ */ jsx3("div", { style: { flex: 1, minHeight: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "11px 16px", background: c.invBg, color: c.invInk, flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.06em", color: c.invInkSoft }, children: content.meta.address }),
+      /* @__PURE__ */ jsxs2("a", { style: { background: c.invAccent, color: c.invBg, padding: "9px 16px", borderRadius: r.btn, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }, children: [
         content.cta.primary.label,
         " \u2192"
-      ] }),
-      /* @__PURE__ */ jsxs2("a", { style: { padding: 12, border: `1px solid ${c.ink}`, borderRadius: r.btn, textAlign: "center", fontSize: 11, fontWeight: 500 }, children: [
-        content.meta.reviewsN,
-        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \xB7 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
       ] })
-    ] }),
-    m && /* @__PURE__ */ jsxs2("section", { style: { background: c.invBg, color: c.invInk, padding: "20px 18px" }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invAccent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 20, height: 1, background: c.invAccent } }),
-        m.eyebrow
-      ] }),
-      m.items.slice(0, 2).map((it, i, arr) => /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "baseline", padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
-        /* @__PURE__ */ jsxs2("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1.05 }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.invInkSoft, marginTop: 3 }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, color: c.invAccent }, children: it.price })
-      ] }, i))
-    ] }),
-    /* @__PURE__ */ jsxs2("footer", { style: { padding: 18, textAlign: "center", background: c.bg }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, marginBottom: 6 }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.08em" }, children: content.meta.address })
     ] })
   ] });
 }
 function SplitFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
+  const s = content.stats;
   const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
-  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 15, fontWeight: 700, letterSpacing: "-0.02em" }, children: [
-        content.meta.brand,
-        /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "." })
-      ] }),
-      /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 14px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: content.cta.primary.label.split(" ")[0] })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { aspectRatio: "4/3", overflow: "hidden", borderRight: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 14, background: c.bgAlt }, children: [
-        /* @__PURE__ */ jsxs2("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: c.accent, marginBottom: 8 }, children: content.meta.category }),
-          /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading })
+  const div = `1px solid ${c.invInkSoft}55`;
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsx3("div", { style: { width: "42%", minHeight: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0, background: c.invBg, color: c.invInk, display: "flex", flexDirection: "column" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flex: "0 0 auto" }, children: [
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: [
+          content.meta.brand,
+          /* @__PURE__ */ jsx3("span", { style: { color: c.invAccent }, children: "." })
         ] }),
-        /* @__PURE__ */ jsx3("p", { style: { fontSize: 11, lineHeight: 1.5, color: c.inkSoft, margin: 0 }, children: content.hero.leadParagraph?.slice(0, 110) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", background: c.invBg, color: c.invInk }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 10px", textAlign: "center", borderRight: i < content.stats.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.invAccent, marginBottom: 4 }, children: [
-        s.num,
-        /* @__PURE__ */ jsx3("span", { style: { fontSize: 12 }, children: s.unit })
+        /* @__PURE__ */ jsxs2("span", { style: { fontFamily: f.mono, fontSize: 8, opacity: 0.7 }, children: [
+          "\u2605 ",
+          content.meta.rating
+        ] })
       ] }),
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.75 }, children: s.label })
-    ] }, i)) }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.accent, marginBottom: 8 }, children: "\u043A\u0430\u043A \u043C\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u043C" }),
-      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 17, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", margin: 0 }, children: content.quote.text.replace(/[«»"\[\]]/g, "") }),
-      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft, marginTop: 8 }, children: [
-        content.quote.authorName,
-        " \xB7 ",
-        content.quote.authorSource
-      ] })
-    ] }),
-    m && /* @__PURE__ */ jsxs2("div", { style: { padding: "20px 14px", background: c.bgAlt, borderBottom: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 14 }, children: m.eyebrow }),
-      /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: m.items.slice(0, 3).map((it, i) => /* @__PURE__ */ jsxs2("div", { style: {
-        background: i === 1 ? c.accent : c.bg,
-        color: i === 1 ? c.accentInk : c.ink,
-        border: `1px solid ${i === 1 ? c.accent : c.line}`,
-        borderRadius: r.card,
-        padding: 14,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 12
-      }, children: [
-        /* @__PURE__ */ jsxs2("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: it.name }),
-          /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, opacity: 0.8, marginTop: 2 }, children: it.desc })
+      /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minHeight: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 16px" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.12em", color: c.invAccent, marginBottom: 8 }, children: content.meta.category }),
+        /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 25, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading }),
+        /* @__PURE__ */ jsxs2("p", { style: { fontSize: 11, lineHeight: 1.5, opacity: 0.82, margin: "10px 0 0" }, children: [
+          content.hero.leadParagraph?.slice(0, 88),
+          "\u2026"
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: `repeat(${s.length}, 1fr)`, borderTop: div, flex: "0 0 auto" }, children: s.map((st, i) => /* @__PURE__ */ jsxs2("div", { style: { padding: "9px 6px", textAlign: "center", borderRight: i < s.length - 1 ? div : void 0 }, children: [
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 16, fontWeight: 800, color: c.invAccent, lineHeight: 1 }, children: [
+          st.num,
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 10 }, children: st.unit })
         ] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }, children: it.price })
-      ] }, i)) })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs2("div", { children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 13, fontWeight: 500 }, children: content.cta.phone }),
-        /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft }, children: content.meta.address })
-      ] }),
-      /* @__PURE__ */ jsxs2("a", { style: { background: c.invBg, color: c.invInk, padding: "11px 16px", borderRadius: r.btn, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 7, textTransform: "uppercase", letterSpacing: "0.06em", opacity: 0.65, marginTop: 3 }, children: st.label })
+      ] }, i)) }),
+      /* @__PURE__ */ jsxs2("a", { style: { background: c.accent, color: c.accentInk, padding: "12px 16px", textAlign: "center", fontSize: 12, fontWeight: 700, flex: "0 0 auto" }, children: [
         content.cta.primary.label.split(" ")[0],
         " \u2192"
       ] })
@@ -1204,65 +842,35 @@ function SplitFamily({ theme, content }) {
 }
 function StackedFamily({ theme, content }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
-  const cardBox = { background: c.bgAlt, border: `1px solid ${c.line}`, borderRadius: r.card };
   const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
-  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 16px", borderBottom: `1px solid ${c.line}`, flex: "0 0 auto" }, children: [
       /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.015em" }, children: content.meta.brand }),
-      /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: "8px 14px", borderRadius: r.btn, fontSize: 12, fontWeight: 600 }, children: "\u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F" })
+      /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 13px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
     ] }),
-    /* @__PURE__ */ jsxs2("section", { style: { padding: "18px 16px 20px" }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 11, fontWeight: 500, marginBottom: 12 }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 18px 12px", textAlign: "center", flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 10, fontWeight: 500, marginBottom: 10 }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
         content.meta.category,
         " \xB7 ",
         content.meta.address.split(",").pop()?.trim()
       ] }),
-      /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: v.displayWeight, lineHeight: 1.05, letterSpacing: "-0.025em", margin: "0 0 10px" }, children: heading }),
-      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.5, color: c.inkSoft, marginBottom: 14 }, children: content.hero.leadParagraph }),
-      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 10, fontSize: 12, color: c.inkSoft, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }, children: [
+      /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 25, fontWeight: v.displayWeight, lineHeight: 1.04, letterSpacing: "-0.025em", margin: "0 auto", maxWidth: "94%" }, children: heading }),
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "center", gap: 8, fontSize: 11, color: c.inkSoft, marginTop: 10, alignItems: "center" }, children: [
         /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" }),
         /* @__PURE__ */ jsx3("b", { children: content.meta.rating }),
         /* @__PURE__ */ jsx3("span", { style: { color: c.inkFaint }, children: "\xB7" }),
         /* @__PURE__ */ jsxs2("span", { children: [
           content.meta.reviewsN,
           " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
-        ] }),
-        /* @__PURE__ */ jsx3("span", { style: { color: c.inkFaint }, children: "\xB7" }),
-        /* @__PURE__ */ jsxs2("span", { children: [
-          "\u0441 ",
-          content.meta.since
         ] })
-      ] }),
-      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "16/10", marginBottom: 14 }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
-      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: 14, borderRadius: r.btn, textAlign: "center", fontSize: 14, fontWeight: 600 }, children: content.cta.primary.label }),
-        /* @__PURE__ */ jsx3("a", { style: { padding: 12, border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 13 }, children: content.cta.phone })
       ] })
     ] }),
-    m && /* @__PURE__ */ jsxs2("section", { style: { padding: "22px 16px", borderTop: `1px solid ${c.line}` }, children: [
-      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438 \u0446\u0435\u043D\u044B" }),
-      /* @__PURE__ */ jsx3("p", { style: { fontSize: 11, color: c.inkSoft, marginBottom: 14 }, children: m.eyebrow }),
-      /* @__PURE__ */ jsx3("div", { style: { ...cardBox, padding: 14 }, children: m.items.map((it, i) => /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0, gap: 12 }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 }, children: it.name }),
-          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 11, color: c.inkSoft }, children: it.desc })
-        ] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }, children: it.price })
-      ] }, i)) })
-    ] }),
-    /* @__PURE__ */ jsx3("section", { style: { padding: "18px 16px", borderTop: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsxs2("div", { style: { background: c.accentSoft, borderRadius: r.card, padding: "14px 16px" }, children: [
-      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.5, margin: 0, color: c.ink }, children: content.quote.text.replace(/\[\[|\]\]/g, "") }),
-      /* @__PURE__ */ jsxs2("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 8, display: "flex", justifyContent: "space-between" }, children: [
-        /* @__PURE__ */ jsxs2("span", { children: [
-          content.quote.authorName,
-          " \xB7 ",
-          content.quote.authorSource
-        ] }),
-        /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" })
-      ] })
-    ] }) })
+    /* @__PURE__ */ jsx3("div", { style: { flex: 1, minHeight: 0, margin: "0 18px", borderRadius: r.photo, overflow: "hidden" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 18px", display: "flex", gap: 8, flex: "0 0 auto" }, children: [
+      /* @__PURE__ */ jsx3("a", { style: { flex: 1, background: c.accent, color: c.accentInk, padding: "12px", borderRadius: r.btn, textAlign: "center", fontSize: 13, fontWeight: 600 }, children: content.cta.primary.label }),
+      /* @__PURE__ */ jsx3("a", { style: { padding: "12px 16px", border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 12, whiteSpace: "nowrap", display: "flex", alignItems: "center", color: c.ink }, children: content.cta.phone })
+    ] })
   ] });
 }
 var FAMILIES = {
@@ -1282,7 +890,7 @@ function PresetRenderer({ preset, content }) {
   }
   return /* @__PURE__ */ jsx3(Family, { theme, content });
 }
-function MiniChrome({ host, children }) {
+function MiniChrome({ host, children, height = 460 }) {
   return /* @__PURE__ */ jsxs2("div", { style: {
     overflow: "hidden",
     borderRadius: 12,
@@ -1291,28 +899,14 @@ function MiniChrome({ host, children }) {
     flexDirection: "column",
     width: "100%",
     minWidth: 0,
-    height: "100%",
-    background: VT.white,
-    alignSelf: "flex-start"
+    height,
+    background: VT.white
   }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "7px 10px",
-      background: "#fff",
-      borderBottom: `1px solid ${VT.line}`,
-      flex: "0 0 auto"
-    }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6, padding: "7px 10px", background: "#fff", borderBottom: `1px solid ${VT.line}`, flex: "0 0 auto" }, children: [
       /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
       /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
       /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
-      /* @__PURE__ */ jsxs2("span", { style: {
-        marginLeft: 10,
-        fontFamily: VT.font.mono,
-        fontSize: 11,
-        color: VT.inkFaint
-      }, children: [
+      /* @__PURE__ */ jsxs2("span", { style: { marginLeft: 10, fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: [
         host,
         ".",
         BRAND.domain
@@ -1702,53 +1296,9 @@ var SOURCE_ICONS = [
     ] })
   }
 ];
-function ChipStrip({
-  mobile = false,
-  label = "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417",
-  items = SOURCE_ICONS,
-  align
-}) {
-  const alignItems = (align ?? (mobile ? "start" : "center")) === "center" ? "center" : "flex-start";
-  const justify = alignItems === "center" ? "center" : "flex-start";
-  return /* @__PURE__ */ jsxs3("div", { style: {
-    marginTop: mobile ? 22 : 36,
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-    alignItems
-  }, children: [
-    label && /* @__PURE__ */ jsx4("div", { style: {
-      fontFamily: VT.font.mono,
-      fontSize: 11,
-      letterSpacing: "0.12em",
-      color: VT.inkFaint,
-      fontWeight: 600
-    }, children: label }),
-    /* @__PURE__ */ jsx4("div", { style: {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 8,
-      justifyContent: justify
-    }, children: items.map((s) => /* @__PURE__ */ jsxs3("span", { style: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8,
-      padding: "5px 14px 5px 5px",
-      background: VT.white,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 999,
-      fontSize: 13,
-      color: VT.ink,
-      fontWeight: 500
-    }, children: [
-      s.icon,
-      s.name
-    ] }, s.id)) })
-  ] });
-}
 function HeroBlock({ mobile }) {
   return /* @__PURE__ */ jsx4("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs3("div", { style: {
-    maxWidth: mobile ? "100%" : 1120,
+    maxWidth: mobile ? "100%" : 1200,
     margin: "0 auto",
     textAlign: mobile ? "left" : "center"
   }, children: [
@@ -1868,11 +1418,47 @@ function HeroBlock({ mobile }) {
     /* @__PURE__ */ jsx4(ChipStrip, { mobile })
   ] }) });
 }
+function ChipStrip({ mobile = false, label = "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417", items = SOURCE_ICONS, align }) {
+  const a = align ?? (mobile ? "start" : "center");
+  const alignItems = a === "center" ? "center" : "flex-start";
+  const justify = alignItems === "center" ? "center" : "flex-start";
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    marginTop: mobile ? 22 : 36,
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    alignItems
+  }, children: [
+    label && /* @__PURE__ */ jsx4("div", { style: {
+      fontFamily: VT.font.mono,
+      fontSize: 11,
+      letterSpacing: "0.12em",
+      color: VT.inkFaint,
+      fontWeight: 600
+    }, children: label }),
+    /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: justify }, children: items.map(
+      (s) => /* @__PURE__ */ jsxs3("span", { style: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "5px 14px 5px 5px",
+        background: VT.white,
+        border: `1px solid ${VT.line}`,
+        borderRadius: 999,
+        fontSize: 13,
+        color: VT.ink,
+        fontWeight: 500
+      }, children: [
+        s.icon,
+        s.name
+      ] }, s.id)
+    ) })
+  ] });
+}
 function ExamplesSection({ mobile }) {
-  const showcase = samplePresets;
-  const ExampleCard = ({
-    item
-  }) => {
+  const showcase = samplePresets || [];
+  const MiniChrome2 = MiniChrome;
+  const ExampleCard = ({ item }) => {
     const [hover, setHover] = React2.useState(false);
     return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", width: "100%", minWidth: 0 }, children: [
       /* @__PURE__ */ jsxs3("div", { style: {
@@ -1907,7 +1493,7 @@ function ExamplesSection({ mobile }) {
             boxShadow: hover ? "0 1px 2px rgba(40,28,18,0.04), 0 10px 24px -14px rgba(120,70,40,0.20), 0 4px 10px -8px rgba(40,28,18,0.08)" : "0 1px 2px rgba(40,28,18,0.03), 0 6px 16px -12px rgba(120,70,40,0.14), 0 2px 6px -6px rgba(40,28,18,0.05)",
             transition: "transform .22s cubic-bezier(0.22,0.61,0.36,1), box-shadow .22s ease"
           },
-          children: /* @__PURE__ */ jsx4(MiniChrome, { host: item.content.meta.host, children: /* @__PURE__ */ jsx4(PresetRenderer, { preset: item.preset, content: item.content }) })
+          children: /* @__PURE__ */ jsx4(MiniChrome2, { host: item.content.meta.host, children: /* @__PURE__ */ jsx4(PresetRenderer, { preset: item.preset, content: item.content }) })
         }
       )
     ] });
@@ -1951,13 +1537,8 @@ function ExamplesSection({ mobile }) {
     ] })
   ] });
 }
-function ExamplesCarousel({
-  mobile,
-  items,
-  renderCard
-}) {
+function ExamplesCarousel({ mobile, items, renderCard }) {
   const scrollerRef = React2.useRef(null);
-  const wrapRef = React2.useRef(null);
   const [atStart, setAtStart] = React2.useState(true);
   const [atEnd, setAtEnd] = React2.useState(false);
   const [activeIdx, setActiveIdx] = React2.useState(0);
@@ -1969,10 +1550,10 @@ function ExamplesCarousel({
     const maxScroll = el.scrollWidth - el.clientWidth;
     setAtStart(el.scrollLeft <= 1);
     setAtEnd(el.scrollLeft >= maxScroll - 1);
-    const firstChild = el.firstElementChild?.firstElementChild;
+    const firstChild = el.firstElementChild && el.firstElementChild.firstElementChild;
     const step = firstChild ? firstChild.getBoundingClientRect().width + 14 : el.clientWidth;
     const idx = Math.round(el.scrollLeft / step);
-    const maxIdx = (el.firstElementChild?.childElementCount ?? 1) - 1;
+    const maxIdx = (el.firstElementChild && el.firstElementChild.childElementCount || 1) - 1;
     setActiveIdx(Math.max(0, Math.min(idx, maxIdx)));
   }, []);
   React2.useEffect(() => {
@@ -2033,276 +1614,254 @@ function ExamplesCarousel({
       ]
     }
   );
-  return /* @__PURE__ */ jsxs3(
-    "div",
-    {
-      ref: wrapRef,
-      style: {
-        position: "relative",
-        marginTop: mobile ? 28 : 56,
-        maxWidth: mobile ? "none" : 1344,
-        marginLeft: mobile ? void 0 : "auto",
-        marginRight: mobile ? void 0 : "auto"
-      },
-      children: [
-        mobile && items.length > 1 && /* @__PURE__ */ jsx4("div", { style: {
-          display: "flex",
-          justifyContent: "center",
-          gap: 7,
-          marginBottom: 14
-        }, children: items.map((_, i) => {
-          const active = i === activeIdx;
-          return /* @__PURE__ */ jsx4(
-            "button",
-            {
-              type: "button",
-              "aria-label": `\u0421\u043B\u0430\u0439\u0434 ${i + 1}`,
-              onClick: () => {
-                const el = scrollerRef.current;
-                if (!el) return;
-                const child = el.firstElementChild?.children[i];
-                if (child) el.scrollTo({ left: child.offsetLeft - 20, behavior: "smooth" });
-              },
-              style: {
-                width: active ? 20 : 7,
-                height: 7,
-                borderRadius: 999,
-                background: active ? VT.accent : VT.line,
-                border: "none",
-                padding: 0,
-                cursor: "pointer",
-                transition: "width .25s ease, background .25s ease"
-              }
-            },
-            i
-          );
-        }) }),
-        /* @__PURE__ */ jsxs3(
-          "div",
-          {
-            ref: scrollerRef,
-            style: {
-              marginLeft: mobile ? -16 : 0,
-              marginRight: mobile ? -16 : 0,
-              overflowX: "auto",
-              WebkitOverflowScrolling: "touch",
-              scrollSnapType: "x mandatory",
-              scrollPaddingLeft: mobile ? 16 : 32,
-              scrollbarWidth: "none",
-              // Fade-out mask — soft edges that hint at off-screen content.
-              // Mask is symmetric and toggled per-side via stops collapsing to 0px.
-              // Left side fades only when scrolled away from start; right fades only when more content awaits.
-              ["--ss-fade-w"]: mobile ? "44px" : "64px",
-              ["--ss-fade-l"]: atStart ? "0px" : "var(--ss-fade-w)",
-              ["--ss-fade-r"]: atEnd ? "0px" : "var(--ss-fade-w)",
-              maskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
-              transition: "mask-image .25s ease, -webkit-mask-image .25s ease"
-            },
-            children: [
-              /* @__PURE__ */ jsx4("style", { children: `.ss-preset-carousel::-webkit-scrollbar{display:none}` }),
-              /* @__PURE__ */ jsx4("div", { className: "ss-preset-carousel", style: {
-                display: "flex",
-                gap: mobile ? 12 : 24,
-                padding: mobile ? "0 56px 16px 16px" : "0 32px 16px",
-                alignItems: "flex-start"
-              }, children: items.map((item, i) => /* @__PURE__ */ jsx4("div", { style: {
-                flex: mobile ? "0 0 94%" : "0 0 calc((100% - 80px) / 3)",
-                scrollSnapAlign: "start",
-                display: "flex",
-                minWidth: 0
-              }, children: renderCard(item, i) }, i)) })
-            ]
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    position: "relative",
+    marginTop: mobile ? 28 : 56,
+    maxWidth: mobile ? "none" : 1200,
+    marginLeft: mobile ? void 0 : "auto",
+    marginRight: mobile ? void 0 : "auto"
+  }, children: [
+    mobile && items.length > 1 && /* @__PURE__ */ jsx4("div", { style: { display: "flex", justifyContent: "center", gap: 7, marginBottom: 14 }, children: items.map((_, i) => {
+      const active = i === activeIdx;
+      return /* @__PURE__ */ jsx4(
+        "button",
+        {
+          type: "button",
+          "aria-label": `\u0421\u043B\u0430\u0439\u0434 ${i + 1}`,
+          onClick: () => {
+            const el = scrollerRef.current;
+            if (!el) return;
+            const child = el.firstElementChild && el.firstElementChild.children[i];
+            if (child) el.scrollTo({ left: child.offsetLeft - 20, behavior: "smooth" });
+          },
+          style: {
+            width: active ? 20 : 7,
+            height: 7,
+            borderRadius: 999,
+            background: active ? VT.accent : VT.line,
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            transition: "width .25s ease, background .25s ease"
           }
-        ),
-        !mobile && /* @__PURE__ */ jsxs3(Fragment2, { children: [
-          /* @__PURE__ */ jsx4(
-            "button",
-            {
-              type: "button",
-              "aria-label": "\u041F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
-              disabled: atStart,
-              onClick: () => scrollBy(-1),
-              onMouseEnter: () => setHoverPrev(true),
-              onMouseLeave: () => setHoverPrev(false),
-              style: arrowStyle(atStart, hoverPrev, -1),
-              children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: -1 })
-            }
-          ),
-          /* @__PURE__ */ jsx4(
-            "button",
-            {
-              type: "button",
-              "aria-label": "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
-              disabled: atEnd,
-              onClick: () => scrollBy(1),
-              onMouseEnter: () => setHoverNext(true),
-              onMouseLeave: () => setHoverNext(false),
-              style: arrowStyle(atEnd, hoverNext, 1),
-              children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: 1 })
-            }
-          )
-        ] })
-      ]
-    }
-  );
+        },
+        i
+      );
+    }) }),
+    /* @__PURE__ */ jsxs3(
+      "div",
+      {
+        ref: scrollerRef,
+        style: {
+          marginLeft: mobile ? -16 : -32,
+          marginRight: mobile ? -16 : -32,
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          scrollSnapType: "x mandatory",
+          scrollPaddingLeft: mobile ? 16 : 32,
+          scrollbarWidth: "none",
+          "--ss-fade-w": mobile ? "44px" : "64px",
+          "--ss-fade-l": atStart ? "0px" : "var(--ss-fade-w)",
+          "--ss-fade-r": atEnd ? "0px" : "var(--ss-fade-w)",
+          maskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
+          transition: "mask-image .25s ease, -webkit-mask-image .25s ease"
+        },
+        children: [
+          /* @__PURE__ */ jsx4("style", { children: `.ss-preset-carousel::-webkit-scrollbar{display:none}` }),
+          /* @__PURE__ */ jsx4("div", { className: "ss-preset-carousel", style: {
+            display: "flex",
+            gap: mobile ? 12 : 24,
+            padding: mobile ? "0 56px 16px 16px" : "0 32px 16px",
+            alignItems: "flex-start"
+          }, children: items.map(
+            (item, i) => /* @__PURE__ */ jsx4("div", { style: {
+              flex: mobile ? "0 0 94%" : "0 0 calc((100% - 80px) / 3)",
+              scrollSnapAlign: "start",
+              display: "flex",
+              minWidth: 0
+            }, children: renderCard(item, i) }, i)
+          ) })
+        ]
+      }
+    ),
+    !mobile && /* @__PURE__ */ jsxs3(Fragment2, { children: [
+      /* @__PURE__ */ jsx4(
+        "button",
+        {
+          type: "button",
+          "aria-label": "\u041F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
+          disabled: atStart,
+          onClick: () => scrollBy(-1),
+          onMouseEnter: () => setHoverPrev(true),
+          onMouseLeave: () => setHoverPrev(false),
+          style: arrowStyle(atStart, hoverPrev, -1),
+          children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: -1 })
+        }
+      ),
+      /* @__PURE__ */ jsx4(
+        "button",
+        {
+          type: "button",
+          "aria-label": "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
+          disabled: atEnd,
+          onClick: () => scrollBy(1),
+          onMouseEnter: () => setHoverNext(true),
+          onMouseLeave: () => setHoverNext(false),
+          style: arrowStyle(atEnd, hoverNext, 1),
+          children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: 1 })
+        }
+      )
+    ] })
+  ] });
 }
 function HowItPicks({ mobile }) {
-  const items = [
+  const EU = (id, w = 480) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+  const extractions = [
     {
-      n: "01",
-      title: "\u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044C \u0443\u0436\u0435 \u0435\u0441\u0442\u044C, \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442 \u0435\u0433\u043E",
-      body: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0431\u0443\u043A\u043B\u0435\u0442, \u0432\u0438\u0437\u0438\u0442\u043A\u0443 \u0438\u043B\u0438 \u0432\u044B\u0432\u0435\u0441\u043A\u0443. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0435\u0442 \u0448\u0440\u0438\u0444\u0442 \u0438 \u0444\u0438\u0440\u043C\u0435\u043D\u043D\u044B\u0435 \u0446\u0432\u0435\u0442\u0430, \u043F\u043E\u0441\u0442\u0430\u0432\u0438\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0442\u0430\u043A\u0438\u0435 \u0436\u0435. \u0412\u0430\u0448 \u0441\u0442\u0438\u043B\u044C \u043D\u0438\u043A\u0443\u0434\u0430 \u043D\u0435 \u0434\u0435\u043D\u0435\u0442\u0441\u044F.",
-      demo: "swatches"
+      niche: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F",
+      photo: EU("photo-1495474472287-4d71bcdd2085"),
+      filter: "saturate(1.02)",
+      palette: ["#FAF6F0", "#C9A57B", "#A8412E", "#211C17"],
+      fontName: "Fraunces",
+      fontCss: "'Fraunces', Georgia, serif",
+      italic: true,
+      note: "\u0442\u0451\u043F\u043B\u043E\u0435, \u0431\u0443\u043C\u0430\u0436\u043D\u043E\u0435"
     },
     {
-      n: "02",
-      title: "\u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044F \u043D\u0435\u0442, \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u043C",
-      body: "\u0426\u0432\u0435\u0442\u0430 \u0432\u043E\u0437\u044C\u043C\u0451\u0442 \u0441 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439: \u0443 \u0442\u0451\u043F\u043B\u043E\u0439 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u2014 \u043C\u043E\u043B\u043E\u0447\u043D\u044B\u0435 \u0438 \u0442\u0435\u0440\u0440\u0430\u043A\u043E\u0442\u043E\u0432\u044B\u0435, \u0443 \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430 \u043D\u0430 \u0440\u043E\u0437\u043E\u0432\u043E\u043C \u0444\u043E\u043D\u0435 \u2014 \u043F\u044B\u043B\u044C\u043D\u043E-\u0440\u043E\u0437\u043E\u0432\u044B\u0435 \u0438 \u0431\u043E\u0440\u0434\u043E. \u0428\u0440\u0438\u0444\u0442 \u043F\u043E\u0434\u0431\u0435\u0440\u0451\u0442 \u043F\u043E\u0434 \u0442\u043E\u043D \u0442\u0435\u043A\u0441\u0442\u0430: \u0434\u043B\u044F \u043B\u0438\u0447\u043D\u043E\u0433\u043E, \u0430\u0432\u0442\u043E\u0440\u0441\u043A\u043E\u0433\u043E \u2014 \u043C\u044F\u0433\u043A\u0438\u0439 \u0441 \u0437\u0430\u0441\u0435\u0447\u043A\u0430\u043C\u0438, \u0434\u043B\u044F \u0441\u0443\u0445\u043E\u0433\u043E \u0438 \u0442\u043E\u0447\u043D\u043E\u0433\u043E \u2014 \u0441\u0442\u0440\u043E\u0433\u0438\u0439 \u0438 \u0440\u043E\u0432\u043D\u044B\u0439.",
-      demo: "fonts"
+      niche: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440",
+      photo: EU("photo-1604654894610-df63bc536371"),
+      filter: "saturate(1.0)",
+      palette: ["#F6E7E3", "#D99CA0", "#8C4A52", "#2A1820"],
+      fontName: "Instrument Serif",
+      fontCss: "'Instrument Serif', Georgia, serif",
+      italic: true,
+      note: "\u043C\u044F\u0433\u043A\u043E\u0435, \u0431\u044C\u044E\u0442\u0438"
     },
     {
-      n: "03",
-      title: "\u0420\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0443 \u0432\u044B\u0431\u0435\u0440\u0435\u0442 \u043F\u043E\u0434 \u0432\u0430\u0448 \u043A\u043E\u043D\u0442\u0435\u043D\u0442",
-      body: "\u041C\u043D\u043E\u0433\u043E \u0446\u0438\u0444\u0440, \u0446\u0435\u043D \u0438 \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u0439 \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0438\u0437 \u043F\u043B\u0438\u0442\u043E\u043A. \u041C\u0435\u043D\u044E, \u0438\u0441\u0442\u043E\u0440\u0438\u0438, \u043E\u0442\u0437\u044B\u0432\u044B \u2014 \u0440\u0430\u0437\u043B\u043E\u0436\u0438\u0442 \u043A\u0430\u043A \u0436\u0443\u0440\u043D\u0430\u043B. \u0423\u043F\u043E\u0440 \u043D\u0430 \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u0443 \u2014 \u043F\u043E\u0441\u0442\u0430\u0432\u0438\u0442 \u043A\u0440\u0443\u043F\u043D\u044B\u0435 \u0444\u043E\u0442\u043E \u0432 \u0434\u0432\u0435 \u043A\u043E\u043B\u043E\u043D\u043A\u0438.",
-      demo: "grids"
-    },
-    {
-      n: "04",
-      title: "\u041D\u0435 \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u043E\u0441\u044C \u2014 \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A",
-      body: "\u0412 \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0435 \u043B\u0435\u0436\u0438\u0442 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439. \u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043E\u0439, \u0438 \u0441\u0430\u0439\u0442 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u043E\u0438\u0442\u0441\u044F \u0437\u0430 \u0441\u0435\u043A\u0443\u043D\u0434\u044B. \u0422\u0435\u043A\u0441\u0442\u044B \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0438 \u043E\u0441\u0442\u0430\u043D\u0443\u0442\u0441\u044F \u043D\u0430 \u043C\u0435\u0441\u0442\u0430\u0445.",
-      demo: "switch"
+      niche: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441",
+      photo: EU("photo-1486262715619-67b85e0b08d3"),
+      filter: "contrast(1.05) saturate(0.9)",
+      palette: ["#0E0F10", "#9A9B98", "#C2D94A", "#F2F0EC"],
+      fontName: "Space Grotesk",
+      fontCss: "'Space Grotesk', sans-serif",
+      italic: false,
+      note: "\u0441\u0442\u0440\u043E\u0433\u043E\u0435, \u0442\u0435\u0445\u043D\u0438\u0447\u043D\u043E\u0435"
     }
   ];
-  const accent = VT.accent;
-  const tray = (children) => /* @__PURE__ */ jsx4("div", { style: {
+  const mechanics = [
+    { n: "01", title: "\u0415\u0441\u0442\u044C \u0444\u0438\u0440\u0441\u0442\u0438\u043B\u044C \u2014 \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442", body: "\u0420\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0451\u0442 \u0448\u0440\u0438\u0444\u0442 \u0438 \u0446\u0432\u0435\u0442\u0430 \u0441 \u0431\u0443\u043A\u043B\u0435\u0442\u0430, \u0432\u0438\u0437\u0438\u0442\u043A\u0438 \u0438\u043B\u0438 \u0432\u044B\u0432\u0435\u0441\u043A\u0438." },
+    { n: "02", title: "\u041D\u0435\u0442 \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u043C", body: "\u041F\u0430\u043B\u0438\u0442\u0440\u0443 \u0431\u0435\u0440\u0451\u0442 \u0441 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E, \u0448\u0440\u0438\u0444\u0442 \u2014 \u043F\u043E\u0434 \u0442\u043E\u043D \u0442\u0435\u043A\u0441\u0442\u0430." },
+    { n: "03", title: "\u0420\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0430 \u043F\u043E\u0434 \u043A\u043E\u043D\u0442\u0435\u043D\u0442", body: "\u0426\u0438\u0444\u0440\u044B \u2014 \u0432 \u043F\u043B\u0438\u0442\u043A\u0438, \u043C\u0435\u043D\u044E \u2014 \u0432 \u0436\u0443\u0440\u043D\u0430\u043B, \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u0430 \u2014 \u0432 \u043A\u0440\u0443\u043F\u043D\u044B\u0435 \u0444\u043E\u0442\u043E." },
+    { n: "04", title: "\u041D\u0435 \u0437\u0430\u0448\u043B\u043E \u2014 \u043A\u043B\u0438\u043A", body: "\u0411\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439, \u0442\u0435\u043A\u0441\u0442\u044B \u0438 \u0444\u043E\u0442\u043E \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F \u043D\u0430 \u043C\u0435\u0441\u0442\u0430\u0445." }
+  ];
+  const ExtractionCard = ({ ex }) => /* @__PURE__ */ jsxs3("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.md,
-    padding: "14px 16px",
+    overflow: "hidden",
     display: "flex",
-    alignItems: "center",
-    gap: 12,
-    minHeight: 56
-  }, children });
-  const Demo = ({ kind }) => {
-    if (kind === "swatches") {
-      const sets = [
-        ["#FAF6F0", "#A8412E", "#211C17"],
-        ["#0E0F10", "#C2D94A", "#9A9B98"],
-        ["#F6E7E3", "#8C4A52", "#2A1820"]
-      ];
-      return tray(
-        /* @__PURE__ */ jsx4(Fragment2, { children: sets.map((set, i) => /* @__PURE__ */ jsx4("div", { style: { display: "flex", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(40,28,18,0.08)" }, children: set.map((col, j) => /* @__PURE__ */ jsx4("span", { style: { width: 22, height: 30, background: col } }, j)) }, i)) })
-      );
-    }
-    if (kind === "fonts") {
-      return tray(
-        /* @__PURE__ */ jsxs3(Fragment2, { children: [
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Fraunces', serif", fontSize: 22, fontStyle: "italic", color: VT.ink }, children: "\u0410\u0430" }),
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Space Grotesk', sans-serif", fontSize: 22, fontWeight: 700, color: VT.ink }, children: "\u0410\u0430" }),
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'JetBrains Mono', monospace", fontSize: 19, color: VT.ink }, children: "\u0410\u0430" }),
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Instrument Serif', serif", fontSize: 23, color: VT.ink }, children: "\u0410\u0430" }),
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 700, color: VT.ink }, children: "\u0410\u0430" })
-        ] })
-      );
-    }
-    if (kind === "grids") {
-      const cell = (style) => /* @__PURE__ */ jsx4("span", { style: { background: VT.accentSoft, borderRadius: 3, ...style } });
-      const frame = { width: 52, height: 44, padding: 5, border: `1px solid ${VT.line}`, borderRadius: 7, background: VT.bg };
-      return tray(
-        /* @__PURE__ */ jsxs3(Fragment2, { children: [
-          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr", gap: 3 }, children: [
-            cell({ gridColumn: "span 2" }),
-            cell({}),
-            cell({})
-          ] }),
-          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "flex", flexDirection: "column", gap: 3 }, children: [
-            cell({ height: 8 }),
-            cell({ flex: 1 }),
-            cell({ height: 5, width: "60%" })
-          ] }),
-          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }, children: [
-            cell({}),
-            cell({})
-          ] })
-        ] })
-      );
-    }
-    return tray(
-      /* @__PURE__ */ jsxs3(Fragment2, { children: [
-        ["#A8412E", "#2D5B8E", "#356E60", "#8C4A52"].map((col, i) => /* @__PURE__ */ jsx4("span", { style: {
-          width: 26,
-          height: 26,
-          borderRadius: "50%",
-          background: col,
-          border: i === 0 ? `2px solid ${VT.ink}` : `2px solid transparent`,
-          boxShadow: i === 0 ? `0 0 0 2px ${VT.white}, 0 0 0 3px ${VT.ink}` : "none"
-        } }, i)),
-        /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 12, color: VT.inkFaint, marginLeft: "auto" }, children: "\u2192 1 \u043A\u043B\u0438\u043A" })
+    flexDirection: "column"
+  }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { position: "relative", height: mobile ? 96 : 88, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsx4("img", { src: ex.photo, alt: "", loading: "lazy", style: {
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        display: "block",
+        filter: ex.filter
+      } }),
+      /* @__PURE__ */ jsx4("span", { style: {
+        position: "absolute",
+        top: 8,
+        left: 8,
+        fontFamily: VT.font.mono,
+        fontSize: 9,
+        letterSpacing: "0.06em",
+        fontWeight: 700,
+        color: VT.ink,
+        background: "rgba(250,246,240,0.92)",
+        padding: "3px 8px",
+        borderRadius: 999,
+        textTransform: "uppercase",
+        backdropFilter: "blur(4px)"
+      }, children: ex.niche })
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { padding: "10px 12px 12px" }, children: [
+      /* @__PURE__ */ jsx4("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.06em", color: VT.inkFaint, fontWeight: 600, marginBottom: 6 }, children: "\u0426\u0412\u0415\u0422\u0410 \u0418\u0417 \u0424\u041E\u0422\u041E" }),
+      /* @__PURE__ */ jsx4("div", { style: { display: "flex", borderRadius: 7, overflow: "hidden", boxShadow: `0 1px 2px rgba(40,28,18,0.10)` }, children: ex.palette.map(
+        (c, i) => /* @__PURE__ */ jsx4("span", { style: { flex: 1, height: 22, background: c } }, i)
+      ) }),
+      /* @__PURE__ */ jsxs3("div", { style: { marginTop: 9, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }, children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          fontFamily: ex.fontCss,
+          fontStyle: ex.italic ? "italic" : "normal",
+          fontSize: 20,
+          color: VT.ink,
+          lineHeight: 1
+        }, children: "\u0410\u0430 \u0411\u0431" }),
+        /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 9.5, color: VT.inkSoft, textAlign: "right" }, children: ex.fontName })
       ] })
-    );
-  };
+    ] })
+  ] });
   return /* @__PURE__ */ jsxs3("div", { style: {
     marginTop: 0,
-    maxWidth: 1100,
+    maxWidth: 1200,
     marginLeft: "auto",
     marginRight: "auto",
-    padding: mobile ? "24px 20px" : "40px 44px",
+    padding: mobile ? "20px 18px" : "26px 30px",
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.lg
   }, children: [
-    /* @__PURE__ */ jsx4("h3", { style: {
-      fontSize: mobile ? 22 : 28,
-      fontWeight: 700,
-      lineHeight: 1.12,
-      letterSpacing: "-0.025em",
+    /* @__PURE__ */ jsxs3("h3", { style: {
+      fontSize: mobile ? 23 : 30,
+      fontWeight: 800,
+      lineHeight: 1.08,
+      letterSpacing: "-0.032em",
       color: VT.ink,
-      marginBottom: 12,
-      maxWidth: 720
-    }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442 \u0434\u0438\u0437\u0430\u0439\u043D \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432, \u0430 \u043D\u0435 \u043F\u043E\u0434\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430" }),
+      marginBottom: 8,
+      maxWidth: 720,
+      marginLeft: "auto",
+      marginRight: "auto",
+      textAlign: "center",
+      textWrap: "balance"
+    }, children: [
+      "\u0414\u0438\u0437\u0430\u0439\u043D \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432\u200A\u2014\u200A",
+      /* @__PURE__ */ jsx4("span", { style: { color: VT.accent }, children: "\u0430 \u043D\u0435 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430" })
+    ] }),
     /* @__PURE__ */ jsx4("p", { style: {
-      fontSize: mobile ? 14 : 16,
-      lineHeight: 1.5,
+      fontSize: mobile ? 13.5 : 15,
+      lineHeight: 1.45,
       color: VT.inkSoft,
-      marginBottom: mobile ? 20 : 28,
-      maxWidth: 680
-    }, children: "\u0415\u0441\u043B\u0438 \u0444\u0438\u0440\u043C\u0435\u043D\u043D\u044B\u0439 \u0441\u0442\u0438\u043B\u044C \u0443\u0436\u0435 \u0435\u0441\u0442\u044C, \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0435\u0433\u043E \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442. \u0415\u0441\u043B\u0438 \u043D\u0435\u0442, \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E \u0438 \u0442\u0435\u043A\u0441\u0442\u043E\u0432. \u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u043D\u0435 \u043F\u043E\u0445\u043E\u0436 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441\u0430, \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u043E\u0431\u0430 \u0441\u043E\u0431\u0440\u0430\u043D\u044B \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439." }),
+      marginBottom: mobile ? 16 : 20,
+      maxWidth: 560,
+      marginLeft: "auto",
+      marginRight: "auto",
+      textAlign: "center",
+      textWrap: "pretty"
+    }, children: "\u041F\u0430\u043B\u0438\u0442\u0440\u0443 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0432\u044B\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442 \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E, \u0430 \u0448\u0440\u0438\u0444\u0442 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u0442 \u043F\u043E\u0434 \u0442\u043E\u043D. \u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u043D\u0435 \u043F\u043E\u0445\u043E\u0436 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441\u0430." }),
     /* @__PURE__ */ jsx4("div", { style: {
       display: "grid",
-      gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
-      gap: mobile ? 14 : 18,
-      alignItems: "stretch"
-    }, children: items.map((it, i) => /* @__PURE__ */ jsxs3("div", { style: {
-      background: VT.bg,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.lg,
-      padding: mobile ? 22 : 28,
-      display: "flex",
-      flexDirection: "column"
-    }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }, children: [
-        /* @__PURE__ */ jsx4("span", { style: {
-          fontFamily: VT.font.mono,
-          fontSize: 13,
-          fontWeight: 700,
-          color: "#fff",
-          background: accent,
-          width: 32,
-          height: 32,
-          borderRadius: 9,
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          letterSpacing: "0.02em",
-          flex: "0 0 auto"
-        }, children: it.n }),
-        /* @__PURE__ */ jsx4("div", { style: { fontSize: mobile ? 18 : 19, fontWeight: 700, letterSpacing: "-0.015em", color: VT.ink, lineHeight: 1.2 }, children: it.title })
-      ] }),
-      /* @__PURE__ */ jsx4("p", { style: { fontSize: mobile ? 14.5 : 15, lineHeight: 1.55, color: VT.inkSoft, margin: 0 }, children: it.body }),
-      /* @__PURE__ */ jsx4("div", { style: { marginTop: "auto", paddingTop: 18 }, children: /* @__PURE__ */ jsx4(Demo, { kind: it.demo }) })
-    ] }, i)) })
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: mobile ? 8 : 12
+    }, children: extractions.map((ex, i) => /* @__PURE__ */ jsx4(ExtractionCard, { ex }, i)) }),
+    /* @__PURE__ */ jsx4("div", { style: {
+      marginTop: mobile ? 16 : 20,
+      paddingTop: mobile ? 16 : 20,
+      borderTop: `1px solid ${VT.line}`,
+      display: "grid",
+      gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4, 1fr)",
+      gap: mobile ? 12 : 18
+    }, children: mechanics.map(
+      (m, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 4 }, children: [
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", gap: 6 }, children: [
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, fontWeight: 700, color: VT.accent }, children: m.n }),
+          /* @__PURE__ */ jsx4("div", { style: { fontSize: mobile ? 13.5 : 14.5, fontWeight: 700, letterSpacing: "-0.015em", color: VT.ink, lineHeight: 1.2 }, children: m.title })
+        ] }),
+        /* @__PURE__ */ jsx4("p", { style: { fontSize: mobile ? 12 : 12.5, lineHeight: 1.45, color: VT.inkSoft, margin: 0 }, children: m.body })
+      ] }, i)
+    ) })
   ] });
 }
 var CYCLE_STEPS = [
@@ -2838,7 +2397,7 @@ function MondaySection({ mobile }) {
     ] }),
     /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 36 : 56,
-      maxWidth: mobile ? "100%" : 1280,
+      maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 36 : 56}px auto 0`
     }, children: mobile ? /* @__PURE__ */ jsxs3("div", { style: {
       marginLeft: -20,
@@ -2945,91 +2504,68 @@ function BaseWorkSection({ mobile }) {
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 14 : 22
-    }, children: BASE_ITEMS.map((item, i) => {
-      const pal = item.palette;
-      return /* @__PURE__ */ jsxs3("div", { style: {
-        position: "relative",
-        background: VT.white,
-        borderRadius: 20,
-        border: `1px solid ${VT.line}`,
-        boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 18px 40px -24px rgba(120,60,30,0.18)",
-        overflow: "hidden",
+    }, children: BASE_ITEMS.map((item) => /* @__PURE__ */ jsxs3("div", { style: {
+      background: VT.white,
+      borderRadius: 18,
+      border: `1px solid ${VT.line}`,
+      boxShadow: "0 1px 2px rgba(40,28,18,0.03), 0 14px 34px -26px rgba(120,60,30,0.16)",
+      padding: mobile ? "22px 22px" : "28px 30px",
+      display: "flex",
+      flexDirection: "column"
+    }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          flex: "0 0 auto",
+          width: 46,
+          height: 46,
+          borderRadius: 12,
+          background: VT.accentSoft,
+          color: VT.accent,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }, children: item.icon }),
+        /* @__PURE__ */ jsx4("h3", { style: {
+          fontSize: mobile ? 20 : 22,
+          fontWeight: 800,
+          letterSpacing: "-0.025em",
+          margin: 0,
+          lineHeight: 1.15,
+          color: VT.ink
+        }, children: item.title })
+      ] }),
+      /* @__PURE__ */ jsx4("p", { style: {
+        margin: 0,
+        fontSize: mobile ? 14.5 : 15.5,
+        lineHeight: 1.5,
+        color: VT.inkSoft,
+        textWrap: "pretty"
+      }, children: item.body }),
+      /* @__PURE__ */ jsxs3("div", { style: {
+        marginTop: "auto",
+        paddingTop: 18,
+        borderTop: `1px solid ${VT.lineSoft}`,
         display: "flex",
-        flexDirection: "column"
+        alignItems: "baseline",
+        gap: 9
       }, children: [
-        /* @__PURE__ */ jsxs3("div", { style: {
-          background: pal.bg,
-          padding: mobile ? "22px 22px 18px" : "26px 28px 22px",
-          borderBottom: `1px solid ${pal.stroke}`,
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 16
-        }, children: [
-          /* @__PURE__ */ jsx4("div", { style: {
-            flex: "0 0 auto",
-            width: mobile ? 52 : 58,
-            height: mobile ? 52 : 58,
-            borderRadius: 14,
-            background: VT.white,
-            color: pal.ink,
-            border: `1px solid ${VT.line}`,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 1px 2px rgba(40,28,18,0.04)"
-          }, children: item.icon }),
-          /* @__PURE__ */ jsxs3("div", { style: {
-            textAlign: "right",
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: 0
-          }, children: [
-            /* @__PURE__ */ jsx4("div", { style: {
-              fontSize: mobile ? 22 : 28,
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 1,
-              color: pal.ink
-            }, children: item.metric }),
-            /* @__PURE__ */ jsx4("div", { style: {
-              marginTop: 4,
-              fontFamily: VT.font.mono,
-              fontSize: mobile ? 10.5 : 11.5,
-              letterSpacing: "0.08em",
-              color: pal.ink,
-              opacity: 0.75,
-              fontWeight: 600,
-              textTransform: "uppercase"
-            }, children: item.metricNote })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs3("div", { style: {
-          padding: mobile ? "18px 22px 22px" : "22px 28px 26px",
-          display: "flex",
-          flexDirection: "column",
-          flex: 1
-        }, children: [
-          /* @__PURE__ */ jsx4("h3", { style: {
-            fontSize: mobile ? 20 : 23,
-            fontWeight: 700,
-            letterSpacing: "-0.025em",
-            margin: 0,
-            lineHeight: 1.2,
-            color: VT.ink
-          }, children: item.title }),
-          /* @__PURE__ */ jsx4("p", { style: {
-            margin: "8px 0 0",
-            fontSize: mobile ? 14.5 : 15.5,
-            lineHeight: 1.5,
-            color: VT.inkSoft,
-            textWrap: "pretty"
-          }, children: item.body })
-        ] })
-      ] }, item.title);
-    }) })
+        /* @__PURE__ */ jsx4("span", { style: {
+          fontSize: mobile ? 22 : 26,
+          fontWeight: 800,
+          letterSpacing: "-0.03em",
+          color: VT.accent,
+          lineHeight: 1
+        }, children: item.metric }),
+        /* @__PURE__ */ jsx4("span", { style: {
+          fontFamily: VT.font.mono,
+          fontSize: 11,
+          letterSpacing: "0.07em",
+          textTransform: "uppercase",
+          color: VT.inkFaint,
+          fontWeight: 600
+        }, children: item.metricNote })
+      ] })
+    ] }, item.title)) })
   ] });
 }
 var SOURCES_LIST = [
@@ -3134,19 +2670,6 @@ function SourcesSection({ mobile }) {
       borderRadius: 14,
       position: "relative"
     }, children: [
-      s.featured && /* @__PURE__ */ jsx4("span", { style: {
-        position: "absolute",
-        top: -10,
-        right: 16,
-        fontFamily: VT.font.mono,
-        fontSize: 9.5,
-        letterSpacing: "0.12em",
-        color: "#fff",
-        background: VT.accent,
-        padding: "3px 8px",
-        borderRadius: 6,
-        fontWeight: 700
-      }, children: "\u0427\u0410\u0429\u0415 \u0412\u0421\u0415\u0413\u041E" }),
       /* @__PURE__ */ jsx4("span", { style: { flex: "0 0 auto" }, children: s.logo }),
       /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
         /* @__PURE__ */ jsx4("div", { style: {
@@ -3204,7 +2727,7 @@ function SourcesSection({ mobile }) {
     ] }),
     /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 32 : 56,
-      maxWidth: mobile ? "100%" : 1100,
+      maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 32 : 56}px auto 0`,
       background: VT.white,
       border: `1px solid ${VT.line}`,
@@ -3252,22 +2775,132 @@ function SourcesSection({ mobile }) {
 }
 var OWNER_POINTS = [
   {
-    title: "\u041D\u0435 \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u0430\u0441\u044C \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u044F \u2014 \u043E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u0435, \u0438 \u043E\u043D\u0430 \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442.",
-    body: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \xAB\u043D\u0435\u0439\u0440\u043E\u0441\u0435\u0442\u044C \u0437\u043D\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0435\xBB."
+    title: "\u041D\u0435 \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u0430\u0441\u044C \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u044F \u2014 \u043E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u0435, \u0438 \u043E\u043D\u0430 \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442",
+    body: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \xAB\u043D\u0435\u0439\u0440\u043E\u0441\u0435\u0442\u044C \u0437\u043D\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0435\xBB.",
+    demo: "approve",
+    icon: /* @__PURE__ */ jsxs3("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }),
+      /* @__PURE__ */ jsx4("path", { d: "M8.5 12l2.2 2.2 4.8-4.8" })
+    ] })
   },
   {
     title: "\u0422\u0435\u043A\u0441\u0442 \u0438 \u0444\u043E\u0442\u043E \u043F\u0440\u0430\u0432\u0438\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A",
-    body: "\u043F\u0440\u044F\u043C\u043E \u043D\u0430 \u0441\u0430\u0439\u0442\u0435, \u0431\u0435\u0437 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u043E\u0432."
+    body: "\u041F\u0440\u044F\u043C\u043E \u043D\u0430 \u0441\u0430\u0439\u0442\u0435, \u0431\u0435\u0437 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u043E\u0432.",
+    demo: "edit",
+    icon: /* @__PURE__ */ jsxs3("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M12 20h9" }),
+      /* @__PURE__ */ jsx4("path", { d: "M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" })
+    ] })
   },
   {
-    title: "\u0421\u0430\u0439\u0442 \u0432\u0430\u0448 \u2014 \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0432 \u043B\u044E\u0431\u043E\u0439 \u043C\u043E\u043C\u0435\u043D\u0442.",
-    body: "\u0410\u0440\u0445\u0438\u0432 HTML \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0441\u043A\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \u2014 \u043F\u043E\u043A\u0430 \u0430\u043A\u043A\u0430\u0443\u043D\u0442 \u0430\u043A\u0442\u0438\u0432\u0435\u043D \u0438 \u0435\u0449\u0451 10 \u0434\u043D\u0435\u0439 \u043F\u043E\u0441\u043B\u0435 \u043E\u0442\u043A\u0430\u0437\u0430."
+    title: "\u0421\u0430\u0439\u0442 \u0432\u0430\u0448, \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0432 \u043B\u044E\u0431\u043E\u0439 \u043C\u043E\u043C\u0435\u043D\u0442",
+    body: "\u0410\u0440\u0445\u0438\u0432 HTML \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0441\u043A\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439. \u0414\u043E\u0441\u0442\u0443\u043F \u043A \u043D\u0435\u043C\u0443 \u2014 \u043F\u043E\u043A\u0430 \u0430\u043A\u0442\u0438\u0432\u0435\u043D \u0430\u043A\u043A\u0430\u0443\u043D\u0442 \u0438 \u0435\u0449\u0451 10 \u0434\u043D\u0435\u0439, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0443\u0439\u0442\u0438.",
+    demo: "export",
+    icon: /* @__PURE__ */ jsxs3("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
+      /* @__PURE__ */ jsx4("path", { d: "M7 10l5 5 5-5" }),
+      /* @__PURE__ */ jsx4("path", { d: "M12 15V3" })
+    ] })
   },
   {
-    title: "\u0423\u0434\u0430\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \u043E\u0434\u043D\u043E \u043D\u0430\u0436\u0430\u0442\u0438\u0435.",
-    body: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \u0437\u0432\u043E\u043D\u043A\u043E\u0432 \u0432 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0443 \u0438 \u043D\u0438\u043A\u0430\u043A\u0438\u0445 \xAB\u0434\u0430\u0439\u0442\u0435 \u043F\u043E\u0434\u0443\u043C\u0430\u0442\u044C\xBB."
+    title: "\u0423\u0434\u0430\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \u043E\u0434\u043D\u043E \u043D\u0430\u0436\u0430\u0442\u0438\u0435",
+    body: "\u0411\u0435\u0437 \u0437\u0432\u043E\u043D\u043A\u043E\u0432 \u0432 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0443 \u0438 \u0443\u0433\u043E\u0432\u043E\u0440\u043E\u0432 \xAB\u043F\u043E\u0434\u0443\u043C\u0430\u0439\u0442\u0435 \u0435\u0449\u0451\xBB.",
+    demo: "delete",
+    icon: /* @__PURE__ */ jsxs3("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M3 6h18" }),
+      /* @__PURE__ */ jsx4("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" }),
+      /* @__PURE__ */ jsx4("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" })
+    ] })
   }
 ];
+function OwnerDemo({ kind, mobile }) {
+  const pill = (label, opts = {}) => /* @__PURE__ */ jsx4("span", { style: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 5,
+    padding: "6px 12px",
+    borderRadius: 999,
+    fontSize: 12.5,
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+    ...opts
+  }, children: label });
+  if (kind === "approve") {
+    return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }, children: [
+      pill(/* @__PURE__ */ jsxs3(Fragment2, { children: [
+        /* @__PURE__ */ jsx4("span", { style: { fontSize: 14 }, children: "\u2713" }),
+        "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C"
+      ] }), { background: VT.accent, color: "#fff" }),
+      pill("\u0418\u043D\u0430\u0447\u0435", { background: VT.white, color: VT.ink, border: `1px solid ${VT.line}` }),
+      pill("\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C", { background: VT.white, color: VT.inkSoft, border: `1px solid ${VT.line}` })
+    ] });
+  }
+  if (kind === "edit") {
+    return /* @__PURE__ */ jsxs3("div", { style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      padding: "8px 12px",
+      borderRadius: 10,
+      border: `1.5px dashed ${VT.accent}`,
+      background: VT.accentSoft,
+      fontSize: 13,
+      color: VT.ink,
+      fontWeight: 500
+    }, children: [
+      "\u041A\u0430\u043F\u0443\u0447\u0438\u043D\u043E \u043D\u0430 \u043E\u0432\u0441\u044F\u043D\u043E\u043C",
+      /* @__PURE__ */ jsx4("span", { style: { width: 1.5, height: 16, background: VT.accent, animation: "none" } }),
+      /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent }, children: "\u043F\u0440\u0430\u0432\u043A\u0430" })
+    ] });
+  }
+  if (kind === "export") {
+    return /* @__PURE__ */ jsxs3("div", { style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 10,
+      padding: "8px 14px",
+      borderRadius: 10,
+      background: VT.white,
+      border: `1px solid ${VT.line}`
+    }, children: [
+      /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: "\u0441\u0430\u0439\u0442.zip" }),
+      /* @__PURE__ */ jsx4("span", { style: { fontSize: 11, color: VT.inkFaint }, children: "HTML + \u0444\u043E\u0442\u043E" }),
+      /* @__PURE__ */ jsx4("span", { style: {
+        width: 24,
+        height: 24,
+        borderRadius: 7,
+        background: VT.accent,
+        color: "#fff",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 13
+      }, children: "\u2193" })
+    ] });
+  }
+  return /* @__PURE__ */ jsxs3("div", { style: { display: "inline-flex", alignItems: "center", gap: 10 }, children: [
+    /* @__PURE__ */ jsxs3("span", { style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 7,
+      padding: "8px 14px",
+      borderRadius: 999,
+      fontSize: 12.5,
+      fontWeight: 600,
+      background: VT.white,
+      color: VT.ink,
+      border: `1px solid ${VT.line}`
+    }, children: [
+      /* @__PURE__ */ jsxs3("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+        /* @__PURE__ */ jsx4("path", { d: "M3 6h18" }),
+        /* @__PURE__ */ jsx4("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" }),
+        /* @__PURE__ */ jsx4("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })
+      ] }),
+      "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0441\u0430\u0439\u0442"
+    ] }),
+    /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "1 \u043A\u043B\u0438\u043A" })
+  ] });
+}
 function OwnershipSection({ mobile }) {
   return /* @__PURE__ */ jsxs3("section", { id: "ownership", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
     /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
@@ -3276,79 +2909,52 @@ function OwnershipSection({ mobile }) {
         /* @__PURE__ */ jsx4("br", {}),
         "\u0420\u0435\u0448\u0435\u043D\u0438\u044F \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F \u0437\u0430 \u0432\u0430\u043C\u0438"
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0418\u0418 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B \u2014 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C. \u0417\u0430\u0445\u043E\u0442\u0435\u043B\u0438 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0440\u0430\u043B\u0438 \u0438 \u0443\u0448\u043B\u0438." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442, \u0438\u0434\u0451\u0442 \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B, \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u0435. \u0417\u0430\u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0438 \u0443\u0439\u0434\u0451\u0442\u0435." })
     ] }),
     /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 48,
-      maxWidth: mobile ? "100%" : 980,
+      maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
-      gap: mobile ? 10 : 14
+      gap: mobile ? 12 : 16
     }, children: OWNER_POINTS.map((pt, i) => /* @__PURE__ */ jsxs3("div", { style: {
       display: "flex",
-      alignItems: "flex-start",
-      gap: 14,
-      padding: mobile ? "18px 18px" : "22px 24px",
+      flexDirection: "column",
+      padding: mobile ? "20px 20px" : "26px 28px",
       background: VT.white,
       border: `1px solid ${VT.line}`,
-      borderRadius: 14
+      borderRadius: 18
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
-        flex: "0 0 auto",
-        width: 28,
-        height: 28,
-        borderRadius: "50%",
-        background: VT.accentSoft,
-        color: VT.accent,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 2
-      }, children: /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12 l4 4 10 -10" }) }) }),
-      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0 }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 13, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          flex: "0 0 auto",
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          background: VT.accent,
+          color: "#fff",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }, children: pt.icon }),
         /* @__PURE__ */ jsx4("div", { style: {
-          fontSize: mobile ? 15.5 : 16.5,
-          fontWeight: 700,
+          fontSize: mobile ? 19 : 22,
+          fontWeight: 800,
           color: VT.ink,
-          letterSpacing: "-0.015em",
-          lineHeight: 1.3
-        }, children: pt.title }),
-        /* @__PURE__ */ jsx4("div", { style: {
-          marginTop: 4,
-          fontSize: mobile ? 14 : 15,
-          lineHeight: 1.45,
-          color: VT.inkSoft
-        }, children: pt.body })
-      ] })
-    ] }, i)) }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 22 : 30, textAlign: "center" }, children: /* @__PURE__ */ jsxs3("a", { href: "client-admin-demo.html", style: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 10,
-      padding: mobile ? "12px 22px" : "14px 28px",
-      background: VT.white,
-      color: VT.ink,
-      border: `1px solid ${VT.line}`,
-      borderRadius: 999,
-      fontSize: mobile ? 14.5 : 15,
-      fontWeight: 600,
-      textDecoration: "none"
-    }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
-        width: 22,
-        height: 22,
-        borderRadius: "50%",
-        background: VT.accent,
-        color: "#fff",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 10
-      }, children: "\u25B6" }),
-      "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0434\u0435\u043C\u043E \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0430",
-      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2197" })
-    ] }) })
+          letterSpacing: "-0.025em",
+          lineHeight: 1.12
+        }, children: pt.title })
+      ] }),
+      /* @__PURE__ */ jsx4("p", { style: {
+        margin: 0,
+        fontSize: mobile ? 14 : 15,
+        lineHeight: 1.5,
+        color: VT.inkSoft,
+        textWrap: "pretty"
+      }, children: pt.body }),
+      /* @__PURE__ */ jsx4("div", { style: { marginTop: "auto", paddingTop: 18 }, children: /* @__PURE__ */ jsx4(OwnerDemo, { kind: pt.demo, mobile }) })
+    ] }, i)) })
   ] });
 }
 function AnalyticsSection({ mobile }) {
@@ -3698,126 +3304,204 @@ function AnalyticsSection({ mobile }) {
     ] }) })
   ] });
 }
-var PLANS = ["\u0421\u0442\u0430\u0440\u0442", "\u041B\u0438\u0447\u043D\u044B\u0439", "\u0411\u0438\u0437\u043D\u0435\u0441", "\u041A\u043E\u043C\u043F\u0430\u043D\u0438\u044F", "\u0421\u0442\u0443\u0434\u0438\u044F"];
-var PLAN_HILITE = -1;
+var PLAN_HILITE = 2;
+var PLAN_META = [
+  { name: "\u0421\u0442\u0430\u0440\u0442", price: "0", unit: "\u20BD", sub: "\u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430" },
+  { name: "\u041B\u0438\u0447\u043D\u044B\u0439", price: "690", unit: "\u20BD/\u043C\u0435\u0441", sub: "6 620 \u20BD/\u0433\u043E\u0434" },
+  { name: "\u0411\u0438\u0437\u043D\u0435\u0441", price: "1 490", unit: "\u20BD/\u043C\u0435\u0441", sub: "14 300 \u20BD/\u0433\u043E\u0434", hot: true },
+  { name: "\u041A\u043E\u043C\u043F\u0430\u043D\u0438\u044F", price: "2 990", unit: "\u20BD/\u043C\u0435\u0441", sub: "28 700 \u20BD/\u0433\u043E\u0434" },
+  { name: "\u0421\u0442\u0443\u0434\u0438\u044F", price: "6 990", unit: "\u20BD/\u043C\u0435\u0441", sub: "67 100 \u20BD/\u0433\u043E\u0434" }
+];
 var PRICING_MATRIX = [
   {
     rows: [
-      { label: "\u0426\u0435\u043D\u0430 / \u043C\u0435\u0441", vals: ["0 \u20BD", "690 \u20BD", "1 490 \u20BD", "2 990 \u20BD", "6 990 \u20BD"] },
-      { label: "\u0426\u0435\u043D\u0430 / \u0433\u043E\u0434", vals: ["0 \u20BD", "6 620 \u20BD", "14 300 \u20BD", "28 700 \u20BD", "67 100 \u20BD"] },
       { label: "\u0412\u044B\u0433\u043E\u0434\u0430 \u0433\u043E\u0434\u043E\u0432\u043E\u0433\u043E", vals: ["\u2014", "\u221220%", "\u221220%", "\u221220%", "\u221220%"] },
-      { label: "\u0414\u043B\u044F \u043A\u043E\u0433\u043E", vals: ["\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C", "\u0421\u0430\u043C\u043E\u0437\u0430\u043D\u044F\u0442\u044B\u0435, \u043B\u0438\u0447\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B", "\u041C\u0430\u043B\u044B\u0439 \u0431\u0438\u0437\u043D\u0435\u0441, \u0444\u0440\u0438\u043B\u0430\u043D\u0441", "\u0418\u043D\u0444\u043E\u0431\u0438\u0437\u043D\u0435\u0441, \u043C\u0430\u043B\u044B\u0435 \u0430\u0433\u0435\u043D\u0442\u0441\u0442\u0432\u0430", "\u0421\u0442\u0443\u0434\u0438\u0438, \u0431\u0435\u043B\u044B\u0435 \u043C\u0435\u0442\u043A\u0438"] }
+      { label: "\u0414\u043B\u044F \u043A\u043E\u0433\u043E", vals: ["\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C", "\u0421\u0430\u043C\u043E\u0437\u0430\u043D\u044F\u0442\u044B\u0435, \u043B\u0438\u0447\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B", "\u041C\u0430\u043B\u044B\u0439 \u0431\u0438\u0437\u043D\u0435\u0441", "\u041D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0431\u0440\u0435\u043D\u0434\u043E\u0432, \u0438\u043D\u0444\u043E\u0431\u0438\u0437\u043D\u0435\u0441", "\u0421\u0442\u0443\u0434\u0438\u0438 \u0438 \u0430\u0433\u0435\u043D\u0442\u0441\u0442\u0432\u0430"] }
     ]
   },
   {
     title: "\u0421\u0430\u0439\u0442\u044B \u0438 \u0445\u043E\u0441\u0442\u0438\u043D\u0433",
     rows: [
-      { label: "\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", vals: ["1", "1", "3", "10", "30"] },
-      { label: "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", vals: [false, false, "3", "10", "30"] },
-      { label: "\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442", vals: ["3", "10", "50", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439"] },
+      { label: "\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", vals: ["1", "1", "2", "8", "30"] },
+      { label: "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", vals: [false, "1", "2", "8", "30"] },
+      { label: "\u041F\u043E\u0434\u0434\u043E\u043C\u0435\u043D samosite", vals: [true, true, true, true, true] },
+      { label: "\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442", vals: ["3", "15", "50", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439"] },
       { label: "\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u043C\u0435\u0434\u0438\u0430", vals: ["500 \u041C\u0411", "5 \u0413\u0411", "20 \u0413\u0411", "100 \u0413\u0411", "500 \u0413\u0411"] },
+      { label: "\u041C\u0435\u0441\u044F\u0447\u043D\u044B\u0439 \u0442\u0440\u0430\u0444\u0438\u043A", vals: ["5 \u0413\u0411", "50 \u0413\u0411", "200 \u0413\u0411", "1 \u0422\u0411", "5 \u0422\u0411"] },
       { label: "\u0421\u0435\u0440\u0442\u0438\u0444\u0438\u043A\u0430\u0442 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438 (SSL)", vals: [true, true, true, true, true] },
-      { label: "\u0423\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u0431\u0440\u0435\u043D\u0434\u0438\u043D\u0433\u0430 Samosite", vals: [false, true, true, true, true] }
+      { label: "\u0423\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u0431\u0440\u0435\u043D\u0434\u0438\u043D\u0433\u0430 samosite", vals: [false, true, true, true, true] }
     ]
   },
   {
     title: "\u0418\u0418-\u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0438 (\u0432 \u043C\u0435\u0441\u044F\u0446)",
     rows: [
-      { label: "\u0413\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0441\u0430\u0439\u0442\u0430 \u0446\u0435\u043B\u0438\u043A\u043E\u043C", vals: ["1 (\u0440\u0430\u0437\u043E\u0432\u043E)", "2", "10", "40", "150"] },
-      { label: "\u041F\u0435\u0440\u0435\u0433\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0431\u043B\u043E\u043A\u043E\u0432", vals: ["10", "30", "150", "600", "2 000"] },
-      { label: "\u0410\u043D\u0430\u043B\u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u043E\u0432", vals: ["1", "5", "25", "100", "400"] },
-      { label: "\u0418\u0418-\u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u0438 (\u043F\u0440\u043E\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435 / \u043A\u043E\u043D\u0442\u0435\u043D\u0442)", vals: [false, "10", "50", "200", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439*"] },
       { label: "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0418\u0418-\u043C\u043E\u0434\u0435\u043B\u0438", vals: ["Yandex", "Claude", "Claude", "Claude", "Claude"] },
-      { label: "\u041F\u0440\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0438 \u043B\u0438\u043C\u0438\u0442\u0430", vals: ["\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u043A\u0430", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u043C\u044F\u0433\u043A\u0438\u0439 \u043B\u0438\u043C\u0438\u0442"] }
+      { label: "\u0413\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0441\u0430\u0439\u0442\u0430 \u0446\u0435\u043B\u0438\u043A\u043E\u043C", vals: ["1 (\u0440\u0430\u0437\u043E\u0432\u043E)", "2", "8", "30", "120"] },
+      { label: "\u041F\u0435\u0440\u0435\u0433\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0431\u043B\u043E\u043A\u043E\u0432", vals: ["10", "30", "120", "500", "1 800"] },
+      { label: "\u0410\u043D\u0430\u043B\u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u043E\u0432", vals: ["1", "5", "20", "80", "350"] },
+      { label: "\u0418\u0418-\u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u0438 (\u043F\u0440\u043E\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435 / \u043A\u043E\u043D\u0442\u0435\u043D\u0442)", vals: [false, "10", "40", "180", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439*"] },
+      { label: "\u041F\u0440\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0438 \u043B\u0438\u043C\u0438\u0442\u0430", vals: ["\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u043A\u0430", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u043C\u044F\u0433\u043A\u0438\u0439 \u043B\u0438\u043C\u0438\u0442"] },
+      { label: "\u0414\u043E\u043A\u0443\u043F\u043A\u0430 \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0439 \u0441\u0432\u0435\u0440\u0445 \u043B\u0438\u043C\u0438\u0442\u0430", vals: [false, true, true, true, true] }
     ]
   },
   {
-    title: "\u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438",
+    title: "\u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438 \u0441\u0430\u0439\u0442\u0430",
     rows: [
-      { label: "\u0428\u0430\u0431\u043B\u043E\u043D\u044B", vals: ["\u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0432\u0441\u0435", "\u0432\u0441\u0435", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C"] },
-      { label: "\u0424\u043E\u0440\u043C\u044B \u0438 \u0437\u0430\u044F\u0432\u043A\u0438", vals: ["1 \u0444\u043E\u0440\u043C\u0430", true, true, true, true] },
-      { label: "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430", vals: [false, "\u0431\u0430\u0437\u043E\u0432\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F"] },
-      { label: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 \u043A\u043E\u0434\u0430", vals: [false, false, false, true, true] },
-      { label: "\u0420\u0430\u0431\u043E\u0442\u0430 \u043F\u043E\u0434 \u0431\u0440\u0435\u043D\u0434 \u043A\u043B\u0438\u0435\u043D\u0442\u0430", vals: [false, false, false, false, true] },
-      { label: "\u041A\u043E\u043C\u0430\u043D\u0434\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F", vals: [false, false, "2 \u0447\u0435\u043B.", "5 \u0447\u0435\u043B.", "15 \u0447\u0435\u043B."] }
+      { label: "\u0428\u0430\u0431\u043B\u043E\u043D\u044B", vals: ["\u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0432\u0441\u0435 \u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0432\u0441\u0435 \u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C"] },
+      { label: "\u0424\u043E\u0440\u043C\u044B \u0438 \u0437\u0430\u044F\u0432\u043A\u0438", vals: ["1 \u0444\u043E\u0440\u043C\u0430", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439"] },
+      { label: "\u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 / \u0432 Telegram", vals: [false, true, true, true, true] },
+      { label: "\u0412\u0438\u0434\u0436\u0435\u0442\u044B \u0441\u043E\u0446\u0441\u0435\u0442\u0435\u0439 \u0438 \u043C\u0435\u0441\u0441\u0435\u043D\u0434\u0436\u0435\u0440\u043E\u0432", vals: [false, true, true, true, true] },
+      { label: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u042F.\u041C\u0435\u0442\u0440\u0438\u043A\u0438 \u0438 \u043F\u0438\u043A\u0441\u0435\u043B\u0435\u0439", vals: [false, true, true, true, true] },
+      { label: "\u041F\u0440\u0438\u0451\u043C \u043F\u043B\u0430\u0442\u0435\u0436\u0435\u0439 (\u042EKassa, \u0422\u0438\u043D\u044C\u043A\u043E\u0444\u0444)", vals: [false, false, true, true, true] },
+      { label: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430 \u0438 \u043A\u0430\u0442\u0430\u043B\u043E\u0433 \u0442\u043E\u0432\u0430\u0440\u043E\u0432", vals: [false, false, "\u0434\u043E 50 \u043F\u043E\u0437.", "\u0434\u043E 500 \u043F\u043E\u0437.", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439"] },
+      { label: "SEO-\u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0441\u0442\u0440\u0430\u043D\u0438\u0446", vals: ["\u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435"] },
+      { label: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435 \u0434\u043E\u043C\u0435\u043D-\u0437\u043E\u043D\u044B (*.brand.ru)", vals: [false, false, false, true, true] },
+      { label: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 \u043A\u043E\u0434\u0430 \u0441\u0430\u0439\u0442\u0430", vals: [false, false, false, false, true] }
+    ]
+  },
+  {
+    title: "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430",
+    rows: [
+      { label: "\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u044B \u0438 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438", vals: [false, true, true, true, true] },
+      { label: "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438 \u0442\u0440\u0430\u0444\u0438\u043A\u0430", vals: [false, false, true, true, true] },
+      { label: "\u0412\u043E\u0440\u043E\u043D\u043A\u0430 \u0437\u0430\u044F\u0432\u043E\u043A \u0438 \u043A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u0438", vals: [false, false, true, true, true] },
+      { label: "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435 \u0432\u0435\u0440\u0441\u0438\u0439 \u0441\u0430\u0439\u0442\u0430", vals: [false, false, false, true, true] },
+      { label: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 \u043E\u0442\u0447\u0451\u0442\u043E\u0432 (CSV / Excel)", vals: [false, false, false, true, true] }
+    ]
+  },
+  {
+    title: "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0438 \u043A\u043B\u0438\u0435\u043D\u0442\u044B",
+    rows: [
+      { label: "\u041A\u043E\u043C\u0430\u043D\u0434\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F", vals: [false, false, "2 \u0447\u0435\u043B.", "5 \u0447\u0435\u043B.", "15 \u0447\u0435\u043B."] },
+      { label: "\u0420\u043E\u043B\u0438 \u0438 \u043F\u0440\u0430\u0432\u0430 \u0434\u043E\u0441\u0442\u0443\u043F\u0430", vals: [false, false, "\u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u044B\u0435"] },
+      { label: "\u0420\u0430\u0431\u043E\u0442\u0430 \u043F\u043E\u0434 \u0431\u0440\u0435\u043D\u0434\u043E\u043C \u043A\u043B\u0438\u0435\u043D\u0442\u0430", vals: [false, false, false, false, true] },
+      { label: "\u041F\u0435\u0440\u0435\u0434\u0430\u0447\u0430 \u0441\u0430\u0439\u0442\u0430 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u0430", vals: [false, false, false, false, true] },
+      { label: "\u0411\u0438\u043B\u043B\u0438\u043D\u0433 \u043E\u0442 \u0438\u043C\u0435\u043D\u0438 \u0441\u0442\u0443\u0434\u0438\u0438", vals: [false, false, false, false, true] }
     ]
   },
   {
     title: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430",
     rows: [
-      { label: "\u041A\u0430\u043D\u0430\u043B", vals: ["\u0431\u0430\u0437\u0430 \u0437\u043D\u0430\u043D\u0438\u0439", "\u0447\u0430\u0442", "\u0447\u0430\u0442", "\u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u043D\u044B\u0439 \u0447\u0430\u0442", "\u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440"] },
-      { label: "\u0412\u0440\u0435\u043C\u044F \u043E\u0442\u0432\u0435\u0442\u0430", vals: ["\u2014", "24 \u0447", "12 \u0447", "4 \u0447", "1 \u0447"] }
+      { label: "\u0411\u0430\u0437\u0430 \u0437\u043D\u0430\u043D\u0438\u0439 \u0438 \u0432\u0438\u0434\u0435\u043E\u0443\u0440\u043E\u043A\u0438", vals: [true, true, true, true, true] },
+      { label: "\u041A\u0430\u043D\u0430\u043B \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438", vals: ["\u2014", "\u0447\u0430\u0442", "\u0447\u0430\u0442", "\u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u043D\u044B\u0439 \u0447\u0430\u0442", "\u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440"] },
+      { label: "\u0412\u0440\u0435\u043C\u044F \u043E\u0442\u0432\u0435\u0442\u0430", vals: ["\u2014", "24 \u0447", "12 \u0447", "4 \u0447", "1 \u0447"] },
+      { label: "\u041E\u0431\u0443\u0447\u0435\u043D\u0438\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u044B (\u043E\u043D\u043B\u0430\u0439\u043D)", vals: [false, false, false, false, true] }
     ]
   }
 ];
 function MatrixCell({ v, hi }) {
-  const base = {
-    fontSize: 13.5,
-    lineHeight: 1.35,
-    color: VT.ink,
-    textAlign: "center",
-    fontVariantNumeric: "tabular-nums"
-  };
   if (v === true) {
     return /* @__PURE__ */ jsx4("span", { style: { display: "inline-flex", width: 22, height: 22, borderRadius: "50%", background: VT.successSoft, color: VT.success, alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12 l4 4 10 -10" }) }) });
   }
   if (v === false) {
     return /* @__PURE__ */ jsx4("span", { style: { color: VT.inkFaint, fontSize: 16 }, children: "\u2014" });
   }
-  return /* @__PURE__ */ jsx4("span", { style: { ...base, fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }, children: v });
+  return /* @__PURE__ */ jsx4("span", { style: { fontSize: 13.5, lineHeight: 1.35, textAlign: "center", fontVariantNumeric: "tabular-nums", fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }, children: v });
 }
 function PricingMatrix({ mobile }) {
   const firstCol = mobile ? 132 : 240;
-  const planCol = mobile ? 96 : 150;
+  const planCol = mobile ? 116 : 192;
   const totalW = firstCol + planCol * 5;
   const cellPad = mobile ? "10px 8px" : "12px 14px";
+  const cols = `${firstCol}px repeat(5, ${planCol}px)`;
+  const hiBg = (ci) => ci === PLAN_HILITE ? VT.accentSoft : "transparent";
+  const hiSide = (ci) => ci === PLAN_HILITE ? { boxShadow: `inset 1px 0 0 ${VT.accent}33, inset -1px 0 0 ${VT.accent}33` } : {};
   return /* @__PURE__ */ jsxs3("div", { style: {
     marginTop: mobile ? 24 : 40,
     border: `1px solid ${VT.line}`,
-    borderRadius: 18,
+    borderRadius: 20,
     overflow: "hidden",
     background: VT.white,
-    boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 18px 48px -28px rgba(120,60,30,0.20)"
+    boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 24px 60px -30px rgba(120,60,30,0.28)"
   }, children: [
     /* @__PURE__ */ jsx4("div", { style: mobile ? { overflowX: "auto", WebkitOverflowScrolling: "touch" } : { overflow: "visible" }, children: /* @__PURE__ */ jsxs3("div", { style: { minWidth: mobile ? totalW : 0 }, children: [
       /* @__PURE__ */ jsxs3("div", { style: {
         display: "grid",
-        gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
+        gridTemplateColumns: cols,
         position: "sticky",
         top: 0,
         zIndex: 2,
         background: VT.white,
-        borderBottom: `2px solid ${VT.line}`
+        borderBottom: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsx4("div", { style: { padding: cellPad, position: "sticky", left: 0, background: VT.white, zIndex: 4 } }),
-        PLANS.map((p, i) => /* @__PURE__ */ jsxs3("div", { style: {
-          padding: cellPad,
-          textAlign: "center",
-          background: i === PLAN_HILITE ? VT.accentSoft : "transparent",
-          borderTopLeftRadius: i === PLAN_HILITE ? 12 : 0,
-          borderTopRightRadius: i === PLAN_HILITE ? 12 : 0
+        /* @__PURE__ */ jsxs3("div", { style: {
+          padding: mobile ? "14px 10px" : "20px 18px",
+          position: "sticky",
+          left: 0,
+          background: VT.white,
+          zIndex: 4,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end"
         }, children: [
-          i === PLAN_HILITE && /* @__PURE__ */ jsx4("div", { style: {
-            fontFamily: VT.font.mono,
-            fontSize: 9,
-            letterSpacing: "0.1em",
-            color: VT.accent,
-            fontWeight: 700,
-            marginBottom: 4,
-            textTransform: "uppercase"
-          }, children: "\u041F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439" }),
           /* @__PURE__ */ jsx4("div", { style: {
-            fontSize: mobile ? 15 : 17,
+            fontFamily: VT.font.mono,
+            fontSize: 10.5,
+            letterSpacing: "0.1em",
+            color: VT.inkFaint,
             fontWeight: 700,
-            letterSpacing: "-0.015em",
-            color: i === PLAN_HILITE ? VT.accent : VT.ink
-          }, children: p })
-        ] }, p))
+            textTransform: "uppercase"
+          }, children: "5 \u0442\u0430\u0440\u0438\u0444\u043E\u0432" }),
+          /* @__PURE__ */ jsx4("div", { style: { marginTop: 4, fontSize: mobile ? 11.5 : 13, color: VT.inkSoft, lineHeight: 1.35 }, children: "\u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" })
+        ] }),
+        PLAN_META.map((p, i) => {
+          const hot = i === PLAN_HILITE;
+          return /* @__PURE__ */ jsxs3("div", { style: {
+            padding: mobile ? "14px 8px 14px" : `${hot ? 14 : 20}px 12px 18px`,
+            textAlign: "center",
+            position: "relative",
+            background: hot ? VT.accentSoft : "transparent",
+            ...hiSide(i)
+          }, children: [
+            hot && /* @__PURE__ */ jsx4("div", { style: {
+              display: "inline-block",
+              marginBottom: 8,
+              fontFamily: VT.font.mono,
+              fontSize: 9,
+              letterSpacing: "0.1em",
+              fontWeight: 700,
+              color: "#fff",
+              background: VT.accent,
+              padding: "3px 9px",
+              borderRadius: 999,
+              textTransform: "uppercase"
+            }, children: "\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439" }),
+            /* @__PURE__ */ jsx4("div", { style: {
+              fontSize: mobile ? 13.5 : 15,
+              fontWeight: 700,
+              letterSpacing: "-0.015em",
+              color: hot ? VT.accent : VT.ink
+            }, children: p.name }),
+            /* @__PURE__ */ jsxs3("div", { style: {
+              marginTop: 6,
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "center",
+              gap: 3,
+              fontVariantNumeric: "tabular-nums"
+            }, children: [
+              /* @__PURE__ */ jsx4("span", { style: {
+                fontSize: mobile ? 19 : 26,
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+                color: VT.ink,
+                lineHeight: 1
+              }, children: p.price }),
+              /* @__PURE__ */ jsx4("span", { style: { fontSize: mobile ? 10.5 : 12, fontWeight: 600, color: VT.inkSoft }, children: p.unit })
+            ] }),
+            /* @__PURE__ */ jsx4("div", { style: {
+              marginTop: 4,
+              fontSize: mobile ? 9.5 : 11,
+              color: VT.inkFaint,
+              lineHeight: 1.3
+            }, children: p.sub })
+          ] }, p.name);
+        })
       ] }),
       PRICING_MATRIX.map((group, gi) => /* @__PURE__ */ jsxs3("div", { children: [
         group.title && /* @__PURE__ */ jsx4("div", { style: {
           gridColumn: "1 / -1",
-          padding: mobile ? "10px 10px" : "11px 14px",
+          padding: mobile ? "9px 10px" : "10px 18px",
           background: VT.bgSoft,
           fontFamily: VT.font.mono,
           fontSize: 10.5,
@@ -3828,38 +3512,68 @@ function PricingMatrix({ mobile }) {
           borderTop: `1px solid ${VT.line}`,
           borderBottom: `1px solid ${VT.line}`
         }, children: group.title }),
-        group.rows.map((row, ri) => {
-          const isPriceMonth = gi === 0 && ri === 0;
-          return /* @__PURE__ */ jsxs3("div", { style: {
-            display: "grid",
-            gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
-            borderBottom: `1px solid ${VT.lineSoft}`,
+        group.rows.map((row, ri) => /* @__PURE__ */ jsxs3("div", { style: {
+          display: "grid",
+          gridTemplateColumns: cols,
+          borderBottom: `1px solid ${VT.lineSoft}`,
+          alignItems: "stretch",
+          background: ri % 2 === 1 ? VT.bgSoft + "80" : "transparent"
+        }, children: [
+          /* @__PURE__ */ jsx4("div", { style: {
+            padding: cellPad,
+            fontSize: mobile ? 12 : 13.5,
+            color: VT.inkSoft,
+            position: "sticky",
+            left: 0,
+            zIndex: 3,
+            background: ri % 2 === 1 ? VT.bg : VT.white,
+            borderRight: `1px solid ${VT.line}`,
+            boxShadow: mobile ? "6px 0 8px -6px rgba(40,28,18,0.12)" : "none",
+            display: "flex",
             alignItems: "center"
-          }, children: [
-            /* @__PURE__ */ jsx4("div", { style: {
-              padding: cellPad,
-              fontSize: mobile ? 12 : 13.5,
-              color: VT.ink,
-              fontWeight: isPriceMonth ? 600 : 400,
-              position: "sticky",
-              left: 0,
-              background: VT.white,
-              zIndex: 3,
-              borderRight: `1px solid ${VT.line}`,
-              boxShadow: mobile ? "6px 0 8px -6px rgba(40,28,18,0.12)" : "none"
-            }, children: row.label }),
-            row.vals.map((v, ci) => /* @__PURE__ */ jsx4("div", { style: {
-              padding: cellPad,
-              textAlign: "center",
-              background: ci === PLAN_HILITE ? VT.accentSoft : "transparent",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }, children: /* @__PURE__ */ jsx4(MatrixCell, { v, hi: isPriceMonth || ci === PLAN_HILITE }) }, ci))
-          ] }, ri);
+          }, children: row.label }),
+          row.vals.map((v, ci) => /* @__PURE__ */ jsx4("div", { style: {
+            padding: cellPad,
+            textAlign: "center",
+            background: hiBg(ci),
+            ...hiSide(ci),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }, children: /* @__PURE__ */ jsx4(MatrixCell, { v, hi: ci === PLAN_HILITE }) }, ci))
+        ] }, ri))
+      ] }, gi)),
+      /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: cols, alignItems: "stretch" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: {
+          position: "sticky",
+          left: 0,
+          zIndex: 3,
+          background: VT.white,
+          borderRight: `1px solid ${VT.line}`
+        } }),
+        PLAN_META.map((p, i) => {
+          const hot = i === PLAN_HILITE;
+          return /* @__PURE__ */ jsx4("div", { style: {
+            padding: mobile ? "12px 6px" : "16px 10px",
+            textAlign: "center",
+            background: hot ? VT.accentSoft : "transparent",
+            ...hiSide(i)
+          }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+            display: "inline-block",
+            width: "100%",
+            boxSizing: "border-box",
+            padding: mobile ? "8px 4px" : "9px 10px",
+            fontSize: mobile ? 11.5 : 13,
+            fontWeight: 700,
+            borderRadius: 999,
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+            background: hot ? VT.accent : "transparent",
+            color: hot ? "#fff" : VT.accent,
+            border: hot ? "none" : `1px solid ${VT.accent}`
+          }, children: i === 0 ? "\u041D\u0430\u0447\u0430\u0442\u044C" : "\u0412\u044B\u0431\u0440\u0430\u0442\u044C" }) }, p.name);
         })
-      ] }, gi))
+      ] })
     ] }) }),
     mobile && /* @__PURE__ */ jsx4("div", { style: {
       padding: "10px 14px",
@@ -3884,19 +3598,12 @@ function PricingSection({ mobile }) {
         textWrap: "pretty"
       }, children: "\u041E\u0442 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u0441\u0442\u0430\u0440\u0442\u0430 \u0434\u043E \u0441\u0442\u0443\u0434\u0438\u0439\u043D\u043E\u0433\u043E. \u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430 \u043B\u044E\u0431\u043E\u043C \u043F\u043B\u0430\u0442\u043D\u043E\u043C \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E." })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { maxWidth: 1100, margin: "0 auto" }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { maxWidth: 1200, margin: "0 auto" }, children: [
       /* @__PURE__ */ jsx4(PricingMatrix, { mobile }),
-      /* @__PURE__ */ jsxs3("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: [
-        /* @__PURE__ */ jsx4(Btn, { style: {
-          padding: mobile ? "14px 26px" : "16px 36px",
-          fontSize: mobile ? 15 : 16
-        }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
-        /* @__PURE__ */ jsx4("div", { style: {
-          marginTop: 12,
-          fontSize: 12.5,
-          color: VT.inkSoft,
-          fontStyle: "italic"
-        }, children: "\u041D\u0430\u0447\u043D\u0438\u0442\u0435 \u043D\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0442\u0430\u0440\u0438\u0444\u0435 \u2014 \u043E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0440\u0430\u0441\u0442\u0438." })
+      /* @__PURE__ */ jsx4("div", { style: { marginTop: 10, fontSize: 12, color: VT.inkFaint, textAlign: mobile ? "left" : "center" }, children: "* \u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439 \u0432 \u0440\u0430\u043C\u043A\u0430\u0445 \u0447\u0435\u0441\u0442\u043D\u043E\u0433\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F" }),
+      /* @__PURE__ */ jsxs3("div", { style: { marginTop: mobile ? 18 : 28, textAlign: "center" }, children: [
+        /* @__PURE__ */ jsx4(Btn, { style: { padding: mobile ? "14px 26px" : "16px 36px", fontSize: mobile ? 15 : 16 }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
+        /* @__PURE__ */ jsx4("div", { style: { marginTop: 12, fontSize: 12.5, color: VT.inkSoft, fontStyle: "italic" }, children: "\u041D\u0430\u0447\u043D\u0438\u0442\u0435 \u043D\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0442\u0430\u0440\u0438\u0444\u0435 \u2014 \u043E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0440\u0430\u0441\u0442\u0438." })
       ] }),
       /* @__PURE__ */ jsx4("p", { style: {
         margin: `${mobile ? 22 : 30}px auto 0`,
@@ -4060,7 +3767,7 @@ function FinalCtaSection({ mobile }) {
     marginTop: mobile ? 64 : 130,
     position: "relative",
     zIndex: 1,
-    maxWidth: mobile ? "100%" : 1360,
+    maxWidth: mobile ? "100%" : 1200,
     margin: `${mobile ? 64 : 130}px auto 0`
   }, children: /* @__PURE__ */ jsxs3("div", { style: {
     background: "oklch(0.20 0.020 60)",
@@ -4283,6 +3990,50 @@ function StickyHeader({ mobile = false }) {
     ] })
   ] });
 }
+function FloatingFeedback({ mobile }) {
+  return /* @__PURE__ */ jsxs3(
+    "a",
+    {
+      href: "#feedback",
+      "aria-label": "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?",
+      style: {
+        position: "fixed",
+        right: mobile ? 16 : 24,
+        bottom: mobile ? 16 : 24,
+        zIndex: 40,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 10,
+        padding: mobile ? "12px 16px" : "13px 20px",
+        background: VT.white,
+        color: VT.ink,
+        border: `1px solid ${VT.line}`,
+        borderRadius: 999,
+        fontFamily: VT.font.sans,
+        fontSize: mobile ? 14 : 14.5,
+        fontWeight: 600,
+        letterSpacing: "-0.01em",
+        textDecoration: "none",
+        boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 14px 32px -12px rgba(120,60,30,0.30), 0 4px 12px -6px rgba(40,28,18,0.12)",
+        cursor: "pointer"
+      },
+      children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          flex: "0 0 auto",
+          width: 26,
+          height: 26,
+          borderRadius: "50%",
+          background: VT.accent,
+          color: "#fff",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }, children: /* @__PURE__ */ jsx4("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }) }) }),
+        "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
+      ]
+    }
+  );
+}
 function Footer({ mobile }) {
   return /* @__PURE__ */ jsxs3("div", { style: {
     ...sectionPad(mobile),
@@ -4406,12 +4157,13 @@ function SamosaytLandingV3({ mobile = false }) {
       /* @__PURE__ */ jsx4(MondaySection, { mobile }),
       /* @__PURE__ */ jsx4(BaseWorkSection, { mobile }),
       /* @__PURE__ */ jsx4(SourcesSection, { mobile }),
-      /* @__PURE__ */ jsx4(OwnershipSection, { mobile }),
       /* @__PURE__ */ jsx4(AnalyticsSection, { mobile }),
+      /* @__PURE__ */ jsx4(OwnershipSection, { mobile }),
       /* @__PURE__ */ jsx4(PricingSection, { mobile }),
       /* @__PURE__ */ jsx4(FaqSection, { mobile }),
       /* @__PURE__ */ jsx4(FinalCtaSection, { mobile }),
-      /* @__PURE__ */ jsx4(Footer, { mobile })
+      /* @__PURE__ */ jsx4(Footer, { mobile }),
+      /* @__PURE__ */ jsx4(FloatingFeedback, { mobile })
     ] })
   ] });
 }
@@ -10561,7 +10313,6 @@ export {
   S7_SchemeSwatches,
   S8_LeadFormConfirm,
   S9_FeedbackPage,
-  SOURCE_ICONS,
   SOURCE_LIB,
   SamosaytLanding,
   SamosaytLandingV3,
