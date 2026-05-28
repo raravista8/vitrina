@@ -61,7 +61,7 @@ function Sub({ children, mobile, align = 'center', maxWidth = 720 }) {
 
 // ───────── BLOCK 1 · HERO ─────────
 
-const SOURCE_ICONS = [
+export const SOURCE_ICONS = [
   { id: 'yandex', name: 'Яндекс.Карты',
     icon: <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z" fill="#FC3F1D"/><circle cx="12" cy="10" r="3.2" fill="#fff"/></svg> },
   { id: 'tg', name: 'Telegram',
@@ -77,6 +77,58 @@ const SOURCE_ICONS = [
   { id: 'card', name: 'фото меню или буклета',
     icon: <svg viewBox="0 0 24 24" width="22" height="22"><rect width="24" height="24" rx="6" fill="oklch(0.74 0.08 70)"/><rect x="6" y="8" width="12" height="9" rx="1.5" fill="none" stroke="#fff" strokeWidth="1.4"/><path d="M8 11.5h4M8 14h6" stroke="#fff" strokeWidth="1.4" strokeLinecap="round"/></svg> },
 ];
+
+// ───────── ChipStrip · переиспользуемый стрип «СОБИРАЕМ ИЗ» ─────────
+// Вынесен из inline-кода Hero (0.7.2), чтобы внешние страницы подключали
+// его как <ChipStrip/> без транскрипции canon-JSX в hand-rolled-разметку.
+// Значения 1:1 с прежним inline-вариантом Hero.
+export interface ChipStripItem { id: string; name: string; icon: React.ReactNode; }
+
+export function ChipStrip({
+  mobile = false,
+  label = 'СОБИРАЕМ ИЗ',
+  items = SOURCE_ICONS as ChipStripItem[],
+  align,
+}: {
+  mobile?: boolean;
+  label?: string;
+  items?: ChipStripItem[];
+  align?: 'start' | 'center';
+}) {
+  const alignItems = (align ?? (mobile ? 'start' : 'center')) === 'center' ? 'center' : 'flex-start';
+  const justify = alignItems === 'center' ? 'center' : 'flex-start';
+  return (
+    <div style={{
+      marginTop: mobile ? 22 : 36,
+      display: 'flex', flexDirection: 'column', gap: 10,
+      alignItems,
+    }}>
+      {label && (
+        <div style={{
+          fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
+          color: VT.inkFaint, fontWeight: 600,
+        }}>{label}</div>
+      )}
+      <div style={{
+        display: 'flex', flexWrap: 'wrap', gap: 8,
+        justifyContent: justify,
+      }}>
+        {items.map(s => (
+          <span key={s.id} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '5px 14px 5px 5px',
+            background: VT.white, border: `1px solid ${VT.line}`,
+            borderRadius: 999,
+            fontSize: 13, color: VT.ink, fontWeight: 500,
+          }}>
+            {s.icon}
+            {s.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function HeroBlock({ mobile }) {
   return (
@@ -173,33 +225,7 @@ function HeroBlock({ mobile }) {
           </a>
         </div>
 
-        <div style={{
-          marginTop: mobile ? 22 : 36,
-          display: 'flex', flexDirection: 'column', gap: 10,
-          alignItems: mobile ? 'flex-start' : 'center',
-        }}>
-          <div style={{
-            fontFamily: VT.font.mono, fontSize: 11, letterSpacing: '0.12em',
-            color: VT.inkFaint, fontWeight: 600,
-          }}>СОБИРАЕМ ИЗ</div>
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: 8,
-            justifyContent: mobile ? 'flex-start' : 'center',
-          }}>
-            {SOURCE_ICONS.map(s => (
-              <span key={s.id} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                padding: '5px 14px 5px 5px',
-                background: VT.white, border: `1px solid ${VT.line}`,
-                borderRadius: 999,
-                fontSize: 13, color: VT.ink, fontWeight: 500,
-              }}>
-                {s.icon}
-                {s.name}
-              </span>
-            ))}
-          </div>
-        </div>
+        <ChipStrip mobile={mobile} />
       </div>
     </section>
   );
@@ -3014,15 +3040,17 @@ function FinalCtaSection({ mobile }) {
 // Standalone sticky header (избегаем зависимости от landing-samosite.jsx,
 // чтобы v3-превью могло жить отдельно).
 function StickyHeader({ mobile = false }) {
-  const px = mobile ? 20 : 80;
+  // Боковые поля сужаются на средних экранах через clamp, чтобы в зоне ~720–1000px
+  // ряд (лого + меню + CTA) не переполнялся и кнопка не обрезалась.
+  const px = mobile ? 20 : 'clamp(24px, 4vw, 80px)';
   const primaryStyle = mobile
     ? { background: VT.accent, color: '#fff', fontWeight: 600, fontSize: 13.5,
         padding: '8px 16px', borderRadius: 999, textDecoration: 'none',
-        display: 'inline-flex', alignItems: 'center', gap: 4, border: 'none' }
+        display: 'inline-flex', alignItems: 'center', gap: 4, border: 'none', whiteSpace: 'nowrap', flex: '0 0 auto' }
     : { background: VT.accent, color: '#fff', fontWeight: 600,
         padding: '10px 20px', borderRadius: 999, fontSize: 14,
         textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6,
-        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)', border: 'none' };
+        boxShadow: '0 6px 16px -8px rgba(120,60,30,0.4)', border: 'none', whiteSpace: 'nowrap', flex: '0 0 auto' };
   const primaryLabel = mobile ? 'Собрать' : 'Собрать за 2 часа';
 
   return (
@@ -3050,12 +3078,12 @@ function StickyHeader({ mobile = false }) {
           <BrandMark size={mobile ? 22 : 26} fontSize={mobile ? 18 : 20} />
         </a>
         {!mobile ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24, fontSize: 14 }}>
-            <a href="#examples" className="ss-nav-link">Примеры</a>
-            <a href="#pricing" className="ss-nav-link">Цена</a>
-            <a href="#faq" className="ss-nav-link">Помощь</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 1.6vw, 24px)', fontSize: 14, flexWrap: 'nowrap', minWidth: 0 }}>
+            <a href="#examples" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Примеры</a>
+            <a href="#pricing" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Цена</a>
+            <a href="#faq" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Помощь</a>
             <a href="#login" className="ss-login-link" style={{
-              fontWeight: 500, fontSize: 14, padding: '8px 16px',
+              fontWeight: 500, fontSize: 14, padding: '8px 16px', whiteSpace: 'nowrap',
             }}>Войти</a>
             <a href="#hero" style={primaryStyle}>{primaryLabel} <span aria-hidden="true">→</span></a>
           </div>
