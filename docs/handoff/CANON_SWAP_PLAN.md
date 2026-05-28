@@ -20,31 +20,59 @@
 | Customer-site Jinja → React-canon SSR | `CustomerSite` | rendered server-side per master into S3 at publish time | **Published customer-sites stop refreshing** | ⏸ feasible but ~3 days backend lift, not blocking |
 | ~~Phase 6 — Intake 3→2 steps~~ | ~~n/a~~ | ~~live TG-source submissions still use 3-step + /api/tg-bot-personal-status polling~~ | — | ✅ resolved via canon 0.3.0 refresh — endpoints removed, flow restructured to link/photo branches |
 
-## 490 vs 990 ₽ — known frontend-only promise
+## Pricing model — frontend 5-tier vs backend single-plan (canon 0.7.1)
 
-Canon 0.6.0 introduces «990 ₽/мес · для первой сотни 490 ₽ навсегда» as
-a cohort-discount promise in Hero microcopy + FinalCta. Backend ЮKassa
-is still configured at 99000 копеек (990 ₽) per
-`docs/runbooks/yookassa-pricing-update.md`. Frontend ships the promise;
-backend enforcement of the "первая сотня" cohort is **out of scope** of
-the canon 0.6.0 vendoring PRs (#152-#153) per explicit decision during
-the night-run handoff.
+> Supersedes the old «490 vs 990» note. Canon 0.7.1 dropped the
+> single-plan «990 ₽ / для первой сотни 490 ₽ навсегда» model entirely
+> and replaced it with a **5-tier `PricingMatrix`**.
+
+Canon 0.7.1 landing now shows, consistently across Hero + `PricingMatrix`
++ `FinalCtaSection`:
+
+| Plan | Price/mo |
+|---|---|
+| Старт | 0 ₽ (бесплатно навсегда) |
+| Личный | 690 ₽ |
+| Бизнес | 1 490 ₽ |
+| Компания | 2 990 ₽ |
+| Студия | 6 990 ₽ |
+
+First month free on any paid plan, no card required. Vitrina's
+hand-rolled `Hero.tsx` `CTA_MICROCOPY` is synced to this (PR vendoring
+0.7.1).
+
+**Backend reality:** ЮKassa is still configured single-plan at 99000
+копеек (990 ₽) per `docs/runbooks/yookassa-pricing-update.md`. So the
+**entire 5-tier model is frontend-only** — there is no backend that can
+charge 690 / 1490 / 2990 / 6990, and no plan-selection flow. This is a
+deliberate, documented gap: canon 0.7.1 ships landing copy + composition
+only; per-plan billing is a backend task explicitly out of scope of the
+canon release (CHANGELOG 0.7.1 §«Backend / data»).
 
 **What this means operationally:**
 
-- For the first ~100 paying users, founder must manually adjust their
-  charged amount in ЮKassa dashboard OR honor the discount as a manual
-  refund after billing.
-- After cohort cap (100 paid signups), refresh canon to a copy that
-  drops the discount line, OR ship backend cohort enforcement.
-- Until ship a tracker (`users.cohort_discount_eligible` flag +
-  ЮKassa amount override per-user) — keep the manual workaround.
+- The landing advertises 4 paid tiers the billing system cannot yet
+  enact. Until backend ships plan-aware ЮKassa products + a
+  plan-selection step, any paid signup resolves to the single 990 ₽
+  plan — founder reconciles manually.
+- Treat the matrix as **marketing/positioning** until the backend epic
+  lands. Do not wire the «Собрать сайт» CTA to a specific plan.
 
-**Future swap to canon-side dynamic pricing:** when canon ships
-`PricingSection` with a `discountedAmount?: number` prop AND backend
-endpoint `/api/me/pricing` returns per-user pricing, switch the
-frontend microcopy to a server-rendered value. Until then, the canon
-0.6.0 string is hard-coded into the visual.
+**Backend epic to close the gap (canon 0.7.1 §«Backend / data»):**
+
+1. Per-site `preset: { themeId, familyId }` storage (varchar 32 each)
+   + `PATCH /api/sites/{id}/preset`.
+2. Plan-aware ЮKassa products (5 plans) + a plan field on `users`.
+3. `/api/me/pricing` (or similar) returning the effective plan/price;
+   then switch Hero microcopy + the matrix to server-rendered values
+   instead of hard-coded canon strings.
+
+**Preset persistence (also out of patch):** canon 0.7.1 introduces the
+preset architecture (`@samosite/canon/presets`) but the consumer side
+only renders the example carousel. Storing a customer's chosen preset
+and re-rendering their `*.samosite.online` site through `PresetRenderer`
+is the customer-SSR swap (see «Customer-site» surface above), unchanged
+by 0.7.1.
 
 ## Why canon-side variants are «read-only»
 

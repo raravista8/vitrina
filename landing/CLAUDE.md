@@ -20,7 +20,7 @@
 
 Per `docs/handoff/VISUAL_COVERAGE.md` and `landing/app/page.tsx`:
 
-- `landing/app/page.tsx` — 10 sections via `<ResponsiveCanonSection>` (canon 0.6.0 v3 narrative: Examples → Cycle → Monday → BaseWork → Sources → Ownership → Analytics → Pricing → FAQ → FinalCta), each renders BOTH mobile and desktop variants, CSS media query picks one
+- `landing/app/page.tsx` — 10 sections via `<ResponsiveCanonSection>` (canon 0.7.1 v3 narrative: Examples → Cycle → Monday → BaseWork → Sources → Ownership → Analytics → Pricing → FAQ → FinalCta), each renders BOTH mobile and desktop variants, CSS media query picks one. canon 0.7.1: `ExamplesSection` is now a 10-card preset carousel + «Как ИИ подбирает стиль» block; `PricingSection` is a 5-tier `PricingMatrix`. The new `@samosite/canon/presets` module (`PresetRenderer`, 5 families × 16 themes) is bundled into the landing chunk via canon's internal `../presets` import — we don't import `@samosite/canon/presets` directly (no prod consumer yet)
 - `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`
 - `landing/app/admin-demo/page.tsx` — `<ClientAdminDemo />` drop-in (PR #122)
 - `landing/app/customer-demo/page.tsx` — customer-site palette preview through canon (PR #124)

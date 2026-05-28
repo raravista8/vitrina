@@ -1,0 +1,1477 @@
+// src/presets/index.tsx
+import React from "react";
+
+// src/tokens.ts
+var VT = {
+  // Surfaces
+  bg: "oklch(0.972 0.012 80)",
+  bgSoft: "oklch(0.945 0.014 75)",
+  white: "#ffffff",
+  // Ink
+  ink: "oklch(0.215 0.018 60)",
+  inkSoft: "oklch(0.42 0.020 60)",
+  inkFaint: "oklch(0.56 0.020 60)",
+  inkMuted: "oklch(0.68 0.016 60)",
+  // Lines
+  line: "oklch(0.88 0.012 70)",
+  lineSoft: "oklch(0.93 0.010 70)",
+  // Accent — terracotta
+  accent: "oklch(0.605 0.155 35)",
+  accentHover: "oklch(0.54 0.16 35)",
+  accentSoft: "oklch(0.92 0.045 40)",
+  accentInk: "oklch(0.42 0.14 35)",
+  // Semantic
+  success: "oklch(0.58 0.13 145)",
+  successSoft: "oklch(0.93 0.05 145)",
+  info: "oklch(0.62 0.10 240)",
+  infoSoft: "oklch(0.93 0.035 240)",
+  warn: "oklch(0.66 0.14 70)",
+  warnSoft: "oklch(0.94 0.06 80)",
+  danger: "oklch(0.55 0.18 28)",
+  dangerSoft: "oklch(0.93 0.055 28)",
+  r: { sm: 6, md: 10, lg: 14, xl: 18, pill: 999 },
+  shadow: {
+    card: "0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)",
+    pop: "0 18px 40px -16px rgba(120,60,30,0.25)"
+  },
+  font: {
+    sans: "Onest, system-ui, -apple-system, sans-serif",
+    mono: "'JetBrains Mono', ui-monospace, monospace"
+  }
+};
+var BRAND = {
+  name: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442",
+  domain: "samosite.online",
+  bot: "@SamositeIntakeBot",
+  contactBot: "@SamositeBot"
+};
+var tokens = {
+  color: {
+    accent: VT.accent,
+    accentSoft: VT.accentSoft,
+    accentInk: VT.accentInk,
+    accentHover: VT.accentHover,
+    ink: VT.ink,
+    inkSoft: VT.inkSoft,
+    inkFaint: VT.inkFaint,
+    inkMuted: VT.inkMuted,
+    line: VT.line,
+    lineSoft: VT.lineSoft,
+    bg: VT.bg,
+    bgSoft: VT.bgSoft,
+    white: VT.white,
+    success: VT.success,
+    successSoft: VT.successSoft,
+    info: VT.info,
+    infoSoft: VT.infoSoft,
+    warn: VT.warn,
+    warnSoft: VT.warnSoft,
+    danger: VT.danger,
+    dangerSoft: VT.dangerSoft
+  },
+  font: VT.font,
+  shadow: VT.shadow,
+  radius: { sm: 10, md: 14, lg: 18, xl: 22, "2xl": 28, full: 999 }
+};
+
+// src/presets/index.tsx
+import { jsx, jsxs } from "react/jsx-runtime";
+var editorialWarm = {
+  id: "editorial-warm",
+  family: "editorial",
+  spectrum: "bold",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u043A\u043B\u0430\u0441\u0441\u0438\u043A\u0430",
+  colors: {
+    bg: "#FAF6F0",
+    bgAlt: "#F2E6D2",
+    ink: "#211C17",
+    inkSoft: "#5C5048",
+    inkFaint: "#897C6E",
+    line: "#211C17",
+    lineSoft: "#D3C7B0",
+    accent: "#A8412E",
+    accentSoft: "rgba(168,65,46,0.10)",
+    accentInk: "#FAF6F0",
+    invBg: "#211C17",
+    invInk: "#FAF6F0",
+    invAccent: "#D9A441",
+    invInkSoft: "#B5A98F"
+  },
+  fonts: {
+    display: "'Fraunces', Georgia, serif",
+    body: "'Inter', system-ui, sans-serif",
+    mono: "'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: true }
+};
+var editorialNoir = {
+  id: "editorial-noir",
+  family: "editorial",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0437\u043E\u043B\u043E\u0442\u043E",
+  colors: {
+    bg: "#14110D",
+    bgAlt: "#211C16",
+    ink: "#EFE7D6",
+    inkSoft: "#9A8F79",
+    inkFaint: "#6B6354",
+    line: "#EFE7D6",
+    lineSoft: "#34301F",
+    accent: "#D4A24E",
+    accentSoft: "rgba(212,162,78,0.14)",
+    accentInk: "#14110D",
+    invBg: "#D4A24E",
+    invInk: "#14110D",
+    invAccent: "#14110D",
+    invInkSoft: "#6B4F1E"
+  },
+  fonts: {
+    display: "'Fraunces', Georgia, serif",
+    body: "'Inter', system-ui, sans-serif",
+    mono: "'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: true, photoFilter: "contrast(1.05) saturate(0.85)" }
+};
+var editorialMono = {
+  id: "editorial-mono",
+  family: "editorial",
+  spectrum: "bold",
+  label: "\u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F \xB7 teal",
+  colors: {
+    bg: "#ECEAE5",
+    bgAlt: "#DEDBD3",
+    ink: "#15211E",
+    inkSoft: "#52605C",
+    inkFaint: "#84908B",
+    line: "#15211E",
+    lineSoft: "#B8B5AD",
+    accent: "#356E60",
+    accentSoft: "rgba(53,110,96,0.12)",
+    accentInk: "#F4F2EC",
+    invBg: "#15211E",
+    invInk: "#ECEAE5",
+    invAccent: "#7FB3A4",
+    invInkSoft: "#5E6B66"
+  },
+  fonts: {
+    display: "'Geist Mono', 'JetBrains Mono', monospace",
+    body: "'Geist Mono', 'JetBrains Mono', monospace",
+    mono: "'Geist Mono', 'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: false, dropCap: true, photoFilter: "grayscale(0.6) contrast(1.1)" }
+};
+var bentoNoir = {
+  id: "bento-noir",
+  family: "bento",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0433\u0440\u0430\u0444\u0438\u0442",
+  colors: {
+    bg: "#0E0F10",
+    bgAlt: "#17191B",
+    ink: "#F2F0EC",
+    inkSoft: "#9A9B98",
+    inkFaint: "#6B6D6B",
+    line: "#262A2C",
+    lineSoft: "#1E2123",
+    accent: "#C2D94A",
+    accentSoft: "rgba(194,217,74,0.14)",
+    accentInk: "#0E0F10",
+    invBg: "#F2F0EC",
+    invInk: "#0E0F10",
+    invAccent: "#0E0F10",
+    invInkSoft: "#5C5E5C"
+  },
+  fonts: { display: "'Space Grotesk', sans-serif", body: "'Space Grotesk', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 10, photo: 14, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var bentoLight = {
+  id: "bento-light",
+  family: "bento",
+  spectrum: "classic",
+  label: "\u0441\u0432\u0435\u0442\u043B\u0430\u044F \xB7 \u0441\u0442\u0430\u043B\u044C",
+  colors: {
+    bg: "#EFF1F4",
+    bgAlt: "#FFFFFF",
+    ink: "#16202E",
+    inkSoft: "#5A6678",
+    inkFaint: "#95A0AF",
+    line: "#E0E4EA",
+    lineSoft: "#ECEFF3",
+    accent: "#2D5B8E",
+    accentSoft: "rgba(45,91,142,0.10)",
+    accentInk: "#FFFFFF",
+    invBg: "#16202E",
+    invInk: "#FFFFFF",
+    invAccent: "#7FA8D9",
+    invInkSoft: "#6B7787"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 16, btn: 8, photo: 16, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var bentoClay = {
+  id: "bento-clay",
+  family: "bento",
+  spectrum: "soft",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u0433\u043B\u0438\u043D\u0430",
+  colors: {
+    bg: "#EDE6DB",
+    bgAlt: "#F7F2E9",
+    ink: "#2A211A",
+    inkSoft: "#5C5048",
+    inkFaint: "#8A7C6C",
+    line: "#DBD2C3",
+    lineSoft: "#E5DDD0",
+    accent: "#B56A43",
+    accentSoft: "rgba(181,106,67,0.12)",
+    accentInk: "#F7F2E9",
+    invBg: "#2A211A",
+    invInk: "#F7F2E9",
+    invAccent: "#D9A441",
+    invInkSoft: "#8A7C6C"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 18, btn: 999, photo: 18, mark: 10 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var displaySoft = {
+  id: "display-soft",
+  family: "display",
+  spectrum: "soft",
+  label: "\u0440\u043E\u0437\u043E\u0432\u0430\u044F \xB7 \u0431\u044C\u044E\u0442\u0438",
+  colors: {
+    bg: "#F6E7E3",
+    bgAlt: "#FBF3F1",
+    ink: "#2A1820",
+    inkSoft: "#6B4A52",
+    inkFaint: "#9C7B82",
+    line: "#E8CFC9",
+    lineSoft: "#F0DED9",
+    accent: "#8C4A52",
+    accentSoft: "rgba(140,74,82,0.10)",
+    accentInk: "#F6E7E3",
+    invBg: "#2A1820",
+    invInk: "#F6E7E3",
+    invAccent: "#D99CA0",
+    invInkSoft: "#8C6168"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 10, btn: 999, photo: 10, mark: 6 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false }
+};
+var displayBold = {
+  id: "display-bold",
+  family: "display",
+  spectrum: "bold",
+  label: "\u043C\u044F\u0442\u043D\u0430\u044F \xB7 \u0441\u043C\u0435\u043B\u0430\u044F",
+  colors: {
+    bg: "#D6EDE3",
+    bgAlt: "#E6F4EC",
+    ink: "#10211B",
+    inkSoft: "#3C544A",
+    inkFaint: "#6B8276",
+    line: "#B6D8C9",
+    lineSoft: "#C8E2D6",
+    accent: "#13231D",
+    accentSoft: "rgba(16,33,27,0.08)",
+    accentInk: "#D6EDE3",
+    invBg: "#10211B",
+    invInk: "#D6EDE3",
+    invAccent: "#9FD9C0",
+    invInkSoft: "#5C7368"
+  },
+  fonts: { display: "'Fraunces', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: false }
+};
+var displayNoir = {
+  id: "display-noir",
+  family: "display",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0437\u043E\u043B\u043E\u0442\u043E",
+  colors: {
+    bg: "#141210",
+    bgAlt: "#201D19",
+    ink: "#EFE9DD",
+    inkSoft: "#9A9082",
+    inkFaint: "#6B645A",
+    line: "#322D27",
+    lineSoft: "#262320",
+    accent: "#D9B36A",
+    accentSoft: "rgba(217,179,106,0.14)",
+    accentInk: "#141210",
+    invBg: "#D9B36A",
+    invInk: "#141210",
+    invAccent: "#141210",
+    invInkSoft: "#6B5630"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 4, btn: 4, photo: 4, mark: 2 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false, photoFilter: "saturate(0.85) contrast(1.05)" }
+};
+var displayInk = {
+  id: "display-ink",
+  family: "display",
+  spectrum: "dark",
+  label: "\u0433\u0440\u0430\u0444\u0438\u0442 \xB7 \u043A\u043E\u0441\u0442\u044C",
+  colors: {
+    bg: "#100F0E",
+    bgAlt: "#1A1917",
+    ink: "#ECE7DF",
+    inkSoft: "#8E8780",
+    inkFaint: "#605A53",
+    line: "#2A2825",
+    lineSoft: "#201E1C",
+    accent: "#C9C2B6",
+    accentSoft: "rgba(201,194,182,0.12)",
+    accentInk: "#100F0E",
+    invBg: "#ECE7DF",
+    invInk: "#100F0E",
+    invAccent: "#100F0E",
+    invInkSoft: "#7A746C"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 3, btn: 3, photo: 3, mark: 2 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false, photoFilter: "grayscale(0.35) contrast(1.08)" }
+};
+var splitProduct = {
+  id: "split-product",
+  family: "split",
+  spectrum: "classic",
+  label: "\u043F\u0440\u043E\u0434\u0443\u043A\u0442\u043E\u0432\u0430\u044F \xB7 \u0441\u0438\u043D\u044F\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#F5F7FA",
+    ink: "#12233B",
+    inkSoft: "#4F6178",
+    inkFaint: "#93A1B3",
+    line: "#E3E9F0",
+    lineSoft: "#EEF2F6",
+    accent: "#244A8E",
+    accentSoft: "rgba(36,74,142,0.08)",
+    accentInk: "#FFFFFF",
+    invBg: "#12233B",
+    invInk: "#FFFFFF",
+    invAccent: "#82A9DC",
+    invInkSoft: "#6A7A8E"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 12, btn: 8, photo: 12, mark: 6 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var splitClay = {
+  id: "split-clay",
+  family: "split",
+  spectrum: "soft",
+  label: "\u0437\u0435\u043C\u043B\u044F\u043D\u0430\u044F \xB7 \u043E\u043B\u0438\u0432\u0430",
+  colors: {
+    bg: "#EFE8DA",
+    bgAlt: "#E3D9C5",
+    ink: "#2A2116",
+    inkSoft: "#5C4F3A",
+    inkFaint: "#8A7B5E",
+    line: "#D7CBB2",
+    lineSoft: "#E2D8C4",
+    accent: "#6E713F",
+    accentSoft: "rgba(110,113,63,0.12)",
+    accentInk: "#EFE8DA",
+    invBg: "#2A2116",
+    invInk: "#EFE8DA",
+    invAccent: "#A8AB6F",
+    invInkSoft: "#8A7B5E"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 999, photo: 14, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false, photoFilter: "saturate(0.95) sepia(0.05)" }
+};
+var splitTeal = {
+  id: "split-teal",
+  family: "split",
+  spectrum: "bold",
+  label: "\u0431\u0438\u0440\u044E\u0437\u043E\u0432\u0430\u044F \xB7 \u0441\u043C\u0435\u043B\u0430\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#EAF6F4",
+    ink: "#0E2422",
+    inkSoft: "#3F5C58",
+    inkFaint: "#7D9794",
+    line: "#D2E6E2",
+    lineSoft: "#E6F2F0",
+    accent: "#127068",
+    accentSoft: "rgba(18,112,104,0.10)",
+    accentInk: "#FFFFFF",
+    invBg: "#0E2422",
+    invInk: "#EAF6F4",
+    invAccent: "#5FB8AC",
+    invInkSoft: "#5C7672"
+  },
+  fonts: { display: "'Space Grotesk', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 6, btn: 6, photo: 6, mark: 4 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var stackedCorporate = {
+  id: "stacked-corporate",
+  family: "stacked",
+  spectrum: "classic",
+  label: "\u0434\u0435\u043B\u043E\u0432\u0430\u044F \xB7 \u0441\u0438\u043D\u0435-\u0441\u0435\u0440\u0430\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#F4F6F8",
+    ink: "#1C2A39",
+    inkSoft: "#5B6A7B",
+    inkFaint: "#95A2B0",
+    line: "#E4E9EE",
+    lineSoft: "#EFF2F5",
+    accent: "#1C2A39",
+    accentSoft: "#EEF1F4",
+    accentInk: "#FFFFFF",
+    invBg: "#1C2A39",
+    invInk: "#FFFFFF",
+    invAccent: "#8CA3BC",
+    invInkSoft: "#6B7888"
+  },
+  fonts: { display: "'Inter', sans-serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 12, btn: 8, photo: 12, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var stackedCream = {
+  id: "stacked-cream",
+  family: "stacked",
+  spectrum: "soft",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u043E\u0445\u0440\u0430",
+  colors: {
+    bg: "#FAF5EC",
+    bgAlt: "#FFFFFF",
+    ink: "#2A2118",
+    inkSoft: "#5C5040",
+    inkFaint: "#8A7C66",
+    line: "#E8DECB",
+    lineSoft: "#F0E8D8",
+    accent: "#A8631F",
+    accentSoft: "rgba(168,99,31,0.10)",
+    accentInk: "#FAF5EC",
+    invBg: "#2A2118",
+    invInk: "#FAF5EC",
+    invAccent: "#D9A441",
+    invInkSoft: "#8A7C66"
+  },
+  fonts: { display: "'Fraunces', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 999, photo: 14, mark: 8 },
+  voice: { displayWeight: 500, italicAccent: false, dropCap: false, photoFilter: "sepia(0.05) saturate(0.95)" }
+};
+var stackedSlate = {
+  id: "stacked-slate",
+  family: "stacked",
+  spectrum: "bold",
+  label: "\u0433\u0440\u0430\u0444\u0438\u0442 \xB7 \u0430\u043A\u0446\u0435\u043D\u0442",
+  colors: {
+    bg: "#FBFBFA",
+    bgAlt: "#F2F2F0",
+    ink: "#1A1A1A",
+    inkSoft: "#4F4F4D",
+    inkFaint: "#8A8A86",
+    line: "#E4E4E0",
+    lineSoft: "#EEEEEB",
+    accent: "#C24E2E",
+    accentSoft: "rgba(194,78,46,0.10)",
+    accentInk: "#FBFBFA",
+    invBg: "#1A1A1A",
+    invInk: "#FBFBFA",
+    invAccent: "#E08A5C",
+    invInkSoft: "#6B6B68"
+  },
+  fonts: { display: "'Inter', sans-serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 10, btn: 6, photo: 10, mark: 6 },
+  voice: { displayWeight: 800, italicAccent: false, dropCap: false }
+};
+var themes = {
+  [editorialWarm.id]: editorialWarm,
+  [editorialNoir.id]: editorialNoir,
+  [editorialMono.id]: editorialMono,
+  [bentoNoir.id]: bentoNoir,
+  [bentoLight.id]: bentoLight,
+  [bentoClay.id]: bentoClay,
+  [displaySoft.id]: displaySoft,
+  [displayBold.id]: displayBold,
+  [displayNoir.id]: displayNoir,
+  [displayInk.id]: displayInk,
+  [splitProduct.id]: splitProduct,
+  [splitClay.id]: splitClay,
+  [splitTeal.id]: splitTeal,
+  [stackedCorporate.id]: stackedCorporate,
+  [stackedCream.id]: stackedCream,
+  [stackedSlate.id]: stackedSlate
+};
+function getTheme(themeId) {
+  const t = themes[themeId];
+  if (!t) throw new Error(`@samosite/canon/presets: unknown themeId "${themeId}"`);
+  return t;
+}
+function EditorialFamily({ theme, content }) {
+  const c = theme.colors;
+  const f = theme.fonts;
+  const r = theme.radii;
+  const v = theme.voice;
+  const withEm = (text) => {
+    const parts = text.split(/\[\[(.+?)\]\]/g);
+    return parts.map(
+      (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: {
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        color: c.accent,
+        fontWeight: v.displayWeight
+      }, children: p }, i)
+    );
+  };
+  const hr = { borderBottom: `1px solid ${c.line}` };
+  return /* @__PURE__ */ jsxs("div", { style: {
+    background: c.bg,
+    color: c.ink,
+    fontFamily: f.body,
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    fontVariantNumeric: "tabular-nums"
+  }, children: [
+    /* @__PURE__ */ jsxs("header", { style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "13px 16px 11px",
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsx("div", { style: {
+        fontFamily: f.display,
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        fontSize: 15,
+        fontWeight: v.displayWeight,
+        letterSpacing: "-0.01em",
+        color: c.ink
+      }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx("a", { style: {
+        background: c.accent,
+        color: c.accentInk,
+        padding: "6px 12px",
+        fontFamily: f.mono,
+        fontSize: 9,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        borderRadius: r.btn,
+        cursor: "pointer"
+      }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "9px 16px",
+      fontFamily: f.mono,
+      fontSize: 9,
+      color: c.inkSoft,
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsxs("span", { children: [
+        "\u0441 ",
+        content.meta.since
+      ] }),
+      /* @__PURE__ */ jsxs("span", { children: [
+        "\u2605\u2605\u2605\u2605\u2605 ",
+        content.meta.rating
+      ] }),
+      /* @__PURE__ */ jsxs("span", { children: [
+        content.meta.reviewsN,
+        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx("section", { style: { padding: "16px 16px 18px", ...hr }, children: /* @__PURE__ */ jsx("h1", { style: {
+      fontFamily: f.display,
+      fontSize: 34,
+      fontWeight: v.displayWeight,
+      lineHeight: 0.94,
+      letterSpacing: "-0.025em",
+      color: c.ink,
+      margin: 0
+    }, children: content.hero.headingLines.map((line, i) => /* @__PURE__ */ jsxs(React.Fragment, { children: [
+      withEm(line),
+      i < content.hero.headingLines.length - 1 && /* @__PURE__ */ jsx("br", {})
+    ] }, i)) }) }),
+    content.hero.leadParagraph && /* @__PURE__ */ jsxs("div", { style: { padding: "14px 16px", ...hr }, children: [
+      v.dropCap && /* @__PURE__ */ jsx("span", { style: {
+        fontFamily: f.display,
+        fontSize: 44,
+        fontWeight: v.displayWeight,
+        float: "left",
+        lineHeight: 0.85,
+        margin: "4px 8px 0 0",
+        color: c.accent
+      }, children: content.hero.leadParagraph[0] }),
+      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.55, color: c.ink, margin: 0 }, children: v.dropCap ? content.hero.leadParagraph.slice(1) : content.hero.leadParagraph })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { aspectRatio: "4 / 3", overflow: "hidden", position: "relative", ...hr }, children: [
+      /* @__PURE__ */ jsx(
+        "img",
+        {
+          src: content.hero.photoSrc,
+          alt: "",
+          loading: "lazy",
+          style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" }
+        }
+      ),
+      content.hero.photoCaption && /* @__PURE__ */ jsx("div", { style: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: "5px 10px",
+        background: c.bg,
+        fontFamily: f.mono,
+        fontSize: 9,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.05em",
+        borderTop: `1px solid ${c.line}`
+      }, children: content.hero.photoCaption })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: {
+      padding: "12px 16px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsxs("a", { style: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: c.accent,
+        color: c.accentInk,
+        padding: "13px 16px",
+        borderRadius: r.btn,
+        fontSize: 13,
+        fontWeight: 700,
+        letterSpacing: "0.04em",
+        textTransform: "uppercase",
+        cursor: "pointer"
+      }, children: [
+        content.cta.primary.label,
+        /* @__PURE__ */ jsx("span", { style: {
+          fontFamily: f.display,
+          fontSize: 22,
+          fontStyle: v.italicAccent ? "italic" : "normal"
+        }, children: "\u2192" })
+      ] }),
+      content.cta.phone && /* @__PURE__ */ jsx("a", { style: {
+        textAlign: "center",
+        padding: "10px 16px",
+        border: `1px solid ${c.ink}`,
+        borderRadius: r.btn,
+        fontSize: 12,
+        fontFamily: f.mono,
+        letterSpacing: "0.05em",
+        color: c.ink,
+        cursor: "pointer"
+      }, children: content.cta.phone })
+    ] }),
+    /* @__PURE__ */ jsx("div", { style: {
+      display: "grid",
+      gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
+      ...hr
+    }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs("div", { style: {
+      padding: "12px 8px",
+      textAlign: "center",
+      borderRight: i < content.stats.length - 1 ? `1px solid ${c.line}` : void 0
+    }, children: [
+      /* @__PURE__ */ jsxs("div", { style: {
+        fontFamily: f.display,
+        fontSize: 22,
+        fontWeight: v.displayWeight,
+        color: c.accent,
+        lineHeight: 1,
+        marginBottom: 3
+      }, children: [
+        s.num,
+        s.unit && /* @__PURE__ */ jsx("span", { style: { fontSize: 12, color: c.inkSoft }, children: s.unit })
+      ] }),
+      /* @__PURE__ */ jsx("div", { style: {
+        fontFamily: f.mono,
+        fontSize: 8,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em"
+      }, children: s.label })
+    ] }, i)) }),
+    content.menu && /* @__PURE__ */ jsxs("section", { style: { padding: "18px 16px", ...hr }, children: [
+      /* @__PURE__ */ jsxs("div", { style: {
+        fontFamily: f.mono,
+        fontSize: 9,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        marginBottom: 10,
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }, children: [
+        /* @__PURE__ */ jsx("span", { style: { height: 1, background: c.inkSoft, flex: 1 } }),
+        content.menu.eyebrow,
+        /* @__PURE__ */ jsx("span", { style: { height: 1, background: c.inkSoft, flex: 1 } })
+      ] }),
+      /* @__PURE__ */ jsx("h3", { style: {
+        fontFamily: f.display,
+        fontSize: 20,
+        fontWeight: v.displayWeight,
+        lineHeight: 1,
+        letterSpacing: "-0.015em",
+        marginBottom: 12,
+        color: c.ink
+      }, children: withEm(content.menu.title) }),
+      content.menu.items.slice(0, 3).map((it, i, arr) => /* @__PURE__ */ jsxs("div", { style: {
+        display: "grid",
+        gridTemplateColumns: "auto 1fr auto",
+        gap: 10,
+        alignItems: "baseline",
+        padding: "9px 0",
+        borderBottom: i < arr.length - 1 ? `1px dotted ${c.lineSoft}` : void 0
+      }, children: [
+        /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.accent }, children: it.num }),
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: v.displayWeight, color: c.ink }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx("span", { style: {
+          fontFamily: f.display,
+          fontStyle: v.italicAccent ? "italic" : "normal",
+          fontSize: 14,
+          color: c.ink
+        }, children: it.price })
+      ] }, i))
+    ] }),
+    /* @__PURE__ */ jsxs("section", { style: { padding: "14px 16px", ...hr }, children: [
+      /* @__PURE__ */ jsx("p", { style: {
+        fontFamily: f.display,
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        fontSize: 15,
+        lineHeight: 1.3,
+        margin: 0,
+        color: c.ink
+      }, children: content.quote.text.split(/\[\[(.+?)\]\]/g).map(
+        (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: { color: c.accent, fontStyle: "normal" }, children: p }, i)
+      ) }),
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.inkSoft, marginTop: 8 }, children: [
+        content.quote.authorName,
+        " \xB7 ",
+        content.quote.authorSource
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("footer", { style: {
+      padding: "11px 16px",
+      background: c.invBg,
+      color: c.invInk,
+      display: "flex",
+      justifyContent: "space-between",
+      fontFamily: f.mono,
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
+      opacity: 0.7
+    }, children: [
+      /* @__PURE__ */ jsx("span", { children: content.meta.address }),
+      /* @__PURE__ */ jsxs("span", { children: [
+        content.meta.host,
+        ".",
+        BRAND.domain
+      ] })
+    ] })
+  ] });
+}
+function renderEm(text, color, italic) {
+  return text.split(/\[\[(.+?)\]\]/g).map(
+    (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx("em", { style: { fontStyle: italic ? "italic" : "normal", color }, children: p }, i)
+  );
+}
+function BentoFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const card = {
+    background: c.bgAlt,
+    borderRadius: r.card,
+    padding: 14,
+    border: `1px solid ${c.line}`,
+    overflow: "hidden"
+  };
+  const label = {
+    fontFamily: f.mono,
+    fontSize: 9,
+    color: c.inkFaint,
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+    marginBottom: 8
+  };
+  const s = content.stats;
+  const m = content.menu;
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, padding: 14, fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, padding: "0 2px" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 8, fontFamily: f.display, fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em" }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 22, height: 22, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12 }, children: content.meta.brand[0] }),
+        content.meta.brand
+      ] }),
+      /* @__PURE__ */ jsxs("span", { style: { fontFamily: f.mono, fontSize: 10, color: c.inkSoft }, children: [
+        "\u2605 ",
+        content.meta.rating
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4", background: c.accent, color: c.accentInk, border: "none", padding: "20px 16px" }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.accent, padding: "5px 9px", borderRadius: 999, fontSize: 9, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14 }, children: [
+          /* @__PURE__ */ jsx("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
+          "\u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F"
+        ] }),
+        /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: 800, lineHeight: 0.96, letterSpacing: "-0.035em", margin: 0 }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx("div", { style: label, children: "\u0441\u0435\u0433\u043E\u0434\u043D\u044F" }),
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }, children: "14:00 \xB7 16:30" }),
+        /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: content.cta.primary.label.toLowerCase() })
+      ] }),
+      s[0] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx("div", { style: label, children: s[0].label }),
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+          s[0].num,
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[0].unit })
+        ] })
+      ] }),
+      s[1] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx("div", { style: label, children: s[1].label }),
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.accent }, children: [
+          s[1].num,
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[1].unit })
+        ] })
+      ] }),
+      s[2] && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx("div", { style: label, children: s[2].label }),
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+          s[2].num,
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[2].unit })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { style: { gridColumn: "span 4", borderRadius: r.card, overflow: "hidden", aspectRatio: "16/9" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", padding: "16px 18px" }, children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
+          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 10, color: c.invInkSoft, marginTop: 2 }, children: content.cta.phone })
+        ] }),
+        /* @__PURE__ */ jsx("span", { style: { width: 32, height: 32, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }, children: "\u2192" })
+      ] }),
+      m && /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4" }, children: [
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 12 }, children: m.title.replace(/\[\[|\]\]/g, "") }),
+        m.items.map((it, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0 }, children: [
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 12 }, children: it.name }),
+          /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 12, color: c.accent, fontWeight: 500 }, children: it.price })
+        ] }, i))
+      ] }),
+      /* @__PURE__ */ jsxs("div", { style: { ...card, gridColumn: "span 4" }, children: [
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 15, fontWeight: 500, marginBottom: 4 }, children: content.cta.phone }),
+        /* @__PURE__ */ jsxs("div", { style: { fontSize: 10, color: c.inkSoft }, children: [
+          content.meta.address,
+          " \xB7 ",
+          content.meta.host,
+          ".",
+          BRAND.domain
+        ] })
+      ] })
+    ] })
+  ] });
+}
+function DisplayFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const lines = content.hero.headingLines;
+  const m = content.menu;
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em" }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, background: c.accent, borderRadius: "50%" } }),
+        content.meta.brand
+      ] }),
+      /* @__PURE__ */ jsx("span", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "6px 12px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: content.cta.phone })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { style: { padding: "16px 18px 22px" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", fontFamily: f.mono, fontSize: 9, color: c.inkSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${c.line}` }, children: [
+        /* @__PURE__ */ jsxs("span", { children: [
+          "\u0441 ",
+          content.meta.since,
+          " \xB7 ",
+          content.meta.address
+        ] }),
+        /* @__PURE__ */ jsxs("span", { children: [
+          "\u2605\u2605\u2605\u2605\u2605 ",
+          content.meta.rating
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 60, fontWeight: v.displayWeight, lineHeight: 0.85, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((line, i) => /* @__PURE__ */ jsx("span", { style: {
+        display: "block",
+        color: i === 1 ? c.accent : c.ink,
+        fontStyle: i === 1 && v.italicAccent ? "italic" : "normal",
+        textIndent: i === 1 ? 20 : 0,
+        textAlign: i === 2 ? "right" : "left"
+      }, children: renderEm(line, c.accent, v.italicAccent) }, i)) }),
+      content.stats[0] && /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", marginTop: 18, paddingTop: 18, borderTop: `1px solid ${c.line}` }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 46, fontWeight: v.displayWeight, lineHeight: 0.85, color: c.accent, fontStyle: v.italicAccent ? "italic" : "normal", whiteSpace: "nowrap" }, children: [
+          content.stats[0].num,
+          /* @__PURE__ */ jsx("span", { style: { fontSize: 22 }, children: content.stats[0].unit })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { style: { fontSize: 13, lineHeight: 1.45, color: c.inkSoft }, children: [
+          /* @__PURE__ */ jsx("b", { style: { color: c.ink }, children: content.stats[0].label }),
+          /* @__PURE__ */ jsx("br", {}),
+          content.hero.leadParagraph?.split(".")[0],
+          "."
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 6, padding: "0 14px 18px" }, children: [
+      /* @__PURE__ */ jsx("div", { style: { gridColumn: "1 / 2", gridRow: "1 / 3", borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1" }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx("img", { src: content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx("img", { src: content.hero.gallery?.[1] ?? content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { padding: "0 14px 22px", display: "flex", flexDirection: "column", gap: 7 }, children: [
+      /* @__PURE__ */ jsxs("a", { style: { background: c.invBg, color: c.invInk, padding: 15, borderRadius: r.btn, textAlign: "center", fontSize: 12, fontWeight: 600, letterSpacing: "0.02em", cursor: "pointer" }, children: [
+        content.cta.primary.label,
+        " \u2192"
+      ] }),
+      /* @__PURE__ */ jsxs("a", { style: { padding: 12, border: `1px solid ${c.ink}`, borderRadius: r.btn, textAlign: "center", fontSize: 11, fontWeight: 500 }, children: [
+        content.meta.reviewsN,
+        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \xB7 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs("section", { style: { background: c.invBg, color: c.invInk, padding: "20px 18px" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invAccent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 20, height: 1, background: c.invAccent } }),
+        m.eyebrow
+      ] }),
+      m.items.slice(0, 2).map((it, i, arr) => /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "baseline", padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1.05 }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.invInkSoft, marginTop: 3 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, color: c.invAccent }, children: it.price })
+      ] }, i))
+    ] }),
+    /* @__PURE__ */ jsxs("footer", { style: { padding: 18, textAlign: "center", background: c.bg }, children: [
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, marginBottom: 6 }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.08em" }, children: content.meta.address })
+    ] })
+  ] });
+}
+function SplitFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.menu;
+  const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 15, fontWeight: 700, letterSpacing: "-0.02em" }, children: [
+        content.meta.brand,
+        /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "." })
+      ] }),
+      /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 14px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: content.cta.primary.label.split(" ")[0] })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx("div", { style: { aspectRatio: "4/3", overflow: "hidden", borderRight: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 14, background: c.bgAlt }, children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: c.accent, marginBottom: 8 }, children: content.meta.category }),
+          /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading })
+        ] }),
+        /* @__PURE__ */ jsx("p", { style: { fontSize: 11, lineHeight: 1.5, color: c.inkSoft, margin: 0 }, children: content.hero.leadParagraph?.slice(0, 110) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", background: c.invBg, color: c.invInk }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs("div", { style: { padding: "14px 10px", textAlign: "center", borderRight: i < content.stats.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.invAccent, marginBottom: 4 }, children: [
+        s.num,
+        /* @__PURE__ */ jsx("span", { style: { fontSize: 12 }, children: s.unit })
+      ] }),
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.75 }, children: s.label })
+    ] }, i)) }),
+    /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.accent, marginBottom: 8 }, children: "\u043A\u0430\u043A \u043C\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u043C" }),
+      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 17, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", margin: 0 }, children: content.quote.text.replace(/[«»"\[\]]/g, "") }),
+      /* @__PURE__ */ jsxs("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft, marginTop: 8 }, children: [
+        content.quote.authorName,
+        " \xB7 ",
+        content.quote.authorSource
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs("div", { style: { padding: "20px 14px", background: c.bgAlt, borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 14 }, children: m.eyebrow }),
+      /* @__PURE__ */ jsx("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: m.items.slice(0, 3).map((it, i) => /* @__PURE__ */ jsxs("div", { style: {
+        background: i === 1 ? c.accent : c.bg,
+        color: i === 1 ? c.accentInk : c.ink,
+        border: `1px solid ${i === 1 ? c.accent : c.line}`,
+        borderRadius: r.card,
+        padding: 14,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 12
+      }, children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: it.name }),
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 10, opacity: 0.8, marginTop: 2 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }, children: it.price })
+      ] }, i)) })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { style: { padding: "18px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.mono, fontSize: 13, fontWeight: 500 }, children: content.cta.phone }),
+        /* @__PURE__ */ jsx("div", { style: { fontSize: 10, color: c.inkSoft }, children: content.meta.address })
+      ] }),
+      /* @__PURE__ */ jsxs("a", { style: { background: c.invBg, color: c.invInk, padding: "11px 16px", borderRadius: r.btn, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }, children: [
+        content.cta.primary.label.split(" ")[0],
+        " \u2192"
+      ] })
+    ] })
+  ] });
+}
+function StackedFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.menu;
+  const cardBox = { background: c.bgAlt, border: `1px solid ${c.line}`, borderRadius: r.card };
+  const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
+  return /* @__PURE__ */ jsxs("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.015em" }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: "8px 14px", borderRadius: r.btn, fontSize: 12, fontWeight: 600 }, children: "\u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F" })
+    ] }),
+    /* @__PURE__ */ jsxs("section", { style: { padding: "18px 16px 20px" }, children: [
+      /* @__PURE__ */ jsxs("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 11, fontWeight: 500, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
+        content.meta.category,
+        " \xB7 ",
+        content.meta.address.split(",").pop()?.trim()
+      ] }),
+      /* @__PURE__ */ jsx("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: v.displayWeight, lineHeight: 1.05, letterSpacing: "-0.025em", margin: "0 0 10px" }, children: heading }),
+      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.5, color: c.inkSoft, marginBottom: 14 }, children: content.hero.leadParagraph }),
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", gap: 10, fontSize: 12, color: c.inkSoft, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }, children: [
+        /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" }),
+        /* @__PURE__ */ jsx("b", { children: content.meta.rating }),
+        /* @__PURE__ */ jsx("span", { style: { color: c.inkFaint }, children: "\xB7" }),
+        /* @__PURE__ */ jsxs("span", { children: [
+          content.meta.reviewsN,
+          " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
+        ] }),
+        /* @__PURE__ */ jsx("span", { style: { color: c.inkFaint }, children: "\xB7" }),
+        /* @__PURE__ */ jsxs("span", { children: [
+          "\u0441 ",
+          content.meta.since
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "16/10", marginBottom: 14 }, children: /* @__PURE__ */ jsx("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
+        /* @__PURE__ */ jsx("a", { style: { background: c.accent, color: c.accentInk, padding: 14, borderRadius: r.btn, textAlign: "center", fontSize: 14, fontWeight: 600 }, children: content.cta.primary.label }),
+        /* @__PURE__ */ jsx("a", { style: { padding: 12, border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 13 }, children: content.cta.phone })
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs("section", { style: { padding: "22px 16px", borderTop: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438 \u0446\u0435\u043D\u044B" }),
+      /* @__PURE__ */ jsx("p", { style: { fontSize: 11, color: c.inkSoft, marginBottom: 14 }, children: m.eyebrow }),
+      /* @__PURE__ */ jsx("div", { style: { ...cardBox, padding: 14 }, children: m.items.map((it, i) => /* @__PURE__ */ jsxs("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0, gap: 12 }, children: [
+        /* @__PURE__ */ jsxs("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx("div", { style: { fontSize: 11, color: c.inkSoft }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }, children: it.price })
+      ] }, i)) })
+    ] }),
+    /* @__PURE__ */ jsx("section", { style: { padding: "18px 16px", borderTop: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsxs("div", { style: { background: c.accentSoft, borderRadius: r.card, padding: "14px 16px" }, children: [
+      /* @__PURE__ */ jsx("p", { style: { fontSize: 13, lineHeight: 1.5, margin: 0, color: c.ink }, children: content.quote.text.replace(/\[\[|\]\]/g, "") }),
+      /* @__PURE__ */ jsxs("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 8, display: "flex", justifyContent: "space-between" }, children: [
+        /* @__PURE__ */ jsxs("span", { children: [
+          content.quote.authorName,
+          " \xB7 ",
+          content.quote.authorSource
+        ] }),
+        /* @__PURE__ */ jsx("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" })
+      ] })
+    ] }) })
+  ] });
+}
+var FAMILIES = {
+  editorial: EditorialFamily,
+  bento: BentoFamily,
+  display: DisplayFamily,
+  split: SplitFamily,
+  stacked: StackedFamily
+};
+function PresetRenderer({ preset, content }) {
+  const theme = getTheme(preset.themeId);
+  const Family = FAMILIES[preset.familyId] ?? FAMILIES.editorial;
+  if (theme.family !== preset.familyId) {
+    if (typeof console !== "undefined" && console.warn) {
+      console.warn(`[@samosite/canon] preset mismatch: theme "${theme.id}" is for family "${theme.family}", but preset.familyId is "${preset.familyId}"`);
+    }
+  }
+  return /* @__PURE__ */ jsx(Family, { theme, content });
+}
+function MiniChrome({ host, children }) {
+  return /* @__PURE__ */ jsxs("div", { style: {
+    overflow: "hidden",
+    borderRadius: 12,
+    border: `1px solid ${VT.lineSoft}`,
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    minWidth: 0,
+    height: "100%",
+    background: VT.white,
+    alignSelf: "flex-start"
+  }, children: [
+    /* @__PURE__ */ jsxs("div", { style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      padding: "7px 10px",
+      background: "#fff",
+      borderBottom: `1px solid ${VT.line}`,
+      flex: "0 0 auto"
+    }, children: [
+      /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsx("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsxs("span", { style: {
+        marginLeft: 10,
+        fontFamily: VT.font.mono,
+        fontSize: 11,
+        color: VT.inkFaint
+      }, children: [
+        host,
+        ".",
+        BRAND.domain
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx("div", { style: { flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }, children })
+  ] });
+}
+var EX_U = (id, w = 720) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+var fixtureCoffeeLena = {
+  meta: { brand: "\u0423\u0442\u0440\u043E \u0443 \u041B\u0435\u043D\u044B", host: "lena", category: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F", address: "\u041F\u043B\u0430\u0442\u043E\u043D\u043E\u0432\u0430 12, \u0412\u043E\u0440\u043E\u043D\u0435\u0436", since: "2019", rating: "4.9", reviewsN: 128 },
+  hero: {
+    headingLines: ["\u041A\u043E\u0444\u0435", "[[&]] \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u0438", "\u0441 07:30"],
+    leadParagraph: "\u041B\u0435\u043D\u0430 \u043E\u0431\u0436\u0430\u0440\u0438\u0432\u0430\u0435\u0442 \u0437\u0435\u0440\u043D\u043E \u0441\u0430\u043C\u0430, \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E. \u0410\u043B\u044C\u0442\u0435\u0440\u043D\u0430\u0442\u0438\u0432\u043D\u043E\u0435 \u043C\u043E\u043B\u043E\u043A\u043E \u0431\u0435\u0437 \u0434\u043E\u043F\u043B\u0430\u0442. \u0412\u044B\u043D\u043E\u0441 \u0437\u0430 \u0442\u0440\u0438 \u043C\u0438\u043D\u0443\u0442\u044B \u2014 \u0443\u0441\u043F\u0435\u0435\u0442\u0435 \u043D\u0430 \u0440\u0430\u0431\u043E\u0442\u0443.",
+    photoSrc: EX_U("photo-1495474472287-4d71bcdd2085", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0441\u0442\u043E\u0439\u043A\u0430, \u0447\u0435\u0442\u0432\u0435\u0440\u0433 08:14"
+  },
+  stats: [
+    { num: "07:30", label: "\u043E\u0442\u043A\u0440\u044B\u0442\u0438\u0435" },
+    { num: "3", unit: " \u043C\u0438\u043D", label: "\u0432\u044B\u043D\u043E\u0441" },
+    { num: "0 \u20BD", label: "\u0430\u043B\u044C\u0442.\u043C\u043E\u043B\u043E\u043A\u043E" }
+  ],
+  menu: {
+    eyebrow: "\u041C\u0435\u043D\u044E \u0443\u0442\u0440\u0430",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C]]",
+    items: [
+      { num: "01", name: "\u041A\u0430\u043F\u0443\u0447\u0438\u043D\u043E", desc: "250 \u043C\u043B \xB7 \u0430\u043B\u044C\u0442.\u043C\u043E\u043B\u043E\u043A\u043E \u0431\u0435\u0437 \u0434\u043E\u043F\u043B\u0430\u0442", price: "220 \u20BD" },
+      { num: "02", name: "\u0420\u0430\u0444 \u0432\u0430\u043D\u0438\u043B\u044C\u043D\u044B\u0439", desc: "300 \u043C\u043B \xB7 \u043D\u0430 \u0441\u043B\u0438\u0432\u043A\u0430\u0445", price: "280 \u20BD" },
+      { num: "03", name: "\u0421\u044B\u0440\u043D\u0438\u043A\u0438 \u0441\u043E \u0441\u043C\u0435\u0442\u0430\u043D\u043E\u0439", desc: "3 \u0448\u0442 \xB7 180 \u0433", price: "340 \u20BD" },
+      { num: "04", name: "\u0410\u0432\u043E\u043A\u0430\u0434\u043E-\u0442\u043E\u0441\u0442", desc: "\u0441 \u044F\u0439\u0446\u043E\u043C-\u043F\u0430\u0448\u043E\u0442", price: "390 \u20BD" }
+    ]
+  },
+  quote: { text: '\xAB\u0420\u0435\u0431\u044F\u0442\u0430 \u043F\u043E\u043C\u043D\u044F\u0442 \u043C\u043E\u0451 [["\u043A\u0430\u043A \u043E\u0431\u044B\u0447\u043D\u043E"]] \u0441 \u0442\u0440\u0435\u0442\u044C\u0435\u0433\u043E \u0440\u0430\u0437\u0430.\xBB', authorName: "\u0410\u043B\u0438\u043D\u0430 \u041A.", authorSource: "2\u0413\u0418\u0421", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u043A \u043F\u0440\u0438\u0445\u043E\u0434\u0443" }, phone: "+7 (900) 000-00-12" }
+};
+var fixtureBakeryDom = {
+  meta: { brand: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F \xAB\u0414\u043E\u043C\xBB", host: "dom-bakery", category: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F", address: "\u0411\u043E\u043B\u044C\u0448\u0430\u044F \u041A\u043E\u043D\u044E\u0448\u0435\u043D\u043D\u0430\u044F 9, \u041F\u0438\u0442\u0435\u0440", since: "2017", rating: "4.8", reviewsN: 246 },
+  hero: {
+    headingLines: ["\u0425\u043B\u0435\u0431", "\u043D\u0430 [[\u0437\u0430\u043A\u0432\u0430\u0441\u043A\u0435]]", "\u0434\u043E \u043F\u043E\u043B\u0443\u0434\u043D\u044F"],
+    leadParagraph: "\u041F\u0435\u0447\u0451\u043C \u0432 5 \u0443\u0442\u0440\u0430, \u0432\u044B\u043A\u043B\u0430\u0434\u044B\u0432\u0430\u0435\u043C \u043A 7. \u041F\u043E\u0441\u043B\u0435 12:00 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u2014 \u043B\u0443\u0447\u0448\u0435 \u0431\u0440\u0430\u0442\u044C \u0441 \u0443\u0442\u0440\u0430 \u0438\u043B\u0438 \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0430\u043A\u0430\u043D\u0443\u043D\u0435 \u0447\u0435\u0440\u0435\u0437 Telegram.",
+    photoSrc: EX_U("photo-1509440159596-0249088772ff", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043F\u0435\u0447\u044C, \u0441\u0440\u0435\u0434\u0430 06:30"
+  },
+  stats: [
+    { num: "05:00", label: "\u043D\u0430\u0447\u0430\u043B\u043E \u0432\u044B\u043F\u0435\u0447\u043A\u0438" },
+    { num: "18", label: "\u0432\u0438\u0434\u043E\u0432 \u0445\u043B\u0435\u0431\u0430" },
+    { num: "0 \u20BD", label: "\u0434\u0440\u043E\u0436\u0436\u0435\u0439" }
+  ],
+  menu: {
+    eyebrow: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F \u0432 \u043F\u0435\u0447\u043A\u0435",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u043D\u0430 \u0437\u0430\u0432\u0442\u0440\u0430]]",
+    items: [
+      { num: "01", name: "\u0411\u043E\u0440\u043E\u0434\u0438\u043D\u0441\u043A\u0438\u0439 \u043D\u0430 \u0437\u0430\u043A\u0432\u0430\u0441\u043A\u0435", desc: "500 \u0433 \xB7 \u0441 \u0442\u043C\u0438\u043D\u043E\u043C", price: "240 \u20BD" },
+      { num: "02", name: "\u0411\u0430\u0433\u0435\u0442 \u0444\u0435\u0440\u043C\u0435\u0440\u0441\u043A\u0438\u0439", desc: "320 \u0433 \xB7 \u0445\u0440\u0443\u0441\u0442\u044F\u0449\u0430\u044F \u043A\u043E\u0440\u043A\u0430", price: "180 \u20BD" },
+      { num: "03", name: "\u0427\u0438\u0430\u0431\u0430\u0442\u0442\u0430 \u043E\u043B\u0438\u0432\u043A\u043E\u0432\u0430\u044F", desc: "280 \u0433", price: "210 \u20BD" },
+      { num: "04", name: "\u0421\u043B\u043E\u0439\u043A\u0430 \u0441 \u044F\u0431\u043B\u043E\u043A\u043E\u043C", desc: "110 \u0433 \xB7 \u0434\u043E\u043C\u0430\u0448\u043D\u0435\u0435 \u0442\u0435\u0441\u0442\u043E", price: "120 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0425\u043B\u0435\u0431 \u043A\u0430\u043A \u0443 \u0431\u0430\u0431\u0443\u0448\u043A\u0438 \u0432 \u0434\u0435\u0440\u0435\u0432\u043D\u0435. [[\u041A\u043E\u0440\u043A\u0430 \u0442\u0430\u043A\u0430\u044F \u0436\u0435]], \u043D\u0435 \u043A\u0430\u043A \u0432 \u043C\u0430\u0433\u0430\u0437\u0438\u043D\u0435.\xBB", authorName: "\u041C\u0430\u0440\u0438\u044F \u0420.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "5 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u043A \u0443\u0442\u0440\u0443" }, phone: "+7 (900) 000-00-11" }
+};
+var fixtureAutoPark = {
+  meta: { brand: "Park \xB7 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441", host: "park-auto", category: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441", address: "\u041F\u0440\u043E\u043C\u044B\u0448\u043B\u0435\u043D\u043D\u0430\u044F 14, \u0421\u0430\u043C\u0430\u0440\u0430", since: "2013", rating: "4.8", reviewsN: 214 },
+  hero: {
+    headingLines: ["\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", "\u0437\u0430 [[30 \u043C\u0438\u043D\u0443\u0442]]", "\u0431\u0435\u0437 \u0441\u044E\u0440\u043F\u0440\u0438\u0437\u043E\u0432"],
+    leadParagraph: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0437\u0432\u043E\u043D\u043E\u043A \u0438 \u0440\u0430\u0441\u0447\u0451\u0442. \u041F\u043E\u0441\u043B\u0435 \xAB\u0434\u0430\xBB \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u043C \u2014 \u0431\u0435\u0437 \u0441\u044E\u0440\u043F\u0440\u0438\u0437\u043E\u0432 \u0432 \u0447\u0435\u043A\u0435. \u0421\u0435\u0433\u043E\u0434\u043D\u044F \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u044B \u043E\u043A\u043D\u0430 14:00 \u0438 16:30.",
+    photoSrc: EX_U("photo-1486262715619-67b85e0b08d3", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0431\u043E\u043A\u0441 \u21162, \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A"
+  },
+  stats: [
+    { num: "12", unit: " \u043B\u0435\u0442", label: "\u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u043C\u0435\u0441\u0442\u0435" },
+    { num: "4.8", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433 2\u0413\u0418\u0421" },
+    { num: "6 \u043C\u0435\u0441", label: "\u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441 \u0431\u0435\u0437 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A",
+    title: "\u0427\u0442\u043E [[\u0434\u0435\u043B\u0430\u0435\u043C]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", desc: "\u0445\u043E\u0434\u043E\u0432\u0430\u044F, \u0442\u043E\u0440\u043C\u043E\u0437\u0430, \u042D\u0411\u0423 \xB7 30 \u043C\u0438\u043D", price: "\u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" },
+      { num: "02", name: "\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430 + \u0444\u0438\u043B\u044C\u0442\u0440", desc: "\u043E\u0440\u0438\u0433\u0438\u043D\u0430\u043B \u0438\u043B\u0438 \u0430\u043D\u0430\u043B\u043E\u0433", price: "\u043E\u0442 1 200 \u20BD" },
+      { num: "03", name: "\u0422\u043E\u0440\u043C\u043E\u0437\u043D\u044B\u0435 \u043A\u043E\u043B\u043E\u0434\u043A\u0438", desc: "\u043F\u0435\u0440\u0435\u0434\u043D\u0438\u0435 / \u0437\u0430\u0434\u043D\u0438\u0435", price: "\u043E\u0442 2 800 \u20BD" },
+      { num: "04", name: "\u0420\u0430\u0437\u0432\u0430\u043B-\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", desc: "3D \xB7 \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F 6 \u043C\u0435\u0441", price: "\u043E\u0442 2 400 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438, \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438, \u0447\u0442\u043E \u0438 \u0437\u0430\u0447\u0435\u043C. [[\u041D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u0430\u043B\u0438]].\xBB", authorName: "\u0414\u043C\u0438\u0442\u0440\u0438\u0439 \u0412.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", authorWhen: "6 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0443" }, phone: "+7 (900) 000-00-08" }
+};
+var fixtureNailsAnna = {
+  meta: { brand: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B", host: "anna-nails", category: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", address: "\u041A\u0443\u0439\u0431\u044B\u0448\u0435\u0432\u0430 8, \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433", since: "2017", rating: "5.0", reviewsN: 86 },
+  hero: {
+    headingLines: ["\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439", "\u043C\u0430\u043D\u0438\u043A\u044E\u0440,", "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F [[3 \u043D\u0435\u0434\u0435\u043B\u0438]]"],
+    leadParagraph: "\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u043E\u0434\u043D\u0430 \u0410\u043D\u043D\u0430, \u043D\u0435 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440. \u0417\u0430\u043F\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 Telegram, \u0431\u0435\u0437 \u0437\u0432\u043E\u043D\u043A\u043E\u0432 \u0438 CRM. \u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 \u0434\u0432\u0430 \u043D\u043E\u0433\u0442\u044F \u0432 \u043F\u043E\u0434\u0430\u0440\u043E\u043A \u043F\u0440\u0438 \u043F\u0435\u0440\u0432\u043E\u043C \u0432\u0438\u0437\u0438\u0442\u0435.",
+    photoSrc: EX_U("photo-1604654894610-df63bc536371", 720),
+    gallery: [EX_U("photo-1610992015732-2449b76344bc", 480), EX_U("photo-1632345031435-8727f6897d53", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0440\u0430\u0431\u043E\u0442\u0430, \u0447\u0435\u0442\u0432\u0435\u0440\u0433"
+  },
+  stats: [
+    { num: "21", unit: " \u0434\u0435\u043D\u044C", label: "\u0441\u0440\u0435\u0434\u043D\u044F\u044F \u043D\u043E\u0441\u043A\u0430" },
+    { num: "5.0", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433" },
+    { num: "9", unit: " \u043B\u0435\u0442", label: "\u043E\u043F\u044B\u0442\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u0426\u0435\u043D\u044B \u0437\u0430 \u043C\u0430\u0439",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E]]",
+    items: [
+      { num: "01", name: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", desc: "\u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439, \u0431\u0435\u0440\u0435\u0436\u043D\u043E \xB7 1,5 \u0447", price: "2 400 \u20BD" },
+      { num: "02", name: "\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 2 \u043D\u043E\u0433\u0442\u044F", desc: "\u043E\u0442 \u043F\u0440\u043E\u0441\u0442\u043E\u0433\u043E \u0434\u043E \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E", price: "300 \u20BD" },
+      { num: "03", name: "\u0421\u043D\u044F\u0442\u0438\u0435 \u0447\u0443\u0436\u043E\u0433\u043E \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", desc: "\u0430\u043A\u043A\u0443\u0440\u0430\u0442\u043D\u043E, \u0431\u0435\u0437 \u0432\u0440\u0435\u0434\u0430", price: "500 \u20BD" },
+      { num: "04", name: "\u0423\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0430\u043A\u0440\u0438\u0433\u0435\u043B\u0435\u043C", desc: "\u0434\u043B\u044F \u0442\u043E\u043D\u043A\u0438\u0445 \u0438 \u043B\u043E\u043C\u043A\u0438\u0445", price: "600 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0410\u043D\u043D\u0430 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F, \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u0435\u0442, \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0435\u0442. [[\u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432]].\xBB", authorName: "\u041E\u043B\u0435\u0441\u044F \u041D.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "3 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432 Telegram" }, phone: "@anna_studio" }
+};
+var fixtureBrowsSochi = {
+  meta: { brand: "Brow Bar \u0421\u043E\u043B\u044C", host: "sol-brows", category: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B", address: "\u041D\u0430\u0432\u0430\u0433\u0438\u043D\u0441\u043A\u0430\u044F 9, \u0421\u043E\u0447\u0438", since: "2019", rating: "4.9", reviewsN: 154 },
+  hero: {
+    headingLines: ["\u0411\u0440\u043E\u0432\u0438", "\u043F\u043E [[\u0432\u0430\u0448\u0435\u0439]]", "\u0444\u043E\u0440\u043C\u0435 \u043B\u0438\u0446\u0430"],
+    leadParagraph: "\u041D\u0435 \u0440\u0438\u0441\u0443\u0435\u043C \u0447\u0443\u0436\u0443\u044E \u0444\u043E\u0440\u043C\u0443 \u2014 \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u0438\u0432\u0430\u0435\u043C \u0432\u0430\u0448\u0443. \u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F, \u043B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435 \u0437\u0430 \u043E\u0434\u0438\u043D \u0432\u0438\u0437\u0438\u0442. \u0414\u0435\u0440\u0436\u0438\u0442\u0441\u044F 6 \u043D\u0435\u0434\u0435\u043B\u044C.",
+    photoSrc: EX_U("photo-1487412947147-5cebf100ffc2", 720),
+    gallery: [EX_U("photo-1522335789203-aabd1fc54bc9", 480), EX_U("photo-1457972729786-0411a3b2b626", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u0441\u0440\u0435\u0434\u0430"
+  },
+  stats: [
+    { num: "6", unit: " \u043D\u0435\u0434", label: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F" },
+    { num: "40", unit: " \u043C\u0438\u043D", label: "\u043D\u0430 \u0432\u0438\u0437\u0438\u0442" },
+    { num: "4.9", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u0427\u0442\u043E [[\u0432\u044B\u0431\u0438\u0440\u0430\u044E\u0442]] \u0447\u0430\u0449\u0435",
+    items: [
+      { num: "01", name: "\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F + \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", desc: "\u0432\u043E\u0441\u043A, \u043F\u0438\u043D\u0446\u0435\u0442, \u043A\u0440\u0430\u0441\u043A\u0430 \u0438\u043B\u0438 \u0445\u043D\u0430", price: "1 400 \u20BD" },
+      { num: "02", name: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0431\u0440\u043E\u0432\u0435\u0439", desc: "\u0444\u0438\u043A\u0441\u0430\u0446\u0438\u044F \u0444\u043E\u0440\u043C\u044B \u043D\u0430 6 \u043D\u0435\u0434\u0435\u043B\u044C", price: "2 200 \u20BD" },
+      { num: "03", name: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0440\u0435\u0441\u043D\u0438\u0446", desc: "\u0431\u0435\u0437 \u043D\u0430\u0440\u0430\u0449\u0438\u0432\u0430\u043D\u0438\u044F, \u0441\u0432\u043E\u0439 \u043E\u0431\u044A\u0451\u043C", price: "2 600 \u20BD" },
+      { num: "04", name: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 \u0431\u0440\u043E\u0432\u0438 + \u0440\u0435\u0441\u043D\u0438\u0446\u044B", desc: "\u0437\u0430 \u043E\u0434\u0438\u043D \u0432\u0438\u0437\u0438\u0442, \u0432\u044B\u0433\u043E\u0434\u043D\u0435\u0435", price: "4 200 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u041F\u0435\u0440\u0432\u044B\u0439 \u0440\u0430\u0437 brow-\u043C\u0430\u0441\u0442\u0435\u0440 \u043D\u0435 \u0441\u0434\u0435\u043B\u0430\u043B\u0430 \u043C\u043D\u0435 [[\u0447\u0443\u0436\u0438\u0435 \u0431\u0440\u043E\u0432\u0438]]. \u0421\u0432\u043E\u0438, \u043D\u043E \u0430\u043A\u043A\u0443\u0440\u0430\u0442\u043D\u044B\u0435.\xBB", authorName: "\u041A\u0430\u0440\u0438\u043D\u0430 \u0422.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "1 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D" }, phone: "\u043E\u043D\u043B\u0430\u0439\u043D-\u0437\u0430\u043F\u0438\u0441\u044C" }
+};
+var fixtureBarberFedor = {
+  meta: { brand: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xAB\u0424\u0451\u0434\u043E\u0440\xBB", host: "fedor-barber", category: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F", address: "\u041D\u0438\u043A\u0438\u0442\u0441\u043A\u0438\u0439 3, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2018", rating: "4.9", reviewsN: 312 },
+  hero: {
+    headingLines: ["\u0421\u0442\u0440\u0438\u0436\u043A\u0430", "[[+]] \u0431\u043E\u0440\u043E\u0434\u0430", "\u0437\u0430 45 \u043C\u0438\u043D\u0443\u0442"],
+    leadParagraph: "\u0422\u043E\u043B\u044C\u043A\u043E \u043C\u0443\u0436\u0441\u043A\u0438\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438 \u0438 \u0431\u043E\u0440\u043E\u0434\u0430. \u0411\u0435\u0437 \u0441\u0430\u043B\u043E\u043D\u0430, \u0431\u0435\u0437 \u0436\u0435\u043D\u0441\u043A\u043E\u0433\u043E \u0437\u0430\u043B\u0430, \u0431\u0435\u0437 \u043C\u0443\u0437\u044B\u043A\u0438 \u0432 \u043D\u0430\u0443\u0448\u043D\u0438\u043A\u0430\u0445 \u043C\u0430\u0441\u0442\u0435\u0440\u0430. \u0412\u0438\u0441\u043A\u0438 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u2014 \u043F\u043E\u0441\u043B\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438, \u0435\u0441\u043B\u0438 \u0445\u043E\u0442\u0438\u0442\u0435.",
+    photoSrc: EX_U("photo-1503951914875-452162b0f3f1", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043A\u0440\u0435\u0441\u043B\u043E, \u0441\u0443\u0431\u0431\u043E\u0442\u0430",
+    gallery: [
+      EX_U("photo-1599351431613-18ef1fdd27e1", 480),
+      EX_U("photo-1622286342621-4bd786c2447c", 480)
+    ]
+  },
+  stats: [
+    { num: "45", unit: " \u043C\u0438\u043D", label: "\u043D\u0430 \u0441\u0442\u0440\u0438\u0436\u043A\u0443" },
+    { num: "8", unit: " \u043B\u0435\u0442", label: "\u0441 2018" },
+    { num: "4", label: "\u043C\u0430\u0441\u0442\u0435\u0440\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u0427\u0442\u043E [[\u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442]] \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0435",
+    items: [
+      { num: "01", name: "\u041C\u0443\u0436\u0441\u043A\u0430\u044F \u0441\u0442\u0440\u0438\u0436\u043A\u0430", desc: "\u043C\u0430\u0448\u0438\u043D\u043A\u0430 + \u043D\u043E\u0436\u043D\u0438\u0446\u044B", price: "2 200 \u20BD" },
+      { num: "02", name: "\u0421\u0442\u0440\u0438\u0436\u043A\u0430 + \u0431\u043E\u0440\u043E\u0434\u0430", desc: "\u0441 \u0433\u043E\u0440\u044F\u0447\u0438\u043C \u043F\u043E\u043B\u043E\u0442\u0435\u043D\u0446\u0435\u043C", price: "3 000 \u20BD" },
+      { num: "03", name: "\u041A\u0430\u043C\u0443\u0444\u043B\u044F\u0436 \u0441\u0435\u0434\u0438\u043D\u044B", desc: "20 \u043C\u0438\u043D \xB7 \u0441\u0442\u043E\u0439\u043A\u043E", price: "1 200 \u20BD" },
+      { num: "04", name: "\u041E\u043F\u0430\u0441\u043D\u043E\u0439 \u0431\u0440\u0438\u0442\u0432\u043E\u0439", desc: "\u0433\u043E\u043B\u043E\u0432\u0430 \u0438\u043B\u0438 \u0431\u043E\u0440\u043E\u0434\u0430", price: "1 800 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0425\u043E\u0436\u0443 \u043A \u0413\u043B\u0435\u0431\u0443 \u0442\u0440\u0435\u0442\u0438\u0439 \u0433\u043E\u0434. [[\u0412\u0441\u0435\u0433\u0434\u0430 \u0432\u0441\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442]], \u043A\u0430\u043A \u0441\u0442\u0440\u0438\u0433\u043B\u0438 \u0432 \u043F\u0440\u043E\u0448\u043B\u044B\u0439 \u0440\u0430\u0437.\xBB", authorName: "\u0410\u043D\u0442\u043E\u043D \u041A.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", authorWhen: "4 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A \u043C\u0430\u0441\u0442\u0435\u0440\u0443" }, phone: "+7 (900) 000-00-14" }
+};
+var fixtureFitnessMetod = {
+  meta: { brand: "\u0421\u0442\u0443\u0434\u0438\u044F \xAB\u041C\u0435\u0442\u043E\u0434\xBB", host: "metod-studio", category: "\u041F\u0438\u043B\u0430\u0442\u0435\u0441", address: "\u041F\u0438\u043E\u043D\u0435\u0440\u0441\u043A\u0430\u044F 12, \u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", since: "2018", rating: "4.9", reviewsN: 187 },
+  hero: {
+    headingLines: ["\u041F\u0438\u043B\u0430\u0442\u0435\u0441", "\u0432 \u0433\u0440\u0443\u043F\u043F\u0435", "[[\u0438\u0437 \u0448\u0435\u0441\u0442\u0438]]"],
+    leadParagraph: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435 \u2014 \u043B\u0438\u0447\u043D\u043E\u0435 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u0442\u0440\u0435\u043D\u0435\u0440\u0430. \u0411\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u044B\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441 \u0431\u0435\u0437 \u043F\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u0430. \u041F\u0435\u0440\u0432\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0437\u0430\u043D\u0438\u043C\u0430\u0435\u0442 50 \u043C\u0438\u043D\u0443\u0442.",
+    photoSrc: EX_U("photo-1518611012118-696072aa579a", 720),
+    gallery: [EX_U("photo-1571019613454-1cb2f99b2d8b", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0437\u0430\u043B, \u0443\u0442\u0440\u043E \u0432\u0442\u043E\u0440\u043D\u0438\u043A\u0430"
+  },
+  stats: [
+    { num: "6", label: "\u0432 \u0433\u0440\u0443\u043F\u043F\u0435" },
+    { num: "12", label: "\u0442\u0440\u0435\u043D\u0435\u0440\u043E\u0432" },
+    { num: "8", unit: " \u043B\u0435\u0442", label: "\u0441\u0442\u0443\u0434\u0438\u0438" }
+  ],
+  menu: {
+    eyebrow: "\u0410\u0431\u043E\u043D\u0435\u043C\u0435\u043D\u0442\u044B",
+    title: "\u0427\u0442\u043E [[\u043F\u043E\u043A\u0443\u043F\u0430\u044E\u0442]] \u043D\u0430 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446",
+    items: [
+      { num: "01", name: "\u0420\u0430\u0437\u043E\u0432\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435", desc: "\u043F\u0435\u0440\u0432\u043E\u0435 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", price: "1 400 \u20BD" },
+      { num: "02", name: "4 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E", price: "5 200 \u20BD" },
+      { num: "03", name: "8 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0441\u0430\u043C\u044B\u0439 \u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439", price: "9 800 \u20BD" },
+      { num: "04", name: "12 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0434\u043B\u044F \u0440\u0435\u0433\u0443\u043B\u044F\u0440\u043D\u044B\u0445", price: "13 200 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0427\u0435\u0440\u0435\u0437 \u0442\u0440\u0438 \u043C\u0435\u0441\u044F\u0446\u0430 [[\u0437\u0430\u0431\u044B\u043B\u0430 \u043F\u0440\u043E \u0431\u043E\u043B\u044C \u0432 \u0441\u043F\u0438\u043D\u0435]]. \u0425\u043E\u0442\u044F \u043F\u0440\u0438\u0448\u043B\u0430 \u0442\u0443\u0434\u0430 \u0438\u043C\u0435\u043D\u043D\u043E \u0441 \u043D\u0435\u0439.\xBB", authorName: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0430 \u041C.", authorSource: "2\u0413\u0418\u0421", authorWhen: "1 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043F\u0435\u0440\u0432\u043E\u0435" }, phone: "+7 (900) 000-00-50" }
+};
+var fixtureLegalSitnikov = {
+  meta: { brand: "\u0421\u0438\u0442\u043D\u0438\u043A\u043E\u0432 \u0438 \u043F\u0430\u0440\u0442\u043D\u0451\u0440\u044B", host: "sitnikov-law", category: "\u042E\u0440.\u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0430", address: "\u0422\u0432\u0435\u0440\u0441\u043A\u0430\u044F 14, \u043E\u0444. 412, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2014", rating: "4.9", reviewsN: 312 },
+  hero: {
+    headingLines: ["\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u0434\u0435\u043D\u0435\u0433", "\u043E\u0442 [[\u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430]]", "\u0431\u0435\u0437 \u0430\u0432\u0430\u043D\u0441\u0430"],
+    leadParagraph: "\u0411\u0435\u0440\u0451\u043C \u0434\u0435\u043B\u043E \u0432 \u0440\u0430\u0431\u043E\u0442\u0443 \u2014 \u043F\u043B\u0430\u0442\u0438\u0442\u0435 \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 \u0432\u044B\u0438\u0433\u0440\u044B\u0448\u0430. \u041F\u0435\u0440\u0432\u0430\u044F \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u0430 \u0438 \u0437\u0430\u043D\u0438\u043C\u0430\u0435\u0442 40 \u043C\u0438\u043D\u0443\u0442. \u0421\u043A\u0430\u0436\u0435\u043C \u0441\u0440\u0430\u0437\u0443, \u0435\u0441\u0442\u044C \u043B\u0438 \u043F\u0435\u0440\u0441\u043F\u0435\u043A\u0442\u0438\u0432\u0430.",
+    photoSrc: EX_U("photo-1497366754035-f200968a6e72", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043E\u0444\u0438\u0441, \u0447\u0435\u0442\u0432\u0435\u0440\u0433"
+  },
+  stats: [
+    { num: "94%", label: "\u0434\u0435\u043B \u0432\u044B\u0438\u0433\u0440\u0430\u043D\u043E" },
+    { num: "312", label: "\u0434\u0435\u043B \u0432 2024" },
+    { num: "10", unit: " \u043B\u0435\u0442", label: "\u0432 \u043E\u0434\u043D\u043E\u043C \u043E\u0444\u0438\u0441\u0435" }
+  ],
+  menu: {
+    eyebrow: "\u0423\u0441\u043B\u0443\u0433\u0438",
+    title: "\u0427\u0442\u043E [[\u0432\u0435\u0434\u0451\u043C]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u043E\u0442 \u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430", desc: "\u043D\u0435\u0443\u0441\u0442\u043E\u0439\u043A\u0430, \u0440\u0430\u0441\u0442\u043E\u0440\u0436\u0435\u043D\u0438\u0435, \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430", price: "20% \u043E\u0442 \u0441\u0443\u043C\u043C\u044B" },
+      { num: "02", name: "\u0421\u0435\u043C\u0435\u0439\u043D\u044B\u0435 \u0441\u043F\u043E\u0440\u044B", desc: "\u0440\u0430\u0437\u0432\u043E\u0434, \u0440\u0430\u0437\u0434\u0435\u043B, \u0430\u043B\u0438\u043C\u0435\u043D\u0442\u044B", price: "\u043E\u0442 30 000 \u20BD" },
+      { num: "03", name: "\u0422\u0440\u0443\u0434\u043E\u0432\u044B\u0435 \u0441\u043F\u043E\u0440\u044B", desc: "\u0443\u0432\u043E\u043B\u044C\u043D\u0435\u043D\u0438\u0435, \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435", price: "\u043E\u0442 25 000 \u20BD" },
+      { num: "04", name: "\u0417\u0430\u0449\u0438\u0442\u0430 \u043F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u0435\u0439", desc: "\u0432\u043E\u0437\u0432\u0440\u0430\u0442, \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F, \u0437\u0430\u043C\u0435\u043D\u0430", price: "15% \u043E\u0442 \u0441\u0443\u043C\u043C\u044B" }
+    ]
+  },
+  quote: { text: "\xAB\u0412\u0435\u0440\u043D\u0443\u043B\u0438 1,2 \u043C\u043B\u043D \u043D\u0435\u0443\u0441\u0442\u043E\u0439\u043A\u0438 \u043E\u0442 \u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430 \u0437\u0430 4 \u043C\u0435\u0441\u044F\u0446\u0430. [[\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \u0430\u0432\u0430\u043D\u0441\u043E\u0432]] \u2014 \u0432\u0441\u0451 \u043F\u043E\u0441\u043B\u0435 \u0441\u0443\u0434\u0430.\xBB", authorName: "\u041C\u0438\u0445\u0430\u0438\u043B \u041F.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044E" }, phone: "+7 (900) 000-00-40" }
+};
+var fixturePhotoMarta = {
+  meta: { brand: "\u041C\u0430\u0440\u0442\u0430 \xB7 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444", host: "marta-photo", category: "\u0424\u043E\u0442\u043E\u0433\u0440\u0430\u0444", address: "\u0432\u044B\u0435\u0437\u0434 \u043F\u043E \u041C\u043E\u0441\u043A\u0432\u0435", since: "2020", rating: "5.0", reviewsN: 94 },
+  hero: {
+    headingLines: ["\u0421\u0435\u043C\u0435\u0439\u043D\u044B\u0435", "\u0441\u044A\u0451\u043C\u043A\u0438 [[\u0434\u043E\u043C\u0430]]", "\u0438 \u0432 \u0441\u0442\u0443\u0434\u0438\u0438"],
+    leadParagraph: "\u0411\u0435\u0437 \u043F\u0440\u0438\u043D\u0443\u0436\u0434\u0451\u043D\u043D\u044B\u0445 \u043F\u043E\u0437 \u0438 \u043D\u0430\u0442\u044F\u043D\u0443\u0442\u044B\u0445 \u0443\u043B\u044B\u0431\u043E\u043A. \u0421\u043D\u0438\u043C\u0430\u044E \u043A\u0430\u043A \u0435\u0441\u0442\u044C: \u0434\u0435\u0442\u0438 \u0432\u043E\u0437\u044F\u0442\u0441\u044F, \u0431\u0430\u0431\u0443\u0448\u043A\u0430 \u0432\u043E\u0440\u0447\u0438\u0442, \u043A\u043E\u0442 \u043D\u0435 \u0432\u043F\u0438\u0441\u0430\u043B\u0441\u044F. \u041F\u0435\u0440\u0435\u0434\u0430\u044E 70+ \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u0442\u043E \u0447\u0435\u0440\u0435\u0437 2 \u043D\u0435\u0434\u0435\u043B\u0438.",
+    photoSrc: EX_U("photo-1452587925148-ce544e77e70d", 720),
+    gallery: [EX_U("photo-1606216794074-735e91aa2c92", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0441\u0435\u043C\u044C\u044F \u041A., \u044F\u043D\u0432\u0430\u0440\u044C"
+  },
+  stats: [
+    { num: "70+", label: "\u0444\u043E\u0442\u043E \u0432 \u0441\u044A\u0451\u043C\u043A\u0435" },
+    { num: "14", unit: " \u0434\u043D\u0435\u0439", label: "\u0434\u043E \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u0430" },
+    { num: "6", unit: " \u043B\u0435\u0442", label: "\u043E\u043F\u044B\u0442\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u0424\u043E\u0440\u043C\u0430\u0442\u044B",
+    title: "\u0427\u0442\u043E [[\u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u0421\u0435\u043C\u0435\u0439\u043D\u0430\u044F \u0441\u044A\u0451\u043C\u043A\u0430 \u0434\u043E\u043C\u0430", desc: "2 \u0447\u0430\u0441\u0430 \xB7 70+ \u0444\u043E\u0442\u043E", price: "18 000 \u20BD" },
+      { num: "02", name: "\u041F\u0440\u043E\u0433\u0443\u043B\u043A\u0430 \u043D\u0430 \u0443\u043B\u0438\u0446\u0435", desc: "1,5 \u0447\u0430\u0441\u0430 \xB7 50+ \u0444\u043E\u0442\u043E", price: "14 000 \u20BD" },
+      { num: "03", name: "\u0421\u0442\u0443\u0434\u0438\u044F", desc: "1 \u0447\u0430\u0441 \xB7 40+ \u0444\u043E\u0442\u043E \xB7 \u0430\u0440\u0435\u043D\u0434\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E", price: "12 000 \u20BD" },
+      { num: "04", name: "\u0411\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0441\u0442\u044C + \u043F\u043E\u0441\u043B\u0435", desc: "\u043F\u0430\u043A\u0435\u0442 \u0438\u0437 \u0434\u0432\u0443\u0445 \u0441\u044A\u0451\u043C\u043E\u043A", price: "28 000 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0421\u044B\u043D \u043D\u0438 \u0441\u0435\u043A\u0443\u043D\u0434\u044B \u043D\u0435 \u0441\u0438\u0434\u0435\u043B \u043D\u0430 \u043C\u0435\u0441\u0442\u0435. \u041C\u0430\u0440\u0442\u0430 [[\u043F\u0440\u0435\u0432\u0440\u0430\u0442\u0438\u043B\u0430 \u044D\u0442\u043E \u0432 \u043F\u043B\u044E\u0441]] \u2014 \u043A\u0430\u0434\u0440\u044B \u0436\u0438\u0432\u044B\u0435, \u043D\u0435 \u043F\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043E\u0447\u043D\u044B\u0435.\xBB", authorName: "\u042E\u043B\u0438\u044F \u0421.", authorSource: "Instagram", authorWhen: "\u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u041D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 WhatsApp" }, phone: "\u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 WhatsApp" }
+};
+var fixtureTattooLine = {
+  meta: { brand: "Line tattoo", host: "line-tattoo", category: "\u0422\u0430\u0442\u0443-\u0441\u0442\u0443\u0434\u0438\u044F", address: "\u041C\u0430\u043B\u0430\u044F \u0411\u0440\u043E\u043D\u043D\u0430\u044F 6, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2016", rating: "5.0", reviewsN: 218 },
+  hero: {
+    headingLines: ["\u0422\u043E\u043D\u043A\u0438\u0435", "[[\u043B\u0438\u043D\u0438\u0438]] \u0438", "\u043C\u0438\u043D\u0438\u043C\u0430\u043B\u0438\u0437\u043C"],
+    leadParagraph: "\u0422\u043E\u043B\u044C\u043A\u043E \u0442\u043E\u043D\u043A\u0438\u0435 \u043B\u0438\u043D\u0438\u0438, \u043C\u0438\u043D\u0438\u043C\u0430\u043B \u0438 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F. \u041D\u0438\u043A\u0430\u043A\u043E\u0433\u043E \u043E\u043B\u0434\u0441\u043A\u0443\u043B\u0430, \u0440\u0435\u0430\u043B\u0438\u0437\u043C\u0430 \u0438 \u0446\u0432\u0435\u0442\u043D\u044B\u0445 \u043F\u043E\u0440\u0442\u0440\u0435\u0442\u043E\u0432. \u0417\u0430\u043F\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 \u044D\u0441\u043A\u0438\u0437 \u2014 \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u0435 \u0438\u0434\u0435\u044E, \u043E\u0431\u0441\u0443\u0436\u0434\u0430\u0435\u043C \u0440\u0430\u0437\u043C\u0435\u0440 \u0438 \u043C\u0435\u0441\u0442\u043E.",
+    photoSrc: EX_U("photo-1565058379802-bbe93b2f703a", 720),
+    gallery: [EX_U("photo-1611501275019-9b5cda994e8d", 480), EX_U("photo-1542856391-010fb87dcfed", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0440\u0430\u0431\u043E\u0442\u0430 \u0412\u043B\u0430\u0434\u0430, \u043C\u0430\u0440\u0442"
+  },
+  stats: [
+    { num: "4", label: "\u043C\u0430\u0441\u0442\u0435\u0440\u0430" },
+    { num: "10", unit: " \u043B\u0435\u0442", label: "\u0441\u0442\u0443\u0434\u0438\u0438" },
+    { num: "218", label: "\u043E\u0442\u0437\u044B\u0432\u043E\u0432" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u041C\u0438\u043D\u0438\u043C\u0443\u043C \u2014 [[15 \u043C\u0438\u043D\u0443\u0442]] \u0440\u0430\u0431\u043E\u0442\u044B",
+    items: [
+      { num: "01", name: "\u041C\u0438\u043D\u0438-\u044D\u0441\u043A\u0438\u0437 \u0434\u043E 5 \u0441\u043C", desc: "\u043B\u0438\u043D\u0438\u0438, \u0441\u0438\u043C\u0432\u043E\u043B\u044B, \u0446\u0438\u0444\u0440\u044B", price: "5 000 \u20BD" },
+      { num: "02", name: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 5\u201315 \u0441\u043C", desc: "\u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F, \u0431\u043E\u0442\u0430\u043D\u0438\u043A\u0430, \u043D\u0430\u0434\u043F\u0438\u0441\u0438", price: "\u043E\u0442 12 000 \u20BD" },
+      { num: "03", name: "\u0427\u0430\u0441 \u0440\u0430\u0431\u043E\u0442\u044B", desc: "\u0434\u043B\u044F \u043A\u0440\u0443\u043F\u043D\u044B\u0445 \u044D\u0441\u043A\u0438\u0437\u043E\u0432", price: "8 000 \u20BD" },
+      { num: "04", name: "\u041F\u0435\u0440\u0435\u043A\u0440\u044B\u0442\u0438\u0435 \u0441\u0442\u0430\u0440\u043E\u0439", desc: "\u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E \u0444\u043E\u0442\u043E", price: "\u043F\u043E \u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0451\u043D\u043D\u043E\u0441\u0442\u0438" }
+    ]
+  },
+  quote: { text: "\xAB\u0412\u043B\u0430\u0434 \u043D\u0430\u0440\u0438\u0441\u043E\u0432\u0430\u043B [[\u0438\u043C\u0435\u043D\u043D\u043E \u0442\u043E, \u0447\u0442\u043E \u044F \u0445\u043E\u0442\u0435\u043B\u0430]], \u043D\u043E \u043D\u0435 \u043C\u043E\u0433\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u0442\u044C. \u041B\u0438\u043D\u0438\u0438 \u0442\u043E\u043D\u043A\u0438\u0435, \u043D\u0435 \u0440\u0430\u0441\u043F\u043B\u044B\u043B\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 \u0433\u043E\u0434.\xBB", authorName: "\u0414\u0430\u0440\u044C\u044F \u041B.", authorSource: "Instagram", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u041F\u0440\u0438\u0441\u043B\u0430\u0442\u044C \u044D\u0441\u043A\u0438\u0437" }, phone: "@line_tattoo" }
+};
+var samplePresets = [
+  { preset: { themeId: "display-soft", familyId: "display" }, content: fixtureNailsAnna, tagline: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "bento-noir", familyId: "bento" }, content: fixtureAutoPark, tagline: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 \xB7 \u0421\u0430\u043C\u0430\u0440\u0430" },
+  { preset: { themeId: "editorial-warm", familyId: "editorial" }, content: fixtureCoffeeLena, tagline: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F \xB7 \u0412\u043E\u0440\u043E\u043D\u0435\u0436" },
+  { preset: { themeId: "display-noir", familyId: "display" }, content: fixtureBarberFedor, tagline: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "split-product", familyId: "split" }, content: fixtureFitnessMetod, tagline: "\u041F\u0438\u043B\u0430\u0442\u0435\u0441 \xB7 \u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "display-ink", familyId: "display" }, content: fixtureTattooLine, tagline: "\u0422\u0430\u0442\u0443-\u0441\u0442\u0443\u0434\u0438\u044F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "stacked-corporate", familyId: "stacked" }, content: fixtureLegalSitnikov, tagline: "\u042E\u0440.\u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0430 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "split-teal", familyId: "split" }, content: fixturePhotoMarta, tagline: "\u0424\u043E\u0442\u043E\u0433\u0440\u0430\u0444 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "stacked-cream", familyId: "stacked" }, content: fixtureBakeryDom, tagline: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F \xB7 \u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "display-bold", familyId: "display" }, content: fixtureBrowsSochi, tagline: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B \xB7 \u0421\u043E\u0447\u0438" }
+];
+export {
+  BentoFamily,
+  DisplayFamily,
+  EditorialFamily,
+  MiniChrome,
+  PresetRenderer,
+  SplitFamily,
+  StackedFamily,
+  bentoClay,
+  bentoLight,
+  bentoNoir,
+  displayBold,
+  displayInk,
+  displayNoir,
+  displaySoft,
+  editorialMono,
+  editorialNoir,
+  editorialWarm,
+  fixtureAutoPark,
+  fixtureBakeryDom,
+  fixtureBarberFedor,
+  fixtureBrowsSochi,
+  fixtureCoffeeLena,
+  fixtureFitnessMetod,
+  fixtureLegalSitnikov,
+  fixtureNailsAnna,
+  fixturePhotoMarta,
+  fixtureTattooLine,
+  getTheme,
+  samplePresets,
+  splitClay,
+  splitProduct,
+  splitTeal,
+  stackedCorporate,
+  stackedCream,
+  stackedSlate,
+  themes
+};
+//# sourceMappingURL=index.js.map

@@ -55,14 +55,15 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     // brand only inside copy strings (CTA «Собрать сайт», microcopy
     // «Самосайт сам напомнит»). Assertion lives in SiteHeader.test.tsx.
 
-    // CTA + free-month risk-reversal pill. The dedicated «Самосайт сам
-    // напомнит» microcopy line under the badge was removed per canon
-    // 0.2.5 (duplicated three other surfaces). The free-month pill
-    // remains and carries the same promise via «Первый месяц —
-    // бесплатно» + «далее 990 ₽/мес».
+    // CTA + pricing microcopy. canon 0.7.1 replaced the single-plan model
+    // («990 ₽/мес · для первой сотни 490 ₽ навсегда») with a 5-tier
+    // PricingMatrix; the Hero microcopy now reads «Тариф "Старт" —
+    // бесплатно навсегда · платные от 690 ₽/мес · первый месяц на
+    // платном бесплатно, карту привязывать не надо» so it stops
+    // contradicting the matrix below.
     expect(screen.getByRole("button", { name: /Собрать сайт/ })).toBeInTheDocument();
-    expect(screen.getByText(/первый месяц бесплатно/i)).toBeInTheDocument();
-    expect(screen.getByText(/990 ₽\/мес/)).toBeInTheDocument();
+    expect(screen.getByText(/первый месяц на платном бесплатно/i)).toBeInTheDocument();
+    expect(screen.getByText(/от 690 ₽\/мес/)).toBeInTheDocument();
     // Reassurance microcopy «Самосайт сам напомнит» MUST be gone from
     // Hero (canon 0.2.5 fix). Guards against accidental re-introduction.
     expect(screen.queryByText(/Самосайт сам напомнит/i)).toBeNull();
