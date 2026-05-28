@@ -124,8 +124,9 @@ export default function HomePage() {
       {/* CanonCtaBindings — DOM-mutation wiring for canon body CTAs.
           Marks Monday/Pricing/FinalCta accent buttons with
           `data-ss-primary-cta` so SiteHeader's existing global click
-          delegation opens SubmitModal. Rewrites Ownership demo link
-          from canon's relative `client-admin-demo.html` to `/admin-demo`.
+          delegation opens SubmitModal. Removes the OwnershipSection
+          «Посмотреть демо личного кабинета» button (user request);
+          rewrites the remaining Analytics demo link to `/admin-demo`.
           Must mount AFTER SiteHeader so its click handler is wired
           first; relative order to Hero doesn't matter. */}
       <CanonCtaBindings />

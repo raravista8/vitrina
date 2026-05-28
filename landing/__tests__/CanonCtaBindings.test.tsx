@@ -55,12 +55,14 @@ describe("CanonCtaBindings — body CTA wiring + demo link rewrite", () => {
     main.remove();
   });
 
-  it("rewrites client-admin-demo.html links to /admin-demo", () => {
+  it("rewrites non-ownership client-admin-demo.html links to /admin-demo", () => {
+    // AnalyticsSection demo link (not inside [data-section=ownership]) →
+    // rewritten, kept.
     const main = setupMain(`
-      <section>
+      <div data-section="analytics">
         <a href="client-admin-demo.html">Посмотреть демо ЛК</a>
         <a href="./client-admin-demo.html">Альтернативный относительный путь</a>
-      </section>
+      </div>
     `);
     render(<CanonCtaBindings />);
     const links = main.querySelectorAll<HTMLAnchorElement>("a");
@@ -68,6 +70,34 @@ describe("CanonCtaBindings — body CTA wiring + demo link rewrite", () => {
     for (const link of Array.from(links)) {
       expect(link.getAttribute("href")).toBe("/admin-demo");
     }
+    main.remove();
+  });
+
+  it("removes the OwnershipSection demo button (wrapper + anchor)", () => {
+    // canon OwnershipSection: <div center><a client-admin-demo>…</a></div>.
+    // The whole wrapper must be gone (no phantom centered gap), and the
+    // AnalyticsSection demo link in the same page must survive (rewritten).
+    const main = setupMain(`
+      <div data-section="ownership">
+        <p>Решения остаются за вами</p>
+        <div data-cta-wrap><a href="client-admin-demo.html">Посмотреть демо личного кабинета</a></div>
+      </div>
+      <div data-section="analytics">
+        <div><a href="client-admin-demo.html">Посмотреть демо личного кабинета</a></div>
+      </div>
+    `);
+    render(<CanonCtaBindings />);
+    // Ownership demo wrapper + anchor removed entirely.
+    expect(
+      main.querySelector('[data-section="ownership"] a[href*="client-admin-demo"]'),
+    ).toBeNull();
+    expect(main.querySelector("[data-cta-wrap]")).toBeNull();
+    // The «Решения остаются за вами» copy itself stays.
+    expect(main.textContent).toContain("Решения остаются за вами");
+    // Analytics demo link survives, rewritten to /admin-demo.
+    const analytics = main.querySelector<HTMLAnchorElement>('[data-section="analytics"] a');
+    expect(analytics).not.toBeNull();
+    expect(analytics!.getAttribute("href")).toBe("/admin-demo");
     main.remove();
   });
 
