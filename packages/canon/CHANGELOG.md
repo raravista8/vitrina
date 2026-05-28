@@ -1,5 +1,100 @@
 # Changelog
 
+## 0.7.1 — Preset architecture + pricing matrix · 2026-05-28
+
+> **MINOR.** Adds a new `@samosite/canon/presets` module and rewrites
+> `ExamplesSection` + `PricingSection`. All existing landing exports
+> (incl. the 11 section components vitrina composes) keep resolving —
+> `<Landing />` / `<ExamplesSection />` consumers need no code change.
+>
+> Vendored into vitrina as a targeted update: only `src/index.ts`,
+> `src/landing/index.tsx`, and the new `src/presets/index.tsx` changed
+> vs 0.6.0 (admin / intake / customer / auth / source / primitives /
+> tokens are byte-identical). `tsup.config.ts` keeps the local
+> `dts: false` carry-forward (upstream ships `dts: true` but its build
+> hits the same admin-* type errors — see «Known issues»).
+
+### Product shift
+
+«One engine, one design system, variable accent» → **«one engine, a
+library of stylistics, AI picks per niche»**. The landing now sells a
+preset library instead of a single tunable theme.
+
+### New module `@samosite/canon/presets`
+
+5 layout families (`editorial`, `bento`, `display`, `split`, `stacked`)
+× 16 themes (incl. new `display-ink` — graphite + bone, thin Instrument
+Serif, for fine-line tattoo studios). Public API: `PresetRenderer`,
+`MiniChrome`, `getTheme`, `themes`, `samplePresets`, family components +
+fixtures + types (`Preset`, `Theme`, `SlotContent`, `FamilyKey`,
+`SpectrumKey`). Hookless / presentational — bundles into the landing
+chunk via the `../presets` relative import, and is also exposed as the
+`./presets` subpath export.
+
+### `ExamplesSection` (rewritten)
+
+- Carousel of 10 preset cards (was a 3-card grid). Dots-indicator
+  ABOVE the carousel (cards are tall), tracks active slide by
+  `scrollLeft`, tap-to-scroll. Mobile: card = 94% width, neighbour
+  peeks under a 44 px right-fade.
+- Below: `HowItPicks` block — 4 points on how the AI picks a style
+  (palette from photos / fonts from tone / grid from content type /
+  one-click swap).
+- New sub: «Стилистик много — Самосайт подбирает её под нишу и контент…»
+- Card order shuffled by contrast (dark themes on positions 2/4/6,
+  маникюр first); card heights balanced by content, not cropping.
+
+### `PricingSection` → `PricingMatrix`
+
+Single price card replaced by a 5-plan matrix (Старт 0 ₽ / Личный
+690 / Бизнес 1 490 / Компания 2 990 / Студия 6 990), 5 parameter
+groups. Sticky first column + header on mobile, horizontal scroll
+mobile-only (desktop fits in 990 px). «Популярный» highlight off
+(`PLAN_HILITE = -1`). Section title: «Тариф под ваш масштаб».
+
+### Pricing copy synced across all surfaces (0.7.1 fix over 0.7.0)
+
+Hero, `PricingMatrix`, and `FinalCtaSection` now say the same thing:
+**Старт бесплатно навсегда, платные от 690 ₽/мес, первый месяц на
+платном бесплатно**. The 0.7.0 leftover «490 ₽ для первой сотни» in
+FinalCta is removed (the bug flagged during vendoring). The single-plan
+«990 ₽ / 490 навсегда» model is gone from the landing entirely.
+
+### Vitrina-side follow-through (this vendoring PR)
+
+- `landing/components/Hero.tsx` — `CTA_MICROCOPY` synced from
+  «990 ₽/мес · 490 навсегда» to «Тариф "Старт" — бесплатно навсегда ·
+  платные от 690 ₽/мес · первый месяц на платном бесплатно…» so the
+  hand-rolled Hero stops contradicting the canon matrix below it.
+- `Hero.test.tsx` — assertions updated to the new copy.
+
+### Known issues (carried from upstream)
+
+- DTS build fails on pre-existing `admin-core` / `admin-demo` type
+  errors (not a 0.7.x regression — reproduces on 0.6.0). Vitrina builds
+  JS-only (`dts: false`); landing types come from
+  `landing/types/samosite-canon.d.ts` ambient shims.
+- Example photos load from `images.unsplash.com/<id>` (18 refs). Fragile
+  if an id 404s; prod should swap to an own media-CDN. Substitution
+  points: `EX_U()` in `src/presets/index.tsx` + fixture `photoSrc` /
+  `gallery` fields.
+
+### Backend / data (NOT in this canon release — out of scope)
+
+Per-site `preset: { themeId, familyId }` storage, `PATCH
+/api/sites/{id}/preset`, SSR-passing the preset, and ML style-selection
+are backend tasks. Likewise the 5-tier pricing is **frontend-only** —
+ЮKassa is still single-plan 990 ₽. See `docs/handoff/CANON_SWAP_PLAN.md`
+§«Pricing model» for the gap.
+
+### Legacy
+
+`EX_CoffeeSite` / `EX_AutoSite` / `EX_NailsSite` + `EX_*` helpers remain
+in code but are unused by `ExamplesSection` (removed in 0.8.0). Vitrina
+never imported them directly — no action needed.
+
+---
+
 ## 0.6.0 — Landing rewrite v3 (BREAKING) · 2026-05-26
 
 > **BREAKING.** Full structural rewrite of the landing. Old internal sections (`StorySection`, `PlatformsSection`, `BigFeaturesSection`, `FreeMonthSection`) are removed. The page composition behind `<SamosaytLanding>` is replaced — 11 blocks instead of 9, new narrative built around the **«цикл 4 сам»** loop and **«каждый понедельник — три предложения»** as the headline feature.

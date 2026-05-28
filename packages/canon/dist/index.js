@@ -238,14 +238,1380 @@ function BrandMark({ size = 22, fontSize, color }) {
 }
 
 // src/landing/index.tsx
+import React2 from "react";
+
+// src/presets/index.tsx
 import React from "react";
-import { Fragment as Fragment2, jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
+import { jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
+var editorialWarm = {
+  id: "editorial-warm",
+  family: "editorial",
+  spectrum: "bold",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u043A\u043B\u0430\u0441\u0441\u0438\u043A\u0430",
+  colors: {
+    bg: "#FAF6F0",
+    bgAlt: "#F2E6D2",
+    ink: "#211C17",
+    inkSoft: "#5C5048",
+    inkFaint: "#897C6E",
+    line: "#211C17",
+    lineSoft: "#D3C7B0",
+    accent: "#A8412E",
+    accentSoft: "rgba(168,65,46,0.10)",
+    accentInk: "#FAF6F0",
+    invBg: "#211C17",
+    invInk: "#FAF6F0",
+    invAccent: "#D9A441",
+    invInkSoft: "#B5A98F"
+  },
+  fonts: {
+    display: "'Fraunces', Georgia, serif",
+    body: "'Inter', system-ui, sans-serif",
+    mono: "'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: true }
+};
+var editorialNoir = {
+  id: "editorial-noir",
+  family: "editorial",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0437\u043E\u043B\u043E\u0442\u043E",
+  colors: {
+    bg: "#14110D",
+    bgAlt: "#211C16",
+    ink: "#EFE7D6",
+    inkSoft: "#9A8F79",
+    inkFaint: "#6B6354",
+    line: "#EFE7D6",
+    lineSoft: "#34301F",
+    accent: "#D4A24E",
+    accentSoft: "rgba(212,162,78,0.14)",
+    accentInk: "#14110D",
+    invBg: "#D4A24E",
+    invInk: "#14110D",
+    invAccent: "#14110D",
+    invInkSoft: "#6B4F1E"
+  },
+  fonts: {
+    display: "'Fraunces', Georgia, serif",
+    body: "'Inter', system-ui, sans-serif",
+    mono: "'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: true, photoFilter: "contrast(1.05) saturate(0.85)" }
+};
+var editorialMono = {
+  id: "editorial-mono",
+  family: "editorial",
+  spectrum: "bold",
+  label: "\u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F \xB7 teal",
+  colors: {
+    bg: "#ECEAE5",
+    bgAlt: "#DEDBD3",
+    ink: "#15211E",
+    inkSoft: "#52605C",
+    inkFaint: "#84908B",
+    line: "#15211E",
+    lineSoft: "#B8B5AD",
+    accent: "#356E60",
+    accentSoft: "rgba(53,110,96,0.12)",
+    accentInk: "#F4F2EC",
+    invBg: "#15211E",
+    invInk: "#ECEAE5",
+    invAccent: "#7FB3A4",
+    invInkSoft: "#5E6B66"
+  },
+  fonts: {
+    display: "'Geist Mono', 'JetBrains Mono', monospace",
+    body: "'Geist Mono', 'JetBrains Mono', monospace",
+    mono: "'Geist Mono', 'JetBrains Mono', monospace"
+  },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: false, dropCap: true, photoFilter: "grayscale(0.6) contrast(1.1)" }
+};
+var bentoNoir = {
+  id: "bento-noir",
+  family: "bento",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0433\u0440\u0430\u0444\u0438\u0442",
+  colors: {
+    bg: "#0E0F10",
+    bgAlt: "#17191B",
+    ink: "#F2F0EC",
+    inkSoft: "#9A9B98",
+    inkFaint: "#6B6D6B",
+    line: "#262A2C",
+    lineSoft: "#1E2123",
+    accent: "#C2D94A",
+    accentSoft: "rgba(194,217,74,0.14)",
+    accentInk: "#0E0F10",
+    invBg: "#F2F0EC",
+    invInk: "#0E0F10",
+    invAccent: "#0E0F10",
+    invInkSoft: "#5C5E5C"
+  },
+  fonts: { display: "'Space Grotesk', sans-serif", body: "'Space Grotesk', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 10, photo: 14, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var bentoLight = {
+  id: "bento-light",
+  family: "bento",
+  spectrum: "classic",
+  label: "\u0441\u0432\u0435\u0442\u043B\u0430\u044F \xB7 \u0441\u0442\u0430\u043B\u044C",
+  colors: {
+    bg: "#EFF1F4",
+    bgAlt: "#FFFFFF",
+    ink: "#16202E",
+    inkSoft: "#5A6678",
+    inkFaint: "#95A0AF",
+    line: "#E0E4EA",
+    lineSoft: "#ECEFF3",
+    accent: "#2D5B8E",
+    accentSoft: "rgba(45,91,142,0.10)",
+    accentInk: "#FFFFFF",
+    invBg: "#16202E",
+    invInk: "#FFFFFF",
+    invAccent: "#7FA8D9",
+    invInkSoft: "#6B7787"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 16, btn: 8, photo: 16, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var bentoClay = {
+  id: "bento-clay",
+  family: "bento",
+  spectrum: "soft",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u0433\u043B\u0438\u043D\u0430",
+  colors: {
+    bg: "#EDE6DB",
+    bgAlt: "#F7F2E9",
+    ink: "#2A211A",
+    inkSoft: "#5C5048",
+    inkFaint: "#8A7C6C",
+    line: "#DBD2C3",
+    lineSoft: "#E5DDD0",
+    accent: "#B56A43",
+    accentSoft: "rgba(181,106,67,0.12)",
+    accentInk: "#F7F2E9",
+    invBg: "#2A211A",
+    invInk: "#F7F2E9",
+    invAccent: "#D9A441",
+    invInkSoft: "#8A7C6C"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 18, btn: 999, photo: 18, mark: 10 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var displaySoft = {
+  id: "display-soft",
+  family: "display",
+  spectrum: "soft",
+  label: "\u0440\u043E\u0437\u043E\u0432\u0430\u044F \xB7 \u0431\u044C\u044E\u0442\u0438",
+  colors: {
+    bg: "#F6E7E3",
+    bgAlt: "#FBF3F1",
+    ink: "#2A1820",
+    inkSoft: "#6B4A52",
+    inkFaint: "#9C7B82",
+    line: "#E8CFC9",
+    lineSoft: "#F0DED9",
+    accent: "#8C4A52",
+    accentSoft: "rgba(140,74,82,0.10)",
+    accentInk: "#F6E7E3",
+    invBg: "#2A1820",
+    invInk: "#F6E7E3",
+    invAccent: "#D99CA0",
+    invInkSoft: "#8C6168"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 10, btn: 999, photo: 10, mark: 6 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false }
+};
+var displayBold = {
+  id: "display-bold",
+  family: "display",
+  spectrum: "bold",
+  label: "\u043C\u044F\u0442\u043D\u0430\u044F \xB7 \u0441\u043C\u0435\u043B\u0430\u044F",
+  colors: {
+    bg: "#D6EDE3",
+    bgAlt: "#E6F4EC",
+    ink: "#10211B",
+    inkSoft: "#3C544A",
+    inkFaint: "#6B8276",
+    line: "#B6D8C9",
+    lineSoft: "#C8E2D6",
+    accent: "#13231D",
+    accentSoft: "rgba(16,33,27,0.08)",
+    accentInk: "#D6EDE3",
+    invBg: "#10211B",
+    invInk: "#D6EDE3",
+    invAccent: "#9FD9C0",
+    invInkSoft: "#5C7368"
+  },
+  fonts: { display: "'Fraunces', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 0, btn: 0, photo: 0, mark: 0 },
+  voice: { displayWeight: 500, italicAccent: true, dropCap: false }
+};
+var displayNoir = {
+  id: "display-noir",
+  family: "display",
+  spectrum: "dark",
+  label: "\u0442\u0451\u043C\u043D\u0430\u044F \xB7 \u0437\u043E\u043B\u043E\u0442\u043E",
+  colors: {
+    bg: "#141210",
+    bgAlt: "#201D19",
+    ink: "#EFE9DD",
+    inkSoft: "#9A9082",
+    inkFaint: "#6B645A",
+    line: "#322D27",
+    lineSoft: "#262320",
+    accent: "#D9B36A",
+    accentSoft: "rgba(217,179,106,0.14)",
+    accentInk: "#141210",
+    invBg: "#D9B36A",
+    invInk: "#141210",
+    invAccent: "#141210",
+    invInkSoft: "#6B5630"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 4, btn: 4, photo: 4, mark: 2 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false, photoFilter: "saturate(0.85) contrast(1.05)" }
+};
+var displayInk = {
+  id: "display-ink",
+  family: "display",
+  spectrum: "dark",
+  label: "\u0433\u0440\u0430\u0444\u0438\u0442 \xB7 \u043A\u043E\u0441\u0442\u044C",
+  colors: {
+    bg: "#100F0E",
+    bgAlt: "#1A1917",
+    ink: "#ECE7DF",
+    inkSoft: "#8E8780",
+    inkFaint: "#605A53",
+    line: "#2A2825",
+    lineSoft: "#201E1C",
+    accent: "#C9C2B6",
+    accentSoft: "rgba(201,194,182,0.12)",
+    accentInk: "#100F0E",
+    invBg: "#ECE7DF",
+    invInk: "#100F0E",
+    invAccent: "#100F0E",
+    invInkSoft: "#7A746C"
+  },
+  fonts: { display: "'Instrument Serif', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 3, btn: 3, photo: 3, mark: 2 },
+  voice: { displayWeight: 400, italicAccent: true, dropCap: false, photoFilter: "grayscale(0.35) contrast(1.08)" }
+};
+var splitProduct = {
+  id: "split-product",
+  family: "split",
+  spectrum: "classic",
+  label: "\u043F\u0440\u043E\u0434\u0443\u043A\u0442\u043E\u0432\u0430\u044F \xB7 \u0441\u0438\u043D\u044F\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#F5F7FA",
+    ink: "#12233B",
+    inkSoft: "#4F6178",
+    inkFaint: "#93A1B3",
+    line: "#E3E9F0",
+    lineSoft: "#EEF2F6",
+    accent: "#244A8E",
+    accentSoft: "rgba(36,74,142,0.08)",
+    accentInk: "#FFFFFF",
+    invBg: "#12233B",
+    invInk: "#FFFFFF",
+    invAccent: "#82A9DC",
+    invInkSoft: "#6A7A8E"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 12, btn: 8, photo: 12, mark: 6 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var splitClay = {
+  id: "split-clay",
+  family: "split",
+  spectrum: "soft",
+  label: "\u0437\u0435\u043C\u043B\u044F\u043D\u0430\u044F \xB7 \u043E\u043B\u0438\u0432\u0430",
+  colors: {
+    bg: "#EFE8DA",
+    bgAlt: "#E3D9C5",
+    ink: "#2A2116",
+    inkSoft: "#5C4F3A",
+    inkFaint: "#8A7B5E",
+    line: "#D7CBB2",
+    lineSoft: "#E2D8C4",
+    accent: "#6E713F",
+    accentSoft: "rgba(110,113,63,0.12)",
+    accentInk: "#EFE8DA",
+    invBg: "#2A2116",
+    invInk: "#EFE8DA",
+    invAccent: "#A8AB6F",
+    invInkSoft: "#8A7B5E"
+  },
+  fonts: { display: "'Inter Tight', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 999, photo: 14, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false, photoFilter: "saturate(0.95) sepia(0.05)" }
+};
+var splitTeal = {
+  id: "split-teal",
+  family: "split",
+  spectrum: "bold",
+  label: "\u0431\u0438\u0440\u044E\u0437\u043E\u0432\u0430\u044F \xB7 \u0441\u043C\u0435\u043B\u0430\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#EAF6F4",
+    ink: "#0E2422",
+    inkSoft: "#3F5C58",
+    inkFaint: "#7D9794",
+    line: "#D2E6E2",
+    lineSoft: "#E6F2F0",
+    accent: "#127068",
+    accentSoft: "rgba(18,112,104,0.10)",
+    accentInk: "#FFFFFF",
+    invBg: "#0E2422",
+    invInk: "#EAF6F4",
+    invAccent: "#5FB8AC",
+    invInkSoft: "#5C7672"
+  },
+  fonts: { display: "'Space Grotesk', sans-serif", body: "'Inter Tight', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 6, btn: 6, photo: 6, mark: 4 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var stackedCorporate = {
+  id: "stacked-corporate",
+  family: "stacked",
+  spectrum: "classic",
+  label: "\u0434\u0435\u043B\u043E\u0432\u0430\u044F \xB7 \u0441\u0438\u043D\u0435-\u0441\u0435\u0440\u0430\u044F",
+  colors: {
+    bg: "#FFFFFF",
+    bgAlt: "#F4F6F8",
+    ink: "#1C2A39",
+    inkSoft: "#5B6A7B",
+    inkFaint: "#95A2B0",
+    line: "#E4E9EE",
+    lineSoft: "#EFF2F5",
+    accent: "#1C2A39",
+    accentSoft: "#EEF1F4",
+    accentInk: "#FFFFFF",
+    invBg: "#1C2A39",
+    invInk: "#FFFFFF",
+    invAccent: "#8CA3BC",
+    invInkSoft: "#6B7888"
+  },
+  fonts: { display: "'Inter', sans-serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 12, btn: 8, photo: 12, mark: 8 },
+  voice: { displayWeight: 700, italicAccent: false, dropCap: false }
+};
+var stackedCream = {
+  id: "stacked-cream",
+  family: "stacked",
+  spectrum: "soft",
+  label: "\u0442\u0451\u043F\u043B\u0430\u044F \xB7 \u043E\u0445\u0440\u0430",
+  colors: {
+    bg: "#FAF5EC",
+    bgAlt: "#FFFFFF",
+    ink: "#2A2118",
+    inkSoft: "#5C5040",
+    inkFaint: "#8A7C66",
+    line: "#E8DECB",
+    lineSoft: "#F0E8D8",
+    accent: "#A8631F",
+    accentSoft: "rgba(168,99,31,0.10)",
+    accentInk: "#FAF5EC",
+    invBg: "#2A2118",
+    invInk: "#FAF5EC",
+    invAccent: "#D9A441",
+    invInkSoft: "#8A7C66"
+  },
+  fonts: { display: "'Fraunces', Georgia, serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 14, btn: 999, photo: 14, mark: 8 },
+  voice: { displayWeight: 500, italicAccent: false, dropCap: false, photoFilter: "sepia(0.05) saturate(0.95)" }
+};
+var stackedSlate = {
+  id: "stacked-slate",
+  family: "stacked",
+  spectrum: "bold",
+  label: "\u0433\u0440\u0430\u0444\u0438\u0442 \xB7 \u0430\u043A\u0446\u0435\u043D\u0442",
+  colors: {
+    bg: "#FBFBFA",
+    bgAlt: "#F2F2F0",
+    ink: "#1A1A1A",
+    inkSoft: "#4F4F4D",
+    inkFaint: "#8A8A86",
+    line: "#E4E4E0",
+    lineSoft: "#EEEEEB",
+    accent: "#C24E2E",
+    accentSoft: "rgba(194,78,46,0.10)",
+    accentInk: "#FBFBFA",
+    invBg: "#1A1A1A",
+    invInk: "#FBFBFA",
+    invAccent: "#E08A5C",
+    invInkSoft: "#6B6B68"
+  },
+  fonts: { display: "'Inter', sans-serif", body: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+  radii: { card: 10, btn: 6, photo: 10, mark: 6 },
+  voice: { displayWeight: 800, italicAccent: false, dropCap: false }
+};
+var themes = {
+  [editorialWarm.id]: editorialWarm,
+  [editorialNoir.id]: editorialNoir,
+  [editorialMono.id]: editorialMono,
+  [bentoNoir.id]: bentoNoir,
+  [bentoLight.id]: bentoLight,
+  [bentoClay.id]: bentoClay,
+  [displaySoft.id]: displaySoft,
+  [displayBold.id]: displayBold,
+  [displayNoir.id]: displayNoir,
+  [displayInk.id]: displayInk,
+  [splitProduct.id]: splitProduct,
+  [splitClay.id]: splitClay,
+  [splitTeal.id]: splitTeal,
+  [stackedCorporate.id]: stackedCorporate,
+  [stackedCream.id]: stackedCream,
+  [stackedSlate.id]: stackedSlate
+};
+function getTheme(themeId) {
+  const t = themes[themeId];
+  if (!t) throw new Error(`@samosite/canon/presets: unknown themeId "${themeId}"`);
+  return t;
+}
+function EditorialFamily({ theme, content }) {
+  const c = theme.colors;
+  const f = theme.fonts;
+  const r = theme.radii;
+  const v = theme.voice;
+  const withEm = (text) => {
+    const parts = text.split(/\[\[(.+?)\]\]/g);
+    return parts.map(
+      (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: {
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        color: c.accent,
+        fontWeight: v.displayWeight
+      }, children: p }, i)
+    );
+  };
+  const hr = { borderBottom: `1px solid ${c.line}` };
+  return /* @__PURE__ */ jsxs2("div", { style: {
+    background: c.bg,
+    color: c.ink,
+    fontFamily: f.body,
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    fontVariantNumeric: "tabular-nums"
+  }, children: [
+    /* @__PURE__ */ jsxs2("header", { style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "13px 16px 11px",
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsx3("div", { style: {
+        fontFamily: f.display,
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        fontSize: 15,
+        fontWeight: v.displayWeight,
+        letterSpacing: "-0.01em",
+        color: c.ink
+      }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx3("a", { style: {
+        background: c.accent,
+        color: c.accentInk,
+        padding: "6px 12px",
+        fontFamily: f.mono,
+        fontSize: 9,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        borderRadius: r.btn,
+        cursor: "pointer"
+      }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "9px 16px",
+      fontFamily: f.mono,
+      fontSize: 9,
+      color: c.inkSoft,
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsxs2("span", { children: [
+        "\u0441 ",
+        content.meta.since
+      ] }),
+      /* @__PURE__ */ jsxs2("span", { children: [
+        "\u2605\u2605\u2605\u2605\u2605 ",
+        content.meta.rating
+      ] }),
+      /* @__PURE__ */ jsxs2("span", { children: [
+        content.meta.reviewsN,
+        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx3("section", { style: { padding: "16px 16px 18px", ...hr }, children: /* @__PURE__ */ jsx3("h1", { style: {
+      fontFamily: f.display,
+      fontSize: 34,
+      fontWeight: v.displayWeight,
+      lineHeight: 0.94,
+      letterSpacing: "-0.025em",
+      color: c.ink,
+      margin: 0
+    }, children: content.hero.headingLines.map((line, i) => /* @__PURE__ */ jsxs2(React.Fragment, { children: [
+      withEm(line),
+      i < content.hero.headingLines.length - 1 && /* @__PURE__ */ jsx3("br", {})
+    ] }, i)) }) }),
+    content.hero.leadParagraph && /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 16px", ...hr }, children: [
+      v.dropCap && /* @__PURE__ */ jsx3("span", { style: {
+        fontFamily: f.display,
+        fontSize: 44,
+        fontWeight: v.displayWeight,
+        float: "left",
+        lineHeight: 0.85,
+        margin: "4px 8px 0 0",
+        color: c.accent
+      }, children: content.hero.leadParagraph[0] }),
+      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.55, color: c.ink, margin: 0 }, children: v.dropCap ? content.hero.leadParagraph.slice(1) : content.hero.leadParagraph })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { aspectRatio: "4 / 3", overflow: "hidden", position: "relative", ...hr }, children: [
+      /* @__PURE__ */ jsx3(
+        "img",
+        {
+          src: content.hero.photoSrc,
+          alt: "",
+          loading: "lazy",
+          style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" }
+        }
+      ),
+      content.hero.photoCaption && /* @__PURE__ */ jsx3("div", { style: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: "5px 10px",
+        background: c.bg,
+        fontFamily: f.mono,
+        fontSize: 9,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.05em",
+        borderTop: `1px solid ${c.line}`
+      }, children: content.hero.photoCaption })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: {
+      padding: "12px 16px",
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+      ...hr
+    }, children: [
+      /* @__PURE__ */ jsxs2("a", { style: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: c.accent,
+        color: c.accentInk,
+        padding: "13px 16px",
+        borderRadius: r.btn,
+        fontSize: 13,
+        fontWeight: 700,
+        letterSpacing: "0.04em",
+        textTransform: "uppercase",
+        cursor: "pointer"
+      }, children: [
+        content.cta.primary.label,
+        /* @__PURE__ */ jsx3("span", { style: {
+          fontFamily: f.display,
+          fontSize: 22,
+          fontStyle: v.italicAccent ? "italic" : "normal"
+        }, children: "\u2192" })
+      ] }),
+      content.cta.phone && /* @__PURE__ */ jsx3("a", { style: {
+        textAlign: "center",
+        padding: "10px 16px",
+        border: `1px solid ${c.ink}`,
+        borderRadius: r.btn,
+        fontSize: 12,
+        fontFamily: f.mono,
+        letterSpacing: "0.05em",
+        color: c.ink,
+        cursor: "pointer"
+      }, children: content.cta.phone })
+    ] }),
+    /* @__PURE__ */ jsx3("div", { style: {
+      display: "grid",
+      gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
+      ...hr
+    }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs2("div", { style: {
+      padding: "12px 8px",
+      textAlign: "center",
+      borderRight: i < content.stats.length - 1 ? `1px solid ${c.line}` : void 0
+    }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: {
+        fontFamily: f.display,
+        fontSize: 22,
+        fontWeight: v.displayWeight,
+        color: c.accent,
+        lineHeight: 1,
+        marginBottom: 3
+      }, children: [
+        s.num,
+        s.unit && /* @__PURE__ */ jsx3("span", { style: { fontSize: 12, color: c.inkSoft }, children: s.unit })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: {
+        fontFamily: f.mono,
+        fontSize: 8,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em"
+      }, children: s.label })
+    ] }, i)) }),
+    content.menu && /* @__PURE__ */ jsxs2("section", { style: { padding: "18px 16px", ...hr }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: {
+        fontFamily: f.mono,
+        fontSize: 9,
+        color: c.inkSoft,
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        marginBottom: 10,
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { height: 1, background: c.inkSoft, flex: 1 } }),
+        content.menu.eyebrow,
+        /* @__PURE__ */ jsx3("span", { style: { height: 1, background: c.inkSoft, flex: 1 } })
+      ] }),
+      /* @__PURE__ */ jsx3("h3", { style: {
+        fontFamily: f.display,
+        fontSize: 20,
+        fontWeight: v.displayWeight,
+        lineHeight: 1,
+        letterSpacing: "-0.015em",
+        marginBottom: 12,
+        color: c.ink
+      }, children: withEm(content.menu.title) }),
+      content.menu.items.slice(0, 3).map((it, i, arr) => /* @__PURE__ */ jsxs2("div", { style: {
+        display: "grid",
+        gridTemplateColumns: "auto 1fr auto",
+        gap: 10,
+        alignItems: "baseline",
+        padding: "9px 0",
+        borderBottom: i < arr.length - 1 ? `1px dotted ${c.lineSoft}` : void 0
+      }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 9, color: c.accent }, children: it.num }),
+        /* @__PURE__ */ jsxs2("div", { children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: v.displayWeight, color: c.ink }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx3("span", { style: {
+          fontFamily: f.display,
+          fontStyle: v.italicAccent ? "italic" : "normal",
+          fontSize: 14,
+          color: c.ink
+        }, children: it.price })
+      ] }, i))
+    ] }),
+    /* @__PURE__ */ jsxs2("section", { style: { padding: "14px 16px", ...hr }, children: [
+      /* @__PURE__ */ jsx3("p", { style: {
+        fontFamily: f.display,
+        fontStyle: v.italicAccent ? "italic" : "normal",
+        fontSize: 15,
+        lineHeight: 1.3,
+        margin: 0,
+        color: c.ink
+      }, children: content.quote.text.split(/\[\[(.+?)\]\]/g).map(
+        (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: { color: c.accent, fontStyle: "normal" }, children: p }, i)
+      ) }),
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.inkSoft, marginTop: 8 }, children: [
+        content.quote.authorName,
+        " \xB7 ",
+        content.quote.authorSource
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs2("footer", { style: {
+      padding: "11px 16px",
+      background: c.invBg,
+      color: c.invInk,
+      display: "flex",
+      justifyContent: "space-between",
+      fontFamily: f.mono,
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: "0.08em",
+      opacity: 0.7
+    }, children: [
+      /* @__PURE__ */ jsx3("span", { children: content.meta.address }),
+      /* @__PURE__ */ jsxs2("span", { children: [
+        content.meta.host,
+        ".",
+        BRAND.domain
+      ] })
+    ] })
+  ] });
+}
+function renderEm(text, color, italic) {
+  return text.split(/\[\[(.+?)\]\]/g).map(
+    (p, i) => i % 2 === 0 ? /* @__PURE__ */ jsx3(React.Fragment, { children: p }, i) : /* @__PURE__ */ jsx3("em", { style: { fontStyle: italic ? "italic" : "normal", color }, children: p }, i)
+  );
+}
+function BentoFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const card = {
+    background: c.bgAlt,
+    borderRadius: r.card,
+    padding: 14,
+    border: `1px solid ${c.line}`,
+    overflow: "hidden"
+  };
+  const label = {
+    fontFamily: f.mono,
+    fontSize: 9,
+    color: c.inkFaint,
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+    marginBottom: 8
+  };
+  const s = content.stats;
+  const m = content.menu;
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, padding: 14, fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, padding: "0 2px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, fontFamily: f.display, fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em" }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 22, height: 22, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12 }, children: content.meta.brand[0] }),
+        content.meta.brand
+      ] }),
+      /* @__PURE__ */ jsxs2("span", { style: { fontFamily: f.mono, fontSize: 10, color: c.inkSoft }, children: [
+        "\u2605 ",
+        content.meta.rating
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4", background: c.accent, color: c.accentInk, border: "none", padding: "20px 16px" }, children: [
+        /* @__PURE__ */ jsxs2("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.accent, padding: "5px 9px", borderRadius: 999, fontSize: 9, fontWeight: 700, fontFamily: f.mono, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14 }, children: [
+          /* @__PURE__ */ jsx3("span", { style: { width: 5, height: 5, background: c.accent, borderRadius: "50%" } }),
+          "\u0441\u0432\u043E\u0431\u043E\u0434\u043D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F"
+        ] }),
+        /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: 800, lineHeight: 0.96, letterSpacing: "-0.035em", margin: 0 }, children: content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "") })
+      ] }),
+      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: label, children: "\u0441\u0435\u0433\u043E\u0434\u043D\u044F" }),
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }, children: "14:00 \xB7 16:30" }),
+        /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 2 }, children: content.cta.primary.label.toLowerCase() })
+      ] }),
+      s[0] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: label, children: s[0].label }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+          s[0].num,
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[0].unit })
+        ] })
+      ] }),
+      s[1] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: label, children: s[1].label }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.accent }, children: [
+          s[1].num,
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[1].unit })
+        ] })
+      ] }),
+      s[2] && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 2" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: label, children: s[2].label }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em" }, children: [
+          s[2].num,
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 14, color: c.inkFaint }, children: s[2].unit })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: { gridColumn: "span 4", borderRadius: r.card, overflow: "hidden", aspectRatio: "16/9" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4", background: c.invBg, color: c.invInk, border: "none", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", padding: "16px 18px" }, children: [
+        /* @__PURE__ */ jsxs2("div", { children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em" }, children: content.cta.primary.label }),
+          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 10, color: c.invInkSoft, marginTop: 2 }, children: content.cta.phone })
+        ] }),
+        /* @__PURE__ */ jsx3("span", { style: { width: 32, height: 32, background: c.accent, color: c.accentInk, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }, children: "\u2192" })
+      ] }),
+      m && /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 12 }, children: m.title.replace(/\[\[|\]\]/g, "") }),
+        m.items.map((it, i) => /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0 }, children: [
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 12 }, children: it.name }),
+          /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 12, color: c.accent, fontWeight: 500 }, children: it.price })
+        ] }, i))
+      ] }),
+      /* @__PURE__ */ jsxs2("div", { style: { ...card, gridColumn: "span 4" }, children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 15, fontWeight: 500, marginBottom: 4 }, children: content.cta.phone }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontSize: 10, color: c.inkSoft }, children: [
+          content.meta.address,
+          " \xB7 ",
+          content.meta.host,
+          ".",
+          BRAND.domain
+        ] })
+      ] })
+    ] })
+  ] });
+}
+function DisplayFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const lines = content.hero.headingLines;
+  const m = content.menu;
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em" }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, background: c.accent, borderRadius: "50%" } }),
+        content.meta.brand
+      ] }),
+      /* @__PURE__ */ jsx3("span", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.ink, padding: "6px 12px", border: `1px solid ${c.ink}`, borderRadius: 999 }, children: content.cta.phone })
+    ] }),
+    /* @__PURE__ */ jsxs2("section", { style: { padding: "16px 18px 22px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", fontFamily: f.mono, fontSize: 9, color: c.inkSoft, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${c.line}` }, children: [
+        /* @__PURE__ */ jsxs2("span", { children: [
+          "\u0441 ",
+          content.meta.since,
+          " \xB7 ",
+          content.meta.address
+        ] }),
+        /* @__PURE__ */ jsxs2("span", { children: [
+          "\u2605\u2605\u2605\u2605\u2605 ",
+          content.meta.rating
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 60, fontWeight: v.displayWeight, lineHeight: 0.85, letterSpacing: "-0.045em", margin: 0 }, children: lines.map((line, i) => /* @__PURE__ */ jsx3("span", { style: {
+        display: "block",
+        color: i === 1 ? c.accent : c.ink,
+        fontStyle: i === 1 && v.italicAccent ? "italic" : "normal",
+        textIndent: i === 1 ? 20 : 0,
+        textAlign: i === 2 ? "right" : "left"
+      }, children: renderEm(line, c.accent, v.italicAccent) }, i)) }),
+      content.stats[0] && /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", marginTop: 18, paddingTop: 18, borderTop: `1px solid ${c.line}` }, children: [
+        /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 46, fontWeight: v.displayWeight, lineHeight: 0.85, color: c.accent, fontStyle: v.italicAccent ? "italic" : "normal", whiteSpace: "nowrap" }, children: [
+          content.stats[0].num,
+          /* @__PURE__ */ jsx3("span", { style: { fontSize: 22 }, children: content.stats[0].unit })
+        ] }),
+        /* @__PURE__ */ jsxs2("div", { style: { fontSize: 13, lineHeight: 1.45, color: c.inkSoft }, children: [
+          /* @__PURE__ */ jsx3("b", { style: { color: c.ink }, children: content.stats[0].label }),
+          /* @__PURE__ */ jsx3("br", {}),
+          content.hero.leadParagraph?.split(".")[0],
+          "."
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "auto auto", gap: 6, padding: "0 14px 18px" }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { gridColumn: "1 / 2", gridRow: "1 / 3", borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1" }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "1/1", background: c.bgAlt }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.gallery?.[1] ?? content.hero.gallery?.[0] ?? content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "0 14px 22px", display: "flex", flexDirection: "column", gap: 7 }, children: [
+      /* @__PURE__ */ jsxs2("a", { style: { background: c.invBg, color: c.invInk, padding: 15, borderRadius: r.btn, textAlign: "center", fontSize: 12, fontWeight: 600, letterSpacing: "0.02em", cursor: "pointer" }, children: [
+        content.cta.primary.label,
+        " \u2192"
+      ] }),
+      /* @__PURE__ */ jsxs2("a", { style: { padding: 12, border: `1px solid ${c.ink}`, borderRadius: r.btn, textAlign: "center", fontSize: 11, fontWeight: 500 }, children: [
+        content.meta.reviewsN,
+        " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \xB7 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs2("section", { style: { background: c.invBg, color: c.invInk, padding: "20px 18px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.invAccent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 20, height: 1, background: c.invAccent } }),
+        m.eyebrow
+      ] }),
+      m.items.slice(0, 2).map((it, i, arr) => /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr auto", gap: 14, alignItems: "baseline", padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
+        /* @__PURE__ */ jsxs2("div", { children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1.05 }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.invInkSoft, marginTop: 3 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, color: c.invAccent }, children: it.price })
+      ] }, i))
+    ] }),
+    /* @__PURE__ */ jsxs2("footer", { style: { padding: 18, textAlign: "center", background: c.bg }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontStyle: v.italicAccent ? "italic" : "normal", fontSize: 18, marginBottom: 6 }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkFaint, textTransform: "uppercase", letterSpacing: "0.08em" }, children: content.meta.address })
+    ] })
+  ] });
+}
+function SplitFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.menu;
+  const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 15, fontWeight: 700, letterSpacing: "-0.02em" }, children: [
+        content.meta.brand,
+        /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "." })
+      ] }),
+      /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: "7px 14px", borderRadius: r.btn, fontSize: 11, fontWeight: 600 }, children: content.cta.primary.label.split(" ")[0] })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { aspectRatio: "4/3", overflow: "hidden", borderRight: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 14, background: c.bgAlt }, children: [
+        /* @__PURE__ */ jsxs2("div", { children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: c.accent, marginBottom: 8 }, children: content.meta.category }),
+          /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: "-0.03em", margin: 0 }, children: heading })
+        ] }),
+        /* @__PURE__ */ jsx3("p", { style: { fontSize: 11, lineHeight: 1.5, color: c.inkSoft, margin: 0 }, children: content.hero.leadParagraph?.slice(0, 110) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", background: c.invBg, color: c.invInk }, children: content.stats.map((s, i) => /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 10px", textAlign: "center", borderRight: i < content.stats.length - 1 ? `1px solid ${c.invInkSoft}` : void 0 }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.03em", color: c.invAccent, marginBottom: 4 }, children: [
+        s.num,
+        /* @__PURE__ */ jsx3("span", { style: { fontSize: 12 }, children: s.unit })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 8, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.75 }, children: s.label })
+    ] }, i)) }),
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: c.accent, marginBottom: 8 }, children: "\u043A\u0430\u043A \u043C\u044B \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u043C" }),
+      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 17, fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.02em", margin: 0 }, children: content.quote.text.replace(/[«»"\[\]]/g, "") }),
+      /* @__PURE__ */ jsxs2("div", { style: { fontFamily: f.mono, fontSize: 9, color: c.inkSoft, marginTop: 8 }, children: [
+        content.quote.authorName,
+        " \xB7 ",
+        content.quote.authorSource
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs2("div", { style: { padding: "20px 14px", background: c.bgAlt, borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 14 }, children: m.eyebrow }),
+      /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: m.items.slice(0, 3).map((it, i) => /* @__PURE__ */ jsxs2("div", { style: {
+        background: i === 1 ? c.accent : c.bg,
+        color: i === 1 ? c.accentInk : c.ink,
+        border: `1px solid ${i === 1 ? c.accent : c.line}`,
+        borderRadius: r.card,
+        padding: 14,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 12
+      }, children: [
+        /* @__PURE__ */ jsxs2("div", { children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700 }, children: it.name }),
+          /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, opacity: 0.8, marginTop: 2 }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 18, fontWeight: 800, whiteSpace: "nowrap" }, children: it.price })
+      ] }, i)) })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs2("div", { children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.mono, fontSize: 13, fontWeight: 500 }, children: content.cta.phone }),
+        /* @__PURE__ */ jsx3("div", { style: { fontSize: 10, color: c.inkSoft }, children: content.meta.address })
+      ] }),
+      /* @__PURE__ */ jsxs2("a", { style: { background: c.invBg, color: c.invInk, padding: "11px 16px", borderRadius: r.btn, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }, children: [
+        content.cta.primary.label.split(" ")[0],
+        " \u2192"
+      ] })
+    ] })
+  ] });
+}
+function StackedFamily({ theme, content }) {
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.menu;
+  const cardBox = { background: c.bgAlt, border: `1px solid ${c.line}`, borderRadius: r.card };
+  const heading = content.hero.headingLines.join(" ").replace(/\[\[|\]\]/g, "");
+  return /* @__PURE__ */ jsxs2("div", { style: { background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: "flex", flexDirection: "column", fontVariantNumeric: "tabular-nums" }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: "-0.015em" }, children: content.meta.brand }),
+      /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: "8px 14px", borderRadius: r.btn, fontSize: 12, fontWeight: 600 }, children: "\u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F" })
+    ] }),
+    /* @__PURE__ */ jsxs2("section", { style: { padding: "18px 16px 20px" }, children: [
+      /* @__PURE__ */ jsxs2("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 10px", background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 11, fontWeight: 500, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { width: 6, height: 6, background: c.accent, borderRadius: "50%" } }),
+        content.meta.category,
+        " \xB7 ",
+        content.meta.address.split(",").pop()?.trim()
+      ] }),
+      /* @__PURE__ */ jsx3("h1", { style: { fontFamily: f.display, fontSize: 27, fontWeight: v.displayWeight, lineHeight: 1.05, letterSpacing: "-0.025em", margin: "0 0 10px" }, children: heading }),
+      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.5, color: c.inkSoft, marginBottom: 14 }, children: content.hero.leadParagraph }),
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 10, fontSize: 12, color: c.inkSoft, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }, children: [
+        /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" }),
+        /* @__PURE__ */ jsx3("b", { children: content.meta.rating }),
+        /* @__PURE__ */ jsx3("span", { style: { color: c.inkFaint }, children: "\xB7" }),
+        /* @__PURE__ */ jsxs2("span", { children: [
+          content.meta.reviewsN,
+          " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
+        ] }),
+        /* @__PURE__ */ jsx3("span", { style: { color: c.inkFaint }, children: "\xB7" }),
+        /* @__PURE__ */ jsxs2("span", { children: [
+          "\u0441 ",
+          content.meta.since
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: { borderRadius: r.photo, overflow: "hidden", aspectRatio: "16/10", marginBottom: 14 }, children: /* @__PURE__ */ jsx3("img", { src: content.hero.photoSrc, alt: "", loading: "lazy", style: { width: "100%", height: "100%", objectFit: "cover", filter: v.photoFilter, display: "block" } }) }),
+      /* @__PURE__ */ jsxs2("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: [
+        /* @__PURE__ */ jsx3("a", { style: { background: c.accent, color: c.accentInk, padding: 14, borderRadius: r.btn, textAlign: "center", fontSize: 14, fontWeight: 600 }, children: content.cta.primary.label }),
+        /* @__PURE__ */ jsx3("a", { style: { padding: 12, border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: "center", fontSize: 13 }, children: content.cta.phone })
+      ] })
+    ] }),
+    m && /* @__PURE__ */ jsxs2("section", { style: { padding: "22px 16px", borderTop: `1px solid ${c.line}` }, children: [
+      /* @__PURE__ */ jsx3("h3", { style: { fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438 \u0446\u0435\u043D\u044B" }),
+      /* @__PURE__ */ jsx3("p", { style: { fontSize: 11, color: c.inkSoft, marginBottom: 14 }, children: m.eyebrow }),
+      /* @__PURE__ */ jsx3("div", { style: { ...cardBox, padding: 14 }, children: m.items.map((it, i) => /* @__PURE__ */ jsxs2("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "10px 0", borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : void 0, gap: 12 }, children: [
+        /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, fontWeight: 600, marginBottom: 2 }, children: it.name }),
+          it.desc && /* @__PURE__ */ jsx3("div", { style: { fontSize: 11, color: c.inkSoft }, children: it.desc })
+        ] }),
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: f.display, fontSize: 14, fontWeight: 600, whiteSpace: "nowrap" }, children: it.price })
+      ] }, i)) })
+    ] }),
+    /* @__PURE__ */ jsx3("section", { style: { padding: "18px 16px", borderTop: `1px solid ${c.line}` }, children: /* @__PURE__ */ jsxs2("div", { style: { background: c.accentSoft, borderRadius: r.card, padding: "14px 16px" }, children: [
+      /* @__PURE__ */ jsx3("p", { style: { fontSize: 13, lineHeight: 1.5, margin: 0, color: c.ink }, children: content.quote.text.replace(/\[\[|\]\]/g, "") }),
+      /* @__PURE__ */ jsxs2("div", { style: { fontSize: 10, color: c.inkSoft, marginTop: 8, display: "flex", justifyContent: "space-between" }, children: [
+        /* @__PURE__ */ jsxs2("span", { children: [
+          content.quote.authorName,
+          " \xB7 ",
+          content.quote.authorSource
+        ] }),
+        /* @__PURE__ */ jsx3("span", { style: { color: c.accent }, children: "\u2605\u2605\u2605\u2605\u2605" })
+      ] })
+    ] }) })
+  ] });
+}
+var FAMILIES = {
+  editorial: EditorialFamily,
+  bento: BentoFamily,
+  display: DisplayFamily,
+  split: SplitFamily,
+  stacked: StackedFamily
+};
+function PresetRenderer({ preset, content }) {
+  const theme = getTheme(preset.themeId);
+  const Family = FAMILIES[preset.familyId] ?? FAMILIES.editorial;
+  if (theme.family !== preset.familyId) {
+    if (typeof console !== "undefined" && console.warn) {
+      console.warn(`[@samosite/canon] preset mismatch: theme "${theme.id}" is for family "${theme.family}", but preset.familyId is "${preset.familyId}"`);
+    }
+  }
+  return /* @__PURE__ */ jsx3(Family, { theme, content });
+}
+function MiniChrome({ host, children }) {
+  return /* @__PURE__ */ jsxs2("div", { style: {
+    overflow: "hidden",
+    borderRadius: 12,
+    border: `1px solid ${VT.lineSoft}`,
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    minWidth: 0,
+    height: "100%",
+    background: VT.white,
+    alignSelf: "flex-start"
+  }, children: [
+    /* @__PURE__ */ jsxs2("div", { style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      padding: "7px 10px",
+      background: "#fff",
+      borderBottom: `1px solid ${VT.line}`,
+      flex: "0 0 auto"
+    }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, borderRadius: "50%", background: "#e3decf" } }),
+      /* @__PURE__ */ jsxs2("span", { style: {
+        marginLeft: 10,
+        fontFamily: VT.font.mono,
+        fontSize: 11,
+        color: VT.inkFaint
+      }, children: [
+        host,
+        ".",
+        BRAND.domain
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx3("div", { style: { flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }, children })
+  ] });
+}
+var EX_U = (id, w = 720) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+var fixtureCoffeeLena = {
+  meta: { brand: "\u0423\u0442\u0440\u043E \u0443 \u041B\u0435\u043D\u044B", host: "lena", category: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F", address: "\u041F\u043B\u0430\u0442\u043E\u043D\u043E\u0432\u0430 12, \u0412\u043E\u0440\u043E\u043D\u0435\u0436", since: "2019", rating: "4.9", reviewsN: 128 },
+  hero: {
+    headingLines: ["\u041A\u043E\u0444\u0435", "[[&]] \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u0438", "\u0441 07:30"],
+    leadParagraph: "\u041B\u0435\u043D\u0430 \u043E\u0431\u0436\u0430\u0440\u0438\u0432\u0430\u0435\u0442 \u0437\u0435\u0440\u043D\u043E \u0441\u0430\u043C\u0430, \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E. \u0410\u043B\u044C\u0442\u0435\u0440\u043D\u0430\u0442\u0438\u0432\u043D\u043E\u0435 \u043C\u043E\u043B\u043E\u043A\u043E \u0431\u0435\u0437 \u0434\u043E\u043F\u043B\u0430\u0442. \u0412\u044B\u043D\u043E\u0441 \u0437\u0430 \u0442\u0440\u0438 \u043C\u0438\u043D\u0443\u0442\u044B \u2014 \u0443\u0441\u043F\u0435\u0435\u0442\u0435 \u043D\u0430 \u0440\u0430\u0431\u043E\u0442\u0443.",
+    photoSrc: EX_U("photo-1495474472287-4d71bcdd2085", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0441\u0442\u043E\u0439\u043A\u0430, \u0447\u0435\u0442\u0432\u0435\u0440\u0433 08:14"
+  },
+  stats: [
+    { num: "07:30", label: "\u043E\u0442\u043A\u0440\u044B\u0442\u0438\u0435" },
+    { num: "3", unit: " \u043C\u0438\u043D", label: "\u0432\u044B\u043D\u043E\u0441" },
+    { num: "0 \u20BD", label: "\u0430\u043B\u044C\u0442.\u043C\u043E\u043B\u043E\u043A\u043E" }
+  ],
+  menu: {
+    eyebrow: "\u041C\u0435\u043D\u044E \u0443\u0442\u0440\u0430",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C]]",
+    items: [
+      { num: "01", name: "\u041A\u0430\u043F\u0443\u0447\u0438\u043D\u043E", desc: "250 \u043C\u043B \xB7 \u0430\u043B\u044C\u0442.\u043C\u043E\u043B\u043E\u043A\u043E \u0431\u0435\u0437 \u0434\u043E\u043F\u043B\u0430\u0442", price: "220 \u20BD" },
+      { num: "02", name: "\u0420\u0430\u0444 \u0432\u0430\u043D\u0438\u043B\u044C\u043D\u044B\u0439", desc: "300 \u043C\u043B \xB7 \u043D\u0430 \u0441\u043B\u0438\u0432\u043A\u0430\u0445", price: "280 \u20BD" },
+      { num: "03", name: "\u0421\u044B\u0440\u043D\u0438\u043A\u0438 \u0441\u043E \u0441\u043C\u0435\u0442\u0430\u043D\u043E\u0439", desc: "3 \u0448\u0442 \xB7 180 \u0433", price: "340 \u20BD" },
+      { num: "04", name: "\u0410\u0432\u043E\u043A\u0430\u0434\u043E-\u0442\u043E\u0441\u0442", desc: "\u0441 \u044F\u0439\u0446\u043E\u043C-\u043F\u0430\u0448\u043E\u0442", price: "390 \u20BD" }
+    ]
+  },
+  quote: { text: '\xAB\u0420\u0435\u0431\u044F\u0442\u0430 \u043F\u043E\u043C\u043D\u044F\u0442 \u043C\u043E\u0451 [["\u043A\u0430\u043A \u043E\u0431\u044B\u0447\u043D\u043E"]] \u0441 \u0442\u0440\u0435\u0442\u044C\u0435\u0433\u043E \u0440\u0430\u0437\u0430.\xBB', authorName: "\u0410\u043B\u0438\u043D\u0430 \u041A.", authorSource: "2\u0413\u0418\u0421", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u043A \u043F\u0440\u0438\u0445\u043E\u0434\u0443" }, phone: "+7 (900) 000-00-12" }
+};
+var fixtureBakeryDom = {
+  meta: { brand: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F \xAB\u0414\u043E\u043C\xBB", host: "dom-bakery", category: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F", address: "\u0411\u043E\u043B\u044C\u0448\u0430\u044F \u041A\u043E\u043D\u044E\u0448\u0435\u043D\u043D\u0430\u044F 9, \u041F\u0438\u0442\u0435\u0440", since: "2017", rating: "4.8", reviewsN: 246 },
+  hero: {
+    headingLines: ["\u0425\u043B\u0435\u0431", "\u043D\u0430 [[\u0437\u0430\u043A\u0432\u0430\u0441\u043A\u0435]]", "\u0434\u043E \u043F\u043E\u043B\u0443\u0434\u043D\u044F"],
+    leadParagraph: "\u041F\u0435\u0447\u0451\u043C \u0432 5 \u0443\u0442\u0440\u0430, \u0432\u044B\u043A\u043B\u0430\u0434\u044B\u0432\u0430\u0435\u043C \u043A 7. \u041F\u043E\u0441\u043B\u0435 12:00 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u2014 \u043B\u0443\u0447\u0448\u0435 \u0431\u0440\u0430\u0442\u044C \u0441 \u0443\u0442\u0440\u0430 \u0438\u043B\u0438 \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0430\u043A\u0430\u043D\u0443\u043D\u0435 \u0447\u0435\u0440\u0435\u0437 Telegram.",
+    photoSrc: EX_U("photo-1509440159596-0249088772ff", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043F\u0435\u0447\u044C, \u0441\u0440\u0435\u0434\u0430 06:30"
+  },
+  stats: [
+    { num: "05:00", label: "\u043D\u0430\u0447\u0430\u043B\u043E \u0432\u044B\u043F\u0435\u0447\u043A\u0438" },
+    { num: "18", label: "\u0432\u0438\u0434\u043E\u0432 \u0445\u043B\u0435\u0431\u0430" },
+    { num: "0 \u20BD", label: "\u0434\u0440\u043E\u0436\u0436\u0435\u0439" }
+  ],
+  menu: {
+    eyebrow: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F \u0432 \u043F\u0435\u0447\u043A\u0435",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u043D\u0430 \u0437\u0430\u0432\u0442\u0440\u0430]]",
+    items: [
+      { num: "01", name: "\u0411\u043E\u0440\u043E\u0434\u0438\u043D\u0441\u043A\u0438\u0439 \u043D\u0430 \u0437\u0430\u043A\u0432\u0430\u0441\u043A\u0435", desc: "500 \u0433 \xB7 \u0441 \u0442\u043C\u0438\u043D\u043E\u043C", price: "240 \u20BD" },
+      { num: "02", name: "\u0411\u0430\u0433\u0435\u0442 \u0444\u0435\u0440\u043C\u0435\u0440\u0441\u043A\u0438\u0439", desc: "320 \u0433 \xB7 \u0445\u0440\u0443\u0441\u0442\u044F\u0449\u0430\u044F \u043A\u043E\u0440\u043A\u0430", price: "180 \u20BD" },
+      { num: "03", name: "\u0427\u0438\u0430\u0431\u0430\u0442\u0442\u0430 \u043E\u043B\u0438\u0432\u043A\u043E\u0432\u0430\u044F", desc: "280 \u0433", price: "210 \u20BD" },
+      { num: "04", name: "\u0421\u043B\u043E\u0439\u043A\u0430 \u0441 \u044F\u0431\u043B\u043E\u043A\u043E\u043C", desc: "110 \u0433 \xB7 \u0434\u043E\u043C\u0430\u0448\u043D\u0435\u0435 \u0442\u0435\u0441\u0442\u043E", price: "120 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0425\u043B\u0435\u0431 \u043A\u0430\u043A \u0443 \u0431\u0430\u0431\u0443\u0448\u043A\u0438 \u0432 \u0434\u0435\u0440\u0435\u0432\u043D\u0435. [[\u041A\u043E\u0440\u043A\u0430 \u0442\u0430\u043A\u0430\u044F \u0436\u0435]], \u043D\u0435 \u043A\u0430\u043A \u0432 \u043C\u0430\u0433\u0430\u0437\u0438\u043D\u0435.\xBB", authorName: "\u041C\u0430\u0440\u0438\u044F \u0420.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "5 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u043A \u0443\u0442\u0440\u0443" }, phone: "+7 (900) 000-00-11" }
+};
+var fixtureAutoPark = {
+  meta: { brand: "Park \xB7 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441", host: "park-auto", category: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441", address: "\u041F\u0440\u043E\u043C\u044B\u0448\u043B\u0435\u043D\u043D\u0430\u044F 14, \u0421\u0430\u043C\u0430\u0440\u0430", since: "2013", rating: "4.8", reviewsN: 214 },
+  hero: {
+    headingLines: ["\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", "\u0437\u0430 [[30 \u043C\u0438\u043D\u0443\u0442]]", "\u0431\u0435\u0437 \u0441\u044E\u0440\u043F\u0440\u0438\u0437\u043E\u0432"],
+    leadParagraph: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0437\u0432\u043E\u043D\u043E\u043A \u0438 \u0440\u0430\u0441\u0447\u0451\u0442. \u041F\u043E\u0441\u043B\u0435 \xAB\u0434\u0430\xBB \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u043C \u2014 \u0431\u0435\u0437 \u0441\u044E\u0440\u043F\u0440\u0438\u0437\u043E\u0432 \u0432 \u0447\u0435\u043A\u0435. \u0421\u0435\u0433\u043E\u0434\u043D\u044F \u0441\u0432\u043E\u0431\u043E\u0434\u043D\u044B \u043E\u043A\u043D\u0430 14:00 \u0438 16:30.",
+    photoSrc: EX_U("photo-1486262715619-67b85e0b08d3", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0431\u043E\u043A\u0441 \u21162, \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A"
+  },
+  stats: [
+    { num: "12", unit: " \u043B\u0435\u0442", label: "\u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u043C\u0435\u0441\u0442\u0435" },
+    { num: "4.8", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433 2\u0413\u0418\u0421" },
+    { num: "6 \u043C\u0435\u0441", label: "\u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441 \u0431\u0435\u0437 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A",
+    title: "\u0427\u0442\u043E [[\u0434\u0435\u043B\u0430\u0435\u043C]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", desc: "\u0445\u043E\u0434\u043E\u0432\u0430\u044F, \u0442\u043E\u0440\u043C\u043E\u0437\u0430, \u042D\u0411\u0423 \xB7 30 \u043C\u0438\u043D", price: "\u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" },
+      { num: "02", name: "\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430 + \u0444\u0438\u043B\u044C\u0442\u0440", desc: "\u043E\u0440\u0438\u0433\u0438\u043D\u0430\u043B \u0438\u043B\u0438 \u0430\u043D\u0430\u043B\u043E\u0433", price: "\u043E\u0442 1 200 \u20BD" },
+      { num: "03", name: "\u0422\u043E\u0440\u043C\u043E\u0437\u043D\u044B\u0435 \u043A\u043E\u043B\u043E\u0434\u043A\u0438", desc: "\u043F\u0435\u0440\u0435\u0434\u043D\u0438\u0435 / \u0437\u0430\u0434\u043D\u0438\u0435", price: "\u043E\u0442 2 800 \u20BD" },
+      { num: "04", name: "\u0420\u0430\u0437\u0432\u0430\u043B-\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", desc: "3D \xB7 \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F 6 \u043C\u0435\u0441", price: "\u043E\u0442 2 400 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438, \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438, \u0447\u0442\u043E \u0438 \u0437\u0430\u0447\u0435\u043C. [[\u041D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u0430\u043B\u0438]].\xBB", authorName: "\u0414\u043C\u0438\u0442\u0440\u0438\u0439 \u0412.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", authorWhen: "6 \u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0443" }, phone: "+7 (900) 000-00-08" }
+};
+var fixtureNailsAnna = {
+  meta: { brand: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B", host: "anna-nails", category: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", address: "\u041A\u0443\u0439\u0431\u044B\u0448\u0435\u0432\u0430 8, \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433", since: "2017", rating: "5.0", reviewsN: 86 },
+  hero: {
+    headingLines: ["\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439", "\u043C\u0430\u043D\u0438\u043A\u044E\u0440,", "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F [[3 \u043D\u0435\u0434\u0435\u043B\u0438]]"],
+    leadParagraph: "\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u043E\u0434\u043D\u0430 \u0410\u043D\u043D\u0430, \u043D\u0435 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440. \u0417\u0430\u043F\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 Telegram, \u0431\u0435\u0437 \u0437\u0432\u043E\u043D\u043A\u043E\u0432 \u0438 CRM. \u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 \u0434\u0432\u0430 \u043D\u043E\u0433\u0442\u044F \u0432 \u043F\u043E\u0434\u0430\u0440\u043E\u043A \u043F\u0440\u0438 \u043F\u0435\u0440\u0432\u043E\u043C \u0432\u0438\u0437\u0438\u0442\u0435.",
+    photoSrc: EX_U("photo-1604654894610-df63bc536371", 720),
+    gallery: [EX_U("photo-1610992015732-2449b76344bc", 480), EX_U("photo-1632345031435-8727f6897d53", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0440\u0430\u0431\u043E\u0442\u0430, \u0447\u0435\u0442\u0432\u0435\u0440\u0433"
+  },
+  stats: [
+    { num: "21", unit: " \u0434\u0435\u043D\u044C", label: "\u0441\u0440\u0435\u0434\u043D\u044F\u044F \u043D\u043E\u0441\u043A\u0430" },
+    { num: "5.0", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433" },
+    { num: "9", unit: " \u043B\u0435\u0442", label: "\u043E\u043F\u044B\u0442\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u0426\u0435\u043D\u044B \u0437\u0430 \u043C\u0430\u0439",
+    title: "\u0427\u0442\u043E \u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 [[\u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E]]",
+    items: [
+      { num: "01", name: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", desc: "\u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439, \u0431\u0435\u0440\u0435\u0436\u043D\u043E \xB7 1,5 \u0447", price: "2 400 \u20BD" },
+      { num: "02", name: "\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 2 \u043D\u043E\u0433\u0442\u044F", desc: "\u043E\u0442 \u043F\u0440\u043E\u0441\u0442\u043E\u0433\u043E \u0434\u043E \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E", price: "300 \u20BD" },
+      { num: "03", name: "\u0421\u043D\u044F\u0442\u0438\u0435 \u0447\u0443\u0436\u043E\u0433\u043E \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", desc: "\u0430\u043A\u043A\u0443\u0440\u0430\u0442\u043D\u043E, \u0431\u0435\u0437 \u0432\u0440\u0435\u0434\u0430", price: "500 \u20BD" },
+      { num: "04", name: "\u0423\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0430\u043A\u0440\u0438\u0433\u0435\u043B\u0435\u043C", desc: "\u0434\u043B\u044F \u0442\u043E\u043D\u043A\u0438\u0445 \u0438 \u043B\u043E\u043C\u043A\u0438\u0445", price: "600 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0410\u043D\u043D\u0430 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F, \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u0435\u0442, \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0435\u0442. [[\u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432]].\xBB", authorName: "\u041E\u043B\u0435\u0441\u044F \u041D.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "3 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432 Telegram" }, phone: "@anna_studio" }
+};
+var fixtureBrowsSochi = {
+  meta: { brand: "Brow Bar \u0421\u043E\u043B\u044C", host: "sol-brows", category: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B", address: "\u041D\u0430\u0432\u0430\u0433\u0438\u043D\u0441\u043A\u0430\u044F 9, \u0421\u043E\u0447\u0438", since: "2019", rating: "4.9", reviewsN: 154 },
+  hero: {
+    headingLines: ["\u0411\u0440\u043E\u0432\u0438", "\u043F\u043E [[\u0432\u0430\u0448\u0435\u0439]]", "\u0444\u043E\u0440\u043C\u0435 \u043B\u0438\u0446\u0430"],
+    leadParagraph: "\u041D\u0435 \u0440\u0438\u0441\u0443\u0435\u043C \u0447\u0443\u0436\u0443\u044E \u0444\u043E\u0440\u043C\u0443 \u2014 \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u0438\u0432\u0430\u0435\u043C \u0432\u0430\u0448\u0443. \u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F, \u043B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435 \u0437\u0430 \u043E\u0434\u0438\u043D \u0432\u0438\u0437\u0438\u0442. \u0414\u0435\u0440\u0436\u0438\u0442\u0441\u044F 6 \u043D\u0435\u0434\u0435\u043B\u044C.",
+    photoSrc: EX_U("photo-1487412947147-5cebf100ffc2", 720),
+    gallery: [EX_U("photo-1522335789203-aabd1fc54bc9", 480), EX_U("photo-1457972729786-0411a3b2b626", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u0441\u0440\u0435\u0434\u0430"
+  },
+  stats: [
+    { num: "6", unit: " \u043D\u0435\u0434", label: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F" },
+    { num: "40", unit: " \u043C\u0438\u043D", label: "\u043D\u0430 \u0432\u0438\u0437\u0438\u0442" },
+    { num: "4.9", label: "\u0440\u0435\u0439\u0442\u0438\u043D\u0433" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u0427\u0442\u043E [[\u0432\u044B\u0431\u0438\u0440\u0430\u044E\u0442]] \u0447\u0430\u0449\u0435",
+    items: [
+      { num: "01", name: "\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F + \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", desc: "\u0432\u043E\u0441\u043A, \u043F\u0438\u043D\u0446\u0435\u0442, \u043A\u0440\u0430\u0441\u043A\u0430 \u0438\u043B\u0438 \u0445\u043D\u0430", price: "1 400 \u20BD" },
+      { num: "02", name: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0431\u0440\u043E\u0432\u0435\u0439", desc: "\u0444\u0438\u043A\u0441\u0430\u0446\u0438\u044F \u0444\u043E\u0440\u043C\u044B \u043D\u0430 6 \u043D\u0435\u0434\u0435\u043B\u044C", price: "2 200 \u20BD" },
+      { num: "03", name: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0440\u0435\u0441\u043D\u0438\u0446", desc: "\u0431\u0435\u0437 \u043D\u0430\u0440\u0430\u0449\u0438\u0432\u0430\u043D\u0438\u044F, \u0441\u0432\u043E\u0439 \u043E\u0431\u044A\u0451\u043C", price: "2 600 \u20BD" },
+      { num: "04", name: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 \u0431\u0440\u043E\u0432\u0438 + \u0440\u0435\u0441\u043D\u0438\u0446\u044B", desc: "\u0437\u0430 \u043E\u0434\u0438\u043D \u0432\u0438\u0437\u0438\u0442, \u0432\u044B\u0433\u043E\u0434\u043D\u0435\u0435", price: "4 200 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u041F\u0435\u0440\u0432\u044B\u0439 \u0440\u0430\u0437 brow-\u043C\u0430\u0441\u0442\u0435\u0440 \u043D\u0435 \u0441\u0434\u0435\u043B\u0430\u043B\u0430 \u043C\u043D\u0435 [[\u0447\u0443\u0436\u0438\u0435 \u0431\u0440\u043E\u0432\u0438]]. \u0421\u0432\u043E\u0438, \u043D\u043E \u0430\u043A\u043A\u0443\u0440\u0430\u0442\u043D\u044B\u0435.\xBB", authorName: "\u041A\u0430\u0440\u0438\u043D\u0430 \u0422.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "1 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D" }, phone: "\u043E\u043D\u043B\u0430\u0439\u043D-\u0437\u0430\u043F\u0438\u0441\u044C" }
+};
+var fixtureBarberFedor = {
+  meta: { brand: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xAB\u0424\u0451\u0434\u043E\u0440\xBB", host: "fedor-barber", category: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F", address: "\u041D\u0438\u043A\u0438\u0442\u0441\u043A\u0438\u0439 3, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2018", rating: "4.9", reviewsN: 312 },
+  hero: {
+    headingLines: ["\u0421\u0442\u0440\u0438\u0436\u043A\u0430", "[[+]] \u0431\u043E\u0440\u043E\u0434\u0430", "\u0437\u0430 45 \u043C\u0438\u043D\u0443\u0442"],
+    leadParagraph: "\u0422\u043E\u043B\u044C\u043A\u043E \u043C\u0443\u0436\u0441\u043A\u0438\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438 \u0438 \u0431\u043E\u0440\u043E\u0434\u0430. \u0411\u0435\u0437 \u0441\u0430\u043B\u043E\u043D\u0430, \u0431\u0435\u0437 \u0436\u0435\u043D\u0441\u043A\u043E\u0433\u043E \u0437\u0430\u043B\u0430, \u0431\u0435\u0437 \u043C\u0443\u0437\u044B\u043A\u0438 \u0432 \u043D\u0430\u0443\u0448\u043D\u0438\u043A\u0430\u0445 \u043C\u0430\u0441\u0442\u0435\u0440\u0430. \u0412\u0438\u0441\u043A\u0438 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u2014 \u043F\u043E\u0441\u043B\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438, \u0435\u0441\u043B\u0438 \u0445\u043E\u0442\u0438\u0442\u0435.",
+    photoSrc: EX_U("photo-1503951914875-452162b0f3f1", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043A\u0440\u0435\u0441\u043B\u043E, \u0441\u0443\u0431\u0431\u043E\u0442\u0430",
+    gallery: [
+      EX_U("photo-1599351431613-18ef1fdd27e1", 480),
+      EX_U("photo-1622286342621-4bd786c2447c", 480)
+    ]
+  },
+  stats: [
+    { num: "45", unit: " \u043C\u0438\u043D", label: "\u043D\u0430 \u0441\u0442\u0440\u0438\u0436\u043A\u0443" },
+    { num: "8", unit: " \u043B\u0435\u0442", label: "\u0441 2018" },
+    { num: "4", label: "\u043C\u0430\u0441\u0442\u0435\u0440\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u0427\u0442\u043E [[\u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442]] \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u044B\u0435",
+    items: [
+      { num: "01", name: "\u041C\u0443\u0436\u0441\u043A\u0430\u044F \u0441\u0442\u0440\u0438\u0436\u043A\u0430", desc: "\u043C\u0430\u0448\u0438\u043D\u043A\u0430 + \u043D\u043E\u0436\u043D\u0438\u0446\u044B", price: "2 200 \u20BD" },
+      { num: "02", name: "\u0421\u0442\u0440\u0438\u0436\u043A\u0430 + \u0431\u043E\u0440\u043E\u0434\u0430", desc: "\u0441 \u0433\u043E\u0440\u044F\u0447\u0438\u043C \u043F\u043E\u043B\u043E\u0442\u0435\u043D\u0446\u0435\u043C", price: "3 000 \u20BD" },
+      { num: "03", name: "\u041A\u0430\u043C\u0443\u0444\u043B\u044F\u0436 \u0441\u0435\u0434\u0438\u043D\u044B", desc: "20 \u043C\u0438\u043D \xB7 \u0441\u0442\u043E\u0439\u043A\u043E", price: "1 200 \u20BD" },
+      { num: "04", name: "\u041E\u043F\u0430\u0441\u043D\u043E\u0439 \u0431\u0440\u0438\u0442\u0432\u043E\u0439", desc: "\u0433\u043E\u043B\u043E\u0432\u0430 \u0438\u043B\u0438 \u0431\u043E\u0440\u043E\u0434\u0430", price: "1 800 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0425\u043E\u0436\u0443 \u043A \u0413\u043B\u0435\u0431\u0443 \u0442\u0440\u0435\u0442\u0438\u0439 \u0433\u043E\u0434. [[\u0412\u0441\u0435\u0433\u0434\u0430 \u0432\u0441\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442]], \u043A\u0430\u043A \u0441\u0442\u0440\u0438\u0433\u043B\u0438 \u0432 \u043F\u0440\u043E\u0448\u043B\u044B\u0439 \u0440\u0430\u0437.\xBB", authorName: "\u0410\u043D\u0442\u043E\u043D \u041A.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", authorWhen: "4 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A \u043C\u0430\u0441\u0442\u0435\u0440\u0443" }, phone: "+7 (900) 000-00-14" }
+};
+var fixtureFitnessMetod = {
+  meta: { brand: "\u0421\u0442\u0443\u0434\u0438\u044F \xAB\u041C\u0435\u0442\u043E\u0434\xBB", host: "metod-studio", category: "\u041F\u0438\u043B\u0430\u0442\u0435\u0441", address: "\u041F\u0438\u043E\u043D\u0435\u0440\u0441\u043A\u0430\u044F 12, \u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433", since: "2018", rating: "4.9", reviewsN: 187 },
+  hero: {
+    headingLines: ["\u041F\u0438\u043B\u0430\u0442\u0435\u0441", "\u0432 \u0433\u0440\u0443\u043F\u043F\u0435", "[[\u0438\u0437 \u0448\u0435\u0441\u0442\u0438]]"],
+    leadParagraph: "\u041A\u0430\u0436\u0434\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435 \u2014 \u043B\u0438\u0447\u043D\u043E\u0435 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435 \u0442\u0440\u0435\u043D\u0435\u0440\u0430. \u0411\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u044B\u0439 \u043F\u0440\u043E\u0433\u0440\u0435\u0441\u0441 \u0431\u0435\u0437 \u043F\u0435\u0440\u0435\u0433\u0440\u0443\u0437\u0430. \u041F\u0435\u0440\u0432\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0437\u0430\u043D\u0438\u043C\u0430\u0435\u0442 50 \u043C\u0438\u043D\u0443\u0442.",
+    photoSrc: EX_U("photo-1518611012118-696072aa579a", 720),
+    gallery: [EX_U("photo-1571019613454-1cb2f99b2d8b", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0437\u0430\u043B, \u0443\u0442\u0440\u043E \u0432\u0442\u043E\u0440\u043D\u0438\u043A\u0430"
+  },
+  stats: [
+    { num: "6", label: "\u0432 \u0433\u0440\u0443\u043F\u043F\u0435" },
+    { num: "12", label: "\u0442\u0440\u0435\u043D\u0435\u0440\u043E\u0432" },
+    { num: "8", unit: " \u043B\u0435\u0442", label: "\u0441\u0442\u0443\u0434\u0438\u0438" }
+  ],
+  menu: {
+    eyebrow: "\u0410\u0431\u043E\u043D\u0435\u043C\u0435\u043D\u0442\u044B",
+    title: "\u0427\u0442\u043E [[\u043F\u043E\u043A\u0443\u043F\u0430\u044E\u0442]] \u043D\u0430 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446",
+    items: [
+      { num: "01", name: "\u0420\u0430\u0437\u043E\u0432\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435", desc: "\u043F\u0435\u0440\u0432\u043E\u0435 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", price: "1 400 \u20BD" },
+      { num: "02", name: "4 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E", price: "5 200 \u20BD" },
+      { num: "03", name: "8 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0441\u0430\u043C\u044B\u0439 \u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439", price: "9 800 \u20BD" },
+      { num: "04", name: "12 \u0432 \u043C\u0435\u0441\u044F\u0446", desc: "\u0434\u043B\u044F \u0440\u0435\u0433\u0443\u043B\u044F\u0440\u043D\u044B\u0445", price: "13 200 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0427\u0435\u0440\u0435\u0437 \u0442\u0440\u0438 \u043C\u0435\u0441\u044F\u0446\u0430 [[\u0437\u0430\u0431\u044B\u043B\u0430 \u043F\u0440\u043E \u0431\u043E\u043B\u044C \u0432 \u0441\u043F\u0438\u043D\u0435]]. \u0425\u043E\u0442\u044F \u043F\u0440\u0438\u0448\u043B\u0430 \u0442\u0443\u0434\u0430 \u0438\u043C\u0435\u043D\u043D\u043E \u0441 \u043D\u0435\u0439.\xBB", authorName: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0430 \u041C.", authorSource: "2\u0413\u0418\u0421", authorWhen: "1 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043F\u0435\u0440\u0432\u043E\u0435" }, phone: "+7 (900) 000-00-50" }
+};
+var fixtureLegalSitnikov = {
+  meta: { brand: "\u0421\u0438\u0442\u043D\u0438\u043A\u043E\u0432 \u0438 \u043F\u0430\u0440\u0442\u043D\u0451\u0440\u044B", host: "sitnikov-law", category: "\u042E\u0440.\u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0430", address: "\u0422\u0432\u0435\u0440\u0441\u043A\u0430\u044F 14, \u043E\u0444. 412, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2014", rating: "4.9", reviewsN: 312 },
+  hero: {
+    headingLines: ["\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u0434\u0435\u043D\u0435\u0433", "\u043E\u0442 [[\u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430]]", "\u0431\u0435\u0437 \u0430\u0432\u0430\u043D\u0441\u0430"],
+    leadParagraph: "\u0411\u0435\u0440\u0451\u043C \u0434\u0435\u043B\u043E \u0432 \u0440\u0430\u0431\u043E\u0442\u0443 \u2014 \u043F\u043B\u0430\u0442\u0438\u0442\u0435 \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 \u0432\u044B\u0438\u0433\u0440\u044B\u0448\u0430. \u041F\u0435\u0440\u0432\u0430\u044F \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u0430 \u0438 \u0437\u0430\u043D\u0438\u043C\u0430\u0435\u0442 40 \u043C\u0438\u043D\u0443\u0442. \u0421\u043A\u0430\u0436\u0435\u043C \u0441\u0440\u0430\u0437\u0443, \u0435\u0441\u0442\u044C \u043B\u0438 \u043F\u0435\u0440\u0441\u043F\u0435\u043A\u0442\u0438\u0432\u0430.",
+    photoSrc: EX_U("photo-1497366754035-f200968a6e72", 720),
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u043E\u0444\u0438\u0441, \u0447\u0435\u0442\u0432\u0435\u0440\u0433"
+  },
+  stats: [
+    { num: "94%", label: "\u0434\u0435\u043B \u0432\u044B\u0438\u0433\u0440\u0430\u043D\u043E" },
+    { num: "312", label: "\u0434\u0435\u043B \u0432 2024" },
+    { num: "10", unit: " \u043B\u0435\u0442", label: "\u0432 \u043E\u0434\u043D\u043E\u043C \u043E\u0444\u0438\u0441\u0435" }
+  ],
+  menu: {
+    eyebrow: "\u0423\u0441\u043B\u0443\u0433\u0438",
+    title: "\u0427\u0442\u043E [[\u0432\u0435\u0434\u0451\u043C]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u0412\u043E\u0437\u0432\u0440\u0430\u0442 \u043E\u0442 \u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430", desc: "\u043D\u0435\u0443\u0441\u0442\u043E\u0439\u043A\u0430, \u0440\u0430\u0441\u0442\u043E\u0440\u0436\u0435\u043D\u0438\u0435, \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430", price: "20% \u043E\u0442 \u0441\u0443\u043C\u043C\u044B" },
+      { num: "02", name: "\u0421\u0435\u043C\u0435\u0439\u043D\u044B\u0435 \u0441\u043F\u043E\u0440\u044B", desc: "\u0440\u0430\u0437\u0432\u043E\u0434, \u0440\u0430\u0437\u0434\u0435\u043B, \u0430\u043B\u0438\u043C\u0435\u043D\u0442\u044B", price: "\u043E\u0442 30 000 \u20BD" },
+      { num: "03", name: "\u0422\u0440\u0443\u0434\u043E\u0432\u044B\u0435 \u0441\u043F\u043E\u0440\u044B", desc: "\u0443\u0432\u043E\u043B\u044C\u043D\u0435\u043D\u0438\u0435, \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435", price: "\u043E\u0442 25 000 \u20BD" },
+      { num: "04", name: "\u0417\u0430\u0449\u0438\u0442\u0430 \u043F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u0435\u0439", desc: "\u0432\u043E\u0437\u0432\u0440\u0430\u0442, \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u044F, \u0437\u0430\u043C\u0435\u043D\u0430", price: "15% \u043E\u0442 \u0441\u0443\u043C\u043C\u044B" }
+    ]
+  },
+  quote: { text: "\xAB\u0412\u0435\u0440\u043D\u0443\u043B\u0438 1,2 \u043C\u043B\u043D \u043D\u0435\u0443\u0441\u0442\u043E\u0439\u043A\u0438 \u043E\u0442 \u0437\u0430\u0441\u0442\u0440\u043E\u0439\u0449\u0438\u043A\u0430 \u0437\u0430 4 \u043C\u0435\u0441\u044F\u0446\u0430. [[\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \u0430\u0432\u0430\u043D\u0441\u043E\u0432]] \u2014 \u0432\u0441\u0451 \u043F\u043E\u0441\u043B\u0435 \u0441\u0443\u0434\u0430.\xBB", authorName: "\u041C\u0438\u0445\u0430\u0438\u043B \u041F.", authorSource: "\u042F\u043D\u0434\u0435\u043A\u0441", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044E" }, phone: "+7 (900) 000-00-40" }
+};
+var fixturePhotoMarta = {
+  meta: { brand: "\u041C\u0430\u0440\u0442\u0430 \xB7 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444", host: "marta-photo", category: "\u0424\u043E\u0442\u043E\u0433\u0440\u0430\u0444", address: "\u0432\u044B\u0435\u0437\u0434 \u043F\u043E \u041C\u043E\u0441\u043A\u0432\u0435", since: "2020", rating: "5.0", reviewsN: 94 },
+  hero: {
+    headingLines: ["\u0421\u0435\u043C\u0435\u0439\u043D\u044B\u0435", "\u0441\u044A\u0451\u043C\u043A\u0438 [[\u0434\u043E\u043C\u0430]]", "\u0438 \u0432 \u0441\u0442\u0443\u0434\u0438\u0438"],
+    leadParagraph: "\u0411\u0435\u0437 \u043F\u0440\u0438\u043D\u0443\u0436\u0434\u0451\u043D\u043D\u044B\u0445 \u043F\u043E\u0437 \u0438 \u043D\u0430\u0442\u044F\u043D\u0443\u0442\u044B\u0445 \u0443\u043B\u044B\u0431\u043E\u043A. \u0421\u043D\u0438\u043C\u0430\u044E \u043A\u0430\u043A \u0435\u0441\u0442\u044C: \u0434\u0435\u0442\u0438 \u0432\u043E\u0437\u044F\u0442\u0441\u044F, \u0431\u0430\u0431\u0443\u0448\u043A\u0430 \u0432\u043E\u0440\u0447\u0438\u0442, \u043A\u043E\u0442 \u043D\u0435 \u0432\u043F\u0438\u0441\u0430\u043B\u0441\u044F. \u041F\u0435\u0440\u0435\u0434\u0430\u044E 70+ \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u0430\u043D\u043D\u044B\u0445 \u0444\u043E\u0442\u043E \u0447\u0435\u0440\u0435\u0437 2 \u043D\u0435\u0434\u0435\u043B\u0438.",
+    photoSrc: EX_U("photo-1452587925148-ce544e77e70d", 720),
+    gallery: [EX_U("photo-1606216794074-735e91aa2c92", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0441\u0435\u043C\u044C\u044F \u041A., \u044F\u043D\u0432\u0430\u0440\u044C"
+  },
+  stats: [
+    { num: "70+", label: "\u0444\u043E\u0442\u043E \u0432 \u0441\u044A\u0451\u043C\u043A\u0435" },
+    { num: "14", unit: " \u0434\u043D\u0435\u0439", label: "\u0434\u043E \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u0430" },
+    { num: "6", unit: " \u043B\u0435\u0442", label: "\u043E\u043F\u044B\u0442\u0430" }
+  ],
+  menu: {
+    eyebrow: "\u0424\u043E\u0440\u043C\u0430\u0442\u044B",
+    title: "\u0427\u0442\u043E [[\u0437\u0430\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442]] \u0447\u0430\u0449\u0435 \u0432\u0441\u0435\u0433\u043E",
+    items: [
+      { num: "01", name: "\u0421\u0435\u043C\u0435\u0439\u043D\u0430\u044F \u0441\u044A\u0451\u043C\u043A\u0430 \u0434\u043E\u043C\u0430", desc: "2 \u0447\u0430\u0441\u0430 \xB7 70+ \u0444\u043E\u0442\u043E", price: "18 000 \u20BD" },
+      { num: "02", name: "\u041F\u0440\u043E\u0433\u0443\u043B\u043A\u0430 \u043D\u0430 \u0443\u043B\u0438\u0446\u0435", desc: "1,5 \u0447\u0430\u0441\u0430 \xB7 50+ \u0444\u043E\u0442\u043E", price: "14 000 \u20BD" },
+      { num: "03", name: "\u0421\u0442\u0443\u0434\u0438\u044F", desc: "1 \u0447\u0430\u0441 \xB7 40+ \u0444\u043E\u0442\u043E \xB7 \u0430\u0440\u0435\u043D\u0434\u0430 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E", price: "12 000 \u20BD" },
+      { num: "04", name: "\u0411\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0441\u0442\u044C + \u043F\u043E\u0441\u043B\u0435", desc: "\u043F\u0430\u043A\u0435\u0442 \u0438\u0437 \u0434\u0432\u0443\u0445 \u0441\u044A\u0451\u043C\u043E\u043A", price: "28 000 \u20BD" }
+    ]
+  },
+  quote: { text: "\xAB\u0421\u044B\u043D \u043D\u0438 \u0441\u0435\u043A\u0443\u043D\u0434\u044B \u043D\u0435 \u0441\u0438\u0434\u0435\u043B \u043D\u0430 \u043C\u0435\u0441\u0442\u0435. \u041C\u0430\u0440\u0442\u0430 [[\u043F\u0440\u0435\u0432\u0440\u0430\u0442\u0438\u043B\u0430 \u044D\u0442\u043E \u0432 \u043F\u043B\u044E\u0441]] \u2014 \u043A\u0430\u0434\u0440\u044B \u0436\u0438\u0432\u044B\u0435, \u043D\u0435 \u043F\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043E\u0447\u043D\u044B\u0435.\xBB", authorName: "\u042E\u043B\u0438\u044F \u0421.", authorSource: "Instagram", authorWhen: "\u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u041D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 WhatsApp" }, phone: "\u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432 WhatsApp" }
+};
+var fixtureTattooLine = {
+  meta: { brand: "Line tattoo", host: "line-tattoo", category: "\u0422\u0430\u0442\u0443-\u0441\u0442\u0443\u0434\u0438\u044F", address: "\u041C\u0430\u043B\u0430\u044F \u0411\u0440\u043E\u043D\u043D\u0430\u044F 6, \u041C\u043E\u0441\u043A\u0432\u0430", since: "2016", rating: "5.0", reviewsN: 218 },
+  hero: {
+    headingLines: ["\u0422\u043E\u043D\u043A\u0438\u0435", "[[\u043B\u0438\u043D\u0438\u0438]] \u0438", "\u043C\u0438\u043D\u0438\u043C\u0430\u043B\u0438\u0437\u043C"],
+    leadParagraph: "\u0422\u043E\u043B\u044C\u043A\u043E \u0442\u043E\u043D\u043A\u0438\u0435 \u043B\u0438\u043D\u0438\u0438, \u043C\u0438\u043D\u0438\u043C\u0430\u043B \u0438 \u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F. \u041D\u0438\u043A\u0430\u043A\u043E\u0433\u043E \u043E\u043B\u0434\u0441\u043A\u0443\u043B\u0430, \u0440\u0435\u0430\u043B\u0438\u0437\u043C\u0430 \u0438 \u0446\u0432\u0435\u0442\u043D\u044B\u0445 \u043F\u043E\u0440\u0442\u0440\u0435\u0442\u043E\u0432. \u0417\u0430\u043F\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 \u044D\u0441\u043A\u0438\u0437 \u2014 \u043F\u0440\u0438\u043D\u043E\u0441\u0438\u0442\u0435 \u0438\u0434\u0435\u044E, \u043E\u0431\u0441\u0443\u0436\u0434\u0430\u0435\u043C \u0440\u0430\u0437\u043C\u0435\u0440 \u0438 \u043C\u0435\u0441\u0442\u043E.",
+    photoSrc: EX_U("photo-1565058379802-bbe93b2f703a", 720),
+    gallery: [EX_U("photo-1611501275019-9b5cda994e8d", 480), EX_U("photo-1542856391-010fb87dcfed", 480)],
+    photoCaption: "\u0424\u043E\u0442\u043E \xB7 \u0440\u0430\u0431\u043E\u0442\u0430 \u0412\u043B\u0430\u0434\u0430, \u043C\u0430\u0440\u0442"
+  },
+  stats: [
+    { num: "4", label: "\u043C\u0430\u0441\u0442\u0435\u0440\u0430" },
+    { num: "10", unit: " \u043B\u0435\u0442", label: "\u0441\u0442\u0443\u0434\u0438\u0438" },
+    { num: "218", label: "\u043E\u0442\u0437\u044B\u0432\u043E\u0432" }
+  ],
+  menu: {
+    eyebrow: "\u041F\u0440\u0430\u0439\u0441",
+    title: "\u041C\u0438\u043D\u0438\u043C\u0443\u043C \u2014 [[15 \u043C\u0438\u043D\u0443\u0442]] \u0440\u0430\u0431\u043E\u0442\u044B",
+    items: [
+      { num: "01", name: "\u041C\u0438\u043D\u0438-\u044D\u0441\u043A\u0438\u0437 \u0434\u043E 5 \u0441\u043C", desc: "\u043B\u0438\u043D\u0438\u0438, \u0441\u0438\u043C\u0432\u043E\u043B\u044B, \u0446\u0438\u0444\u0440\u044B", price: "5 000 \u20BD" },
+      { num: "02", name: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 5\u201315 \u0441\u043C", desc: "\u0433\u0435\u043E\u043C\u0435\u0442\u0440\u0438\u044F, \u0431\u043E\u0442\u0430\u043D\u0438\u043A\u0430, \u043D\u0430\u0434\u043F\u0438\u0441\u0438", price: "\u043E\u0442 12 000 \u20BD" },
+      { num: "03", name: "\u0427\u0430\u0441 \u0440\u0430\u0431\u043E\u0442\u044B", desc: "\u0434\u043B\u044F \u043A\u0440\u0443\u043F\u043D\u044B\u0445 \u044D\u0441\u043A\u0438\u0437\u043E\u0432", price: "8 000 \u20BD" },
+      { num: "04", name: "\u041F\u0435\u0440\u0435\u043A\u0440\u044B\u0442\u0438\u0435 \u0441\u0442\u0430\u0440\u043E\u0439", desc: "\u043E\u0446\u0435\u043D\u043A\u0430 \u043F\u043E \u0444\u043E\u0442\u043E", price: "\u043F\u043E \u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0451\u043D\u043D\u043E\u0441\u0442\u0438" }
+    ]
+  },
+  quote: { text: "\xAB\u0412\u043B\u0430\u0434 \u043D\u0430\u0440\u0438\u0441\u043E\u0432\u0430\u043B [[\u0438\u043C\u0435\u043D\u043D\u043E \u0442\u043E, \u0447\u0442\u043E \u044F \u0445\u043E\u0442\u0435\u043B\u0430]], \u043D\u043E \u043D\u0435 \u043C\u043E\u0433\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u0442\u044C. \u041B\u0438\u043D\u0438\u0438 \u0442\u043E\u043D\u043A\u0438\u0435, \u043D\u0435 \u0440\u0430\u0441\u043F\u043B\u044B\u043B\u0438\u0441\u044C \u0447\u0435\u0440\u0435\u0437 \u0433\u043E\u0434.\xBB", authorName: "\u0414\u0430\u0440\u044C\u044F \u041B.", authorSource: "Instagram", authorWhen: "2 \u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+  cta: { primary: { label: "\u041F\u0440\u0438\u0441\u043B\u0430\u0442\u044C \u044D\u0441\u043A\u0438\u0437" }, phone: "@line_tattoo" }
+};
+var samplePresets = [
+  { preset: { themeId: "display-soft", familyId: "display" }, content: fixtureNailsAnna, tagline: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "bento-noir", familyId: "bento" }, content: fixtureAutoPark, tagline: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 \xB7 \u0421\u0430\u043C\u0430\u0440\u0430" },
+  { preset: { themeId: "editorial-warm", familyId: "editorial" }, content: fixtureCoffeeLena, tagline: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F \xB7 \u0412\u043E\u0440\u043E\u043D\u0435\u0436" },
+  { preset: { themeId: "display-noir", familyId: "display" }, content: fixtureBarberFedor, tagline: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "split-product", familyId: "split" }, content: fixtureFitnessMetod, tagline: "\u041F\u0438\u043B\u0430\u0442\u0435\u0441 \xB7 \u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "display-ink", familyId: "display" }, content: fixtureTattooLine, tagline: "\u0422\u0430\u0442\u0443-\u0441\u0442\u0443\u0434\u0438\u044F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "stacked-corporate", familyId: "stacked" }, content: fixtureLegalSitnikov, tagline: "\u042E\u0440.\u043F\u0440\u0430\u043A\u0442\u0438\u043A\u0430 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "split-teal", familyId: "split" }, content: fixturePhotoMarta, tagline: "\u0424\u043E\u0442\u043E\u0433\u0440\u0430\u0444 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" },
+  { preset: { themeId: "stacked-cream", familyId: "stacked" }, content: fixtureBakeryDom, tagline: "\u041F\u0435\u043A\u0430\u0440\u043D\u044F \xB7 \u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433" },
+  { preset: { themeId: "display-bold", familyId: "display" }, content: fixtureBrowsSochi, tagline: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B \xB7 \u0421\u043E\u0447\u0438" }
+];
+
+// src/landing/index.tsx
+import { Fragment as Fragment2, jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
 function sectionPad(mobile) {
   const v = mobile ? 20 : 80;
   return { paddingLeft: v, paddingRight: v, boxSizing: "border-box" };
 }
 function H2({ children, mobile, align = "center" }) {
-  return /* @__PURE__ */ jsx3("h2", { style: {
+  return /* @__PURE__ */ jsx4("h2", { style: {
     fontSize: mobile ? 30 : 52,
     lineHeight: mobile ? 1.1 : 1.05,
     fontWeight: 700,
@@ -256,7 +1622,7 @@ function H2({ children, mobile, align = "center" }) {
   }, children });
 }
 function Sub({ children, mobile, align = "center", maxWidth = 720 }) {
-  return /* @__PURE__ */ jsx3("p", { style: {
+  return /* @__PURE__ */ jsx4("p", { style: {
     fontSize: mobile ? 16 : 19,
     lineHeight: 1.45,
     color: VT.inkSoft,
@@ -270,79 +1636,79 @@ var SOURCE_ICONS = [
   {
     id: "yandex",
     name: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
     ] })
   },
   {
     id: "tg",
     name: "Telegram",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
-      /* @__PURE__ */ jsx3("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
+      /* @__PURE__ */ jsx4("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
     ] })
   },
   {
     id: "2gis",
     name: "2\u0413\u0418\u0421",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
-      /* @__PURE__ */ jsx3("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
+      /* @__PURE__ */ jsx4("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
     ] })
   },
   {
     id: "avito",
     name: "Avito",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
-      /* @__PURE__ */ jsx3("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
+      /* @__PURE__ */ jsx4("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
     ] })
   },
   {
     id: "ig",
     name: "Instagram",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("defs", { children: /* @__PURE__ */ jsxs2("linearGradient", { id: "iggr3a", x1: "0", y1: "1", x2: "1", y2: "0", children: [
-        /* @__PURE__ */ jsx3("stop", { offset: "0%", stopColor: "#FEDA77" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "30%", stopColor: "#F58529" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "60%", stopColor: "#DD2A7B" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "100%", stopColor: "#8134AF" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsxs3("linearGradient", { id: "iggr3a", x1: "0", y1: "1", x2: "1", y2: "0", children: [
+        /* @__PURE__ */ jsx4("stop", { offset: "0%", stopColor: "#FEDA77" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "30%", stopColor: "#F58529" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "60%", stopColor: "#DD2A7B" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "100%", stopColor: "#8134AF" })
       ] }) }),
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggr3a)" }),
-      /* @__PURE__ */ jsx3("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggr3a)" }),
+      /* @__PURE__ */ jsx4("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
     ] })
   },
   {
     id: "site",
     name: "\u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx3("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx3("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx4("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx4("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
     ] })
   },
   {
     id: "card",
     name: "\u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430",
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
-      /* @__PURE__ */ jsx3("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
-      /* @__PURE__ */ jsx3("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
+      /* @__PURE__ */ jsx4("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
+      /* @__PURE__ */ jsx4("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
     ] })
   }
 ];
 function HeroBlock({ mobile }) {
-  return /* @__PURE__ */ jsx3("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs2("div", { style: {
+  return /* @__PURE__ */ jsx4("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs3("div", { style: {
     maxWidth: mobile ? "100%" : 1120,
     margin: "0 auto",
     textAlign: mobile ? "left" : "center"
   }, children: [
-    /* @__PURE__ */ jsxs2("h1", { style: {
+    /* @__PURE__ */ jsxs3("h1", { style: {
       fontSize: mobile ? "clamp(32px, 8.8vw, 44px)" : 76,
       lineHeight: mobile ? 1.06 : 1.04,
       fontWeight: 700,
@@ -352,9 +1718,9 @@ function HeroBlock({ mobile }) {
     }, children: [
       "\u0421\u043E\u0431\u0435\u0440\u0451\u043C \u0437\u0430",
       " ",
-      /* @__PURE__ */ jsxs2("span", { style: { position: "relative", color: VT.accent, whiteSpace: "nowrap" }, children: [
+      /* @__PURE__ */ jsxs3("span", { style: { position: "relative", color: VT.accent, whiteSpace: "nowrap" }, children: [
         "2 \u0447\u0430\u0441\u0430",
-        !mobile && /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", style: {
+        !mobile && /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", style: {
           position: "absolute",
           left: 2,
           right: 6,
@@ -368,32 +1734,28 @@ function HeroBlock({ mobile }) {
       ] }),
       " ",
       "\u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043B\u043E\u0432\u0438\u0442 \u0437\u0430\u044F\u0432\u043A\u0438.",
-      /* @__PURE__ */ jsx3("br", {}),
+      /* @__PURE__ */ jsx4("br", {}),
       "\u0414\u0430\u043B\u044C\u0448\u0435\xA0\u043E\u043D ",
-      /* @__PURE__ */ jsx3("span", { style: { color: VT.accent }, children: "\u0441\u0430\u043C \u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u043B\u0443\u0447\u0448\u0435" }),
+      /* @__PURE__ */ jsx4("span", { style: { color: VT.accent }, children: "\u0441\u0430\u043C \u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u043B\u0443\u0447\u0448\u0435" }),
       " \u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E."
     ] }),
-    /* @__PURE__ */ jsx3("p", { style: {
+    /* @__PURE__ */ jsx4("p", { style: {
       fontSize: mobile ? 16.5 : 20,
       lineHeight: 1.5,
       color: VT.inkSoft,
       margin: mobile ? "20px 0 0" : "28px auto 0",
       maxWidth: mobile ? "100%" : 860,
       textWrap: "pretty"
-    }, children: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0433\u0434\u0435 \u0432\u044B \u0441\u0435\u0439\u0447\u0430\u0441 \u0432\u0435\u0434\u0451\u0442\u0435 \u0441\u0432\u043E\u0438 \u0434\u0435\u043B\u0430: \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram, 2\u0413\u0418\u0421, Avito \u0438\u043B\u0438 Instagram. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u044D\u0442\u043E\u0433\u043E \u043D\u0435\u0442 \u2014 \u043F\u0440\u043E\u0441\u0442\u043E \u0441\u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0440\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442." }),
-    /* @__PURE__ */ jsxs2("p", { style: {
+    }, children: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0433\u0434\u0435 \u0432\u044B \u0432\u0435\u0434\u0451\u0442\u0435 \u0434\u0435\u043B\u0430: \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram, 2\u0413\u0418\u0421, Avito \u0438\u043B\u0438 Instagram. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442, \u0441\u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0440\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442." }),
+    /* @__PURE__ */ jsx4("p", { style: {
       fontSize: mobile ? 16.5 : 20,
       lineHeight: 1.5,
       color: VT.inkSoft,
       margin: mobile ? "10px 0 0" : "12px auto 0",
       maxWidth: mobile ? "100%" : 860,
       textWrap: "pretty"
-    }, children: [
-      "\u0427\u0435\u0440\u0435\u0437 ",
-      /* @__PURE__ */ jsx3("b", { style: { color: VT.ink }, children: "2 \u0447\u0430\u0441\u0430 \u0441\u0430\u0439\u0442 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438" }),
-      ". \u0414\u0430\u043B\u044C\u0448\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0441\u0430\u043C: \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442, \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442, \u0447\u0442\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0434\u0438 \u043D\u043E\u0432\u044B\u0445 \u0437\u0430\u044F\u0432\u043E\u043A."
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { className: "ss-hero-pill", style: {
+    }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u0439\u0442 \u0441\u043E \u0432\u0441\u0435\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0444\u043E\u0442\u043E. \u0422\u0435\u043A\u0441\u0442\u044B \u043D\u0430\u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C. \u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0443\u0442 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438, \u043D\u0430\u0447\u043D\u0451\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C, \u0447\u0442\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0434\u0438 \u043D\u043E\u0432\u044B\u0445 \u0437\u0430\u044F\u0432\u043E\u043A." }),
+    /* @__PURE__ */ jsxs3("div", { className: "ss-hero-pill", style: {
       marginTop: mobile ? 22 : 32,
       display: "flex",
       flexDirection: mobile ? "column" : "row",
@@ -408,7 +1770,7 @@ function HeroBlock({ mobile }) {
       boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)",
       alignItems: mobile ? "stretch" : "center"
     }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         flex: 1,
         display: "flex",
         alignItems: "center",
@@ -416,8 +1778,8 @@ function HeroBlock({ mobile }) {
         padding: mobile ? "12px 14px" : "0 18px",
         minWidth: 0
       }, children: [
-        /* @__PURE__ */ jsx3(IconLink, {}),
-        /* @__PURE__ */ jsx3("span", { style: {
+        /* @__PURE__ */ jsx4(IconLink, {}),
+        /* @__PURE__ */ jsx4("span", { style: {
           color: VT.inkFaint,
           fontSize: mobile ? 15 : 16,
           overflow: "hidden",
@@ -425,12 +1787,12 @@ function HeroBlock({ mobile }) {
           whiteSpace: "nowrap"
         }, children: "\u0412\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" })
       ] }),
-      /* @__PURE__ */ jsx3(Btn, { style: {
+      /* @__PURE__ */ jsx4(Btn, { style: {
         padding: mobile ? "14px 20px" : "14px 26px",
         borderRadius: mobile ? 10 : 999
-      }, iconRight: /* @__PURE__ */ jsx3(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" })
+      }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 10 : 12,
       textAlign: mobile ? "left" : "center",
       fontFamily: VT.font.mono,
@@ -439,14 +1801,14 @@ function HeroBlock({ mobile }) {
       color: VT.inkSoft,
       lineHeight: 1.45
     }, children: [
-      "990 \u20BD/\u043C\u0435\u0441 \xB7 \u0434\u043B\u044F \u043F\u0435\u0440\u0432\u043E\u0439 \u0441\u043E\u0442\u043D\u0438 ",
-      /* @__PURE__ */ jsx3("b", { style: { color: VT.accent }, children: "490 \u20BD \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430" }),
-      " \xB7 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E"
+      "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041F\u043B\u0430\u0442\u043D\u044B\u0435 ",
+      /* @__PURE__ */ jsx4("b", { style: { color: VT.accent }, children: "\u043E\u0442 690 \u20BD/\u043C\u0435\u0441" }),
+      " \xB7 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430 \u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E"
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 14 : 18,
       textAlign: mobile ? "left" : "center"
-    }, children: /* @__PURE__ */ jsxs2("a", { href: "#examples", style: {
+    }, children: /* @__PURE__ */ jsxs3("a", { href: "#examples", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 6,
@@ -457,28 +1819,28 @@ function HeroBlock({ mobile }) {
       textDecorationColor: VT.line
     }, children: [
       "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0440\u044B",
-      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2193" })
+      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2193" })
     ] }) }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 22 : 36,
       display: "flex",
       flexDirection: "column",
       gap: 10,
       alignItems: mobile ? "flex-start" : "center"
     }, children: [
-      /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsx4("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 11,
         letterSpacing: "0.12em",
         color: VT.inkFaint,
         fontWeight: 600
       }, children: "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417" }),
-      /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsx4("div", { style: {
         display: "flex",
         flexWrap: "wrap",
         gap: 8,
         justifyContent: mobile ? "flex-start" : "center"
-      }, children: SOURCE_ICONS.map((s) => /* @__PURE__ */ jsxs2("span", { style: {
+      }, children: SOURCE_ICONS.map((s) => /* @__PURE__ */ jsxs3("span", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -496,384 +1858,441 @@ function HeroBlock({ mobile }) {
     ] })
   ] }) });
 }
-function Star({ filled = true, size = 10 }) {
-  return /* @__PURE__ */ jsx3(
+function ExamplesSection({ mobile }) {
+  const showcase = samplePresets;
+  const ExampleCard = ({
+    item
+  }) => {
+    const [hover, setHover] = React2.useState(false);
+    return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", width: "100%", minWidth: 0 }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginBottom: 14,
+        minHeight: 28,
+        minWidth: 0
+      }, children: [
+        /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent, flex: "0 0 auto" } }),
+        /* @__PURE__ */ jsx4("span", { style: {
+          fontSize: mobile ? 14 : 15,
+          fontWeight: 600,
+          letterSpacing: "-0.015em",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          minWidth: 0
+        }, children: item.tagline })
+      ] }),
+      /* @__PURE__ */ jsx4(
+        "div",
+        {
+          onMouseEnter: () => !mobile && setHover(true),
+          onMouseLeave: () => setHover(false),
+          style: {
+            display: "flex",
+            borderRadius: 12,
+            position: "relative",
+            transform: hover ? "translateY(-2px)" : "translateY(0)",
+            boxShadow: hover ? "0 1px 2px rgba(40,28,18,0.04), 0 10px 24px -14px rgba(120,70,40,0.20), 0 4px 10px -8px rgba(40,28,18,0.08)" : "0 1px 2px rgba(40,28,18,0.03), 0 6px 16px -12px rgba(120,70,40,0.14), 0 2px 6px -6px rgba(40,28,18,0.05)",
+            transition: "transform .22s cubic-bezier(0.22,0.61,0.36,1), box-shadow .22s ease"
+          },
+          children: /* @__PURE__ */ jsx4(MiniChrome, { host: item.content.meta.host, children: /* @__PURE__ */ jsx4(PresetRenderer, { preset: item.preset, content: item.content }) })
+        }
+      )
+    ] });
+  };
+  return /* @__PURE__ */ jsxs3("section", { id: "examples", style: { ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3(H2, { mobile, children: [
+        "\u0412\u043E\u0442 \u043A\u0430\u043A \u0431\u0443\u0434\u0435\u0442",
+        /* @__PURE__ */ jsx4("br", {}),
+        "\u0432\u044B\u0433\u043B\u044F\u0434\u0435\u0442\u044C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442"
+      ] }),
+      /* @__PURE__ */ jsx4(Sub, { mobile, children: "\u0421\u0442\u0438\u043B\u0438\u0441\u0442\u0438\u043A \u043C\u043D\u043E\u0433\u043E \u2014 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u0442 \u0435\u0451 \u043F\u043E\u0434 \u043D\u0438\u0448\u0443 \u0438 \u043A\u043E\u043D\u0442\u0435\u043D\u0442. \u0415\u0441\u043B\u0438 \u043D\u0435 \u0437\u0430\u0439\u0434\u0451\u0442 \u2014 \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438." })
+    ] }),
+    /* @__PURE__ */ jsx4(ExamplesCarousel, { mobile, items: showcase, renderCard: (item) => /* @__PURE__ */ jsx4(ExampleCard, { item }) }),
+    /* @__PURE__ */ jsx4(HowItPicks, { mobile }),
+    /* @__PURE__ */ jsxs3("div", { style: { marginTop: mobile ? 28 : 44, textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        flexWrap: "nowrap",
+        background: VT.accent,
+        color: "#fff",
+        fontWeight: 700,
+        padding: mobile ? "13px 22px" : "16px 32px",
+        borderRadius: 999,
+        fontSize: mobile ? 15 : 17,
+        lineHeight: 1.2,
+        textDecoration: "none",
+        boxShadow: "0 12px 28px -12px rgba(120,60,30,0.45)",
+        maxWidth: "100%",
+        boxSizing: "border-box"
+      }, children: /* @__PURE__ */ jsx4("span", { children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439\xA0\u0436\u0435 \u0438\u0437\xA0\u043C\u043E\u0435\u0433\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\xA0\u2192" }) }),
+      /* @__PURE__ */ jsx4("div", { style: {
+        marginTop: 14,
+        fontFamily: VT.font.mono,
+        fontSize: 12,
+        color: VT.inkFaint,
+        letterSpacing: "0.02em"
+      }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u0430\u043C \u043F\u043E\u0434\u0431\u0435\u0440\u0451\u0442 \u0441\u0442\u0438\u043B\u044C \u2014 \u043F\u043E\u0442\u043E\u043C \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043C\u0435\u043D\u044F\u0442\u044C" })
+    ] })
+  ] });
+}
+function ExamplesCarousel({
+  mobile,
+  items,
+  renderCard
+}) {
+  const scrollerRef = React2.useRef(null);
+  const wrapRef = React2.useRef(null);
+  const [atStart, setAtStart] = React2.useState(true);
+  const [atEnd, setAtEnd] = React2.useState(false);
+  const [activeIdx, setActiveIdx] = React2.useState(0);
+  const [hoverPrev, setHoverPrev] = React2.useState(false);
+  const [hoverNext, setHoverNext] = React2.useState(false);
+  const updateBounds = React2.useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setAtStart(el.scrollLeft <= 1);
+    setAtEnd(el.scrollLeft >= maxScroll - 1);
+    const firstChild = el.firstElementChild?.firstElementChild;
+    const step = firstChild ? firstChild.getBoundingClientRect().width + 14 : el.clientWidth;
+    const idx = Math.round(el.scrollLeft / step);
+    const maxIdx = (el.firstElementChild?.childElementCount ?? 1) - 1;
+    setActiveIdx(Math.max(0, Math.min(idx, maxIdx)));
+  }, []);
+  React2.useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    updateBounds();
+    el.addEventListener("scroll", updateBounds, { passive: true });
+    window.addEventListener("resize", updateBounds);
+    return () => {
+      el.removeEventListener("scroll", updateBounds);
+      window.removeEventListener("resize", updateBounds);
+    };
+  }, [updateBounds]);
+  const scrollBy = (direction) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const step = Math.max(280, el.clientWidth / 3);
+    el.scrollBy({ left: step * direction, behavior: "smooth" });
+  };
+  const arrowStyle = (disabled, hovered, direction) => ({
+    position: "absolute",
+    top: "50%",
+    [direction === -1 ? "left" : "right"]: -28,
+    transform: `translateY(-50%) ${hovered && !disabled ? `translateX(${direction * 2}px) scale(1.05)` : ""}`.trim(),
+    width: 56,
+    height: 56,
+    borderRadius: "50%",
+    border: "none",
+    background: VT.white,
+    color: disabled ? VT.inkMuted : VT.ink,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: disabled ? "default" : "pointer",
+    opacity: disabled ? 0 : 1,
+    pointerEvents: disabled ? "none" : "auto",
+    transition: "opacity .2s ease, transform .2s ease, box-shadow .2s ease",
+    boxShadow: hovered && !disabled ? "0 16px 40px -12px rgba(120,60,30,0.30), 0 4px 12px -4px rgba(0,0,0,0.10)" : "0 8px 24px -8px rgba(120,60,30,0.20), 0 2px 6px -2px rgba(0,0,0,0.06)",
+    padding: 0,
+    fontFamily: "inherit",
+    zIndex: 5
+  });
+  const ArrowIcon = ({ direction }) => /* @__PURE__ */ jsxs3(
     "svg",
     {
-      width: size,
-      height: size,
-      viewBox: "0 0 20 20",
-      fill: filled ? "#f4a93b" : "none",
-      stroke: filled ? "#f4a93b" : "#ccc",
-      strokeWidth: "1.5",
+      width: "22",
+      height: "22",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2",
+      strokeLinecap: "round",
       strokeLinejoin: "round",
-      children: /* @__PURE__ */ jsx3("path", { d: "M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z" })
+      style: { transform: direction === -1 ? "scaleX(-1)" : void 0 },
+      children: [
+        /* @__PURE__ */ jsx4("path", { d: "M5 12 H19" }),
+        /* @__PURE__ */ jsx4("path", { d: "M13 6 L19 12 L13 18" })
+      ]
+    }
+  );
+  return /* @__PURE__ */ jsxs3(
+    "div",
+    {
+      ref: wrapRef,
+      style: {
+        position: "relative",
+        marginTop: mobile ? 28 : 56,
+        maxWidth: mobile ? "none" : 1344,
+        marginLeft: mobile ? void 0 : "auto",
+        marginRight: mobile ? void 0 : "auto"
+      },
+      children: [
+        mobile && items.length > 1 && /* @__PURE__ */ jsx4("div", { style: {
+          display: "flex",
+          justifyContent: "center",
+          gap: 7,
+          marginBottom: 14
+        }, children: items.map((_, i) => {
+          const active = i === activeIdx;
+          return /* @__PURE__ */ jsx4(
+            "button",
+            {
+              type: "button",
+              "aria-label": `\u0421\u043B\u0430\u0439\u0434 ${i + 1}`,
+              onClick: () => {
+                const el = scrollerRef.current;
+                if (!el) return;
+                const child = el.firstElementChild?.children[i];
+                if (child) el.scrollTo({ left: child.offsetLeft - 20, behavior: "smooth" });
+              },
+              style: {
+                width: active ? 20 : 7,
+                height: 7,
+                borderRadius: 999,
+                background: active ? VT.accent : VT.line,
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                transition: "width .25s ease, background .25s ease"
+              }
+            },
+            i
+          );
+        }) }),
+        /* @__PURE__ */ jsxs3(
+          "div",
+          {
+            ref: scrollerRef,
+            style: {
+              marginLeft: mobile ? -16 : 0,
+              marginRight: mobile ? -16 : 0,
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
+              scrollSnapType: "x mandatory",
+              scrollPaddingLeft: mobile ? 16 : 32,
+              scrollbarWidth: "none",
+              // Fade-out mask — soft edges that hint at off-screen content.
+              // Mask is symmetric and toggled per-side via stops collapsing to 0px.
+              // Left side fades only when scrolled away from start; right fades only when more content awaits.
+              ["--ss-fade-w"]: mobile ? "44px" : "64px",
+              ["--ss-fade-l"]: atStart ? "0px" : "var(--ss-fade-w)",
+              ["--ss-fade-r"]: atEnd ? "0px" : "var(--ss-fade-w)",
+              maskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, transparent 0, #000 var(--ss-fade-l), #000 calc(100% - var(--ss-fade-r)), transparent 100%)",
+              transition: "mask-image .25s ease, -webkit-mask-image .25s ease"
+            },
+            children: [
+              /* @__PURE__ */ jsx4("style", { children: `.ss-preset-carousel::-webkit-scrollbar{display:none}` }),
+              /* @__PURE__ */ jsx4("div", { className: "ss-preset-carousel", style: {
+                display: "flex",
+                gap: mobile ? 12 : 24,
+                padding: mobile ? "0 56px 16px 16px" : "0 32px 16px",
+                alignItems: "flex-start"
+              }, children: items.map((item, i) => /* @__PURE__ */ jsx4("div", { style: {
+                flex: mobile ? "0 0 94%" : "0 0 calc((100% - 80px) / 3)",
+                scrollSnapAlign: "start",
+                display: "flex",
+                minWidth: 0
+              }, children: renderCard(item, i) }, i)) })
+            ]
+          }
+        ),
+        !mobile && /* @__PURE__ */ jsxs3(Fragment2, { children: [
+          /* @__PURE__ */ jsx4(
+            "button",
+            {
+              type: "button",
+              "aria-label": "\u041F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
+              disabled: atStart,
+              onClick: () => scrollBy(-1),
+              onMouseEnter: () => setHoverPrev(true),
+              onMouseLeave: () => setHoverPrev(false),
+              style: arrowStyle(atStart, hoverPrev, -1),
+              children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: -1 })
+            }
+          ),
+          /* @__PURE__ */ jsx4(
+            "button",
+            {
+              type: "button",
+              "aria-label": "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043F\u0440\u0438\u043C\u0435\u0440",
+              disabled: atEnd,
+              onClick: () => scrollBy(1),
+              onMouseEnter: () => setHoverNext(true),
+              onMouseLeave: () => setHoverNext(false),
+              style: arrowStyle(atEnd, hoverNext, 1),
+              children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: 1 })
+            }
+          )
+        ] })
+      ]
     }
   );
 }
-function PhotoFill({ tone = "peach", src, style }) {
-  const tones = {
-    peach: ["oklch(0.84 0.07 50)", "oklch(0.62 0.09 35)", "oklch(0.46 0.07 30)"],
-    sage: ["oklch(0.82 0.06 145)", "oklch(0.58 0.08 145)", "oklch(0.38 0.06 145)"],
-    slate: ["oklch(0.80 0.04 240)", "oklch(0.55 0.06 240)", "oklch(0.35 0.04 240)"],
-    warm: ["oklch(0.88 0.05 70)", "oklch(0.70 0.10 50)", "oklch(0.48 0.10 35)"]
-  };
-  const [c1, c2, c3] = tones[tone] || tones.peach;
-  return /* @__PURE__ */ jsx3("div", { style: {
-    position: "relative",
-    overflow: "hidden",
-    background: src ? "#222" : `radial-gradient(120% 80% at 30% 20%, ${c1} 0%, transparent 55%), radial-gradient(110% 70% at 80% 90%, ${c3} 0%, transparent 55%), linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3} 100%)`,
-    ...style
-  }, children: src && /* @__PURE__ */ jsx3("img", { src, alt: "", loading: "lazy", style: {
-    position: "absolute",
-    inset: 0,
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    objectPosition: "center",
-    display: "block"
-  } }) });
-}
-function MiniSiteCard({ ex }) {
-  return /* @__PURE__ */ jsxs2("div", { className: "ss-card-lift", style: {
-    background: VT.white,
-    color: VT.ink,
-    border: `1px solid ${VT.line}`,
-    borderRadius: 18,
-    overflow: "hidden",
-    boxShadow: "0 18px 36px -18px rgba(120,60,30,0.22)",
-    display: "flex",
-    flexDirection: "column",
-    width: "100%"
-  }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "8px 12px",
-      background: VT.bgSoft,
-      borderBottom: `1px solid ${VT.line}`
-    }, children: [
-      /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-      /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-      /* @__PURE__ */ jsxs2("span", { style: { marginLeft: 8, fontFamily: VT.font.mono, fontSize: 10, color: VT.inkFaint }, children: [
-        ex.handle,
-        ".",
-        BRAND.domain
-      ] })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
-      display: "flex",
-      alignItems: "center",
-      gap: 8,
-      padding: "9px 12px",
-      background: "#fff",
-      borderBottom: `1px solid ${VT.line}`
-    }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
-        width: 24,
-        height: 24,
-        flex: "0 0 auto",
-        borderRadius: 7,
-        background: ex.accent,
-        color: "#fff",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontWeight: 800,
-        fontSize: 13
-      }, children: ex.letter }),
-      /* @__PURE__ */ jsx3("span", { style: { fontSize: 12.5, fontWeight: 700, letterSpacing: "-0.015em" }, children: ex.name }),
-      /* @__PURE__ */ jsx3("span", { style: {
-        marginLeft: "auto",
-        fontFamily: VT.font.mono,
-        fontSize: 10.5,
-        color: VT.inkSoft
-      }, children: "\u0442\u0435\u043B\u0435\u0444\u043E\u043D" }),
-      /* @__PURE__ */ jsx3("span", { style: {
-        padding: "4px 10px",
-        borderRadius: 999,
-        background: ex.accent,
-        color: "#fff",
-        fontSize: 10.5,
-        fontWeight: 600
-      }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "14px 14px 12px", borderBottom: `1px solid ${VT.line}` }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
-        fontFamily: VT.font.mono,
-        fontSize: 9.5,
-        letterSpacing: "0.12em",
-        color: ex.accent,
-        fontWeight: 600
-      }, children: [
-        ex.category.toUpperCase(),
-        " \xB7 ",
-        ex.city.toUpperCase()
-      ] }),
-      /* @__PURE__ */ jsx3("h3", { style: {
-        fontSize: 17,
-        fontWeight: 700,
-        letterSpacing: "-0.025em",
-        margin: "6px 0 0",
-        lineHeight: 1.15,
-        textWrap: "balance",
-        whiteSpace: "pre-line"
-      }, children: ex.heroLine }),
-      /* @__PURE__ */ jsxs2("div", { style: {
-        marginTop: 8,
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "4px 10px",
-        background: VT.bgSoft,
-        border: `1px solid ${VT.line}`,
-        borderRadius: 999,
-        fontSize: 11
-      }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { display: "inline-flex", gap: 1 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx3(Star, { filled: true, size: 10 }, i)) }),
-        /* @__PURE__ */ jsxs2("b", { children: [
-          ex.rating,
-          " \u2605"
-        ] }),
-        /* @__PURE__ */ jsxs2("span", { style: { color: VT.inkSoft }, children: [
-          "\xB7 ",
-          ex.reviewCount,
-          " \u043E\u0442\u0437\u044B\u0432\u043E\u0432"
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx3("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx3(PhotoFill, { tone: ex.tone, src: ex.heroPhoto, style: {
-        aspectRatio: "16 / 9",
-        borderRadius: 8,
-        border: `1px solid ${VT.line}`
-      } }) })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "12px 14px" }, children: [
-      /* @__PURE__ */ jsx3("div", { style: {
-        fontFamily: VT.font.mono,
-        fontSize: 9.5,
-        letterSpacing: "0.12em",
-        color: ex.accent,
-        fontWeight: 600,
-        marginBottom: 8
-      }, children: "\u0423\u0421\u041B\u0423\u0413\u0418 \u0418 \u0426\u0415\u041D\u042B" }),
-      /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 6 }, children: ex.services.map(([n, pr]) => /* @__PURE__ */ jsxs2("div", { style: {
-        background: VT.white,
-        border: `1px solid ${VT.line}`,
-        borderRadius: 10,
-        padding: "8px 10px",
-        display: "flex",
-        alignItems: "center",
-        gap: 8
-      }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontSize: 12, fontWeight: 600, letterSpacing: "-0.01em" }, children: n }),
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: VT.font.mono, fontSize: 11, marginTop: 1 }, children: pr })
-        ] }),
-        /* @__PURE__ */ jsx3("span", { style: {
-          padding: "4px 8px",
-          borderRadius: 999,
-          background: ex.accentSoft,
-          color: ex.accent,
-          fontSize: 10,
-          fontWeight: 600
-        }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u2192" })
-      ] }, n)) })
-    ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "12px 14px", background: VT.bgSoft, borderTop: `1px solid ${VT.line}` }, children: [
-      /* @__PURE__ */ jsx3("div", { style: {
-        fontFamily: VT.font.mono,
-        fontSize: 9.5,
-        letterSpacing: "0.12em",
-        color: ex.accent,
-        fontWeight: 600,
-        marginBottom: 8
-      }, children: "\u041E\u0422\u0417\u042B\u0412" }),
-      /* @__PURE__ */ jsxs2("div", { style: {
-        background: VT.white,
-        border: `1px solid ${VT.line}`,
-        borderRadius: 10,
-        padding: "8px 10px"
-      }, children: [
-        /* @__PURE__ */ jsx3("div", { style: { display: "flex", gap: 1, marginBottom: 4 }, children: Array.from({ length: 5 }).map((_, j) => /* @__PURE__ */ jsx3(Star, { filled: true, size: 9 }, j)) }),
-        /* @__PURE__ */ jsxs2("p", { style: { margin: 0, fontSize: 11.5, lineHeight: 1.4 }, children: [
-          "\xAB",
-          ex.review,
-          "\xBB"
-        ] }),
-        /* @__PURE__ */ jsx3("div", { style: { marginTop: 4, fontSize: 10, color: VT.inkSoft }, children: ex.reviewAuthor })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx3("div", { style: { padding: "12px 14px" }, children: /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 3 }, children: ex.gallery.map((g, i) => /* @__PURE__ */ jsx3(
-      PhotoFill,
-      {
-        tone: g.tone || ex.tone,
-        src: g.src,
-        style: { aspectRatio: "1 / 1", borderRadius: 4 }
-      },
-      i
-    )) }) }),
-    /* @__PURE__ */ jsx3("div", { style: { padding: "0 14px 14px", marginTop: "auto" }, children: /* @__PURE__ */ jsx3("div", { style: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
-      padding: "11px 14px",
-      borderRadius: 10,
-      background: ex.accent,
-      color: "#fff",
-      fontSize: 13,
-      fontWeight: 700
-    }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D \u2192" }) })
-  ] });
-}
-function ExamplesSection({ mobile }) {
-  const U2 = (id, w = 600) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
-  const examples = [
+function HowItPicks({ mobile }) {
+  const items = [
     {
-      handle: "morning-coffee",
-      name: "\u0423\u0442\u0440\u043E \u0443 \u041B\u0435\u043D\u044B",
-      category: "\u041A\u043E\u0444\u0435\u0439\u043D\u044F",
-      city: "\u0412\u043E\u0440\u043E\u043D\u0435\u0436",
-      tone: "warm",
-      accent: "oklch(0.55 0.13 30)",
-      accentSoft: "oklch(0.93 0.05 40)",
-      letter: "\u0423",
-      src: "Telegram-\u043A\u0430\u043D\u0430\u043B\u0430",
-      heroLine: "\u041A\u043E\u0444\u0435 \u0438 \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u0438\n\u043F\u043E \u0430\u0434\u0440\u0435\u0441\u0443 \u041F\u043B\u0430\u0442\u043E\u043D\u043E\u0432\u0430, 12",
-      heroPhoto: U2("photo-1495474472287-4d71bcdd2085"),
-      rating: "4.9",
-      reviewCount: 28,
-      services: [
-        ["\u041A\u0430\u043F\u0443\u0447\u0438\u043D\u043E / \u043B\u0430\u0442\u0442\u0435", "180 \u20BD"],
-        ["\u0421\u044B\u0440\u043D\u0438\u043A \u0441\u043E \u0441\u043C\u0435\u0442\u0430\u043D\u043E\u0439", "220 \u20BD"],
-        ["\u0417\u0430\u0432\u0442\u0440\u0430\u043A \u0432\u044B\u0445\u043E\u0434\u043D\u043E\u0433\u043E \u0434\u043D\u044F", "450 \u20BD"]
-      ],
-      review: "\u041B\u0443\u0447\u0448\u0438\u0439 \u0440\u0430\u0444 \u0432 \u0433\u043E\u0440\u043E\u0434\u0435, \u0438 \u0440\u0435\u0431\u044F\u0442\u0430 \u0432\u0441\u0435\u0433\u0434\u0430 \u043F\u043E\u043C\u043D\u044F\u0442 \u043C\u043E\u0451 \xAB\u0442\u043E \u0436\u0435, \u0447\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E\xBB.",
-      reviewAuthor: "\u0410\u043B\u0438\u043D\u0430 \u041A.",
-      gallery: [
-        { src: U2("photo-1509042239860-f550ce710b93", 300) },
-        { src: U2("photo-1572442388796-11668a67e53d", 300) },
-        { src: U2("photo-1554118811-1e0d58224f24", 300) },
-        { src: U2("photo-1497636577773-f1231844b336", 300) }
-      ]
+      n: "01",
+      title: "\u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044C \u0443\u0436\u0435 \u0435\u0441\u0442\u044C, \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442 \u0435\u0433\u043E",
+      body: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0431\u0443\u043A\u043B\u0435\u0442, \u0432\u0438\u0437\u0438\u0442\u043A\u0443 \u0438\u043B\u0438 \u0432\u044B\u0432\u0435\u0441\u043A\u0443. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0435\u0442 \u0448\u0440\u0438\u0444\u0442 \u0438 \u0444\u0438\u0440\u043C\u0435\u043D\u043D\u044B\u0435 \u0446\u0432\u0435\u0442\u0430, \u043F\u043E\u0441\u0442\u0430\u0432\u0438\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0442\u0430\u043A\u0438\u0435 \u0436\u0435. \u0412\u0430\u0448 \u0441\u0442\u0438\u043B\u044C \u043D\u0438\u043A\u0443\u0434\u0430 \u043D\u0435 \u0434\u0435\u043D\u0435\u0442\u0441\u044F.",
+      demo: "swatches"
     },
     {
-      handle: "avto-park",
-      name: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 Park",
-      category: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441",
-      city: "\u0421\u0430\u043C\u0430\u0440\u0430",
-      tone: "slate",
-      accent: "oklch(0.40 0.06 250)",
-      accentSoft: "oklch(0.93 0.045 250)",
-      letter: "P",
-      src: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442",
-      heroLine: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441,\n\u0433\u0434\u0435 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442, \u043F\u043E\u0442\u043E\u043C \u0447\u0438\u043D\u044F\u0442",
-      heroPhoto: U2("photo-1486262715619-67b85e0b08d3"),
-      rating: "5.0",
-      reviewCount: 56,
-      services: [
-        ["\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", "1 500 \u20BD"],
-        ["\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430", "900 \u20BD"],
-        ["\u0420\u0430\u0437\u0432\u0430\u043B-\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", "2 400 \u20BD"]
-      ],
-      review: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438, \u0432\u0441\u0451 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438, \u043F\u043E \u043A\u0430\u043A\u043E\u0439 \u043F\u0440\u0438\u0447\u0438\u043D\u0435 \u0447\u0442\u043E \u043C\u0435\u043D\u044F\u0435\u043C. \u041D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u0430\u043B\u0438.",
-      reviewAuthor: "\u0414\u043C\u0438\u0442\u0440\u0438\u0439 \u0412.",
-      gallery: [
-        { src: U2("photo-1632823471565-1ecdf5c69f4d", 300) },
-        { src: U2("photo-1530046339160-ce3e530c7d2f", 300) },
-        { src: U2("photo-1487754180451-c456f719a1fc", 300) },
-        { src: U2("photo-1493238792000-8113da705763", 300) }
-      ]
+      n: "02",
+      title: "\u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044F \u043D\u0435\u0442, \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u043C",
+      body: "\u0426\u0432\u0435\u0442\u0430 \u0432\u043E\u0437\u044C\u043C\u0451\u0442 \u0441 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439: \u0443 \u0442\u0451\u043F\u043B\u043E\u0439 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u2014 \u043C\u043E\u043B\u043E\u0447\u043D\u044B\u0435 \u0438 \u0442\u0435\u0440\u0440\u0430\u043A\u043E\u0442\u043E\u0432\u044B\u0435, \u0443 \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430 \u043D\u0430 \u0440\u043E\u0437\u043E\u0432\u043E\u043C \u0444\u043E\u043D\u0435 \u2014 \u043F\u044B\u043B\u044C\u043D\u043E-\u0440\u043E\u0437\u043E\u0432\u044B\u0435 \u0438 \u0431\u043E\u0440\u0434\u043E. \u0428\u0440\u0438\u0444\u0442 \u043F\u043E\u0434\u0431\u0435\u0440\u0451\u0442 \u043F\u043E\u0434 \u0442\u043E\u043D \u0442\u0435\u043A\u0441\u0442\u0430: \u0434\u043B\u044F \u043B\u0438\u0447\u043D\u043E\u0433\u043E, \u0430\u0432\u0442\u043E\u0440\u0441\u043A\u043E\u0433\u043E \u2014 \u043C\u044F\u0433\u043A\u0438\u0439 \u0441 \u0437\u0430\u0441\u0435\u0447\u043A\u0430\u043C\u0438, \u0434\u043B\u044F \u0441\u0443\u0445\u043E\u0433\u043E \u0438 \u0442\u043E\u0447\u043D\u043E\u0433\u043E \u2014 \u0441\u0442\u0440\u043E\u0433\u0438\u0439 \u0438 \u0440\u043E\u0432\u043D\u044B\u0439.",
+      demo: "fonts"
     },
     {
-      handle: "flow-dance",
-      name: "\u0428\u043A\u043E\u043B\u0430 \u0442\u0430\u043D\u0446\u0435\u0432 Flow",
-      category: "\u0422\u0430\u043D\u0446\u044B",
-      city: "\u041A\u0440\u0430\u0441\u043D\u043E\u0434\u0430\u0440",
-      tone: "sage",
-      accent: "oklch(0.45 0.11 145)",
-      accentSoft: "oklch(0.93 0.06 145)",
-      letter: "F",
-      src: "\u0441\u0442\u0430\u0440\u043E\u0433\u043E \u0441\u0430\u0439\u0442\u0430",
-      heroLine: "\u0421\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u0430\u044F \u0445\u043E\u0440\u0435\u043E\u0433\u0440\u0430\u0444\u0438\u044F\n\u0441 \u043D\u0443\u043B\u044F \u2014 \u0434\u043B\u044F \u0432\u0437\u0440\u043E\u0441\u043B\u044B\u0445",
-      heroPhoto: U2("photo-1547153760-18fc86324498"),
-      rating: "4.8",
-      reviewCount: 19,
-      services: [
-        ["\u041F\u0440\u043E\u0431\u043D\u043E\u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u0435", "500 \u20BD"],
-        ["\u0410\u0431\u043E\u043D\u0435\u043C\u0435\u043D\u0442 4 \u0437\u0430\u043D\u044F\u0442\u0438\u044F", "3 200 \u20BD"],
-        ["\u0410\u0431\u043E\u043D\u0435\u043C\u0435\u043D\u0442 8 \u0437\u0430\u043D\u044F\u0442\u0438\u0439", "5 600 \u20BD"]
-      ],
-      review: "\u0411\u0435\u0437 \u044D\u0437\u043E\u0442\u0435\u0440\u0438\u043A\u0438 \u0438 \u043E\u0446\u0435\u043D\u043E\u043A. \u041F\u0440\u0435\u043F\u043E\u0434\u0430\u0432\u0430\u0442\u0435\u043B\u0438 \u0442\u0435\u0440\u043F\u0435\u043B\u0438\u0432\u043E \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442 \u0434\u0432\u0438\u0436\u0435\u043D\u0438\u044F, \u0433\u0440\u0443\u043F\u043F\u0430 \u0434\u0440\u0443\u0436\u043D\u0430\u044F.",
-      reviewAuthor: "\u041E\u043B\u0435\u0441\u044F \u041D.",
-      gallery: [
-        { src: U2("photo-1535525153412-5a42439a210d", 300) },
-        { src: U2("photo-1518609878373-06d740f60d8b", 300) },
-        { src: U2("photo-1508700115892-45ecd05ae2ad", 300) },
-        { src: U2("photo-1518611012118-696072aa579a", 300) }
-      ]
+      n: "03",
+      title: "\u0420\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0443 \u0432\u044B\u0431\u0435\u0440\u0435\u0442 \u043F\u043E\u0434 \u0432\u0430\u0448 \u043A\u043E\u043D\u0442\u0435\u043D\u0442",
+      body: "\u041C\u043D\u043E\u0433\u043E \u0446\u0438\u0444\u0440, \u0446\u0435\u043D \u0438 \u0433\u0430\u0440\u0430\u043D\u0442\u0438\u0439 \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0438\u0437 \u043F\u043B\u0438\u0442\u043E\u043A. \u041C\u0435\u043D\u044E, \u0438\u0441\u0442\u043E\u0440\u0438\u0438, \u043E\u0442\u0437\u044B\u0432\u044B \u2014 \u0440\u0430\u0437\u043B\u043E\u0436\u0438\u0442 \u043A\u0430\u043A \u0436\u0443\u0440\u043D\u0430\u043B. \u0423\u043F\u043E\u0440 \u043D\u0430 \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u0443 \u2014 \u043F\u043E\u0441\u0442\u0430\u0432\u0438\u0442 \u043A\u0440\u0443\u043F\u043D\u044B\u0435 \u0444\u043E\u0442\u043E \u0432 \u0434\u0432\u0435 \u043A\u043E\u043B\u043E\u043D\u043A\u0438.",
+      demo: "grids"
+    },
+    {
+      n: "04",
+      title: "\u041D\u0435 \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u043E\u0441\u044C \u2014 \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A",
+      body: "\u0412 \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0435 \u043B\u0435\u0436\u0438\u0442 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439. \u041E\u0442\u043A\u0440\u043E\u0439\u0442\u0435, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0440\u0443\u0433\u043E\u0439, \u0438 \u0441\u0430\u0439\u0442 \u043F\u0435\u0440\u0435\u0441\u0442\u0440\u043E\u0438\u0442\u0441\u044F \u0437\u0430 \u0441\u0435\u043A\u0443\u043D\u0434\u044B. \u0422\u0435\u043A\u0441\u0442\u044B \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0438 \u043E\u0441\u0442\u0430\u043D\u0443\u0442\u0441\u044F \u043D\u0430 \u043C\u0435\u0441\u0442\u0430\u0445.",
+      demo: "switch"
     }
   ];
-  const Caption = ({ ex }) => /* @__PURE__ */ jsxs2("div", { style: { display: "flex", flexDirection: "column", height: "100%", width: "100%" }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }, children: [
-      /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent, flex: "0 0 auto" } }),
-      /* @__PURE__ */ jsxs2("span", { style: { fontSize: mobile ? 14.5 : 16, fontWeight: 600, letterSpacing: "-0.015em" }, children: [
-        "\u0421\u043E\u0431\u0440\u0430\u043D \u0438\u0437 ",
-        ex.src
+  const accent = VT.accent;
+  const tray = (children) => /* @__PURE__ */ jsx4("div", { style: {
+    background: VT.white,
+    border: `1px solid ${VT.line}`,
+    borderRadius: VT.r.md,
+    padding: "14px 16px",
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    minHeight: 56
+  }, children });
+  const Demo = ({ kind }) => {
+    if (kind === "swatches") {
+      const sets = [
+        ["#FAF6F0", "#A8412E", "#211C17"],
+        ["#0E0F10", "#C2D94A", "#9A9B98"],
+        ["#F6E7E3", "#8C4A52", "#2A1820"]
+      ];
+      return tray(
+        /* @__PURE__ */ jsx4(Fragment2, { children: sets.map((set, i) => /* @__PURE__ */ jsx4("div", { style: { display: "flex", borderRadius: 8, overflow: "hidden", boxShadow: "0 1px 3px rgba(40,28,18,0.08)" }, children: set.map((col, j) => /* @__PURE__ */ jsx4("span", { style: { width: 22, height: 30, background: col } }, j)) }, i)) })
+      );
+    }
+    if (kind === "fonts") {
+      return tray(
+        /* @__PURE__ */ jsxs3(Fragment2, { children: [
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Fraunces', serif", fontSize: 22, fontStyle: "italic", color: VT.ink }, children: "\u0410\u0430" }),
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Space Grotesk', sans-serif", fontSize: 22, fontWeight: 700, color: VT.ink }, children: "\u0410\u0430" }),
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'JetBrains Mono', monospace", fontSize: 19, color: VT.ink }, children: "\u0410\u0430" }),
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Instrument Serif', serif", fontSize: 23, color: VT.ink }, children: "\u0410\u0430" }),
+          /* @__PURE__ */ jsx4("span", { style: { fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 700, color: VT.ink }, children: "\u0410\u0430" })
+        ] })
+      );
+    }
+    if (kind === "grids") {
+      const cell = (style) => /* @__PURE__ */ jsx4("span", { style: { background: VT.accentSoft, borderRadius: 3, ...style } });
+      const frame = { width: 52, height: 44, padding: 5, border: `1px solid ${VT.line}`, borderRadius: 7, background: VT.bg };
+      return tray(
+        /* @__PURE__ */ jsxs3(Fragment2, { children: [
+          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr", gap: 3 }, children: [
+            cell({ gridColumn: "span 2" }),
+            cell({}),
+            cell({})
+          ] }),
+          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "flex", flexDirection: "column", gap: 3 }, children: [
+            cell({ height: 8 }),
+            cell({ flex: 1 }),
+            cell({ height: 5, width: "60%" })
+          ] }),
+          /* @__PURE__ */ jsxs3("div", { style: { ...frame, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }, children: [
+            cell({}),
+            cell({})
+          ] })
+        ] })
+      );
+    }
+    return tray(
+      /* @__PURE__ */ jsxs3(Fragment2, { children: [
+        ["#A8412E", "#2D5B8E", "#356E60", "#8C4A52"].map((col, i) => /* @__PURE__ */ jsx4("span", { style: {
+          width: 26,
+          height: 26,
+          borderRadius: "50%",
+          background: col,
+          border: i === 0 ? `2px solid ${VT.ink}` : `2px solid transparent`,
+          boxShadow: i === 0 ? `0 0 0 2px ${VT.white}, 0 0 0 3px ${VT.ink}` : "none"
+        } }, i)),
+        /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 12, color: VT.inkFaint, marginLeft: "auto" }, children: "\u2192 1 \u043A\u043B\u0438\u043A" })
       ] })
-    ] }),
-    /* @__PURE__ */ jsx3("div", { style: { flex: 1, minHeight: 0, display: "flex" }, children: /* @__PURE__ */ jsx3(MiniSiteCard, { ex }) })
-  ] });
-  return /* @__PURE__ */ jsxs2("section", { id: "examples", style: { ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2(H2, { mobile, children: [
-        "\u0412\u043E\u0442 \u043A\u0430\u043A \u0431\u0443\u0434\u0435\u0442",
-        /* @__PURE__ */ jsx3("br", {}),
-        "\u0432\u044B\u0433\u043B\u044F\u0434\u0435\u0442\u044C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442"
-      ] }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, children: "\u0422\u0440\u0438 \u043F\u0440\u0438\u043C\u0435\u0440\u0430 \u0438\u0437 \u0440\u0430\u0437\u043D\u044B\u0445 \u0434\u0435\u043B. \u0412\u0441\u0435 \u0441\u043E\u0431\u0440\u0430\u043D\u044B \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u2014 \u0441\u043E \u0441\u0432\u043E\u0438\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u044F\u043C\u0438 \u0440\u0430\u0431\u043E\u0442." })
-    ] }),
-    mobile ? /* @__PURE__ */ jsxs2("div", { style: {
-      marginTop: 28,
-      marginLeft: -20,
-      marginRight: -20,
-      overflowX: "auto",
-      WebkitOverflowScrolling: "touch",
-      scrollSnapType: "x mandatory",
-      scrollPaddingLeft: 20,
-      scrollbarWidth: "none"
-    }, children: [
-      /* @__PURE__ */ jsx3("style", { children: `.ss-v3-carousel::-webkit-scrollbar{display:none}` }),
-      /* @__PURE__ */ jsx3("div", { className: "ss-v3-carousel", style: {
-        display: "flex",
-        gap: 14,
-        padding: "0 20px 24px",
-        alignItems: "stretch"
-      }, children: examples.map((ex) => /* @__PURE__ */ jsx3("div", { style: { flex: "0 0 86%", scrollSnapAlign: "start", display: "flex" }, children: /* @__PURE__ */ jsx3(Caption, { ex }) }, ex.name)) })
-    ] }) : /* @__PURE__ */ jsx3("div", { style: {
-      marginTop: 48,
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gridAutoRows: "1fr",
-      gap: 24,
-      maxWidth: 1280,
-      margin: "48px auto 0",
-      alignItems: "stretch"
-    }, children: examples.map((ex) => /* @__PURE__ */ jsx3(Caption, { ex }, ex.name)) }),
-    /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 28 : 44, textAlign: "center" }, children: /* @__PURE__ */ jsx3("a", { href: "#hero", style: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8,
-      background: VT.accent,
-      color: "#fff",
+    );
+  };
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    marginTop: 0,
+    maxWidth: 1100,
+    marginLeft: "auto",
+    marginRight: "auto",
+    padding: mobile ? "24px 20px" : "40px 44px",
+    background: VT.white,
+    border: `1px solid ${VT.line}`,
+    borderRadius: VT.r.lg
+  }, children: [
+    /* @__PURE__ */ jsx4("h3", { style: {
+      fontSize: mobile ? 22 : 28,
       fontWeight: 700,
-      padding: mobile ? "14px 24px" : "16px 32px",
-      borderRadius: 999,
-      fontSize: mobile ? 16 : 17,
-      textDecoration: "none",
-      boxShadow: "0 12px 28px -12px rgba(120,60,30,0.45)"
-    }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439 \u0436\u0435 \u0438\u0437 \u043C\u043E\u0435\u0433\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u2192" }) })
+      lineHeight: 1.12,
+      letterSpacing: "-0.025em",
+      color: VT.ink,
+      marginBottom: 12,
+      maxWidth: 720
+    }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442 \u0434\u0438\u0437\u0430\u0439\u043D \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432, \u0430 \u043D\u0435 \u043F\u043E\u0434\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430" }),
+    /* @__PURE__ */ jsx4("p", { style: {
+      fontSize: mobile ? 14 : 16,
+      lineHeight: 1.5,
+      color: VT.inkSoft,
+      marginBottom: mobile ? 20 : 28,
+      maxWidth: 680
+    }, children: "\u0415\u0441\u043B\u0438 \u0444\u0438\u0440\u043C\u0435\u043D\u043D\u044B\u0439 \u0441\u0442\u0438\u043B\u044C \u0443\u0436\u0435 \u0435\u0441\u0442\u044C, \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0435\u0433\u043E \u043F\u043E\u0432\u0442\u043E\u0440\u0438\u0442. \u0415\u0441\u043B\u0438 \u043D\u0435\u0442, \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E \u0438 \u0442\u0435\u043A\u0441\u0442\u043E\u0432. \u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u043D\u0435 \u043F\u043E\u0445\u043E\u0436 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441\u0430, \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u043E\u0431\u0430 \u0441\u043E\u0431\u0440\u0430\u043D\u044B \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439." }),
+    /* @__PURE__ */ jsx4("div", { style: {
+      display: "grid",
+      gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
+      gap: mobile ? 14 : 18,
+      alignItems: "stretch"
+    }, children: items.map((it, i) => /* @__PURE__ */ jsxs3("div", { style: {
+      background: VT.bg,
+      border: `1px solid ${VT.line}`,
+      borderRadius: VT.r.lg,
+      padding: mobile ? 22 : 28,
+      display: "flex",
+      flexDirection: "column"
+    }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx4("span", { style: {
+          fontFamily: VT.font.mono,
+          fontSize: 13,
+          fontWeight: 700,
+          color: "#fff",
+          background: accent,
+          width: 32,
+          height: 32,
+          borderRadius: 9,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          letterSpacing: "0.02em",
+          flex: "0 0 auto"
+        }, children: it.n }),
+        /* @__PURE__ */ jsx4("div", { style: { fontSize: mobile ? 18 : 19, fontWeight: 700, letterSpacing: "-0.015em", color: VT.ink, lineHeight: 1.2 }, children: it.title })
+      ] }),
+      /* @__PURE__ */ jsx4("p", { style: { fontSize: mobile ? 14.5 : 15, lineHeight: 1.55, color: VT.inkSoft, margin: 0 }, children: it.body }),
+      /* @__PURE__ */ jsx4("div", { style: { marginTop: "auto", paddingTop: 18 }, children: /* @__PURE__ */ jsx4(Demo, { kind: it.demo }) })
+    ] }, i)) })
   ] });
 }
 var CYCLE_STEPS = [
@@ -883,9 +2302,9 @@ var CYCLE_STEPS = [
     cadence: "\u043E\u0434\u0438\u043D \u0440\u0430\u0437",
     body: "\u041F\u043E\u043A\u0430\u0436\u0435\u0442\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u2014 \u0437\u0430 2 \u0447\u0430\u0441\u0430 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u0439\u0442 \u0441\u043E \u0432\u0441\u0435\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0433\u0430\u043B\u0435\u0440\u0435\u0435\u0439 \u0440\u0430\u0431\u043E\u0442. \u0422\u0435\u043A\u0441\u0442\u044B \u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C.",
     palette: { bg: "oklch(0.95 0.05 40)", ink: "oklch(0.32 0.14 35)", dec: "oklch(0.86 0.10 40)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3" }),
-      /* @__PURE__ */ jsx3("path", { d: "M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3" }),
+      /* @__PURE__ */ jsx4("path", { d: "M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3" })
     ] })
   },
   {
@@ -894,11 +2313,11 @@ var CYCLE_STEPS = [
     cadence: "\u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E",
     body: "\u0420\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E \u0437\u0430\u0433\u043B\u044F\u0434\u044B\u0432\u0430\u0435\u0442 \u0432 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041D\u043E\u0432\u044B\u0435 \u0446\u0435\u043D\u044B, \u043F\u043E\u0441\u0442\u044B \u0438\u043B\u0438 \u0444\u043E\u0442\u043E \u2014 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0451\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442. \u041E\u0442 \u0432\u0430\u0441 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0443\u0436\u043D\u043E.",
     palette: { bg: "oklch(0.94 0.06 95)", ink: "oklch(0.36 0.12 85)", dec: "oklch(0.84 0.12 90)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M14 32 a18 18 0 0 1 30 -13" }),
-      /* @__PURE__ */ jsx3("path", { d: "M44 12 L44 22 L34 22" }),
-      /* @__PURE__ */ jsx3("path", { d: "M50 32 a18 18 0 0 1 -30 13" }),
-      /* @__PURE__ */ jsx3("path", { d: "M20 52 L20 42 L30 42" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M14 32 a18 18 0 0 1 30 -13" }),
+      /* @__PURE__ */ jsx4("path", { d: "M44 12 L44 22 L34 22" }),
+      /* @__PURE__ */ jsx4("path", { d: "M50 32 a18 18 0 0 1 -30 13" }),
+      /* @__PURE__ */ jsx4("path", { d: "M20 52 L20 42 L30 42" })
     ] })
   },
   {
@@ -907,28 +2326,28 @@ var CYCLE_STEPS = [
     cadence: "\u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C",
     body: "\u0421\u043C\u043E\u0442\u0440\u0438\u0442, \u043A\u0430\u043A \u0432\u0435\u0434\u0443\u0442 \u0441\u0435\u0431\u044F \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438: \u043A\u0442\u043E \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B, \u0434\u043E \u0447\u0435\u0433\u043E \u0434\u043E\u043B\u0438\u0441\u0442\u0430\u043B, \u0433\u0434\u0435 \u0437\u0430\u043A\u0440\u044B\u043B \u0432\u043A\u043B\u0430\u0434\u043A\u0443. \u0421\u0447\u0438\u0442\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u0438 \u043E\u0442\u043A\u0443\u0434\u0430 \u043E\u043D\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442.",
     palette: { bg: "oklch(0.94 0.05 200)", ink: "oklch(0.34 0.10 220)", dec: "oklch(0.82 0.08 210)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M4 32 C 14 18, 50 18, 60 32" }),
-      /* @__PURE__ */ jsx3("path", { d: "M4 32 C 14 46, 50 46, 60 32" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "32", cy: "32", r: "8" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "32", cy: "32", r: "3", fill: "currentColor" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M4 32 C 14 18, 50 18, 60 32" }),
+      /* @__PURE__ */ jsx4("path", { d: "M4 32 C 14 46, 50 46, 60 32" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "32", cy: "32", r: "8" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "32", cy: "32", r: "3", fill: "currentColor" })
     ] })
   },
   {
     n: "04",
     title: "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442",
     cadence: "\u043A\u0430\u0436\u0434\u044B\u0439 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A",
-    body: "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0442\u0440\u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F, \u043A\u0430\u043A \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0441\u0438\u043B\u044C\u043D\u0435\u0435. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C, \u043F\u0435\u0440\u0435\u0434\u0435\u043B\u0430\u0442\u044C \u0438\u043D\u0430\u0447\u0435 \u0438\u043B\u0438 \u043E\u0442\u043A\u0430\u0437\u0430\u0442\u044C\u0441\u044F \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B.",
+    body: "\u041A\u043E\u0433\u0434\u0430 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0431\u0440\u0430\u043B\u043E\u0441\u044C \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E \u0434\u0430\u043D\u043D\u044B\u0445, \u0432 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0434\u043E \u0442\u0440\u0451\u0445 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0439, \u043A\u0430\u043A \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0441\u0438\u043B\u044C\u043D\u0435\u0435. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C, \u043F\u0435\u0440\u0435\u0434\u0435\u043B\u0430\u0442\u044C \u0438\u043D\u0430\u0447\u0435 \u0438\u043B\u0438 \u043E\u0442\u043A\u0430\u0437\u0430\u0442\u044C\u0441\u044F \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B.",
     palette: { bg: "oklch(0.94 0.05 145)", ink: "oklch(0.32 0.11 145)", dec: "oklch(0.82 0.08 145)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M12 14 L52 14 L52 44 L36 44 L28 54 L28 44 L12 44 Z" }),
-      /* @__PURE__ */ jsx3("path", { d: "M22 26 L42 26 M22 34 L36 34" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M12 14 L52 14 L52 44 L36 44 L28 54 L28 44 L12 44 Z" }),
+      /* @__PURE__ */ jsx4("path", { d: "M22 26 L42 26 M22 34 L36 34" })
     ] })
   }
 ];
 function CycleCard({ step, size = 240 }) {
   const p = step.palette;
-  return /* @__PURE__ */ jsxs2("div", { style: {
+  return /* @__PURE__ */ jsxs3("div", { style: {
     width: size,
     padding: 18,
     boxSizing: "border-box",
@@ -941,8 +2360,8 @@ function CycleCard({ step, size = 240 }) {
     display: "flex",
     flexDirection: "column"
   }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
+      /* @__PURE__ */ jsx4("span", { style: {
         width: 48,
         height: 48,
         borderRadius: "50%",
@@ -954,8 +2373,8 @@ function CycleCard({ step, size = 240 }) {
         color: p.ink,
         flex: "0 0 auto"
       }, children: step.icon }),
-      /* @__PURE__ */ jsxs2("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: {
           fontFamily: VT.font.mono,
           fontSize: 11,
           letterSpacing: "0.08em",
@@ -963,10 +2382,10 @@ function CycleCard({ step, size = 240 }) {
           opacity: 0.7,
           fontWeight: 600
         }, children: step.n }),
-        /* @__PURE__ */ jsx3("div", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
+        /* @__PURE__ */ jsx4("div", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: 6,
       fontFamily: VT.font.mono,
       fontSize: 11,
@@ -975,7 +2394,7 @@ function CycleCard({ step, size = 240 }) {
       opacity: 0.75,
       fontStyle: "italic"
     }, children: step.cadence }),
-    /* @__PURE__ */ jsx3("p", { style: {
+    /* @__PURE__ */ jsx4("p", { style: {
       margin: "10px 0 0",
       fontSize: 13.5,
       lineHeight: 1.4,
@@ -991,17 +2410,17 @@ function DesktopCycle() {
   const arcH = 100;
   const H = cardH + arcH + 60;
   const cx = (i) => i * (cardW + gap) + cardW / 2;
-  return /* @__PURE__ */ jsxs2("div", { style: { position: "relative", width: "100%", maxWidth: W, margin: "0 auto" }, children: [
-    /* @__PURE__ */ jsx3("div", { style: {
+  return /* @__PURE__ */ jsxs3("div", { style: { position: "relative", width: "100%", maxWidth: W, margin: "0 auto" }, children: [
+    /* @__PURE__ */ jsx4("div", { style: {
       display: "grid",
       gridTemplateColumns: `repeat(4, ${cardW}px)`,
       columnGap: gap,
       alignItems: "stretch",
       position: "relative",
       zIndex: 1
-    }, children: CYCLE_STEPS.map((step, i) => /* @__PURE__ */ jsxs2("div", { style: { position: "relative", display: "flex" }, children: [
-      /* @__PURE__ */ jsx3(CycleCard, { step, size: cardW }),
-      i < 3 && /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+    }, children: CYCLE_STEPS.map((step, i) => /* @__PURE__ */ jsxs3("div", { style: { position: "relative", display: "flex" }, children: [
+      /* @__PURE__ */ jsx4(CycleCard, { step, size: cardW }),
+      i < 3 && /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
         position: "absolute",
         top: 56,
         right: -gap,
@@ -1011,8 +2430,8 @@ function DesktopCycle() {
         alignItems: "center",
         justifyContent: "center",
         color: VT.accent
-      }, children: /* @__PURE__ */ jsxs2("svg", { width: gap, height: "24", viewBox: `0 0 ${gap} 24`, fill: "none", children: [
-        /* @__PURE__ */ jsx3(
+      }, children: /* @__PURE__ */ jsxs3("svg", { width: gap, height: "24", viewBox: `0 0 ${gap} 24`, fill: "none", children: [
+        /* @__PURE__ */ jsx4(
           "path",
           {
             d: `M 2 12 L ${gap - 8} 12`,
@@ -1021,7 +2440,7 @@ function DesktopCycle() {
             strokeLinecap: "round"
           }
         ),
-        /* @__PURE__ */ jsx3(
+        /* @__PURE__ */ jsx4(
           "path",
           {
             d: `M ${gap - 12} 6 L ${gap - 4} 12 L ${gap - 12} 18`,
@@ -1034,7 +2453,7 @@ function DesktopCycle() {
         )
       ] }) })
     ] }, step.n)) }),
-    /* @__PURE__ */ jsxs2(
+    /* @__PURE__ */ jsxs3(
       "svg",
       {
         width: "100%",
@@ -1042,7 +2461,7 @@ function DesktopCycle() {
         preserveAspectRatio: "none",
         style: { display: "block", marginTop: -8, height: arcH + 60 },
         children: [
-          /* @__PURE__ */ jsx3("defs", { children: /* @__PURE__ */ jsx3(
+          /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsx4(
             "marker",
             {
               id: "v3retArr",
@@ -1052,10 +2471,10 @@ function DesktopCycle() {
               markerWidth: "7",
               markerHeight: "7",
               orient: "auto-start-reverse",
-              children: /* @__PURE__ */ jsx3("path", { d: "M0 0 L10 5 L0 10 z", fill: VT.accent })
+              children: /* @__PURE__ */ jsx4("path", { d: "M0 0 L10 5 L0 10 z", fill: VT.accent })
             }
           ) }),
-          /* @__PURE__ */ jsx3(
+          /* @__PURE__ */ jsx4(
             "path",
             {
               d: `M ${cx(3)} 8 C ${cx(3)} ${arcH + 30}, ${cx(1)} ${arcH + 30}, ${cx(1)} 8`,
@@ -1066,7 +2485,7 @@ function DesktopCycle() {
               markerEnd: "url(#v3retArr)"
             }
           ),
-          /* @__PURE__ */ jsx3("foreignObject", { x: (cx(1) + cx(3)) / 2 - 130, y: arcH + 6, width: "260", height: "40", children: /* @__PURE__ */ jsx3("div", { xmlns: "http://www.w3.org/1999/xhtml", style: {
+          /* @__PURE__ */ jsx4("foreignObject", { x: (cx(1) + cx(3)) / 2 - 130, y: arcH + 6, width: "260", height: "40", children: /* @__PURE__ */ jsx4("div", { xmlns: "http://www.w3.org/1999/xhtml", style: {
             textAlign: "center",
             fontFamily: VT.font.mono,
             fontSize: 12,
@@ -1080,11 +2499,11 @@ function DesktopCycle() {
   ] });
 }
 function MobileCycle() {
-  return /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: CYCLE_STEPS.map((step, idx) => {
+  return /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: CYCLE_STEPS.map((step, idx) => {
     const p = step.palette;
     const isLast = idx === CYCLE_STEPS.length - 1;
-    return /* @__PURE__ */ jsxs2("div", { children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
+    return /* @__PURE__ */ jsxs3("div", { children: [
+      /* @__PURE__ */ jsxs3("div", { style: {
         background: p.bg,
         border: `2px solid ${p.ink}`,
         borderRadius: 18,
@@ -1092,8 +2511,8 @@ function MobileCycle() {
         padding: 18,
         color: p.ink
       }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
-          /* @__PURE__ */ jsx3("span", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
+          /* @__PURE__ */ jsx4("span", { style: {
             width: 48,
             height: 48,
             borderRadius: "50%",
@@ -1105,8 +2524,8 @@ function MobileCycle() {
             flex: "0 0 auto",
             color: p.ink
           }, children: step.icon }),
-          /* @__PURE__ */ jsxs2("div", { children: [
-            /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { children: [
+            /* @__PURE__ */ jsxs3("div", { style: {
               fontFamily: VT.font.mono,
               fontSize: 11,
               letterSpacing: "0.08em",
@@ -1117,12 +2536,12 @@ function MobileCycle() {
               " \xB7 ",
               step.cadence
             ] }),
-            /* @__PURE__ */ jsx3("div", { style: { fontSize: 20, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
+            /* @__PURE__ */ jsx4("div", { style: { fontSize: 20, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
           ] })
         ] }),
-        /* @__PURE__ */ jsx3("p", { style: { margin: "10px 0 0", fontSize: 14.5, lineHeight: 1.45, textWrap: "pretty" }, children: step.body })
+        /* @__PURE__ */ jsx4("p", { style: { margin: "10px 0 0", fontSize: 14.5, lineHeight: 1.45, textWrap: "pretty" }, children: step.body })
       ] }),
-      !isLast && /* @__PURE__ */ jsx3("div", { style: {
+      !isLast && /* @__PURE__ */ jsx4("div", { style: {
         textAlign: "center",
         height: 20,
         color: p.ink,
@@ -1133,26 +2552,26 @@ function MobileCycle() {
   }) });
 }
 function CycleSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "cycle", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs3("section", { id: "cycle", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3(H2, { mobile, children: [
         "\u042D\u0442\u043E \u043D\u0435 \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u044B \u0434\u0435\u043B\u0430\u0435\u0442\u0435 \u043E\u0434\u0438\u043D \u0440\u0430\u0437.",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u042D\u0442\u043E \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C."
       ] }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 760, children: "\u041E\u0434\u0438\u043D \u0440\u0430\u0437 \u043F\u043E\u043A\u0430\u0437\u0430\u043B\u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0435\u0441\u0442\u044C. \u0414\u0430\u043B\u044C\u0448\u0435 \u043E\u043D \u0441\u0430\u043C \u0445\u043E\u0434\u0438\u0442 \u043F\u043E \u043A\u0440\u0443\u0433\u0443: \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442, \u0441\u043C\u043E\u0442\u0440\u0438\u0442 \u043D\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439, \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A \u0432\u0430\u043C \u0441 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F\u043C\u0438. \u0427\u0442\u043E \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u041E\u0434\u0438\u043D \u0440\u0430\u0437 \u043F\u043E\u043A\u0430\u0437\u0430\u043B\u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0435\u0441\u0442\u044C. \u0414\u0430\u043B\u044C\u0448\u0435 \u043E\u043D \u0441\u0430\u043C \u0445\u043E\u0434\u0438\u0442 \u043F\u043E \u043A\u0440\u0443\u0433\u0443: \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442, \u0441\u043C\u043E\u0442\u0440\u0438\u0442 \u043D\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439, \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A \u0432\u0430\u043C \u0441 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F\u043C\u0438. \u0427\u0442\u043E \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B." })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 36 : 56,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 36 : 56}px auto 0`
-    }, children: !mobile ? /* @__PURE__ */ jsx3(DesktopCycle, {}) : /* @__PURE__ */ jsx3(MobileCycle, {}) }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    }, children: !mobile ? /* @__PURE__ */ jsx4(DesktopCycle, {}) : /* @__PURE__ */ jsx4(MobileCycle, {}) }),
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 44,
       textAlign: "center",
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 28 : 44}px auto 0`
-    }, children: /* @__PURE__ */ jsx3("p", { style: {
+    }, children: /* @__PURE__ */ jsx4("p", { style: {
       fontSize: mobile ? 15 : 17,
       lineHeight: 1.5,
       color: VT.inkSoft,
@@ -1160,7 +2579,7 @@ function CycleSection({ mobile }) {
       textWrap: "pretty",
       fontStyle: "italic"
     }, children: "\u0421\u0430\u0439\u0442 \u043F\u043E\u043B\u0443\u0447\u0430\u0435\u0442\u0441\u044F \u043D\u0435 \u043A\u0430\u043A \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0444\u0430\u0439\u043B \u2014 \u044D\u0442\u043E \u043F\u0440\u043E\u0446\u0435\u0441\u0441. \u041A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u043E\u043D \u043D\u0435\u043C\u043D\u043E\u0433\u043E \u0434\u0440\u0443\u0433\u043E\u0439. \u041A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0447\u0443\u0442\u044C \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \u0431\u044B\u043B." }) }),
-    /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx3("a", { href: "#hero", style: {
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 8,
@@ -1183,18 +2602,18 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441",
     title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043F\u0440\u043E\u0445\u043E\u0434\u0438\u0442 \u043C\u0438\u043C\u043E",
     body: [
-      /* @__PURE__ */ jsxs2("span", { children: [
+      /* @__PURE__ */ jsxs3("span", { children: [
         "\u0417\u0430 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430 \u0441\u0430\u0439\u0442 \u0437\u0430\u0448\u043B\u0438 ",
-        /* @__PURE__ */ jsx3("b", { children: "312 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
+        /* @__PURE__ */ jsx4("b", { children: "312 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
         ". ",
-        /* @__PURE__ */ jsx3("b", { children: "224" }),
+        /* @__PURE__ */ jsx4("b", { children: "224" }),
         " \u0437\u0430\u043A\u0440\u044B\u043B\u0438 \u0435\u0433\u043E, \u0434\u043E \u0443\u0441\u043B\u0443\u0433 \u0434\u0430\u0436\u0435 \u043D\u0435 \u0434\u043E\u043B\u0438\u0441\u0442\u0430\u0432."
       ] }),
-      /* @__PURE__ */ jsx3("span", { children: "\u0412 \u0432\u0430\u0448\u0438\u0445 \u043E\u0442\u0437\u044B\u0432\u0430\u0445 \u043B\u044E\u0434\u0438 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E \u043F\u0438\u0448\u0443\u0442: \xAB\u0432\u0441\u0451 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C, \u043A\u0430\u043A \u0447\u0438\u043D\u0438\u0442\u044C\xBB \u0438 \xAB\u043D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u044B\u0432\u0430\u043B\u0438\xBB. \u0412\u043E\u0442 \u0432\u0430\u0448\u0430 \u0441\u0438\u043B\u044C\u043D\u0430\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u0430. \u0412 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0435 \u0435\u0451 \u0441\u0435\u0439\u0447\u0430\u0441 \u043D\u0435\u0442." })
+      /* @__PURE__ */ jsx4("span", { children: "\u0412 \u0432\u0430\u0448\u0438\u0445 \u043E\u0442\u0437\u044B\u0432\u0430\u0445 \u043B\u044E\u0434\u0438 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E \u043F\u0438\u0448\u0443\u0442: \xAB\u0432\u0441\u0451 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C, \u043A\u0430\u043A \u0447\u0438\u043D\u0438\u0442\u044C\xBB \u0438 \xAB\u043D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u044B\u0432\u0430\u043B\u0438\xBB. \u0412\u043E\u0442 \u0432\u0430\u0448\u0430 \u0441\u0438\u043B\u044C\u043D\u0430\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u0430. \u0412 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0435 \u0435\u0451 \u0441\u0435\u0439\u0447\u0430\u0441 \u043D\u0435\u0442." })
     ],
-    suggestion: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+    suggestion: /* @__PURE__ */ jsxs3(Fragment2, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: ",
-      /* @__PURE__ */ jsx3("b", { children: "\xAB\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441, \u0433\u0434\u0435 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442, \u043F\u043E\u0442\u043E\u043C \u0447\u0438\u043D\u044F\u0442\xBB" })
+      /* @__PURE__ */ jsx4("b", { children: "\xAB\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441, \u0433\u0434\u0435 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442, \u043F\u043E\u0442\u043E\u043C \u0447\u0438\u043D\u044F\u0442\xBB" })
     ] }),
     actions: ["\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C", "\u0414\u0440\u0443\u0433\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442", "\u041D\u0435 \u043D\u0430\u0434\u043E"]
   },
@@ -1205,22 +2624,22 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u043A\u043E\u0444\u0435\u0439\u043D\u044F",
     title: "\xAB\u0417\u0430\u0432\u0442\u0440\u0430\u043A\u0438\xBB \u043D\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442",
     body: [
-      /* @__PURE__ */ jsxs2("span", { children: [
+      /* @__PURE__ */ jsxs3("span", { children: [
         "\u0418\u0437 ",
-        /* @__PURE__ */ jsx3("b", { children: "156 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
+        /* @__PURE__ */ jsx4("b", { children: "156 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
         ", \u043E\u0442\u043A\u0440\u044B\u0432\u0448\u0438\u0445 \u043C\u0435\u043D\u044E, ",
-        /* @__PURE__ */ jsx3("b", { children: "98" }),
+        /* @__PURE__ */ jsx4("b", { children: "98" }),
         " \u043D\u0430\u0436\u0430\u043B\u0438 \u043D\u0430 \xAB\u041A\u043E\u0444\u0435 \u0438 \u0434\u0435\u0441\u0435\u0440\u0442\u044B\xBB. \u041D\u0430 \xAB\u0417\u0430\u0432\u0442\u0440\u0430\u043A\u0438\xBB \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u043B\u0438 ",
-        /* @__PURE__ */ jsx3("b", { children: "72" }),
+        /* @__PURE__ */ jsx4("b", { children: "72" }),
         " \u0438 \u0442\u043E\u043B\u044C\u043A\u043E ",
-        /* @__PURE__ */ jsx3("b", { children: "4" }),
+        /* @__PURE__ */ jsx4("b", { children: "4" }),
         " \u0437\u0430\u043A\u0430\u0437\u0430\u043B\u0438."
       ] }),
-      /* @__PURE__ */ jsx3("span", { children: "\u0423 \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u043E\u0432 \u043D\u0435\u0442 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0438 \u043D\u0435\u0442 \u0441\u043E\u0441\u0442\u0430\u0432\u0430. \u0422\u043E\u043B\u044C\u043A\u043E \u0446\u0435\u043D\u0430 \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435. \u0427\u0435\u043B\u043E\u0432\u0435\u043A \u043F\u0440\u043E\u0441\u0442\u043E \u043D\u0435 \u043F\u043E\u043D\u0438\u043C\u0430\u0435\u0442, \u0447\u0442\u043E \u0442\u0430\u043C \u0432 \u0441\u0435\u0442\u0435 \u0438 \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u043E\u043D\u043E \u0442\u043E\u0433\u043E." })
+      /* @__PURE__ */ jsx4("span", { children: "\u0423 \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u043E\u0432 \u043D\u0435\u0442 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0438 \u043D\u0435\u0442 \u0441\u043E\u0441\u0442\u0430\u0432\u0430. \u0422\u043E\u043B\u044C\u043A\u043E \u0446\u0435\u043D\u0430 \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435. \u0427\u0435\u043B\u043E\u0432\u0435\u043A \u043F\u0440\u043E\u0441\u0442\u043E \u043D\u0435 \u043F\u043E\u043D\u0438\u043C\u0430\u0435\u0442, \u0447\u0442\u043E \u0442\u0430\u043C \u0432 \u0441\u0435\u0442\u0435 \u0438 \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u043E\u043D\u043E \u0442\u043E\u0433\u043E." })
     ],
-    suggestion: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+    suggestion: /* @__PURE__ */ jsxs3(Fragment2, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C ",
-      /* @__PURE__ */ jsx3("b", { children: "3\u20134 \u0444\u043E\u0442\u043E" }),
+      /* @__PURE__ */ jsx4("b", { children: "3\u20134 \u0444\u043E\u0442\u043E" }),
       " \u0438 \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u0442\u044C, \u0447\u0442\u043E \u0432\u0445\u043E\u0434\u0438\u0442."
     ] }),
     actions: ["\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0444\u043E\u0442\u043E", "\u0421\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u044C"]
@@ -1232,28 +2651,28 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u0447\u0430\u0441\u0442\u043D\u0430\u044F \u043A\u043B\u0438\u043D\u0438\u043A\u0430",
     title: "\u041E\u0442\u0437\u044B\u0432\u044B \u0447\u0438\u0442\u0430\u044E\u0442. \xAB\u041E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u2014 \u043D\u0435\u0442",
     body: [
-      /* @__PURE__ */ jsxs2("span", { children: [
-        /* @__PURE__ */ jsx3("b", { children: "68%" }),
+      /* @__PURE__ */ jsxs3("span", { children: [
+        /* @__PURE__ */ jsx4("b", { children: "68%" }),
         " \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439 \u0434\u043E\u043B\u0438\u0441\u0442\u044B\u0432\u0430\u044E\u0442 \u0434\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u0438\u0434\u044F\u0442 \u043D\u0430 \u043D\u0438\u0445 \u0432 \u0441\u0440\u0435\u0434\u043D\u0435\u043C ",
-        /* @__PURE__ */ jsx3("b", { children: "22 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
+        /* @__PURE__ */ jsx4("b", { children: "22 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
         ". \u0414\u043E \u0431\u043B\u043E\u043A\u0430 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0434\u043E\u0445\u043E\u0434\u044F\u0442 \u0442\u043E\u043B\u044C\u043A\u043E ",
-        /* @__PURE__ */ jsx3("b", { children: "19%" }),
+        /* @__PURE__ */ jsx4("b", { children: "19%" }),
         ". \u041F\u043E\u0447\u0442\u0438 \u0432\u0441\u0435 \u0443\u0445\u043E\u0434\u044F\u0442 \u0437\u0430 ",
-        /* @__PURE__ */ jsx3("b", { children: "4 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
+        /* @__PURE__ */ jsx4("b", { children: "4 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
         "."
       ] }),
-      /* @__PURE__ */ jsx3("span", { children: "\u0421\u0435\u0439\u0447\u0430\u0441 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0438\u0434\u0451\u0442 \u0440\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u044A\u0435\u0434\u0430\u0435\u0442 \u0438\u043C \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435." })
+      /* @__PURE__ */ jsx4("span", { children: "\u0421\u0435\u0439\u0447\u0430\u0441 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0438\u0434\u0451\u0442 \u0440\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u044A\u0435\u0434\u0430\u0435\u0442 \u0438\u043C \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435." })
     ],
-    suggestion: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+    suggestion: /* @__PURE__ */ jsxs3(Fragment2, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: ",
-      /* @__PURE__ */ jsx3("b", { children: "\u043E\u0442\u0437\u044B\u0432\u044B \u043F\u043E\u0434\u043D\u044F\u0442\u044C \u0432\u044B\u0448\u0435" }),
+      /* @__PURE__ */ jsx4("b", { children: "\u043E\u0442\u0437\u044B\u0432\u044B \u043F\u043E\u0434\u043D\u044F\u0442\u044C \u0432\u044B\u0448\u0435" }),
       ", \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0441\u043E\u043A\u0440\u0430\u0442\u0438\u0442\u044C \u0434\u043E \u0430\u0431\u0437\u0430\u0446\u0430 \u0438 \u0443\u0431\u0440\u0430\u0442\u044C \u0432\u043D\u0438\u0437."
     ] }),
     actions: ["\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C", "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C, \u043A\u0430\u043A \u0431\u0443\u0434\u0435\u0442", "\u041D\u0435 \u043D\u0430\u0434\u043E"]
   }
 ];
 function MondayCard({ card, n, mobile }) {
-  return /* @__PURE__ */ jsxs2("div", { style: {
+  return /* @__PURE__ */ jsxs3("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 18,
@@ -1263,7 +2682,7 @@ function MondayCard({ card, n, mobile }) {
     flexDirection: "column",
     height: "100%"
   }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       padding: "12px 16px",
       background: VT.bgSoft,
       borderBottom: `1px solid ${VT.line}`,
@@ -1271,7 +2690,7 @@ function MondayCard({ card, n, mobile }) {
       alignItems: "center",
       gap: 10
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         width: 32,
         height: 32,
         borderRadius: "50%",
@@ -1284,11 +2703,11 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 800,
         letterSpacing: "-0.04em"
       }, children: "\u0421" }),
-      /* @__PURE__ */ jsxs2("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontSize: 13, fontWeight: 700, color: VT.ink, lineHeight: 1.15 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.04em" }, children: "\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \xB7 9:14" })
+      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 700, color: VT.ink, lineHeight: 1.15 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.04em" }, children: "\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \xB7 9:14" })
       ] }),
-      /* @__PURE__ */ jsxs2("span", { style: {
+      /* @__PURE__ */ jsxs3("span", { style: {
         marginLeft: "auto",
         fontFamily: VT.font.mono,
         fontSize: 10,
@@ -1303,8 +2722,8 @@ function MondayCard({ card, n, mobile }) {
         " / 3"
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { padding: "18px 18px 14px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: { padding: "18px 18px 14px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 10.5,
         letterSpacing: "0.12em",
@@ -1315,11 +2734,11 @@ function MondayCard({ card, n, mobile }) {
         gap: 8,
         flexWrap: "wrap"
       }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 8, height: 8, borderRadius: "50%", background: card.accent } }),
-        /* @__PURE__ */ jsx3("span", { children: card.eyebrow }),
-        /* @__PURE__ */ jsx3("span", { style: { marginLeft: "auto", fontStyle: "italic", fontWeight: 500, color: VT.inkFaint, letterSpacing: "0.02em" }, children: card.caseLabel })
+        /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: card.accent } }),
+        /* @__PURE__ */ jsx4("span", { children: card.eyebrow }),
+        /* @__PURE__ */ jsx4("span", { style: { marginLeft: "auto", fontStyle: "italic", fontWeight: 500, color: VT.inkFaint, letterSpacing: "0.02em" }, children: card.caseLabel })
       ] }),
-      /* @__PURE__ */ jsx3("h3", { style: {
+      /* @__PURE__ */ jsx4("h3", { style: {
         fontSize: mobile ? 19 : 22,
         fontWeight: 700,
         letterSpacing: "-0.025em",
@@ -1327,20 +2746,20 @@ function MondayCard({ card, n, mobile }) {
         lineHeight: 1.2,
         color: VT.ink
       }, children: card.title }),
-      card.body.map((p, i) => /* @__PURE__ */ jsx3("p", { style: {
+      card.body.map((p, i) => /* @__PURE__ */ jsx4("p", { style: {
         margin: 0,
         fontSize: mobile ? 14 : 15,
         lineHeight: 1.5,
         color: VT.inkSoft,
         textWrap: "pretty"
       }, children: p }, i)),
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         marginTop: 4,
         padding: "12px 14px",
         background: card.accentBg,
         borderRadius: 12
       }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
+        /* @__PURE__ */ jsx4("div", { style: {
           fontFamily: VT.font.mono,
           fontSize: 10,
           letterSpacing: "0.12em",
@@ -1348,7 +2767,7 @@ function MondayCard({ card, n, mobile }) {
           opacity: 0.8,
           color: card.accent
         }, children: "\u041F\u0420\u0415\u0414\u041B\u041E\u0416\u0415\u041D\u0418\u0415" }),
-        /* @__PURE__ */ jsx3("div", { style: {
+        /* @__PURE__ */ jsx4("div", { style: {
           marginTop: 4,
           fontSize: mobile ? 14.5 : 15.5,
           lineHeight: 1.45,
@@ -1356,7 +2775,7 @@ function MondayCard({ card, n, mobile }) {
         }, children: card.suggestion })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       padding: 10,
       borderTop: `1px solid ${VT.line}`,
       background: "#fff",
@@ -1364,7 +2783,7 @@ function MondayCard({ card, n, mobile }) {
       gridTemplateColumns: `1fr auto auto`,
       gap: 6
     }, children: [
-      /* @__PURE__ */ jsx3("button", { type: "button", style: {
+      /* @__PURE__ */ jsx4("button", { type: "button", style: {
         padding: "10px 14px",
         borderRadius: 10,
         border: "none",
@@ -1374,7 +2793,7 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 600,
         cursor: "pointer"
       }, children: card.actions[0] }),
-      /* @__PURE__ */ jsx3("button", { type: "button", style: {
+      /* @__PURE__ */ jsx4("button", { type: "button", style: {
         padding: "10px 12px",
         borderRadius: 10,
         background: "#fff",
@@ -1384,7 +2803,7 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 500,
         cursor: "pointer"
       }, children: card.actions[1] }),
-      /* @__PURE__ */ jsx3("button", { type: "button", style: {
+      /* @__PURE__ */ jsx4("button", { type: "button", style: {
         padding: "10px 12px",
         borderRadius: 10,
         background: "#fff",
@@ -1398,20 +2817,20 @@ function MondayCard({ card, n, mobile }) {
   ] });
 }
 function MondaySection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "monday", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs3("section", { id: "monday", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3(H2, { mobile, children: [
         "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u2014 \u0442\u0440\u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F,",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u043A\u0430\u043A \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0441\u0438\u043B\u044C\u043D\u0435\u0435"
       ] }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 820, children: "\u0412\u0441\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043C\u043E\u0442\u0440\u0438\u0442, \u0447\u0442\u043E \u043F\u0440\u043E\u0438\u0441\u0445\u043E\u0434\u0438\u0442 \u0443 \u0432\u0430\u0441 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u0412 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0440\u0430\u0437\u0431\u043E\u0440: \u0433\u0434\u0435 \u0447\u0442\u043E \u043F\u0440\u043E\u0441\u0435\u043B\u043E \u0438 \u0447\u0442\u043E \u0441 \u044D\u0442\u0438\u043C \u0434\u0435\u043B\u0430\u0442\u044C. \u041D\u0435 \u043E\u0431\u0449\u0438\u043C\u0438 \u0444\u0440\u0430\u0437\u0430\u043C\u0438 \u2014 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 820, children: "\u0412\u0441\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043C\u043E\u0442\u0440\u0438\u0442, \u0447\u0442\u043E \u043F\u0440\u043E\u0438\u0441\u0445\u043E\u0434\u0438\u0442 \u0443 \u0432\u0430\u0441 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u0412 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0440\u0430\u0437\u0431\u043E\u0440: \u0433\u0434\u0435 \u0447\u0442\u043E \u043F\u0440\u043E\u0441\u0435\u043B\u043E \u0438 \u0447\u0442\u043E \u0441 \u044D\u0442\u0438\u043C \u0434\u0435\u043B\u0430\u0442\u044C. \u041D\u0435 \u043E\u0431\u0449\u0438\u043C\u0438 \u0444\u0440\u0430\u0437\u0430\u043C\u0438 \u2014 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E." })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 36 : 56,
       maxWidth: mobile ? "100%" : 1280,
       margin: `${mobile ? 36 : 56}px auto 0`
-    }, children: mobile ? /* @__PURE__ */ jsxs2("div", { style: {
+    }, children: mobile ? /* @__PURE__ */ jsxs3("div", { style: {
       marginLeft: -20,
       marginRight: -20,
       overflowX: "auto",
@@ -1420,32 +2839,32 @@ function MondaySection({ mobile }) {
       scrollPaddingLeft: 20,
       scrollbarWidth: "none"
     }, children: [
-      /* @__PURE__ */ jsx3("style", { children: `.ss-v3-monday::-webkit-scrollbar{display:none}` }),
-      /* @__PURE__ */ jsx3("div", { className: "ss-v3-monday", style: {
+      /* @__PURE__ */ jsx4("style", { children: `.ss-v3-monday::-webkit-scrollbar{display:none}` }),
+      /* @__PURE__ */ jsx4("div", { className: "ss-v3-monday", style: {
         display: "flex",
         gap: 14,
         padding: "4px 20px 24px",
         alignItems: "stretch"
-      }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx3("div", { style: { flex: "0 0 88%", scrollSnapAlign: "start", display: "flex" }, children: /* @__PURE__ */ jsx3(MondayCard, { card: c, n: i + 1, mobile }) }, i)) })
-    ] }) : /* @__PURE__ */ jsx3("div", { style: {
+      }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx4("div", { style: { flex: "0 0 88%", scrollSnapAlign: "start", display: "flex" }, children: /* @__PURE__ */ jsx4(MondayCard, { card: c, n: i + 1, mobile }) }, i)) })
+    ] }) : /* @__PURE__ */ jsx4("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(3, 1fr)",
       gap: 24,
       alignItems: "stretch"
-    }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx3(MondayCard, { card: c, n: i + 1, mobile }, i)) }) }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx4(MondayCard, { card: c, n: i + 1, mobile }, i)) }) }),
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 44,
       textAlign: "center",
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 28 : 44}px auto 0`
-    }, children: /* @__PURE__ */ jsx3("p", { style: {
+    }, children: /* @__PURE__ */ jsx4("p", { style: {
       fontSize: mobile ? 14.5 : 16,
       lineHeight: 1.5,
       color: VT.inkSoft,
       margin: 0,
       textWrap: "pretty"
     }, children: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \u043F\u0440\u0430\u0432\u043E\u043A \u0431\u0435\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0441\u043E\u0433\u043B\u0430\u0441\u043E\u0432\u0430\u043D\u0438\u044F. \u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0442\u0443\u0434\u0430, \u0433\u0434\u0435 \u0443\u0434\u043E\u0431\u043D\u043E: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS." }) }),
-    /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx3("a", { href: "#hero", style: {
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 8,
@@ -1467,9 +2886,9 @@ var BASE_ITEMS = [
     metric: "4 \u043A\u0430\u043D\u0430\u043B\u0430",
     metricNote: "\u043D\u0430 \u0432\u044B\u0431\u043E\u0440",
     palette: { bg: "oklch(0.94 0.045 40)", ink: "oklch(0.42 0.16 35)", stroke: "oklch(0.85 0.08 40)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("rect", { x: "10", y: "14", width: "44", height: "36", rx: "5" }),
-      /* @__PURE__ */ jsx3("path", { d: "M10 22 L32 36 L54 22" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("rect", { x: "10", y: "14", width: "44", height: "36", rx: "5" }),
+      /* @__PURE__ */ jsx4("path", { d: "M10 22 L32 36 L54 22" })
     ] })
   },
   {
@@ -1478,7 +2897,7 @@ var BASE_ITEMS = [
     metric: "4\u20136",
     metricNote: "\u043B\u0443\u0447\u0448\u0438\u0445 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E",
     palette: { bg: "oklch(0.94 0.045 80)", ink: "oklch(0.42 0.13 70)", stroke: "oklch(0.86 0.08 80)" },
-    icon: /* @__PURE__ */ jsx3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "currentColor", children: /* @__PURE__ */ jsx3("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
+    icon: /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
   },
   {
     title: "\u041F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A",
@@ -1486,30 +2905,30 @@ var BASE_ITEMS = [
     metric: "\u042F\u043D\u0434\u0435\u043A\u0441",
     metricNote: "+ Google",
     palette: { bg: "oklch(0.94 0.04 145)", ink: "oklch(0.40 0.11 145)", stroke: "oklch(0.86 0.07 145)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("circle", { cx: "27", cy: "27", r: "14" }),
-      /* @__PURE__ */ jsx3("path", { d: "M38 38 L54 54" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("circle", { cx: "27", cy: "27", r: "14" }),
+      /* @__PURE__ */ jsx4("path", { d: "M38 38 L54 54" })
     ] })
   },
   {
     title: "\u041E\u0442\u0441\u0435\u043A\u0430\u0435\u0442 \u0441\u043F\u0430\u043C",
     body: "\u0410\u043D\u0442\u0438\u0431\u043E\u0442-\u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430, \u043A\u043E\u0442\u043E\u0440\u0443\u044E \u0436\u0438\u0432\u043E\u0439 \u0447\u0435\u043B\u043E\u0432\u0435\u043A \u043D\u0435 \u0437\u0430\u043C\u0435\u0447\u0430\u0435\u0442. \u0411\u043E\u0442\u044B \u043F\u043E\u043B\u0443\u0447\u0430\u044E\u0442 \u0442\u0438\u0448\u0438\u043D\u0443. \u0414\u043E \u0432\u0430\u0441 \u0434\u043E\u0445\u043E\u0434\u044F\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u043D\u0430\u0441\u0442\u043E\u044F\u0449\u0438\u0435 \u0437\u0430\u044F\u0432\u043A\u0438.",
     metric: "0",
-    metricNote: "\u0431\u043E\u0442\u043E\u0432 \u0432 \u0434\u0435\u043D\u044C",
+    metricNote: "\u0431\u043E\u0442\u043E\u0432 \u0432 \u0437\u0430\u044F\u0432\u043A\u0430\u0445",
     palette: { bg: "oklch(0.94 0.04 270)", ink: "oklch(0.42 0.15 270)", stroke: "oklch(0.85 0.08 270)" },
-    icon: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z" }),
-      /* @__PURE__ */ jsx3("path", { d: "M22 32 L29 39 L42 24" })
+    icon: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "2.6", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z" }),
+      /* @__PURE__ */ jsx4("path", { d: "M22 32 L29 39 L42 24" })
     ] })
   }
 ];
 function BaseWorkSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "base", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx3(H2, { mobile, children: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2014 \u0442\u043E\u0436\u0435 \u043D\u0430 \u043D\u0451\u043C" }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438, \u0431\u0435\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0443\u0447\u0430\u0441\u0442\u0438\u044F." })
+  return /* @__PURE__ */ jsxs3("section", { id: "base", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2014 \u0442\u043E\u0436\u0435 \u043D\u0430 \u043D\u0451\u043C" }),
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438, \u0431\u0435\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0443\u0447\u0430\u0441\u0442\u0438\u044F." })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
@@ -1518,7 +2937,7 @@ function BaseWorkSection({ mobile }) {
       gap: mobile ? 14 : 22
     }, children: BASE_ITEMS.map((item, i) => {
       const pal = item.palette;
-      return /* @__PURE__ */ jsxs2("div", { style: {
+      return /* @__PURE__ */ jsxs3("div", { style: {
         position: "relative",
         background: VT.white,
         borderRadius: 20,
@@ -1528,7 +2947,7 @@ function BaseWorkSection({ mobile }) {
         display: "flex",
         flexDirection: "column"
       }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           background: pal.bg,
           padding: mobile ? "22px 22px 18px" : "26px 28px 22px",
           borderBottom: `1px solid ${pal.stroke}`,
@@ -1537,7 +2956,7 @@ function BaseWorkSection({ mobile }) {
           justifyContent: "space-between",
           gap: 16
         }, children: [
-          /* @__PURE__ */ jsx3("div", { style: {
+          /* @__PURE__ */ jsx4("div", { style: {
             flex: "0 0 auto",
             width: mobile ? 56 : 64,
             height: mobile ? 56 : 64,
@@ -1550,7 +2969,7 @@ function BaseWorkSection({ mobile }) {
             justifyContent: "center",
             boxShadow: `3px 3px 0 0 ${pal.ink}`
           }, children: item.icon }),
-          /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { style: {
             textAlign: "right",
             minWidth: 0,
             display: "flex",
@@ -1558,14 +2977,14 @@ function BaseWorkSection({ mobile }) {
             alignItems: "flex-end",
             gap: 0
           }, children: [
-            /* @__PURE__ */ jsx3("div", { style: {
+            /* @__PURE__ */ jsx4("div", { style: {
               fontSize: mobile ? 26 : 34,
               fontWeight: 800,
               letterSpacing: "-0.035em",
               lineHeight: 1,
               color: pal.ink
             }, children: item.metric }),
-            /* @__PURE__ */ jsx3("div", { style: {
+            /* @__PURE__ */ jsx4("div", { style: {
               marginTop: 4,
               fontFamily: VT.font.mono,
               fontSize: mobile ? 10.5 : 11.5,
@@ -1577,13 +2996,13 @@ function BaseWorkSection({ mobile }) {
             }, children: item.metricNote })
           ] })
         ] }),
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           padding: mobile ? "18px 22px 22px" : "22px 28px 26px",
           display: "flex",
           flexDirection: "column",
           flex: 1
         }, children: [
-          /* @__PURE__ */ jsx3("h3", { style: {
+          /* @__PURE__ */ jsx4("h3", { style: {
             fontSize: mobile ? 20 : 23,
             fontWeight: 700,
             letterSpacing: "-0.025em",
@@ -1591,7 +3010,7 @@ function BaseWorkSection({ mobile }) {
             lineHeight: 1.2,
             color: VT.ink
           }, children: item.title }),
-          /* @__PURE__ */ jsx3("p", { style: {
+          /* @__PURE__ */ jsx4("p", { style: {
             margin: "8px 0 0",
             fontSize: mobile ? 14.5 : 15.5,
             lineHeight: 1.5,
@@ -1609,93 +3028,93 @@ var SOURCES_LIST = [
     name: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
     pull: "\u043E\u0442\u0437\u044B\u0432\u044B \xB7 \u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u0446\u0435\u043D\u044B \xB7 \u0444\u043E\u0442\u043E \xB7 \u0440\u0435\u0436\u0438\u043C \u0440\u0430\u0431\u043E\u0442\u044B",
     featured: true,
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
     ] })
   },
   {
     id: "tg",
     name: "Telegram-\u043A\u0430\u043D\u0430\u043B",
     pull: "\u043F\u043E\u0441\u0442\u044B \xB7 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442 \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
-      /* @__PURE__ */ jsx3("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
+      /* @__PURE__ */ jsx4("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
     ] })
   },
   {
     id: "ig",
     name: "Instagram",
     pull: "\u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("defs", { children: /* @__PURE__ */ jsxs2("linearGradient", { id: "iggrC", x1: "0", y1: "1", x2: "1", y2: "0", children: [
-        /* @__PURE__ */ jsx3("stop", { offset: "0%", stopColor: "#FEDA77" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "30%", stopColor: "#F58529" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "60%", stopColor: "#DD2A7B" }),
-        /* @__PURE__ */ jsx3("stop", { offset: "100%", stopColor: "#8134AF" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsxs3("linearGradient", { id: "iggrC", x1: "0", y1: "1", x2: "1", y2: "0", children: [
+        /* @__PURE__ */ jsx4("stop", { offset: "0%", stopColor: "#FEDA77" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "30%", stopColor: "#F58529" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "60%", stopColor: "#DD2A7B" }),
+        /* @__PURE__ */ jsx4("stop", { offset: "100%", stopColor: "#8134AF" })
       ] }) }),
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggrC)" }),
-      /* @__PURE__ */ jsx3("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggrC)" }),
+      /* @__PURE__ */ jsx4("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
     ] })
   },
   {
     id: "2gis",
     name: "2\u0413\u0418\u0421",
     pull: "\u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u043E\u0442\u0437\u044B\u0432\u044B \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
-      /* @__PURE__ */ jsx3("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
+      /* @__PURE__ */ jsx4("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
     ] })
   },
   {
     id: "avito",
     name: "Avito",
     pull: "\u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u0446\u0435\u043D\u044B \xB7 \u043E\u0442\u0437\u044B\u0432\u044B",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
-      /* @__PURE__ */ jsx3("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
+      /* @__PURE__ */ jsx4("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
     ] })
   },
   {
     id: "site",
     name: "\u0412\u0430\u0448 \u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442",
     pull: "\u0442\u0435\u043A\u0441\u0442\u044B \xB7 \u0444\u043E\u0442\u043E \xB7 \u0443\u0441\u043B\u0443\u0433\u0438",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
-      /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx3("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx3("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
+      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx4("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx4("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
     ] })
   },
   {
     id: "card",
     name: "\u0424\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430",
     pull: "\u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0451\u043C \u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx3("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
-      /* @__PURE__ */ jsx3("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
-      /* @__PURE__ */ jsx3("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
+    logo: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
+      /* @__PURE__ */ jsx4("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
+      /* @__PURE__ */ jsx4("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
     ] })
   }
 ];
 var SOURCES_SOON = ["\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435", "Ozon", "YouTube"];
 function SourcesSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "sources", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx3(H2, { mobile, children: "\u0423 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0432\u0441\u0451 \u0435\u0441\u0442\u044C \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430" }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 720, children: "\u041F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u0432\u0441\u0451, \u0433\u0434\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435 \u0443\u0436\u0435 \u0447\u0442\u043E-\u0442\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u043E. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442 \u2014 \u0445\u0432\u0430\u0442\u0438\u0442 \u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430." })
+  return /* @__PURE__ */ jsxs3("section", { id: "sources", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0423 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0432\u0441\u0451 \u0435\u0441\u0442\u044C \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430" }),
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u041F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u0432\u0441\u0451, \u0433\u0434\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435 \u0443\u0436\u0435 \u0447\u0442\u043E-\u0442\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u043E. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442 \u2014 \u0445\u0432\u0430\u0442\u0438\u0442 \u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430." })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 10 : 14
-    }, children: SOURCES_LIST.map((s) => /* @__PURE__ */ jsxs2("div", { style: {
+    }, children: SOURCES_LIST.map((s) => /* @__PURE__ */ jsxs3("div", { style: {
       display: "flex",
       alignItems: "center",
       gap: mobile ? 14 : 18,
@@ -1705,7 +3124,7 @@ function SourcesSection({ mobile }) {
       borderRadius: 14,
       position: "relative"
     }, children: [
-      s.featured && /* @__PURE__ */ jsx3("span", { style: {
+      s.featured && /* @__PURE__ */ jsx4("span", { style: {
         position: "absolute",
         top: -10,
         right: 16,
@@ -1718,16 +3137,16 @@ function SourcesSection({ mobile }) {
         borderRadius: 6,
         fontWeight: 700
       }, children: "\u0427\u0410\u0429\u0415 \u0412\u0421\u0415\u0413\u041E" }),
-      /* @__PURE__ */ jsx3("span", { style: { flex: "0 0 auto" }, children: s.logo }),
-      /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsx4("span", { style: { flex: "0 0 auto" }, children: s.logo }),
+      /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: {
           fontSize: mobile ? 15.5 : 17,
           fontWeight: 700,
           color: VT.ink,
           letterSpacing: "-0.022em",
           lineHeight: 1.2
         }, children: s.name }),
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           marginTop: 3,
           fontFamily: VT.font.mono,
           fontSize: mobile ? 11.5 : 12.5,
@@ -1739,7 +3158,7 @@ function SourcesSection({ mobile }) {
         ] })
       ] })
     ] }, s.id)) }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 20 : 28,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 20 : 28}px auto 0`,
@@ -1749,14 +3168,14 @@ function SourcesSection({ mobile }) {
       gap: 10,
       justifyContent: mobile ? "flex-start" : "center"
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 11,
         letterSpacing: "0.12em",
         color: VT.inkFaint,
         fontWeight: 600
       }, children: "\u0421\u041A\u041E\u0420\u041E \u041F\u041E\u0414\u041A\u041B\u042E\u0427\u0418\u041C" }),
-      SOURCES_SOON.map((n) => /* @__PURE__ */ jsx3("span", { style: {
+      SOURCES_SOON.map((n) => /* @__PURE__ */ jsx4("span", { style: {
         padding: "6px 14px",
         background: VT.bgSoft,
         border: `1px solid ${VT.line}`,
@@ -1765,7 +3184,7 @@ function SourcesSection({ mobile }) {
         color: VT.inkSoft,
         fontWeight: 500
       }, children: n }, n)),
-      /* @__PURE__ */ jsx3("a", { style: {
+      /* @__PURE__ */ jsx4("a", { style: {
         fontSize: 13.5,
         color: VT.accent,
         textDecoration: "underline",
@@ -1773,7 +3192,7 @@ function SourcesSection({ mobile }) {
         marginLeft: mobile ? 0 : 6
       }, children: "\u041D\u0435 \u043D\u0430\u0448\u043B\u0438 \u0441\u0432\u043E\u044E? \u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u2192" })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 32 : 56,
       maxWidth: mobile ? "100%" : 1100,
       margin: `${mobile ? 32 : 56}px auto 0`,
@@ -1788,16 +3207,16 @@ function SourcesSection({ mobile }) {
       position: "relative",
       overflow: "hidden"
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         flex: "0 0 auto",
         width: mobile ? 64 : 88,
         height: mobile ? 64 : 88
-      }, children: /* @__PURE__ */ jsxs2("svg", { viewBox: "0 0 88 88", width: "100%", height: "100%", children: [
-        /* @__PURE__ */ jsx3("path", { d: "M44 4 C 24 4, 10 18, 10 38 C 10 60, 44 84, 44 84 C 44 84, 78 60, 78 38 C 78 18, 64 4, 44 4 Z", fill: "#FC3F1D" }),
-        /* @__PURE__ */ jsx3("text", { x: "44", y: "48", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "32", fill: "#fff", children: "\u042F" })
+      }, children: /* @__PURE__ */ jsxs3("svg", { viewBox: "0 0 88 88", width: "100%", height: "100%", children: [
+        /* @__PURE__ */ jsx4("path", { d: "M44 4 C 24 4, 10 18, 10 38 C 10 60, 44 84, 44 84 C 44 84, 78 60, 78 38 C 78 18, 64 4, 44 4 Z", fill: "#FC3F1D" }),
+        /* @__PURE__ */ jsx4("text", { x: "44", y: "48", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "32", fill: "#fff", children: "\u042F" })
       ] }) }),
-      /* @__PURE__ */ jsxs2("div", { style: { flex: 1, minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx3("h3", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("h3", { style: {
           margin: 0,
           fontSize: mobile ? 21 : 26,
           fontWeight: 700,
@@ -1806,7 +3225,7 @@ function SourcesSection({ mobile }) {
           color: VT.ink,
           textWrap: "balance"
         }, children: "\xAB\u0423 \u043C\u0435\u043D\u044F \u0436\u0435 \u0435\u0441\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u0430\u0445. \u0417\u0430\u0447\u0435\u043C \u043C\u043D\u0435 \u0435\u0449\u0451 \u0441\u0430\u0439\u0442?\xBB" }),
-        /* @__PURE__ */ jsxs2("p", { style: {
+        /* @__PURE__ */ jsxs3("p", { style: {
           margin: "10px 0 0",
           fontSize: mobile ? 14.5 : 16,
           lineHeight: 1.5,
@@ -1814,7 +3233,7 @@ function SourcesSection({ mobile }) {
           textWrap: "pretty"
         }, children: [
           "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u041A\u0430\u0440\u0442\u0430\u0445 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0432\u0430\u0441 \u0442\u0435\u043C, \u043A\u0442\u043E \u0438 \u0442\u0430\u043A \u0438\u0449\u0435\u0442 \u0438\u043C\u0435\u043D\u043D\u043E \u0432\u0430\u0441. ",
-          /* @__PURE__ */ jsx3("b", { style: { color: VT.ink }, children: "\u0421\u0430\u0439\u0442 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u0438 \u043F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0448\u0438\u0440\u043E\u043A\u0438\u043C \u0437\u0430\u043F\u0440\u043E\u0441\u0430\u043C" }),
+          /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "\u0421\u0430\u0439\u0442 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u0438 \u043F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0448\u0438\u0440\u043E\u043A\u0438\u043C \u0437\u0430\u043F\u0440\u043E\u0441\u0430\u043C" }),
           " \u2014 \u0442\u0443\u0434\u0430, \u043A\u0443\u0434\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u0434\u043E\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442\u0441\u044F. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0431\u0435\u0440\u0451\u0442 \u043E\u0442\u0442\u0443\u0434\u0430 \u0434\u0430\u043D\u043D\u044B\u0435 \u0438 \u0434\u0435\u043B\u0430\u0435\u0442 \u0438\u0437 \u043D\u0438\u0445 \u0442\u043E, \u0447\u0435\u0433\u043E \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u041A\u0430\u0440\u0442\u0430\u0445 \u043D\u0435 \u0443\u043C\u0435\u0435\u0442."
         ] })
       ] })
@@ -1832,7 +3251,7 @@ var OWNER_POINTS = [
   },
   {
     title: "\u0421\u0430\u0439\u0442 \u0432\u0430\u0448 \u2014 \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0432 \u043B\u044E\u0431\u043E\u0439 \u043C\u043E\u043C\u0435\u043D\u0442.",
-    body: "\u0410\u0440\u0445\u0438\u0432 HTML \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0441\u043A\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439."
+    body: "\u0410\u0440\u0445\u0438\u0432 HTML \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0441\u043A\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439 \u2014 \u043F\u043E\u043A\u0430 \u0430\u043A\u043A\u0430\u0443\u043D\u0442 \u0430\u043A\u0442\u0438\u0432\u0435\u043D \u0438 \u0435\u0449\u0451 10 \u0434\u043D\u0435\u0439 \u043F\u043E\u0441\u043B\u0435 \u043E\u0442\u043A\u0430\u0437\u0430."
   },
   {
     title: "\u0423\u0434\u0430\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \u043E\u0434\u043D\u043E \u043D\u0430\u0436\u0430\u0442\u0438\u0435.",
@@ -1840,23 +3259,23 @@ var OWNER_POINTS = [
   }
 ];
 function OwnershipSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "ownership", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs3("section", { id: "ownership", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3(H2, { mobile, children: [
         "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0434\u0435\u043B\u0430\u0435\u0442 \u0440\u0443\u0442\u0438\u043D\u0443.",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u0420\u0435\u0448\u0435\u043D\u0438\u044F \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F \u0437\u0430 \u0432\u0430\u043C\u0438"
       ] }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0418\u0418 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B \u2014 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C. \u0417\u0430\u0445\u043E\u0442\u0435\u043B\u0438 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0440\u0430\u043B\u0438 \u0438 \u0443\u0448\u043B\u0438." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0418\u0418 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B \u2014 \u043C\u043E\u0436\u043D\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C. \u0417\u0430\u0445\u043E\u0442\u0435\u043B\u0438 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0440\u0430\u043B\u0438 \u0438 \u0443\u0448\u043B\u0438." })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 980,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 10 : 14
-    }, children: OWNER_POINTS.map((pt, i) => /* @__PURE__ */ jsxs2("div", { style: {
+    }, children: OWNER_POINTS.map((pt, i) => /* @__PURE__ */ jsxs3("div", { style: {
       display: "flex",
       alignItems: "flex-start",
       gap: 14,
@@ -1865,7 +3284,7 @@ function OwnershipSection({ mobile }) {
       border: `1px solid ${VT.line}`,
       borderRadius: 14
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         flex: "0 0 auto",
         width: 28,
         height: 28,
@@ -1876,16 +3295,16 @@ function OwnershipSection({ mobile }) {
         alignItems: "center",
         justifyContent: "center",
         marginTop: 2
-      }, children: /* @__PURE__ */ jsx3("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx3("path", { d: "M5 12 l4 4 10 -10" }) }) }),
-      /* @__PURE__ */ jsxs2("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
+      }, children: /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12 l4 4 10 -10" }) }) }),
+      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: {
           fontSize: mobile ? 15.5 : 16.5,
           fontWeight: 700,
           color: VT.ink,
           letterSpacing: "-0.015em",
           lineHeight: 1.3
         }, children: pt.title }),
-        /* @__PURE__ */ jsx3("div", { style: {
+        /* @__PURE__ */ jsx4("div", { style: {
           marginTop: 4,
           fontSize: mobile ? 14 : 15,
           lineHeight: 1.45,
@@ -1893,7 +3312,7 @@ function OwnershipSection({ mobile }) {
         }, children: pt.body })
       ] })
     ] }, i)) }),
-    /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 22 : 30, textAlign: "center" }, children: /* @__PURE__ */ jsxs2("a", { href: "client-admin-demo.html", style: {
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 22 : 30, textAlign: "center" }, children: /* @__PURE__ */ jsxs3("a", { href: "client-admin-demo.html", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 10,
@@ -1906,7 +3325,7 @@ function OwnershipSection({ mobile }) {
       fontWeight: 600,
       textDecoration: "none"
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         width: 22,
         height: 22,
         borderRadius: "50%",
@@ -1918,7 +3337,7 @@ function OwnershipSection({ mobile }) {
         fontSize: 10
       }, children: "\u25B6" }),
       "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0434\u0435\u043C\u043E \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0430",
-      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2197" })
+      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2197" })
     ] }) })
   ] });
 }
@@ -1931,41 +3350,41 @@ function AnalyticsSection({ mobile }) {
     {
       tag: "\u041F\u0418\u041A",
       tagColor: "oklch(0.60 0.15 35)",
-      text: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+      text: /* @__PURE__ */ jsxs3(Fragment2, { children: [
         "\u0412 ",
-        /* @__PURE__ */ jsx3("b", { children: "\u043F\u044F\u0442\u043D\u0438\u0446\u0443" }),
+        /* @__PURE__ */ jsx4("b", { children: "\u043F\u044F\u0442\u043D\u0438\u0446\u0443" }),
         " \u0437\u0430\u044F\u0432\u043E\u043A \u0432 \u0434\u0432\u0430 \u0440\u0430\u0437\u0430 \u0431\u043E\u043B\u044C\u0448\u0435, \u0447\u0435\u043C \u0432 \u0432\u043E\u0441\u043A\u0440\u0435\u0441\u0435\u043D\u044C\u0435. \u041F\u043E\u0445\u043E\u0436\u0435 \u043D\u0430 \u043F\u0440\u0438\u0432\u044B\u0447\u043A\u0443 \xAB\u0440\u0435\u0448\u0438\u0442\u044C \u0434\u0435\u043B\u0430 \u043F\u0435\u0440\u0435\u0434 \u0432\u044B\u0445\u043E\u0434\u043D\u044B\u043C\u0438\xBB."
       ] })
     },
     {
       tag: "\u0420\u041E\u0421\u0422",
       tagColor: "oklch(0.50 0.13 145)",
-      text: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+      text: /* @__PURE__ */ jsxs3(Fragment2, { children: [
         "\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430 ",
-        /* @__PURE__ */ jsx3("b", { children: "+34%" }),
+        /* @__PURE__ */ jsx4("b", { children: "+34%" }),
         " \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E. \u041F\u043E\u0441\u043B\u0435 \u0442\u043E\u0433\u043E, \u043A\u0430\u043A \u043F\u043E\u0434\u043D\u044F\u043B\u0438 \u0431\u043B\u043E\u043A \u043D\u0430\u0432\u0435\u0440\u0445 \u0433\u043B\u0430\u0432\u043D\u043E\u0439."
       ] })
     },
     {
       tag: "\u041F\u0420\u041E\u0412\u0410\u041B",
       tagColor: "oklch(0.50 0.16 270)",
-      text: /* @__PURE__ */ jsxs2(Fragment2, { children: [
+      text: /* @__PURE__ */ jsxs3(Fragment2, { children: [
         "\xAB\u0428\u0438\u043D\u043E\u043C\u043E\u043D\u0442\u0430\u0436\xBB \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u044E\u0442, \u043D\u043E ",
-        /* @__PURE__ */ jsx3("b", { children: "\u043D\u0435 \u043D\u0430\u0436\u0438\u043C\u0430\u044E\u0442" }),
+        /* @__PURE__ */ jsx4("b", { children: "\u043D\u0435 \u043D\u0430\u0436\u0438\u043C\u0430\u044E\u0442" }),
         ". \u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E, \u043D\u0435\u0442 \u0446\u0435\u043D \u2014 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0432 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A."
       ] })
     }
   ];
-  return /* @__PURE__ */ jsxs2("section", { id: "analytics", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2(H2, { mobile, children: [
-        "\u0422\u0435 \u0436\u0435 \u0434\u0430\u043D\u043D\u044B\u0435, \u0447\u0442\u043E \u0432\u0438\u0434\u0438\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442,",
-        /* @__PURE__ */ jsx3("br", {}),
-        "\u0443 \u0432\u0430\u0441 \u043F\u0435\u0440\u0435\u0434 \u0433\u043B\u0430\u0437\u0430\u043C\u0438"
+  return /* @__PURE__ */ jsxs3("section", { id: "analytics", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3(H2, { mobile, children: [
+        "\u0412\u0438\u0434\u0438\u0442\u0435 \u0440\u043E\u0432\u043D\u043E \u0442\u043E \u0436\u0435,",
+        /* @__PURE__ */ jsx4("br", {}),
+        "\u0447\u0442\u043E \u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442"
       ] }),
-      /* @__PURE__ */ jsx3(Sub, { mobile, maxWidth: 760, children: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0448\u043B\u0438, \u043E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438, \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B\u0438, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043E\u043A. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u043B \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u0440\u0430\u0432\u043A\u0443 \u2014 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u043D\u0435\u0434\u0435\u043B\u0435 \u0432\u0438\u0434\u0438\u0442\u0435, \u043A\u0430\u043A \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C \u0446\u0438\u0444\u0440\u044B." })
+      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0448\u043B\u0438, \u043E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438, \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B\u0438, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043E\u043A. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u043B \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u0440\u0430\u0432\u043A\u0443 \u2014 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u043D\u0435\u0434\u0435\u043B\u0435 \u0432\u0438\u0434\u0438\u0442\u0435, \u043A\u0430\u043A \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C \u0446\u0438\u0444\u0440\u044B." })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
@@ -1976,7 +3395,7 @@ function AnalyticsSection({ mobile }) {
       boxShadow: "0 24px 50px -28px rgba(120,60,30,0.25), 0 0 0 1px rgba(0,0,0,0.02)",
       position: "relative"
     }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         padding: mobile ? "12px 16px" : "14px 22px",
         borderBottom: `1px solid ${VT.line}`,
         display: "flex",
@@ -1984,12 +3403,12 @@ function AnalyticsSection({ mobile }) {
         gap: 14,
         background: VT.bgSoft
       }, children: [
-        /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FF5F57" } }),
-          /* @__PURE__ */ jsx3("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FEBC2E" } }),
-          /* @__PURE__ */ jsx3("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#28C840" } })
+        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FF5F57" } }),
+          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FEBC2E" } }),
+          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#28C840" } })
         ] }),
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           flex: 1,
           padding: "5px 12px",
           background: VT.white,
@@ -2003,13 +3422,13 @@ function AnalyticsSection({ mobile }) {
           alignItems: "center",
           gap: 8
         }, children: [
-          /* @__PURE__ */ jsxs2("svg", { width: "10", height: "10", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: [
-            /* @__PURE__ */ jsx3("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2" }),
-            /* @__PURE__ */ jsx3("path", { d: "M7 11 V7 a5 5 0 0 1 10 0 V11" })
+          /* @__PURE__ */ jsxs3("svg", { width: "10", height: "10", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: [
+            /* @__PURE__ */ jsx4("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2" }),
+            /* @__PURE__ */ jsx4("path", { d: "M7 11 V7 a5 5 0 0 1 10 0 V11" })
           ] }),
           "app.samosite.online/analytics"
         ] }),
-        /* @__PURE__ */ jsxs2("span", { style: {
+        /* @__PURE__ */ jsxs3("span", { style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
@@ -2019,7 +3438,7 @@ function AnalyticsSection({ mobile }) {
           color: VT.ink,
           fontWeight: 600
         }, children: [
-          /* @__PURE__ */ jsx3("span", { style: {
+          /* @__PURE__ */ jsx4("span", { style: {
             width: 8,
             height: 8,
             borderRadius: "50%",
@@ -2029,7 +3448,7 @@ function AnalyticsSection({ mobile }) {
           "LIVE"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         padding: mobile ? "12px 16px" : "14px 26px",
         display: "flex",
         alignItems: "center",
@@ -2037,9 +3456,9 @@ function AnalyticsSection({ mobile }) {
         flexWrap: "wrap",
         borderBottom: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { fontSize: mobile ? 14 : 16, fontWeight: 700, letterSpacing: "-0.02em" }, children: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 Park \xB7 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }),
-        /* @__PURE__ */ jsx3("span", { style: { flex: 1 } }),
-        ["7 \u0434\u043D\u0435\u0439", "30 \u0434\u043D\u0435\u0439", "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F"].map((p, i) => /* @__PURE__ */ jsx3("button", { type: "button", style: {
+        /* @__PURE__ */ jsx4("span", { style: { fontSize: mobile ? 14 : 16, fontWeight: 700, letterSpacing: "-0.02em" }, children: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 Park \xB7 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }),
+        /* @__PURE__ */ jsx4("span", { style: { flex: 1 } }),
+        ["7 \u0434\u043D\u0435\u0439", "30 \u0434\u043D\u0435\u0439", "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F"].map((p, i) => /* @__PURE__ */ jsx4("button", { type: "button", style: {
           padding: "6px 12px",
           borderRadius: 8,
           border: "none",
@@ -2051,8 +3470,8 @@ function AnalyticsSection({ mobile }) {
           fontFamily: "inherit"
         }, children: p }, p))
       ] }),
-      /* @__PURE__ */ jsxs2("div", { style: { padding: mobile ? "18px 16px" : "24px 26px" }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: { padding: mobile ? "18px 16px" : "24px 26px" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: {
           display: "grid",
           gridTemplateColumns: mobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
           gap: mobile ? 10 : 14
@@ -2061,7 +3480,7 @@ function AnalyticsSection({ mobile }) {
           { label: "\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u044B \u0443\u0441\u043B\u0443\u0433", value: "892", delta: "+24%" },
           { label: "\u0437\u0430\u044F\u0432\u043E\u043A", value: "47", delta: "+12%", accent: true },
           { label: "\u043A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F", value: "3.7%", delta: "+0.4 \u043F.\u043F." }
-        ].map((k, i) => /* @__PURE__ */ jsxs2("div", { style: {
+        ].map((k, i) => /* @__PURE__ */ jsxs3("div", { style: {
           padding: mobile ? 14 : 16,
           borderRadius: 12,
           background: k.accent ? VT.accentSoft : VT.bgSoft,
@@ -2069,7 +3488,7 @@ function AnalyticsSection({ mobile }) {
           position: "relative",
           overflow: "hidden"
         }, children: [
-          /* @__PURE__ */ jsx3("div", { style: {
+          /* @__PURE__ */ jsx4("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 10.5,
             letterSpacing: "0.08em",
@@ -2077,7 +3496,7 @@ function AnalyticsSection({ mobile }) {
             fontWeight: 600,
             textTransform: "uppercase"
           }, children: k.label }),
-          /* @__PURE__ */ jsx3("div", { style: {
+          /* @__PURE__ */ jsx4("div", { style: {
             marginTop: 8,
             fontSize: mobile ? 26 : 32,
             fontWeight: 700,
@@ -2086,7 +3505,7 @@ function AnalyticsSection({ mobile }) {
             lineHeight: 1,
             fontFamily: VT.font.mono
           }, children: k.value }),
-          /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { style: {
             marginTop: 6,
             display: "inline-flex",
             alignItems: "center",
@@ -2095,13 +3514,13 @@ function AnalyticsSection({ mobile }) {
             color: "oklch(0.50 0.13 145)",
             fontWeight: 600
           }, children: [
-            /* @__PURE__ */ jsx3("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: /* @__PURE__ */ jsx3("path", { d: "M5 1 L9 7 L1 7 Z" }) }),
+            /* @__PURE__ */ jsx4("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M5 1 L9 7 L1 7 Z" }) }),
             k.delta,
             " ",
-            /* @__PURE__ */ jsx3("span", { style: { color: VT.inkFaint, fontWeight: 500 }, children: "\u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E" })
+            /* @__PURE__ */ jsx4("span", { style: { color: VT.inkFaint, fontWeight: 500 }, children: "\u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E" })
           ] })
         ] }, i)) }),
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           marginTop: 18,
           padding: 18,
           borderRadius: 14,
@@ -2109,15 +3528,15 @@ function AnalyticsSection({ mobile }) {
           border: `1px solid ${VT.line}`,
           position: "relative"
         }, children: [
-          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
-            /* @__PURE__ */ jsx3("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u043E \u0434\u043D\u044F\u043C" }),
-            /* @__PURE__ */ jsx3("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "\u043F\u043D \u2013 \u0432\u0441" }),
-            /* @__PURE__ */ jsxs2("span", { style: { marginLeft: "auto", fontFamily: VT.font.mono, fontSize: 11, color: VT.inkSoft }, children: [
+          /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
+            /* @__PURE__ */ jsx4("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u043E \u0434\u043D\u044F\u043C" }),
+            /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "\u043F\u043D \u2013 \u0432\u0441" }),
+            /* @__PURE__ */ jsxs3("span", { style: { marginLeft: "auto", fontFamily: VT.font.mono, fontSize: 11, color: VT.inkSoft }, children: [
               "\u0432\u0441\u0435\u0433\u043E ",
-              /* @__PURE__ */ jsx3("b", { style: { color: VT.ink }, children: "47" })
+              /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "47" })
             ] })
           ] }),
-          /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { style: {
             marginTop: 22,
             position: "relative",
             display: "grid",
@@ -2126,21 +3545,21 @@ function AnalyticsSection({ mobile }) {
             alignItems: "end",
             height: mobile ? 140 : 180
           }, children: [
-            /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+            /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
               position: "absolute",
               inset: 0,
               pointerEvents: "none",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between"
-            }, children: [0, 1, 2, 3].map((i) => /* @__PURE__ */ jsx3("div", { style: { borderTop: `1px dashed ${VT.line}` } }, i)) }),
-            days.map((d, i) => /* @__PURE__ */ jsx3("div", { style: {
+            }, children: [0, 1, 2, 3].map((i) => /* @__PURE__ */ jsx4("div", { style: { borderTop: `1px dashed ${VT.line}` } }, i)) }),
+            days.map((d, i) => /* @__PURE__ */ jsx4("div", { style: {
               height: `${d / max * 100}%`,
               background: i === peakIdx ? `linear-gradient(180deg, ${VT.accent}, oklch(0.50 0.16 35))` : "oklch(0.84 0.06 50)",
               borderRadius: "6px 6px 0 0",
               position: "relative",
               boxShadow: i === peakIdx ? "0 -2px 16px rgba(217, 119, 87, 0.4)" : "none"
-            }, children: /* @__PURE__ */ jsx3("span", { style: {
+            }, children: /* @__PURE__ */ jsx4("span", { style: {
               position: "absolute",
               top: -20,
               left: "50%",
@@ -2151,7 +3570,7 @@ function AnalyticsSection({ mobile }) {
               fontWeight: i === peakIdx ? 700 : 500
             }, children: d }) }, i))
           ] }),
-          /* @__PURE__ */ jsx3("div", { style: {
+          /* @__PURE__ */ jsx4("div", { style: {
             marginTop: 6,
             display: "grid",
             gridTemplateColumns: `repeat(${days.length}, 1fr)`,
@@ -2161,75 +3580,75 @@ function AnalyticsSection({ mobile }) {
             color: VT.inkFaint,
             textAlign: "center",
             letterSpacing: "0.04em"
-          }, children: dayLabels.map((l, i) => /* @__PURE__ */ jsx3("span", { style: {
+          }, children: dayLabels.map((l, i) => /* @__PURE__ */ jsx4("span", { style: {
             color: i === peakIdx ? VT.accentSoft : "inherit",
             fontWeight: i === peakIdx ? 700 : 500
           }, children: l }, l)) })
         ] }),
-        /* @__PURE__ */ jsxs2("div", { style: {
+        /* @__PURE__ */ jsxs3("div", { style: {
           marginTop: 16,
           display: "grid",
           gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
           gap: mobile ? 12 : 16
         }, children: [
-          /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { style: {
             padding: 18,
             borderRadius: 14,
             background: VT.bgSoft,
             border: `1px solid ${VT.line}`
           }, children: [
-            /* @__PURE__ */ jsx3("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438" }),
+            /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438" }),
             [
               ["\u042F\u043D\u0434\u0435\u043A\u0441", 48, "oklch(0.55 0.14 30)"],
               ["Google", 22, "oklch(0.48 0.13 240)"],
               ["\u041F\u0440\u044F\u043C\u044B\u0435 \u0437\u0430\u0445\u043E\u0434\u044B", 12, "oklch(0.50 0.12 145)"],
               ["\u0421\u043E\u0446\u0441\u0435\u0442\u0438", 11, "oklch(0.55 0.10 280)"],
               ["\u0414\u0440\u0443\u0433\u043E\u0435", 7, "oklch(0.60 0.04 60)"]
-            ].map(([label, v, color]) => /* @__PURE__ */ jsxs2("div", { style: { marginBottom: 9 }, children: [
-              /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", fontSize: 12.5 }, children: [
-                /* @__PURE__ */ jsx3("span", { style: { color: VT.ink }, children: label }),
-                /* @__PURE__ */ jsxs2("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600 }, children: [
+            ].map(([label, v, color]) => /* @__PURE__ */ jsxs3("div", { style: { marginBottom: 9 }, children: [
+              /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", fontSize: 12.5 }, children: [
+                /* @__PURE__ */ jsx4("span", { style: { color: VT.ink }, children: label }),
+                /* @__PURE__ */ jsxs3("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600 }, children: [
                   v,
                   "%"
                 ] })
               ] }),
-              /* @__PURE__ */ jsx3("div", { style: { marginTop: 5, height: 6, background: VT.line, borderRadius: 3, overflow: "hidden" }, children: /* @__PURE__ */ jsx3("div", { style: { width: `${v}%`, height: "100%", background: color } }) })
+              /* @__PURE__ */ jsx4("div", { style: { marginTop: 5, height: 6, background: VT.line, borderRadius: 3, overflow: "hidden" }, children: /* @__PURE__ */ jsx4("div", { style: { width: `${v}%`, height: "100%", background: color } }) })
             ] }, label))
           ] }),
-          /* @__PURE__ */ jsxs2("div", { style: {
+          /* @__PURE__ */ jsxs3("div", { style: {
             padding: 18,
             borderRadius: 14,
             background: VT.bgSoft,
             border: `1px solid ${VT.line}`
           }, children: [
-            /* @__PURE__ */ jsx3("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u0421\u0430\u043C\u044B\u0435 \u043A\u043B\u0438\u043A\u0430\u0431\u0435\u043B\u044C\u043D\u044B\u0435 \u0443\u0441\u043B\u0443\u0433\u0438" }),
+            /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u0421\u0430\u043C\u044B\u0435 \u043A\u043B\u0438\u043A\u0430\u0431\u0435\u043B\u044C\u043D\u044B\u0435 \u0443\u0441\u043B\u0443\u0433\u0438" }),
             [
               ["\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430", 142, "+34%"],
               ["\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", 98, "+8%"],
               ["\u0420\u0430\u0437\u0432\u0430\u043B-\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", 64, "+2%"],
               ["\u0428\u0438\u043D\u043E\u043C\u043E\u043D\u0442\u0430\u0436", 41, "\u221212%"]
-            ].map(([n, v, delta]) => /* @__PURE__ */ jsxs2("div", { style: {
+            ].map(([n, v, delta]) => /* @__PURE__ */ jsxs3("div", { style: {
               display: "flex",
               alignItems: "baseline",
               gap: 10,
               padding: "8px 0",
               borderBottom: `1px dashed ${VT.line}`
             }, children: [
-              /* @__PURE__ */ jsx3("span", { style: { color: VT.ink, fontSize: 13 }, children: n }),
-              /* @__PURE__ */ jsx3("span", { style: {
+              /* @__PURE__ */ jsx4("span", { style: { color: VT.ink, fontSize: 13 }, children: n }),
+              /* @__PURE__ */ jsx4("span", { style: {
                 fontFamily: VT.font.mono,
                 fontSize: 11,
                 fontWeight: 600,
                 color: String(delta).startsWith("+") ? "oklch(0.75 0.16 145)" : "oklch(0.70 0.14 30)"
               }, children: delta }),
-              /* @__PURE__ */ jsx3("span", { style: { flex: 1 } }),
-              /* @__PURE__ */ jsx3("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600, fontSize: 13 }, children: v })
+              /* @__PURE__ */ jsx4("span", { style: { flex: 1 } }),
+              /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600, fontSize: 13 }, children: v })
             ] }, n))
           ] })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("p", { style: {
+    /* @__PURE__ */ jsx4("p", { style: {
       marginTop: mobile ? 22 : 30,
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 22 : 30}px auto 0`,
@@ -2239,7 +3658,7 @@ function AnalyticsSection({ mobile }) {
       textAlign: "center",
       textWrap: "pretty"
     }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E \u0442\u0443\u0434\u0430 \u0436\u0435, \u043A\u0443\u0434\u0430 \u0438 \u0432\u0441\u0451 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS. \u0412 \u043A\u0430\u0431\u0438\u043D\u0435\u0442 \u0437\u0430\u0445\u043E\u0434\u0438\u0442\u044C \u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E, \u0434\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u043C\u0438 \u043D\u0430\u0439\u0434\u0443\u0442 \u0432\u0430\u0441." }),
-    /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 20 : 28, textAlign: "center" }, children: /* @__PURE__ */ jsxs2("a", { href: "client-admin-demo.html", style: {
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 20 : 28, textAlign: "center" }, children: /* @__PURE__ */ jsxs3("a", { href: "client-admin-demo.html", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 10,
@@ -2253,7 +3672,7 @@ function AnalyticsSection({ mobile }) {
       textDecoration: "none",
       boxShadow: "0 6px 18px -10px rgba(120,60,30,0.20)"
     }, children: [
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("span", { style: {
         width: 22,
         height: 22,
         borderRadius: "50%",
@@ -2265,177 +3684,211 @@ function AnalyticsSection({ mobile }) {
         fontSize: 9
       }, children: "\u25B6" }),
       "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0434\u0435\u043C\u043E \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0430",
-      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2197" })
+      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2197" })
     ] }) })
   ] });
 }
-var PRICING_BULLETS = [
-  "\u0421\u043E\u0431\u0435\u0440\u0451\u043C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430 \u0438\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430",
-  "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u043C \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E",
-  "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u043C \u0442\u0440\u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F, \u0447\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C",
-  "\u041F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u043C \u0437\u0430\u044F\u0432\u043A\u0438 \u0442\u0443\u0434\u0430, \u0433\u0434\u0435 \u0443\u0434\u043E\u0431\u043D\u043E: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS",
-  "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430 \u0432 \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0435 \u0438 \u0441\u0432\u043E\u0434\u043A\u0430 \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E",
-  "\u0417\u0430\u0449\u0438\u0449\u0451\u043D\u043D\u043E\u0435 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435, \u043F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u042F\u043D\u0434\u0435\u043A\u0441 \u0438 Google",
-  "\u0414\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432 \u0420\u043E\u0441\u0441\u0438\u0438, \u043F\u043E \u0424\u0417-152"
+var PLANS = ["\u0421\u0442\u0430\u0440\u0442", "\u041B\u0438\u0447\u043D\u044B\u0439", "\u0411\u0438\u0437\u043D\u0435\u0441", "\u041A\u043E\u043C\u043F\u0430\u043D\u0438\u044F", "\u0421\u0442\u0443\u0434\u0438\u044F"];
+var PLAN_HILITE = -1;
+var PRICING_MATRIX = [
+  {
+    rows: [
+      { label: "\u0426\u0435\u043D\u0430 / \u043C\u0435\u0441", vals: ["0 \u20BD", "690 \u20BD", "1 490 \u20BD", "2 990 \u20BD", "6 990 \u20BD"] },
+      { label: "\u0426\u0435\u043D\u0430 / \u0433\u043E\u0434", vals: ["0 \u20BD", "6 620 \u20BD", "14 300 \u20BD", "28 700 \u20BD", "67 100 \u20BD"] },
+      { label: "\u0412\u044B\u0433\u043E\u0434\u0430 \u0433\u043E\u0434\u043E\u0432\u043E\u0433\u043E", vals: ["\u2014", "\u221220%", "\u221220%", "\u221220%", "\u221220%"] },
+      { label: "\u0414\u043B\u044F \u043A\u043E\u0433\u043E", vals: ["\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C", "\u0421\u0430\u043C\u043E\u0437\u0430\u043D\u044F\u0442\u044B\u0435, \u043B\u0438\u0447\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B", "\u041C\u0430\u043B\u044B\u0439 \u0431\u0438\u0437\u043D\u0435\u0441, \u0444\u0440\u0438\u043B\u0430\u043D\u0441", "\u0418\u043D\u0444\u043E\u0431\u0438\u0437\u043D\u0435\u0441, \u043C\u0430\u043B\u044B\u0435 \u0430\u0433\u0435\u043D\u0442\u0441\u0442\u0432\u0430", "\u0421\u0442\u0443\u0434\u0438\u0438, \u0431\u0435\u043B\u044B\u0435 \u043C\u0435\u0442\u043A\u0438"] }
+    ]
+  },
+  {
+    title: "\u0421\u0430\u0439\u0442\u044B \u0438 \u0445\u043E\u0441\u0442\u0438\u043D\u0433",
+    rows: [
+      { label: "\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", vals: ["1", "1", "3", "10", "30"] },
+      { label: "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", vals: [false, false, "3", "10", "30"] },
+      { label: "\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442", vals: ["3", "10", "50", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439"] },
+      { label: "\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u043C\u0435\u0434\u0438\u0430", vals: ["500 \u041C\u0411", "5 \u0413\u0411", "20 \u0413\u0411", "100 \u0413\u0411", "500 \u0413\u0411"] },
+      { label: "\u0421\u0435\u0440\u0442\u0438\u0444\u0438\u043A\u0430\u0442 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438 (SSL)", vals: [true, true, true, true, true] },
+      { label: "\u0423\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u0431\u0440\u0435\u043D\u0434\u0438\u043D\u0433\u0430 Samosite", vals: [false, true, true, true, true] }
+    ]
+  },
+  {
+    title: "\u0418\u0418-\u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0438 (\u0432 \u043C\u0435\u0441\u044F\u0446)",
+    rows: [
+      { label: "\u0413\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0441\u0430\u0439\u0442\u0430 \u0446\u0435\u043B\u0438\u043A\u043E\u043C", vals: ["1 (\u0440\u0430\u0437\u043E\u0432\u043E)", "2", "10", "40", "150"] },
+      { label: "\u041F\u0435\u0440\u0435\u0433\u0435\u043D\u0435\u0440\u0430\u0446\u0438\u044F \u0431\u043B\u043E\u043A\u043E\u0432", vals: ["10", "30", "150", "600", "2 000"] },
+      { label: "\u0410\u043D\u0430\u043B\u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u043E\u0432", vals: ["1", "5", "25", "100", "400"] },
+      { label: "\u0418\u0418-\u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u0438 (\u043F\u0440\u043E\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435 / \u043A\u043E\u043D\u0442\u0435\u043D\u0442)", vals: [false, "10", "50", "200", "\u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439*"] },
+      { label: "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0418\u0418-\u043C\u043E\u0434\u0435\u043B\u0438", vals: ["Yandex", "Claude", "Claude", "Claude", "Claude"] },
+      { label: "\u041F\u0440\u0438 \u043F\u0440\u0435\u0432\u044B\u0448\u0435\u043D\u0438\u0438 \u043B\u0438\u043C\u0438\u0442\u0430", vals: ["\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u043A\u0430", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u0443\u043F\u0440\u043E\u0449\u0451\u043D\u043D\u044B\u0439 \u0440\u0435\u0436\u0438\u043C", "\u043C\u044F\u0433\u043A\u0438\u0439 \u043B\u0438\u043C\u0438\u0442"] }
+    ]
+  },
+  {
+    title: "\u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E\u0441\u0442\u0438",
+    rows: [
+      { label: "\u0428\u0430\u0431\u043B\u043E\u043D\u044B", vals: ["\u0431\u0430\u0437\u043E\u0432\u044B\u0435", "\u0432\u0441\u0435", "\u0432\u0441\u0435", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C", "\u0432\u0441\u0435 + \u043F\u0440\u0435\u043C\u0438\u0443\u043C"] },
+      { label: "\u0424\u043E\u0440\u043C\u044B \u0438 \u0437\u0430\u044F\u0432\u043A\u0438", vals: ["1 \u0444\u043E\u0440\u043C\u0430", true, true, true, true] },
+      { label: "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430", vals: [false, "\u0431\u0430\u0437\u043E\u0432\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F", "\u0440\u0430\u0441\u0448\u0438\u0440\u0435\u043D\u043D\u0430\u044F"] },
+      { label: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 \u043A\u043E\u0434\u0430", vals: [false, false, false, true, true] },
+      { label: "\u0420\u0430\u0431\u043E\u0442\u0430 \u043F\u043E\u0434 \u0431\u0440\u0435\u043D\u0434 \u043A\u043B\u0438\u0435\u043D\u0442\u0430", vals: [false, false, false, false, true] },
+      { label: "\u041A\u043E\u043C\u0430\u043D\u0434\u043D\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F", vals: [false, false, "2 \u0447\u0435\u043B.", "5 \u0447\u0435\u043B.", "15 \u0447\u0435\u043B."] }
+    ]
+  },
+  {
+    title: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430",
+    rows: [
+      { label: "\u041A\u0430\u043D\u0430\u043B", vals: ["\u0431\u0430\u0437\u0430 \u0437\u043D\u0430\u043D\u0438\u0439", "\u0447\u0430\u0442", "\u0447\u0430\u0442", "\u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u043D\u044B\u0439 \u0447\u0430\u0442", "\u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u043C\u0435\u043D\u0435\u0434\u0436\u0435\u0440"] },
+      { label: "\u0412\u0440\u0435\u043C\u044F \u043E\u0442\u0432\u0435\u0442\u0430", vals: ["\u2014", "24 \u0447", "12 \u0447", "4 \u0447", "1 \u0447"] }
+    ]
+  }
 ];
-function PricingSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "pricing", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsx3("div", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsxs2(H2, { mobile, children: [
-      "\u041E\u0434\u0438\u043D \u0442\u0430\u0440\u0438\u0444.",
-      /* @__PURE__ */ jsx3("br", {}),
-      "\u0411\u0435\u0437 \u0430\u043F\u0441\u0435\u043B\u043E\u0432 \u0438 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A"
-    ] }) }),
-    /* @__PURE__ */ jsxs2("div", { style: {
-      marginTop: mobile ? 28 : 48,
-      maxWidth: mobile ? "100%" : 720,
-      margin: `${mobile ? 28 : 48}px auto 0`
-    }, children: [
-      /* @__PURE__ */ jsxs2("div", { className: "ss-pricing-card", style: {
+function MatrixCell({ v, hi }) {
+  const base = {
+    fontSize: 13.5,
+    lineHeight: 1.35,
+    color: VT.ink,
+    textAlign: "center",
+    fontVariantNumeric: "tabular-nums"
+  };
+  if (v === true) {
+    return /* @__PURE__ */ jsx4("span", { style: { display: "inline-flex", width: 22, height: 22, borderRadius: "50%", background: VT.successSoft, color: VT.success, alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12 l4 4 10 -10" }) }) });
+  }
+  if (v === false) {
+    return /* @__PURE__ */ jsx4("span", { style: { color: VT.inkFaint, fontSize: 16 }, children: "\u2014" });
+  }
+  return /* @__PURE__ */ jsx4("span", { style: { ...base, fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }, children: v });
+}
+function PricingMatrix({ mobile }) {
+  const firstCol = mobile ? 132 : 240;
+  const planCol = mobile ? 96 : 150;
+  const totalW = firstCol + planCol * 5;
+  const cellPad = mobile ? "10px 8px" : "12px 14px";
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    marginTop: mobile ? 24 : 40,
+    border: `1px solid ${VT.line}`,
+    borderRadius: 18,
+    overflow: "hidden",
+    background: VT.white,
+    boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 18px 48px -28px rgba(120,60,30,0.20)"
+  }, children: [
+    /* @__PURE__ */ jsx4("div", { style: mobile ? { overflowX: "auto", WebkitOverflowScrolling: "touch" } : { overflow: "visible" }, children: /* @__PURE__ */ jsxs3("div", { style: { minWidth: mobile ? totalW : 0 }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: {
+        display: "grid",
+        gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
+        position: "sticky",
+        top: 0,
+        zIndex: 2,
         background: VT.white,
-        border: `2px solid ${VT.accent}`,
-        borderRadius: 22,
-        padding: mobile ? "28px 22px" : "44px 44px",
-        boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 24px 60px -24px rgba(120,60,30,0.30)",
-        position: "relative",
-        overflow: "hidden"
+        borderBottom: `2px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsx3("div", { style: {
-          position: "absolute",
-          top: mobile ? 12 : 18,
-          right: mobile ? -28 : -24,
-          transform: "rotate(8deg)",
-          background: VT.accent,
-          color: "#fff",
-          padding: mobile ? "5px 28px" : "6px 32px",
-          fontFamily: VT.font.mono,
-          fontSize: mobile ? 10.5 : 12,
-          letterSpacing: "0.12em",
-          fontWeight: 700,
-          boxShadow: "0 4px 12px rgba(120,60,30,0.3)"
-        }, children: "\u041C\u042B \u0417\u0410\u041F\u0423\u0421\u041A\u0410\u0415\u041C\u0421\u042F" }),
-        /* @__PURE__ */ jsxs2("div", { style: { marginTop: mobile ? 28 : 16 }, children: [
-          /* @__PURE__ */ jsx3("div", { style: {
-            fontFamily: VT.font.mono,
-            fontSize: mobile ? 11 : 12.5,
-            letterSpacing: "0.14em",
-            color: VT.accent,
-            fontWeight: 700
-          }, children: "\u041F\u0415\u0420\u0412\u041E\u0419 \u0421\u041E\u0422\u041D\u0415 \u2014 \u041D\u0410\u0412\u0421\u0415\u0413\u0414\u0410" }),
-          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap", marginTop: 8 }, children: [
-            /* @__PURE__ */ jsx3("span", { style: {
-              fontSize: mobile ? 56 : 88,
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-              color: VT.ink
-            }, children: "490\xA0\u20BD" }),
-            /* @__PURE__ */ jsx3("span", { style: { fontSize: mobile ? 16 : 20, color: VT.inkSoft, fontWeight: 500 }, children: "\u0432 \u043C\u0435\u0441\u044F\u0446" })
-          ] }),
-          /* @__PURE__ */ jsxs2("div", { style: {
-            marginTop: 6,
-            fontSize: mobile ? 13.5 : 14.5,
-            color: VT.inkSoft
-          }, children: [
-            "\u043F\u043E\u0442\u043E\u043C ",
-            /* @__PURE__ */ jsx3("b", { style: { color: VT.ink }, children: "990 \u20BD / \u043C\u0435\u0441\u044F\u0446" }),
-            " \u0434\u043B\u044F \u0432\u0441\u0435\u0445 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u044B\u0445"
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs2("div", { style: {
-          marginTop: mobile ? 18 : 22,
-          padding: mobile ? "14px 16px" : "16px 22px",
-          background: VT.accentSoft,
-          borderRadius: 14,
-          display: "flex",
-          alignItems: "center",
-          gap: 14
-        }, children: [
-          /* @__PURE__ */ jsx3("span", { style: {
-            flex: "0 0 auto",
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            background: VT.accent,
-            color: "#fff",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }, children: /* @__PURE__ */ jsxs2("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx3("path", { d: "M20 12 V22 H4 V12" }),
-            /* @__PURE__ */ jsx3("rect", { x: "2", y: "7", width: "20", height: "5", rx: "1" }),
-            /* @__PURE__ */ jsx3("path", { d: "M12 22 V7" }),
-            /* @__PURE__ */ jsx3("path", { d: "M12 7 C 12 3.5, 7.5 3.5, 7.5 7 C 7.5 7, 9.5 7, 12 7 Z" }),
-            /* @__PURE__ */ jsx3("path", { d: "M12 7 C 12 3.5, 16.5 3.5, 16.5 7 C 16.5 7, 14.5 7, 12 7 Z" })
-          ] }) }),
-          /* @__PURE__ */ jsxs2("div", { style: { minWidth: 0 }, children: [
-            /* @__PURE__ */ jsx3("div", { style: {
-              fontSize: mobile ? 15.5 : 17,
-              fontWeight: 700,
-              color: VT.ink,
-              letterSpacing: "-0.015em",
-              lineHeight: 1.2
-            }, children: "\u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u2014 \u0432\u043E\u043E\u0431\u0449\u0435 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" }),
-            /* @__PURE__ */ jsx3("div", { style: {
-              marginTop: 2,
-              fontSize: mobile ? 13 : 14,
-              color: VT.accent,
-              fontWeight: 500
-            }, children: "\u041A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E" })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs2("div", { style: { marginTop: mobile ? 20 : 26 }, children: [
-          /* @__PURE__ */ jsx3("div", { style: {
-            fontFamily: VT.font.mono,
-            fontSize: 11,
-            letterSpacing: "0.12em",
-            color: VT.inkFaint,
-            fontWeight: 600,
-            marginBottom: 10
-          }, children: "\u0412\u0425\u041E\u0414\u0418\u0422 \u0412\u0421\u0401" }),
-          /* @__PURE__ */ jsx3("ul", { style: {
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10
-          }, children: PRICING_BULLETS.map((b) => /* @__PURE__ */ jsxs2("li", { style: {
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 10,
-            fontSize: mobile ? 14.5 : 15.5,
-            color: VT.ink,
-            lineHeight: 1.45
-          }, children: [
-            /* @__PURE__ */ jsx3("span", { style: {
-              flex: "0 0 auto",
-              width: 22,
-              height: 22,
-              borderRadius: "50%",
-              background: VT.successSoft,
-              color: VT.success,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: 1
-            }, children: /* @__PURE__ */ jsx3("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx3("path", { d: "M5 12 l4 4 10 -10" }) }) }),
-            /* @__PURE__ */ jsx3("span", { children: b })
-          ] }, b)) })
-        ] }),
-        /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 24 : 32 }, children: /* @__PURE__ */ jsx3(Btn, { style: {
-          width: "100%",
-          padding: mobile ? "14px 22px" : "16px 26px",
-          fontSize: mobile ? 15 : 16
-        }, iconRight: /* @__PURE__ */ jsx3(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }) }),
-        /* @__PURE__ */ jsx3("div", { style: {
-          marginTop: 12,
+        /* @__PURE__ */ jsx4("div", { style: { padding: cellPad, position: "sticky", left: 0, background: VT.white, zIndex: 4 } }),
+        PLANS.map((p, i) => /* @__PURE__ */ jsxs3("div", { style: {
+          padding: cellPad,
           textAlign: "center",
+          background: i === PLAN_HILITE ? VT.accentSoft : "transparent",
+          borderTopLeftRadius: i === PLAN_HILITE ? 12 : 0,
+          borderTopRightRadius: i === PLAN_HILITE ? 12 : 0
+        }, children: [
+          i === PLAN_HILITE && /* @__PURE__ */ jsx4("div", { style: {
+            fontFamily: VT.font.mono,
+            fontSize: 9,
+            letterSpacing: "0.1em",
+            color: VT.accent,
+            fontWeight: 700,
+            marginBottom: 4,
+            textTransform: "uppercase"
+          }, children: "\u041F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439" }),
+          /* @__PURE__ */ jsx4("div", { style: {
+            fontSize: mobile ? 15 : 17,
+            fontWeight: 700,
+            letterSpacing: "-0.015em",
+            color: i === PLAN_HILITE ? VT.accent : VT.ink
+          }, children: p })
+        ] }, p))
+      ] }),
+      PRICING_MATRIX.map((group, gi) => /* @__PURE__ */ jsxs3("div", { children: [
+        group.title && /* @__PURE__ */ jsx4("div", { style: {
+          gridColumn: "1 / -1",
+          padding: mobile ? "10px 10px" : "11px 14px",
+          background: VT.bgSoft,
+          fontFamily: VT.font.mono,
+          fontSize: 10.5,
+          letterSpacing: "0.1em",
+          color: VT.inkFaint,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          borderTop: `1px solid ${VT.line}`,
+          borderBottom: `1px solid ${VT.line}`
+        }, children: group.title }),
+        group.rows.map((row, ri) => {
+          const isPriceMonth = gi === 0 && ri === 0;
+          return /* @__PURE__ */ jsxs3("div", { style: {
+            display: "grid",
+            gridTemplateColumns: `${firstCol}px repeat(5, ${planCol}px)`,
+            borderBottom: `1px solid ${VT.lineSoft}`,
+            alignItems: "center"
+          }, children: [
+            /* @__PURE__ */ jsx4("div", { style: {
+              padding: cellPad,
+              fontSize: mobile ? 12 : 13.5,
+              color: VT.ink,
+              fontWeight: isPriceMonth ? 600 : 400,
+              position: "sticky",
+              left: 0,
+              background: VT.white,
+              zIndex: 3,
+              borderRight: `1px solid ${VT.line}`,
+              boxShadow: mobile ? "6px 0 8px -6px rgba(40,28,18,0.12)" : "none"
+            }, children: row.label }),
+            row.vals.map((v, ci) => /* @__PURE__ */ jsx4("div", { style: {
+              padding: cellPad,
+              textAlign: "center",
+              background: ci === PLAN_HILITE ? VT.accentSoft : "transparent",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }, children: /* @__PURE__ */ jsx4(MatrixCell, { v, hi: isPriceMonth || ci === PLAN_HILITE }) }, ci))
+          ] }, ri);
+        })
+      ] }, gi))
+    ] }) }),
+    mobile && /* @__PURE__ */ jsx4("div", { style: {
+      padding: "10px 14px",
+      textAlign: "center",
+      fontSize: 12,
+      color: VT.inkFaint,
+      fontFamily: VT.font.mono,
+      borderTop: `1px solid ${VT.line}`
+    }, children: "\u2190 \u0442\u0430\u0431\u043B\u0438\u0446\u0430 \u043B\u0438\u0441\u0442\u0430\u0435\u0442\u0441\u044F \u0432\u0431\u043E\u043A \u2192" })
+  ] });
+}
+function PricingSection({ mobile }) {
+  return /* @__PURE__ */ jsxs3("section", { id: "pricing", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0422\u0430\u0440\u0438\u0444 \u043F\u043E\u0434 \u0432\u0430\u0448 \u043C\u0430\u0441\u0448\u0442\u0430\u0431" }),
+      /* @__PURE__ */ jsx4("p", { style: {
+        margin: `${mobile ? 14 : 18}px auto 0`,
+        maxWidth: 600,
+        fontSize: mobile ? 15 : 17,
+        lineHeight: 1.5,
+        color: VT.inkSoft,
+        textWrap: "pretty"
+      }, children: "\u041E\u0442 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u0441\u0442\u0430\u0440\u0442\u0430 \u0434\u043E \u0441\u0442\u0443\u0434\u0438\u0439\u043D\u043E\u0433\u043E. \u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430 \u043B\u044E\u0431\u043E\u043C \u043F\u043B\u0430\u0442\u043D\u043E\u043C \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E." })
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { maxWidth: 1100, margin: "0 auto" }, children: [
+      /* @__PURE__ */ jsx4(PricingMatrix, { mobile }),
+      /* @__PURE__ */ jsxs3("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: [
+        /* @__PURE__ */ jsx4(Btn, { style: {
+          padding: mobile ? "14px 26px" : "16px 36px",
+          fontSize: mobile ? 15 : 16
+        }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
+        /* @__PURE__ */ jsx4("div", { style: {
+          marginTop: 12,
           fontSize: 12.5,
           color: VT.inkSoft,
           fontStyle: "italic"
-        }, children: "\u041E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u043E\u0441\u0442\u0430\u0442\u044C\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u043C\u0435\u0441\u044F\u0446\u0430." })
+        }, children: "\u041D\u0430\u0447\u043D\u0438\u0442\u0435 \u043D\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0442\u0430\u0440\u0438\u0444\u0435 \u2014 \u043E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0440\u0430\u0441\u0442\u0438." })
       ] }),
-      /* @__PURE__ */ jsx3("p", { style: {
+      /* @__PURE__ */ jsx4("p", { style: {
         margin: `${mobile ? 22 : 30}px auto 0`,
         maxWidth: 600,
         fontSize: mobile ? 14 : 15,
@@ -2504,7 +3957,7 @@ var FAQ_REST = [
   }
 ];
 function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
-  return /* @__PURE__ */ jsxs2("details", { open: defaultOpen, style: {
+  return /* @__PURE__ */ jsxs3("details", { open: defaultOpen, style: {
     background: VT.white,
     border: `1px solid ${highlight ? VT.accent : VT.line}`,
     borderRadius: 14,
@@ -2512,7 +3965,7 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
     overflow: "hidden",
     position: "relative"
   }, children: [
-    /* @__PURE__ */ jsxs2("summary", { style: {
+    /* @__PURE__ */ jsxs3("summary", { style: {
       listStyle: "none",
       cursor: "pointer",
       padding: mobile ? "16px 18px" : "18px 22px",
@@ -2524,9 +3977,9 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
       color: VT.ink,
       lineHeight: 1.35
     }, children: [
-      /* @__PURE__ */ jsx3("style", { children: `details > summary::-webkit-details-marker { display: none; }` }),
-      /* @__PURE__ */ jsx3("span", { style: { flex: 1 }, children: q }),
-      /* @__PURE__ */ jsx3("span", { style: {
+      /* @__PURE__ */ jsx4("style", { children: `details > summary::-webkit-details-marker { display: none; }` }),
+      /* @__PURE__ */ jsx4("span", { style: { flex: 1 }, children: q }),
+      /* @__PURE__ */ jsx4("span", { style: {
         flex: "0 0 auto",
         width: 28,
         height: 28,
@@ -2541,7 +3994,7 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
         lineHeight: 1
       }, children: "+" })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: {
+    /* @__PURE__ */ jsx4("div", { style: {
       padding: mobile ? "0 18px 16px" : "0 22px 20px",
       fontSize: mobile ? 14.5 : 15.5,
       lineHeight: 1.55,
@@ -2551,14 +4004,14 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
   ] });
 }
 function FaqSection({ mobile }) {
-  return /* @__PURE__ */ jsxs2("section", { id: "faq", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsx3("div", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx3(H2, { mobile, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+  return /* @__PURE__ */ jsxs3("section", { id: "faq", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsx4("div", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }),
+    /* @__PURE__ */ jsxs3("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 860,
       margin: `${mobile ? 28 : 48}px auto 0`
     }, children: [
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 11,
         letterSpacing: "0.12em",
@@ -2569,11 +4022,11 @@ function FaqSection({ mobile }) {
         alignItems: "center",
         gap: 8
       }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
+        /* @__PURE__ */ jsx4("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
         "\u041F\u0420\u041E \u0415\u0416\u0415\u041D\u0415\u0414\u0415\u041B\u042C\u041D\u042B\u0415 \u0420\u0415\u041A\u041E\u041C\u0415\u041D\u0414\u0410\u0426\u0418\u0418"
       ] }),
-      /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_NEW.map((f, i) => /* @__PURE__ */ jsx3(FaqItem, { q: f.q, a: f.a, defaultOpen: i === 0, mobile, highlight: true }, f.q)) }),
-      /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_NEW.map((f, i) => /* @__PURE__ */ jsx4(FaqItem, { q: f.q, a: f.a, defaultOpen: i === 0, mobile, highlight: true }, f.q)) }),
+      /* @__PURE__ */ jsx4("div", { style: {
         marginTop: 28,
         fontFamily: VT.font.mono,
         fontSize: 11,
@@ -2582,24 +4035,24 @@ function FaqSection({ mobile }) {
         fontWeight: 600,
         marginBottom: 12
       }, children: "\u041E\u0421\u0422\u0410\u041B\u042C\u041D\u042B\u0415 \u0412\u041E\u041F\u0420\u041E\u0421\u042B" }),
-      /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_REST.map((f) => /* @__PURE__ */ jsx3(FaqItem, { q: f.q, a: f.a, mobile }, f.q)) })
+      /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_REST.map((f) => /* @__PURE__ */ jsx4(FaqItem, { q: f.q, a: f.a, mobile }, f.q)) })
     ] })
   ] });
 }
 function FinalCtaSection({ mobile }) {
   const ladder = [
     { when: "\u0427\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430", what: "\u0443 \u0432\u0430\u0441 \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438" },
-    { when: "\u0427\u0435\u0440\u0435\u0437 \u043D\u0435\u0434\u0435\u043B\u044E", what: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u0440\u0438\u0448\u043B\u0451\u0442 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F, \u0447\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C" },
-    { when: "\u0427\u0435\u0440\u0435\u0437 \u043C\u0435\u0441\u044F\u0446", what: "\u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u044B \u0441\u0430\u043C\u0438 \u0431\u044B \u043D\u0435 \u0434\u043E\u0433\u0430\u0434\u0430\u043B\u0438\u0441\u044C \u0441\u043E\u0431\u0440\u0430\u0442\u044C" }
+    { when: "\u0427\u0435\u0440\u0435\u0437 \u043D\u0435\u0434\u0435\u043B\u044E", what: "\u043F\u043E\u0434\u0442\u044F\u043D\u0435\u0442 \u0441\u0432\u0435\u0436\u0438\u0435 \u043F\u043E\u0441\u0442\u044B, \u0446\u0435\u043D\u044B \u0438 \u0444\u043E\u0442\u043E \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" },
+    { when: "\u0427\u0435\u0440\u0435\u0437 \u043C\u0435\u0441\u044F\u0446", what: "\u043D\u0430\u0431\u0435\u0440\u0451\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0445 \u2014 \u0438 \u043D\u0430\u0447\u043D\u0451\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C, \u0447\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C" }
   ];
-  return /* @__PURE__ */ jsx3("section", { id: "cta", style: {
+  return /* @__PURE__ */ jsx4("section", { id: "cta", style: {
     ...sectionPad(mobile),
     marginTop: mobile ? 64 : 130,
     position: "relative",
     zIndex: 1,
     maxWidth: mobile ? "100%" : 1360,
     margin: `${mobile ? 64 : 130}px auto 0`
-  }, children: /* @__PURE__ */ jsxs2("div", { style: {
+  }, children: /* @__PURE__ */ jsxs3("div", { style: {
     background: "oklch(0.20 0.020 60)",
     color: VT.bg,
     borderRadius: mobile ? 22 : 28,
@@ -2607,7 +4060,7 @@ function FinalCtaSection({ mobile }) {
     position: "relative",
     overflow: "hidden"
   }, children: [
-    /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+    /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
       position: "absolute",
       right: -140,
       top: -120,
@@ -2617,7 +4070,7 @@ function FinalCtaSection({ mobile }) {
       background: `radial-gradient(circle, ${VT.accent} 0%, transparent 60%)`,
       opacity: 0.4
     } }),
-    /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+    /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
       position: "absolute",
       left: -100,
       bottom: -120,
@@ -2627,8 +4080,8 @@ function FinalCtaSection({ mobile }) {
       background: `radial-gradient(circle, oklch(0.6 0.10 50) 0%, transparent 65%)`,
       opacity: 0.3
     } }),
-    /* @__PURE__ */ jsxs2("div", { style: { position: "relative", maxWidth: 920, margin: "0 auto", textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs2("h2", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: { position: "relative", maxWidth: 920, margin: "0 auto", textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs3("h2", { style: {
         fontSize: mobile ? 28 : 50,
         fontWeight: 700,
         letterSpacing: "-0.03em",
@@ -2637,14 +4090,14 @@ function FinalCtaSection({ mobile }) {
         textWrap: "balance"
       }, children: [
         "\u0427\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430 \u2014 \u0441\u0430\u0439\u0442.",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u0427\u0435\u0440\u0435\u0437 \u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F.",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u0427\u0435\u0440\u0435\u0437 \u043C\u0435\u0441\u044F\u0446 \u2014 \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u044B \u0441\u0430\u043C\u0438",
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx4("br", {}),
         "\u0431\u044B \u043D\u0435 \u0434\u043E\u0433\u0430\u0434\u0430\u043B\u0438\u0441\u044C \u0441\u043E\u0431\u0440\u0430\u0442\u044C."
       ] }),
-      /* @__PURE__ */ jsx3("p", { style: {
+      /* @__PURE__ */ jsx4("p", { style: {
         fontSize: mobile ? 16 : 19,
         lineHeight: 1.5,
         color: "oklch(0.85 0.014 60)",
@@ -2652,7 +4105,7 @@ function FinalCtaSection({ mobile }) {
         maxWidth: 720,
         textWrap: "pretty"
       }, children: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0433\u0434\u0435 \u0432\u044B \u0441\u0435\u0439\u0447\u0430\u0441 \u0432\u0435\u0434\u0451\u0442\u0435 \u0441\u0432\u043E\u0438 \u0434\u0435\u043B\u0430: \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram, 2\u0413\u0418\u0421, Avito \u0438\u043B\u0438 Instagram. \u0418\u043B\u0438 \u043F\u0440\u043E\u0441\u0442\u043E \u0441\u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0440\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442. \u0414\u0430\u043B\u044C\u0448\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442." }),
-      /* @__PURE__ */ jsxs2("p", { style: {
+      /* @__PURE__ */ jsxs3("p", { style: {
         fontSize: mobile ? 15 : 17,
         lineHeight: 1.5,
         color: "oklch(0.92 0.012 60)",
@@ -2661,11 +4114,11 @@ function FinalCtaSection({ mobile }) {
         textWrap: "pretty",
         fontWeight: 500
       }, children: [
-        "\u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E. \u0414\u043B\u044F \u043F\u0435\u0440\u0432\u043E\u0439 \u0441\u043E\u0442\u043D\u0438 \u2014 ",
-        /* @__PURE__ */ jsx3("b", { style: { color: VT.accentSoft }, children: "490 \u20BD \u0432 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430" }),
+        "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041D\u0430 \u043F\u043B\u0430\u0442\u043D\u044B\u0445 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0434\u0430\u043B\u044C\u0448\u0435 ",
+        /* @__PURE__ */ jsx4("b", { style: { color: VT.accentSoft }, children: "\u043E\u0442 690 \u20BD \u0432 \u043C\u0435\u0441\u044F\u0446" }),
         "."
       ] }),
-      /* @__PURE__ */ jsx3("div", { style: {
+      /* @__PURE__ */ jsx4("div", { style: {
         marginTop: mobile ? 26 : 36,
         display: "grid",
         gridTemplateColumns: mobile ? "1fr" : "repeat(3, 1fr)",
@@ -2674,7 +4127,7 @@ function FinalCtaSection({ mobile }) {
         maxWidth: 880,
         margin: `${mobile ? 26 : 36}px auto 0`,
         position: "relative"
-      }, children: ladder.map((rung, i) => /* @__PURE__ */ jsxs2("div", { style: {
+      }, children: ladder.map((rung, i) => /* @__PURE__ */ jsxs3("div", { style: {
         padding: mobile ? "16px 16px" : "20px 20px",
         background: "rgba(255,255,255,0.06)",
         border: "1px solid rgba(255,255,255,0.10)",
@@ -2684,7 +4137,7 @@ function FinalCtaSection({ mobile }) {
         gap: 6,
         position: "relative"
       }, children: [
-        /* @__PURE__ */ jsxs2("span", { style: {
+        /* @__PURE__ */ jsxs3("span", { style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
@@ -2694,29 +4147,29 @@ function FinalCtaSection({ mobile }) {
           color: VT.accentSoft,
           fontWeight: 700
         }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
+          /* @__PURE__ */ jsx4("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
           "\u0428\u0410\u0413 ",
           i + 1
         ] }),
-        /* @__PURE__ */ jsx3("div", { style: {
+        /* @__PURE__ */ jsx4("div", { style: {
           fontSize: mobile ? 18 : 21,
           fontWeight: 700,
           color: "#fff",
           letterSpacing: "-0.025em",
           lineHeight: 1.15
         }, children: rung.when }),
-        /* @__PURE__ */ jsx3("div", { style: {
+        /* @__PURE__ */ jsx4("div", { style: {
           fontSize: mobile ? 14 : 14.5,
           color: "oklch(0.85 0.014 60)",
           lineHeight: 1.4,
           textWrap: "pretty"
         }, children: rung.what })
       ] }, i)) }),
-      /* @__PURE__ */ jsx3("div", { style: { marginTop: mobile ? 28 : 36, display: "inline-flex" }, children: /* @__PURE__ */ jsx3(Btn, { iconRight: /* @__PURE__ */ jsx3(IconArrow, {}), style: {
+      /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 28 : 36, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Btn, { iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), style: {
         padding: mobile ? "14px 24px" : "18px 32px",
         fontSize: mobile ? 16 : 18
       }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }) }),
-      /* @__PURE__ */ jsxs2("div", { style: {
+      /* @__PURE__ */ jsxs3("div", { style: {
         marginTop: mobile ? 20 : 26,
         paddingTop: mobile ? 16 : 22,
         borderTop: "1px solid rgba(255,255,255,0.10)",
@@ -2724,7 +4177,7 @@ function FinalCtaSection({ mobile }) {
         color: "oklch(0.82 0.014 60)"
       }, children: [
         "\u041E\u0441\u0442\u0430\u043B\u0438\u0441\u044C \u0432\u043E\u043F\u0440\u043E\u0441\u044B? ",
-        /* @__PURE__ */ jsx3("a", { style: {
+        /* @__PURE__ */ jsx4("a", { style: {
           color: VT.accentSoft,
           textDecoration: "underline",
           textUnderlineOffset: 3
@@ -2762,7 +4215,7 @@ function StickyHeader({ mobile = false }) {
     border: "none"
   };
   const primaryLabel = mobile ? "\u0421\u043E\u0431\u0440\u0430\u0442\u044C" : "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0437\u0430 2 \u0447\u0430\u0441\u0430";
-  return /* @__PURE__ */ jsxs2("div", { className: "ss-sticky-header", style: {
+  return /* @__PURE__ */ jsxs3("div", { className: "ss-sticky-header", style: {
     position: "sticky",
     top: 0,
     zIndex: 10,
@@ -2777,48 +4230,46 @@ function StickyHeader({ mobile = false }) {
     borderBottom: `1px solid ${VT.lineSoft}`,
     boxSizing: "border-box"
   }, children: [
-    /* @__PURE__ */ jsx3("style", { children: `
+    /* @__PURE__ */ jsx4("style", { children: `
         .ss-sticky-header a.ss-nav-link { color: ${VT.inkSoft}; text-decoration: none; padding: 6px 2px; transition: color .15s ease; }
         .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
         .ss-sticky-header a.ss-login-link { color: ${VT.inkSoft}; text-decoration: none; border-radius: 999px; }
         .ss-sticky-header a.ss-login-link:hover { color: ${VT.ink}; background: ${VT.bgSoft}; }
       ` }),
-    /* @__PURE__ */ jsxs2("div", { style: {
+    /* @__PURE__ */ jsxs3("div", { style: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       gap: 16
     }, children: [
-      /* @__PURE__ */ jsx3("a", { href: "#hero", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx3(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
-      !mobile ? /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
-        /* @__PURE__ */ jsx3("a", { href: "#cycle", className: "ss-nav-link", children: "\u0426\u0438\u043A\u043B 4 \u0441\u0430\u043C" }),
-        /* @__PURE__ */ jsx3("a", { href: "#monday", className: "ss-nav-link", children: "\u041F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A" }),
-        /* @__PURE__ */ jsx3("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
-        /* @__PURE__ */ jsx3("a", { href: "#pricing", className: "ss-nav-link", children: "\u0426\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx3("a", { href: "#faq", className: "ss-nav-link", children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-login-link", style: {
+      /* @__PURE__ */ jsx4("a", { href: "#hero", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx4(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
+      !mobile ? /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
+        /* @__PURE__ */ jsx4("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+        /* @__PURE__ */ jsx4("a", { href: "#pricing", className: "ss-nav-link", children: "\u0426\u0435\u043D\u0430" }),
+        /* @__PURE__ */ jsx4("a", { href: "#faq", className: "ss-nav-link", children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
+        /* @__PURE__ */ jsx4("a", { href: "#login", className: "ss-login-link", style: {
           fontWeight: 500,
           fontSize: 14,
           padding: "8px 16px"
         }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-        /* @__PURE__ */ jsxs2("a", { href: "#hero", style: primaryStyle, children: [
+        /* @__PURE__ */ jsxs3("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
           " ",
-          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
         ] })
-      ] }) : /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-login-link", style: { fontWeight: 500, fontSize: 13.5, padding: "8px 12px" }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-        /* @__PURE__ */ jsxs2("a", { href: "#hero", style: primaryStyle, children: [
+      ] }) : /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+        /* @__PURE__ */ jsx4("a", { href: "#login", className: "ss-login-link", style: { fontWeight: 500, fontSize: 13.5, padding: "8px 12px" }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+        /* @__PURE__ */ jsxs3("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
           " ",
-          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
         ] })
       ] })
     ] })
   ] });
 }
 function Footer({ mobile }) {
-  return /* @__PURE__ */ jsxs2("div", { style: {
+  return /* @__PURE__ */ jsxs3("div", { style: {
     ...sectionPad(mobile),
     marginTop: mobile ? 40 : 64,
     paddingTop: mobile ? 22 : 28,
@@ -2833,24 +4284,24 @@ function Footer({ mobile }) {
     position: "relative",
     zIndex: 1
   }, children: [
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx3(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
-      /* @__PURE__ */ jsxs2("span", { children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx4(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
+      /* @__PURE__ */ jsxs3("span", { children: [
         "\xA9 2026 \xB7 ",
         BRAND.domain,
         " \xB7 \u0432\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432 \u0420\u0424"
       ] })
     ] }),
-    /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
-      /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
-      /* @__PURE__ */ jsx3("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
+      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
+      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
     ] })
   ] });
 }
 function SamosaytLandingV3({ mobile = false }) {
-  const rootRef = React.useRef(null);
-  React.useEffect(() => {
+  const rootRef = React2.useRef(null);
+  React2.useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
     const PREPS = /(^|[\s\u00A0(])([иваоксуяАИВОКСУЯ]|[Нн][еаио]|[Пп]о|[Зз]а|[Дд]о|[Оо]т|[Ии]з)(\s)/g;
@@ -2885,8 +4336,8 @@ function SamosaytLandingV3({ mobile = false }) {
       last.nodeValue = v.replace(/\.[\s\u00A0]*$/, "");
     });
   }, [mobile]);
-  return /* @__PURE__ */ jsxs2(Fragment2, { children: [
-    /* @__PURE__ */ jsx3("style", { children: `
+  return /* @__PURE__ */ jsxs3(Fragment2, { children: [
+    /* @__PURE__ */ jsx4("style", { children: `
         .ss-hero-pill:focus-within {
           border-color: ${VT.accent} !important;
           box-shadow: 0 0 0 4px ${VT.accentSoft}, 0 12px 32px -16px rgba(120,60,30,0.25) !important;
@@ -2899,7 +4350,7 @@ function SamosaytLandingV3({ mobile = false }) {
         details summary:hover { background-color: ${VT.bgSoft}; }
         html { scroll-behavior: smooth; }
       ` }),
-    /* @__PURE__ */ jsxs2("div", { ref: rootRef, className: "ss-v3-root", style: {
+    /* @__PURE__ */ jsxs3("div", { ref: rootRef, className: "ss-v3-root", style: {
       width: "100%",
       minHeight: "100%",
       background: VT.bg,
@@ -2911,7 +4362,7 @@ function SamosaytLandingV3({ mobile = false }) {
       overflow: "hidden",
       letterSpacing: "-0.01em"
     }, children: [
-      /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+      /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
         position: "absolute",
         right: mobile ? -120 : -180,
         top: mobile ? -100 : -160,
@@ -2922,7 +4373,7 @@ function SamosaytLandingV3({ mobile = false }) {
         opacity: 0.85,
         pointerEvents: "none"
       } }),
-      /* @__PURE__ */ jsx3("div", { "aria-hidden": "true", style: {
+      /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
         position: "absolute",
         left: mobile ? -100 : -120,
         top: mobile ? 700 : 600,
@@ -2933,27 +4384,27 @@ function SamosaytLandingV3({ mobile = false }) {
         opacity: 0.7,
         pointerEvents: "none"
       } }),
-      /* @__PURE__ */ jsx3(StickyHeader, { mobile }),
-      /* @__PURE__ */ jsx3(HeroBlock, { mobile }),
-      /* @__PURE__ */ jsx3(ExamplesSection, { mobile }),
-      /* @__PURE__ */ jsx3(CycleSection, { mobile }),
-      /* @__PURE__ */ jsx3(MondaySection, { mobile }),
-      /* @__PURE__ */ jsx3(BaseWorkSection, { mobile }),
-      /* @__PURE__ */ jsx3(SourcesSection, { mobile }),
-      /* @__PURE__ */ jsx3(OwnershipSection, { mobile }),
-      /* @__PURE__ */ jsx3(AnalyticsSection, { mobile }),
-      /* @__PURE__ */ jsx3(PricingSection, { mobile }),
-      /* @__PURE__ */ jsx3(FaqSection, { mobile }),
-      /* @__PURE__ */ jsx3(FinalCtaSection, { mobile }),
-      /* @__PURE__ */ jsx3(Footer, { mobile })
+      /* @__PURE__ */ jsx4(StickyHeader, { mobile }),
+      /* @__PURE__ */ jsx4(HeroBlock, { mobile }),
+      /* @__PURE__ */ jsx4(ExamplesSection, { mobile }),
+      /* @__PURE__ */ jsx4(CycleSection, { mobile }),
+      /* @__PURE__ */ jsx4(MondaySection, { mobile }),
+      /* @__PURE__ */ jsx4(BaseWorkSection, { mobile }),
+      /* @__PURE__ */ jsx4(SourcesSection, { mobile }),
+      /* @__PURE__ */ jsx4(OwnershipSection, { mobile }),
+      /* @__PURE__ */ jsx4(AnalyticsSection, { mobile }),
+      /* @__PURE__ */ jsx4(PricingSection, { mobile }),
+      /* @__PURE__ */ jsx4(FaqSection, { mobile }),
+      /* @__PURE__ */ jsx4(FinalCtaSection, { mobile }),
+      /* @__PURE__ */ jsx4(Footer, { mobile })
     ] })
   ] });
 }
 function SamosaytLandingV3_Desktop() {
-  return /* @__PURE__ */ jsx3(SamosaytLandingV3, { mobile: false });
+  return /* @__PURE__ */ jsx4(SamosaytLandingV3, { mobile: false });
 }
 function SamosaytLandingV3_Mobile() {
-  return /* @__PURE__ */ jsx3(SamosaytLandingV3, { mobile: true });
+  return /* @__PURE__ */ jsx4(SamosaytLandingV3, { mobile: true });
 }
 var SamosaytLanding = SamosaytLandingV3;
 var Landing = SamosaytLandingV3;
@@ -2964,9 +4415,9 @@ var SamosaytLanding_Mobile = SamosaytLandingV3_Mobile;
 var HeroSection = HeroBlock;
 
 // src/intake/index.tsx
-import { Fragment as Fragment3, jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
+import { Fragment as Fragment3, jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
 function ModalShell({ children, width = 540 }) {
-  return /* @__PURE__ */ jsx4("div", { style: {
+  return /* @__PURE__ */ jsx5("div", { style: {
     background: "rgba(0,0,0,0.32)",
     minHeight: "100%",
     width: "100%",
@@ -2975,7 +4426,7 @@ function ModalShell({ children, width = 540 }) {
     justifyContent: "center",
     padding: 24,
     fontFamily: VT.font.sans
-  }, children: /* @__PURE__ */ jsxs3("div", { style: {
+  }, children: /* @__PURE__ */ jsxs4("div", { style: {
     width,
     maxWidth: "100%",
     background: VT.bg,
@@ -2984,7 +4435,7 @@ function ModalShell({ children, width = 540 }) {
     padding: 28,
     position: "relative"
   }, children: [
-    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", style: {
+    /* @__PURE__ */ jsx5("button", { "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", style: {
       position: "absolute",
       top: 14,
       right: 14,
@@ -3004,9 +4455,9 @@ function ModalShell({ children, width = 540 }) {
   ] }) });
 }
 function StepHeader({ step, total, title, sub, showBack = true }) {
-  return /* @__PURE__ */ jsxs3(Fragment3, { children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
-      step > 1 && showBack && /* @__PURE__ */ jsxs3("button", { style: {
+  return /* @__PURE__ */ jsxs4(Fragment3, { children: [
+    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
+      step > 1 && showBack && /* @__PURE__ */ jsxs4("button", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -3020,39 +4471,39 @@ function StepHeader({ step, total, title, sub, showBack = true }) {
         fontWeight: 500,
         color: VT.inkSoft
       }, children: [
-        /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M15 6l-6 6 6 6" }) }),
+        /* @__PURE__ */ jsx5("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M15 6l-6 6 6 6" }) }),
         "\u041D\u0430\u0437\u0430\u0434"
       ] }),
-      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
+      /* @__PURE__ */ jsxs4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
         "\u0428\u0410\u0413 ",
         step,
         "/",
         total
       ] }),
-      /* @__PURE__ */ jsx4("div", { style: { display: "flex", gap: 4 }, children: Array.from({ length: total }).map((_, i) => /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx5("div", { style: { display: "flex", gap: 4 }, children: Array.from({ length: total }).map((_, i) => /* @__PURE__ */ jsx5("span", { style: {
         width: 28,
         height: 4,
         borderRadius: 2,
         background: i < step ? VT.accent : VT.line
       } }, i)) })
     ] }),
-    /* @__PURE__ */ jsx4("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
-    sub && /* @__PURE__ */ jsx4("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
+    /* @__PURE__ */ jsx5("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
+    sub && /* @__PURE__ */ jsx5("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
   ] });
 }
 function SvgLink() {
-  return /* @__PURE__ */ jsxs3("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", children: [
-    /* @__PURE__ */ jsx4("path", { d: "M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11 5" }),
-    /* @__PURE__ */ jsx4("path", { d: "M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07L13 19" })
+  return /* @__PURE__ */ jsxs4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", children: [
+    /* @__PURE__ */ jsx5("path", { d: "M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07L11 5" }),
+    /* @__PURE__ */ jsx5("path", { d: "M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07L13 19" })
   ] });
 }
 function SvgPaperclip() {
-  return /* @__PURE__ */ jsx4("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" }) });
+  return /* @__PURE__ */ jsx5("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" }) });
 }
 function ModeSwitcher({ mode = "link", onModeChange }) {
   const tab = (id, label, icon) => {
     const active = mode === id;
-    return /* @__PURE__ */ jsxs3(
+    return /* @__PURE__ */ jsxs4(
       "button",
       {
         onClick: () => onModeChange?.(id),
@@ -3074,14 +4525,14 @@ function ModeSwitcher({ mode = "link", onModeChange }) {
           color: active ? VT.ink : VT.inkSoft
         },
         children: [
-          /* @__PURE__ */ jsx4("span", { style: { fontSize: 15, display: "inline-flex" }, children: icon }),
+          /* @__PURE__ */ jsx5("span", { style: { fontSize: 15, display: "inline-flex" }, children: icon }),
           label
         ]
       },
       id
     );
   };
-  return /* @__PURE__ */ jsxs3("div", { role: "tablist", "aria-label": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430", style: {
+  return /* @__PURE__ */ jsxs4("div", { role: "tablist", "aria-label": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430", style: {
     display: "flex",
     gap: 4,
     padding: 4,
@@ -3090,8 +4541,8 @@ function ModeSwitcher({ mode = "link", onModeChange }) {
     borderRadius: 999,
     marginTop: 18
   }, children: [
-    tab("link", "\u0421\u0441\u044B\u043B\u043A\u0430", /* @__PURE__ */ jsx4(SvgLink, {})),
-    tab("photo", "\u0424\u043E\u0442\u043E", /* @__PURE__ */ jsx4(SvgPaperclip, {}))
+    tab("link", "\u0421\u0441\u044B\u043B\u043A\u0430", /* @__PURE__ */ jsx5(SvgLink, {})),
+    tab("photo", "\u0424\u043E\u0442\u043E", /* @__PURE__ */ jsx5(SvgPaperclip, {}))
   ] });
 }
 var SOURCE_LIB = {
@@ -3110,7 +4561,7 @@ function SourceBadge({ source, counts, onCorrect }) {
   const meta = SOURCE_LIB[source] || SOURCE_LIB.unknown;
   const tier = meta.tier;
   if (tier === "ok") {
-    return /* @__PURE__ */ jsxs3("div", { style: {
+    return /* @__PURE__ */ jsxs4("div", { style: {
       padding: "12px 14px",
       background: VT.successSoft,
       borderRadius: VT.r.md,
@@ -3120,16 +4571,16 @@ function SourceBadge({ source, counts, onCorrect }) {
       fontSize: 13.5,
       color: "oklch(0.32 0.12 145)"
     }, children: [
-      /* @__PURE__ */ jsx4("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10" }) }),
-      /* @__PURE__ */ jsxs3("span", { children: [
+      /* @__PURE__ */ jsx5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M5 12l4 4 10-10" }) }),
+      /* @__PURE__ */ jsxs4("span", { children: [
         "\u0420\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u043B\u0438: ",
-        /* @__PURE__ */ jsx4("b", { children: meta.label }),
-        counts ? /* @__PURE__ */ jsxs3("span", { style: { color: "oklch(0.42 0.11 145)" }, children: [
+        /* @__PURE__ */ jsx5("b", { children: meta.label }),
+        counts ? /* @__PURE__ */ jsxs4("span", { style: { color: "oklch(0.42 0.11 145)" }, children: [
           " \xB7 ",
           counts
         ] }) : null
       ] }),
-      /* @__PURE__ */ jsx4("button", { onClick: onCorrect, style: {
+      /* @__PURE__ */ jsx5("button", { onClick: onCorrect, style: {
         marginLeft: "auto",
         background: "transparent",
         border: "none",
@@ -3143,7 +4594,7 @@ function SourceBadge({ source, counts, onCorrect }) {
     ] });
   }
   if (tier === "soon") {
-    return /* @__PURE__ */ jsxs3("div", { style: {
+    return /* @__PURE__ */ jsxs4("div", { style: {
       padding: "12px 14px",
       background: VT.infoSoft,
       borderRadius: VT.r.md,
@@ -3153,14 +4604,14 @@ function SourceBadge({ source, counts, onCorrect }) {
       fontSize: 13.5,
       color: "oklch(0.36 0.10 240)"
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: meta.icon }),
-      /* @__PURE__ */ jsxs3("span", { children: [
-        /* @__PURE__ */ jsx4("b", { children: meta.label }),
+      /* @__PURE__ */ jsx5("span", { style: { fontSize: 16 }, children: meta.icon }),
+      /* @__PURE__ */ jsxs4("span", { children: [
+        /* @__PURE__ */ jsx5("b", { children: meta.label }),
         " \u2014 \u0441\u043A\u043E\u0440\u043E \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u043C. \u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email \u2014 \u043D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u0430\u043A \u0434\u043E\u0431\u0430\u0432\u0438\u043C."
       ] })
     ] });
   }
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     padding: "12px 14px",
     background: VT.warnSoft,
     borderRadius: VT.r.md,
@@ -3170,13 +4621,13 @@ function SourceBadge({ source, counts, onCorrect }) {
     fontSize: 13.5,
     color: "oklch(0.42 0.13 70)"
   }, children: [
-    /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsx4("span", { children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u0441\u044C \u043D\u0430 \u0444\u043E\u0442\u043E \u2192" })
+    /* @__PURE__ */ jsx5("span", { style: { fontSize: 16 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsx5("span", { children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u2014 \u043F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u0435\u0441\u044C \u043D\u0430 \u0444\u043E\u0442\u043E \u2192" })
   ] });
 }
 function LinkInput({ value, placeholder = "https://...", onChange, loading = false }) {
   const empty = !value;
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     display: "flex",
     alignItems: "center",
     gap: 10,
@@ -3185,8 +4636,8 @@ function LinkInput({ value, placeholder = "https://...", onChange, loading = fal
     border: `1.5px solid ${empty ? VT.line : VT.accent}`,
     borderRadius: VT.r.md
   }, children: [
-    /* @__PURE__ */ jsx4(IconLink, {}),
-    /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5(IconLink, {}),
+    /* @__PURE__ */ jsx5(
       "input",
       {
         type: "url",
@@ -3204,27 +4655,27 @@ function LinkInput({ value, placeholder = "https://...", onChange, loading = fal
         }
       }
     ),
-    loading && /* @__PURE__ */ jsx4("span", { style: { color: VT.success, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Spinner, { size: 14 }) })
+    loading && /* @__PURE__ */ jsx5("span", { style: { color: VT.success, display: "inline-flex" }, children: /* @__PURE__ */ jsx5(Spinner, { size: 14 }) })
   ] });
 }
 var PHOTO_LIMITS = { minFiles: 5, maxFiles: 60, maxFileBytes: 15 * 1024 * 1024, maxTotalBytes: 200 * 1024 * 1024 };
 function PhotoDropZone({ compact = false, onPick }) {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     border: `1.5px dashed ${VT.accent}`,
     background: `repeating-linear-gradient(45deg, ${VT.bg} 0 8px, ${VT.accentSoft} 8px 9px)`,
     borderRadius: VT.r.lg,
     padding: compact ? 20 : 28,
     textAlign: "center"
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: { fontSize: compact ? 22 : 26, marginBottom: 6 }, children: "\u{1F4F7}" }),
-    /* @__PURE__ */ jsx4("div", { style: { fontSize: compact ? 14 : 15, fontWeight: 600 }, children: "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0441\u044E\u0434\u0430" }),
-    /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, color: VT.inkSoft, margin: "4px 0 12px" }, children: "\u0438\u043B\u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \xB7 JPEG / PNG / WebP / HEIC" }),
-    /* @__PURE__ */ jsx4(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B" }),
-    /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 10, fontFamily: VT.font.mono }, children: "5\u201360 \u0444\u0430\u0439\u043B\u043E\u0432 \xB7 \u0434\u043E 15 \u041C\u0411 \u043A\u0430\u0436\u0434\u044B\u0439 \xB7 \u0434\u043E 200 \u041C\u0411 \u0432\u0441\u0435\u0433\u043E" })
+    /* @__PURE__ */ jsx5("div", { style: { fontSize: compact ? 22 : 26, marginBottom: 6 }, children: "\u{1F4F7}" }),
+    /* @__PURE__ */ jsx5("div", { style: { fontSize: compact ? 14 : 15, fontWeight: 600 }, children: "\u041F\u0435\u0440\u0435\u0442\u0430\u0449\u0438\u0442\u0435 \u0444\u0430\u0439\u043B\u044B \u0441\u044E\u0434\u0430" }),
+    /* @__PURE__ */ jsx5("div", { style: { fontSize: 13, color: VT.inkSoft, margin: "4px 0 12px" }, children: "\u0438\u043B\u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \u0447\u0442\u043E\u0431\u044B \u0432\u044B\u0431\u0440\u0430\u0442\u044C \xB7 JPEG / PNG / WebP / HEIC" }),
+    /* @__PURE__ */ jsx5(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B" }),
+    /* @__PURE__ */ jsx5("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 10, fontFamily: VT.font.mono }, children: "5\u201360 \u0444\u0430\u0439\u043B\u043E\u0432 \xB7 \u0434\u043E 15 \u041C\u0411 \u043A\u0430\u0436\u0434\u044B\u0439 \xB7 \u0434\u043E 200 \u041C\u0411 \u0432\u0441\u0435\u0433\u043E" })
   ] });
 }
 function PhotoThumb({ name, sizeKb = 2400, idx = 0, onRemove }) {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     display: "flex",
     gap: 12,
     alignItems: "center",
@@ -3233,23 +4684,23 @@ function PhotoThumb({ name, sizeKb = 2400, idx = 0, onRemove }) {
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.md
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx5("div", { style: {
       width: 44,
       height: 44,
       borderRadius: 8,
       background: `repeating-linear-gradient(${30 + idx * 35}deg, ${VT.accentSoft} 0 6px, ${VT.bgSoft} 6px 12px)`,
       flex: "0 0 auto"
     } }),
-    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
-      /* @__PURE__ */ jsxs3("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
+    /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
+      /* @__PURE__ */ jsxs4("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
         name.split(".").pop().toUpperCase(),
         " \xB7 ",
         (sizeKb / 1e3).toFixed(1),
         " MB"
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
+    /* @__PURE__ */ jsx5("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
       width: 28,
       height: 28,
       borderRadius: 6,
@@ -3263,20 +4714,20 @@ function PhotoThumb({ name, sizeKb = 2400, idx = 0, onRemove }) {
 }
 function PhotoList({ files, onRemove }) {
   const totalKb = files.reduce((s, f) => s + (f.sizeKb || 2400), 0);
-  return /* @__PURE__ */ jsxs3("div", { style: { marginTop: 14 }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
+  return /* @__PURE__ */ jsxs4("div", { style: { marginTop: 14 }, children: [
+    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsxs4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
         "\u0417\u0410\u0413\u0420\u0423\u0416\u0415\u041D\u041E \xB7 ",
         files.length,
         " \u0418\u0417 ",
         PHOTO_LIMITS.maxFiles
       ] }),
-      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11 }, children: [
+      /* @__PURE__ */ jsxs4(Mono, { style: { fontSize: 11 }, children: [
         (totalKb / 1e3).toFixed(1),
         " \u041C\u0411 \xB7 \u2264 200 \u041C\u0411"
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: files.map((f, i) => /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: files.map((f, i) => /* @__PURE__ */ jsx5(
       PhotoThumb,
       {
         name: f.name,
@@ -3289,7 +4740,7 @@ function PhotoList({ files, onRemove }) {
   ] });
 }
 function FieldLabel({ children, required = false }) {
-  return /* @__PURE__ */ jsxs3("label", { style: {
+  return /* @__PURE__ */ jsxs4("label", { style: {
     display: "block",
     fontSize: 13,
     color: VT.inkSoft,
@@ -3297,11 +4748,11 @@ function FieldLabel({ children, required = false }) {
     marginBottom: 6
   }, children: [
     children,
-    required && /* @__PURE__ */ jsx4("span", { style: { color: VT.accent, marginLeft: 4 }, children: "*" })
+    required && /* @__PURE__ */ jsx5("span", { style: { color: VT.accent, marginLeft: 4 }, children: "*" })
   ] });
 }
 function FieldInput({ value, placeholder, onChange, mono = false, type = "text" }) {
-  return /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsx5(
     "input",
     {
       type,
@@ -3325,7 +4776,7 @@ function FieldInput({ value, placeholder, onChange, mono = false, type = "text" 
   );
 }
 function FieldTextarea({ value, placeholder, onChange, rows = 4 }) {
-  return /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsx5(
     "textarea",
     {
       value: value || "",
@@ -3352,7 +4803,7 @@ function FieldTextarea({ value, placeholder, onChange, rows = 4 }) {
 function CustomerContactPicker({ type = "phone", value = "", onTypeChange, onValueChange }) {
   const tab = (id, label, icon) => {
     const active = type === id;
-    return /* @__PURE__ */ jsxs3(
+    return /* @__PURE__ */ jsxs4(
       "button",
       {
         onClick: () => onTypeChange?.(id),
@@ -3374,7 +4825,7 @@ function CustomerContactPicker({ type = "phone", value = "", onTypeChange, onVal
           color: active ? VT.ink : VT.inkSoft
         },
         children: [
-          /* @__PURE__ */ jsx4("span", { style: { fontSize: 14 }, children: icon }),
+          /* @__PURE__ */ jsx5("span", { style: { fontSize: 14 }, children: icon }),
           label
         ]
       },
@@ -3382,8 +4833,8 @@ function CustomerContactPicker({ type = "phone", value = "", onTypeChange, onVal
     );
   };
   const ph = type === "phone" ? "+7 921 234-56-78" : "@your_handle";
-  return /* @__PURE__ */ jsxs3(Fragment3, { children: [
-    /* @__PURE__ */ jsxs3("div", { role: "tablist", style: {
+  return /* @__PURE__ */ jsxs4(Fragment3, { children: [
+    /* @__PURE__ */ jsxs4("div", { role: "tablist", style: {
       display: "flex",
       gap: 4,
       padding: 4,
@@ -3395,11 +4846,11 @@ function CustomerContactPicker({ type = "phone", value = "", onTypeChange, onVal
       tab("phone", "\u0422\u0435\u043B\u0435\u0444\u043E\u043D", "\u{1F4F1}"),
       tab("telegram", "Telegram", "\u2708\uFE0F")
     ] }),
-    /* @__PURE__ */ jsx4(FieldInput, { value, placeholder: ph, mono: true, onChange: onValueChange })
+    /* @__PURE__ */ jsx5(FieldInput, { value, placeholder: ph, mono: true, onChange: onValueChange })
   ] });
 }
 function TextFileThumb({ name, sizeKb = 240, onRemove }) {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     display: "flex",
     gap: 12,
     alignItems: "center",
@@ -3408,7 +4859,7 @@ function TextFileThumb({ name, sizeKb = 240, onRemove }) {
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.md
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx5("div", { style: {
       width: 32,
       height: 32,
       borderRadius: 6,
@@ -3420,16 +4871,16 @@ function TextFileThumb({ name, sizeKb = 240, onRemove }) {
       fontSize: 14,
       flex: "0 0 auto"
     }, children: "\u{1F4C4}" }),
-    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
-      /* @__PURE__ */ jsxs3("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
+    /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
+      /* @__PURE__ */ jsxs4("div", { style: { fontSize: 11, color: VT.inkFaint, fontFamily: VT.font.mono }, children: [
         name.split(".").pop().toUpperCase(),
         " \xB7 ",
         (sizeKb / 1e3).toFixed(1),
         " MB"
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
+    /* @__PURE__ */ jsx5("button", { "aria-label": "\u0423\u0434\u0430\u043B\u0438\u0442\u044C", onClick: onRemove, style: {
       width: 26,
       height: 26,
       borderRadius: 6,
@@ -3442,7 +4893,7 @@ function TextFileThumb({ name, sizeKb = 240, onRemove }) {
   ] });
 }
 function TextFilesDropZone({ onPick }) {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     border: `1.5px dashed ${VT.line}`,
     background: VT.bgSoft,
     borderRadius: VT.r.md,
@@ -3451,7 +4902,7 @@ function TextFilesDropZone({ onPick }) {
     alignItems: "center",
     gap: 12
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx5("div", { style: {
       width: 38,
       height: 38,
       borderRadius: 8,
@@ -3463,15 +4914,15 @@ function TextFilesDropZone({ onPick }) {
       fontSize: 16,
       flex: "0 0 auto"
     }, children: "\u{1F4CE}" }),
-    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 500 }, children: "\u041F\u0440\u0430\u0439\u0441, \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u044F \u0443\u0441\u043B\u0443\u0433, FAQ" }),
-      /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, fontFamily: VT.font.mono, marginTop: 1 }, children: "PDF / DOCX / TXT / RTF \xB7 \u0434\u043E 10 \u0444\u0430\u0439\u043B\u043E\u0432" })
+    /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontSize: 13.5, fontWeight: 500 }, children: "\u041F\u0440\u0430\u0439\u0441, \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u044F \u0443\u0441\u043B\u0443\u0433, FAQ" }),
+      /* @__PURE__ */ jsx5("div", { style: { fontSize: 11.5, color: VT.inkFaint, fontFamily: VT.font.mono, marginTop: 1 }, children: "PDF / DOCX / TXT / RTF \xB7 \u0434\u043E 10 \u0444\u0430\u0439\u043B\u043E\u0432" })
     ] }),
-    /* @__PURE__ */ jsx4(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C" })
+    /* @__PURE__ */ jsx5(Btn, { variant: "secondary", size: "sm", onClick: onPick, children: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C" })
   ] });
 }
 function CaptchaNotice() {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     display: "flex",
     alignItems: "center",
     gap: 8,
@@ -3481,7 +4932,7 @@ function CaptchaNotice() {
     fontFamily: VT.font.mono,
     letterSpacing: "0.02em"
   }, children: [
-    /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: /* @__PURE__ */ jsx4("path", { d: "M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" }) }),
+    /* @__PURE__ */ jsx5("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", children: /* @__PURE__ */ jsx5("path", { d: "M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" }) }),
     "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha"
   ] });
 }
@@ -3496,8 +4947,8 @@ function S3_Step1_Link({
   onContinue
 }) {
   const canContinue = !!url && source && SOURCE_LIB[source]?.tier === "ok";
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
-    /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsxs4(ModalShell, { width: 540, children: [
+    /* @__PURE__ */ jsx5(
       StepHeader,
       {
         step: 1,
@@ -3507,10 +4958,10 @@ function S3_Step1_Link({
         sub: `\u0412\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u2014 ${BRAND.name} \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438 \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u0432\u0441\u0451 \u043D\u0443\u0436\u043D\u043E\u0435`
       }
     ),
-    /* @__PURE__ */ jsx4(ModeSwitcher, { mode: "link", onModeChange }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
-      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u0421\u0441\u044B\u043B\u043A\u0430" }),
-      /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5(ModeSwitcher, { mode: "link", onModeChange }),
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 18 }, children: [
+      /* @__PURE__ */ jsx5(FieldLabel, { children: "\u0421\u0441\u044B\u043B\u043A\u0430" }),
+      /* @__PURE__ */ jsx5(
         LinkInput,
         {
           value: url,
@@ -3520,22 +4971,22 @@ function S3_Step1_Link({
         }
       )
     ] }),
-    source && /* @__PURE__ */ jsx4("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx4(SourceBadge, { source, counts, onCorrect }) }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, fontSize: 12.5, color: VT.inkFaint, lineHeight: 1.5 }, children: [
-      /* @__PURE__ */ jsx4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: "\u041F\u041E\u0414\u0414\u0415\u0420\u0416\u0418\u0412\u0410\u0415\u041C:" }),
+    source && /* @__PURE__ */ jsx5("div", { style: { marginTop: 10 }, children: /* @__PURE__ */ jsx5(SourceBadge, { source, counts, onCorrect }) }),
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 16, fontSize: 12.5, color: VT.inkFaint, lineHeight: 1.5 }, children: [
+      /* @__PURE__ */ jsx5(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: "\u041F\u041E\u0414\u0414\u0415\u0420\u0416\u0418\u0412\u0410\u0415\u041C:" }),
       " ",
       "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \xB7 Telegram-\u043A\u0430\u043D\u0430\u043B \xB7 Instagram \xB7 2\u0413\u0418\u0421 \xB7 Avito \xB7 \u0432\u0430\u0448 \u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442"
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx5(
       Btn,
       {
         style: { flex: 1, opacity: canContinue ? 1 : 0.55 },
-        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        iconRight: /* @__PURE__ */ jsx5(IconArrow, {}),
         onClick: canContinue ? onContinue : void 0,
         children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
       }
     ) }),
-    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+    /* @__PURE__ */ jsx5(CaptchaNotice, {})
   ] });
 }
 function S3_Step1_Photo({
@@ -3548,8 +4999,8 @@ function S3_Step1_Photo({
 }) {
   const empty = files.length === 0;
   const canContinue = files.length >= PHOTO_LIMITS.minFiles;
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 560, children: [
-    /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsxs4(ModalShell, { width: 560, children: [
+    /* @__PURE__ */ jsx5(
       StepHeader,
       {
         step: 1,
@@ -3559,10 +5010,10 @@ function S3_Step1_Photo({
         sub: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0440\u0430\u0431\u043E\u0442\u044B, \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u044B \u043F\u0440\u043E\u0444\u0438\u043B\u044F, \u0444\u043E\u0442\u043E \u0431\u0443\u043A\u043B\u0435\u0442\u0430 \u0438\u043B\u0438 \u043C\u0435\u043D\u044E \u2014 \u0441\u043E\u0431\u0435\u0440\u0451\u043C \u0441\u0430\u0439\u0442 \u0438\u0437 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044C"
       }
     ),
-    /* @__PURE__ */ jsx4(ModeSwitcher, { mode: "photo", onModeChange }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx4(PhotoDropZone, { compact: !empty, onPick }) }),
-    !empty && /* @__PURE__ */ jsx4(PhotoList, { files, onRemove }),
-    !empty && files.length < PHOTO_LIMITS.minFiles && /* @__PURE__ */ jsxs3("div", { style: {
+    /* @__PURE__ */ jsx5(ModeSwitcher, { mode: "photo", onModeChange }),
+    /* @__PURE__ */ jsx5("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx5(PhotoDropZone, { compact: !empty, onPick }) }),
+    !empty && /* @__PURE__ */ jsx5(PhotoList, { files, onRemove }),
+    !empty && files.length < PHOTO_LIMITS.minFiles && /* @__PURE__ */ jsxs4("div", { style: {
       marginTop: 12,
       fontSize: 12.5,
       color: VT.inkSoft,
@@ -3576,16 +5027,16 @@ function S3_Step1_Photo({
       PHOTO_LIMITS.minFiles,
       " \u0444\u043E\u0442\u043E."
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx5(
       Btn,
       {
         style: { flex: 1, opacity: canContinue ? 1 : 0.55 },
-        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        iconRight: /* @__PURE__ */ jsx5(IconArrow, {}),
         onClick: canContinue ? onContinue : void 0,
         children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
       }
     ) }),
-    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+    /* @__PURE__ */ jsx5(CaptchaNotice, {})
   ] });
 }
 function S3_Step2_PhotoDesc({
@@ -3604,8 +5055,8 @@ function S3_Step2_PhotoDesc({
   onContinue
 }) {
   const ok = description.length >= 30 && !!city && !!customerContact;
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 560, children: [
-    /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsxs4(ModalShell, { width: 560, children: [
+    /* @__PURE__ */ jsx5(
       StepHeader,
       {
         step: 2,
@@ -3614,9 +5065,9 @@ function S3_Step2_PhotoDesc({
         sub: "\u041F\u0430\u0440\u0430 \u0441\u0442\u0440\u043E\u043A, \u0447\u0442\u043E\u0431\u044B \u0418\u0418 \u0441\u043E\u0431\u0440\u0430\u043B \u0441\u0430\u0439\u0442 \u0442\u043E\u0447\u043D\u0435\u0435"
       }
     ),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
-      /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u0427\u0442\u043E \u0432\u044B \u0434\u0435\u043B\u0430\u0435\u0442\u0435" }),
-      /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 20 }, children: [
+      /* @__PURE__ */ jsx5(FieldLabel, { required: true, children: "\u0427\u0442\u043E \u0432\u044B \u0434\u0435\u043B\u0430\u0435\u0442\u0435" }),
+      /* @__PURE__ */ jsx5(
         FieldTextarea,
         {
           value: description,
@@ -3626,14 +5077,14 @@ function S3_Step2_PhotoDesc({
         }
       )
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 16, display: "grid", gridTemplateColumns: "1fr", gap: 16 }, children: [
-      /* @__PURE__ */ jsxs3("div", { children: [
-        /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u0413\u043E\u0440\u043E\u0434" }),
-        /* @__PURE__ */ jsx4(FieldInput, { value: city, placeholder: "\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A", onChange: onCityChange })
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 16, display: "grid", gridTemplateColumns: "1fr", gap: 16 }, children: [
+      /* @__PURE__ */ jsxs4("div", { children: [
+        /* @__PURE__ */ jsx5(FieldLabel, { required: true, children: "\u0413\u043E\u0440\u043E\u0434" }),
+        /* @__PURE__ */ jsx5(FieldInput, { value: city, placeholder: "\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A", onChange: onCityChange })
       ] }),
-      /* @__PURE__ */ jsxs3("div", { children: [
-        /* @__PURE__ */ jsx4(FieldLabel, { required: true, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435" }),
-        /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsxs4("div", { children: [
+        /* @__PURE__ */ jsx5(FieldLabel, { required: true, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435" }),
+        /* @__PURE__ */ jsx5(
           CustomerContactPicker,
           {
             type: customerContactType,
@@ -3642,13 +5093,13 @@ function S3_Step2_PhotoDesc({
             onValueChange: onCustomerContactChange
           }
         ),
-        /* @__PURE__ */ jsx4("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 6, lineHeight: 1.4 }, children: "\u041F\u043E\u043A\u0430\u0436\u0435\u043C \u043A\u043B\u0438\u0435\u043D\u0442\u0430\u043C \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u041A\u0443\u0434\u0430 \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u0430\u043C \u043B\u0438\u0447\u043D\u043E \u2014 \u0441\u043F\u0440\u043E\u0441\u0438\u043C \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u0448\u0430\u0433\u0435." })
+        /* @__PURE__ */ jsx5("div", { style: { fontSize: 11.5, color: VT.inkFaint, marginTop: 6, lineHeight: 1.4 }, children: "\u041F\u043E\u043A\u0430\u0436\u0435\u043C \u043A\u043B\u0438\u0435\u043D\u0442\u0430\u043C \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u041A\u0443\u0434\u0430 \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u0430\u043C \u043B\u0438\u0447\u043D\u043E \u2014 \u0441\u043F\u0440\u043E\u0441\u0438\u043C \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u0448\u0430\u0433\u0435." })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
-      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u041F\u0440\u0438\u043A\u0440\u0435\u043F\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)" }),
-      textFiles.length === 0 ? /* @__PURE__ */ jsx4(TextFilesDropZone, { onPick: onPickTextFile }) : /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 6 }, children: [
-        textFiles.map((f, i) => /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 18 }, children: [
+      /* @__PURE__ */ jsx5(FieldLabel, { children: "\u041F\u0440\u0438\u043A\u0440\u0435\u043F\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0435 \u0444\u0430\u0439\u043B\u044B (\u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E)" }),
+      textFiles.length === 0 ? /* @__PURE__ */ jsx5(TextFilesDropZone, { onPick: onPickTextFile }) : /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: "column", gap: 6 }, children: [
+        textFiles.map((f, i) => /* @__PURE__ */ jsx5(
           TextFileThumb,
           {
             name: f.name,
@@ -3657,7 +5108,7 @@ function S3_Step2_PhotoDesc({
           },
           i
         )),
-        /* @__PURE__ */ jsx4("button", { onClick: onPickTextFile, style: {
+        /* @__PURE__ */ jsx5("button", { onClick: onPickTextFile, style: {
           alignSelf: "flex-start",
           marginTop: 4,
           background: "transparent",
@@ -3671,20 +5122,20 @@ function S3_Step2_PhotoDesc({
         }, children: "+ \u0435\u0449\u0451 \u0444\u0430\u0439\u043B" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 22 }, children: /* @__PURE__ */ jsx5(
       Btn,
       {
         style: { flex: 1, opacity: ok ? 1 : 0.55 },
-        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        iconRight: /* @__PURE__ */ jsx5(IconArrow, {}),
         onClick: ok ? onContinue : void 0,
         children: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
       }
     ) }),
-    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+    /* @__PURE__ */ jsx5(CaptchaNotice, {})
   ] });
 }
 function ChannelOption({ value, label, hint, icon, selected, onSelect }) {
-  return /* @__PURE__ */ jsxs3(
+  return /* @__PURE__ */ jsxs4(
     "label",
     {
       onClick: () => onSelect?.(value),
@@ -3699,7 +5150,7 @@ function ChannelOption({ value, label, hint, icon, selected, onSelect }) {
         cursor: "pointer"
       },
       children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx5("span", { style: {
           width: 18,
           height: 18,
           borderRadius: "50%",
@@ -3709,11 +5160,11 @@ function ChannelOption({ value, label, hint, icon, selected, onSelect }) {
           alignItems: "center",
           justifyContent: "center",
           flex: "0 0 auto"
-        }, children: selected && /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent } }) }),
-        /* @__PURE__ */ jsx4("span", { style: { fontSize: 16 }, children: icon }),
-        /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx4("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
-          /* @__PURE__ */ jsx4("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 1 }, children: hint })
+        }, children: selected && /* @__PURE__ */ jsx5("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent } }) }),
+        /* @__PURE__ */ jsx5("span", { style: { fontSize: 16 }, children: icon }),
+        /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx5("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
+          /* @__PURE__ */ jsx5("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 1 }, children: hint })
         ] })
       ]
     }
@@ -3737,8 +5188,8 @@ function S3_StepContact({
     email: "you@example.ru",
     max: "@your_handle"
   }[channel];
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
-    /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsxs4(ModalShell, { width: 540, children: [
+    /* @__PURE__ */ jsx5(
       StepHeader,
       {
         step,
@@ -3747,10 +5198,10 @@ function S3_StepContact({
         sub: "\u041E\u0434\u0438\u043D \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u0432\u0430\u0441 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043E\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432."
       }
     ),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
-      /* @__PURE__ */ jsx4(FieldLabel, { children: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u0430\u043D\u0430\u043B" }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }, children: [
-        /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 20 }, children: [
+      /* @__PURE__ */ jsx5(FieldLabel, { children: "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u043A\u0430\u043D\u0430\u043B" }),
+      /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }, children: [
+        /* @__PURE__ */ jsx5(
           ChannelOption,
           {
             value: "telegram",
@@ -3761,7 +5212,7 @@ function S3_StepContact({
             onSelect: onChannelChange
           }
         ),
-        /* @__PURE__ */ jsx4(
+        /* @__PURE__ */ jsx5(
           ChannelOption,
           {
             value: "phone",
@@ -3772,7 +5223,7 @@ function S3_StepContact({
             onSelect: onChannelChange
           }
         ),
-        /* @__PURE__ */ jsx4(
+        /* @__PURE__ */ jsx5(
           ChannelOption,
           {
             value: "email",
@@ -3783,7 +5234,7 @@ function S3_StepContact({
             onSelect: onChannelChange
           }
         ),
-        /* @__PURE__ */ jsx4(
+        /* @__PURE__ */ jsx5(
           ChannelOption,
           {
             value: "max",
@@ -3796,40 +5247,40 @@ function S3_StepContact({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 18 }, children: [
-      /* @__PURE__ */ jsx4(FieldLabel, { children: channel === "phone" ? "\u0412\u0430\u0448 \u043D\u043E\u043C\u0435\u0440 \u0434\u043B\u044F SMS" : channel === "email" ? "\u0412\u0430\u0448 email" : channel === "max" ? "\u0412\u0430\u0448 MAX (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" }),
-      /* @__PURE__ */ jsx4(FieldInput, { value: contact, placeholder: ph, mono: true, onChange: onContactChange })
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 18 }, children: [
+      /* @__PURE__ */ jsx5(FieldLabel, { children: channel === "phone" ? "\u0412\u0430\u0448 \u043D\u043E\u043C\u0435\u0440 \u0434\u043B\u044F SMS" : channel === "email" ? "\u0412\u0430\u0448 email" : channel === "max" ? "\u0412\u0430\u0448 MAX (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" : "\u0412\u0430\u0448 Telegram (\u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440)" }),
+      /* @__PURE__ */ jsx5(FieldInput, { value: contact, placeholder: ph, mono: true, onChange: onContactChange })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsx5(
       Checkbox,
       {
         checked: consent,
         onChange: (v) => onConsentChange?.(v),
-        label: /* @__PURE__ */ jsx4(Fragment3, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0430\u0446\u0438\u044E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 \u0441\u043E\u0433\u043B\u0430\u0441\u043D\u043E" }),
+        label: /* @__PURE__ */ jsx5(Fragment3, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0430\u0446\u0438\u044E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u043E\u0432 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 \u0441\u043E\u0433\u043B\u0430\u0441\u043D\u043E" }),
         link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0435 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438"
       }
     ) }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 20 }, children: /* @__PURE__ */ jsx4(
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 20 }, children: /* @__PURE__ */ jsx5(
       Btn,
       {
         style: { flex: 1, opacity: contact && consent ? 1 : 0.55 },
-        iconRight: /* @__PURE__ */ jsx4(IconArrow, {}),
+        iconRight: /* @__PURE__ */ jsx5(IconArrow, {}),
         onClick: contact && consent ? onSubmit : void 0,
         children: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443"
       }
     ) }),
-    /* @__PURE__ */ jsx4(CaptchaNotice, {})
+    /* @__PURE__ */ jsx5(CaptchaNotice, {})
   ] });
 }
 function SummaryRow({ label, value }) {
-  return /* @__PURE__ */ jsxs3("div", { style: {
+  return /* @__PURE__ */ jsxs4("div", { style: {
     display: "flex",
     alignItems: "flex-start",
     gap: 12,
     padding: "10px 0",
     borderTop: `1px solid ${VT.line}`
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx5("div", { style: {
       flex: "0 0 130px",
       fontFamily: VT.font.mono,
       fontSize: 11,
@@ -3837,7 +5288,7 @@ function SummaryRow({ label, value }) {
       color: VT.inkFaint,
       paddingTop: 2
     }, children: label }),
-    /* @__PURE__ */ jsx4("div", { style: { flex: 1, fontSize: 14, color: VT.ink, lineHeight: 1.45, wordBreak: "break-word" }, children: value })
+    /* @__PURE__ */ jsx5("div", { style: { flex: 1, fontSize: 14, color: VT.ink, lineHeight: 1.45, wordBreak: "break-word" }, children: value })
   ] });
 }
 function pluralFiles(n) {
@@ -3848,17 +5299,17 @@ function pluralFiles(n) {
   return "\u0444\u0430\u0439\u043B\u043E\u0432";
 }
 function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
-  return /* @__PURE__ */ jsxs3(ModalShell, { width: 540, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }, children: [
-      /* @__PURE__ */ jsxs3(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
+  return /* @__PURE__ */ jsxs4(ModalShell, { width: 540, children: [
+    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }, children: [
+      /* @__PURE__ */ jsxs4(Mono, { style: { fontSize: 11, letterSpacing: "0.1em" }, children: [
         "\u0428\u0410\u0413 ",
         total,
         "/",
         total
       ] }),
-      /* @__PURE__ */ jsx4("div", { style: { display: "flex", gap: 4 }, children: Array.from({ length: total }).map((_, i) => /* @__PURE__ */ jsx4("span", { style: { width: 28, height: 4, borderRadius: 2, background: VT.accent } }, i)) })
+      /* @__PURE__ */ jsx5("div", { style: { display: "flex", gap: 4 }, children: Array.from({ length: total }).map((_, i) => /* @__PURE__ */ jsx5("span", { style: { width: 28, height: 4, borderRadius: 2, background: VT.accent } }, i)) })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx5("div", { style: {
       width: 56,
       height: 56,
       borderRadius: "50%",
@@ -3867,29 +5318,29 @@ function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
       display: "inline-flex",
       alignItems: "center",
       justifyContent: "center"
-    }, children: /* @__PURE__ */ jsx4("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12l4 4 10-10" }) }) }),
-    /* @__PURE__ */ jsx4("h2", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.03em", margin: "16px 0 8px", lineHeight: 1.15 }, children: "\u0413\u043E\u0442\u043E\u0432\u0438\u043C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442" }),
-    /* @__PURE__ */ jsxs3("p", { style: { fontSize: 15, lineHeight: 1.5, color: VT.inkSoft, margin: 0 }, children: [
+    }, children: /* @__PURE__ */ jsx5("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M5 12l4 4 10-10" }) }) }),
+    /* @__PURE__ */ jsx5("h2", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.03em", margin: "16px 0 8px", lineHeight: 1.15 }, children: "\u0413\u043E\u0442\u043E\u0432\u0438\u043C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442" }),
+    /* @__PURE__ */ jsxs4("p", { style: { fontSize: 15, lineHeight: 1.5, color: VT.inkSoft, margin: 0 }, children: [
       "\u0421\u0432\u044F\u0436\u0435\u043C\u0441\u044F \u0441 \u0432\u0430\u043C\u0438 \u0438 \u043F\u0440\u0438\u0448\u043B\u0451\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u0432 \u0442\u0435\u0447\u0435\u043D\u0438\u0435 ",
-      /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "2 \u0447\u0430\u0441\u043E\u0432" }),
+      /* @__PURE__ */ jsx5("b", { style: { color: VT.ink }, children: "2 \u0447\u0430\u0441\u043E\u0432" }),
       "."
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { marginTop: 20 }, children: [
-      mode === "link" && summary.url && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0421\u0421\u042B\u041B\u041A\u0410", value: /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.url }) }),
-      mode === "photo" && /* @__PURE__ */ jsxs3(Fragment3, { children: [
-        /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0424\u0410\u0419\u041B\u042B", value: `${summary.fileCount || 0} \u0444\u043E\u0442\u043E` }),
-        summary.description && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u041E\u041F\u0418\u0421\u0410\u041D\u0418\u0415", value: summary.description }),
-        summary.city && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0413\u041E\u0420\u041E\u0414", value: summary.city }),
-        summary.customerContact && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u041D\u0410 \u0421\u0410\u0419\u0422\u0415", value: /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.customerContact }) }),
-        summary.textFileCount > 0 && /* @__PURE__ */ jsx4(SummaryRow, { label: "\u0422\u0415\u041A\u0421\u0422\u042B", value: `${summary.textFileCount} ${pluralFiles(summary.textFileCount)}` })
+    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 20 }, children: [
+      mode === "link" && summary.url && /* @__PURE__ */ jsx5(SummaryRow, { label: "\u0421\u0421\u042B\u041B\u041A\u0410", value: /* @__PURE__ */ jsx5("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.url }) }),
+      mode === "photo" && /* @__PURE__ */ jsxs4(Fragment3, { children: [
+        /* @__PURE__ */ jsx5(SummaryRow, { label: "\u0424\u0410\u0419\u041B\u042B", value: `${summary.fileCount || 0} \u0444\u043E\u0442\u043E` }),
+        summary.description && /* @__PURE__ */ jsx5(SummaryRow, { label: "\u041E\u041F\u0418\u0421\u0410\u041D\u0418\u0415", value: summary.description }),
+        summary.city && /* @__PURE__ */ jsx5(SummaryRow, { label: "\u0413\u041E\u0420\u041E\u0414", value: summary.city }),
+        summary.customerContact && /* @__PURE__ */ jsx5(SummaryRow, { label: "\u041D\u0410 \u0421\u0410\u0419\u0422\u0415", value: /* @__PURE__ */ jsx5("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: summary.customerContact }) }),
+        summary.textFileCount > 0 && /* @__PURE__ */ jsx5(SummaryRow, { label: "\u0422\u0415\u041A\u0421\u0422\u042B", value: `${summary.textFileCount} ${pluralFiles(summary.textFileCount)}` })
       ] }),
-      /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsx5(
         SummaryRow,
         {
           label: "\u041D\u0410\u041F\u0418\u0428\u0415\u041C \u0412\u0410\u041C",
-          value: /* @__PURE__ */ jsxs3("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
+          value: /* @__PURE__ */ jsxs4("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
             summary.contact,
-            /* @__PURE__ */ jsxs3("span", { style: { color: VT.inkFaint }, children: [
+            /* @__PURE__ */ jsxs4("span", { style: { color: VT.inkFaint }, children: [
               " \xB7 ",
               {
                 telegram: "Telegram",
@@ -3902,7 +5353,7 @@ function S3_FinalConfirm({ mode = "link", total = 3, summary = {}, onClose }) {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: 24 }, children: /* @__PURE__ */ jsx4(Btn, { variant: "secondary", style: { width: "100%" }, onClick: onClose, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u041E\u043A, \u0436\u0434\u0443" }) })
+    /* @__PURE__ */ jsx5("div", { style: { marginTop: 24 }, children: /* @__PURE__ */ jsx5(Btn, { variant: "secondary", style: { width: "100%" }, onClick: onClose, iconRight: /* @__PURE__ */ jsx5(IconArrow, {}), children: "\u041E\u043A, \u0436\u0434\u0443" }) })
   ] });
 }
 function SubmitModal(props) {
@@ -3950,7 +5401,7 @@ function SubmitModal(props) {
   } = props;
   const total = mode === "photo" ? 4 : 3;
   if (step === 1 && mode === "link") {
-    return /* @__PURE__ */ jsx4(
+    return /* @__PURE__ */ jsx5(
       S3_Step1_Link,
       {
         url,
@@ -3965,7 +5416,7 @@ function SubmitModal(props) {
     );
   }
   if (step === 1 && mode === "photo") {
-    return /* @__PURE__ */ jsx4(
+    return /* @__PURE__ */ jsx5(
       S3_Step1_Photo,
       {
         files,
@@ -3978,7 +5429,7 @@ function SubmitModal(props) {
     );
   }
   if (step === 2 && mode === "photo") {
-    return /* @__PURE__ */ jsx4(
+    return /* @__PURE__ */ jsx5(
       S3_Step2_PhotoDesc,
       {
         description,
@@ -3998,7 +5449,7 @@ function SubmitModal(props) {
     );
   }
   if (step === 2 && mode === "link" || step === 3 && mode === "photo") {
-    return /* @__PURE__ */ jsx4(
+    return /* @__PURE__ */ jsx5(
       S3_StepContact,
       {
         step,
@@ -4025,9 +5476,9 @@ function SubmitModal(props) {
       channel,
       contact
     };
-    return /* @__PURE__ */ jsx4(S3_FinalConfirm, { mode, total, summary: s, onClose });
+    return /* @__PURE__ */ jsx5(S3_FinalConfirm, { mode, total, summary: s, onClose });
   }
-  return /* @__PURE__ */ jsx4(
+  return /* @__PURE__ */ jsx5(
     S3_Step1_Link,
     {
       url,
@@ -4040,12 +5491,12 @@ function SubmitModal(props) {
   );
 }
 function PhotoDrawer(props) {
-  return /* @__PURE__ */ jsx4(S3_Step1_Photo, { ...props, total: 4 });
+  return /* @__PURE__ */ jsx5(S3_Step1_Photo, { ...props, total: 4 });
 }
 var Confirmation = S3_FinalConfirm;
 
 // src/customer/index.tsx
-import { Fragment as Fragment4, jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
+import { Fragment as Fragment4, jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
 var SCHEMES = {
   cream: { bg: VT.bg, bgAlt: VT.bgSoft, ink: VT.ink, sub: VT.inkSoft, line: VT.line, accent: VT.accent, accentSoft: VT.accentSoft, white: VT.white, photoTone: "peach" },
   slate: { bg: "oklch(0.96 0.005 250)", bgAlt: "oklch(0.93 0.008 250)", ink: "oklch(0.20 0.012 250)", sub: "oklch(0.42 0.014 250)", line: "oklch(0.88 0.006 250)", accent: "oklch(0.55 0.13 250)", accentSoft: "oklch(0.93 0.04 250)", white: "#ffffff", photoTone: "slate" },
@@ -4060,7 +5511,7 @@ function CPhoto({ tone = "peach", src, children, style }) {
     rose: ["oklch(0.86 0.06 25)", "oklch(0.62 0.10 20)", "oklch(0.38 0.08 18)"]
   };
   const [c1, c2, c3] = tones[tone] || tones.peach;
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { style: {
     position: "relative",
     overflow: "hidden",
     background: src ? "#222" : `
@@ -4070,7 +5521,7 @@ function CPhoto({ tone = "peach", src, children, style }) {
       `,
     ...style
   }, children: [
-    src && /* @__PURE__ */ jsx5(
+    src && /* @__PURE__ */ jsx6(
       "img",
       {
         src,
@@ -4079,7 +5530,7 @@ function CPhoto({ tone = "peach", src, children, style }) {
         style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }
       }
     ),
-    !src && /* @__PURE__ */ jsx5("div", { "aria-hidden": "true", style: {
+    !src && /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
       position: "absolute",
       inset: 0,
       pointerEvents: "none",
@@ -4118,7 +5569,7 @@ function ReviewAvatar({ name, tone = "peach", size = 36 }) {
     butter: ["oklch(0.84 0.10 85)", "oklch(0.58 0.12 75)"]
   };
   const [c1, c2] = tones[tone] || tones.peach;
-  return /* @__PURE__ */ jsx5("span", { style: {
+  return /* @__PURE__ */ jsx6("span", { style: {
     width: size,
     height: size,
     borderRadius: "50%",
@@ -4134,7 +5585,7 @@ function ReviewAvatar({ name, tone = "peach", size = 36 }) {
   }, children: initial });
 }
 function CStar({ filled = true, size = 13 }) {
-  return /* @__PURE__ */ jsx5("svg", { width: size, height: size, viewBox: "0 0 20 20", fill: filled ? "#f4a93b" : "none", stroke: filled ? "#f4a93b" : "#ccc", strokeWidth: "1.5", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z" }) });
+  return /* @__PURE__ */ jsx6("svg", { width: size, height: size, viewBox: "0 0 20 20", fill: filled ? "#f4a93b" : "none", stroke: filled ? "#f4a93b" : "#ccc", strokeWidth: "1.5", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M10 1.5 L12.6 7 L18.5 7.8 L14.3 12 L15.3 18 L10 15.2 L4.7 18 L5.7 12 L1.5 7.8 L7.4 7 Z" }) });
 }
 var STUDIO = {
   name: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B",
@@ -4232,7 +5683,7 @@ function CustomerHeader({ s }) {
     ["\u041E \u043C\u0430\u0441\u0442\u0435\u0440\u0435", "#about"],
     ["\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B", "#contact"]
   ];
-  return /* @__PURE__ */ jsxs4("header", { style: {
+  return /* @__PURE__ */ jsxs5("header", { style: {
     position: "sticky",
     top: 0,
     zIndex: 5,
@@ -4244,8 +5695,8 @@ function CustomerHeader({ s }) {
     alignItems: "center",
     gap: 24
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx5("span", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 32,
         height: 32,
         flex: "0 0 auto",
@@ -4260,11 +5711,11 @@ function CustomerHeader({ s }) {
         letterSpacing: "-0.04em",
         lineHeight: 1
       }, children: STUDIO.logo.letter }),
-      /* @__PURE__ */ jsx5("div", { style: { fontWeight: 700, fontSize: 18, letterSpacing: "-0.02em", color: s.ink }, children: STUDIO.name })
+      /* @__PURE__ */ jsx6("div", { style: { fontWeight: 700, fontSize: 18, letterSpacing: "-0.02em", color: s.ink }, children: STUDIO.name })
     ] }),
-    /* @__PURE__ */ jsx5("nav", { style: { display: "flex", alignItems: "center", gap: 22, marginLeft: 12, fontSize: 14, color: s.sub }, children: links.map(([label, href]) => /* @__PURE__ */ jsx5("a", { href, style: { color: "inherit", textDecoration: "none" }, children: label }, label)) }),
-    /* @__PURE__ */ jsxs4("div", { style: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs4("a", { href: `tel:${STUDIO.phoneHref}`, style: {
+    /* @__PURE__ */ jsx6("nav", { style: { display: "flex", alignItems: "center", gap: 22, marginLeft: 12, fontSize: 14, color: s.sub }, children: links.map(([label, href]) => /* @__PURE__ */ jsx6("a", { href, style: { color: "inherit", textDecoration: "none" }, children: label }, label)) }),
+    /* @__PURE__ */ jsxs5("div", { style: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs5("a", { href: `tel:${STUDIO.phoneHref}`, style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -4274,10 +5725,10 @@ function CustomerHeader({ s }) {
         textDecoration: "none",
         fontWeight: 500
       }, children: [
-        /* @__PURE__ */ jsx5("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
+        /* @__PURE__ */ jsx6("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
         STUDIO.phone
       ] }),
-      /* @__PURE__ */ jsx5("a", { href: "#book", style: {
+      /* @__PURE__ */ jsx6("a", { href: "#book", style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -4293,7 +5744,7 @@ function CustomerHeader({ s }) {
   ] });
 }
 function CustomerHero({ s }) {
-  return /* @__PURE__ */ jsxs4("section", { style: {
+  return /* @__PURE__ */ jsxs5("section", { style: {
     padding: "48px 36px 40px",
     borderBottom: `1px solid ${s.line}`,
     display: "grid",
@@ -4301,13 +5752,13 @@ function CustomerHero({ s }) {
     gap: 36,
     alignItems: "center"
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { children: [
-      /* @__PURE__ */ jsxs4("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent }, children: [
+    /* @__PURE__ */ jsxs5("div", { children: [
+      /* @__PURE__ */ jsxs5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent }, children: [
         STUDIO.category.toUpperCase(),
         " \xB7 ",
         STUDIO.city.toUpperCase()
       ] }),
-      /* @__PURE__ */ jsx5("h1", { style: {
+      /* @__PURE__ */ jsx6("h1", { style: {
         fontSize: 52,
         fontWeight: 700,
         letterSpacing: "-0.035em",
@@ -4316,8 +5767,8 @@ function CustomerHero({ s }) {
         whiteSpace: "pre-line",
         textWrap: "balance"
       }, children: STUDIO.hero.title }),
-      /* @__PURE__ */ jsx5("p", { style: { fontSize: 17, lineHeight: 1.5, color: s.sub, maxWidth: 480, margin: 0, textWrap: "pretty" }, children: STUDIO.hero.sub }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsx6("p", { style: { fontSize: 17, lineHeight: 1.5, color: s.sub, maxWidth: 480, margin: 0, textWrap: "pretty" }, children: STUDIO.hero.sub }),
+      /* @__PURE__ */ jsxs5("div", { style: {
         marginTop: 24,
         display: "inline-flex",
         alignItems: "center",
@@ -4327,16 +5778,16 @@ function CustomerHero({ s }) {
         border: `1px solid ${s.line}`,
         borderRadius: 999
       }, children: [
-        /* @__PURE__ */ jsx5("span", { style: { display: "inline-flex", gap: 1 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx5(CStar, { filled: true, size: 14 }, i)) }),
-        /* @__PURE__ */ jsx5("span", { style: { fontWeight: 700, color: s.ink, fontSize: 14 }, children: STUDIO.trust.rating }),
-        /* @__PURE__ */ jsxs4("span", { style: { color: s.sub, fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: { display: "inline-flex", gap: 1 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx6(CStar, { filled: true, size: 14 }, i)) }),
+        /* @__PURE__ */ jsx6("span", { style: { fontWeight: 700, color: s.ink, fontSize: 14 }, children: STUDIO.trust.rating }),
+        /* @__PURE__ */ jsxs5("span", { style: { color: s.sub, fontSize: 13 }, children: [
           "\xB7 ",
           STUDIO.trust.reviews,
           " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u0430\u0445"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ jsxs4("a", { href: "#book", style: {
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 12, marginTop: 22, flexWrap: "wrap" }, children: [
+        /* @__PURE__ */ jsxs5("a", { href: "#book", style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
@@ -4350,9 +5801,9 @@ function CustomerHero({ s }) {
           boxShadow: "0 10px 24px -12px rgba(0,0,0,0.25)"
         }, children: [
           "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F ",
-          /* @__PURE__ */ jsx5(IconArrow, { size: 16 })
+          /* @__PURE__ */ jsx6(IconArrow, { size: 16 })
         ] }),
-        /* @__PURE__ */ jsxs4("a", { href: `tel:${STUDIO.phoneHref}`, style: {
+        /* @__PURE__ */ jsxs5("a", { href: `tel:${STUDIO.phoneHref}`, style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
@@ -4365,20 +5816,20 @@ function CustomerHero({ s }) {
           border: `1px solid ${s.line}`,
           textDecoration: "none"
         }, children: [
-          /* @__PURE__ */ jsx5("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
+          /* @__PURE__ */ jsx6("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
           STUDIO.phone
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs4(CPhoto, { tone: s.photoTone, src: STUDIO_PHOTOS.hero, style: { aspectRatio: "4 / 5", borderRadius: 16, border: `1px solid ${s.line}` }, children: [
-      /* @__PURE__ */ jsx5("div", { "aria-hidden": "true", style: {
+    /* @__PURE__ */ jsxs5(CPhoto, { tone: s.photoTone, src: STUDIO_PHOTOS.hero, style: { aspectRatio: "4 / 5", borderRadius: 16, border: `1px solid ${s.line}` }, children: [
+      /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
         position: "absolute",
         inset: 0,
         background: "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%)"
       } }),
-      /* @__PURE__ */ jsxs4("div", { style: { position: "absolute", left: 20, bottom: 18, right: 20, color: "#fff" }, children: [
-        /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", opacity: 0.9 }, children: "\u0421\u0422\u0423\u0414\u0418\u042F \u0412 \u0426\u0415\u041D\u0422\u0420\u0415 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A\u0410" }),
-        /* @__PURE__ */ jsx5("div", { style: { fontWeight: 600, fontSize: 15, marginTop: 4 }, children: STUDIO.address })
+      /* @__PURE__ */ jsxs5("div", { style: { position: "absolute", left: 20, bottom: 18, right: 20, color: "#fff" }, children: [
+        /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", opacity: 0.9 }, children: "\u0421\u0422\u0423\u0414\u0418\u042F \u0412 \u0426\u0415\u041D\u0422\u0420\u0415 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A\u0410" }),
+        /* @__PURE__ */ jsx6("div", { style: { fontWeight: 600, fontSize: 15, marginTop: 4 }, children: STUDIO.address })
       ] })
     ] })
   ] });
@@ -4389,7 +5840,7 @@ function CustomerSocialBar({ s }) {
     { logo: "2\u0413", name: "2GIS", stars: "5.0", count: "12 \u043E\u0442\u0437\u044B\u0432\u043E\u0432" },
     { logo: "TG", name: "Telegram", stars: "\u2605\u2605\u2605\u2605\u2605", count: "420 \u043F\u043E\u0434\u043F\u0438\u0441\u0447\u0438\u043A\u043E\u0432" }
   ];
-  return /* @__PURE__ */ jsxs4("section", { style: {
+  return /* @__PURE__ */ jsxs5("section", { style: {
     padding: "20px 36px",
     background: s.bgAlt,
     borderBottom: `1px solid ${s.line}`,
@@ -4398,7 +5849,7 @@ function CustomerSocialBar({ s }) {
     gap: 28,
     flexWrap: "wrap"
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: {
       display: "flex",
       alignItems: "baseline",
       gap: 8,
@@ -4408,14 +5859,14 @@ function CustomerSocialBar({ s }) {
       color: s.sub
     }, children: [
       "\u041D\u0410\u0421 \u0412\u042B\u0411\u0420\u0410\u041B\u0418",
-      /* @__PURE__ */ jsx5("span", { style: { fontFamily: VT.font.sans, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", color: s.ink }, children: STUDIO.trust.clients }),
-      /* @__PURE__ */ jsxs4("span", { children: [
+      /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.sans, fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em", color: s.ink }, children: STUDIO.trust.clients }),
+      /* @__PURE__ */ jsxs5("span", { children: [
         "\u0427\u0415\u041B\u041E\u0412\u0415\u041A \u0417\u0410 ",
         STUDIO.trust.years.toUpperCase()
       ] })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 18, marginLeft: "auto", flexWrap: "wrap" }, children: badges.map((b) => /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx5("span", { style: {
+    /* @__PURE__ */ jsx6("div", { style: { display: "flex", alignItems: "center", gap: 18, marginLeft: "auto", flexWrap: "wrap" }, children: badges.map((b) => /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 30,
         height: 30,
         borderRadius: 8,
@@ -4429,35 +5880,35 @@ function CustomerSocialBar({ s }) {
         fontWeight: 700,
         color: s.ink
       }, children: b.logo }),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: "column", gap: 1 }, children: [
-        /* @__PURE__ */ jsxs4("div", { style: { fontSize: 13, fontWeight: 600, color: s.ink, display: "flex", alignItems: "center", gap: 6 }, children: [
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 1 }, children: [
+        /* @__PURE__ */ jsxs5("div", { style: { fontSize: 13, fontWeight: 600, color: s.ink, display: "flex", alignItems: "center", gap: 6 }, children: [
           b.stars,
           " ",
-          /* @__PURE__ */ jsx5("span", { style: { color: "#f4a93b" }, children: "\u2605" }),
-          /* @__PURE__ */ jsxs4("span", { style: { color: s.sub, fontWeight: 400 }, children: [
+          /* @__PURE__ */ jsx6("span", { style: { color: "#f4a93b" }, children: "\u2605" }),
+          /* @__PURE__ */ jsxs5("span", { style: { color: s.sub, fontWeight: 400 }, children: [
             "\xB7 ",
             b.name
           ] })
         ] }),
-        /* @__PURE__ */ jsx5("div", { style: { fontSize: 11.5, color: s.sub, fontFamily: VT.font.mono }, children: b.count })
+        /* @__PURE__ */ jsx6("div", { style: { fontSize: 11.5, color: s.sub, fontFamily: VT.font.mono }, children: b.count })
       ] })
     ] }, b.name)) })
   ] });
 }
 function CustomerServices({ s }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "services", style: { padding: "52px 36px 40px", scrollMarginTop: 80 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 22, flexWrap: "wrap", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs4("div", { children: [
-        /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0423\u0421\u041B\u0423\u0413\u0418 \u0418 \u0426\u0415\u041D\u042B" }),
-        /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u044F \u0434\u0435\u043B\u0430\u044E" })
+  return /* @__PURE__ */ jsxs5("section", { id: "services", style: { padding: "52px 36px 40px", scrollMarginTop: 80 }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 22, flexWrap: "wrap", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0423\u0421\u041B\u0423\u0413\u0418 \u0418 \u0426\u0415\u041D\u042B" }),
+        /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u044F \u0434\u0435\u043B\u0430\u044E" })
       ] }),
-      /* @__PURE__ */ jsx5(Mono, { style: { fontSize: 11.5, color: s.sub }, children: "\u0446\u0435\u043D\u044B \u0430\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u044B \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B 12 \u043C\u0430\u044F 2026" })
+      /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 11.5, color: s.sub }, children: "\u0446\u0435\u043D\u044B \u0430\u043A\u0442\u0443\u0430\u043B\u044C\u043D\u044B \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u044B 12 \u043C\u0430\u044F 2026" })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(2, 1fr)",
       gap: 14
-    }, children: STUDIO.services.map((sv, i) => /* @__PURE__ */ jsxs4("article", { style: {
+    }, children: STUDIO.services.map((sv, i) => /* @__PURE__ */ jsxs5("article", { style: {
       background: s.white,
       border: `1px solid ${s.line}`,
       borderRadius: 16,
@@ -4467,16 +5918,16 @@ function CustomerServices({ s }) {
       gap: 12,
       gridColumn: i === 0 && STUDIO.services.length % 2 === 1 ? "1 / -1" : "auto"
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 }, children: [
-        /* @__PURE__ */ jsx5("h3", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", margin: 0, color: s.ink, lineHeight: 1.2 }, children: sv.name }),
-        /* @__PURE__ */ jsxs4("div", { style: { textAlign: "right", flex: "0 0 auto" }, children: [
-          /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 18, fontWeight: 700, color: s.ink, letterSpacing: "-0.01em" }, children: sv.price }),
-          sv.priceHint && /* @__PURE__ */ jsx5("div", { style: { fontSize: 11.5, color: s.sub, fontFamily: VT.font.mono }, children: sv.priceHint })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 }, children: [
+        /* @__PURE__ */ jsx6("h3", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", margin: 0, color: s.ink, lineHeight: 1.2 }, children: sv.name }),
+        /* @__PURE__ */ jsxs5("div", { style: { textAlign: "right", flex: "0 0 auto" }, children: [
+          /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 18, fontWeight: 700, color: s.ink, letterSpacing: "-0.01em" }, children: sv.price }),
+          sv.priceHint && /* @__PURE__ */ jsx6("div", { style: { fontSize: 11.5, color: s.sub, fontFamily: VT.font.mono }, children: sv.priceHint })
         ] })
       ] }),
-      /* @__PURE__ */ jsx5("p", { style: { fontSize: 14, color: s.sub, lineHeight: 1.5, margin: 0, flex: 1 }, children: sv.desc }),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }, children: [
-        sv.dur && /* @__PURE__ */ jsxs4("span", { style: {
+      /* @__PURE__ */ jsx6("p", { style: { fontSize: 14, color: s.sub, lineHeight: 1.5, margin: 0, flex: 1 }, children: sv.desc }),
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }, children: [
+        sv.dur && /* @__PURE__ */ jsxs5("span", { style: {
           fontFamily: VT.font.mono,
           fontSize: 12,
           color: s.sub,
@@ -4484,13 +5935,13 @@ function CustomerServices({ s }) {
           alignItems: "center",
           gap: 5
         }, children: [
-          /* @__PURE__ */ jsxs4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx5("circle", { cx: "12", cy: "12", r: "9" }),
-            /* @__PURE__ */ jsx5("path", { d: "M12 7v5l3 2" })
+          /* @__PURE__ */ jsxs5("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+            /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "9" }),
+            /* @__PURE__ */ jsx6("path", { d: "M12 7v5l3 2" })
           ] }),
           sv.dur
         ] }),
-        /* @__PURE__ */ jsxs4("a", { href: "#book", style: {
+        /* @__PURE__ */ jsxs5("a", { href: "#book", style: {
           marginLeft: "auto",
           display: "inline-flex",
           alignItems: "center",
@@ -4504,7 +5955,7 @@ function CustomerServices({ s }) {
           background: s.accentSoft
         }, children: [
           "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F ",
-          /* @__PURE__ */ jsx5(IconArrow, { size: 14 })
+          /* @__PURE__ */ jsx6(IconArrow, { size: 14 })
         ] })
       ] })
     ] }, sv.name)) })
@@ -4513,27 +5964,27 @@ function CustomerServices({ s }) {
 function ProcessIcon({ kind, color, soft }) {
   const sz = 26;
   const svg = {
-    calendar: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx5("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2" }),
-      /* @__PURE__ */ jsx5("path", { d: "M8 3v4M16 3v4M3 10h18" })
+    calendar: /* @__PURE__ */ jsxs5("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("rect", { x: "3", y: "5", width: "18", height: "16", rx: "2" }),
+      /* @__PURE__ */ jsx6("path", { d: "M8 3v4M16 3v4M3 10h18" })
     ] }),
-    pin: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx5("path", { d: "M12 2 C 7 2, 4 6, 4 10 C 4 16, 12 22, 12 22 C 12 22, 20 16, 20 10 C 20 6, 17 2, 12 2 Z" }),
-      /* @__PURE__ */ jsx5("circle", { cx: "12", cy: "10", r: "3" })
+    pin: /* @__PURE__ */ jsxs5("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 2 C 7 2, 4 6, 4 10 C 4 16, 12 22, 12 22 C 12 22, 20 16, 20 10 C 20 6, 17 2, 12 2 Z" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "10", r: "3" })
     ] }),
-    coffee: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx5("path", { d: "M4 8h13v5a5 5 0 0 1-5 5H9 a5 5 0 0 1-5-5z" }),
-      /* @__PURE__ */ jsx5("path", { d: "M17 9 h2 a3 3 0 0 1 0 6 h-2" }),
-      /* @__PURE__ */ jsx5("path", { d: "M7 4 c 0 1 1 1 1 2 s -1 1 -1 2" }),
-      /* @__PURE__ */ jsx5("path", { d: "M11 4 c 0 1 1 1 1 2 s -1 1 -1 2" })
+    coffee: /* @__PURE__ */ jsxs5("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M4 8h13v5a5 5 0 0 1-5 5H9 a5 5 0 0 1-5-5z" }),
+      /* @__PURE__ */ jsx6("path", { d: "M17 9 h2 a3 3 0 0 1 0 6 h-2" }),
+      /* @__PURE__ */ jsx6("path", { d: "M7 4 c 0 1 1 1 1 2 s -1 1 -1 2" }),
+      /* @__PURE__ */ jsx6("path", { d: "M11 4 c 0 1 1 1 1 2 s -1 1 -1 2" })
     ] }),
-    sparkles: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "currentColor", children: [
-      /* @__PURE__ */ jsx5("path", { d: "M12 3 L13.4 8.2 L18.6 9 L13.4 9.8 L12 15 L10.6 9.8 L5.4 9 L10.6 8.2 Z" }),
-      /* @__PURE__ */ jsx5("circle", { cx: "19", cy: "18", r: "1.6" }),
-      /* @__PURE__ */ jsx5("circle", { cx: "6", cy: "19", r: "1.2" })
+    sparkles: /* @__PURE__ */ jsxs5("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "currentColor", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 3 L13.4 8.2 L18.6 9 L13.4 9.8 L12 15 L10.6 9.8 L5.4 9 L10.6 8.2 Z" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "19", cy: "18", r: "1.6" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "6", cy: "19", r: "1.2" })
     ] })
   }[kind];
-  return /* @__PURE__ */ jsx5("div", { style: {
+  return /* @__PURE__ */ jsx6("div", { style: {
     width: 52,
     height: 52,
     borderRadius: 14,
@@ -4547,22 +5998,22 @@ function ProcessIcon({ kind, color, soft }) {
 }
 function CustomerProcess({ s }) {
   const icons = ["calendar", "pin", "coffee", "sparkles"];
-  return /* @__PURE__ */ jsxs4("section", { style: { padding: "40px 36px", background: s.bgAlt, borderTop: `1px solid ${s.line}`, borderBottom: `1px solid ${s.line}` }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
-      /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041A\u0410\u041A \u0411\u0423\u0414\u0415\u0422" }),
-      /* @__PURE__ */ jsxs4("h2", { style: { fontSize: 32, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: [
+  return /* @__PURE__ */ jsxs5("section", { style: { padding: "40px 36px", background: s.bgAlt, borderTop: `1px solid ${s.line}`, borderBottom: `1px solid ${s.line}` }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
+      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041A\u0410\u041A \u0411\u0423\u0414\u0415\u0422" }),
+      /* @__PURE__ */ jsxs5("h2", { style: { fontSize: 32, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: [
         "\u041E\u0442 \u0437\u0430\u043F\u0438\u0441\u0438 \u0434\u043E\xA0\u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u0430 \u2014",
-        /* @__PURE__ */ jsx5("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0447\u0435\u0442\u044B\u0440\u0435 \u0448\u0430\u0433\u0430"
       ] })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(4, 1fr)",
       gap: 16,
       position: "relative"
-    }, children: STUDIO.process.map((p, i) => /* @__PURE__ */ jsxs4("div", { style: { position: "relative" }, children: [
-      i < STUDIO.process.length - 1 && /* @__PURE__ */ jsx5("div", { "aria-hidden": "true", style: {
+    }, children: STUDIO.process.map((p, i) => /* @__PURE__ */ jsxs5("div", { style: { position: "relative" }, children: [
+      i < STUDIO.process.length - 1 && /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
         position: "absolute",
         top: 26,
         right: -16,
@@ -4570,8 +6021,8 @@ function CustomerProcess({ s }) {
         height: 2,
         background: `repeating-linear-gradient(to right, ${s.line} 0 4px, transparent 4px 8px)`
       } }),
-      /* @__PURE__ */ jsx5(ProcessIcon, { kind: icons[i], color: s.accent, soft: s.accentSoft }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsx6(ProcessIcon, { kind: icons[i], color: s.accent, soft: s.accentSoft }),
+      /* @__PURE__ */ jsxs5("div", { style: {
         marginTop: 14,
         fontFamily: VT.font.mono,
         fontSize: 11.5,
@@ -4582,8 +6033,8 @@ function CustomerProcess({ s }) {
         "\u0428\u0410\u0413 ",
         i + 1
       ] }),
-      /* @__PURE__ */ jsx5("h3", { style: { fontSize: 17, fontWeight: 700, letterSpacing: "-0.02em", margin: "4px 0 6px", color: s.ink }, children: p.title }),
-      /* @__PURE__ */ jsx5("p", { style: { fontSize: 13.5, color: s.sub, lineHeight: 1.5, margin: 0 }, children: p.body })
+      /* @__PURE__ */ jsx6("h3", { style: { fontSize: 17, fontWeight: 700, letterSpacing: "-0.02em", margin: "4px 0 6px", color: s.ink }, children: p.title }),
+      /* @__PURE__ */ jsx6("p", { style: { fontSize: 13.5, color: s.sub, lineHeight: 1.5, margin: 0 }, children: p.body })
     ] }, p.title)) })
   ] });
 }
@@ -4600,20 +6051,20 @@ function CustomerGallery({ s }) {
     { tone: "rose", span: "s", src: STUDIO_PHOTOS.gallery[8] },
     { tone: s.photoTone, span: "s", src: STUDIO_PHOTOS.gallery[9] }
   ];
-  return /* @__PURE__ */ jsxs4("section", { style: { padding: "52px 36px 40px" }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 18, flexWrap: "wrap", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs4("div", { children: [
-        /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041F\u041E\u0420\u0422\u0424\u041E\u041B\u0418\u041E" }),
-        /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0420\u0430\u0431\u043E\u0442\u044B" })
+  return /* @__PURE__ */ jsxs5("section", { style: { padding: "52px 36px 40px" }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 18, flexWrap: "wrap", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041F\u041E\u0420\u0422\u0424\u041E\u041B\u0418\u041E" }),
+        /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0420\u0430\u0431\u043E\u0442\u044B" })
       ] }),
-      /* @__PURE__ */ jsx5(Mono, { style: { fontSize: 11.5, color: s.sub }, children: "\u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0438\u0437\xA0\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u0435\u0436\u0435\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u043E" })
+      /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 11.5, color: s.sub }, children: "\u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0438\u0437\xA0\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 \u0435\u0436\u0435\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u043E" })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(4, 1fr)",
       gridAutoRows: "170px",
       gap: 10
-    }, children: tiles.map((t, i) => /* @__PURE__ */ jsx5(CPhoto, { tone: t.tone, src: t.src, style: {
+    }, children: tiles.map((t, i) => /* @__PURE__ */ jsx6(CPhoto, { tone: t.tone, src: t.src, style: {
       gridColumn: t.span === "l" ? "span 2" : "span 1",
       gridRow: t.span === "l" ? "span 2" : "span 1",
       borderRadius: 12,
@@ -4622,22 +6073,22 @@ function CustomerGallery({ s }) {
   ] });
 }
 function CustomerReviews({ s }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "reviews", style: { padding: "52px 36px 40px", background: s.bgAlt, borderTop: `1px solid ${s.line}`, scrollMarginTop: 80 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs4("div", { children: [
-        /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041E\u0422\u0417\u042B\u0412\u042B" }),
-        /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 8px", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u0433\u043E\u0432\u043E\u0440\u044F\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u044B" }),
-        /* @__PURE__ */ jsxs4("div", { style: { fontSize: 14, color: s.sub, display: "flex", alignItems: "center", gap: 8 }, children: [
-          /* @__PURE__ */ jsx5("span", { style: { display: "inline-flex", gap: 1 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx5(CStar, { filled: true, size: 14 }, i)) }),
-          /* @__PURE__ */ jsx5("span", { style: { fontWeight: 600, color: s.ink }, children: "4.9 \u0438\u0437 5" }),
-          /* @__PURE__ */ jsxs4("span", { children: [
+  return /* @__PURE__ */ jsxs5("section", { id: "reviews", style: { padding: "52px 36px 40px", background: s.bgAlt, borderTop: `1px solid ${s.line}`, scrollMarginTop: 80 }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041E\u0422\u0417\u042B\u0412\u042B" }),
+        /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 8px", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u0433\u043E\u0432\u043E\u0440\u044F\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u044B" }),
+        /* @__PURE__ */ jsxs5("div", { style: { fontSize: 14, color: s.sub, display: "flex", alignItems: "center", gap: 8 }, children: [
+          /* @__PURE__ */ jsx6("span", { style: { display: "inline-flex", gap: 1 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx6(CStar, { filled: true, size: 14 }, i)) }),
+          /* @__PURE__ */ jsx6("span", { style: { fontWeight: 600, color: s.ink }, children: "4.9 \u0438\u0437 5" }),
+          /* @__PURE__ */ jsxs5("span", { children: [
             "\xB7 ",
             STUDIO.trust.reviews,
             " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u0430\u0445"
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs5("div", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -4650,11 +6101,11 @@ function CustomerReviews({ s }) {
         letterSpacing: "0.1em",
         color: s.sub
       }, children: [
-        /* @__PURE__ */ jsx5("span", { style: { color: s.accent }, children: "\u2605" }),
-        /* @__PURE__ */ jsx5("span", { children: "\u041B\u0423\u0427\u0428\u0418\u0415 \u2014 \u0412\u042B\u0411\u0420\u0410\u041B \u0418\u0418 \xB7 \u041E\u0411\u041D\u041E\u0412\u041B\u042F\u0415\u0422\u0421\u042F \u0415\u0416\u0415\u041D\u0415\u0414\u0415\u041B\u042C\u041D\u041E" })
+        /* @__PURE__ */ jsx6("span", { style: { color: s.accent }, children: "\u2605" }),
+        /* @__PURE__ */ jsx6("span", { children: "\u041B\u0423\u0427\u0428\u0418\u0415 \u2014 \u0412\u042B\u0411\u0420\u0410\u041B \u0418\u0418 \xB7 \u041E\u0411\u041D\u041E\u0412\u041B\u042F\u0415\u0422\u0421\u042F \u0415\u0416\u0415\u041D\u0415\u0414\u0415\u041B\u042C\u041D\u041E" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }, children: STUDIO.reviews.map((r, i) => /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }, children: STUDIO.reviews.map((r, i) => /* @__PURE__ */ jsxs5("div", { style: {
       background: s.white,
       border: `1px solid ${s.line}`,
       borderRadius: 14,
@@ -4664,7 +6115,7 @@ function CustomerReviews({ s }) {
       flexDirection: "column",
       gap: 12
     }, children: [
-      r.curated && /* @__PURE__ */ jsx5("span", { style: {
+      r.curated && /* @__PURE__ */ jsx6("span", { style: {
         position: "absolute",
         top: 14,
         right: 14,
@@ -4677,21 +6128,21 @@ function CustomerReviews({ s }) {
         borderRadius: 4,
         fontWeight: 700
       }, children: "\u2605 \u041B\u0423\u0427\u0428\u0418\u0419" }),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-        /* @__PURE__ */ jsx5(ReviewAvatar, { name: r.author, tone: r.tone, size: 36 }),
-        /* @__PURE__ */ jsxs4("div", { children: [
-          /* @__PURE__ */ jsx5("div", { style: { fontWeight: 600, fontSize: 14, color: s.ink, lineHeight: 1.1 }, children: r.author }),
-          /* @__PURE__ */ jsx5("div", { style: { fontSize: 12, color: s.sub, fontFamily: VT.font.mono, marginTop: 2 }, children: r.date })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+        /* @__PURE__ */ jsx6(ReviewAvatar, { name: r.author, tone: r.tone, size: 36 }),
+        /* @__PURE__ */ jsxs5("div", { children: [
+          /* @__PURE__ */ jsx6("div", { style: { fontWeight: 600, fontSize: 14, color: s.ink, lineHeight: 1.1 }, children: r.author }),
+          /* @__PURE__ */ jsx6("div", { style: { fontSize: 12, color: s.sub, fontFamily: VT.font.mono, marginTop: 2 }, children: r.date })
         ] })
       ] }),
-      /* @__PURE__ */ jsx5("div", { style: { display: "flex", gap: 2 }, children: Array.from({ length: 5 }).map((_, j) => /* @__PURE__ */ jsx5(CStar, { filled: j < r.stars, size: 13 }, j)) }),
-      /* @__PURE__ */ jsxs4("p", { style: { fontSize: 14, lineHeight: 1.55, color: s.ink, margin: 0, textWrap: "pretty" }, children: [
+      /* @__PURE__ */ jsx6("div", { style: { display: "flex", gap: 2 }, children: Array.from({ length: 5 }).map((_, j) => /* @__PURE__ */ jsx6(CStar, { filled: j < r.stars, size: 13 }, j)) }),
+      /* @__PURE__ */ jsxs5("p", { style: { fontSize: 14, lineHeight: 1.55, color: s.ink, margin: 0, textWrap: "pretty" }, children: [
         "\xAB",
         r.text,
         "\xBB"
       ] })
     ] }, i)) }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: {
       marginTop: 28,
       textAlign: "center",
       display: "flex",
@@ -4699,7 +6150,7 @@ function CustomerReviews({ s }) {
       alignItems: "center",
       gap: 10
     }, children: [
-      /* @__PURE__ */ jsxs4("a", { href: "#book", style: {
+      /* @__PURE__ */ jsxs5("a", { href: "#book", style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -4712,14 +6163,14 @@ function CustomerReviews({ s }) {
         textDecoration: "none"
       }, children: [
         "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A\xA0\u0410\u043D\u043D\u0435 ",
-        /* @__PURE__ */ jsx5(IconArrow, { size: 16 })
+        /* @__PURE__ */ jsx6(IconArrow, { size: 16 })
       ] }),
-      /* @__PURE__ */ jsx5(Mono, { style: { fontSize: 12, color: s.sub }, children: "\u0431\u043B\u0438\u0436\u0430\u0439\u0448\u0435\u0435 \u043E\u043A\u043D\u043E \u2014 \u0447\u0435\u0442\u0432\u0435\u0440\u0433 14:00" })
+      /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 12, color: s.sub }, children: "\u0431\u043B\u0438\u0436\u0430\u0439\u0448\u0435\u0435 \u043E\u043A\u043D\u043E \u2014 \u0447\u0435\u0442\u0432\u0435\u0440\u0433 14:00" })
     ] })
   ] });
 }
 function CustomerAbout({ s }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "about", style: {
+  return /* @__PURE__ */ jsxs5("section", { id: "about", style: {
     padding: "52px 36px",
     display: "grid",
     gridTemplateColumns: "0.8fr 1.2fr",
@@ -4727,29 +6178,29 @@ function CustomerAbout({ s }) {
     alignItems: "flex-start",
     scrollMarginTop: 80
   }, children: [
-    /* @__PURE__ */ jsx5("div", { children: /* @__PURE__ */ jsx5(CPhoto, { tone: "rose", src: STUDIO_PHOTOS.master, style: { aspectRatio: "4 / 5", borderRadius: 16, border: `1px solid ${s.line}` } }) }),
-    /* @__PURE__ */ jsxs4("div", { children: [
-      /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041E \u041C\u0410\u0421\u0422\u0415\u0420\u0415" }),
-      /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 4px", lineHeight: 1.1 }, children: STUDIO.about.masterName }),
-      /* @__PURE__ */ jsx5("div", { style: { fontSize: 15, color: s.sub, marginBottom: 16 }, children: STUDIO.about.role }),
-      /* @__PURE__ */ jsx5("p", { style: { fontSize: 15.5, lineHeight: 1.6, color: s.ink, margin: "0 0 22px", maxWidth: 560, textWrap: "pretty" }, children: STUDIO.about.bio }),
-      /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { children: /* @__PURE__ */ jsx6(CPhoto, { tone: "rose", src: STUDIO_PHOTOS.master, style: { aspectRatio: "4 / 5", borderRadius: 16, border: `1px solid ${s.line}` } }) }),
+    /* @__PURE__ */ jsxs5("div", { children: [
+      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u041E \u041C\u0410\u0421\u0422\u0415\u0420\u0415" }),
+      /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 4px", lineHeight: 1.1 }, children: STUDIO.about.masterName }),
+      /* @__PURE__ */ jsx6("div", { style: { fontSize: 15, color: s.sub, marginBottom: 16 }, children: STUDIO.about.role }),
+      /* @__PURE__ */ jsx6("p", { style: { fontSize: 15.5, lineHeight: 1.6, color: s.ink, margin: "0 0 22px", maxWidth: 560, textWrap: "pretty" }, children: STUDIO.about.bio }),
+      /* @__PURE__ */ jsx6("div", { style: {
         display: "grid",
         gridTemplateColumns: "repeat(2, 1fr)",
         gap: 10,
         marginBottom: 24
-      }, children: STUDIO.about.creds.map(([title, body]) => /* @__PURE__ */ jsxs4("div", { style: {
+      }, children: STUDIO.about.creds.map(([title, body]) => /* @__PURE__ */ jsxs5("div", { style: {
         background: s.bgAlt,
         border: `1px solid ${s.line}`,
         borderRadius: 12,
         padding: "12px 14px"
       }, children: [
-        /* @__PURE__ */ jsx5("div", { style: { fontSize: 13.5, fontWeight: 600, color: s.ink, letterSpacing: "-0.01em" }, children: title }),
-        /* @__PURE__ */ jsx5("div", { style: { fontSize: 12, color: s.sub, marginTop: 2 }, children: body })
+        /* @__PURE__ */ jsx6("div", { style: { fontSize: 13.5, fontWeight: 600, color: s.ink, letterSpacing: "-0.01em" }, children: title }),
+        /* @__PURE__ */ jsx6("div", { style: { fontSize: 12, color: s.sub, marginTop: 2 }, children: body })
       ] }, title)) }),
-      /* @__PURE__ */ jsx5("h3", { style: { fontSize: 17, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 10px" }, children: "\u0427\u0442\u043E \u0432\u0445\u043E\u0434\u0438\u0442" }),
-      /* @__PURE__ */ jsx5("ul", { style: { listStyle: "none", padding: 0, margin: 0, fontSize: 14.5, color: s.ink, display: "flex", flexDirection: "column", gap: 8 }, children: STUDIO.guarantees.map((item) => /* @__PURE__ */ jsxs4("li", { style: { display: "flex", gap: 10, alignItems: "flex-start", lineHeight: 1.5 }, children: [
-        /* @__PURE__ */ jsx5("span", { style: {
+      /* @__PURE__ */ jsx6("h3", { style: { fontSize: 17, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 10px" }, children: "\u0427\u0442\u043E \u0432\u0445\u043E\u0434\u0438\u0442" }),
+      /* @__PURE__ */ jsx6("ul", { style: { listStyle: "none", padding: 0, margin: 0, fontSize: 14.5, color: s.ink, display: "flex", flexDirection: "column", gap: 8 }, children: STUDIO.guarantees.map((item) => /* @__PURE__ */ jsxs5("li", { style: { display: "flex", gap: 10, alignItems: "flex-start", lineHeight: 1.5 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: {
           flex: "0 0 auto",
           width: 20,
           height: 20,
@@ -4760,31 +6211,31 @@ function CustomerAbout({ s }) {
           alignItems: "center",
           justifyContent: "center",
           marginTop: 1
-        }, children: /* @__PURE__ */ jsx5("svg", { width: "11", height: "11", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M5 12 l4 4 10 -10" }) }) }),
+        }, children: /* @__PURE__ */ jsx6("svg", { width: "11", height: "11", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M5 12 l4 4 10 -10" }) }) }),
         item
       ] }, item)) })
     ] })
   ] });
 }
 function CustomerFaq({ s }) {
-  return /* @__PURE__ */ jsxs4("section", { style: { padding: "52px 36px 40px", background: s.bgAlt, borderTop: `1px solid ${s.line}` }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
-      /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0427\u0410\u0421\u0422\u042B\u0415 \u0412\u041E\u041F\u0420\u041E\u0421\u042B" }),
-      /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0441\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u044E\u0442" })
+  return /* @__PURE__ */ jsxs5("section", { style: { padding: "52px 36px 40px", background: s.bgAlt, borderTop: `1px solid ${s.line}` }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
+      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0427\u0410\u0421\u0422\u042B\u0415 \u0412\u041E\u041F\u0420\u041E\u0421\u042B" }),
+      /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 0", lineHeight: 1.1 }, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0441\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u044E\u0442" })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       maxWidth: 760,
       margin: "0 auto",
       display: "flex",
       flexDirection: "column",
       gap: 8
-    }, children: STUDIO.faq.map(([q, a], i) => /* @__PURE__ */ jsxs4("details", { open: i === 0, style: {
+    }, children: STUDIO.faq.map(([q, a], i) => /* @__PURE__ */ jsxs5("details", { open: i === 0, style: {
       background: s.white,
       border: `1px solid ${s.line}`,
       borderRadius: 12,
       overflow: "hidden"
     }, children: [
-      /* @__PURE__ */ jsxs4("summary", { style: {
+      /* @__PURE__ */ jsxs5("summary", { style: {
         listStyle: "none",
         cursor: "pointer",
         padding: "16px 20px",
@@ -4796,8 +6247,8 @@ function CustomerFaq({ s }) {
         color: s.ink,
         lineHeight: 1.35
       }, children: [
-        /* @__PURE__ */ jsx5("span", { style: { flex: 1 }, children: q }),
-        /* @__PURE__ */ jsx5("span", { style: {
+        /* @__PURE__ */ jsx6("span", { style: { flex: 1 }, children: q }),
+        /* @__PURE__ */ jsx6("span", { style: {
           flex: "0 0 auto",
           width: 26,
           height: 26,
@@ -4812,7 +6263,7 @@ function CustomerFaq({ s }) {
           lineHeight: 1
         }, children: "+" })
       ] }),
-      /* @__PURE__ */ jsx5("div", { style: {
+      /* @__PURE__ */ jsx6("div", { style: {
         padding: "0 20px 16px",
         fontSize: 14.5,
         lineHeight: 1.6,
@@ -4823,9 +6274,9 @@ function CustomerFaq({ s }) {
   ] });
 }
 function CustomerInput({ placeholder, s, multiline, label }) {
-  return /* @__PURE__ */ jsxs4("div", { children: [
-    label && /* @__PURE__ */ jsx5("div", { style: { fontSize: 12.5, color: s.sub, fontWeight: 500, marginBottom: 5 }, children: label }),
-    /* @__PURE__ */ jsx5("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { children: [
+    label && /* @__PURE__ */ jsx6("div", { style: { fontSize: 12.5, color: s.sub, fontWeight: 500, marginBottom: 5 }, children: label }),
+    /* @__PURE__ */ jsx6("div", { style: {
       padding: "13px 16px",
       background: s.white,
       border: `1px solid ${s.line}`,
@@ -4838,7 +6289,7 @@ function CustomerInput({ placeholder, s, multiline, label }) {
   ] });
 }
 function MapPlaceholder({ s }) {
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { style: {
     position: "relative",
     overflow: "hidden",
     borderRadius: 14,
@@ -4847,16 +6298,16 @@ function MapPlaceholder({ s }) {
     aspectRatio: "1 / 1",
     minHeight: 280
   }, children: [
-    /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 400 400", width: "100%", height: "100%", style: { display: "block", opacity: 0.6 }, children: [
-      /* @__PURE__ */ jsx5("defs", { children: /* @__PURE__ */ jsx5("pattern", { id: "grid-map", width: "40", height: "40", patternUnits: "userSpaceOnUse", children: /* @__PURE__ */ jsx5("path", { d: "M 40 0 L 0 0 0 40", fill: "none", stroke: s.line, strokeWidth: "1" }) }) }),
-      /* @__PURE__ */ jsx5("rect", { width: "400", height: "400", fill: "url(#grid-map)" }),
-      /* @__PURE__ */ jsx5("path", { d: "M 0 220 Q 100 180, 180 220 T 400 200", fill: "none", stroke: s.accent, strokeWidth: "3", strokeLinecap: "round", opacity: "0.5" }),
-      /* @__PURE__ */ jsx5("path", { d: "M 40 0 L 80 120 L 60 240 L 100 400", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", opacity: "0.4" }),
-      /* @__PURE__ */ jsx5("path", { d: "M 220 0 L 260 180 L 240 400", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", opacity: "0.4" }),
-      /* @__PURE__ */ jsx5("path", { d: "M 0 80 L 400 60", fill: "none", stroke: s.sub, strokeWidth: "1.5", opacity: "0.3" }),
-      /* @__PURE__ */ jsx5("path", { d: "M 0 340 L 400 320", fill: "none", stroke: s.sub, strokeWidth: "1.5", opacity: "0.3" })
+    /* @__PURE__ */ jsxs5("svg", { viewBox: "0 0 400 400", width: "100%", height: "100%", style: { display: "block", opacity: 0.6 }, children: [
+      /* @__PURE__ */ jsx6("defs", { children: /* @__PURE__ */ jsx6("pattern", { id: "grid-map", width: "40", height: "40", patternUnits: "userSpaceOnUse", children: /* @__PURE__ */ jsx6("path", { d: "M 40 0 L 0 0 0 40", fill: "none", stroke: s.line, strokeWidth: "1" }) }) }),
+      /* @__PURE__ */ jsx6("rect", { width: "400", height: "400", fill: "url(#grid-map)" }),
+      /* @__PURE__ */ jsx6("path", { d: "M 0 220 Q 100 180, 180 220 T 400 200", fill: "none", stroke: s.accent, strokeWidth: "3", strokeLinecap: "round", opacity: "0.5" }),
+      /* @__PURE__ */ jsx6("path", { d: "M 40 0 L 80 120 L 60 240 L 100 400", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", opacity: "0.4" }),
+      /* @__PURE__ */ jsx6("path", { d: "M 220 0 L 260 180 L 240 400", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", opacity: "0.4" }),
+      /* @__PURE__ */ jsx6("path", { d: "M 0 80 L 400 60", fill: "none", stroke: s.sub, strokeWidth: "1.5", opacity: "0.3" }),
+      /* @__PURE__ */ jsx6("path", { d: "M 0 340 L 400 320", fill: "none", stroke: s.sub, strokeWidth: "1.5", opacity: "0.3" })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: {
       position: "absolute",
       left: "50%",
       top: "50%",
@@ -4866,7 +6317,7 @@ function MapPlaceholder({ s }) {
       alignItems: "center",
       gap: 4
     }, children: [
-      /* @__PURE__ */ jsx5("div", { style: {
+      /* @__PURE__ */ jsx6("div", { style: {
         background: s.accent,
         color: "#fff",
         padding: "8px 14px",
@@ -4876,9 +6327,9 @@ function MapPlaceholder({ s }) {
         boxShadow: "0 8px 24px -8px rgba(0,0,0,0.35)",
         whiteSpace: "nowrap"
       }, children: STUDIO.name }),
-      /* @__PURE__ */ jsx5("svg", { width: "22", height: "14", viewBox: "0 0 22 14", fill: s.accent, children: /* @__PURE__ */ jsx5("path", { d: "M0 0 L22 0 L11 14 Z" }) })
+      /* @__PURE__ */ jsx6("svg", { width: "22", height: "14", viewBox: "0 0 22 14", fill: s.accent, children: /* @__PURE__ */ jsx6("path", { d: "M0 0 L22 0 L11 14 Z" }) })
     ] }),
-    /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       position: "absolute",
       left: 12,
       bottom: 12,
@@ -4893,41 +6344,41 @@ function MapPlaceholder({ s }) {
   ] });
 }
 function CustomerBooking({ s, confirmed = false }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "book", style: {
+  return /* @__PURE__ */ jsxs5("section", { id: "book", style: {
     padding: "52px 36px 40px",
     borderTop: `1px solid ${s.line}`,
     background: s.bg,
     scrollMarginTop: 80
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
-      /* @__PURE__ */ jsx5("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0417\u0410\u041F\u0418\u0421\u042C" }),
-      /* @__PURE__ */ jsx5("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 6px", lineHeight: 1.1 }, children: "\u0417\u0430\u043F\u0438\u0448\u0438\u0442\u0435\u0441\u044C \u043E\u043D\u043B\u0430\u0439\u043D \u0437\u0430 30 \u0441\u0435\u043A\u0443\u043D\u0434" }),
-      /* @__PURE__ */ jsx5("p", { style: { fontSize: 15.5, color: s.sub, margin: 0 }, children: "\u041F\u0435\u0440\u0435\u0437\u0432\u043E\u043D\u044E \u0437\u0430 15 \u043C\u0438\u043D\u0443\u0442. \u0414\u0430\u043D\u043D\u044B\u0435 \u043D\u0435\xA0\u043F\u0435\u0440\u0435\u0434\u0430\u0451\u043C \u0442\u0440\u0435\u0442\u044C\u0438\u043C \u043B\u0438\u0446\u0430\u043C." })
+    /* @__PURE__ */ jsxs5("div", { style: { textAlign: "center", marginBottom: 28 }, children: [
+      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.14em", color: s.accent, fontWeight: 600 }, children: "\u0417\u0410\u041F\u0418\u0421\u042C" }),
+      /* @__PURE__ */ jsx6("h2", { style: { fontSize: 36, fontWeight: 700, letterSpacing: "-0.03em", margin: "6px 0 6px", lineHeight: 1.1 }, children: "\u0417\u0430\u043F\u0438\u0448\u0438\u0442\u0435\u0441\u044C \u043E\u043D\u043B\u0430\u0439\u043D \u0437\u0430 30 \u0441\u0435\u043A\u0443\u043D\u0434" }),
+      /* @__PURE__ */ jsx6("p", { style: { fontSize: 15.5, color: s.sub, margin: 0 }, children: "\u041F\u0435\u0440\u0435\u0437\u0432\u043E\u043D\u044E \u0437\u0430 15 \u043C\u0438\u043D\u0443\u0442. \u0414\u0430\u043D\u043D\u044B\u0435 \u043D\u0435\xA0\u043F\u0435\u0440\u0435\u0434\u0430\u0451\u043C \u0442\u0440\u0435\u0442\u044C\u0438\u043C \u043B\u0438\u0446\u0430\u043C." })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "stretch" }, children: [
-      /* @__PURE__ */ jsx5("div", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsx6("div", { style: {
         background: s.white,
         border: `1px solid ${s.line}`,
         borderRadius: 18,
         padding: 28
-      }, children: confirmed ? /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", background: s.bgAlt, borderRadius: 12 }, children: [
-        /* @__PURE__ */ jsx5("span", { style: { width: 40, height: 40, borderRadius: "50%", background: VT.successSoft, color: VT.success, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx5("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx5("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-        /* @__PURE__ */ jsxs4("div", { children: [
-          /* @__PURE__ */ jsx5("div", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430" }),
-          /* @__PURE__ */ jsx5("div", { style: { fontSize: 13.5, color: s.sub }, children: "\u041F\u0435\u0440\u0435\u0437\u0432\u043E\u043D\u044E \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 \u0447\u0430\u0441\u0430. \u041C\u043E\u0436\u043D\u043E \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443." })
+      }, children: confirmed ? /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", background: s.bgAlt, borderRadius: 12 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: { width: 40, height: 40, borderRadius: "50%", background: VT.successSoft, color: VT.success, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx6("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx6("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
+        /* @__PURE__ */ jsxs5("div", { children: [
+          /* @__PURE__ */ jsx6("div", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430" }),
+          /* @__PURE__ */ jsx6("div", { style: { fontSize: 13.5, color: s.sub }, children: "\u041F\u0435\u0440\u0435\u0437\u0432\u043E\u043D\u044E \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 \u0447\u0430\u0441\u0430. \u041C\u043E\u0436\u043D\u043E \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443." })
         ] })
-      ] }) : /* @__PURE__ */ jsxs4(Fragment4, { children: [
-        /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
-          /* @__PURE__ */ jsx5(CustomerInput, { label: "\u041A\u0430\u043A \u0432\u0430\u0441 \u0437\u043E\u0432\u0443\u0442", placeholder: "\u0418\u043C\u044F", s }),
-          /* @__PURE__ */ jsx5(CustomerInput, { label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", placeholder: "+7 ___ ___-__-__", s })
+      ] }) : /* @__PURE__ */ jsxs5(Fragment4, { children: [
+        /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
+          /* @__PURE__ */ jsx6(CustomerInput, { label: "\u041A\u0430\u043A \u0432\u0430\u0441 \u0437\u043E\u0432\u0443\u0442", placeholder: "\u0418\u043C\u044F", s }),
+          /* @__PURE__ */ jsx6(CustomerInput, { label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", placeholder: "+7 ___ ___-__-__", s })
         ] }),
-        /* @__PURE__ */ jsxs4("div", { style: { marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
-          /* @__PURE__ */ jsx5(CustomerSelect, { label: "\u0423\u0441\u043B\u0443\u0433\u0430", value: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", s }),
-          /* @__PURE__ */ jsx5(CustomerSelect, { label: "\u0423\u0434\u043E\u0431\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F", value: "\u0437\u0430\u0432\u0442\u0440\u0430, \u043F\u043E\u0441\u043B\u0435 14:00", s })
+        /* @__PURE__ */ jsxs5("div", { style: { marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
+          /* @__PURE__ */ jsx6(CustomerSelect, { label: "\u0423\u0441\u043B\u0443\u0433\u0430", value: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", s }),
+          /* @__PURE__ */ jsx6(CustomerSelect, { label: "\u0423\u0434\u043E\u0431\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F", value: "\u0437\u0430\u0432\u0442\u0440\u0430, \u043F\u043E\u0441\u043B\u0435 14:00", s })
         ] }),
-        /* @__PURE__ */ jsx5(Mono, { style: { fontSize: 10, color: s.sub, marginTop: 10 }, children: `<input type="text" name="company" tabIndex={-1} style="display:none"> // honeypot` }),
-        /* @__PURE__ */ jsx5("div", { style: { marginTop: 14 }, children: /* @__PURE__ */ jsx5(Checkbox, { checked: false, label: /* @__PURE__ */ jsx5(Fragment4, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0430" }) }),
-        /* @__PURE__ */ jsx5("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsxs4("a", { href: "#book", style: {
+        /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 10, color: s.sub, marginTop: 10 }, children: `<input type="text" name="company" tabIndex={-1} style="display:none"> // honeypot` }),
+        /* @__PURE__ */ jsx6("div", { style: { marginTop: 14 }, children: /* @__PURE__ */ jsx6(Checkbox, { checked: false, label: /* @__PURE__ */ jsx6(Fragment4, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0430" }) }),
+        /* @__PURE__ */ jsx6("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsxs5("a", { href: "#book", style: {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -4942,18 +6393,18 @@ function CustomerBooking({ s, confirmed = false }) {
           letterSpacing: "-0.005em"
         }, children: [
           "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F ",
-          /* @__PURE__ */ jsx5(IconArrow, { size: 16 })
+          /* @__PURE__ */ jsx6(IconArrow, { size: 16 })
         ] }) }),
-        /* @__PURE__ */ jsx5(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha" }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsx6(Mono, { style: { display: "block", fontSize: 11, color: s.sub, marginTop: 10, textAlign: "center" }, children: "\u0417\u0430\u0449\u0438\u0449\u0435\u043D\u043E Yandex SmartCaptcha" }),
+        /* @__PURE__ */ jsxs5("div", { style: {
           marginTop: 18,
           paddingTop: 16,
           borderTop: `1px solid ${s.line}`,
           textAlign: "center"
         }, children: [
-          /* @__PURE__ */ jsx5("div", { style: { fontSize: 13, color: s.sub, marginBottom: 10 }, children: "\u041D\u0435 \u043B\u044E\u0431\u0438\u0442\u0435 \u0444\u043E\u0440\u043C\u044B? \u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u0432\xA0\u043C\u0435\u0441\u0441\u0435\u043D\u0434\u0436\u0435\u0440:" }),
-          /* @__PURE__ */ jsxs4("div", { style: { display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }, children: [
-            /* @__PURE__ */ jsxs4("a", { href: `https://t.me/${STUDIO.tg.replace("@", "")}`, style: {
+          /* @__PURE__ */ jsx6("div", { style: { fontSize: 13, color: s.sub, marginBottom: 10 }, children: "\u041D\u0435 \u043B\u044E\u0431\u0438\u0442\u0435 \u0444\u043E\u0440\u043C\u044B? \u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u0432\xA0\u043C\u0435\u0441\u0441\u0435\u043D\u0434\u0436\u0435\u0440:" }),
+          /* @__PURE__ */ jsxs5("div", { style: { display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }, children: [
+            /* @__PURE__ */ jsxs5("a", { href: `https://t.me/${STUDIO.tg.replace("@", "")}`, style: {
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
@@ -4965,10 +6416,10 @@ function CustomerBooking({ s, confirmed = false }) {
               fontSize: 14,
               textDecoration: "none"
             }, children: [
-              /* @__PURE__ */ jsx5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor", children: /* @__PURE__ */ jsx5("path", { d: "M22 3 L1.5 11 L8 13.5 L17 7 L11 14 L11.5 20 L15 16 L20 19 Z" }) }),
+              /* @__PURE__ */ jsx6("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor", children: /* @__PURE__ */ jsx6("path", { d: "M22 3 L1.5 11 L8 13.5 L17 7 L11 14 L11.5 20 L15 16 L20 19 Z" }) }),
               "Telegram"
             ] }),
-            /* @__PURE__ */ jsxs4("a", { href: `https://wa.me/${STUDIO.whatsapp}`, style: {
+            /* @__PURE__ */ jsxs5("a", { href: `https://wa.me/${STUDIO.whatsapp}`, style: {
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
@@ -4980,10 +6431,10 @@ function CustomerBooking({ s, confirmed = false }) {
               fontSize: 14,
               textDecoration: "none"
             }, children: [
-              /* @__PURE__ */ jsx5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor", children: /* @__PURE__ */ jsx5("path", { d: "M12 2 A10 10 0 0 0 3 17 L2 22 L7 21 A10 10 0 1 0 12 2 Z M9 7 C 9.5 7 10 7.5 10.5 9 C 11 10 11 10.5 10 11 C 9.5 11.5 9 12 10 13 C 11 14 12 14.5 12.5 14 C 13 13 13.5 13 14.5 13.5 C 15.5 14 16 14.5 16 15 C 16 17 13 17 11 16 C 9 15 7 13 7 11 C 7 9 8 7 9 7 Z" }) }),
+              /* @__PURE__ */ jsx6("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor", children: /* @__PURE__ */ jsx6("path", { d: "M12 2 A10 10 0 0 0 3 17 L2 22 L7 21 A10 10 0 1 0 12 2 Z M9 7 C 9.5 7 10 7.5 10.5 9 C 11 10 11 10.5 10 11 C 9.5 11.5 9 12 10 13 C 11 14 12 14.5 12.5 14 C 13 13 13.5 13 14.5 13.5 C 15.5 14 16 14.5 16 15 C 16 17 13 17 11 16 C 9 15 7 13 7 11 C 7 9 8 7 9 7 Z" }) }),
               "WhatsApp"
             ] }),
-            /* @__PURE__ */ jsxs4("a", { href: `tel:${STUDIO.phoneHref}`, style: {
+            /* @__PURE__ */ jsxs5("a", { href: `tel:${STUDIO.phoneHref}`, style: {
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
@@ -4996,26 +6447,26 @@ function CustomerBooking({ s, confirmed = false }) {
               textDecoration: "none",
               border: `1px solid ${s.line}`
             }, children: [
-              /* @__PURE__ */ jsx5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round", children: /* @__PURE__ */ jsx5("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
+              /* @__PURE__ */ jsx6("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round", children: /* @__PURE__ */ jsx6("path", { d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }) }),
               "\u041F\u043E\u0437\u0432\u043E\u043D\u0438\u0442\u044C"
             ] })
           ] })
         ] })
       ] }) }),
-      /* @__PURE__ */ jsxs4("div", { id: "contact", style: {
+      /* @__PURE__ */ jsxs5("div", { id: "contact", style: {
         display: "flex",
         flexDirection: "column",
         gap: 14,
         scrollMarginTop: 80
       }, children: [
-        /* @__PURE__ */ jsx5(MapPlaceholder, { s }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsx6(MapPlaceholder, { s }),
+        /* @__PURE__ */ jsxs5("div", { style: {
           background: s.white,
           border: `1px solid ${s.line}`,
           borderRadius: 14,
           padding: "16px 18px"
         }, children: [
-          /* @__PURE__ */ jsx5("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 11,
             letterSpacing: "0.12em",
@@ -5023,19 +6474,19 @@ function CustomerBooking({ s, confirmed = false }) {
             fontWeight: 600,
             marginBottom: 8
           }, children: "\u0413\u0414\u0415 \u0418 \u041A\u041E\u0413\u0414\u0410" }),
-          /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 8 }, children: [
-            /* @__PURE__ */ jsx5("span", { style: { color: s.accent, marginTop: 1, flex: "0 0 auto" }, children: /* @__PURE__ */ jsxs4("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-              /* @__PURE__ */ jsx5("path", { d: "M12 2 C 7 2, 4 6, 4 10 C 4 16, 12 22, 12 22 C 12 22, 20 16, 20 10 C 20 6, 17 2, 12 2 Z" }),
-              /* @__PURE__ */ jsx5("circle", { cx: "12", cy: "10", r: "3" })
+          /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 8 }, children: [
+            /* @__PURE__ */ jsx6("span", { style: { color: s.accent, marginTop: 1, flex: "0 0 auto" }, children: /* @__PURE__ */ jsxs5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+              /* @__PURE__ */ jsx6("path", { d: "M12 2 C 7 2, 4 6, 4 10 C 4 16, 12 22, 12 22 C 12 22, 20 16, 20 10 C 20 6, 17 2, 12 2 Z" }),
+              /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "10", r: "3" })
             ] }) }),
-            /* @__PURE__ */ jsx5("span", { style: { fontSize: 14, color: s.ink, lineHeight: 1.4 }, children: STUDIO.address })
+            /* @__PURE__ */ jsx6("span", { style: { fontSize: 14, color: s.ink, lineHeight: 1.4 }, children: STUDIO.address })
           ] }),
-          /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 10, alignItems: "flex-start" }, children: [
-            /* @__PURE__ */ jsx5("span", { style: { color: s.accent, marginTop: 1, flex: "0 0 auto" }, children: /* @__PURE__ */ jsxs4("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-              /* @__PURE__ */ jsx5("circle", { cx: "12", cy: "12", r: "9" }),
-              /* @__PURE__ */ jsx5("path", { d: "M12 7v5l3 2" })
+          /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 10, alignItems: "flex-start" }, children: [
+            /* @__PURE__ */ jsx6("span", { style: { color: s.accent, marginTop: 1, flex: "0 0 auto" }, children: /* @__PURE__ */ jsxs5("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+              /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "9" }),
+              /* @__PURE__ */ jsx6("path", { d: "M12 7v5l3 2" })
             ] }) }),
-            /* @__PURE__ */ jsx5("span", { style: { fontSize: 14, color: s.ink, lineHeight: 1.4 }, children: STUDIO.hours })
+            /* @__PURE__ */ jsx6("span", { style: { fontSize: 14, color: s.ink, lineHeight: 1.4 }, children: STUDIO.hours })
           ] })
         ] })
       ] })
@@ -5043,9 +6494,9 @@ function CustomerBooking({ s, confirmed = false }) {
   ] });
 }
 function CustomerSelect({ label, value, s }) {
-  return /* @__PURE__ */ jsxs4("div", { children: [
-    label && /* @__PURE__ */ jsx5("div", { style: { fontSize: 12.5, color: s.sub, fontWeight: 500, marginBottom: 5 }, children: label }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { children: [
+    label && /* @__PURE__ */ jsx6("div", { style: { fontSize: 12.5, color: s.sub, fontWeight: 500, marginBottom: 5 }, children: label }),
+    /* @__PURE__ */ jsxs5("div", { style: {
       padding: "13px 16px",
       background: s.white,
       border: `1px solid ${s.line}`,
@@ -5056,16 +6507,16 @@ function CustomerSelect({ label, value, s }) {
       alignItems: "center",
       justifyContent: "space-between"
     }, children: [
-      /* @__PURE__ */ jsx5("span", { children: value }),
-      /* @__PURE__ */ jsx5("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx5("path", { d: "M6 9l6 6 6-6" }) })
+      /* @__PURE__ */ jsx6("span", { children: value }),
+      /* @__PURE__ */ jsx6("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: s.sub, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M6 9l6 6 6-6" }) })
     ] })
   ] });
 }
 function CustomerLeadForm({ s, confirmed = false }) {
-  return /* @__PURE__ */ jsx5(CustomerBooking, { s, confirmed });
+  return /* @__PURE__ */ jsx6(CustomerBooking, { s, confirmed });
 }
 function CustomerFooter({ s, plan = "free" }) {
-  return /* @__PURE__ */ jsxs4("footer", { style: {
+  return /* @__PURE__ */ jsxs5("footer", { style: {
     padding: "22px 36px 24px",
     borderTop: `1px solid ${s.line}`,
     background: s.bgAlt,
@@ -5075,27 +6526,27 @@ function CustomerFooter({ s, plan = "free" }) {
     fontSize: 13,
     color: s.sub
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ jsx5("span", { style: { color: s.ink, fontWeight: 600 }, children: STUDIO.name }),
-        /* @__PURE__ */ jsxs4("span", { children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
+        /* @__PURE__ */ jsx6("span", { style: { color: s.ink, fontWeight: 600 }, children: STUDIO.name }),
+        /* @__PURE__ */ jsxs5("span", { children: [
           "\xB7 ",
           STUDIO.address
         ] }),
-        /* @__PURE__ */ jsx5("a", { href: `tel:${STUDIO.phoneHref}`, style: { color: "inherit", textDecoration: "none", fontFamily: VT.font.mono }, children: STUDIO.phone })
+        /* @__PURE__ */ jsx6("a", { href: `tel:${STUDIO.phoneHref}`, style: { color: "inherit", textDecoration: "none", fontFamily: VT.font.mono }, children: STUDIO.phone })
       ] }),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 18, fontSize: 12.5 }, children: [
-        /* @__PURE__ */ jsx5("a", { style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
-        /* @__PURE__ */ jsx5("a", { style: { color: "inherit", textDecoration: "none" }, children: "\u0420\u0435\u043A\u0432\u0438\u0437\u0438\u0442\u044B" })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 18, fontSize: 12.5 }, children: [
+        /* @__PURE__ */ jsx6("a", { style: { color: "inherit", textDecoration: "none" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
+        /* @__PURE__ */ jsx6("a", { style: { color: "inherit", textDecoration: "none" }, children: "\u0420\u0435\u043A\u0432\u0438\u0437\u0438\u0442\u044B" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14, fontSize: 12 }, children: [
-      /* @__PURE__ */ jsxs4("span", { children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14, fontSize: 12 }, children: [
+      /* @__PURE__ */ jsxs5("span", { children: [
         "\xA9 2026 ",
         STUDIO.name,
         ". \u0418\u041F \u041F\u0435\u0442\u0440\u043E\u0432\u0430 \u0410. \u0418., \u0441\u0430\u043C\u043E\u0437\u0430\u043D\u044F\u0442\u0430\u044F."
       ] }),
-      plan === "free" ? /* @__PURE__ */ jsxs4("a", { style: {
+      plan === "free" ? /* @__PURE__ */ jsxs5("a", { style: {
         color: s.sub,
         textDecoration: "none",
         display: "inline-flex",
@@ -5105,16 +6556,16 @@ function CustomerFooter({ s, plan = "free" }) {
         fontSize: 11.5
       }, children: [
         "\u0421\u0414\u0415\u041B\u0410\u041D\u041E \u041D\u0410 ",
-        /* @__PURE__ */ jsx5("b", { style: { color: s.ink, fontFamily: VT.font.sans }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435" }),
+        /* @__PURE__ */ jsx6("b", { style: { color: s.ink, fontFamily: VT.font.sans }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435" }),
         " \u2192"
-      ] }) : /* @__PURE__ */ jsx5("span", {})
+      ] }) : /* @__PURE__ */ jsx6("span", {})
     ] })
   ] });
 }
 function S7_CustomerSite({ scheme = "cream", plan = "free" }) {
   const s = SCHEMES[scheme];
-  return /* @__PURE__ */ jsxs4("div", { style: { background: s.bg, color: s.ink, fontFamily: VT.font.sans, minHeight: "100%", letterSpacing: "-0.005em", position: "relative" }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { style: { background: s.bg, color: s.ink, fontFamily: VT.font.sans, minHeight: "100%", letterSpacing: "-0.005em", position: "relative" }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: {
       display: "flex",
       alignItems: "center",
       gap: 6,
@@ -5125,30 +6576,30 @@ function S7_CustomerSite({ scheme = "cream", plan = "free" }) {
       fontSize: 12,
       color: VT.inkFaint
     }, children: [
-      /* @__PURE__ */ jsx5("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
-      /* @__PURE__ */ jsx5("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
-      /* @__PURE__ */ jsx5("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
-      /* @__PURE__ */ jsx5("span", { style: { marginLeft: 12 }, children: "studia-anna.samosite.online" })
+      /* @__PURE__ */ jsx6("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
+      /* @__PURE__ */ jsx6("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
+      /* @__PURE__ */ jsx6("span", { style: { width: 10, height: 10, borderRadius: "50%", background: s.line } }),
+      /* @__PURE__ */ jsx6("span", { style: { marginLeft: 12 }, children: "studia-anna.samosite.online" })
     ] }),
-    /* @__PURE__ */ jsx5(CustomerHeader, { s }),
-    /* @__PURE__ */ jsx5(CustomerHero, { s }),
-    /* @__PURE__ */ jsx5(CustomerSocialBar, { s }),
-    /* @__PURE__ */ jsx5(CustomerServices, { s }),
-    /* @__PURE__ */ jsx5(CustomerProcess, { s }),
-    /* @__PURE__ */ jsx5(CustomerGallery, { s }),
-    /* @__PURE__ */ jsx5(CustomerReviews, { s }),
-    /* @__PURE__ */ jsx5(CustomerAbout, { s }),
-    /* @__PURE__ */ jsx5(CustomerFaq, { s }),
-    /* @__PURE__ */ jsx5(CustomerBooking, { s }),
-    /* @__PURE__ */ jsx5(CustomerFooter, { s, plan })
+    /* @__PURE__ */ jsx6(CustomerHeader, { s }),
+    /* @__PURE__ */ jsx6(CustomerHero, { s }),
+    /* @__PURE__ */ jsx6(CustomerSocialBar, { s }),
+    /* @__PURE__ */ jsx6(CustomerServices, { s }),
+    /* @__PURE__ */ jsx6(CustomerProcess, { s }),
+    /* @__PURE__ */ jsx6(CustomerGallery, { s }),
+    /* @__PURE__ */ jsx6(CustomerReviews, { s }),
+    /* @__PURE__ */ jsx6(CustomerAbout, { s }),
+    /* @__PURE__ */ jsx6(CustomerFaq, { s }),
+    /* @__PURE__ */ jsx6(CustomerBooking, { s }),
+    /* @__PURE__ */ jsx6(CustomerFooter, { s, plan })
   ] });
 }
 function S8_LeadFormConfirm() {
   const s = SCHEMES.cream;
-  return /* @__PURE__ */ jsx5("div", { style: { background: s.bg, fontFamily: VT.font.sans, padding: 24 }, children: /* @__PURE__ */ jsx5(CustomerLeadForm, { s, confirmed: true }) });
+  return /* @__PURE__ */ jsx6("div", { style: { background: s.bg, fontFamily: VT.font.sans, padding: 24 }, children: /* @__PURE__ */ jsx6(CustomerLeadForm, { s, confirmed: true }) });
 }
 function S7_SchemeSwatches() {
-  return /* @__PURE__ */ jsx5("div", { style: {
+  return /* @__PURE__ */ jsx6("div", { style: {
     background: VT.bg,
     padding: 28,
     fontFamily: VT.font.sans,
@@ -5161,8 +6612,8 @@ function S7_SchemeSwatches() {
     ["sage", "\u041F\u0440\u0438\u0440\u043E\u0434\u043D\u0430\u044F", "\u0434\u043B\u044F \u0437\u0435\u043B\u0451\u043D\u044B\u0445 / \u0434\u0440\u0435\u0432\u0435\u0441\u043D\u044B\u0445 \u0442\u043E\u043D\u043E\u0432"]
   ].map(([key, name, hint]) => {
     const s = SCHEMES[key];
-    return /* @__PURE__ */ jsxs4("div", { style: { width: 200 }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+    return /* @__PURE__ */ jsxs5("div", { style: { width: 200 }, children: [
+      /* @__PURE__ */ jsxs5("div", { style: {
         height: 110,
         borderRadius: VT.r.md,
         overflow: "hidden",
@@ -5171,12 +6622,12 @@ function S7_SchemeSwatches() {
         display: "flex",
         flexDirection: "column"
       }, children: [
-        /* @__PURE__ */ jsx5("div", { style: { flex: 1, padding: 12, color: s.ink, fontWeight: 700, fontSize: 16, letterSpacing: "-0.02em" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-        /* @__PURE__ */ jsx5("div", { style: { height: 8, background: s.accent } }),
-        /* @__PURE__ */ jsx5("div", { style: { display: "flex", gap: 4, padding: 8 }, children: [0, 1, 2].map((i) => /* @__PURE__ */ jsx5("div", { style: { flex: 1, height: 14, borderRadius: 3, background: s.accentSoft } }, i)) })
+        /* @__PURE__ */ jsx6("div", { style: { flex: 1, padding: 12, color: s.ink, fontWeight: 700, fontSize: 16, letterSpacing: "-0.02em" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+        /* @__PURE__ */ jsx6("div", { style: { height: 8, background: s.accent } }),
+        /* @__PURE__ */ jsx6("div", { style: { display: "flex", gap: 4, padding: 8 }, children: [0, 1, 2].map((i) => /* @__PURE__ */ jsx6("div", { style: { flex: 1, height: 14, borderRadius: 3, background: s.accentSoft } }, i)) })
       ] }),
-      /* @__PURE__ */ jsx5("div", { style: { marginTop: 8, fontSize: 13, fontWeight: 600 }, children: name }),
-      /* @__PURE__ */ jsx5("div", { style: { fontSize: 12, color: VT.inkFaint }, children: hint })
+      /* @__PURE__ */ jsx6("div", { style: { marginTop: 8, fontSize: 13, fontWeight: 600 }, children: name }),
+      /* @__PURE__ */ jsx6("div", { style: { fontSize: 12, color: VT.inkFaint }, children: hint })
     ] }, key);
   }) });
 }
@@ -5198,13 +6649,13 @@ var FEATURE_LIST = [
   ["stats", "\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439"]
 ];
 function FBSection({ title, items }) {
-  return /* @__PURE__ */ jsxs4(Card, { style: { padding: 22 }, children: [
-    /* @__PURE__ */ jsx5("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: title }),
-    /* @__PURE__ */ jsx5("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: "\u041F\u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0433\u0430\u043B\u043E\u0447\u043A\u0443 \u043D\u0430\u043F\u0440\u043E\u0442\u0438\u0432 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E\xA0\u043D\u0443\u0436\u043D\u043E. \u041A\u043E\u0433\u0434\u0430 \u0441\u043E\u0431\u0435\u0440\u0451\u043C 10 \u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u2014 \u0434\u043E\u0431\u0430\u0432\u0438\u043C." }),
-    /* @__PURE__ */ jsx5("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }, children: items.map(([key, label]) => /* @__PURE__ */ jsx5(Checkbox, { checked: false, label }, key)) }),
-    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 14 }, children: [
-      /* @__PURE__ */ jsx5("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u0421\u0432\u043E\u0451 (\u043E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u043E)" }),
-      /* @__PURE__ */ jsx5("div", { style: {
+  return /* @__PURE__ */ jsxs5(Card, { style: { padding: 22 }, children: [
+    /* @__PURE__ */ jsx6("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: title }),
+    /* @__PURE__ */ jsx6("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: "\u041F\u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0433\u0430\u043B\u043E\u0447\u043A\u0443 \u043D\u0430\u043F\u0440\u043E\u0442\u0438\u0432 \u0442\u043E\u0433\u043E, \u0447\u0442\u043E\xA0\u043D\u0443\u0436\u043D\u043E. \u041A\u043E\u0433\u0434\u0430 \u0441\u043E\u0431\u0435\u0440\u0451\u043C 10 \u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u2014 \u0434\u043E\u0431\u0430\u0432\u0438\u043C." }),
+    /* @__PURE__ */ jsx6("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10 }, children: items.map(([key, label]) => /* @__PURE__ */ jsx6(Checkbox, { checked: false, label }, key)) }),
+    /* @__PURE__ */ jsxs5("div", { style: { marginTop: 14 }, children: [
+      /* @__PURE__ */ jsx6("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u0421\u0432\u043E\u0451 (\u043E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u043E)" }),
+      /* @__PURE__ */ jsx6("div", { style: {
         padding: "10px 12px",
         background: VT.white,
         border: `1px solid ${VT.line}`,
@@ -5216,7 +6667,7 @@ function FBSection({ title, items }) {
   ] });
 }
 function S9_FeedbackPage() {
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs5("div", { style: {
     background: VT.bg,
     color: VT.ink,
     fontFamily: VT.font.sans,
@@ -5224,28 +6675,28 @@ function S9_FeedbackPage() {
     minHeight: "100%",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsx5("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px", lineHeight: 1.15 }, children: "\u0421\u043A\u0430\u0436\u0438\u0442\u0435, \u0447\u0435\u0433\u043E\xA0\u043D\u0435\xA0\u0445\u0432\u0430\u0442\u0430\u0435\u0442" }),
-    /* @__PURE__ */ jsx5("p", { style: { fontSize: 14, color: VT.inkSoft, maxWidth: 600, margin: "0 0 18px" }, children: "\u0414\u0435\u043B\u0430\u0435\u043C \u043F\u043E\xA0\u0437\u0430\u043F\u0440\u043E\u0441\u0443. \u0427\u0435\u043C \u0431\u043E\u043B\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439 \u043F\u0440\u043E\u0441\u044F\u0442 \u043E\u0434\u043D\u043E \u0438\xA0\u0442\u043E\xA0\u0436\u0435 \u2014 \u0442\u0435\u043C \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u043C" }),
-    /* @__PURE__ */ jsx5(Card, { style: { padding: 16 }, children: /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs4("div", { children: [
-        /* @__PURE__ */ jsx5("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "\u041A\u0430\u043A\xA0\u0432\u0430\u0441 \u0437\u043E\u0432\u0443\u0442" }),
-        /* @__PURE__ */ jsx5("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }, children: "\u0438\u043C\u044F" })
+    /* @__PURE__ */ jsx6("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px", lineHeight: 1.15 }, children: "\u0421\u043A\u0430\u0436\u0438\u0442\u0435, \u0447\u0435\u0433\u043E\xA0\u043D\u0435\xA0\u0445\u0432\u0430\u0442\u0430\u0435\u0442" }),
+    /* @__PURE__ */ jsx6("p", { style: { fontSize: 14, color: VT.inkSoft, maxWidth: 600, margin: "0 0 18px" }, children: "\u0414\u0435\u043B\u0430\u0435\u043C \u043F\u043E\xA0\u0437\u0430\u043F\u0440\u043E\u0441\u0443. \u0427\u0435\u043C \u0431\u043E\u043B\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439 \u043F\u0440\u043E\u0441\u044F\u0442 \u043E\u0434\u043D\u043E \u0438\xA0\u0442\u043E\xA0\u0436\u0435 \u2014 \u0442\u0435\u043C \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u043C" }),
+    /* @__PURE__ */ jsx6(Card, { style: { padding: 16 }, children: /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx6("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "\u041A\u0430\u043A\xA0\u0432\u0430\u0441 \u0437\u043E\u0432\u0443\u0442" }),
+        /* @__PURE__ */ jsx6("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }, children: "\u0438\u043C\u044F" })
       ] }),
-      /* @__PURE__ */ jsxs4("div", { children: [
-        /* @__PURE__ */ jsx5("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "Email, \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438\xA0@telegram" }),
-        /* @__PURE__ */ jsx5("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }, children: "\u043A\u043E\u043D\u0442\u0430\u043A\u0442" })
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx6("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "Email, \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438\xA0@telegram" }),
+        /* @__PURE__ */ jsx6("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }, children: "\u043A\u043E\u043D\u0442\u0430\u043A\u0442" })
       ] })
     ] }) }),
-    /* @__PURE__ */ jsxs4("div", { style: { marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
-      /* @__PURE__ */ jsx5(FBSection, { title: "\u0425\u043E\u0447\u0443 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A", items: WAITLIST_SOURCES }),
-      /* @__PURE__ */ jsx5(FBSection, { title: "\u0425\u043E\u0447\u0443 \u0444\u0438\u0447\u0443", items: FEATURE_LIST })
+    /* @__PURE__ */ jsxs5("div", { style: { marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
+      /* @__PURE__ */ jsx6(FBSection, { title: "\u0425\u043E\u0447\u0443 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A", items: WAITLIST_SOURCES }),
+      /* @__PURE__ */ jsx6(FBSection, { title: "\u0425\u043E\u0447\u0443 \u0444\u0438\u0447\u0443", items: FEATURE_LIST })
     ] }),
-    /* @__PURE__ */ jsxs4(Card, { style: { marginTop: 12, padding: 16 }, children: [
-      /* @__PURE__ */ jsx5("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 (\u043E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u043E)" }),
-      /* @__PURE__ */ jsx5("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint, minHeight: 72 }, children: "\u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0440\u0430\u0441\u0441\u043A\u0430\u0437\u0430\u0442\u044C" }),
-      /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 12 }, children: /* @__PURE__ */ jsx5(Btn, { size: "sm", children: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C" }) })
+    /* @__PURE__ */ jsxs5(Card, { style: { marginTop: 12, padding: 16 }, children: [
+      /* @__PURE__ */ jsx6("label", { style: { display: "block", fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }, children: "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 (\u043E\u043F\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u043E)" }),
+      /* @__PURE__ */ jsx6("div", { style: { padding: "8px 10px", background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint, minHeight: 72 }, children: "\u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0440\u0430\u0441\u0441\u043A\u0430\u0437\u0430\u0442\u044C" }),
+      /* @__PURE__ */ jsx6("div", { style: { display: "flex", alignItems: "center", gap: 12, marginTop: 12 }, children: /* @__PURE__ */ jsx6(Btn, { size: "sm", children: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C" }) })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs5("div", { style: {
       position: "absolute",
       right: 24,
       bottom: 24,
@@ -5260,7 +6711,7 @@ function S9_FeedbackPage() {
       gap: 8,
       boxShadow: "0 8px 24px -8px rgba(0,0,0,0.3)"
     }, children: [
-      /* @__PURE__ */ jsx5("span", { style: { fontSize: 16 }, children: "\u{1F4AC}" }),
+      /* @__PURE__ */ jsx6("span", { style: { fontSize: 16 }, children: "\u{1F4AC}" }),
       "\u0427\u0435\u0433\u043E\xA0\u043D\u0435\xA0\u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
     ] })
   ] });
@@ -5271,7 +6722,7 @@ var FeedbackPage = S9_FeedbackPage;
 
 // src/admin-demo/index.tsx
 import { useState } from "react";
-import { Fragment as Fragment6, jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
+import { Fragment as Fragment6, jsx as jsx7, jsxs as jsxs6 } from "react/jsx-runtime";
 var DEMO_SITE = {
   name: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B",
   handle: "studia-anna",
@@ -5296,38 +6747,38 @@ function NavIcon({ kind, size = 18 }) {
   const props = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
   switch (kind) {
     case "bar":
-      return /* @__PURE__ */ jsxs5("svg", { ...props, children: [
-        /* @__PURE__ */ jsx6("path", { d: "M4 20V12" }),
-        /* @__PURE__ */ jsx6("path", { d: "M10 20V6" }),
-        /* @__PURE__ */ jsx6("path", { d: "M16 20V14" }),
-        /* @__PURE__ */ jsx6("path", { d: "M22 20V9" })
+      return /* @__PURE__ */ jsxs6("svg", { ...props, children: [
+        /* @__PURE__ */ jsx7("path", { d: "M4 20V12" }),
+        /* @__PURE__ */ jsx7("path", { d: "M10 20V6" }),
+        /* @__PURE__ */ jsx7("path", { d: "M16 20V14" }),
+        /* @__PURE__ */ jsx7("path", { d: "M22 20V9" })
       ] });
     case "site":
-      return /* @__PURE__ */ jsxs5("svg", { ...props, children: [
-        /* @__PURE__ */ jsx6("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-        /* @__PURE__ */ jsx6("path", { d: "M3 8h18" }),
-        /* @__PURE__ */ jsx6("circle", { cx: "7", cy: "6", r: "0.5", fill: "currentColor" })
+      return /* @__PURE__ */ jsxs6("svg", { ...props, children: [
+        /* @__PURE__ */ jsx7("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+        /* @__PURE__ */ jsx7("path", { d: "M3 8h18" }),
+        /* @__PURE__ */ jsx7("circle", { cx: "7", cy: "6", r: "0.5", fill: "currentColor" })
       ] });
     case "inbox":
-      return /* @__PURE__ */ jsxs5("svg", { ...props, children: [
-        /* @__PURE__ */ jsx6("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }),
-        /* @__PURE__ */ jsx6("path", { d: "M3 14h5l1.5 2h5L16 14h5" })
+      return /* @__PURE__ */ jsxs6("svg", { ...props, children: [
+        /* @__PURE__ */ jsx7("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }),
+        /* @__PURE__ */ jsx7("path", { d: "M3 14h5l1.5 2h5L16 14h5" })
       ] });
     case "star":
-      return /* @__PURE__ */ jsx6("svg", { ...props, fill: "currentColor", stroke: "none", children: /* @__PURE__ */ jsx6("path", { d: "M12 2 L14.5 8.5 L21.5 9.3 L16.4 14 L17.9 21 L12 17.4 L6.1 21 L7.6 14 L2.5 9.3 L9.5 8.5 Z" }) });
+      return /* @__PURE__ */ jsx7("svg", { ...props, fill: "currentColor", stroke: "none", children: /* @__PURE__ */ jsx7("path", { d: "M12 2 L14.5 8.5 L21.5 9.3 L16.4 14 L17.9 21 L12 17.4 L6.1 21 L7.6 14 L2.5 9.3 L9.5 8.5 Z" }) });
     case "list":
-      return /* @__PURE__ */ jsxs5("svg", { ...props, children: [
-        /* @__PURE__ */ jsx6("path", { d: "M8 6h13" }),
-        /* @__PURE__ */ jsx6("path", { d: "M8 12h13" }),
-        /* @__PURE__ */ jsx6("path", { d: "M8 18h13" }),
-        /* @__PURE__ */ jsx6("circle", { cx: "4", cy: "6", r: "1.2" }),
-        /* @__PURE__ */ jsx6("circle", { cx: "4", cy: "12", r: "1.2" }),
-        /* @__PURE__ */ jsx6("circle", { cx: "4", cy: "18", r: "1.2" })
+      return /* @__PURE__ */ jsxs6("svg", { ...props, children: [
+        /* @__PURE__ */ jsx7("path", { d: "M8 6h13" }),
+        /* @__PURE__ */ jsx7("path", { d: "M8 12h13" }),
+        /* @__PURE__ */ jsx7("path", { d: "M8 18h13" }),
+        /* @__PURE__ */ jsx7("circle", { cx: "4", cy: "6", r: "1.2" }),
+        /* @__PURE__ */ jsx7("circle", { cx: "4", cy: "12", r: "1.2" }),
+        /* @__PURE__ */ jsx7("circle", { cx: "4", cy: "18", r: "1.2" })
       ] });
     case "gear":
-      return /* @__PURE__ */ jsxs5("svg", { ...props, children: [
-        /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "3" }),
-        /* @__PURE__ */ jsx6("path", { d: "M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" })
+      return /* @__PURE__ */ jsxs6("svg", { ...props, children: [
+        /* @__PURE__ */ jsx7("circle", { cx: "12", cy: "12", r: "3" }),
+        /* @__PURE__ */ jsx7("path", { d: "M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" })
       ] });
   }
   return null;
@@ -5340,7 +6791,7 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
   const ys = points.map((p) => h - (p - min) / range * (h - 4) - 2);
   const path = xs.map((x, i) => `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(" ");
   const area = `${path} L ${w} ${h} L 0 ${h} Z`;
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 14,
@@ -5349,10 +6800,10 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
     flexDirection: "column",
     gap: 6
   }, children: [
-    /* @__PURE__ */ jsx6("div", { style: { fontSize: 12.5, color: VT.inkFaint, fontWeight: 500, letterSpacing: "-0.005em" }, children: label }),
-    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
-      /* @__PURE__ */ jsx6("span", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink, lineHeight: 1 }, children: value }),
-      /* @__PURE__ */ jsxs5("span", { style: {
+    /* @__PURE__ */ jsx7("div", { style: { fontSize: 12.5, color: VT.inkFaint, fontWeight: 500, letterSpacing: "-0.005em" }, children: label }),
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
+      /* @__PURE__ */ jsx7("span", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink, lineHeight: 1 }, children: value }),
+      /* @__PURE__ */ jsxs6("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 12,
         fontWeight: 600,
@@ -5363,9 +6814,9 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
         delta
       ] })
     ] }),
-    /* @__PURE__ */ jsxs5("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%", height: h, style: { marginTop: 4 }, children: [
-      /* @__PURE__ */ jsx6("path", { d: area, fill: color, fillOpacity: "0.12" }),
-      /* @__PURE__ */ jsx6("path", { d: path, fill: "none", stroke: color, strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" })
+    /* @__PURE__ */ jsxs6("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%", height: h, style: { marginTop: 4 }, children: [
+      /* @__PURE__ */ jsx7("path", { d: area, fill: color, fillOpacity: "0.12" }),
+      /* @__PURE__ */ jsx7("path", { d: path, fill: "none", stroke: color, strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" })
     ] })
   ] });
 }
@@ -5385,31 +6836,31 @@ function TrafficChart() {
   const visitsArea = `${visitsPath} L ${xFor(days - 1)} ${yFor(0)} L ${xFor(0)} ${yFor(0)} Z`;
   const xLabels = [0, 7, 14, 21, 29];
   const xLabelText = ["1 \u043C\u0430\u044F", "8 \u043C\u0430\u044F", "15 \u043C\u0430\u044F", "22 \u043C\u0430\u044F", "30 \u043C\u0430\u044F"];
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     padding: 22
   }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs5("div", { children: [
-        /* @__PURE__ */ jsx6("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "\u0422\u0440\u0430\u0444\u0438\u043A \u0437\u0430 30 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx6("div", { style: { fontSize: 13, color: VT.inkFaint, marginTop: 2 }, children: "\u041A\u0430\u0436\u0434\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u2014 \u0434\u0435\u043D\u044C. \u0417\u0430\u044F\u0432\u043A\u0438 \u0438\u0434\u0443\u0442 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u044F\u043C." })
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs6("div", { children: [
+        /* @__PURE__ */ jsx7("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "\u0422\u0440\u0430\u0444\u0438\u043A \u0437\u0430 30 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx7("div", { style: { fontSize: 13, color: VT.inkFaint, marginTop: 2 }, children: "\u041A\u0430\u0436\u0434\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u2014 \u0434\u0435\u043D\u044C. \u0417\u0430\u044F\u0432\u043A\u0438 \u0438\u0434\u0443\u0442 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u044F\u043C." })
       ] }),
-      /* @__PURE__ */ jsxs5("div", { style: { display: "inline-flex", gap: 14, fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs5("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
-          /* @__PURE__ */ jsx6("span", { style: { width: 10, height: 10, borderRadius: "50%", background: VT.accent } }),
+      /* @__PURE__ */ jsxs6("div", { style: { display: "inline-flex", gap: 14, fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs6("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
+          /* @__PURE__ */ jsx7("span", { style: { width: 10, height: 10, borderRadius: "50%", background: VT.accent } }),
           "\u041F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F"
         ] }),
-        /* @__PURE__ */ jsxs5("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
-          /* @__PURE__ */ jsx6("span", { style: { width: 10, height: 2, background: "oklch(0.5 0.13 240)" } }),
+        /* @__PURE__ */ jsxs6("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
+          /* @__PURE__ */ jsx7("span", { style: { width: 10, height: 2, background: "oklch(0.5 0.13 240)" } }),
           "\u0417\u0430\u044F\u0432\u043A\u0438"
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs5("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, style: { display: "block" }, children: [
-      [0, 0.25, 0.5, 0.75, 1].map((t, i) => /* @__PURE__ */ jsxs5("g", { children: [
-        /* @__PURE__ */ jsx6(
+    /* @__PURE__ */ jsxs6("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, style: { display: "block" }, children: [
+      [0, 0.25, 0.5, 0.75, 1].map((t, i) => /* @__PURE__ */ jsxs6("g", { children: [
+        /* @__PURE__ */ jsx7(
           "line",
           {
             x1: PAD.left,
@@ -5420,11 +6871,11 @@ function TrafficChart() {
             strokeWidth: "1"
           }
         ),
-        /* @__PURE__ */ jsx6("text", { x: PAD.left - 8, y: PAD.top + inner.h * t + 4, fontSize: "10", fill: VT.inkFaint, textAnchor: "end", fontFamily: VT.font.mono, children: Math.round(maxV * (1 - t)) })
+        /* @__PURE__ */ jsx7("text", { x: PAD.left - 8, y: PAD.top + inner.h * t + 4, fontSize: "10", fill: VT.inkFaint, textAnchor: "end", fontFamily: VT.font.mono, children: Math.round(maxV * (1 - t)) })
       ] }, i)),
-      /* @__PURE__ */ jsx6("path", { d: visitsArea, fill: VT.accent, fillOpacity: "0.10" }),
-      /* @__PURE__ */ jsx6("path", { d: visitsPath, fill: "none", stroke: VT.accent, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
-      leads.map((l, i) => /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7("path", { d: visitsArea, fill: VT.accent, fillOpacity: "0.10" }),
+      /* @__PURE__ */ jsx7("path", { d: visitsPath, fill: "none", stroke: VT.accent, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
+      leads.map((l, i) => /* @__PURE__ */ jsx7(
         "rect",
         {
           x: xFor(i) - 2,
@@ -5437,7 +6888,7 @@ function TrafficChart() {
         },
         i
       )),
-      xLabels.map((i, k) => /* @__PURE__ */ jsx6("text", { x: xFor(i), y: H - 8, fontSize: "11", fill: VT.inkFaint, textAnchor: "middle", children: xLabelText[k] }, k))
+      xLabels.map((i, k) => /* @__PURE__ */ jsx7("text", { x: xFor(i), y: H - 8, fontSize: "11", fill: VT.inkFaint, textAnchor: "middle", children: xLabelText[k] }, k))
     ] })
   ] });
 }
@@ -5449,29 +6900,29 @@ function SourceBreakdown() {
     { name: "2\u0413\u0418\u0421", share: 8, color: "#19BB4F" },
     { name: "Google", share: 4, color: "oklch(0.55 0.18 25)" }
   ];
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     padding: 22
   }, children: [
-    /* @__PURE__ */ jsx6("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442" }),
-    /* @__PURE__ */ jsxs5("div", { style: { fontSize: 13, color: VT.inkFaint, marginBottom: 16 }, children: [
+    /* @__PURE__ */ jsx7("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442" }),
+    /* @__PURE__ */ jsxs6("div", { style: { fontSize: 13, color: VT.inkFaint, marginBottom: 16 }, children: [
       "\u042F.\u041A\u0430\u0440\u0442\u044B \u2014 \u0441\u0430\u043C\u044B\u0439 \u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B. ",
       BRAND.name,
       " \u0434\u0435\u0440\u0436\u0438\u0442 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0441\u0432\u0435\u0436\u0435\u0439."
     ] }),
-    /* @__PURE__ */ jsx6("div", { style: { display: "flex", height: 14, borderRadius: 7, overflow: "hidden" }, children: sources.map((s) => /* @__PURE__ */ jsx6("span", { style: { width: `${s.share}%`, background: s.color } }, s.name)) }),
-    /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }, children: sources.map((s) => /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsx7("div", { style: { display: "flex", height: 14, borderRadius: 7, overflow: "hidden" }, children: sources.map((s) => /* @__PURE__ */ jsx7("span", { style: { width: `${s.share}%`, background: s.color } }, s.name)) }),
+    /* @__PURE__ */ jsx7("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }, children: sources.map((s) => /* @__PURE__ */ jsxs6("div", { style: {
       display: "flex",
       alignItems: "center",
       gap: 10,
       fontSize: 13.5,
       color: VT.ink
     }, children: [
-      /* @__PURE__ */ jsx6("span", { style: { width: 12, height: 12, borderRadius: 3, background: s.color, flex: "0 0 auto" } }),
-      /* @__PURE__ */ jsx6("span", { style: { flex: 1 }, children: s.name }),
-      /* @__PURE__ */ jsxs5("b", { style: { fontFamily: VT.font.mono, color: VT.ink }, children: [
+      /* @__PURE__ */ jsx7("span", { style: { width: 12, height: 12, borderRadius: 3, background: s.color, flex: "0 0 auto" } }),
+      /* @__PURE__ */ jsx7("span", { style: { flex: 1 }, children: s.name }),
+      /* @__PURE__ */ jsxs6("b", { style: { fontFamily: VT.font.mono, color: VT.ink }, children: [
         s.share,
         "%"
       ] })
@@ -5479,13 +6930,13 @@ function SourceBreakdown() {
   ] });
 }
 function AnalyticsTab() {
-  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(4, 1fr)",
       gap: 12
     }, children: [
-      /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7(
         StatCard,
         {
           label: "\u041F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F / 30 \u0434\u043D\u0435\u0439",
@@ -5496,7 +6947,7 @@ function AnalyticsTab() {
           points: [210, 198, 215, 240, 232, 260, 275, 290, 280, 295, 310, 325, 345, 360]
         }
       ),
-      /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7(
         StatCard,
         {
           label: "\u0423\u043D\u0438\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0438",
@@ -5507,7 +6958,7 @@ function AnalyticsTab() {
           points: [140, 145, 160, 170, 175, 180, 195, 210, 215, 225, 240, 250, 265, 275]
         }
       ),
-      /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7(
         StatCard,
         {
           label: "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u0440\u0438\u043D\u044F\u0442\u043E",
@@ -5518,7 +6969,7 @@ function AnalyticsTab() {
           points: [2, 3, 4, 3, 5, 4, 5, 6, 5, 7, 6, 8, 7, 9]
         }
       ),
-      /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7(
         StatCard,
         {
           label: "\u041A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F \u0432\xA0\u0437\u0430\u044F\u0432\u043A\u0443",
@@ -5530,24 +6981,24 @@ function AnalyticsTab() {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx6(TrafficChart, {}),
-    /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }, children: [
-      /* @__PURE__ */ jsx6(SourceBreakdown, {}),
-      /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsx7(TrafficChart, {}),
+    /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }, children: [
+      /* @__PURE__ */ jsx7(SourceBreakdown, {}),
+      /* @__PURE__ */ jsxs6("div", { style: {
         background: VT.white,
         border: `1px solid ${VT.line}`,
         borderRadius: 16,
         padding: 22
       }, children: [
-        /* @__PURE__ */ jsx6("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 16 }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E" }),
-        /* @__PURE__ */ jsx6("ul", { style: { listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }, children: [
+        /* @__PURE__ */ jsx7("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 16 }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E" }),
+        /* @__PURE__ */ jsx7("ul", { style: { listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }, children: [
           ["\u041B\u0443\u0447\u0448\u0438\u0439 \u0434\u0435\u043D\u044C", "\u0427\u0435\u0442\u0432\u0435\u0440\u0433 \u2014 142 \u043F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F, 8 \u0437\u0430\u044F\u0432\u043E\u043A"],
           ["\u041B\u0443\u0447\u0448\u0438\u0439 \u043A\u0430\u043D\u0430\u043B", "\u042F.\u041A\u0430\u0440\u0442\u044B \u2014 \u0432\u044B\u0440\u043E\u0441\u043B\u0438 \u043D\u0430 +24% \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E"],
           ["\u041B\u0443\u0447\u0448\u0430\u044F \u0443\u0441\u043B\u0443\u0433\u0430", "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435 \u2014 12 \u0437\u0430\u043F\u0438\u0441\u0435\u0439"],
           ["\u0427\u0442\u043E \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u043E\u0441\u044C", "\u0421\u0432\u0435\u0436\u0438\u0435 3 \u0444\u043E\u0442\u043E \u0438\u0437 Telegram + 1 \u043D\u043E\u0432\u044B\u0439 \u043E\u0442\u0437\u044B\u0432 \u0441\xA0\u042F.\u041A\u0430\u0440\u0442"]
-        ].map(([k, v]) => /* @__PURE__ */ jsxs5("li", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
-          /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.08em", color: VT.inkFaint }, children: k.toUpperCase() }),
-          /* @__PURE__ */ jsx6("span", { style: { fontSize: 14, color: VT.ink }, children: v })
+        ].map(([k, v]) => /* @__PURE__ */ jsxs6("li", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
+          /* @__PURE__ */ jsx7("span", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.08em", color: VT.inkFaint }, children: k.toUpperCase() }),
+          /* @__PURE__ */ jsx7("span", { style: { fontSize: 14, color: VT.ink }, children: v })
         ] }, k)) })
       ] })
     ] })
@@ -5566,8 +7017,8 @@ function SiteEditTab() {
     "oklch(0.45 0.12 285)"
   ];
   const togSection = (k) => setSections((s) => ({ ...s, [k]: !s[k] }));
-  return /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 16, alignItems: "flex-start" }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 16, alignItems: "flex-start" }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 16,
@@ -5575,19 +7026,19 @@ function SiteEditTab() {
       position: "sticky",
       top: 88
     }, children: [
-      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }, children: [
-        /* @__PURE__ */ jsx6("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: "\u041F\u0440\u0435\u0432\u044C\u044E" }),
-        /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 11.5 }, children: DEMO_SITE.domain })
+      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }, children: [
+        /* @__PURE__ */ jsx7("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: "\u041F\u0440\u0435\u0432\u044C\u044E" }),
+        /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 11.5 }, children: DEMO_SITE.domain })
       ] }),
-      /* @__PURE__ */ jsxs5("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         background: VT.bgSoft,
         borderRadius: 10,
         overflow: "hidden",
         border: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsxs5("div", { style: { padding: "24px 22px" }, children: [
-          /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", color: accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-          /* @__PURE__ */ jsx6("h2", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: { padding: "24px 22px" }, children: [
+          /* @__PURE__ */ jsx7("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", color: accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+          /* @__PURE__ */ jsx7("h2", { style: {
             fontSize: 26,
             fontWeight: 700,
             letterSpacing: "-0.025em",
@@ -5596,8 +7047,8 @@ function SiteEditTab() {
             color: VT.ink,
             textWrap: "balance"
           }, children: title }),
-          /* @__PURE__ */ jsx6("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: 0, lineHeight: 1.5 }, children: sub }),
-          /* @__PURE__ */ jsx6("div", { style: {
+          /* @__PURE__ */ jsx7("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: 0, lineHeight: 1.5 }, children: sub }),
+          /* @__PURE__ */ jsx7("div", { style: {
             marginTop: 14,
             display: "inline-flex",
             alignItems: "center",
@@ -5610,13 +7061,13 @@ function SiteEditTab() {
             fontWeight: 600
           }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u2192" })
         ] }),
-        /* @__PURE__ */ jsx6("div", { style: { borderTop: `1px solid ${VT.line}`, padding: 14, background: VT.white }, children: Object.entries({
+        /* @__PURE__ */ jsx7("div", { style: { borderTop: `1px solid ${VT.line}`, padding: 14, background: VT.white }, children: Object.entries({
           services: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B",
           reviews: "\u041E\u0442\u0437\u044B\u0432\u044B \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432",
           gallery: "\u0413\u0430\u043B\u0435\u0440\u0435\u044F \u0440\u0430\u0431\u043E\u0442",
           faq: "\u0427\u0430\u0441\u0442\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B",
           map: "\u041A\u0430\u0440\u0442\u0430 \u0438\xA0\u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"
-        }).map(([k, label]) => /* @__PURE__ */ jsxs5("div", { style: {
+        }).map(([k, label]) => /* @__PURE__ */ jsxs6("div", { style: {
           display: "flex",
           alignItems: "center",
           gap: 8,
@@ -5626,13 +7077,13 @@ function SiteEditTab() {
           color: sections[k] ? VT.ink : VT.inkFaint,
           textDecoration: sections[k] ? "none" : "line-through"
         }, children: [
-          /* @__PURE__ */ jsx6("span", { style: { color: sections[k] ? VT.success : VT.inkMuted, fontSize: 14 }, children: sections[k] ? "\u25CF" : "\u25CB" }),
+          /* @__PURE__ */ jsx7("span", { style: { color: sections[k] ? VT.success : VT.inkMuted, fontSize: 14 }, children: sections[k] ? "\u25CF" : "\u25CB" }),
           label
         ] }, k)) })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-      /* @__PURE__ */ jsx6(EditorBlock, { title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A (H1)", children: /* @__PURE__ */ jsx6(
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+      /* @__PURE__ */ jsx7(EditorBlock, { title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A (H1)", children: /* @__PURE__ */ jsx7(
         "textarea",
         {
           value: title,
@@ -5641,7 +7092,7 @@ function SiteEditTab() {
           style: editorTextarea
         }
       ) }),
-      /* @__PURE__ */ jsx6(EditorBlock, { title: "\u041F\u043E\u0434\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A", children: /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7(EditorBlock, { title: "\u041F\u043E\u0434\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A", children: /* @__PURE__ */ jsx7(
         "textarea",
         {
           value: sub,
@@ -5650,8 +7101,8 @@ function SiteEditTab() {
           style: editorTextarea
         }
       ) }),
-      /* @__PURE__ */ jsxs5(EditorBlock, { title: "\u0426\u0432\u0435\u0442 \u0430\u043A\u0446\u0435\u043D\u0442\u0430", children: [
-        /* @__PURE__ */ jsx6("div", { style: { display: "flex", gap: 8 }, children: accentSwatches.map((c) => /* @__PURE__ */ jsx6("button", { onClick: () => setAccent(c), style: {
+      /* @__PURE__ */ jsxs6(EditorBlock, { title: "\u0426\u0432\u0435\u0442 \u0430\u043A\u0446\u0435\u043D\u0442\u0430", children: [
+        /* @__PURE__ */ jsx7("div", { style: { display: "flex", gap: 8 }, children: accentSwatches.map((c) => /* @__PURE__ */ jsx7("button", { onClick: () => setAccent(c), style: {
           width: 36,
           height: 36,
           borderRadius: 10,
@@ -5662,9 +7113,9 @@ function SiteEditTab() {
           transition: "all .15s",
           outlineOffset: -1
         }, "aria-label": `\u0426\u0432\u0435\u0442 ${c}` }, c)) }),
-        /* @__PURE__ */ jsx6("div", { style: { marginTop: 8, fontSize: 12, color: VT.inkFaint, fontFamily: VT.font.mono }, children: accent })
+        /* @__PURE__ */ jsx7("div", { style: { marginTop: 8, fontSize: 12, color: VT.inkFaint, fontFamily: VT.font.mono }, children: accent })
       ] }),
-      /* @__PURE__ */ jsx6(EditorBlock, { title: "Hero-\u0444\u043E\u0442\u043E", children: /* @__PURE__ */ jsxs5("div", { style: {
+      /* @__PURE__ */ jsx7(EditorBlock, { title: "Hero-\u0444\u043E\u0442\u043E", children: /* @__PURE__ */ jsxs6("div", { style: {
         display: "flex",
         alignItems: "center",
         gap: 12,
@@ -5672,23 +7123,23 @@ function SiteEditTab() {
         background: VT.bgSoft,
         borderRadius: 10
       }, children: [
-        /* @__PURE__ */ jsx6("div", { style: {
+        /* @__PURE__ */ jsx7("div", { style: {
           width: 48,
           height: 48,
           borderRadius: 8,
           background: `repeating-linear-gradient(135deg, ${VT.accentSoft} 0 6px, ${VT.bgSoft} 6px 12px)`,
           border: `1px solid ${VT.line}`
         } }),
-        /* @__PURE__ */ jsx6("div", { style: { flex: 1, fontSize: 13, color: VT.inkSoft }, children: "hero-anna-1.jpg \xB7 1.2 MB" }),
-        /* @__PURE__ */ jsx6("button", { style: editorSecondaryBtn, children: "\u0417\u0430\u043C\u0435\u043D\u0438\u0442\u044C" })
+        /* @__PURE__ */ jsx7("div", { style: { flex: 1, fontSize: 13, color: VT.inkSoft }, children: "hero-anna-1.jpg \xB7 1.2 MB" }),
+        /* @__PURE__ */ jsx7("button", { style: editorSecondaryBtn, children: "\u0417\u0430\u043C\u0435\u043D\u0438\u0442\u044C" })
       ] }) }),
-      /* @__PURE__ */ jsx6(EditorBlock, { title: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0435\u043A\u0446\u0438\u0438", children: /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: Object.entries({
+      /* @__PURE__ */ jsx7(EditorBlock, { title: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0435\u043A\u0446\u0438\u0438", children: /* @__PURE__ */ jsx7("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: Object.entries({
         services: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B",
         reviews: "\u041E\u0442\u0437\u044B\u0432\u044B (\u2605 \u041B\u0423\u0427\u0428\u0418\u0415 \u2014 \u0432\u044B\u0431\u0440\u0430\u043D\u044B \u0418\u0418)",
         gallery: "\u0413\u0430\u043B\u0435\u0440\u0435\u044F \u0440\u0430\u0431\u043E\u0442",
         faq: "\u0427\u0430\u0441\u0442\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B",
         map: "\u041A\u0430\u0440\u0442\u0430 \u0438\xA0\u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"
-      }).map(([k, label]) => /* @__PURE__ */ jsxs5("label", { style: {
+      }).map(([k, label]) => /* @__PURE__ */ jsxs6("label", { style: {
         display: "flex",
         alignItems: "center",
         gap: 10,
@@ -5697,7 +7148,7 @@ function SiteEditTab() {
         fontSize: 14,
         color: VT.ink
       }, children: [
-        /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: {
           width: 36,
           height: 22,
           borderRadius: 11,
@@ -5705,7 +7156,7 @@ function SiteEditTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx6("span", { style: {
+        }, children: /* @__PURE__ */ jsx7("span", { style: {
           position: "absolute",
           top: 2,
           left: sections[k] ? 16 : 2,
@@ -5716,10 +7167,10 @@ function SiteEditTab() {
           transition: "left .15s",
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
         } }) }),
-        /* @__PURE__ */ jsx6("input", { type: "checkbox", checked: sections[k], onChange: () => togSection(k), style: { display: "none" } }),
+        /* @__PURE__ */ jsx7("input", { type: "checkbox", checked: sections[k], onChange: () => togSection(k), style: { display: "none" } }),
         label
       ] }, k)) }) }),
-      /* @__PURE__ */ jsx6("button", { style: {
+      /* @__PURE__ */ jsx7("button", { style: {
         background: VT.accent,
         color: "#fff",
         fontWeight: 700,
@@ -5760,13 +7211,13 @@ var editorSecondaryBtn = {
   cursor: "pointer"
 };
 function EditorBlock({ title, children }) {
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 14,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsx6("div", { style: { fontSize: 12, fontWeight: 600, color: VT.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }, children: title }),
+    /* @__PURE__ */ jsx7("div", { style: { fontSize: 12, fontWeight: 600, color: VT.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }, children: title }),
     children
   ] });
 }
@@ -5798,8 +7249,8 @@ function LeadsTab() {
   const setStatus = (id, status) => {
     setLeads((ls) => ls.map((l) => l.id === id ? { ...l, status } : l));
   };
-  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-    /* @__PURE__ */ jsx6("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: filters.map(([id, label, count]) => /* @__PURE__ */ jsxs5("button", { onClick: () => setFilter(id), style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+    /* @__PURE__ */ jsx7("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: filters.map(([id, label, count]) => /* @__PURE__ */ jsxs6("button", { onClick: () => setFilter(id), style: {
       padding: "8px 14px",
       borderRadius: 999,
       background: filter === id ? VT.ink : VT.white,
@@ -5813,7 +7264,7 @@ function LeadsTab() {
       gap: 6
     }, children: [
       label,
-      /* @__PURE__ */ jsx6("span", { style: {
+      /* @__PURE__ */ jsx7("span", { style: {
         padding: "1px 7px",
         borderRadius: 999,
         background: filter === id ? "rgba(255,255,255,0.18)" : VT.bgSoft,
@@ -5821,13 +7272,13 @@ function LeadsTab() {
         fontFamily: VT.font.mono
       }, children: count })
     ] }, id)) }),
-    /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 16,
       overflow: "hidden"
     }, children: [
-      /* @__PURE__ */ jsxs5("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         display: "grid",
         gridTemplateColumns: "1.2fr 1.4fr 1.5fr 1.1fr 0.6fr 1fr 1.1fr",
         padding: "14px 18px",
@@ -5839,15 +7290,15 @@ function LeadsTab() {
         color: VT.inkFaint,
         fontWeight: 600
       }, children: [
-        /* @__PURE__ */ jsx6("span", { children: "\u0418\u041C\u042F" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u041A\u041E\u041D\u0422\u0410\u041A\u0422" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u0423\u0421\u041B\u0423\u0413\u0410" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u041A\u041E\u0413\u0414\u0410" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u041A\u0410\u041D\u0410\u041B" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u0421\u0422\u0410\u0422\u0423\u0421" }),
-        /* @__PURE__ */ jsx6("span", { children: "\u0414\u0415\u0419\u0421\u0422\u0412\u0418\u042F" })
+        /* @__PURE__ */ jsx7("span", { children: "\u0418\u041C\u042F" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u041A\u041E\u041D\u0422\u0410\u041A\u0422" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u0423\u0421\u041B\u0423\u0413\u0410" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u041A\u041E\u0413\u0414\u0410" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u041A\u0410\u041D\u0410\u041B" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u0421\u0422\u0410\u0422\u0423\u0421" }),
+        /* @__PURE__ */ jsx7("span", { children: "\u0414\u0415\u0419\u0421\u0422\u0412\u0418\u042F" })
       ] }),
-      filtered.map((l) => /* @__PURE__ */ jsxs5("div", { style: {
+      filtered.map((l) => /* @__PURE__ */ jsxs6("div", { style: {
         display: "grid",
         gridTemplateColumns: "1.2fr 1.4fr 1.5fr 1.1fr 0.6fr 1fr 1.1fr",
         padding: "14px 18px",
@@ -5856,12 +7307,12 @@ function LeadsTab() {
         fontSize: 13.5,
         color: VT.ink
       }, children: [
-        /* @__PURE__ */ jsx6("span", { style: { fontWeight: 600 }, children: l.name }),
-        /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, color: VT.inkSoft }, children: l.contact }),
-        /* @__PURE__ */ jsx6("span", { children: l.service }),
-        /* @__PURE__ */ jsx6("span", { style: { color: VT.inkSoft }, children: l.when }),
-        /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: l.source }),
-        /* @__PURE__ */ jsx6("span", { children: /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: { fontWeight: 600 }, children: l.name }),
+        /* @__PURE__ */ jsx7("span", { style: { fontFamily: VT.font.mono, color: VT.inkSoft }, children: l.contact }),
+        /* @__PURE__ */ jsx7("span", { children: l.service }),
+        /* @__PURE__ */ jsx7("span", { style: { color: VT.inkSoft }, children: l.when }),
+        /* @__PURE__ */ jsx7("span", { style: { fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: l.source }),
+        /* @__PURE__ */ jsx7("span", { children: /* @__PURE__ */ jsx7("span", { style: {
           padding: "4px 10px",
           borderRadius: 999,
           background: statusInfo[l.status].bg,
@@ -5869,9 +7320,9 @@ function LeadsTab() {
           fontSize: 11.5,
           fontWeight: 600
         }, children: statusInfo[l.status].label }) }),
-        /* @__PURE__ */ jsxs5("span", { style: { display: "flex", gap: 6 }, children: [
-          l.status === "new" && /* @__PURE__ */ jsxs5(Fragment6, { children: [
-            /* @__PURE__ */ jsx6("button", { onClick: () => setStatus(l.id, "booked"), style: {
+        /* @__PURE__ */ jsxs6("span", { style: { display: "flex", gap: 6 }, children: [
+          l.status === "new" && /* @__PURE__ */ jsxs6(Fragment6, { children: [
+            /* @__PURE__ */ jsx7("button", { onClick: () => setStatus(l.id, "booked"), style: {
               padding: "5px 10px",
               borderRadius: 6,
               background: VT.accent,
@@ -5881,7 +7332,7 @@ function LeadsTab() {
               fontWeight: 600,
               cursor: "pointer"
             }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C" }),
-            /* @__PURE__ */ jsx6("button", { onClick: () => setStatus(l.id, "declined"), style: {
+            /* @__PURE__ */ jsx7("button", { onClick: () => setStatus(l.id, "declined"), style: {
               padding: "5px 10px",
               borderRadius: 6,
               background: VT.white,
@@ -5891,7 +7342,7 @@ function LeadsTab() {
               cursor: "pointer"
             }, children: "\xD7" })
           ] }),
-          l.status === "answered" && /* @__PURE__ */ jsx6("button", { onClick: () => setStatus(l.id, "booked"), style: {
+          l.status === "answered" && /* @__PURE__ */ jsx7("button", { onClick: () => setStatus(l.id, "booked"), style: {
             padding: "5px 10px",
             borderRadius: 6,
             background: VT.accent,
@@ -5901,10 +7352,10 @@ function LeadsTab() {
             fontWeight: 600,
             cursor: "pointer"
           }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u043D" }),
-          (l.status === "booked" || l.status === "declined") && /* @__PURE__ */ jsx6("span", { style: { color: VT.inkFaint, fontSize: 11.5 }, children: "\u2014" })
+          (l.status === "booked" || l.status === "declined") && /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint, fontSize: 11.5 }, children: "\u2014" })
         ] })
       ] }, l.id)),
-      filtered.length === 0 && /* @__PURE__ */ jsx6("div", { style: { padding: 40, textAlign: "center", color: VT.inkFaint }, children: "\u0417\u0430\u044F\u0432\u043E\u043A \u0432\xA0\u044D\u0442\u043E\u043C \u0441\u0442\u0430\u0442\u0443\u0441\u0435 \u043D\u0435\u0442" })
+      filtered.length === 0 && /* @__PURE__ */ jsx7("div", { style: { padding: 40, textAlign: "center", color: VT.inkFaint }, children: "\u0417\u0430\u044F\u0432\u043E\u043A \u0432\xA0\u044D\u0442\u043E\u043C \u0441\u0442\u0430\u0442\u0443\u0441\u0435 \u043D\u0435\u0442" })
     ] })
   ] });
 }
@@ -5921,8 +7372,8 @@ function ReviewsTab() {
   ]);
   const toggleShown = (id) => setReviews((rs) => rs.map((r) => r.id === id ? { ...r, shown: !r.shown } : r));
   const shownCount = reviews.filter((r) => r.shown).length;
-  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
@@ -5933,11 +7384,11 @@ function ReviewsTab() {
       gap: 14,
       flexWrap: "wrap"
     }, children: [
-      /* @__PURE__ */ jsxs5("div", { children: [
-        /* @__PURE__ */ jsx6("div", { style: { fontSize: 16, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "AI-\u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0441\u0442\u0432\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432" }),
-        /* @__PURE__ */ jsxs5("div", { style: { fontSize: 13.5, color: VT.inkSoft, marginTop: 2 }, children: [
+      /* @__PURE__ */ jsxs6("div", { children: [
+        /* @__PURE__ */ jsx7("div", { style: { fontSize: 16, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "AI-\u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0441\u0442\u0432\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432" }),
+        /* @__PURE__ */ jsxs6("div", { style: { fontSize: 13.5, color: VT.inkSoft, marginTop: 2 }, children: [
           "\u041D\u0430 \u0441\u0430\u0439\u0442\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043E ",
-          /* @__PURE__ */ jsx6("b", { children: shownCount }),
+          /* @__PURE__ */ jsx7("b", { children: shownCount }),
           " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438\u0437 ",
           reviews.length,
           ". ",
@@ -5945,7 +7396,7 @@ function ReviewsTab() {
           " \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 \u043F\u043E\u0434\u0431\u043E\u0440\u043A\u0443 \u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u0432\u044B\u0431\u0438\u0440\u0430\u0435\u0442 4\u20136 \u0441\u0430\u043C\u044B\u0445 \u0442\u0451\u043F\u043B\u044B\u0445."
         ] })
       ] }),
-      /* @__PURE__ */ jsx6("button", { style: {
+      /* @__PURE__ */ jsx7("button", { style: {
         padding: "10px 18px",
         borderRadius: 999,
         background: VT.accent,
@@ -5956,7 +7407,7 @@ function ReviewsTab() {
         cursor: "pointer"
       }, children: "\u041F\u0435\u0440\u0435\u0447\u0438\u0442\u0430\u0442\u044C \u0432\u0441\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u2192" })
     ] }),
-    /* @__PURE__ */ jsx6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: reviews.map((r) => /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsx7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: reviews.map((r) => /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: r.shown ? `1px solid ${VT.line}` : `1px dashed ${VT.line}`,
       borderRadius: 14,
@@ -5964,8 +7415,8 @@ function ReviewsTab() {
       opacity: r.shown ? 1 : 0.55,
       position: "relative"
     }, children: [
-      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 }, children: [
-        /* @__PURE__ */ jsx6("span", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 }, children: [
+        /* @__PURE__ */ jsx7("span", { style: {
           width: 32,
           height: 32,
           borderRadius: "50%",
@@ -5978,10 +7429,10 @@ function ReviewsTab() {
           fontWeight: 700,
           fontSize: 14
         }, children: r.author[0] }),
-        /* @__PURE__ */ jsxs5("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-            /* @__PURE__ */ jsx6("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: r.author }),
-            r.topPick && /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: r.author }),
+            r.topPick && /* @__PURE__ */ jsx7("span", { style: {
               marginLeft: "auto",
               fontFamily: VT.font.mono,
               fontSize: 9.5,
@@ -5993,7 +7444,7 @@ function ReviewsTab() {
               fontWeight: 700
             }, children: "\u2605 \u0422\u041E\u041F" })
           ] }),
-          /* @__PURE__ */ jsxs5("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 11,
             color: VT.inkFaint,
@@ -6008,7 +7459,7 @@ function ReviewsTab() {
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs5("p", { style: {
+      /* @__PURE__ */ jsxs6("p", { style: {
         margin: "10px 0 0",
         fontSize: 13.5,
         lineHeight: 1.5,
@@ -6019,7 +7470,7 @@ function ReviewsTab() {
         r.text,
         "\xBB"
       ] }),
-      /* @__PURE__ */ jsxs5("label", { style: {
+      /* @__PURE__ */ jsxs6("label", { style: {
         marginTop: 12,
         display: "flex",
         alignItems: "center",
@@ -6028,7 +7479,7 @@ function ReviewsTab() {
         fontSize: 12.5,
         color: VT.inkSoft
       }, children: [
-        /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: {
           width: 30,
           height: 18,
           borderRadius: 9,
@@ -6036,7 +7487,7 @@ function ReviewsTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx6("span", { style: {
+        }, children: /* @__PURE__ */ jsx7("span", { style: {
           position: "absolute",
           top: 2,
           left: r.shown ? 14 : 2,
@@ -6046,7 +7497,7 @@ function ReviewsTab() {
           background: "#fff",
           transition: "left .15s"
         } }) }),
-        /* @__PURE__ */ jsx6("input", { type: "checkbox", checked: r.shown, onChange: () => toggleShown(r.id), style: { display: "none" } }),
+        /* @__PURE__ */ jsx7("input", { type: "checkbox", checked: r.shown, onChange: () => toggleShown(r.id), style: { display: "none" } }),
         r.shown ? "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043D\u0430\xA0\u0441\u0430\u0439\u0442\u0435" : "\u0421\u043A\u0440\u044B\u0442"
       ] })
     ] }, r.id)) })
@@ -6061,13 +7512,13 @@ function ServicesTab() {
     { id: 5, name: "\u0421\u043D\u044F\u0442\u0438\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", duration: "20 \u043C\u0438\u043D", price: "500 \u20BD" }
   ]);
   const [edit, setEdit] = useState(null);
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     overflow: "hidden"
   }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       padding: "14px 22px",
       background: VT.bgSoft,
       borderBottom: `1px solid ${VT.line}`,
@@ -6075,11 +7526,11 @@ function ServicesTab() {
       alignItems: "center",
       justifyContent: "space-between"
     }, children: [
-      /* @__PURE__ */ jsxs5("div", { style: { fontSize: 15, fontWeight: 600, color: VT.ink }, children: [
+      /* @__PURE__ */ jsxs6("div", { style: { fontSize: 15, fontWeight: 600, color: VT.ink }, children: [
         "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B \u2014 ",
         services.length
       ] }),
-      /* @__PURE__ */ jsx6("button", { style: {
+      /* @__PURE__ */ jsx7("button", { style: {
         padding: "8px 16px",
         borderRadius: 999,
         background: VT.accent,
@@ -6090,15 +7541,15 @@ function ServicesTab() {
         cursor: "pointer"
       }, children: "+ \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0443\u0441\u043B\u0443\u0433\u0443" })
     ] }),
-    services.map((sv) => /* @__PURE__ */ jsx6("div", { style: {
+    services.map((sv) => /* @__PURE__ */ jsx7("div", { style: {
       display: "grid",
       gridTemplateColumns: "1.5fr 0.8fr 0.8fr 0.6fr",
       padding: "14px 22px",
       borderBottom: `1px solid ${VT.lineSoft}`,
       alignItems: "center",
       gap: 10
-    }, children: edit === sv.id ? /* @__PURE__ */ jsxs5(Fragment6, { children: [
-      /* @__PURE__ */ jsx6(
+    }, children: edit === sv.id ? /* @__PURE__ */ jsxs6(Fragment6, { children: [
+      /* @__PURE__ */ jsx7(
         "input",
         {
           defaultValue: sv.name,
@@ -6110,16 +7561,16 @@ function ServicesTab() {
           autoFocus: true
         }
       ),
-      /* @__PURE__ */ jsx6("input", { defaultValue: sv.duration, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
-      /* @__PURE__ */ jsx6("input", { defaultValue: sv.price, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
-      /* @__PURE__ */ jsx6("button", { onClick: () => setEdit(null), style: { ...editorSecondaryBtn, fontSize: 12 }, children: "OK" })
-    ] }) : /* @__PURE__ */ jsxs5(Fragment6, { children: [
-      /* @__PURE__ */ jsx6("span", { style: { fontSize: 14, color: VT.ink, fontWeight: 500 }, children: sv.name }),
-      /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 12.5, color: VT.inkSoft }, children: sv.duration || "\u2014" }),
-      /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: sv.price }),
-      /* @__PURE__ */ jsxs5("span", { style: { display: "flex", gap: 6 }, children: [
-        /* @__PURE__ */ jsx6("button", { onClick: () => setEdit(sv.id), style: { ...editorSecondaryBtn, fontSize: 11 }, children: "\u270E" }),
-        /* @__PURE__ */ jsx6(
+      /* @__PURE__ */ jsx7("input", { defaultValue: sv.duration, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
+      /* @__PURE__ */ jsx7("input", { defaultValue: sv.price, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
+      /* @__PURE__ */ jsx7("button", { onClick: () => setEdit(null), style: { ...editorSecondaryBtn, fontSize: 12 }, children: "OK" })
+    ] }) : /* @__PURE__ */ jsxs6(Fragment6, { children: [
+      /* @__PURE__ */ jsx7("span", { style: { fontSize: 14, color: VT.ink, fontWeight: 500 }, children: sv.name }),
+      /* @__PURE__ */ jsx7("span", { style: { fontFamily: VT.font.mono, fontSize: 12.5, color: VT.inkSoft }, children: sv.duration || "\u2014" }),
+      /* @__PURE__ */ jsx7("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: sv.price }),
+      /* @__PURE__ */ jsxs6("span", { style: { display: "flex", gap: 6 }, children: [
+        /* @__PURE__ */ jsx7("button", { onClick: () => setEdit(sv.id), style: { ...editorSecondaryBtn, fontSize: 11 }, children: "\u270E" }),
+        /* @__PURE__ */ jsx7(
           "button",
           {
             onClick: () => setServices((s) => s.filter((x) => x.id !== sv.id)),
@@ -6134,15 +7585,15 @@ function ServicesTab() {
 function SettingsTab() {
   const [notify, setNotify] = useState({ tg: true, max: false, email: true });
   const [paused, setPaused] = useState(false);
-  return /* @__PURE__ */ jsxs5("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-    /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22
     }, children: [
-      /* @__PURE__ */ jsx6("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0430" }),
-      /* @__PURE__ */ jsxs5("div", { style: {
+      /* @__PURE__ */ jsx7("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0430" }),
+      /* @__PURE__ */ jsxs6("div", { style: {
         padding: "14px 16px",
         background: VT.bgSoft,
         borderRadius: 10,
@@ -6150,14 +7601,14 @@ function SettingsTab() {
         alignItems: "baseline",
         justifyContent: "space-between"
       }, children: [
-        /* @__PURE__ */ jsxs5("div", { children: [
-          /* @__PURE__ */ jsx6("div", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink }, children: DEMO_SITE.plan }),
-          /* @__PURE__ */ jsxs5("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 2 }, children: [
+        /* @__PURE__ */ jsxs6("div", { children: [
+          /* @__PURE__ */ jsx7("div", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink }, children: DEMO_SITE.plan }),
+          /* @__PURE__ */ jsxs6("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 2 }, children: [
             "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0435 \u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \xB7 ",
             DEMO_SITE.nextBilling
           ] })
         ] }),
-        /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: {
           padding: "4px 10px",
           borderRadius: 999,
           background: "oklch(0.93 0.06 145)",
@@ -6166,34 +7617,34 @@ function SettingsTab() {
           fontWeight: 600
         }, children: "\u0410\u041A\u0422\u0418\u0412\u041D\u0410" })
       ] }),
-      /* @__PURE__ */ jsxs5("div", { style: { marginTop: 12, display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx6("button", { style: editorSecondaryBtn, children: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u0430\u0440\u0442\u0443" }),
-        /* @__PURE__ */ jsx6("button", { style: { ...editorSecondaryBtn, color: VT.danger }, children: "\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u043E\u0434\u043F\u0438\u0441\u043A\u0443" })
+      /* @__PURE__ */ jsxs6("div", { style: { marginTop: 12, display: "flex", gap: 8 }, children: [
+        /* @__PURE__ */ jsx7("button", { style: editorSecondaryBtn, children: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u0430\u0440\u0442\u0443" }),
+        /* @__PURE__ */ jsx7("button", { style: { ...editorSecondaryBtn, color: VT.danger }, children: "\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u043E\u0434\u043F\u0438\u0441\u043A\u0443" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22
     }, children: [
-      /* @__PURE__ */ jsx6("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0410\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430" }),
-      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 14, color: VT.ink, marginBottom: 10 }, children: DEMO_SITE.domain }),
-      /* @__PURE__ */ jsx6("button", { style: editorSecondaryBtn, children: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D" })
+      /* @__PURE__ */ jsx7("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0410\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430" }),
+      /* @__PURE__ */ jsx7("div", { style: { fontFamily: VT.font.mono, fontSize: 14, color: VT.ink, marginBottom: 10 }, children: DEMO_SITE.domain }),
+      /* @__PURE__ */ jsx7("button", { style: editorSecondaryBtn, children: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D" })
     ] }),
-    /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22,
       gridColumn: "1 / -1"
     }, children: [
-      /* @__PURE__ */ jsx6("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0438" }),
-      /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
+      /* @__PURE__ */ jsx7("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0438" }),
+      /* @__PURE__ */ jsx7("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
         ["tg", "Telegram", "@anna_studio", "#229ED9"],
         ["max", "MAX", "\u043D\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E", "oklch(0.55 0.13 285)"],
         ["email", "Email", "anna@studio.ru", VT.accent]
-      ].map(([k, label, value, color]) => /* @__PURE__ */ jsxs5("label", { style: {
+      ].map(([k, label, value, color]) => /* @__PURE__ */ jsxs6("label", { style: {
         display: "flex",
         alignItems: "center",
         gap: 12,
@@ -6203,7 +7654,7 @@ function SettingsTab() {
         borderRadius: 10,
         cursor: "pointer"
       }, children: [
-        /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: {
           width: 36,
           height: 36,
           borderRadius: 8,
@@ -6217,11 +7668,11 @@ function SettingsTab() {
           opacity: notify[k] ? 1 : 0.4,
           flex: "0 0 auto"
         }, children: label[0] }),
-        /* @__PURE__ */ jsxs5("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx6("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
-          /* @__PURE__ */ jsx6("div", { style: { fontSize: 12, color: VT.inkSoft, fontFamily: VT.font.mono }, children: value })
+        /* @__PURE__ */ jsxs6("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx7("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
+          /* @__PURE__ */ jsx7("div", { style: { fontSize: 12, color: VT.inkSoft, fontFamily: VT.font.mono }, children: value })
         ] }),
-        /* @__PURE__ */ jsx6("span", { style: {
+        /* @__PURE__ */ jsx7("span", { style: {
           width: 36,
           height: 22,
           borderRadius: 11,
@@ -6229,7 +7680,7 @@ function SettingsTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx6("span", { style: {
+        }, children: /* @__PURE__ */ jsx7("span", { style: {
           position: "absolute",
           top: 2,
           left: notify[k] ? 16 : 2,
@@ -6240,19 +7691,19 @@ function SettingsTab() {
           transition: "left .15s",
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
         } }) }),
-        /* @__PURE__ */ jsx6("input", { type: "checkbox", checked: notify[k], onChange: () => setNotify((n) => ({ ...n, [k]: !n[k] })), style: { display: "none" } })
+        /* @__PURE__ */ jsx7("input", { type: "checkbox", checked: notify[k], onChange: () => setNotify((n) => ({ ...n, [k]: !n[k] })), style: { display: "none" } })
       ] }, k)) })
     ] }),
-    /* @__PURE__ */ jsxs5("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22,
       gridColumn: "1 / -1"
     }, children: [
-      /* @__PURE__ */ jsx6("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0430\u0439\u0442\u043E\u043C" }),
-      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ jsx6("button", { onClick: () => setPaused((p) => !p), style: {
+      /* @__PURE__ */ jsx7("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0430\u0439\u0442\u043E\u043C" }),
+      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
+        /* @__PURE__ */ jsx7("button", { onClick: () => setPaused((p) => !p), style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: paused ? VT.success : VT.white,
@@ -6262,7 +7713,7 @@ function SettingsTab() {
           border: `1px solid ${paused ? VT.success : VT.line}`,
           cursor: "pointer"
         }, children: paused ? "\u25B6 \u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" : "\u23F8 \u041F\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u043D\u0430\xA0\u043F\u0430\u0443\u0437\u0443" }),
-        /* @__PURE__ */ jsx6("button", { style: {
+        /* @__PURE__ */ jsx7("button", { style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: VT.white,
@@ -6272,7 +7723,7 @@ function SettingsTab() {
           border: `1px solid ${VT.line}`,
           cursor: "pointer"
         }, children: "\u2193 \u0421\u043A\u0430\u0447\u0430\u0442\u044C \u0430\u0440\u0445\u0438\u0432 (HTML + \u0444\u043E\u0442\u043E)" }),
-        /* @__PURE__ */ jsx6("button", { style: {
+        /* @__PURE__ */ jsx7("button", { style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: VT.white,
@@ -6289,7 +7740,7 @@ function SettingsTab() {
 function ClientAdminDemo() {
   const [tab, setTab] = useState("analytics");
   const currentTab = TABS.find((t) => t.id === tab);
-  return /* @__PURE__ */ jsxs5("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     width: "100%",
     minHeight: "100vh",
     background: VT.bg,
@@ -6299,7 +7750,7 @@ function ClientAdminDemo() {
     display: "flex",
     flexDirection: "column"
   }, children: [
-    /* @__PURE__ */ jsxs5("header", { style: {
+    /* @__PURE__ */ jsxs6("header", { style: {
       position: "sticky",
       top: 0,
       zIndex: 10,
@@ -6311,8 +7762,8 @@ function ClientAdminDemo() {
       alignItems: "center",
       gap: 18
     }, children: [
-      /* @__PURE__ */ jsx6(BrandMark, { size: 26, fontSize: 18 }),
-      /* @__PURE__ */ jsx6("span", { style: {
+      /* @__PURE__ */ jsx7(BrandMark, { size: 26, fontSize: 18 }),
+      /* @__PURE__ */ jsx7("span", { style: {
         padding: "4px 10px",
         borderRadius: 6,
         background: VT.bgSoft,
@@ -6322,19 +7773,19 @@ function ClientAdminDemo() {
         color: VT.inkFaint,
         fontWeight: 600
       }, children: "\u0414\u0415\u041C\u041E \xB7 \u041B\u0418\u0427\u041D\u042B\u0419 \u041A\u0410\u0411\u0418\u041D\u0415\u0422" }),
-      /* @__PURE__ */ jsx6("div", { style: { flex: 1 } }),
-      /* @__PURE__ */ jsxs5("span", { style: {
+      /* @__PURE__ */ jsx7("div", { style: { flex: 1 } }),
+      /* @__PURE__ */ jsxs6("span", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
         fontSize: 13,
         color: VT.inkSoft
       }, children: [
-        /* @__PURE__ */ jsx6("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.success } }),
-        /* @__PURE__ */ jsx6(Mono, { style: { fontSize: 13, color: VT.ink }, children: DEMO_SITE.domain }),
+        /* @__PURE__ */ jsx7("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.success } }),
+        /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 13, color: VT.ink }, children: DEMO_SITE.domain }),
         "\xB7 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D"
       ] }),
-      /* @__PURE__ */ jsx6("a", { href: "index.html", style: {
+      /* @__PURE__ */ jsx7("a", { href: "index.html", style: {
         padding: "8px 14px",
         borderRadius: 999,
         background: VT.bgSoft,
@@ -6347,7 +7798,7 @@ function ClientAdminDemo() {
         alignItems: "center",
         gap: 6
       }, children: "\u2190 \u041D\u0430\u0437\u0430\u0434 \u043A\xA0\u043B\u0435\u043D\u0434\u0438\u043D\u0433\u0443" }),
-      /* @__PURE__ */ jsx6("a", { href: "#", style: {
+      /* @__PURE__ */ jsx7("a", { href: "#", style: {
         padding: "8px 16px",
         borderRadius: 999,
         background: VT.accent,
@@ -6357,8 +7808,8 @@ function ClientAdminDemo() {
         textDecoration: "none"
       }, children: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u0430\u0439\u0442 \u2197" })
     ] }),
-    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flex: 1, minHeight: 0 }, children: [
-      /* @__PURE__ */ jsxs5("aside", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flex: 1, minHeight: 0 }, children: [
+      /* @__PURE__ */ jsxs6("aside", { style: {
         width: 240,
         flex: "0 0 auto",
         background: VT.white,
@@ -6368,7 +7819,7 @@ function ClientAdminDemo() {
         flexDirection: "column",
         gap: 4
       }, children: [
-        /* @__PURE__ */ jsx6("div", { style: {
+        /* @__PURE__ */ jsx7("div", { style: {
           padding: "6px 14px",
           fontFamily: VT.font.mono,
           fontSize: 11,
@@ -6377,7 +7828,7 @@ function ClientAdminDemo() {
           fontWeight: 600,
           marginBottom: 4
         }, children: "\u0421\u0422\u0423\u0414\u0418\u042F \u0410\u041D\u041D\u042B" }),
-        TABS.map((t) => /* @__PURE__ */ jsxs5("button", { onClick: () => setTab(t.id), style: {
+        TABS.map((t) => /* @__PURE__ */ jsxs6("button", { onClick: () => setTab(t.id), style: {
           padding: "10px 14px",
           borderRadius: 10,
           background: tab === t.id ? VT.accentSoft : "transparent",
@@ -6392,9 +7843,9 @@ function ClientAdminDemo() {
           fontWeight: tab === t.id ? 600 : 500,
           fontFamily: VT.font.sans
         }, children: [
-          /* @__PURE__ */ jsx6("span", { style: { color: tab === t.id ? VT.accent : VT.inkSoft, display: "inline-flex" }, children: /* @__PURE__ */ jsx6(NavIcon, { kind: t.icon, size: 17 }) }),
-          /* @__PURE__ */ jsx6("span", { style: { flex: 1 }, children: t.label }),
-          t.badge && /* @__PURE__ */ jsx6("span", { style: {
+          /* @__PURE__ */ jsx7("span", { style: { color: tab === t.id ? VT.accent : VT.inkSoft, display: "inline-flex" }, children: /* @__PURE__ */ jsx7(NavIcon, { kind: t.icon, size: 17 }) }),
+          /* @__PURE__ */ jsx7("span", { style: { flex: 1 }, children: t.label }),
+          t.badge && /* @__PURE__ */ jsx7("span", { style: {
             padding: "1px 7px",
             borderRadius: 999,
             background: VT.accent,
@@ -6404,8 +7855,8 @@ function ClientAdminDemo() {
             fontWeight: 700
           }, children: t.badge })
         ] }, t.id)),
-        /* @__PURE__ */ jsx6("div", { style: { flex: 1 } }),
-        /* @__PURE__ */ jsxs5("div", { style: {
+        /* @__PURE__ */ jsx7("div", { style: { flex: 1 } }),
+        /* @__PURE__ */ jsxs6("div", { style: {
           margin: "20px 6px 0",
           padding: 14,
           background: VT.bgSoft,
@@ -6414,12 +7865,12 @@ function ClientAdminDemo() {
           color: VT.inkSoft,
           lineHeight: 1.5
         }, children: [
-          /* @__PURE__ */ jsx6("div", { style: { fontWeight: 600, color: VT.ink, marginBottom: 4 }, children: "\u042D\u0442\u043E \u0434\u0435\u043C\u043E" }),
+          /* @__PURE__ */ jsx7("div", { style: { fontWeight: 600, color: VT.ink, marginBottom: 4 }, children: "\u042D\u0442\u043E \u0434\u0435\u043C\u043E" }),
           "\u0412\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u043D\u0438\u0436\u0435 \u2014 \u043F\u0440\u0438\u043C\u0435\u0440. \u0420\u0435\u0430\u043B\u044C\u043D\u044B\u0439 \u041B\u041A \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0442\u0430\u043A \u0436\u0435."
         ] })
       ] }),
-      /* @__PURE__ */ jsxs5("main", { style: { flex: 1, minWidth: 0, padding: "24px 28px 60px", overflowX: "hidden" }, children: [
-        /* @__PURE__ */ jsx6("div", { style: { marginBottom: 20 }, children: /* @__PURE__ */ jsx6("h1", { style: {
+      /* @__PURE__ */ jsxs6("main", { style: { flex: 1, minWidth: 0, padding: "24px 28px 60px", overflowX: "hidden" }, children: [
+        /* @__PURE__ */ jsx7("div", { style: { marginBottom: 20 }, children: /* @__PURE__ */ jsx7("h1", { style: {
           fontSize: 30,
           fontWeight: 700,
           letterSpacing: "-0.025em",
@@ -6427,22 +7878,22 @@ function ClientAdminDemo() {
           lineHeight: 1.1,
           color: VT.ink
         }, children: currentTab.label }) }),
-        tab === "analytics" && /* @__PURE__ */ jsx6(AnalyticsTab, {}),
-        tab === "site" && /* @__PURE__ */ jsx6(SiteEditTab, {}),
-        tab === "leads" && /* @__PURE__ */ jsx6(LeadsTab, {}),
-        tab === "reviews" && /* @__PURE__ */ jsx6(ReviewsTab, {}),
-        tab === "services" && /* @__PURE__ */ jsx6(ServicesTab, {}),
-        tab === "settings" && /* @__PURE__ */ jsx6(SettingsTab, {})
+        tab === "analytics" && /* @__PURE__ */ jsx7(AnalyticsTab, {}),
+        tab === "site" && /* @__PURE__ */ jsx7(SiteEditTab, {}),
+        tab === "leads" && /* @__PURE__ */ jsx7(LeadsTab, {}),
+        tab === "reviews" && /* @__PURE__ */ jsx7(ReviewsTab, {}),
+        tab === "services" && /* @__PURE__ */ jsx7(ServicesTab, {}),
+        tab === "settings" && /* @__PURE__ */ jsx7(SettingsTab, {})
       ] })
     ] })
   ] });
 }
 
 // src/admin-core/index.tsx
-import React3, { useState as useState2, useEffect as useEffect2, useCallback as useCallback2 } from "react";
-import { Fragment as Fragment8, jsx as jsx7, jsxs as jsxs6 } from "react/jsx-runtime";
+import React4, { useState as useState2, useEffect as useEffect2, useCallback as useCallback2 } from "react";
+import { Fragment as Fragment8, jsx as jsx8, jsxs as jsxs7 } from "react/jsx-runtime";
 function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
-  return /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: {
+  return /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: {
     display: "inline-block",
     width,
     height,
@@ -6455,29 +7906,29 @@ function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
   } });
 }
 function EmptyState({ title, hint }) {
-  return /* @__PURE__ */ jsxs6("div", { role: "status", style: {
+  return /* @__PURE__ */ jsxs7("div", { role: "status", style: {
     padding: "48px 24px",
     textAlign: "center",
     color: VT.inkFaint,
     fontFamily: VT.font.sans
   }, children: [
-    /* @__PURE__ */ jsx7("div", { "aria-hidden": "true", style: { fontSize: 28, opacity: 0.6, marginBottom: 8 }, children: "\u2205" }),
-    /* @__PURE__ */ jsx7("div", { style: { fontSize: 14.5, fontWeight: 500, color: VT.inkSoft, marginBottom: 4 }, children: title }),
-    hint && /* @__PURE__ */ jsx7("div", { style: { fontSize: 13 }, children: hint })
+    /* @__PURE__ */ jsx8("div", { "aria-hidden": "true", style: { fontSize: 28, opacity: 0.6, marginBottom: 8 }, children: "\u2205" }),
+    /* @__PURE__ */ jsx8("div", { style: { fontSize: 14.5, fontWeight: 500, color: VT.inkSoft, marginBottom: 4 }, children: title }),
+    hint && /* @__PURE__ */ jsx8("div", { style: { fontSize: 13 }, children: hint })
   ] });
 }
 function ErrorBlock({ title, message, onRetry }) {
-  return /* @__PURE__ */ jsx7(Card, { role: "alert", style: {
+  return /* @__PURE__ */ jsx8(Card, { role: "alert", style: {
     padding: 18,
     background: VT.dangerSoft,
     borderColor: "oklch(0.86 0.06 28)"
-  }, children: /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-    /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { fontSize: 18 }, children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsxs6("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ jsx7("div", { style: { fontWeight: 600, fontSize: 14, color: "oklch(0.4 0.15 28)" }, children: title || "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A" }),
-      message && /* @__PURE__ */ jsx7("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 2 }, children: message })
+  }, children: /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+    /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { fontSize: 18 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsxs7("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ jsx8("div", { style: { fontWeight: 600, fontSize: 14, color: "oklch(0.4 0.15 28)" }, children: title || "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A" }),
+      message && /* @__PURE__ */ jsx8("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 2 }, children: message })
     ] }),
-    onRetry && /* @__PURE__ */ jsx7("button", { type: "button", onClick: onRetry, style: {
+    onRetry && /* @__PURE__ */ jsx8("button", { type: "button", onClick: onRetry, style: {
       border: "none",
       background: VT.white,
       color: VT.ink,
@@ -6500,7 +7951,7 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
   }, [retryAfterSeconds]);
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
-  return /* @__PURE__ */ jsxs6("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs7("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -6512,10 +7963,10 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
     alignItems: "center",
     gap: 8
   }, children: [
-    /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsxs6("span", { children: [
+    /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsxs7("span", { children: [
       "5 \u043D\u0435\u0443\u0434\u0430\u0447 \u0437\u0430 15 \u043C\u0438\u043D \u2014 IP \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D. \u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C ",
-      /* @__PURE__ */ jsxs6(Mono, { style: { color: "inherit", fontSize: 13 }, children: [
+      /* @__PURE__ */ jsxs7(Mono, { style: { color: "inherit", fontSize: 13 }, children: [
         mm,
         ":",
         ss
@@ -6525,7 +7976,7 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
   ] });
 }
 function TextField({ type = "text", value, onChange, placeholder, ariaLabel, inputMode, maxLength, autoFocus, disabled, style, mono }) {
-  return /* @__PURE__ */ jsx7(
+  return /* @__PURE__ */ jsx8(
     "input",
     {
       type,
@@ -6574,7 +8025,7 @@ function AdminChrome({
   const activeKey = SECTION_ALIAS[active] || active;
   const u = user || { username: "founder@samosite.online", initials: "F" };
   const badges = badgeCounts ?? { apps: 12 };
-  return /* @__PURE__ */ jsxs6("div", { style: {
+  return /* @__PURE__ */ jsxs7("div", { style: {
     display: "grid",
     gridTemplateColumns: "220px 1fr",
     minHeight: "100%",
@@ -6583,7 +8034,7 @@ function AdminChrome({
     color: VT.ink,
     letterSpacing: "-0.005em"
   }, children: [
-    /* @__PURE__ */ jsxs6("aside", { style: {
+    /* @__PURE__ */ jsxs7("aside", { style: {
       background: VT.bg,
       borderRight: `1px solid ${VT.line}`,
       padding: 16,
@@ -6591,15 +8042,15 @@ function AdminChrome({
       flexDirection: "column",
       gap: 4
     }, children: [
-      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
-        /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
-        /* @__PURE__ */ jsx7("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-        /* @__PURE__ */ jsx7(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
+      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
+        /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
+        /* @__PURE__ */ jsx8("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+        /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
       ] }),
-      /* @__PURE__ */ jsx7("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
+      /* @__PURE__ */ jsx8("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
         const isActive = activeKey === key;
         const count = badges?.[key];
-        return /* @__PURE__ */ jsxs6(
+        return /* @__PURE__ */ jsxs7(
           "button",
           {
             type: "button",
@@ -6622,18 +8073,18 @@ function AdminChrome({
               width: "100%"
             },
             children: [
-              /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
+              /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
               name,
-              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx7(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
+              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx8(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
             ]
           },
           key
         );
       }) }),
-      /* @__PURE__ */ jsxs6("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
-        /* @__PURE__ */ jsx7("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
-        /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsxs7("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
+        /* @__PURE__ */ jsx8("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
+        /* @__PURE__ */ jsx8(
           "button",
           {
             type: "button",
@@ -6652,7 +8103,7 @@ function AdminChrome({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsx7("main", { style: { minWidth: 0 }, children })
+    /* @__PURE__ */ jsx8("main", { style: { minWidth: 0 }, children })
   ] });
 }
 var LOGIN_ERROR_MSG = {
@@ -6705,7 +8156,7 @@ function S10_AdminLogin(props) {
     const code = mode === "totp" ? totp : backupCode;
     if (onSubmitCode) onSubmitCode(mode, code);
   }, [loading, mode, totp, backupCode, onSubmitCode]);
-  return /* @__PURE__ */ jsx7("div", { style: {
+  return /* @__PURE__ */ jsx8("div", { style: {
     background: VT.bgSoft,
     minHeight: "100%",
     width: "100%",
@@ -6714,16 +8165,16 @@ function S10_AdminLogin(props) {
     justifyContent: "center",
     fontFamily: VT.font.sans,
     padding: 24
-  }, children: /* @__PURE__ */ jsxs6(Card, { style: { width: 400, padding: 28 }, children: [
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }, children: [
-      /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.white } }),
-      /* @__PURE__ */ jsx7("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-      /* @__PURE__ */ jsx7(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 7px", fontSize: 10 }, children: "ADMIN" })
+  }, children: /* @__PURE__ */ jsxs7(Card, { style: { width: 400, padding: 28 }, children: [
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }, children: [
+      /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.white } }),
+      /* @__PURE__ */ jsx8("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+      /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 7px", fontSize: 10 }, children: "ADMIN" })
     ] }),
-    /* @__PURE__ */ jsx7("h1", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 4px" }, children: step === 1 ? "\u0412\u0445\u043E\u0434 \u0432 \u0430\u0434\u043C\u0438\u043D\u043A\u0443" : "\u0414\u0432\u0443\u0445\u0444\u0430\u043A\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F" }),
-    /* @__PURE__ */ jsx7("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: "0 0 18px" }, children: step === 1 ? "\u0422\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F founder. \u0412\u0441\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F." : "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F-\u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430." }),
-    rateLimited && /* @__PURE__ */ jsx7(RateLimitCountdown, { retryAfterSeconds: rateLimitedRetryAfterSeconds }),
-    error && !rateLimited && /* @__PURE__ */ jsx7("div", { role: "alert", style: {
+    /* @__PURE__ */ jsx8("h1", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 4px" }, children: step === 1 ? "\u0412\u0445\u043E\u0434 \u0432 \u0430\u0434\u043C\u0438\u043D\u043A\u0443" : "\u0414\u0432\u0443\u0445\u0444\u0430\u043A\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F" }),
+    /* @__PURE__ */ jsx8("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: "0 0 18px" }, children: step === 1 ? "\u0422\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F founder. \u0412\u0441\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F." : "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F-\u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430." }),
+    rateLimited && /* @__PURE__ */ jsx8(RateLimitCountdown, { retryAfterSeconds: rateLimitedRetryAfterSeconds }),
+    error && !rateLimited && /* @__PURE__ */ jsx8("div", { role: "alert", style: {
       padding: "8px 12px",
       background: VT.dangerSoft,
       border: `1px solid oklch(0.85 0.06 28)`,
@@ -6732,9 +8183,9 @@ function S10_AdminLogin(props) {
       color: "oklch(0.4 0.15 28)",
       marginBottom: 14
     }, children: LOGIN_ERROR_MSG[error] || LOGIN_ERROR_MSG.unknown_error }),
-    step === 1 ? /* @__PURE__ */ jsxs6("form", { onSubmit: onSubmit1, children: [
-      /* @__PURE__ */ jsx7("label", { htmlFor: "ss-admin-email", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "Email" }),
-      /* @__PURE__ */ jsx7(
+    step === 1 ? /* @__PURE__ */ jsxs7("form", { onSubmit: onSubmit1, children: [
+      /* @__PURE__ */ jsx8("label", { htmlFor: "ss-admin-email", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "Email" }),
+      /* @__PURE__ */ jsx8(
         TextField,
         {
           type: "text",
@@ -6747,8 +8198,8 @@ function S10_AdminLogin(props) {
           style: { marginBottom: 10 }
         }
       ),
-      /* @__PURE__ */ jsx7("label", { htmlFor: "ss-admin-password", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
-      /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("label", { htmlFor: "ss-admin-password", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
+      /* @__PURE__ */ jsx8(
         TextField,
         {
           type: "password",
@@ -6760,23 +8211,23 @@ function S10_AdminLogin(props) {
           mono: true
         }
       ),
-      /* @__PURE__ */ jsx7("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx8(
         Btn,
         {
           type: "submit",
           style: { width: "100%" },
           disabled: loading || rateLimited || !username || !password,
-          iconRight: loading ? /* @__PURE__ */ jsx7(Spinner, { size: 14 }) : /* @__PURE__ */ jsx7(IconArrow, {}),
+          iconRight: loading ? /* @__PURE__ */ jsx8(Spinner, { size: 14 }) : /* @__PURE__ */ jsx8(IconArrow, {}),
           children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0414\u0430\u043B\u044C\u0448\u0435"
         }
       ) })
-    ] }) : /* @__PURE__ */ jsxs6("form", { onSubmit: onSubmit2, children: [
-      /* @__PURE__ */ jsx7("div", { role: "tablist", "aria-label": "\u0421\u043F\u043E\u0441\u043E\u0431 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F", style: { display: "flex", gap: 6, marginBottom: 12, padding: 3, background: VT.bgSoft, borderRadius: VT.r.md, border: `1px solid ${VT.line}` }, children: [
+    ] }) : /* @__PURE__ */ jsxs7("form", { onSubmit: onSubmit2, children: [
+      /* @__PURE__ */ jsx8("div", { role: "tablist", "aria-label": "\u0421\u043F\u043E\u0441\u043E\u0431 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F", style: { display: "flex", gap: 6, marginBottom: 12, padding: 3, background: VT.bgSoft, borderRadius: VT.r.md, border: `1px solid ${VT.line}` }, children: [
         ["totp", "\u0410\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440"],
         ["backup", "Backup-\u043A\u043E\u0434"]
       ].map(([key, label]) => {
         const isActive = mode === key;
-        return /* @__PURE__ */ jsx7(
+        return /* @__PURE__ */ jsx8(
           "button",
           {
             type: "button",
@@ -6802,8 +8253,8 @@ function S10_AdminLogin(props) {
           key
         );
       }) }),
-      /* @__PURE__ */ jsx7("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 6 }, children: mode === "totp" ? "\u041A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430" : "Backup-\u043A\u043E\u0434" }),
-      /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 6 }, children: mode === "totp" ? "\u041A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430" : "Backup-\u043A\u043E\u0434" }),
+      /* @__PURE__ */ jsx8(
         TextField,
         {
           type: "text",
@@ -6819,8 +8270,8 @@ function S10_AdminLogin(props) {
           style: { fontSize: 20, letterSpacing: mode === "totp" ? "0.4em" : "0.1em", textAlign: "center" }
         }
       ),
-      /* @__PURE__ */ jsxs6("div", { style: { marginTop: 18, display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsxs7("div", { style: { marginTop: 18, display: "flex", gap: 8 }, children: [
+        /* @__PURE__ */ jsx8(
           Btn,
           {
             variant: "secondary",
@@ -6831,13 +8282,13 @@ function S10_AdminLogin(props) {
             children: "\u2190 \u041D\u0430\u0437\u0430\u0434"
           }
         ),
-        /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsx8(
           Btn,
           {
             type: "submit",
             style: { flex: 1 },
             disabled: loading || rateLimited || !(mode === "totp" ? totp : backupCode),
-            iconRight: loading ? /* @__PURE__ */ jsx7(Spinner, { size: 14 }) : /* @__PURE__ */ jsx7(IconArrow, {}),
+            iconRight: loading ? /* @__PURE__ */ jsx8(Spinner, { size: 14 }) : /* @__PURE__ */ jsx8(IconArrow, {}),
             children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0412\u043E\u0439\u0442\u0438"
           }
         )
@@ -6847,7 +8298,7 @@ function S10_AdminLogin(props) {
 }
 function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
   const clickable = !!onClick && !loading;
-  return /* @__PURE__ */ jsx7(
+  return /* @__PURE__ */ jsx8(
     Card,
     {
       style: {
@@ -6855,7 +8306,7 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
         cursor: clickable ? "pointer" : "default",
         transition: "transform .15s ease, box-shadow .15s ease"
       },
-      children: /* @__PURE__ */ jsxs6(
+      children: /* @__PURE__ */ jsxs7(
         "div",
         {
           role: clickable ? "button" : void 0,
@@ -6868,10 +8319,10 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
             }
           } : void 0,
           children: [
-            /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: String(label).toUpperCase() }),
-            loading ? /* @__PURE__ */ jsx7("div", { style: { marginTop: 8 }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: 64, height: 28, radius: 6 }) }) : /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
-              /* @__PURE__ */ jsx7("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
-              delta && /* @__PURE__ */ jsxs6("span", { style: {
+            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: String(label).toUpperCase() }),
+            loading ? /* @__PURE__ */ jsx8("div", { style: { marginTop: 8 }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: 64, height: 28, radius: 6 }) }) : /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
+              /* @__PURE__ */ jsx8("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
+              delta && /* @__PURE__ */ jsxs7("span", { style: {
                 fontSize: 12.5,
                 fontWeight: 600,
                 color: deltaSign === "+" ? VT.success : deltaSign === "-" ? VT.danger : VT.inkSoft
@@ -6880,8 +8331,8 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
                 delta
               ] })
             ] }),
-            sub && !loading && /* @__PURE__ */ jsx7("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub }),
-            loading && /* @__PURE__ */ jsx7("div", { style: { marginTop: 6 }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: "50%", height: 10 }) })
+            sub && !loading && /* @__PURE__ */ jsx8("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub }),
+            loading && /* @__PURE__ */ jsx8("div", { style: { marginTop: 6 }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: "50%", height: 10 }) })
           ]
         }
       )
@@ -6909,7 +8360,7 @@ var STATUS_MAP = {
 };
 function StatusPill({ status, size = "md" }) {
   const m = STATUS_MAP[status] || [VT.bgSoft, VT.inkSoft, String(status)];
-  return /* @__PURE__ */ jsxs6("span", { style: {
+  return /* @__PURE__ */ jsxs7("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 6,
@@ -6920,12 +8371,12 @@ function StatusPill({ status, size = "md" }) {
     fontSize: size === "sm" ? 11 : 11.5,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
+    /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
     m[2]
   ] });
 }
 function FilterChip({ label, active, count, onClick, disabled }) {
-  return /* @__PURE__ */ jsxs6(
+  return /* @__PURE__ */ jsxs7(
     "button",
     {
       type: "button",
@@ -6949,7 +8400,7 @@ function FilterChip({ label, active, count, onClick, disabled }) {
       },
       children: [
         label,
-        count != null && /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
+        count != null && /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
       ]
     }
   );
@@ -6961,11 +8412,11 @@ function TrendChart({ series, height = 200, labels }) {
   const xLabels = labels || ["\u041F\u043D", "\u0412\u0442", "\u0421\u0440", "\u0427\u0442", "\u041F\u0442", "\u0421\u0431", "\u0412\u0441"];
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"} ${i / (points.length - 1) * w} ${height - 30 - p / max * (height - 50)}`).join(" ");
   const area = path + ` L ${w} ${height - 30} L 0 ${height - 30} Z`;
-  return /* @__PURE__ */ jsxs6("svg", { viewBox: `0 0 ${w} ${height}`, width: "100%", height, preserveAspectRatio: "none", role: "img", "aria-label": "\u0413\u0440\u0430\u0444\u0438\u043A \u0437\u0430\u044F\u0432\u043E\u043A", children: [
-    /* @__PURE__ */ jsx7("path", { d: area, fill: VT.accentSoft, opacity: "0.7" }),
-    /* @__PURE__ */ jsx7("path", { d: path, fill: "none", stroke: VT.accent, strokeWidth: "2" }),
-    points.map((p, i) => /* @__PURE__ */ jsx7("circle", { cx: i / (points.length - 1) * w, cy: height - 30 - p / max * (height - 50), r: "3", fill: VT.bg, stroke: VT.accent, strokeWidth: "1.5" }, i)),
-    xLabels.map((l, i) => /* @__PURE__ */ jsx7("text", { x: i / (xLabels.length - 1) * w, y: height - 8, fontSize: "11", fill: VT.inkFaint, fontFamily: "JetBrains Mono, monospace", textAnchor: i === 0 ? "start" : i === xLabels.length - 1 ? "end" : "middle", children: l }, l + i))
+  return /* @__PURE__ */ jsxs7("svg", { viewBox: `0 0 ${w} ${height}`, width: "100%", height, preserveAspectRatio: "none", role: "img", "aria-label": "\u0413\u0440\u0430\u0444\u0438\u043A \u0437\u0430\u044F\u0432\u043E\u043A", children: [
+    /* @__PURE__ */ jsx8("path", { d: area, fill: VT.accentSoft, opacity: "0.7" }),
+    /* @__PURE__ */ jsx8("path", { d: path, fill: "none", stroke: VT.accent, strokeWidth: "2" }),
+    points.map((p, i) => /* @__PURE__ */ jsx8("circle", { cx: i / (points.length - 1) * w, cy: height - 30 - p / max * (height - 50), r: "3", fill: VT.bg, stroke: VT.accent, strokeWidth: "1.5" }, i)),
+    xLabels.map((l, i) => /* @__PURE__ */ jsx8("text", { x: i / (xLabels.length - 1) * w, y: height - 8, fontSize: "11", fill: VT.inkFaint, fontFamily: "JetBrains Mono, monospace", textAnchor: i === 0 ? "start" : i === xLabels.length - 1 ? "end" : "middle", children: l }, l + i))
   ] });
 }
 var MOCK_DASHBOARD = {
@@ -7002,23 +8453,23 @@ var COUNTER_TILES = [
 ];
 function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) {
   const d = data || MOCK_DASHBOARD;
-  const Wrap = _embed === false ? React3.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "dashboard", onNavigate };
-  return /* @__PURE__ */ jsx7(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs6("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22 }, children: [
-      /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx7(Eyebrow, { children: "DASHBOARD" }),
-        /* @__PURE__ */ jsx7("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "10px 0 0" }, children: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F" })
+  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22 }, children: [
+      /* @__PURE__ */ jsxs7("div", { children: [
+        /* @__PURE__ */ jsx8(Eyebrow, { children: "DASHBOARD" }),
+        /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "10px 0 0" }, children: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F" })
       ] }),
-      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 8 }, children: [
-        onRefresh && /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" }),
-        /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", children: "7 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: "30 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", children: "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F" })
+      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 8 }, children: [
+        onRefresh && /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" }),
+        /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", children: "7 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: "30 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", children: "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F" })
       ] })
     ] }),
-    error && /* @__PURE__ */ jsx7(ErrorBlock, { message: error, onRetry: onRefresh }),
-    /* @__PURE__ */ jsx7("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginTop: error ? 14 : 0 }, children: COUNTER_TILES.map((t) => /* @__PURE__ */ jsx7(
+    error && /* @__PURE__ */ jsx8(ErrorBlock, { message: error, onRetry: onRefresh }),
+    /* @__PURE__ */ jsx8("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginTop: error ? 14 : 0 }, children: COUNTER_TILES.map((t) => /* @__PURE__ */ jsx8(
       StatTile,
       {
         label: t.label,
@@ -7028,21 +8479,21 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
       },
       t.key
     )) }),
-    /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 14, marginTop: 14 }, children: [
-      /* @__PURE__ */ jsxs6(Card, { style: { padding: 20 }, children: [
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }, children: [
-          /* @__PURE__ */ jsxs6("div", { children: [
-            /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0417\u0410\u042F\u0412\u041A\u0418 \xB7 14 \u0414\u041D\u0415\u0419" }),
-            /* @__PURE__ */ jsx7("div", { style: { fontSize: 20, fontWeight: 700, marginTop: 4 }, children: loading ? /* @__PURE__ */ jsx7(SkeletonBlock, { width: 80, height: 20 }) : d.applications_series_14d.reduce((s, x) => s + x.count, 0) })
+    /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 14, marginTop: 14 }, children: [
+      /* @__PURE__ */ jsxs7(Card, { style: { padding: 20 }, children: [
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }, children: [
+          /* @__PURE__ */ jsxs7("div", { children: [
+            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0417\u0410\u042F\u0412\u041A\u0418 \xB7 14 \u0414\u041D\u0415\u0419" }),
+            /* @__PURE__ */ jsx8("div", { style: { fontSize: 20, fontWeight: 700, marginTop: 4 }, children: loading ? /* @__PURE__ */ jsx8(SkeletonBlock, { width: 80, height: 20 }) : d.applications_series_14d.reduce((s, x) => s + x.count, 0) })
           ] }),
-          /* @__PURE__ */ jsx7(Btn, { variant: "ghost", size: "sm", children: "CSV" })
+          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", children: "CSV" })
         ] }),
-        loading ? /* @__PURE__ */ jsx7(SkeletonBlock, { width: "100%", height: 200, radius: 8 }) : /* @__PURE__ */ jsx7(TrendChart, { series: d.applications_series_14d, labels: d.applications_series_14d.map((s) => s.day.slice(8)) })
+        loading ? /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 200, radius: 8 }) : /* @__PURE__ */ jsx8(TrendChart, { series: d.applications_series_14d, labels: d.applications_series_14d.map((s) => s.day.slice(8)) })
       ] }),
-      /* @__PURE__ */ jsxs6(Card, { style: { padding: 20 }, children: [
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "QUICK \xB7 \u0422\u041E\u041F-5 PENDING" }),
-          /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsxs7(Card, { style: { padding: 20 }, children: [
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "QUICK \xB7 \u0422\u041E\u041F-5 PENDING" }),
+          /* @__PURE__ */ jsx8(
             "button",
             {
               type: "button",
@@ -7060,13 +8511,13 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
             }
           )
         ] }),
-        loading ? /* @__PURE__ */ jsx7("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx7("div", { style: { padding: "8px 10px", borderBottom: `1px solid ${VT.lineSoft}` }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: "80%", height: 14 }) }, i)) }) : /* @__PURE__ */ jsx7("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
+        loading ? /* @__PURE__ */ jsx8("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx8("div", { style: { padding: "8px 10px", borderBottom: `1px solid ${VT.lineSoft}` }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: "80%", height: 14 }) }, i)) }) : /* @__PURE__ */ jsx8("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
           ["#A-1842", "TG", "studia-anna \xB7 47 \u043F\u043E\u0441\u0442\u043E\u0432", "12 \u043C\u0438\u043D \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1841", "YM", "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \u0421\u0430\u043C\u0430\u0440\u0430 \xB7 24 \u043E\u0442\u0437.", "34 \u043C\u0438\u043D \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1840", "Photo", "\u041F\u0441\u0438\u0445\u043E\u043B\u043E\u0433 \u041C\u0430\u0440\u0438\u043D\u0430 \xB7 12 \u0444\u043E\u0442\u043E", "1 \u0447 \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1839", "TG", "\u0414\u043E\u043C \u0440\u0435\u0441\u043D\u0438\u0446 \xB7 89 \u043F\u043E\u0441\u0442\u043E\u0432", "2 \u0447 \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1838", "YM", "\u0421\u0442\u0443\u0434\u0438\u044F \u0439\u043E\u0433\u0438 \xB7 56 \u043E\u0442\u0437.", "3 \u0447 \u043D\u0430\u0437\u0430\u0434"]
-        ].map(([id, src, name, ago]) => /* @__PURE__ */ jsxs6(
+        ].map(([id, src, name, ago]) => /* @__PURE__ */ jsxs7(
           "button",
           {
             type: "button",
@@ -7087,10 +8538,10 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
               width: "100%"
             },
             children: [
-              /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 11, width: 56 }, children: id }),
-              /* @__PURE__ */ jsx7(Badge, { kind: "neutral", style: { padding: "2px 7px", fontSize: 10.5, borderRadius: 4 }, children: src }),
-              /* @__PURE__ */ jsx7("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
-              /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 11 }, children: ago })
+              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, width: 56 }, children: id }),
+              /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { padding: "2px 7px", fontSize: 10.5, borderRadius: 4 }, children: src }),
+              /* @__PURE__ */ jsx8("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
+              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11 }, children: ago })
             ]
           },
           id
@@ -7136,22 +8587,22 @@ function S12_AppsList({
   _embed
 }) {
   const d = data || MOCK_APPS_LIST;
-  const Wrap = _embed === false ? React3.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "apps", onNavigate: () => {
   } };
   const showItems = !loading && d.items && d.items.length > 0;
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const totalPages = Math.max(1, Math.ceil(d.total / Math.max(1, d.limit)));
   const currentPage = Math.floor(d.offset / Math.max(1, d.limit)) + 1;
-  return /* @__PURE__ */ jsx7(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs6("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx7(Eyebrow, { children: "\u0417\u0410\u042F\u0412\u041A\u0418" }),
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx7("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438" }),
-      /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", children: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 CSV" })
+  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx8(Eyebrow, { children: "\u0417\u0410\u042F\u0412\u041A\u0418" }),
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438" }),
+      /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", children: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 CSV" })
     ] }),
-    error && /* @__PURE__ */ jsx7("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx7(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx7("div", { style: { display: "flex", gap: 6 }, children: STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx7(
+    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx8("div", { style: { display: "flex", gap: 6 }, children: STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx8(
         FilterChip,
         {
           label,
@@ -7160,7 +8611,7 @@ function S12_AppsList({
         },
         key
       )) }),
-      /* @__PURE__ */ jsx7("div", { style: { marginLeft: "auto", display: "flex", gap: 8 }, children: /* @__PURE__ */ jsxs6("div", { style: {
+      /* @__PURE__ */ jsx8("div", { style: { marginLeft: "auto", display: "flex", gap: 8 }, children: /* @__PURE__ */ jsxs7("div", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -7172,16 +8623,16 @@ function S12_AppsList({
         color: VT.inkFaint,
         minWidth: 240
       }, children: [
-        /* @__PURE__ */ jsxs6("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", "aria-hidden": "true", children: [
-          /* @__PURE__ */ jsx7("circle", { cx: "11", cy: "11", r: "7" }),
-          /* @__PURE__ */ jsx7("path", { d: "M21 21l-4.3-4.3", strokeLinecap: "round" })
+        /* @__PURE__ */ jsxs7("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", "aria-hidden": "true", children: [
+          /* @__PURE__ */ jsx8("circle", { cx: "11", cy: "11", r: "7" }),
+          /* @__PURE__ */ jsx8("path", { d: "M21 21l-4.3-4.3", strokeLinecap: "round" })
         ] }),
         "\u043F\u043E\u0438\u0441\u043A \u043F\u043E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0443, ID, \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0443"
       ] }) })
     ] }),
-    /* @__PURE__ */ jsxs6(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs6("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx7("thead", { children: /* @__PURE__ */ jsx7("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["ID", "\u0421\u043E\u0437\u0434\u0430\u043D\u0430", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0421\u0442\u0430\u0442\u0443\u0441", ""].map((h) => /* @__PURE__ */ jsx7("th", { scope: "col", style: {
+    /* @__PURE__ */ jsxs7(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs7("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx8("thead", { children: /* @__PURE__ */ jsx8("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["ID", "\u0421\u043E\u0437\u0434\u0430\u043D\u0430", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0421\u0442\u0430\u0442\u0443\u0441", ""].map((h) => /* @__PURE__ */ jsx8("th", { scope: "col", style: {
           textAlign: "left",
           padding: "12px 16px",
           fontFamily: VT.font.mono,
@@ -7190,9 +8641,9 @@ function S12_AppsList({
           color: VT.inkFaint,
           fontWeight: 500
         }, children: h.toUpperCase() }, h || "go")) }) }),
-        /* @__PURE__ */ jsxs6("tbody", { children: [
-          loading && [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => /* @__PURE__ */ jsx7("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [60, 90, 80, 180, 90, 80, 18].map((w, j) => /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
-          showItems && d.items.map((row) => /* @__PURE__ */ jsxs6(
+        /* @__PURE__ */ jsxs7("tbody", { children: [
+          loading && [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => /* @__PURE__ */ jsx8("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [60, 90, 80, 180, 90, 80, 18].map((w, j) => /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
+          showItems && d.items.map((row) => /* @__PURE__ */ jsxs7(
             "tr",
             {
               onClick: () => onRowClick && onRowClick(row.id),
@@ -7202,30 +8653,30 @@ function S12_AppsList({
               } : void 0,
               style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: onRowClick ? "pointer" : "default" },
               children: [
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx7(Mono, { children: row.id }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px", color: VT.inkSoft }, children: /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 12 }, children: formatTs(row.created_at) }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx7(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: row.source_type }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 12 }, children: row.source_url || "\u2014" }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 12 }, children: row.contact_value_masked }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx7(StatusPill, { status: row.status }) }),
-                /* @__PURE__ */ jsx7("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx7("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { children: row.id }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", color: VT.inkSoft }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: formatTs(row.created_at) }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: row.source_type }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: row.source_url || "\u2014" }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: row.contact_value_masked }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(StatusPill, { status: row.status }) }),
+                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
               ]
             },
             row.id
           ))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx7(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u044F\u0432\u043E\u043A", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u043F\u0435\u0440\u0432\u0430\u044F \u2014 \u043E\u043D\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
-      !showEmpty && /* @__PURE__ */ jsxs6("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs6("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx8(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u044F\u0432\u043E\u043A", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u043F\u0435\u0440\u0432\u0430\u044F \u2014 \u043E\u043D\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+      !showEmpty && /* @__PURE__ */ jsxs7("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs7("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx8(
             Btn,
             {
               variant: "ghost",
@@ -7235,12 +8686,12 @@ function S12_AppsList({
               children: "\u2190"
             }
           ),
-          /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
-          /* @__PURE__ */ jsxs6(Mono, { style: { alignSelf: "center" }, children: [
+          /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
+          /* @__PURE__ */ jsxs7(Mono, { style: { alignSelf: "center" }, children: [
             "/ ",
             totalPages
           ] }),
-          /* @__PURE__ */ jsx7(
+          /* @__PURE__ */ jsx8(
             Btn,
             {
               variant: "ghost",
@@ -7296,9 +8747,9 @@ function JsonTree() {
     ['  "fetched_at": ', VT.inkSoft, '"2026-05-19T14:22:18Z"', VT.accent],
     ["}", VT.inkSoft]
   ];
-  return /* @__PURE__ */ jsx7("pre", { style: { margin: 0, fontFamily: VT.font.mono, fontSize: 12.5, lineHeight: 1.55, color: VT.inkSoft }, children: lines.map((row, i) => /* @__PURE__ */ jsxs6("div", { children: [
-    /* @__PURE__ */ jsx7("span", { style: { color: row[1] }, children: row[0] }),
-    row[2] && /* @__PURE__ */ jsx7("span", { style: { color: row[3] }, children: row[2] })
+  return /* @__PURE__ */ jsx8("pre", { style: { margin: 0, fontFamily: VT.font.mono, fontSize: 12.5, lineHeight: 1.55, color: VT.inkSoft }, children: lines.map((row, i) => /* @__PURE__ */ jsxs7("div", { children: [
+    /* @__PURE__ */ jsx8("span", { style: { color: row[1] }, children: row[0] }),
+    row[2] && /* @__PURE__ */ jsx8("span", { style: { color: row[3] }, children: row[2] })
   ] }, i)) });
 }
 function S13_AppDetail({
@@ -7317,7 +8768,7 @@ function S13_AppDetail({
   const [rejectReason, setRejectReason] = useState2("");
   const app = d.application;
   const isPending = app && app.status === "pending";
-  const Wrap = _embed === false ? React3.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "apps", onNavigate: onBack ? () => onBack() : void 0 };
   const submitReject = () => {
     if (onReject) onReject(app.id, rejectReason || void 0);
@@ -7325,18 +8776,18 @@ function S13_AppDetail({
     setRejectReason("");
   };
   if (loading) {
-    return /* @__PURE__ */ jsx7(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs6("div", { style: { padding: "20px 32px 40px" }, children: [
-      /* @__PURE__ */ jsx7(SkeletonBlock, { width: 140, height: 14, style: { marginBottom: 14 } }),
-      /* @__PURE__ */ jsx7(SkeletonBlock, { width: 320, height: 28, radius: 6, style: { marginBottom: 20 } }),
-      /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-        /* @__PURE__ */ jsx7(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) }),
-        /* @__PURE__ */ jsx7(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx7(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) })
+    return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "20px 32px 40px" }, children: [
+      /* @__PURE__ */ jsx8(SkeletonBlock, { width: 140, height: 14, style: { marginBottom: 14 } }),
+      /* @__PURE__ */ jsx8(SkeletonBlock, { width: 320, height: 28, radius: 6, style: { marginBottom: 20 } }),
+      /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+        /* @__PURE__ */ jsx8(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) }),
+        /* @__PURE__ */ jsx8(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) })
       ] })
     ] }) });
   }
-  return /* @__PURE__ */ jsx7(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs6("div", { style: { padding: "20px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsx7(
+  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "20px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsx8(
         "button",
         {
           type: "button",
@@ -7345,26 +8796,26 @@ function S13_AppDetail({
           children: "\u2190 \u0417\u0430\u044F\u0432\u043A\u0438"
         }
       ),
-      /* @__PURE__ */ jsx7("span", { children: "/" }),
-      /* @__PURE__ */ jsx7(Mono, { style: { color: VT.ink }, children: app.id })
+      /* @__PURE__ */ jsx8("span", { children: "/" }),
+      /* @__PURE__ */ jsx8(Mono, { style: { color: VT.ink }, children: app.id })
     ] }),
-    error && /* @__PURE__ */ jsx7("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx7(ErrorBlock, { message: error }) }),
-    actionError && /* @__PURE__ */ jsx7("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx7(ErrorBlock, { title: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435", message: actionError }) }),
-    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 22 }, children: [
-      /* @__PURE__ */ jsxs6("div", { children: [
-        /* @__PURE__ */ jsx7("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" }),
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: VT.inkSoft, flexWrap: "wrap" }, children: [
-          app.source_url && /* @__PURE__ */ jsx7("a", { href: `https://${app.source_url.replace(/^https?:\/\//, "")}`, target: "_blank", rel: "noreferrer", style: { color: VT.accent, textDecoration: "underline", textUnderlineOffset: 2 }, children: /* @__PURE__ */ jsx7(Mono, { style: { color: "inherit" }, children: app.source_url }) }),
-          /* @__PURE__ */ jsx7("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx7("span", { children: app.contact_value_masked }),
-          /* @__PURE__ */ jsx7("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx7(Mono, { children: formatTs(app.created_at) }),
-          /* @__PURE__ */ jsx7(StatusPill, { status: app.status }),
-          app.is_manual_review && /* @__PURE__ */ jsx7(Badge, { kind: "warn", style: { fontSize: 11, padding: "2px 8px" }, children: "manual review" })
+    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
+    actionError && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { title: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435", message: actionError }) }),
+    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 22 }, children: [
+      /* @__PURE__ */ jsxs7("div", { children: [
+        /* @__PURE__ */ jsx8("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" }),
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: VT.inkSoft, flexWrap: "wrap" }, children: [
+          app.source_url && /* @__PURE__ */ jsx8("a", { href: `https://${app.source_url.replace(/^https?:\/\//, "")}`, target: "_blank", rel: "noreferrer", style: { color: VT.accent, textDecoration: "underline", textUnderlineOffset: 2 }, children: /* @__PURE__ */ jsx8(Mono, { style: { color: "inherit" }, children: app.source_url }) }),
+          /* @__PURE__ */ jsx8("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx8("span", { children: app.contact_value_masked }),
+          /* @__PURE__ */ jsx8("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx8(Mono, { children: formatTs(app.created_at) }),
+          /* @__PURE__ */ jsx8(StatusPill, { status: app.status }),
+          app.is_manual_review && /* @__PURE__ */ jsx8(Badge, { kind: "warn", style: { fontSize: 11, padding: "2px 8px" }, children: "manual review" })
         ] })
       ] }),
-      /* @__PURE__ */ jsx7("div", { style: { display: "flex", gap: 8 }, children: isPending ? /* @__PURE__ */ jsxs6(Fragment8, { children: [
-        /* @__PURE__ */ jsx7(
+      /* @__PURE__ */ jsx8("div", { style: { display: "flex", gap: 8 }, children: isPending ? /* @__PURE__ */ jsxs7(Fragment8, { children: [
+        /* @__PURE__ */ jsx8(
           Btn,
           {
             variant: "secondary",
@@ -7375,24 +8826,24 @@ function S13_AppDetail({
             children: "\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C"
           }
         ),
-        /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsx8(
           Btn,
           {
             size: "sm",
             onClick: () => onApprove && onApprove(app.id),
             disabled: !!actionLoading,
-            iconRight: actionLoading ? /* @__PURE__ */ jsx7(Spinner, { size: 14 }) : /* @__PURE__ */ jsx7(IconArrow, { size: 14 }),
+            iconRight: actionLoading ? /* @__PURE__ */ jsx8(Spinner, { size: 14 }) : /* @__PURE__ */ jsx8(IconArrow, { size: 14 }),
             children: actionLoading ? "\u041E\u0434\u043E\u0431\u0440\u044F\u0435\u043C\u2026" : "\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C"
           }
         )
-      ] }) : /* @__PURE__ */ jsxs6(Badge, { kind: app.status === "approved" || app.status === "published" ? "success" : "neutral", style: { padding: "6px 12px" }, children: [
+      ] }) : /* @__PURE__ */ jsxs7(Badge, { kind: app.status === "approved" || app.status === "published" ? "success" : "neutral", style: { padding: "6px 12px" }, children: [
         "\u0423\u0436\u0435 ",
         STATUS_MAP[app.status]?.[2] || app.status
       ] }) })
     ] }),
-    rejectOpen && /* @__PURE__ */ jsxs6(Card, { style: { padding: 16, marginBottom: 14, borderColor: "oklch(0.85 0.06 28)" }, children: [
-      /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em", color: VT.danger }, children: "\u041F\u0420\u0418\u0427\u0418\u041D\u0410 \u041E\u0422\u041A\u0410\u0417\u0410" }),
-      /* @__PURE__ */ jsx7(
+    rejectOpen && /* @__PURE__ */ jsxs7(Card, { style: { padding: 16, marginBottom: 14, borderColor: "oklch(0.85 0.06 28)" }, children: [
+      /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em", color: VT.danger }, children: "\u041F\u0420\u0418\u0427\u0418\u041D\u0410 \u041E\u0422\u041A\u0410\u0417\u0410" }),
+      /* @__PURE__ */ jsx8(
         "textarea",
         {
           value: rejectReason,
@@ -7415,12 +8866,12 @@ function S13_AppDetail({
           }
         }
       ),
-      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 8, marginTop: 10, justifyContent: "flex-end" }, children: [
-        /* @__PURE__ */ jsx7(Btn, { variant: "secondary", size: "sm", onClick: () => {
+      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 8, marginTop: 10, justifyContent: "flex-end" }, children: [
+        /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", onClick: () => {
           setRejectOpen(false);
           setRejectReason("");
         }, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx7(
+        /* @__PURE__ */ jsx8(
           Btn,
           {
             size: "sm",
@@ -7432,47 +8883,47 @@ function S13_AppDetail({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs6(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE SNAPSHOT \xB7 JSON" }),
-          /* @__PURE__ */ jsx7(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "raw" })
+    /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE SNAPSHOT \xB7 JSON" }),
+          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "raw" })
         ] }),
-        /* @__PURE__ */ jsx7("div", { style: {
+        /* @__PURE__ */ jsx8("div", { style: {
           background: VT.bgSoft,
           borderRadius: VT.r.sm,
           padding: 14,
           border: `1px solid ${VT.line}`,
           maxHeight: 280,
           overflow: "auto"
-        }, children: /* @__PURE__ */ jsx7(JsonTree, {}) })
+        }, children: /* @__PURE__ */ jsx8(JsonTree, {}) })
       ] }),
-      /* @__PURE__ */ jsxs6(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "GENERATED CONTENT" }),
-          /* @__PURE__ */ jsx7(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: "\u2713 sanitized" }),
-          /* @__PURE__ */ jsx7(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "\u2197 preview" })
+      /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "GENERATED CONTENT" }),
+          /* @__PURE__ */ jsx8(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: "\u2713 sanitized" }),
+          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "\u2197 preview" })
         ] }),
-        /* @__PURE__ */ jsxs6("div", { style: { background: VT.bgSoft, borderRadius: VT.r.sm, padding: 14, border: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsx7("div", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent, letterSpacing: "0.1em", marginBottom: 6 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-          /* @__PURE__ */ jsx7("div", { style: { fontWeight: 700, fontSize: 20, lineHeight: 1.15, marginBottom: 8 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-          /* @__PURE__ */ jsx7("div", { style: { fontSize: 13, lineHeight: 1.5, color: VT.inkSoft }, children: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u0441 2017 \u0433\u043E\u0434\u0430, \u043F\u0440\u043E\u0448\u043B\u0430 \u043A\u0443\u0440\u0441\u044B \u0432 [SCHOOL]. \u041F\u0440\u0438\u043D\u0438\u043C\u0430\u044E \u043E\u0434\u043D\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430 \u0432 \u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u0441\u043F\u0435\u0448\u043A\u0438, \u0441 \u0447\u0430\u0448\u043A\u043E\u0439 \u043A\u043E\u0444\u0435." }),
-          /* @__PURE__ */ jsx7("div", { style: { display: "flex", gap: 6, marginTop: 12 }, children: Array.from({ length: 6 }).map((_, i) => /* @__PURE__ */ jsx7("div", { "aria-hidden": "true", style: { flex: 1, aspectRatio: "1/1", borderRadius: 6, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bg} 5px 10px)` } }, i)) }),
-          /* @__PURE__ */ jsx7("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, marginTop: 8 }, children: "\u2248 320 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \xB7 \u2248 12 \u20BD \xB7 \u043C\u043E\u0434\u0435\u043B\u044C: YandexGPT 5 Pro" })
+        /* @__PURE__ */ jsxs7("div", { style: { background: VT.bgSoft, borderRadius: VT.r.sm, padding: 14, border: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsx8("div", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent, letterSpacing: "0.1em", marginBottom: 6 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+          /* @__PURE__ */ jsx8("div", { style: { fontWeight: 700, fontSize: 20, lineHeight: 1.15, marginBottom: 8 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+          /* @__PURE__ */ jsx8("div", { style: { fontSize: 13, lineHeight: 1.5, color: VT.inkSoft }, children: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u0441 2017 \u0433\u043E\u0434\u0430, \u043F\u0440\u043E\u0448\u043B\u0430 \u043A\u0443\u0440\u0441\u044B \u0432 [SCHOOL]. \u041F\u0440\u0438\u043D\u0438\u043C\u0430\u044E \u043E\u0434\u043D\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430 \u0432 \u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u0441\u043F\u0435\u0448\u043A\u0438, \u0441 \u0447\u0430\u0448\u043A\u043E\u0439 \u043A\u043E\u0444\u0435." }),
+          /* @__PURE__ */ jsx8("div", { style: { display: "flex", gap: 6, marginTop: 12 }, children: Array.from({ length: 6 }).map((_, i) => /* @__PURE__ */ jsx8("div", { "aria-hidden": "true", style: { flex: 1, aspectRatio: "1/1", borderRadius: 6, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bg} 5px 10px)` } }, i)) }),
+          /* @__PURE__ */ jsx8("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, marginTop: 8 }, children: "\u2248 320 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \xB7 \u2248 12 \u20BD \xB7 \u043C\u043E\u0434\u0435\u043B\u044C: YandexGPT 5 Pro" })
         ] })
       ] })
     ] }),
-    (d.user || d.consent) && /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }, children: [
-      d.user && /* @__PURE__ */ jsxs6(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "USER" }),
-        /* @__PURE__ */ jsxs6("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442" }),
-            /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 13, color: VT.ink }, children: d.user.contact_value_masked })
+    (d.user || d.consent) && /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }, children: [
+      d.user && /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "USER" }),
+        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442" }),
+            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 13, color: VT.ink }, children: d.user.contact_value_masked })
           ] }),
-          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0430\u0440\u0438\u0444" }),
-            /* @__PURE__ */ jsx7(
+          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0430\u0440\u0438\u0444" }),
+            /* @__PURE__ */ jsx8(
               Badge,
               {
                 kind: d.user.plan === "pro" ? "success" : d.user.plan === "trial" ? "info" : "neutral",
@@ -7481,58 +8932,58 @@ function S13_AppDetail({
               }
             )
           ] }),
-          d.user.plan_until && /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0410\u043A\u0442\u0438\u0432\u0435\u043D \u0434\u043E" }),
-            /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 13 }, children: d.user.plan_until })
+          d.user.plan_until && /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0410\u043A\u0442\u0438\u0432\u0435\u043D \u0434\u043E" }),
+            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 13 }, children: d.user.plan_until })
           ] })
         ] })
       ] }),
-      d.consent && /* @__PURE__ */ jsxs6(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "CONSENT" }),
-        /* @__PURE__ */ jsxs6("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0412\u0435\u0440\u0441\u0438\u044F \u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0438" }),
-            /* @__PURE__ */ jsxs6(Mono, { style: { fontSize: 13 }, children: [
+      d.consent && /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "CONSENT" }),
+        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0412\u0435\u0440\u0441\u0438\u044F \u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0438" }),
+            /* @__PURE__ */ jsxs7(Mono, { style: { fontSize: 13 }, children: [
               "v",
               d.consent.policy_version
             ] })
           ] }),
-          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx7("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E" }),
-            /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 13 }, children: formatTs(d.consent.created_at) })
+          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E" }),
+            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 13 }, children: formatTs(d.consent.created_at) })
           ] })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs6(Card, { style: { marginTop: 14, padding: 18 }, children: [
-      /* @__PURE__ */ jsx7(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "AUDIT LOG" }),
-      /* @__PURE__ */ jsxs6("div", { style: { marginTop: 10, fontSize: 13, fontFamily: VT.font.mono, color: VT.inkSoft, lineHeight: 1.7 }, children: [
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:22:18" }),
+    /* @__PURE__ */ jsxs7(Card, { style: { marginTop: 14, padding: 18 }, children: [
+      /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "AUDIT LOG" }),
+      /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10, fontSize: 13, fontFamily: VT.font.mono, color: VT.inkSoft, lineHeight: 1.7 }, children: [
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:22:18" }),
           " \xB7 application.submitted \xB7 ip 195.***.***.42"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:22:19" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:22:19" }),
           " \xB7 parser.tg.start \xB7 @studia_anna"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:22:34" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:22:34" }),
           " \xB7 parser.tg.ok \xB7 posts=47 photos=12"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:22:35" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:22:35" }),
           " \xB7 llm.generate.start \xB7 model=yandexgpt-5-pro"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:23:02" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:23:02" }),
           " \xB7 llm.generate.ok \xB7 tokens=320 cost_rub=12.40"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
           " \xB7 sanitize.ok \xB7 bleach.clean allowlist=v1"
         ] }),
-        /* @__PURE__ */ jsxs6("div", { children: [
-          /* @__PURE__ */ jsx7("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
+        /* @__PURE__ */ jsxs7("div", { children: [
+          /* @__PURE__ */ jsx8("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
           " \xB7 status.new \u2192 status.awaiting_review"
         ] })
       ] })
@@ -7545,8 +8996,8 @@ var AppsList = S12_AppsList;
 var AppDetail = S13_AppDetail;
 
 // src/admin-ops/index.tsx
-import React4, { useState as useState3, useMemo as useMemo2 } from "react";
-import { Fragment as Fragment10, jsx as jsx8, jsxs as jsxs7 } from "react/jsx-runtime";
+import React5, { useState as useState3, useMemo as useMemo2 } from "react";
+import { Fragment as Fragment10, jsx as jsx9, jsxs as jsxs8 } from "react/jsx-runtime";
 function formatTs2(iso) {
   if (!iso) return "\u2014";
   return iso.replace("T", " ").slice(0, 16);
@@ -7556,7 +9007,7 @@ function formatRel(iso) {
   return iso.slice(0, 10);
 }
 function TextField2({ value, onChange, placeholder, ariaLabel, inputMode, maxLength, autoFocus, disabled, style, mono, type = "text" }) {
-  return /* @__PURE__ */ jsx8(
+  return /* @__PURE__ */ jsx9(
     "input",
     {
       type,
@@ -7616,20 +9067,20 @@ function S14_SitesList({
   _embed
 }) {
   const d = data || MOCK_SITES_LIST;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "sites" };
   const showItems = !loading && d.items && d.items.length > 0;
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const totalPages = Math.max(1, Math.ceil(d.total / Math.max(1, d.limit)));
   const currentPage = Math.floor(d.offset / Math.max(1, d.limit)) + 1;
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx8(Eyebrow, { children: "\u0421\u0410\u0419\u0422\u042B" }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", children: "CSV" })
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx9(Eyebrow, { children: "\u0421\u0410\u0419\u0422\u042B" }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx9("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B" }),
+      /* @__PURE__ */ jsx9(Btn, { variant: "secondary", size: "sm", children: "CSV" })
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsx8("div", { style: { display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }, children: SITE_STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx8(
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsx9("div", { style: { display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }, children: SITE_STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx9(
       FilterChip,
       {
         label,
@@ -7638,12 +9089,12 @@ function S14_SitesList({
       },
       key
     )) }),
-    /* @__PURE__ */ jsxs7(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs7("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx8("thead", { children: /* @__PURE__ */ jsx8("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "Status", "Last sync", ""].map((h) => /* @__PURE__ */ jsx8("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
-        /* @__PURE__ */ jsxs7("tbody", { children: [
-          loading && [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx8("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [160, 80, 220, 110, 110, 18].map((w, j) => /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
-          showItems && d.items.map((s) => /* @__PURE__ */ jsxs7(
+    /* @__PURE__ */ jsxs8(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs8("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx9("thead", { children: /* @__PURE__ */ jsx9("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "Status", "Last sync", ""].map((h) => /* @__PURE__ */ jsx9("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+        /* @__PURE__ */ jsxs8("tbody", { children: [
+          loading && [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx9("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [160, 80, 220, 110, 110, 18].map((w, j) => /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
+          showItems && d.items.map((s) => /* @__PURE__ */ jsxs8(
             "tr",
             {
               onClick: () => onRowClick && onRowClick(s.id),
@@ -7653,39 +9104,39 @@ function S14_SitesList({
               } : void 0,
               style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: onRowClick ? "pointer" : "default" },
               children: [
-                /* @__PURE__ */ jsxs7("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: [
+                /* @__PURE__ */ jsxs8("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: [
                   s.subdomain,
                   ".samosite.online",
-                  s.custom_domain && /* @__PURE__ */ jsx8(Badge, { kind: "success", style: { marginLeft: 8, padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: s.custom_domain })
+                  s.custom_domain && /* @__PURE__ */ jsx9(Badge, { kind: "success", style: { marginLeft: 8, padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: s.custom_domain })
                 ] }),
-                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: s.source_type }) }),
-                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: s.source_url }) }),
-                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(StatusPill, { status: s.status }) }),
-                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: formatTs2(s.last_synced_at) }) }),
-                /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
+                /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: s.source_type }) }),
+                /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: s.source_url }) }),
+                /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(StatusPill, { status: s.status }) }),
+                /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: formatTs2(s.last_synced_at) }) }),
+                /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
               ]
             },
             s.id
           ))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx8(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", hint: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B \xAB\u0417\u0430\u044F\u0432\u043A\u0438\xBB \u2014 \u0442\u0430\u043C \u043E\u0434\u043E\u0431\u0440\u044F\u0439\u0442\u0435 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435." }),
-      !showEmpty && /* @__PURE__ */ jsxs7("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs7("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx9(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", hint: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B \xAB\u0417\u0430\u044F\u0432\u043A\u0438\xBB \u2014 \u0442\u0430\u043C \u043E\u0434\u043E\u0431\u0440\u044F\u0439\u0442\u0435 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435." }),
+      !showEmpty && /* @__PURE__ */ jsxs8("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs8("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
-          /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
-          /* @__PURE__ */ jsxs7(Mono, { style: { alignSelf: "center" }, children: [
+        /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx9(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
+          /* @__PURE__ */ jsxs8(Mono, { style: { alignSelf: "center" }, children: [
             "/ ",
             totalPages
           ] }),
-          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+          /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
         ] })
       ] })
     ] })
@@ -7733,15 +9184,15 @@ function S15_SiteDetail({
 }) {
   const d = data || MOCK_SITE_DETAIL;
   const site = d.site;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "sites" };
   if (loading) {
-    return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "20px 32px 40px" }, children: [
-      /* @__PURE__ */ jsx8(SkeletonBlock, { width: 200, height: 14, style: { marginBottom: 14 } }),
-      /* @__PURE__ */ jsx8(SkeletonBlock, { width: 280, height: 28, radius: 6, style: { marginBottom: 24 } }),
-      /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
-        /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 420, radius: 10 }),
-        /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 420, radius: 10 })
+    return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "20px 32px 40px" }, children: [
+      /* @__PURE__ */ jsx9(SkeletonBlock, { width: 200, height: 14, style: { marginBottom: 14 } }),
+      /* @__PURE__ */ jsx9(SkeletonBlock, { width: 280, height: 28, radius: 6, style: { marginBottom: 24 } }),
+      /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
+        /* @__PURE__ */ jsx9(SkeletonBlock, { width: "100%", height: 420, radius: 10 }),
+        /* @__PURE__ */ jsx9(SkeletonBlock, { width: "100%", height: 420, radius: 10 })
       ] })
     ] }) });
   }
@@ -7749,14 +9200,14 @@ function S15_SiteDetail({
     const enabled = actionEnabled(action, site.status);
     const isLoading = actionLoading === action;
     const anyLoading = !!actionLoading;
-    return /* @__PURE__ */ jsx8(
+    return /* @__PURE__ */ jsx9(
       Btn,
       {
         size: "sm",
         variant,
         disabled: !enabled || anyLoading,
         onClick: () => enabled && onAction && onAction(site.id, action),
-        iconRight: isLoading ? /* @__PURE__ */ jsx8(Spinner, { size: 14 }) : variant === "primary" ? /* @__PURE__ */ jsx8(IconArrow, { size: 14 }) : void 0,
+        iconRight: isLoading ? /* @__PURE__ */ jsx9(Spinner, { size: 14 }) : variant === "primary" ? /* @__PURE__ */ jsx9(IconArrow, { size: 14 }) : void 0,
         children: isLoading ? "..." : ACTION_LABELS[action]
       },
       action
@@ -7765,9 +9216,9 @@ function S15_SiteDetail({
   const primaryAction = site.status === "pending_review" ? "publish" : site.status === "published" ? "republish" : site.status === "paused" ? "resume_sync" : site.status === "archived" ? "unarchive" : null;
   const secondaryActions = ["publish", "republish", "pause_sync", "resume_sync", "archive", "unarchive"].filter((a) => a !== primaryAction && actionEnabled(a, site.status));
   const safePreviewUrl = previewUrl || (site.subdomain ? `https://${site.subdomain}.samosite.online` : null);
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "20px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsx8(
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "20px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsx9(
         "button",
         {
           type: "button",
@@ -7776,50 +9227,50 @@ function S15_SiteDetail({
           children: "\u2190 \u0421\u0430\u0439\u0442\u044B"
         }
       ),
-      /* @__PURE__ */ jsx8("span", { children: "/" }),
-      /* @__PURE__ */ jsxs7(Mono, { style: { color: VT.ink }, children: [
+      /* @__PURE__ */ jsx9("span", { children: "/" }),
+      /* @__PURE__ */ jsxs8(Mono, { style: { color: VT.ink }, children: [
         site.subdomain,
         ".samosite.online"
       ] })
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 18 }, children: [
-      /* @__PURE__ */ jsxs7("div", { children: [
-        /* @__PURE__ */ jsx8("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: site.subdomain.replace(/-/g, " ") }),
-        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft, flexWrap: "wrap" }, children: [
-          safePreviewUrl && /* @__PURE__ */ jsxs7("a", { href: safePreviewUrl, target: "_blank", rel: "noreferrer", style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
-            /* @__PURE__ */ jsxs7(Mono, { style: { color: "inherit" }, children: [
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 18 }, children: [
+      /* @__PURE__ */ jsxs8("div", { children: [
+        /* @__PURE__ */ jsx9("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: site.subdomain.replace(/-/g, " ") }),
+        /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft, flexWrap: "wrap" }, children: [
+          safePreviewUrl && /* @__PURE__ */ jsxs8("a", { href: safePreviewUrl, target: "_blank", rel: "noreferrer", style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
+            /* @__PURE__ */ jsxs8(Mono, { style: { color: "inherit" }, children: [
               site.subdomain,
               ".samosite.online"
             ] }),
             " \u2197"
           ] }),
-          /* @__PURE__ */ jsx8("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx8(StatusPill, { status: site.status }),
-          site.published_at && /* @__PURE__ */ jsxs7(Fragment10, { children: [
-            /* @__PURE__ */ jsx8("span", { children: "\xB7" }),
-            /* @__PURE__ */ jsxs7("span", { children: [
+          /* @__PURE__ */ jsx9("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx9(StatusPill, { status: site.status }),
+          site.published_at && /* @__PURE__ */ jsxs8(Fragment10, { children: [
+            /* @__PURE__ */ jsx9("span", { children: "\xB7" }),
+            /* @__PURE__ */ jsxs8("span", { children: [
               "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D ",
               formatRel(site.published_at)
             ] })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }, children: [
+      /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }, children: [
         secondaryActions.map((a) => renderAction(a, "secondary")),
         primaryAction && renderAction(primaryAction, "primary")
       ] })
     ] }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-        /* @__PURE__ */ jsxs7("div", { style: { padding: "10px 14px", borderBottom: `1px solid ${VT.line}`, display: "flex", alignItems: "center", gap: 6, background: VT.bgSoft, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: [
-          /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx8("span", { style: { marginLeft: 10 }, children: safePreviewUrl }),
-          /* @__PURE__ */ jsx8("span", { style: { marginLeft: "auto" }, children: "preview" })
+    /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+        /* @__PURE__ */ jsxs8("div", { style: { padding: "10px 14px", borderBottom: `1px solid ${VT.line}`, display: "flex", alignItems: "center", gap: 6, background: VT.bgSoft, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: [
+          /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx9("span", { style: { marginLeft: 10 }, children: safePreviewUrl }),
+          /* @__PURE__ */ jsx9("span", { style: { marginLeft: "auto" }, children: "preview" })
         ] }),
-        safePreviewUrl ? /* @__PURE__ */ jsx8(
+        safePreviewUrl ? /* @__PURE__ */ jsx9(
           "iframe",
           {
             src: safePreviewUrl,
@@ -7827,24 +9278,24 @@ function S15_SiteDetail({
             sandbox: "allow-same-origin allow-scripts allow-popups-to-escape-sandbox",
             style: { width: "100%", aspectRatio: "4 / 3", border: "none", background: VT.bg, display: "block" }
           }
-        ) : /* @__PURE__ */ jsxs7("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
-          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: `1px solid ${VT.line}` }, children: [
-            /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
-            /* @__PURE__ */ jsx8("span", { style: { fontSize: 12, fontWeight: 700, color: VT.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-            /* @__PURE__ */ jsx8("span", { style: { marginLeft: "auto", padding: "3px 9px", borderRadius: 999, background: VT.accent, color: "#fff", fontSize: 10, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
+        ) : /* @__PURE__ */ jsxs8("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
+          /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: `1px solid ${VT.line}` }, children: [
+            /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
+            /* @__PURE__ */ jsx9("span", { style: { fontSize: 12, fontWeight: 700, color: VT.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+            /* @__PURE__ */ jsx9("span", { style: { marginLeft: "auto", padding: "3px 9px", borderRadius: 999, background: VT.accent, color: "#fff", fontSize: 10, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
           ] }),
-          /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10 }, children: [
-            /* @__PURE__ */ jsx8("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.12em", color: VT.accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-            /* @__PURE__ */ jsx8("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
+          /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10 }, children: [
+            /* @__PURE__ */ jsx9("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.12em", color: VT.accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+            /* @__PURE__ */ jsx9("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
           ] }),
-          /* @__PURE__ */ jsx8("div", { style: { marginTop: 10, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx8("div", { "aria-hidden": "true", style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
+          /* @__PURE__ */ jsx9("div", { style: { marginTop: 10, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx9("div", { "aria-hidden": "true", style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-        /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B" }),
-          /* @__PURE__ */ jsx8("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: d.leads_count }),
-          /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsxs8("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+        /* @__PURE__ */ jsxs8(Card, { style: { padding: 18 }, children: [
+          /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B" }),
+          /* @__PURE__ */ jsx9("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: d.leads_count }),
+          /* @__PURE__ */ jsx9(
             Btn,
             {
               variant: "ghost",
@@ -7855,20 +9306,20 @@ function S15_SiteDetail({
             }
           )
         ] }),
-        /* @__PURE__ */ jsxs7(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0418\u0421\u0422\u041E\u0427\u041D\u0418\u041A" }),
-          /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-            /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0438\u043F" }),
-              /* @__PURE__ */ jsx8(Badge, { kind: "neutral", style: { padding: "2px 9px", fontSize: 11.5, borderRadius: 4 }, children: site.source_type })
+        /* @__PURE__ */ jsxs8(Card, { style: { padding: 18 }, children: [
+          /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0418\u0421\u0422\u041E\u0427\u041D\u0418\u041A" }),
+          /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+            /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx9("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0438\u043F" }),
+              /* @__PURE__ */ jsx9(Badge, { kind: "neutral", style: { padding: "2px 9px", fontSize: 11.5, borderRadius: 4 }, children: site.source_type })
             ] }),
-            /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "URL" }),
-              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: site.source_url })
+            /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx9("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "URL" }),
+              /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: site.source_url })
             ] }),
-            /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "Last sync" }),
-              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: formatTs2(site.last_synced_at) })
+            /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx9("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "Last sync" }),
+              /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: formatTs2(site.last_synced_at) })
             ] })
           ] })
         ] })
@@ -7912,7 +9363,7 @@ function S16_Leads(props) {
     _embed
   } = props;
   const d = data || MOCK_LEADS_LIST;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "leads" };
   const [uSelected, setUSelected] = useState3([]);
   const [uModalOpen, setUModalOpen] = useState3(false);
@@ -7935,12 +9386,12 @@ function S16_Leads(props) {
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const isSelected = (id) => selected.includes(id);
   const allSelected = showItems && selected.length === d.items.length;
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
-    /* @__PURE__ */ jsx8(Eyebrow, { children: "\u041B\u0418\u0414\u042B" }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0412\u0441\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 8, alignItems: "center" }, children: [
-        selected.length > 0 && /* @__PURE__ */ jsxs7(
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
+    /* @__PURE__ */ jsx9(Eyebrow, { children: "\u041B\u0418\u0414\u042B" }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx9("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0412\u0441\u0435 \u0441\u0430\u0439\u0442\u044B" }),
+      /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 8, alignItems: "center" }, children: [
+        selected.length > 0 && /* @__PURE__ */ jsxs8(
           "button",
           {
             type: "button",
@@ -7953,13 +9404,13 @@ function S16_Leads(props) {
             ]
           }
         ),
-        /* @__PURE__ */ jsxs7(
+        /* @__PURE__ */ jsxs8(
           Btn,
           {
             size: "sm",
             onClick: openModal,
             disabled: selected.length === 0 || loading,
-            iconRight: /* @__PURE__ */ jsx8(IconArrow, { size: 14 }),
+            iconRight: /* @__PURE__ */ jsx9(IconArrow, { size: 14 }),
             children: [
               "\u{1F513} \u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C (",
               selected.length,
@@ -7969,20 +9420,20 @@ function S16_Leads(props) {
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }, children: [
-      /* @__PURE__ */ jsxs7(Mono, { style: { fontSize: 12 }, children: [
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }, children: [
+      /* @__PURE__ */ jsxs8(Mono, { style: { fontSize: 12 }, children: [
         "\u0412\u0441\u0435\u0433\u043E: ",
         d.total,
         " \xB7 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043E: ",
         d.items?.length ?? 0
       ] }),
-      /* @__PURE__ */ jsx8(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES \u2014 plaintext \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 TOTP-\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F" })
+      /* @__PURE__ */ jsx9(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES \u2014 plaintext \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 TOTP-\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F" })
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs7(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs7("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx8("thead", { children: /* @__PURE__ */ jsxs7("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsx8("th", { scope: "col", style: { width: 48, padding: "12px 16px", textAlign: "left" }, children: /* @__PURE__ */ jsx8(
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs8(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs8("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx9("thead", { children: /* @__PURE__ */ jsxs8("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsx9("th", { scope: "col", style: { width: 48, padding: "12px 16px", textAlign: "left" }, children: /* @__PURE__ */ jsx9(
             "input",
             {
               type: "checkbox",
@@ -7997,18 +9448,18 @@ function S16_Leads(props) {
               }
             }
           ) }),
-          ["ID", "\u0421\u0430\u0439\u0442", "IP prefix", "Status", "\u041A\u043E\u0433\u0434\u0430"].map((h) => /* @__PURE__ */ jsx8("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h))
+          ["ID", "\u0421\u0430\u0439\u0442", "IP prefix", "Status", "\u041A\u043E\u0433\u0434\u0430"].map((h) => /* @__PURE__ */ jsx9("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h))
         ] }) }),
-        /* @__PURE__ */ jsxs7("tbody", { children: [
-          loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs7("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: 14, height: 14, radius: 3 }) }),
-            [90, 160, 120, 90, 110].map((w, j) => /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: w, height: 12 }) }, j))
+        /* @__PURE__ */ jsxs8("tbody", { children: [
+          loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs8("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(SkeletonBlock, { width: 14, height: 14, radius: 3 }) }),
+            [90, 160, 120, 90, 110].map((w, j) => /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(SkeletonBlock, { width: w, height: 12 }) }, j))
           ] }, i)),
-          showItems && d.items.map((row) => /* @__PURE__ */ jsxs7("tr", { style: {
+          showItems && d.items.map((row) => /* @__PURE__ */ jsxs8("tr", { style: {
             borderBottom: `1px solid ${VT.lineSoft}`,
             background: isSelected(row.id) ? VT.accentSoft : "transparent"
           }, children: [
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(
               "input",
               {
                 type: "checkbox",
@@ -8017,31 +9468,31 @@ function S16_Leads(props) {
                 onChange: (e) => setSelected(row.id, e.target.checked)
               }
             ) }),
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { children: row.id }) }),
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft }, children: row.site_id }),
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: row.ip_prefix || "\u2014" }) }),
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(StatusPill, { status: row.status, size: "sm" }) }),
-            /* @__PURE__ */ jsx8("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: formatTs2(row.created_at) }) })
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(Mono, { children: row.id }) }),
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft }, children: row.site_id }),
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: row.ip_prefix || "\u2014" }) }),
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(StatusPill, { status: row.status, size: "sm" }) }),
+            /* @__PURE__ */ jsx9("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: formatTs2(row.created_at) }) })
           ] }, row.id))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx8(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043B\u0438\u0434\u043E\u0432", hint: "\u041A\u043E\u0433\u0434\u0430 \u043A\u0442\u043E-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442 \u0444\u043E\u0440\u043C\u0443 \u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0441\u0430\u0439\u0442\u043E\u0432 \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
-      !showEmpty && !loading && /* @__PURE__ */ jsxs7("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs7("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx9(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043B\u0438\u0434\u043E\u0432", hint: "\u041A\u043E\u0433\u0434\u0430 \u043A\u0442\u043E-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442 \u0444\u043E\u0440\u043C\u0443 \u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0441\u0430\u0439\u0442\u043E\u0432 \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+      !showEmpty && !loading && /* @__PURE__ */ jsxs8("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs8("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
-          /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+        /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u0412\u0441\u0435 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F \u0432 audit-log (admin_actions) \u2014 admin_id, ip, lead_ids, ts." }),
-    modalOpen && /* @__PURE__ */ jsx8(
+    /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u0412\u0441\u0435 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F \u0432 audit-log (admin_actions) \u2014 admin_id, ip, lead_ids, ts." }),
+    modalOpen && /* @__PURE__ */ jsx9(
       "div",
       {
         role: "dialog",
@@ -8057,16 +9508,16 @@ function S16_Leads(props) {
           padding: 24,
           zIndex: 10
         },
-        children: /* @__PURE__ */ jsx8(Card, { style: { width: decryptedRows ? 560 : 380, padding: 24, background: VT.bg }, children: !decryptedRows ? /* @__PURE__ */ jsxs7(Fragment10, { children: [
-          /* @__PURE__ */ jsx8("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
-          /* @__PURE__ */ jsxs7("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: [
+        children: /* @__PURE__ */ jsx9(Card, { style: { width: decryptedRows ? 560 : 380, padding: 24, background: VT.bg }, children: !decryptedRows ? /* @__PURE__ */ jsxs8(Fragment10, { children: [
+          /* @__PURE__ */ jsx9("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
+          /* @__PURE__ */ jsxs8("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: [
             "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C ",
-            /* @__PURE__ */ jsx8("b", { children: selected.length }),
+            /* @__PURE__ */ jsx9("b", { children: selected.length }),
             " ",
             selected.length === 1 ? "\u043B\u0438\u0434" : "\u043B\u0438\u0434\u043E\u0432",
             ". \u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430."
           ] }),
-          decryptError && /* @__PURE__ */ jsx8("div", { role: "alert", style: {
+          decryptError && /* @__PURE__ */ jsx9("div", { role: "alert", style: {
             padding: "8px 12px",
             background: VT.dangerSoft,
             border: `1px solid oklch(0.85 0.06 28)`,
@@ -8075,7 +9526,7 @@ function S16_Leads(props) {
             color: "oklch(0.4 0.15 28)",
             marginBottom: 14
           }, children: decryptError }),
-          /* @__PURE__ */ jsx8(
+          /* @__PURE__ */ jsx9(
             TextField2,
             {
               value: totp,
@@ -8090,41 +9541,41 @@ function S16_Leads(props) {
               style: { fontSize: 20, letterSpacing: "0.4em", textAlign: "center" }
             }
           ),
-          /* @__PURE__ */ jsxs7("div", { style: { marginTop: 14, display: "flex", gap: 8 }, children: [
-            /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, onClick: cancel, disabled: !!decryptLoading, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
-            /* @__PURE__ */ jsx8(
+          /* @__PURE__ */ jsxs8("div", { style: { marginTop: 14, display: "flex", gap: 8 }, children: [
+            /* @__PURE__ */ jsx9(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, onClick: cancel, disabled: !!decryptLoading, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
+            /* @__PURE__ */ jsx9(
               Btn,
               {
                 size: "sm",
                 style: { flex: 1 },
                 onClick: submitDecrypt,
                 disabled: !totp || totp.length < 6 || !!decryptLoading,
-                iconRight: decryptLoading ? /* @__PURE__ */ jsx8(Spinner, { size: 14 }) : void 0,
+                iconRight: decryptLoading ? /* @__PURE__ */ jsx9(Spinner, { size: 14 }) : void 0,
                 children: decryptLoading ? "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C\u2026" : "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C"
               }
             )
           ] })
-        ] }) : /* @__PURE__ */ jsxs7(Fragment10, { children: [
-          /* @__PURE__ */ jsxs7("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: [
+        ] }) : /* @__PURE__ */ jsxs8(Fragment10, { children: [
+          /* @__PURE__ */ jsxs8("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: [
             "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u043E \xB7 ",
             decryptedRows.length
           ] }),
-          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: VT.inkFaint, display: "block", marginBottom: 12 }, children: "\u0417\u0430\u043B\u043E\u0433\u0438\u0440\u043E\u0432\u0430\u043D\u043E \u0432 audit-log. \u0417\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u043E\u043A\u043D\u043E \u2014 plaintext \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442 \u0438\u0437 DOM." }),
-          /* @__PURE__ */ jsx8("div", { style: { maxHeight: 360, overflow: "auto", display: "flex", flexDirection: "column", gap: 10 }, children: decryptedRows.map((r) => /* @__PURE__ */ jsxs7(Card, { style: { padding: 12, border: `1px solid ${VT.line}` }, children: [
-            /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }, children: [
-              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11.5 }, children: r.id }),
-              /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: r.site_id }),
-              /* @__PURE__ */ jsx8(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(r.created_at) })
+          /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, color: VT.inkFaint, display: "block", marginBottom: 12 }, children: "\u0417\u0430\u043B\u043E\u0433\u0438\u0440\u043E\u0432\u0430\u043D\u043E \u0432 audit-log. \u0417\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u043E\u043A\u043D\u043E \u2014 plaintext \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442 \u0438\u0437 DOM." }),
+          /* @__PURE__ */ jsx9("div", { style: { maxHeight: 360, overflow: "auto", display: "flex", flexDirection: "column", gap: 10 }, children: decryptedRows.map((r) => /* @__PURE__ */ jsxs8(Card, { style: { padding: 12, border: `1px solid ${VT.line}` }, children: [
+            /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }, children: [
+              /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11.5 }, children: r.id }),
+              /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: r.site_id }),
+              /* @__PURE__ */ jsx9(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(r.created_at) })
             ] }),
-            /* @__PURE__ */ jsx8("div", { style: { fontSize: 13, fontWeight: 500 }, children: r.name || "\u2014" }),
-            /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: r.phone || "\u2014" }),
-            r.message && /* @__PURE__ */ jsxs7("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 4, lineHeight: 1.5 }, children: [
+            /* @__PURE__ */ jsx9("div", { style: { fontSize: 13, fontWeight: 500 }, children: r.name || "\u2014" }),
+            /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: r.phone || "\u2014" }),
+            r.message && /* @__PURE__ */ jsxs8("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 4, lineHeight: 1.5 }, children: [
               "\xAB",
               r.message,
               "\xBB"
             ] })
           ] }, r.id)) }),
-          /* @__PURE__ */ jsx8("div", { style: { marginTop: 14, display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ jsx8(Btn, { size: "sm", onClick: cancel, children: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C" }) })
+          /* @__PURE__ */ jsx9("div", { style: { marginTop: 14, display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ jsx9(Btn, { size: "sm", onClick: cancel, children: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C" }) })
         ] }) })
       }
     )
@@ -8158,57 +9609,57 @@ var SOURCE_LABELS = {
 };
 function S17_Waitlist({ data, loading, error, onMarkInDevelopment, _embed }) {
   const d = data || MOCK_WAITLIST;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "waitlist" };
   const items = d.items || [];
   const readyItems = items.filter((it) => it.ready);
   const restItems = items.filter((it) => !it.ready);
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx8(Eyebrow, { children: "WAITLIST \xB7 ADR-0009" }),
-    /* @__PURE__ */ jsx8("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 6px" }, children: /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0413\u043E\u043B\u043E\u0441\u0430 \u043F\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\u043C" }) }),
-    /* @__PURE__ */ jsxs7("p", { style: { fontSize: 14, color: VT.inkSoft, margin: "0 0 22px", maxWidth: 680 }, children: [
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx9(Eyebrow, { children: "WAITLIST \xB7 ADR-0009" }),
+    /* @__PURE__ */ jsx9("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 6px" }, children: /* @__PURE__ */ jsx9("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0413\u043E\u043B\u043E\u0441\u0430 \u043F\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\u043C" }) }),
+    /* @__PURE__ */ jsxs8("p", { style: { fontSize: 14, color: VT.inkSoft, margin: "0 0 22px", maxWidth: 680 }, children: [
       "\u0413\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0430 \u043F\u043E ",
-      /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: "source_name" }),
+      /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: "source_name" }),
       ". \u0417\u0435\u043B\u0451\u043D\u044B\u043C \u2014 \u2265",
       d.threshold,
       " \u0433\u043E\u043B\u043E\u0441\u043E\u0432, \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C ADR."
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
-    !loading && items.length === 0 && /* @__PURE__ */ jsx8(Card, { style: { padding: 0 }, children: /* @__PURE__ */ jsx8(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0430 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438", hint: "\u0413\u043E\u043B\u043E\u0441\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0438\u0437 feedback-\u0444\u043E\u0440\u043C\u044B \u0438 source-detection \xABunknown\xBB." }) }),
-    (loading || items.length > 0) && /* @__PURE__ */ jsx8(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs7("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
-      /* @__PURE__ */ jsx8("thead", { children: /* @__PURE__ */ jsx8("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx8("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
-      /* @__PURE__ */ jsxs7("tbody", { children: [
-        loading && [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsx8("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [200, 100, 140, 120].map((w, j) => /* @__PURE__ */ jsx8("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx8(SkeletonBlock, { width: w, height: 14 }) }, j)) }, i)),
-        !loading && readyItems.map((it) => /* @__PURE__ */ jsx8(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name)),
-        !loading && readyItems.length > 0 && restItems.length > 0 && /* @__PURE__ */ jsx8("tr", { "aria-hidden": "true", children: /* @__PURE__ */ jsx8("td", { colSpan: 4, style: { padding: "6px 16px", background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: /* @__PURE__ */ jsxs7(Mono, { style: { fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.08em" }, children: [
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error }) }),
+    !loading && items.length === 0 && /* @__PURE__ */ jsx9(Card, { style: { padding: 0 }, children: /* @__PURE__ */ jsx9(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0430 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438", hint: "\u0413\u043E\u043B\u043E\u0441\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0438\u0437 feedback-\u0444\u043E\u0440\u043C\u044B \u0438 source-detection \xABunknown\xBB." }) }),
+    (loading || items.length > 0) && /* @__PURE__ */ jsx9(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs8("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
+      /* @__PURE__ */ jsx9("thead", { children: /* @__PURE__ */ jsx9("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx9("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+      /* @__PURE__ */ jsxs8("tbody", { children: [
+        loading && [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsx9("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [200, 100, 140, 120].map((w, j) => /* @__PURE__ */ jsx9("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx9(SkeletonBlock, { width: w, height: 14 }) }, j)) }, i)),
+        !loading && readyItems.map((it) => /* @__PURE__ */ jsx9(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name)),
+        !loading && readyItems.length > 0 && restItems.length > 0 && /* @__PURE__ */ jsx9("tr", { "aria-hidden": "true", children: /* @__PURE__ */ jsx9("td", { colSpan: 4, style: { padding: "6px 16px", background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: /* @__PURE__ */ jsxs8(Mono, { style: { fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.08em" }, children: [
           "\u2500\u2500\u2500 \u041D\u0418\u0416\u0415 \u041F\u041E\u0420\u041E\u0413\u0410 (",
           d.threshold,
           " \u0413\u041E\u041B\u041E\u0421\u041E\u0412) \u2500\u2500\u2500"
         ] }) }) }),
-        !loading && restItems.map((it) => /* @__PURE__ */ jsx8(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name))
+        !loading && restItems.map((it) => /* @__PURE__ */ jsx9(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name))
       ] })
     ] }) })
   ] }) });
 }
 function WaitlistRow({ item, threshold, onMarkInDevelopment }) {
-  return /* @__PURE__ */ jsxs7("tr", { style: {
+  return /* @__PURE__ */ jsxs8("tr", { style: {
     borderBottom: `1px solid ${VT.lineSoft}`,
     background: item.ready ? "oklch(0.97 0.03 145 / 0.5)" : "transparent"
   }, children: [
-    /* @__PURE__ */ jsx8("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: item.source_name }),
-      /* @__PURE__ */ jsx8("span", { style: { fontWeight: 500 }, children: SOURCE_LABELS[item.source_name] || item.source_name })
+    /* @__PURE__ */ jsx9("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: item.source_name }),
+      /* @__PURE__ */ jsx9("span", { style: { fontWeight: 500 }, children: SOURCE_LABELS[item.source_name] || item.source_name })
     ] }) }),
-    /* @__PURE__ */ jsx8("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx8("span", { style: { fontSize: 22, fontWeight: 700, color: item.ready ? VT.success : VT.ink }, children: item.votes }),
-      item.ready && /* @__PURE__ */ jsxs7(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: [
+    /* @__PURE__ */ jsx9("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx9("span", { style: { fontSize: 22, fontWeight: 700, color: item.ready ? VT.success : VT.ink }, children: item.votes }),
+      item.ready && /* @__PURE__ */ jsxs8(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: [
         "\u2265 ",
         threshold,
         " \xB7 \u041F\u041E\u0420\u0410"
       ] })
     ] }) }),
-    /* @__PURE__ */ jsx8("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: item.first_seen }) }),
-    /* @__PURE__ */ jsx8("td", { style: { padding: "14px 16px", textAlign: "right" }, children: item.ready ? /* @__PURE__ */ jsx8(Btn, { size: "sm", onClick: () => onMarkInDevelopment && onMarkInDevelopment(item.source_name), children: "\u0412 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0443" }) : /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2014" }) })
+    /* @__PURE__ */ jsx9("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: item.first_seen }) }),
+    /* @__PURE__ */ jsx9("td", { style: { padding: "14px 16px", textAlign: "right" }, children: item.ready ? /* @__PURE__ */ jsx9(Btn, { size: "sm", onClick: () => onMarkInDevelopment && onMarkInDevelopment(item.source_name), children: "\u0412 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0443" }) : /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2014" }) })
   ] });
 }
 var MOCK_FEEDBACK = {
@@ -8237,7 +9688,7 @@ function FbTypePill({ type }) {
     bug: ["\u0431\u0430\u0433", VT.dangerSoft, "oklch(0.42 0.15 28)"],
     general: ["\u0434\u0440\u0443\u0433\u043E\u0435", VT.bgSoft, VT.inkSoft]
   }[type] || ["\u2014", VT.bgSoft, VT.inkSoft];
-  return /* @__PURE__ */ jsx8("span", { style: { display: "inline-flex", padding: "2px 8px", borderRadius: 4, background: m[1], color: m[2], fontSize: 10.5, fontWeight: 600, fontFamily: VT.font.mono, letterSpacing: "0.06em" }, children: m[0].toUpperCase() });
+  return /* @__PURE__ */ jsx9("span", { style: { display: "inline-flex", padding: "2px 8px", borderRadius: 4, background: m[1], color: m[2], fontSize: 10.5, fontWeight: 600, fontFamily: VT.font.mono, letterSpacing: "0.06em" }, children: m[0].toUpperCase() });
 }
 function S18_FeedbackInbox({
   data,
@@ -8252,7 +9703,7 @@ function S18_FeedbackInbox({
   _embed
 }) {
   const d = data || MOCK_FEEDBACK;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "feedback" };
   const [selectedId, setSelectedId] = useState3(null);
   const selected = useMemo2(() => {
@@ -8264,11 +9715,11 @@ function S18_FeedbackInbox({
     setSelectedId(id);
     if (onRowClick) onRowClick(id);
   };
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx8(Eyebrow, { children: "FEEDBACK INBOX" }),
-    /* @__PURE__ */ jsx8("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" }) }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx8("div", { style: { display: "flex", gap: 6 }, children: FB_TYPE_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx8(
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx9(Eyebrow, { children: "FEEDBACK INBOX" }),
+    /* @__PURE__ */ jsx9("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: /* @__PURE__ */ jsx9("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" }) }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx9("div", { style: { display: "flex", gap: 6 }, children: FB_TYPE_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx9(
         FilterChip,
         {
           label,
@@ -8277,7 +9728,7 @@ function S18_FeedbackInbox({
         },
         key
       )) }),
-      /* @__PURE__ */ jsx8("div", { style: { marginLeft: "auto" }, children: /* @__PURE__ */ jsx8(
+      /* @__PURE__ */ jsx9("div", { style: { marginLeft: "auto" }, children: /* @__PURE__ */ jsx9(
         "input",
         {
           type: "search",
@@ -8299,17 +9750,17 @@ function S18_FeedbackInbox({
         }
       ) })
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-        loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs7("div", { style: { padding: "14px 16px", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-          /* @__PURE__ */ jsx8(SkeletonBlock, { width: "60%", height: 12, style: { marginBottom: 6 } }),
-          /* @__PURE__ */ jsx8(SkeletonBlock, { width: "90%", height: 14 })
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+        loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs8("div", { style: { padding: "14px 16px", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+          /* @__PURE__ */ jsx9(SkeletonBlock, { width: "60%", height: 12, style: { marginBottom: 6 } }),
+          /* @__PURE__ */ jsx9(SkeletonBlock, { width: "90%", height: 14 })
         ] }, i)),
-        !loading && (d.items || []).length === 0 && /* @__PURE__ */ jsx8(EmptyState, { title: "Inbox \u043F\u0443\u0441\u0442", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043E\u0441\u0442\u0430\u0432\u0438\u0442 feedback \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+        !loading && (d.items || []).length === 0 && /* @__PURE__ */ jsx9(EmptyState, { title: "Inbox \u043F\u0443\u0441\u0442", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043E\u0441\u0442\u0430\u0432\u0438\u0442 feedback \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
         !loading && (d.items || []).map((row, i, arr) => {
           const isSelected = selected && selected.id === row.id;
-          return /* @__PURE__ */ jsxs7(
+          return /* @__PURE__ */ jsxs8(
             "button",
             {
               type: "button",
@@ -8326,47 +9777,47 @@ function S18_FeedbackInbox({
                 fontFamily: "inherit"
               },
               children: [
-                /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
-                  /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11.5 }, children: row.id }),
-                  /* @__PURE__ */ jsx8(FbTypePill, { type: row.type }),
-                  /* @__PURE__ */ jsx8(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(row.created_at) })
+                /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
+                  /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11.5 }, children: row.id }),
+                  /* @__PURE__ */ jsx9(FbTypePill, { type: row.type }),
+                  /* @__PURE__ */ jsx9(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(row.created_at) })
                 ] }),
-                /* @__PURE__ */ jsx8("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: row.message }),
-                /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: row.email_or_contact_masked || "\u2014" })
+                /* @__PURE__ */ jsx9("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: row.message }),
+                /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: row.email_or_contact_masked || "\u2014" })
               ]
             },
             row.id
           );
         }),
-        !loading && (d.items || []).length > 0 && onPageChange && /* @__PURE__ */ jsxs7("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft, borderTop: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsxs7("span", { children: [
+        !loading && (d.items || []).length > 0 && onPageChange && /* @__PURE__ */ jsxs8("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft, borderTop: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsxs8("span", { children: [
             d.offset + 1,
             "\u2013",
             Math.min(d.offset + d.limit, d.total),
             " \u0438\u0437 ",
             d.total
           ] }),
-          /* @__PURE__ */ jsxs7("div", { style: { display: "flex", gap: 6 }, children: [
-            /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0, children: "\u2190" }),
-            /* @__PURE__ */ jsx8(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total, children: "\u2192" })
+          /* @__PURE__ */ jsxs8("div", { style: { display: "flex", gap: 6 }, children: [
+            /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0, children: "\u2190" }),
+            /* @__PURE__ */ jsx9(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total, children: "\u2192" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsx8(Card, { style: { padding: 22 }, children: !selected ? /* @__PURE__ */ jsx8(EmptyState, { title: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043B\u0435\u0432\u0430" }) : /* @__PURE__ */ jsxs7(Fragment10, { children: [
-        /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx8(Mono, { children: selected.id }),
-          /* @__PURE__ */ jsx8(FbTypePill, { type: selected.type }),
-          /* @__PURE__ */ jsx8(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(selected.created_at) })
+      /* @__PURE__ */ jsx9(Card, { style: { padding: 22 }, children: !selected ? /* @__PURE__ */ jsx9(EmptyState, { title: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043B\u0435\u0432\u0430" }) : /* @__PURE__ */ jsxs8(Fragment10, { children: [
+        /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx9(Mono, { children: selected.id }),
+          /* @__PURE__ */ jsx9(FbTypePill, { type: selected.type }),
+          /* @__PURE__ */ jsx9(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(selected.created_at) })
         ] }),
-        /* @__PURE__ */ jsx8("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: selected.type === "source_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" : selected.type === "feature_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" : selected.type === "bug" ? "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435" : "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435" }),
-        selected.email_or_contact_masked && /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: selected.email_or_contact_masked }),
-        /* @__PURE__ */ jsx8("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: selected.message }),
-        selected.source_name && /* @__PURE__ */ jsxs7("div", { style: { marginBottom: 14 }, children: [
-          /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE NAME" }),
-          /* @__PURE__ */ jsx8("div", { style: { marginTop: 4 }, children: /* @__PURE__ */ jsx8(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 12 }, children: selected.source_name }) })
+        /* @__PURE__ */ jsx9("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: selected.type === "source_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" : selected.type === "feature_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" : selected.type === "bug" ? "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435" : "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435" }),
+        selected.email_or_contact_masked && /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: selected.email_or_contact_masked }),
+        /* @__PURE__ */ jsx9("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: selected.message }),
+        selected.source_name && /* @__PURE__ */ jsxs8("div", { style: { marginBottom: 14 }, children: [
+          /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE NAME" }),
+          /* @__PURE__ */ jsx9("div", { style: { marginTop: 4 }, children: /* @__PURE__ */ jsx9(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 12 }, children: selected.source_name }) })
         ] }),
-        selected.checkboxes && Object.keys(selected.checkboxes).length > 0 && /* @__PURE__ */ jsxs7("details", { open: false, children: [
-          /* @__PURE__ */ jsx8("summary", { style: {
+        selected.checkboxes && Object.keys(selected.checkboxes).length > 0 && /* @__PURE__ */ jsxs8("details", { open: false, children: [
+          /* @__PURE__ */ jsx9("summary", { style: {
             fontFamily: VT.font.mono,
             fontSize: 10.5,
             letterSpacing: "0.1em",
@@ -8375,7 +9826,7 @@ function S18_FeedbackInbox({
             padding: "6px 0",
             listStyle: "none"
           }, children: "CHECKBOXES \xB7 JSONB \u25BE" }),
-          /* @__PURE__ */ jsx8("pre", { style: {
+          /* @__PURE__ */ jsx9("pre", { style: {
             margin: "6px 0 0",
             padding: 14,
             background: VT.bgSoft,
@@ -8409,7 +9860,7 @@ var MOCK_SETTINGS = {
   fernet_keys_configured: true
 };
 function ConfiguredBadge({ on, label }) {
-  return /* @__PURE__ */ jsxs7("span", { style: {
+  return /* @__PURE__ */ jsxs8("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 6,
@@ -8420,71 +9871,71 @@ function ConfiguredBadge({ on, label }) {
     fontSize: 11.5,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx8("span", { "aria-hidden": "true", children: on ? "\u2713" : "\u26A0" }),
+    /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", children: on ? "\u2713" : "\u26A0" }),
     label || (on ? "\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D" : "\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D")
   ] });
 }
 function KeyValueRow({ label, children }) {
-  return /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px dashed ${VT.line}`, gap: 16 }, children: [
-    /* @__PURE__ */ jsx8("span", { style: { fontSize: 13, color: VT.inkSoft }, children: label }),
-    /* @__PURE__ */ jsx8("div", { children })
+  return /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px dashed ${VT.line}`, gap: 16 }, children: [
+    /* @__PURE__ */ jsx9("span", { style: { fontSize: 13, color: VT.inkSoft }, children: label }),
+    /* @__PURE__ */ jsx9("div", { children })
   ] });
 }
 function S19_Settings({ data, loading, error, onRefresh, _embed }) {
   const d = data || MOCK_SETTINGS;
-  const Wrap = _embed === false ? React4.Fragment : AdminChrome;
+  const Wrap = _embed === false ? React5.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "settings" };
   const envBadge = d.environment === "prod" ? { kind: "danger", label: "PROD" } : d.environment === "staging" ? { kind: "warn", label: "STAGING" } : { kind: "info", label: "DEV" };
-  return /* @__PURE__ */ jsx8(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs7("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx8(Eyebrow, { children: "SETTINGS \xB7 SYSTEM" }),
-    /* @__PURE__ */ jsxs7("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx8("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }),
-      onRefresh && /* @__PURE__ */ jsx8(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" })
+  return /* @__PURE__ */ jsx9(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs8("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx9(Eyebrow, { children: "SETTINGS \xB7 SYSTEM" }),
+    /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx9("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }),
+      onRefresh && /* @__PURE__ */ jsx9(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" })
     ] }),
-    error && /* @__PURE__ */ jsx8("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx8(ErrorBlock, { message: error, onRetry: onRefresh }) }),
-    loading && /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 200, radius: 10 }),
-      /* @__PURE__ */ jsx8(SkeletonBlock, { width: "100%", height: 200, radius: 10 })
+    error && /* @__PURE__ */ jsx9("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx9(ErrorBlock, { message: error, onRetry: onRefresh }) }),
+    loading && /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsx9(SkeletonBlock, { width: "100%", height: 200, radius: 10 }),
+      /* @__PURE__ */ jsx9(SkeletonBlock, { width: "100%", height: 200, radius: 10 })
     ] }),
-    !loading && /* @__PURE__ */ jsxs7("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0421\u0420\u0415\u0414\u0410" }),
-        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Environment", children: /* @__PURE__ */ jsx8(Badge, { kind: envBadge.kind, style: { padding: "2px 10px", fontSize: 11.5 }, children: envBadge.label }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Log level", children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 13 }, children: d.log_level }) })
+    !loading && /* @__PURE__ */ jsxs8("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0421\u0420\u0415\u0414\u0410" }),
+        /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Environment", children: /* @__PURE__ */ jsx9(Badge, { kind: envBadge.kind, style: { padding: "2px 10px", fontSize: 11.5 }, children: envBadge.label }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Log level", children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 13 }, children: d.log_level }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0411\u0410\u0417\u041E\u0412\u042B\u0415 URL" }),
-        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "App", children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: d.app_base_url }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Landing", children: /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 12 }, children: d.landing_base_url }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Sites", children: /* @__PURE__ */ jsxs7(Mono, { style: { fontSize: 12 }, children: [
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0411\u0410\u0417\u041E\u0412\u042B\u0415 URL" }),
+        /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "App", children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: d.app_base_url }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Landing", children: /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 12 }, children: d.landing_base_url }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Sites", children: /* @__PURE__ */ jsxs8(Mono, { style: { fontSize: 12 }, children: [
             "*.",
             d.sites_base_domain
           ] }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "FEATURE FLAGS" }),
-        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "MAX-bot integration", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.feature_max_bot, label: d.feature_max_bot ? "on" : "off" }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Auto-sync sites", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.feature_auto_sync, label: d.feature_auto_sync ? "on" : "off" }) })
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "FEATURE FLAGS" }),
+        /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "MAX-bot integration", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.feature_max_bot, label: d.feature_max_bot ? "on" : "off" }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Auto-sync sites", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.feature_auto_sync, label: d.feature_auto_sync ? "on" : "off" }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs7(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0412\u041D\u0415\u0428\u041D\u0418\u0415 \u0421\u0415\u0420\u0412\u0418\u0421\u042B" }),
-        /* @__PURE__ */ jsxs7("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Captcha", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.captcha_configured }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Telegram-\u0431\u043E\u0442", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.tg_bot_configured }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "YandexGPT", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.yandexgpt_configured }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "\u042EKassa", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.yookassa_configured }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "S3 storage", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.s3_configured }) }),
-          /* @__PURE__ */ jsx8(KeyValueRow, { label: "Fernet keys", children: /* @__PURE__ */ jsx8(ConfiguredBadge, { on: d.fernet_keys_configured }) })
+      /* @__PURE__ */ jsxs8(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0412\u041D\u0415\u0428\u041D\u0418\u0415 \u0421\u0415\u0420\u0412\u0418\u0421\u042B" }),
+        /* @__PURE__ */ jsxs8("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Captcha", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.captcha_configured }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Telegram-\u0431\u043E\u0442", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.tg_bot_configured }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "YandexGPT", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.yandexgpt_configured }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "\u042EKassa", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.yookassa_configured }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "S3 storage", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.s3_configured }) }),
+          /* @__PURE__ */ jsx9(KeyValueRow, { label: "Fernet keys", children: /* @__PURE__ */ jsx9(ConfiguredBadge, { on: d.fernet_keys_configured }) })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx8(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 14, display: "block" }, children: "Read-only snapshot. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u0435\u043A\u0440\u0435\u0442\u043E\u0432 \u043D\u0435 \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u0441\u044F \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u0430\u0442\u0443\u0441 \xAB\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D/\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\xBB." })
+    /* @__PURE__ */ jsx9(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 14, display: "block" }, children: "Read-only snapshot. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u0435\u043A\u0440\u0435\u0442\u043E\u0432 \u043D\u0435 \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u0441\u044F \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u0430\u0442\u0443\u0441 \xAB\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D/\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\xBB." })
   ] }) });
 }
 var SitesList = S14_SitesList;
@@ -8496,7 +9947,7 @@ var Settings = S19_Settings;
 
 // src/auth/index.tsx
 import { useState as useState4, useEffect as useEffect3, useCallback as useCallback3 } from "react";
-import { jsx as jsx9, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
 var CUSTOMER_ERROR_MSG = {
   invalid_credentials: "\u041D\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435, \u043A\u043E\u0442\u043E\u0440\u043E\u0435 \u043C\u044B \u0432\u0430\u043C \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u043B\u0438.",
   rate_limited: null,
@@ -8515,7 +9966,7 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
   const totalMin = Math.ceil(remaining / 60);
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
-  return /* @__PURE__ */ jsxs8("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs9("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -8525,12 +9976,12 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
     marginBottom: 14,
     lineHeight: 1.5
   }, children: [
-    /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsx10("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
     "\u0421\u043B\u0438\u0448\u043A\u043E\u043C \u043C\u043D\u043E\u0433\u043E \u043F\u043E\u043F\u044B\u0442\u043E\u043A. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0447\u0435\u0440\u0435\u0437 ",
     totalMin,
     "\xA0\u043C\u0438\u043D \u2014 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C",
     " ",
-    /* @__PURE__ */ jsxs8("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
+    /* @__PURE__ */ jsxs9("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
       mm,
       ":",
       ss
@@ -8541,7 +9992,7 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
 function CustomerErrorNotice({ code }) {
   const msg = CUSTOMER_ERROR_MSG[code] || CUSTOMER_ERROR_MSG.unknown_error;
   if (!msg) return null;
-  return /* @__PURE__ */ jsxs8("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs9("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -8551,7 +10002,7 @@ function CustomerErrorNotice({ code }) {
     marginBottom: 14,
     lineHeight: 1.5
   }, children: [
-    /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsx10("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
     msg
   ] });
 }
@@ -8568,7 +10019,7 @@ function CLTextField({
   mono,
   style
 }) {
-  return /* @__PURE__ */ jsx9(
+  return /* @__PURE__ */ jsx10(
     "input",
     {
       id,
@@ -8610,7 +10061,7 @@ function S20_CustomerLogin(props) {
     if (loading || isRateLimited) return;
     if (onSubmit) onSubmit();
   }, [loading, isRateLimited, onSubmit]);
-  return /* @__PURE__ */ jsx9("div", { style: {
+  return /* @__PURE__ */ jsx10("div", { style: {
     background: VT.bgSoft,
     minHeight: "100%",
     width: "100%",
@@ -8621,41 +10072,41 @@ function S20_CustomerLogin(props) {
     color: VT.ink,
     padding: "40px 24px",
     boxSizing: "border-box"
-  }, children: /* @__PURE__ */ jsxs8("div", { style: { width: "100%", maxWidth: 420 }, children: [
-    /* @__PURE__ */ jsx9("div", { style: {
+  }, children: /* @__PURE__ */ jsxs9("div", { style: { width: "100%", maxWidth: 420 }, children: [
+    /* @__PURE__ */ jsx10("div", { style: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 18
-    }, children: /* @__PURE__ */ jsx9("a", { href: "/", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx9(BrandMark, { size: 26, fontSize: 20 }) }) }),
-    /* @__PURE__ */ jsxs8(Card, { style: {
+    }, children: /* @__PURE__ */ jsx10("a", { href: "/", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx10(BrandMark, { size: 26, fontSize: 20 }) }) }),
+    /* @__PURE__ */ jsxs9(Card, { style: {
       padding: 28,
       boxShadow: VT.shadow.card,
       borderTop: `2px solid ${VT.success}`
     }, children: [
-      /* @__PURE__ */ jsx9("h1", { style: {
+      /* @__PURE__ */ jsx10("h1", { style: {
         fontSize: 22,
         fontWeight: 700,
         letterSpacing: "-0.02em",
         margin: "0 0 6px",
         lineHeight: 1.2
       }, children: "\u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0432 \u0441\u0432\u043E\u0439 \u043A\u0430\u0431\u0438\u043D\u0435\u0442" }),
-      /* @__PURE__ */ jsx9("p", { style: {
+      /* @__PURE__ */ jsx10("p", { style: {
         fontSize: 13.5,
         color: VT.inkSoft,
         margin: "0 0 18px",
         lineHeight: 1.5
       }, children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043B\u043E\u0433\u0438\u043D \u0438 \u043F\u0430\u0440\u043E\u043B\u044C, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043C\u044B \u043F\u0440\u0438\u0441\u043B\u0430\u043B\u0438 \u0432\u0430\u043C \u043F\u043E\u0441\u043B\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430." }),
-      isRateLimited ? /* @__PURE__ */ jsx9(CustomerRateLimitNotice, { retryAfterSeconds: retryAfterSeconds ?? 263 }) : error && /* @__PURE__ */ jsx9(CustomerErrorNotice, { code: error }),
-      /* @__PURE__ */ jsxs8("form", { onSubmit: handleSubmit, noValidate: true, children: [
-        /* @__PURE__ */ jsx9("label", { htmlFor: "ss-customer-login", style: {
+      isRateLimited ? /* @__PURE__ */ jsx10(CustomerRateLimitNotice, { retryAfterSeconds: retryAfterSeconds ?? 263 }) : error && /* @__PURE__ */ jsx10(CustomerErrorNotice, { code: error }),
+      /* @__PURE__ */ jsxs9("form", { onSubmit: handleSubmit, noValidate: true, children: [
+        /* @__PURE__ */ jsx10("label", { htmlFor: "ss-customer-login", style: {
           display: "block",
           fontSize: 12,
           color: VT.inkSoft,
           marginBottom: 4,
           fontWeight: 500
         }, children: "\u041B\u043E\u0433\u0438\u043D" }),
-        /* @__PURE__ */ jsx9(
+        /* @__PURE__ */ jsx10(
           CLTextField,
           {
             id: "ss-customer-login",
@@ -8671,14 +10122,14 @@ function S20_CustomerLogin(props) {
             style: { marginBottom: 12 }
           }
         ),
-        /* @__PURE__ */ jsx9("label", { htmlFor: "ss-customer-password", style: {
+        /* @__PURE__ */ jsx10("label", { htmlFor: "ss-customer-password", style: {
           display: "block",
           fontSize: 12,
           color: VT.inkSoft,
           marginBottom: 4,
           fontWeight: 500
         }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
-        /* @__PURE__ */ jsx9(
+        /* @__PURE__ */ jsx10(
           CLTextField,
           {
             id: "ss-customer-password",
@@ -8692,19 +10143,19 @@ function S20_CustomerLogin(props) {
             mono: true
           }
         ),
-        /* @__PURE__ */ jsx9("div", { style: { marginTop: 20 }, children: /* @__PURE__ */ jsx9(
+        /* @__PURE__ */ jsx10("div", { style: { marginTop: 20 }, children: /* @__PURE__ */ jsx10(
           Btn,
           {
             type: "submit",
             style: { width: "100%" },
             disabled: loading || isRateLimited || !login || !password,
-            iconRight: loading ? /* @__PURE__ */ jsx9(Spinner, { size: 14 }) : /* @__PURE__ */ jsx9(IconArrow, {}),
+            iconRight: loading ? /* @__PURE__ */ jsx10(Spinner, { size: 14 }) : /* @__PURE__ */ jsx10(IconArrow, {}),
             children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0412\u043E\u0439\u0442\u0438"
           }
         ) })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs8("div", { style: {
+    /* @__PURE__ */ jsxs9("div", { style: {
       marginTop: 22,
       textAlign: "center",
       fontSize: 13.5,
@@ -8712,7 +10163,7 @@ function S20_CustomerLogin(props) {
     }, children: [
       "\u0415\u0449\u0451 \u043D\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430?",
       " ",
-      onCreateSiteClick ? /* @__PURE__ */ jsxs8(
+      onCreateSiteClick ? /* @__PURE__ */ jsxs9(
         "button",
         {
           type: "button",
@@ -8729,19 +10180,19 @@ function S20_CustomerLogin(props) {
           },
           children: [
             "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
-            /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", children: "\u2192" })
+            /* @__PURE__ */ jsx10("span", { "aria-hidden": "true", children: "\u2192" })
           ]
         }
-      ) : /* @__PURE__ */ jsxs8("a", { href: "/", style: {
+      ) : /* @__PURE__ */ jsxs9("a", { href: "/", style: {
         color: VT.accent,
         fontWeight: 600,
         textDecoration: "none"
       }, children: [
         "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
-        /* @__PURE__ */ jsx9("span", { "aria-hidden": "true", children: "\u2192" })
+        /* @__PURE__ */ jsx10("span", { "aria-hidden": "true", children: "\u2192" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx9("div", { style: {
+    /* @__PURE__ */ jsx10("div", { style: {
       marginTop: 14,
       textAlign: "center",
       fontSize: 11.5,
@@ -8753,9 +10204,9 @@ function S20_CustomerLogin(props) {
 var CustomerLogin = S20_CustomerLogin;
 
 // src/source/index.tsx
-import { jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
+import { jsx as jsx11, jsxs as jsxs10 } from "react/jsx-runtime";
 function MiniHero({ url }) {
-  return /* @__PURE__ */ jsxs9("div", { style: {
+  return /* @__PURE__ */ jsxs10("div", { style: {
     display: "flex",
     gap: 8,
     alignItems: "center",
@@ -8765,9 +10216,9 @@ function MiniHero({ url }) {
     padding: 8,
     boxShadow: VT.shadow.card
   }, children: [
-    /* @__PURE__ */ jsxs9("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
-      /* @__PURE__ */ jsx10(IconLink, {}),
-      /* @__PURE__ */ jsx10("span", { style: {
+    /* @__PURE__ */ jsxs10("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
+      /* @__PURE__ */ jsx11(IconLink, {}),
+      /* @__PURE__ */ jsx11("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 14,
         color: VT.ink,
@@ -8776,11 +10227,11 @@ function MiniHero({ url }) {
         textOverflow: "ellipsis"
       }, children: url })
     ] }),
-    /* @__PURE__ */ jsx10(Btn, { iconRight: /* @__PURE__ */ jsx10(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+    /* @__PURE__ */ jsx11(Btn, { iconRight: /* @__PURE__ */ jsx11(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
   ] });
 }
 function StateBadge({ kind, icon, children }) {
-  return /* @__PURE__ */ jsxs9("span", { style: {
+  return /* @__PURE__ */ jsxs10("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 8,
@@ -8791,7 +10242,7 @@ function StateBadge({ kind, icon, children }) {
     fontSize: 14,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx10("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
+    /* @__PURE__ */ jsx11("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
     children
   ] });
 }
@@ -8801,7 +10252,7 @@ var STATES = [
     label: "1 \xB7 Loading",
     kind: "neutral",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx10(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx11(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
     note: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u043B \u0442\u0438\u043F (<100ms). \u0417\u0430\u043F\u0440\u043E\u0441 preview API \u0432 \u0444\u043E\u043D\u0435, 3s timeout.",
     api: "GET /api/preview?url=\u2026 (debounced 300ms)"
   },
@@ -8810,7 +10261,7 @@ var STATES = [
     label: "2 \xB7 \u2713 Telegram",
     kind: "success",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx11("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx11("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
     note: "Bot API getChat + getChatHistory(1). CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB \u0430\u043A\u0442\u0438\u0432\u043D\u0430 \u2014 open Submit modal.",
     api: 'GET /api/preview \u2192 {source:"telegram", posts:47, photos:12}'
   },
@@ -8819,7 +10270,7 @@ var STATES = [
     label: "3 \xB7 \u2713 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
     kind: "success",
     url: "yandex.ru/maps/-/CDvI7QJM",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx11("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx11("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
     note: "Geosearch API find. \u0415\u0441\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u2192 fallback \u043A \u0441\u0442\u0430\u0442\u0438\u0447\u043D\u043E\u043C\u0443 \u2713 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B.",
     api: 'GET /api/preview \u2192 {source:"yandex_maps", reviews:24, photos:18}'
   },
@@ -8828,7 +10279,7 @@ var STATES = [
     label: "4 \xB7 \u2713 \u0411\u0435\u0437 \u0447\u0438\u0441\u0435\u043B (preview timeout >3s)",
     kind: "success",
     url: "t.me/privatechannel",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx11("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx11("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
     note: "FR-005a: regex \u043E\u0442\u0434\u0430\u043B \u0442\u0438\u043F, preview API \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u0437\u0430 3s \u2192 \u0431\u0435\u0439\u0434\u0436 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u043C \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E.",
     api: "Timeout fallback \u2014 UI \u043D\u0435 \u0431\u043B\u043E\u043A\u0438\u0440\u0443\u0435\u0442 submit"
   },
@@ -8837,7 +10288,7 @@ var STATES = [
     label: "5 \xB7 \u2713 Instagram",
     kind: "success",
     url: "instagram.com/master.nails.spb",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx11("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx11("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
     note: "0.3.0: Instagram \u0442\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044B\u0447\u043D\u044B\u0439 ok-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u0417\u0430\u044F\u0432\u043A\u0430 \u0438\u0434\u0451\u0442 \u0432 \u043E\u0431\u0449\u0443\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C, \u0440\u0443\u0447\u043D\u0430\u044F \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u0440\u0435\u0448\u0438\u0442 \u0447\u0442\u043E \u0432\u044B\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0442\u044C.",
     api: 'GET /api/preview \u2192 {source:"instagram", status:"ok"}'
   },
@@ -8846,7 +10297,7 @@ var STATES = [
     label: "6 \xB7 \u2139\uFE0F \u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u2014 waitlist + photo CTA",
     kind: "info",
     url: "vk.com/master_nails",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx11("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: true,
     note: "Identical pattern to IG. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA: \xAB\u0418\u043B\u0438 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442\xBB.",
@@ -8857,7 +10308,7 @@ var STATES = [
     label: "7 \xB7 \u2139\uFE0F \u0414\u0440\u0443\u0433\u043E\u0439 known \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A (2GIS / Avito / WA / YT / \u0414\u0437\u0435\u043D)",
     kind: "info",
     url: "2gis.ru/samara/firm/70000001045896531",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx11("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: false,
     note: "\u0411\u0435\u0437 photo CTA \u2014 2GIS/Avito/WA \u043D\u0435 \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u044E\u0442\u0441\u044F \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u043E\u043C \u043F\u0440\u043E\u0444\u0438\u043B\u044F.",
@@ -8868,7 +10319,7 @@ var STATES = [
     label: "8 \xB7 \u26A0\uFE0F \u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
     kind: "warn",
     url: "https://my-portfolio.example.com",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx11("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
     unknownInput: true,
     note: "Open input. \u0421\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u043C \u043A\u0430\u043A source_request c source_name=user-typed \u0434\u043B\u044F \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0438.",
     api: 'POST /api/feedback { type:"source_request", source_name:<user>, source_url_raw:<url> }'
@@ -8878,29 +10329,29 @@ var STATES = [
     label: "9 \xB7 \u26A0\uFE0F \u041D\u0435 \u0441\u0441\u044B\u043B\u043A\u0430 \u0438 \u043D\u0435 \u0444\u0430\u0439\u043B",
     kind: "warn",
     url: "\u043C\u0430\u0441\u0442\u0435\u0440 \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430",
-    badge: /* @__PURE__ */ jsx10(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx10("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx11(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx11("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
     note: "CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB disabled, fallback-\u0441\u0441\u044B\u043B\u043A\u0430 \xAB\u{1F4F7} \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0444\u043E\u0442\u043E\xBB \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u043D\u0443\u0442\u0430.",
     api: "\u2014 (client-side only)"
   }
 ];
 function WaitlistCapture({ source, withPhotoCta }) {
   const label = source === "instagram" ? "Instagram" : source === "vk" ? "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435" : source === "2gis" ? "2GIS" : source;
-  return /* @__PURE__ */ jsxs9("div", { style: {
+  return /* @__PURE__ */ jsxs10("div", { style: {
     marginTop: 12,
     background: VT.infoSoft,
     border: `1px solid oklch(0.85 0.05 240)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsxs9("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
+    /* @__PURE__ */ jsxs10("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
       "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C ",
       label
     ] }),
-    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
-      /* @__PURE__ */ jsx10(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx10(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsx11(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx11(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
     ] }),
-    withPhotoCta && /* @__PURE__ */ jsxs9("div", { style: {
+    withPhotoCta && /* @__PURE__ */ jsxs10("div", { style: {
       marginTop: 12,
       paddingTop: 12,
       borderTop: `1px dashed oklch(0.85 0.05 240)`,
@@ -8908,7 +10359,7 @@ function WaitlistCapture({ source, withPhotoCta }) {
       color: VT.inkSoft
     }, children: [
       "\u0418\u043B\u0438 \u0441\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0441\u0435\u0439\u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F:",
-      /* @__PURE__ */ jsxs9("a", { style: {
+      /* @__PURE__ */ jsxs10("a", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -8919,40 +10370,40 @@ function WaitlistCapture({ source, withPhotoCta }) {
         textUnderlineOffset: 3
       }, children: [
         "\u{1F4F7} \u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442",
-        /* @__PURE__ */ jsx10(IconArrow, { size: 14 })
+        /* @__PURE__ */ jsx11(IconArrow, { size: 14 })
       ] })
     ] })
   ] });
 }
 function UnknownSourceInput() {
-  return /* @__PURE__ */ jsxs9("div", { style: {
+  return /* @__PURE__ */ jsxs10("div", { style: {
     marginTop: 12,
     background: VT.warnSoft,
     border: `1px solid oklch(0.85 0.06 70)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsx10("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
-    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
-      /* @__PURE__ */ jsx10(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx10(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsx11("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
+    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
+      /* @__PURE__ */ jsx11(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx11(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
     ] })
   ] });
 }
 function StateRow({ s }) {
-  return /* @__PURE__ */ jsx10(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs9("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
-    /* @__PURE__ */ jsxs9("div", { children: [
-      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsx10(MiniHero, { url: s.url }),
-      /* @__PURE__ */ jsx10("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx10(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx10(UnknownSourceInput, {})
+  return /* @__PURE__ */ jsx11(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs10("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
+    /* @__PURE__ */ jsxs10("div", { children: [
+      /* @__PURE__ */ jsx11("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsx11(MiniHero, { url: s.url }),
+      /* @__PURE__ */ jsx11("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx11(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx11(UnknownSourceInput, {})
     ] }),
-    /* @__PURE__ */ jsxs9("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
-      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
-      /* @__PURE__ */ jsx10("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
-      /* @__PURE__ */ jsx10("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
-      /* @__PURE__ */ jsx10("div", { style: {
+    /* @__PURE__ */ jsxs10("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
+      /* @__PURE__ */ jsx11("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
+      /* @__PURE__ */ jsx11("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
+      /* @__PURE__ */ jsx11("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
+      /* @__PURE__ */ jsx11("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 12,
         color: VT.inkSoft,
@@ -8965,7 +10416,7 @@ function StateRow({ s }) {
   ] }) });
 }
 function S2_Desktop() {
-  return /* @__PURE__ */ jsxs9("div", { style: {
+  return /* @__PURE__ */ jsxs10("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -8974,18 +10425,18 @@ function S2_Desktop() {
     padding: "40px 56px 64px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsxs9("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
-      /* @__PURE__ */ jsx10(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
-      /* @__PURE__ */ jsx10(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
+    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
+      /* @__PURE__ */ jsx11(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
+      /* @__PURE__ */ jsx11(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
     ] }),
-    /* @__PURE__ */ jsx10("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
-    /* @__PURE__ */ jsx10("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
-    /* @__PURE__ */ jsx10("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx10(StateRow, { s }, s.id)) })
+    /* @__PURE__ */ jsx11("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
+    /* @__PURE__ */ jsx11("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
+    /* @__PURE__ */ jsx11("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx11(StateRow, { s }, s.id)) })
   ] });
 }
 function S2_Mobile() {
   const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-success", "unknown-url"].includes(s.id));
-  return /* @__PURE__ */ jsxs9("div", { style: {
+  return /* @__PURE__ */ jsxs10("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -8994,11 +10445,11 @@ function S2_Mobile() {
     padding: "20px 16px 40px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsx10(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
-    /* @__PURE__ */ jsx10("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
-    /* @__PURE__ */ jsx10("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs9(Card, { style: { padding: 14 }, children: [
-      /* @__PURE__ */ jsx10("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsxs9("div", { style: {
+    /* @__PURE__ */ jsx11(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
+    /* @__PURE__ */ jsx11("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
+    /* @__PURE__ */ jsx11("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs10(Card, { style: { padding: 14 }, children: [
+      /* @__PURE__ */ jsx11("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsxs10("div", { style: {
         display: "flex",
         flexDirection: "column",
         gap: 8,
@@ -9007,15 +10458,15 @@ function S2_Mobile() {
         borderRadius: VT.r.lg,
         padding: 10
       }, children: [
-        /* @__PURE__ */ jsxs9("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
-          /* @__PURE__ */ jsx10(IconLink, {}),
-          /* @__PURE__ */ jsx10("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
+        /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
+          /* @__PURE__ */ jsx11(IconLink, {}),
+          /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
         ] }),
-        /* @__PURE__ */ jsx10(Btn, { iconRight: /* @__PURE__ */ jsx10(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+        /* @__PURE__ */ jsx11(Btn, { iconRight: /* @__PURE__ */ jsx11(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
       ] }),
-      /* @__PURE__ */ jsx10("div", { style: { marginTop: 10 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx10(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx10(UnknownSourceInput, {})
+      /* @__PURE__ */ jsx11("div", { style: { marginTop: 10 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx11(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx11(UnknownSourceInput, {})
     ] }, s.id)) })
   ] });
 }
@@ -9030,6 +10481,7 @@ export {
   BRAND,
   Badge,
   BaseWorkSection,
+  BentoFamily,
   BrandMark,
   Btn,
   CanonStyles,
@@ -9042,6 +10494,8 @@ export {
   CustomerLogin,
   CustomerSite,
   CycleSection,
+  DisplayFamily,
+  EditorialFamily,
   EmptyState,
   ErrorBlock,
   ExamplesSection,
@@ -9060,11 +10514,13 @@ export {
   LeadForm,
   Leads,
   Logo,
+  MiniChrome,
   MondaySection,
   Mono,
   OwnershipSection,
   PHOTO_LIMITS,
   PhotoDrawer,
+  PresetRenderer,
   PricingSection,
   RateLimitCountdown,
   S10_AdminLogin,
@@ -9103,6 +10559,8 @@ export {
   SourceDetectionBadge,
   SourcesSection,
   Spinner,
+  SplitFamily,
+  StackedFamily,
   StatTile,
   StatusPill,
   StickyHeader,
@@ -9110,6 +10568,35 @@ export {
   TrendChart,
   VT,
   Waitlist,
+  bentoClay,
+  bentoLight,
+  bentoNoir,
+  displayBold,
+  displayInk,
+  displayNoir,
+  displaySoft,
+  editorialMono,
+  editorialNoir,
+  editorialWarm,
+  fixtureAutoPark,
+  fixtureBakeryDom,
+  fixtureBarberFedor,
+  fixtureBrowsSochi,
+  fixtureCoffeeLena,
+  fixtureFitnessMetod,
+  fixtureLegalSitnikov,
+  fixtureNailsAnna,
+  fixturePhotoMarta,
+  fixtureTattooLine,
+  getTheme,
+  samplePresets,
+  splitClay,
+  splitProduct,
+  splitTeal,
+  stackedCorporate,
+  stackedCream,
+  stackedSlate,
+  themes,
   tokens
 };
 //# sourceMappingURL=index.js.map

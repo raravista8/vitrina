@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.6.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.6.0: landing rewrite — 11 blocks, new narrative «цикл 4 сам» + «по понедельникам — 3 предложения», предзапуск-цена 490 ₽ для первой сотни.",
+  "version": "0.7.1",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.7.1: пресетная архитектура (5 семейств × 16 тем), полная тарифная сетка, синхронизированные цены (Старт бесплатно, платные от 690 ₽), карусель примеров.",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -56,6 +56,10 @@
     "./source": {
       "types": "./dist/source/index.d.ts",
       "import": "./dist/source/index.js"
+    },
+    "./presets": {
+      "types": "./dist/presets/index.d.ts",
+      "import": "./dist/presets/index.js"
     },
     "./tailwind-preset": {
       "types": "./dist/tailwind-preset.d.ts",
