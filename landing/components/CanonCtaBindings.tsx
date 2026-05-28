@@ -26,9 +26,14 @@
  *    `preventDefault()`, and dispatches the `samosite:open-submit`
  *    CustomEvent. Hero's effect listens for that event and opens
  *    `<SubmitModal />` in `link` mode.
- *  - Every `<a href*="client-admin-demo">` has its `href` rewritten to
- *    `/admin-demo` (the actual Next.js route lives at
- *    `landing/app/admin-demo/page.tsx`). Native anchor click navigates.
+ *  - The OwnershipSection «Посмотреть демо личного кабинета» button
+ *    (`<a href*="client-admin-demo">` inside `[data-section="ownership"]`)
+ *    is REMOVED per user request — it shouldn't appear under «Решения
+ *    остаются за вами». Its centered wrapper `<div>` is removed too so
+ *    no phantom gap remains.
+ *  - The remaining demo links (AnalyticsSection «Видите ровно то же…»)
+ *    keep their `href` rewritten to `/admin-demo` (the real Next.js
+ *    route at `landing/app/admin-demo/page.tsx`). Native click navigates.
  *
  * MutationObserver scoped to `<main>` re-applies the bindings every
  * time canon re-renders (mobile-toggle, hover state, any future canon
@@ -77,10 +82,24 @@ export function CanonCtaBindings() {
           a.dataset["ssPrimaryCta"] = "1";
         }
       }
-      /* Ownership demo link — `<a href="client-admin-demo.html">` from
-       * canon 0.6.0. We use href substring match so any future canon
-       * variant (e.g. `./client-admin-demo.html`) is still caught.
-       * Idempotent: setting the same href twice is a no-op. */
+      /* OwnershipSection «Посмотреть демо личного кабинета» button —
+       * REMOVED (user: shouldn't be under «Решения остаются за вами»).
+       * Scoped to `[data-section="ownership"]` so the AnalyticsSection
+       * demo link is untouched. Remove the anchor's centered wrapper
+       * `<div>` (canon: `<div style="margin-top;text-align:center">`
+       * containing only the anchor) so no empty gap is left. Idempotent:
+       * once removed, the next observer pass finds nothing. */
+      for (const a of Array.from(
+        main.querySelectorAll<HTMLAnchorElement>(
+          '[data-section="ownership"] a[href*="client-admin-demo"]',
+        ),
+      )) {
+        (a.parentElement ?? a).remove();
+      }
+      /* Remaining demo links (AnalyticsSection) — `<a
+       * href="client-admin-demo.html">` from canon. Substring match so
+       * any future canon variant (e.g. `./client-admin-demo.html`) is
+       * still caught. Idempotent: setting the same href twice is a no-op. */
       for (const a of Array.from(
         main.querySelectorAll<HTMLAnchorElement>('a[href*="client-admin-demo"]'),
       )) {
