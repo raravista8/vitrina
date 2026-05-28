@@ -62,6 +62,7 @@ import { CanonCtaBindings } from "@/components/CanonCtaBindings";
 import { FeedbackFloatingButton } from "@/components/FeedbackForm";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
+import { MetrikaGoals } from "@/components/MetrikaGoals";
 import { SiteHeader } from "@/components/SiteHeader";
 
 /**
@@ -131,6 +132,11 @@ export default function HomePage() {
           Must mount AFTER SiteHeader so its click handler is wired
           first; relative order to Hero doesn't matter. */}
       <CanonCtaBindings />
+      {/* MetrikaGoals — analytics telemetry for canon sections:
+          IntersectionObserver `*_view` goals + click delegation
+          (faq_open / feedback_open / login_click / analytics_demo_click).
+          Funnel + cta_click goals live in SiteHeader / Hero / SubmitModal. */}
+      <MetrikaGoals />
       <Hero />
       <ResponsiveCanonSection id="examples" Component={ExamplesSection} />
       <ResponsiveCanonSection id="cycle" Component={CycleSection} />

@@ -200,6 +200,20 @@ export function SubmitModal({
   // the relevant state changes — see effect below.
   const [validationError, setValidationError] = useState<string | null>(null);
 
+  // ── Я.Метрика funnel goals ──────────────────────────────────────────
+  // `submit_photo_mode` — user is in the photo branch (initial open in
+  // photo OR switched via the Step-1 mode-switcher). Guarded so the
+  // link branch never fires it.
+  useEffect(() => {
+    if (mode === "photo") reachGoal("submit_photo_mode");
+  }, [mode]);
+  // `submit_contact_step` — reached the «куда писать» step (link → step 2,
+  // photo → step 3). Fires on each arrival («how many got this far»).
+  useEffect(() => {
+    const contactStep = mode === "photo" ? 3 : 2;
+    if (step === contactStep) reachGoal("submit_contact_step");
+  }, [step, mode]);
+
   // Debounced URL — drives canon's source badge. While the user is
   // actively typing, debouncedUrl lags the live `url` state by
   // URL_DEBOUNCE_MS; canon's `<LinkInput loading={!!url && !source}>`
