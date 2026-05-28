@@ -8,19 +8,21 @@
  * Inline-styled canvas → Tailwind classes; tokens live in
  * `tailwind.config.ts` (paper / ink / accent / line).
  *
- * Copy anchors (locked to canon 0.6.0 / packages/canon/docs/COPY.md):
+ * Copy anchors (locked to canon 0.7.2 / packages/canon/docs/COPY.md +
+ * docs/handoff/DESIGN_SPEC.md):
  *   - H1 «Соберём за 2 часа сайт, который ловит заявки. Дальше он
- *     сам становится лучше каждую неделю.» (two accent phrases:
- *     «2 часа» + «сам становится лучше»)
- *   - Two sub-paragraphs (sources list + 2-hour timeline + monday
- *     recommendations foreshadow)
- *   - CTA «Собрать сайт за 2 часа» + microcopy «990 ₽/мес · для
- *     первой сотни 490 ₽ навсегда · первый месяц бесплатно, карту
- *     привязывать не надо» (mono, прямо под кнопкой)
+ *     сам становится лучше каждую неделю» (two accent phrases:
+ *     «2 часа» + «сам становится лучше»; trailing period stripped)
+ *   - Two sub-paragraphs (sources list + «Самосайт соберёт сайт со
+ *     всеми услугами…» value + monday recommendations foreshadow)
+ *   - CTA «Собрать сайт за 2 часа» + microcopy «Тариф "Старт" —
+ *     бесплатно навсегда · платные от 690 ₽/мес · первый месяц на
+ *     платном бесплатно, карту привязывать не надо» (mono, под кнопкой)
  *   - Secondary link «Сначала посмотреть примеры ↓» (anchor to
  *     #examples — Hero CTA skipper)
- *   - Photo-link companion (prod-only — canon 0.6.0 merges photo
- *     into the single input via placeholder hint)
+ *   - «СОБИРАЕМ ИЗ» chip-strip via canon `<ChipStrip>` export (0.7.2)
+ *   - Photo-link companion REMOVED in canon 0.7.2 (DESIGN_SPEC §1 NB);
+ *     photo path now via input placeholder + SubmitModal switcher
  *
  * Behaviour — owned by this component (NOT in the design canvas):
  *   - URL paste is debounced via `useDeferredValue` then classified.
