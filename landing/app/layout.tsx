@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
-// `FeedbackFloatingButton` («Что не хватает?») удалён с публичного
-// лендинга в PR-G — для платного сервиса «висящая» feedback-кнопка на
-// главной создавала ощущение «ребята ещё пилят». Сам feedback-form
-// доступен по `/feedback` (см. nav-link) + будет переехать в admin
-// сайдбар как «Обратная связь» в follow-up.
+// `FeedbackFloatingButton` («Чего не хватает?») was removed from the
+// global layout in PR-G (paid-service polish), then re-added per user
+// request — but landing-only, mounted in `app/page.tsx` (not here in
+// the root layout). Landing-only keeps it off `/feedback` (redundant)
+// and `/login` / admin (wrong context). The form itself stays at
+// `/feedback` (see nav-link).
 import "./globals.css";
 
 import { CanonStyles } from "@samosite/canon";
