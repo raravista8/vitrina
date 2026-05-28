@@ -1,5 +1,112 @@
 # Changelog
 
+## 0.8.0 — Examples carousel + pricing matrix + block redesign · 2026-05-28
+
+> **MINOR.** Over 0.7.2/0.7.3. Public landing exports unchanged
+> (`SamosaytLandingV3`, `_Desktop`/`_Mobile`, all section components
+> still resolve). Internal markup of several blocks changed, copy
+> reworked, and the **pricing model** finalised (the 490/990 pre-launch
+> card → a full 5-tier matrix). Pure canon-import on our side — every
+> changed block (`ExamplesSection`, `PricingSection`, `BaseWorkSection`,
+> `OwnershipSection`, `SourcesSection`, `StickyHeader`) is rendered via
+> `ResponsiveCanonSection` / `SiteHeader` in `app/page.tsx`, so **drift =
+> 0 by construction**. No hand-rolled reconciliation needed beyond the
+> existing DOM-mutation wrappers (which keep working — see «Vitrina
+> side» below).
+
+### Examples (block 02) — redesign
+
+- Client-site previews rewritten as **compact, fixed-height (460px)**
+  expressive «heroes»; `MiniChrome` now takes a `height` prop. All 5
+  families (editorial / bento / display / split / stacked) are distinct
+  compositions filling the fixed height (no more «full-page» strips).
+- `ExamplesSection` renders the previews in a **horizontal carousel**
+  (`ExamplesCarousel`: arrows + dots + edge-fades, scroll-snap; 3 visible
+  on desktop, 94%-width peek on mobile).
+- New `HowItPicks` block «Дизайн собирается из ваших материалов» — 3
+  extraction cards (photo → derived palette + niche font sample) + a strip
+  of 4 mechanics. Centred title with an accent contrast phrase, 30/800.
+
+### Pricing (block 09) — full matrix
+
+- The single 490 ₽ pre-launch card is replaced by `PricingMatrix`: 5
+  plans (Старт 0 / Личный 690 / Бизнес 1 490 / Компания 2 990 / Студия
+  6 990 ₽), ~40 rows in 7 groups, price-band header, «Бизнес» highlight
+  (`PLAN_HILITE`), zebra rows, per-column CTA, fair-use footnote.
+- **Pricing reality unchanged:** still a FRONT-END model. ЮKassa stays
+  single-plan 990 ₽ — see `docs/handoff/CANON_SWAP_PLAN.md` §«Pricing
+  model».
+
+### BaseWork (block 05) — restraint
+
+- Cards re-laid-out: the blurred colour header + large «floating» numeral
+  are gone → clean editorial cards (icon-tile + heading + body + footer
+  metric over a hairline). Copy «Готов к поиску», «ботов в заявках»,
+  «Месячный трафик» (carried from 0.7.3).
+
+### Ownership («Вы — главный»)
+
+- Moved **below Analytics** (order: …Sources → Analytics → Ownership →
+  Pricing) — which is the order vitrina already shipped (#164), now baked
+  into canon.
+- The «Демо ЛК» link is removed from this block (kept only under
+  Analytics) — which vitrina already enforced via `CanonCtaBindings`
+  (now a no-op there).
+- Re-laid-out into 2×2 cards with mini-controls (`OwnerDemo`: approve /
+  edit / export / delete). Copy updated.
+
+### Sources (block 06)
+
+- «ЧАЩЕ ВСЕГО» badge removed from the Я.Карты featured card (accent
+  border kept).
+
+### Header + system
+
+- Sticky-header nav: «Цикл 4 сам» + «Понедельник» dropped → **Примеры ·
+  Цена · Помощь · Войти** + CTA. Side padding `clamp()` + `nowrap`. The
+  structural hooks vitrina's `SiteHeader` DOM-mutation relies on
+  (`.ss-sticky-header`, `.ss-login-link`, `a[href="#hero"]` with accent
+  `primaryStyle`, `#login`) are all intact — login/home href overrides
+  keep working.
+- All blocks aligned to a single **1200px** column.
+- Floating «Чего не хватает?» button (`FloatingFeedback`) returned — but
+  it lives only in the `SamosaytLandingV3` composition, NOT the individual
+  section components vitrina renders, so there is **no double button**
+  (vitrina keeps its own `FeedbackFloatingButton`).
+
+### Vitrina-side follow-through (this vendoring PR)
+
+- **Converter-bug repair (2 edits in `src/landing/index.tsx`).** The
+  upstream 0.8.0 preview→package conversion shipped two defects that
+  broke the ESM build / SSR render; both fixed with minimal de-wrapping,
+  no markup or logic change:
+  1. A leaked IIFE opener (`if (!window.__ss_landing_v3a) {…(function
+     ssLandingV3a() {`) + a bare (un-commented) banner line at the top of
+     part A — removed / commented to balance braces so the module parses.
+  2. A self-referential `const PresetRenderer = PresetRenderer;` inside
+     `ExamplesSection` (the converter turned the preview's
+     `window.PresetRenderer` into a bare `const` shadowing the top-level
+     `import { PresetRenderer } from '../presets'`) — a TDZ that threw
+     `Cannot access 'PresetRenderer' before initialization` at SSR.
+     Removed; the JSX uses the imported `PresetRenderer`.
+  **Flagged to Claude Design** for the next upstream conversion pass.
+- No consumer code changed: `app/page.tsx` already renders Analytics
+  before Ownership; `CanonCtaBindings` already removed the ownership demo
+  link and rewrote the analytics one to `/admin-demo`; `SiteHeader`
+  override + the `/feedback` wiring for «Не нашли свою? Напишите →» all
+  reconcile against 0.8.0 markup unchanged.
+- `tsup.config.ts` keeps the local `dts: false` carry-forward + the
+  `src/presets/index.tsx` entry. Dist rebuilt (index + landing + presets
+  chunks).
+
+### No API/dep change
+
+Token surface, package exports, and every other module (admin / intake /
+customer / auth / source / primitives / tokens) are byte-identical to
+0.7.3.
+
+---
+
 ## 0.7.3 — BaseWorkSection copy + restrained visual · 2026-05-28
 
 > **PATCH.** Only `src/landing/index.tsx` changed vs 0.7.2 — a single

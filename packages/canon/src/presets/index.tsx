@@ -437,248 +437,43 @@ export function getTheme(themeId: string): Theme {
 // ───────────────────────────────────────────────────────────────
 
 export function EditorialFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
-  const c = theme.colors;
-  const f = theme.fonts;
-  const r = theme.radii;
-  const v = theme.voice;
-
-  // Render text with [[...]] markers as <em> (accent in editorial).
-  const withEm = (text: string) => {
-    const parts = text.split(/\[\[(.+?)\]\]/g);
-    return parts.map((p, i) =>
-      i % 2 === 0
-        ? <React.Fragment key={i}>{p}</React.Fragment>
-        : <em key={i} style={{
-            fontStyle: v.italicAccent ? 'italic' : 'normal',
-            color: c.accent,
-            fontWeight: v.displayWeight,
-          }}>{p}</em>
-    );
-  };
-
-  // Reusable horizontal divider rule.
-  const hr: React.CSSProperties = { borderBottom: `1px solid ${c.line}` };
-
+  const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const accentEm = (text) => text.split(/\[\[(.+?)\]\]/g).map((p, i) =>
+    i % 2 === 0
+      ? <React.Fragment key={i}>{p}</React.Fragment>
+      : <em key={i} style={{ fontStyle: v.italicAccent ? 'italic' : 'normal', color: c.accent }}>{p}</em>
+  );
+  const rule = `1px solid ${c.line}`;
   return (
-    <div style={{
-      background: c.bg, color: c.ink,
-      fontFamily: f.body,
-      flex: 1, display: 'flex', flexDirection: 'column',
-      fontVariantNumeric: 'tabular-nums',
-    }}>
-      {/* Header */}
-      <header style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '13px 16px 11px', ...hr,
-      }}>
-        <div style={{
-          fontFamily: f.display,
-          fontStyle: v.italicAccent ? 'italic' : 'normal',
-          fontSize: 15, fontWeight: v.displayWeight,
-          letterSpacing: '-0.01em', color: c.ink,
-        }}>{content.meta.brand}</div>
-        <a style={{
-          background: c.accent, color: c.accentInk,
-          padding: '6px 12px',
-          fontFamily: f.mono, fontSize: 9, fontWeight: 700,
-          textTransform: 'uppercase', letterSpacing: '0.08em',
-          borderRadius: r.btn,
-          cursor: 'pointer',
-        }}>Записаться</a>
-      </header>
-
-      {/* Meta strip */}
-      <div style={{
-        display: 'flex', justifyContent: 'space-between',
-        padding: '9px 16px',
-        fontFamily: f.mono, fontSize: 9,
-        color: c.inkSoft, textTransform: 'uppercase',
-        letterSpacing: '0.08em', ...hr,
-      }}>
-        <span>с {content.meta.since}</span>
-        <span>★★★★★ {content.meta.rating}</span>
-        <span>{content.meta.reviewsN} отзывов</span>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      {/* masthead */}
+      <div style={{ padding: '11px 16px 9px', borderBottom: `2px solid ${c.ink}`, textAlign: 'center' }}>
+        <div style={{ fontFamily: f.mono, fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.inkSoft, marginBottom: 4 }}>с {content.meta.since} · {content.meta.category}</div>
+        <div style={{ fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal', fontSize: 27, fontWeight: v.displayWeight, letterSpacing: '-0.02em', lineHeight: 1 }}>{content.meta.brand}</div>
       </div>
-
-      {/* Hero */}
-      <section style={{ padding: '16px 16px 18px', ...hr }}>
-        <h1 style={{
-          fontFamily: f.display, fontSize: 34,
-          fontWeight: v.displayWeight,
-          lineHeight: 0.94, letterSpacing: '-0.025em',
-          color: c.ink, margin: 0,
-        }}>
-          {content.hero.headingLines.map((line, i) => (
-            <React.Fragment key={i}>
-              {withEm(line)}
-              {i < content.hero.headingLines.length - 1 && <br />}
-            </React.Fragment>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 16px', borderBottom: rule, fontFamily: f.mono, fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkSoft }}>
+        <span>★★★★★ {content.meta.rating}</span><span>{content.meta.reviewsN} отзывов</span>
+      </div>
+      {/* headline */}
+      <div style={{ padding: '14px 16px 12px', borderBottom: rule }}>
+        <h1 style={{ fontFamily: f.display, fontSize: 30, fontWeight: v.displayWeight, lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
+          {content.hero.headingLines.map((l, i) => (
+            <React.Fragment key={i}>{accentEm(l)}{i < content.hero.headingLines.length - 1 && <br />}</React.Fragment>
           ))}
         </h1>
-      </section>
-
-      {/* Lead with drop-cap */}
-      {content.hero.leadParagraph && (
-        <div style={{ padding: '14px 16px', ...hr }}>
-          {v.dropCap && (
-            <span style={{
-              fontFamily: f.display, fontSize: 44,
-              fontWeight: v.displayWeight,
-              float: 'left', lineHeight: 0.85,
-              margin: '4px 8px 0 0', color: c.accent,
-            }}>{content.hero.leadParagraph[0]}</span>
-          )}
-          <p style={{ fontSize: 13, lineHeight: 1.55, color: c.ink, margin: 0 }}>
-            {v.dropCap ? content.hero.leadParagraph.slice(1) : content.hero.leadParagraph}
-          </p>
-        </div>
-      )}
-
-      {/* Photo with caption */}
-      <div style={{ aspectRatio: '4 / 3', overflow: 'hidden', position: 'relative', ...hr }}>
-        <img
-          src={content.hero.photoSrc}
-          alt=""
-          loading="lazy"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }}
-        />
-        {content.hero.photoCaption && (
-          <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0,
-            padding: '5px 10px', background: c.bg,
-            fontFamily: f.mono, fontSize: 9,
-            color: c.inkSoft, textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            borderTop: `1px solid ${c.line}`,
-          }}>{content.hero.photoCaption}</div>
-        )}
       </div>
-
-      {/* CTA row */}
-      <div style={{
-        padding: '12px 16px', display: 'flex',
-        flexDirection: 'column', gap: 6, ...hr,
-      }}>
-        <a style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: c.accent, color: c.accentInk,
-          padding: '13px 16px', borderRadius: r.btn,
-          fontSize: 13, fontWeight: 700,
-          letterSpacing: '0.04em', textTransform: 'uppercase',
-          cursor: 'pointer',
-        }}>
-          {content.cta.primary.label}
-          <span style={{
-            fontFamily: f.display, fontSize: 22,
-            fontStyle: v.italicAccent ? 'italic' : 'normal',
-          }}>→</span>
+      {/* photo fills remaining height */}
+      <div style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden', borderBottom: rule }}>
+        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+        <div style={{ position: 'absolute', left: 0, bottom: 0, padding: '4px 10px', background: c.bg, borderTop: rule, borderRight: rule, fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.inkSoft }}>{content.hero.photoCaption || content.meta.address}</div>
+      </div>
+      {/* footer CTA */}
+      <div style={{ display: 'flex', alignItems: 'stretch' }}>
+        <a style={{ flex: 1, background: c.accent, color: c.accentInk, padding: '12px 16px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
+          {content.cta.primary.label}<span style={{ fontFamily: f.display, fontSize: 18, fontStyle: v.italicAccent ? 'italic' : 'normal' }}>→</span>
         </a>
-        {content.cta.phone && (
-          <a style={{
-            textAlign: 'center', padding: '10px 16px',
-            border: `1px solid ${c.ink}`, borderRadius: r.btn,
-            fontSize: 12, fontFamily: f.mono,
-            letterSpacing: '0.05em', color: c.ink,
-            cursor: 'pointer',
-          }}>{content.cta.phone}</a>
-        )}
+        <div style={{ padding: '0 14px', display: 'flex', alignItems: 'center', fontFamily: f.mono, fontSize: 10, color: c.accentInk, background: c.ink, whiteSpace: 'nowrap' }}>{content.cta.phone}</div>
       </div>
-
-      {/* Stats */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
-        ...hr,
-      }}>
-        {content.stats.map((s, i) => (
-          <div key={i} style={{
-            padding: '12px 8px', textAlign: 'center',
-            borderRight: i < content.stats.length - 1 ? `1px solid ${c.line}` : undefined,
-          }}>
-            <div style={{
-              fontFamily: f.display, fontSize: 22,
-              fontWeight: v.displayWeight, color: c.accent,
-              lineHeight: 1, marginBottom: 3,
-            }}>
-              {s.num}{s.unit && <span style={{ fontSize: 12, color: c.inkSoft }}>{s.unit}</span>}
-            </div>
-            <div style={{
-              fontFamily: f.mono, fontSize: 8,
-              color: c.inkSoft, textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Menu block */}
-      {content.menu && (
-        <section style={{ padding: '18px 16px', ...hr }}>
-          <div style={{
-            fontFamily: f.mono, fontSize: 9,
-            color: c.inkSoft, textTransform: 'uppercase',
-            letterSpacing: '0.1em', marginBottom: 10,
-            display: 'flex', alignItems: 'center', gap: 8,
-          }}>
-            <span style={{ height: 1, background: c.inkSoft, flex: 1 }} />
-            {content.menu.eyebrow}
-            <span style={{ height: 1, background: c.inkSoft, flex: 1 }} />
-          </div>
-          <h3 style={{
-            fontFamily: f.display, fontSize: 20,
-            fontWeight: v.displayWeight,
-            lineHeight: 1, letterSpacing: '-0.015em',
-            marginBottom: 12, color: c.ink,
-          }}>{withEm(content.menu.title)}</h3>
-          {content.menu.items.slice(0, 3).map((it, i, arr) => (
-            <div key={i} style={{
-              display: 'grid', gridTemplateColumns: 'auto 1fr auto',
-              gap: 10, alignItems: 'baseline',
-              padding: '9px 0',
-              borderBottom: i < arr.length - 1 ? `1px dotted ${c.lineSoft}` : undefined,
-            }}>
-              <span style={{ fontFamily: f.mono, fontSize: 9, color: c.accent }}>{it.num}</span>
-              <div>
-                <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: v.displayWeight, color: c.ink }}>{it.name}</div>
-                {it.desc && <div style={{ fontSize: 10, color: c.inkSoft, marginTop: 2 }}>{it.desc}</div>}
-              </div>
-              <span style={{
-                fontFamily: f.display,
-                fontStyle: v.italicAccent ? 'italic' : 'normal',
-                fontSize: 14, color: c.ink,
-              }}>{it.price}</span>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {/* Quote line — компактный отзыв */}
-      <section style={{ padding: '14px 16px', ...hr }}>
-        <p style={{
-          fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal',
-          fontSize: 15, lineHeight: 1.3, margin: 0, color: c.ink,
-        }}>
-          {content.quote.text.split(/\[\[(.+?)\]\]/g).map((p, i) =>
-            i % 2 === 0
-              ? <React.Fragment key={i}>{p}</React.Fragment>
-              : <em key={i} style={{ color: c.accent, fontStyle: 'normal' }}>{p}</em>
-          )}
-        </p>
-        <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.inkSoft, marginTop: 8 }}>
-          {content.quote.authorName} · {content.quote.authorSource}
-        </div>
-      </section>
-
-      {/* Foot */}
-      <footer style={{
-        padding: '11px 16px', background: c.invBg, color: c.invInk,
-        display: 'flex', justifyContent: 'space-between',
-        fontFamily: f.mono, fontSize: 9,
-        textTransform: 'uppercase', letterSpacing: '0.08em',
-        opacity: 0.7,
-      }}>
-        <span>{content.meta.address}</span>
-        <span>{content.meta.host}.{BRAND.domain}</span>
-      </footer>
     </div>
   );
 }
@@ -702,82 +497,31 @@ function renderEm(text: string, color: string, italic: boolean) {
 
 export function BentoFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const card: React.CSSProperties = {
-    background: c.bgAlt, borderRadius: r.card, padding: 14,
-    border: `1px solid ${c.line}`, overflow: 'hidden',
-  };
-  const label: React.CSSProperties = {
-    fontFamily: f.mono, fontSize: 9, color: c.inkFaint,
-    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8,
-  };
   const s = content.stats;
-  const m = content.menu;
+  const tile = { background: c.bgAlt, borderRadius: r.card, border: `1px solid ${c.line}`, padding: 12, overflow: 'hidden' };
+  const lbl = { fontFamily: f.mono, fontSize: 8, color: c.inkFaint, textTransform: 'uppercase', letterSpacing: '0.06em' };
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, padding: 14, fontVariantNumeric: 'tabular-nums' }}>
-      {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '0 2px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: f.display, fontWeight: 700, fontSize: 14, letterSpacing: '-0.02em' }}>
-          <span style={{ width: 22, height: 22, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12 }}>{content.meta.brand[0]}</span>
-          {content.meta.brand}
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 12, gap: 8, fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: '0 0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontFamily: f.display, fontWeight: 700, fontSize: 13, letterSpacing: '-0.02em' }}>
+          <span style={{ width: 20, height: 20, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{content.meta.brand[0]}</span>{content.meta.brand}
         </div>
-        <span style={{ fontFamily: f.mono, fontSize: 10, color: c.inkSoft }}>★ {content.meta.rating}</span>
+        <span style={{ fontFamily: f.mono, fontSize: 9, color: c.inkSoft }}>★ {content.meta.rating}</span>
       </div>
-      {/* bento grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-        {/* hero — full width on accent */}
-        <div style={{ ...card, gridColumn: 'span 4', background: c.accent, color: c.accentInk, border: 'none', padding: '20px 16px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: c.bg, color: c.accent, padding: '5px 9px', borderRadius: 999, fontSize: 9, fontWeight: 700, fontFamily: f.mono, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 14 }}>
-            <span style={{ width: 5, height: 5, background: c.accent, borderRadius: '50%' }} />свободно сегодня
-          </div>
-          <h1 style={{ fontFamily: f.display, fontSize: 27, fontWeight: 800, lineHeight: 0.96, letterSpacing: '-0.035em', margin: 0 }}>
-            {content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '')}
-          </h1>
+      <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr', gap: 8 }}>
+        <div style={{ ...tile, gridColumn: 'span 2', background: c.accent, color: c.accentInk, border: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <span style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 5, background: c.bg, color: c.accent, padding: '4px 8px', borderRadius: 999, fontSize: 8, fontWeight: 700, fontFamily: f.mono, textTransform: 'uppercase', letterSpacing: '0.05em' }}><span style={{ width: 4, height: 4, background: c.accent, borderRadius: '50%' }} />свободно сегодня</span>
+          <h1 style={{ fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.035em', margin: '10px 0 0' }}>{content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '')}</h1>
         </div>
-        {/* slots / stats */}
-        <div style={{ ...card, gridColumn: 'span 2' }}>
-          <div style={label}>сегодня</div>
-          <div style={{ fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>14:00 · 16:30</div>
-          <div style={{ fontSize: 10, color: c.inkSoft, marginTop: 2 }}>{content.cta.primary.label.toLowerCase()}</div>
-        </div>
-        {s[0] && <div style={{ ...card, gridColumn: 'span 2' }}>
-          <div style={label}>{s[0].label}</div>
-          <div style={{ fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em' }}>{s[0].num}<span style={{ fontSize: 14, color: c.inkFaint }}>{s[0].unit}</span></div>
-        </div>}
-        {s[1] && <div style={{ ...card, gridColumn: 'span 2' }}>
-          <div style={label}>{s[1].label}</div>
-          <div style={{ fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em', color: c.accent }}>{s[1].num}<span style={{ fontSize: 14, color: c.inkFaint }}>{s[1].unit}</span></div>
-        </div>}
-        {s[2] && <div style={{ ...card, gridColumn: 'span 2' }}>
-          <div style={label}>{s[2].label}</div>
-          <div style={{ fontFamily: f.display, fontSize: 26, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em' }}>{s[2].num}<span style={{ fontSize: 14, color: c.inkFaint }}>{s[2].unit}</span></div>
-        </div>}
-        {/* photo */}
-        <div style={{ gridColumn: 'span 4', borderRadius: r.card, overflow: 'hidden', aspectRatio: '16/9' }}>
+        {s[0] && <div style={tile}><div style={lbl}>{s[0].label}</div><div style={{ fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 4 }}>{s[0].num}<span style={{ fontSize: 13, color: c.inkFaint }}>{s[0].unit}</span></div></div>}
+        {s[1] && <div style={tile}><div style={lbl}>{s[1].label}</div><div style={{ fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 4, color: c.accent }}>{s[1].num}<span style={{ fontSize: 13, color: c.inkFaint }}>{s[1].unit}</span></div></div>}
+        <div style={{ gridColumn: 'span 2', borderRadius: r.card, overflow: 'hidden', minHeight: 0 }}>
           <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
         </div>
-        {/* CTA */}
-        <div style={{ ...card, gridColumn: 'span 4', background: c.invBg, color: c.invInk, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '16px 18px' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '-0.02em' }}>{content.cta.primary.label}</div>
-            <div style={{ fontFamily: f.mono, fontSize: 10, color: c.invInkSoft, marginTop: 2 }}>{content.cta.phone}</div>
-          </div>
-          <span style={{ width: 32, height: 32, background: c.accent, color: c.accentInk, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>→</span>
-        </div>
-        {/* price list */}
-        {m && <div style={{ ...card, gridColumn: 'span 4' }}>
-          <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 12 }}>{m.title.replace(/\[\[|\]\]/g, '')}</div>
-          {m.items.map((it, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '10px 0', borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : undefined }}>
-              <span style={{ fontSize: 12 }}>{it.name}</span>
-              <span style={{ fontFamily: f.mono, fontSize: 12, color: c.accent, fontWeight: 500 }}>{it.price}</span>
-            </div>
-          ))}
-        </div>}
-        {/* contact */}
-        <div style={{ ...card, gridColumn: 'span 4' }}>
-          <div style={{ fontFamily: f.mono, fontSize: 15, fontWeight: 500, marginBottom: 4 }}>{content.cta.phone}</div>
-          <div style={{ fontSize: 10, color: c.inkSoft }}>{content.meta.address} · {content.meta.host}.{BRAND.domain}</div>
-        </div>
+      </div>
+      <div style={{ ...tile, flex: '0 0 auto', background: c.invBg, color: c.invInk, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px' }}>
+        <div><div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '-0.02em' }}>{content.cta.primary.label}</div><div style={{ fontFamily: f.mono, fontSize: 9, color: c.invInkSoft, marginTop: 1 }}>{content.cta.phone}</div></div>
+        <span style={{ width: 28, height: 28, background: c.accent, color: c.accentInk, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>→</span>
       </div>
     </div>
   );
@@ -790,82 +534,26 @@ export function BentoFamily({ theme, content }: { theme: Theme; content: SlotCon
 export function DisplayFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
   const lines = content.hero.headingLines;
-  const m = content.menu;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: 'flex', flexDirection: 'column', fontVariantNumeric: 'tabular-nums' }}>
-      {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 600, letterSpacing: '-0.01em' }}>
-          <span style={{ width: 7, height: 7, background: c.accent, borderRadius: '50%' }} />{content.meta.brand}
-        </div>
-        <span style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.ink, padding: '6px 12px', border: `1px solid ${c.ink}`, borderRadius: 999 }}>{content.cta.phone}</span>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', flex: '0 0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 600 }}><span style={{ width: 6, height: 6, background: c.accent, borderRadius: '50%' }} />{content.meta.brand}</div>
+        <span style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.ink, padding: '5px 10px', border: `1px solid ${c.ink}`, borderRadius: 999 }}>★ {content.meta.rating}</span>
       </div>
-      {/* hero — giant heading */}
-      <section style={{ padding: '16px 18px 22px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: f.mono, fontSize: 9, color: c.inkSoft, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 14, paddingBottom: 14, borderBottom: `1px solid ${c.line}` }}>
-          <span>с {content.meta.since} · {content.meta.address}</span><span>★★★★★ {content.meta.rating}</span>
-        </div>
-        <h1 style={{ fontFamily: f.display, fontSize: 60, fontWeight: v.displayWeight, lineHeight: 0.85, letterSpacing: '-0.045em', margin: 0 }}>
-          {lines.map((line, i) => (
-            <span key={i} style={{
-              display: 'block',
-              color: i === 1 ? c.accent : c.ink,
-              fontStyle: i === 1 && v.italicAccent ? 'italic' : 'normal',
-              textIndent: i === 1 ? 20 : 0,
-              textAlign: i === 2 ? 'right' : 'left',
-            }}>{renderEm(line, c.accent, v.italicAccent)}</span>
+      <div style={{ padding: '2px 16px 14px', flex: '0 0 auto' }}>
+        <h1 style={{ fontFamily: f.display, fontSize: 50, fontWeight: v.displayWeight, lineHeight: 0.84, letterSpacing: '-0.045em', margin: 0 }}>
+          {lines.map((l, i) => (
+            <span key={i} style={{ display: 'block', color: i === 1 ? c.accent : c.ink, fontStyle: i === 1 && v.italicAccent ? 'italic' : 'normal', textIndent: i === 1 ? 16 : 0, textAlign: i === 2 ? 'right' : 'left' }}>{renderEm(l, c.accent, v.italicAccent)}</span>
           ))}
         </h1>
-        {content.stats[0] && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 16, alignItems: 'center', marginTop: 18, paddingTop: 18, borderTop: `1px solid ${c.line}` }}>
-            <div style={{ fontFamily: f.display, fontSize: 46, fontWeight: v.displayWeight, lineHeight: 0.85, color: c.accent, fontStyle: v.italicAccent ? 'italic' : 'normal', whiteSpace: 'nowrap' }}>
-              {content.stats[0].num}<span style={{ fontSize: 22 }}>{content.stats[0].unit}</span>
-            </div>
-            <div style={{ fontSize: 13, lineHeight: 1.45, color: c.inkSoft }}>
-              <b style={{ color: c.ink }}>{content.stats[0].label}</b><br/>{content.hero.leadParagraph?.split('.')[0]}.
-            </div>
-          </div>
-        )}
-      </section>
-      {/* asymmetric gallery */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto', gap: 6, padding: '0 14px 18px' }}>
-        <div style={{ gridColumn: '1 / 2', gridRow: '1 / 3', borderRadius: r.photo, overflow: 'hidden', aspectRatio: '1/1' }}>
-          <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        </div>
-        <div style={{ borderRadius: r.photo, overflow: 'hidden', aspectRatio: '1/1', background: c.bgAlt }}>
-          <img src={content.hero.gallery?.[0] ?? content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        </div>
-        <div style={{ borderRadius: r.photo, overflow: 'hidden', aspectRatio: '1/1', background: c.bgAlt }}>
-          <img src={content.hero.gallery?.[1] ?? content.hero.gallery?.[0] ?? content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        </div>
       </div>
-      {/* CTA */}
-      <div style={{ padding: '0 14px 22px', display: 'flex', flexDirection: 'column', gap: 7 }}>
-        <a style={{ background: c.invBg, color: c.invInk, padding: 15, borderRadius: r.btn, textAlign: 'center', fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', cursor: 'pointer' }}>{content.cta.primary.label} →</a>
-        <a style={{ padding: 12, border: `1px solid ${c.ink}`, borderRadius: r.btn, textAlign: 'center', fontSize: 11, fontWeight: 500 }}>{content.meta.reviewsN} отзывов · посмотреть</a>
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
       </div>
-      {/* services on inverse — сокращено для компактности превью */}
-      {m && (
-        <section style={{ background: c.invBg, color: c.invInk, padding: '20px 18px' }}>
-          <div style={{ fontFamily: f.mono, fontSize: 9, color: c.invAccent, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 20, height: 1, background: c.invAccent }} />{m.eyebrow}
-          </div>
-          {m.items.slice(0, 2).map((it, i, arr) => (
-            <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 14, alignItems: 'baseline', padding: '10px 0', borderBottom: i < arr.length - 1 ? `1px solid ${c.invInkSoft}` : undefined }}>
-              <div>
-                <div style={{ fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1.05 }}>{it.name}</div>
-                {it.desc && <div style={{ fontSize: 10, color: c.invInkSoft, marginTop: 3 }}>{it.desc}</div>}
-              </div>
-              <div style={{ fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal', fontSize: 18, color: c.invAccent }}>{it.price}</div>
-            </div>
-          ))}
-        </section>
-      )}
-      {/* footer */}
-      <footer style={{ padding: 18, textAlign: 'center', background: c.bg }}>
-        <div style={{ fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal', fontSize: 18, marginBottom: 6 }}>{content.meta.brand}</div>
-        <div style={{ fontFamily: f.mono, fontSize: 9, color: c.inkFaint, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{content.meta.address}</div>
-      </footer>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '11px 16px', background: c.invBg, color: c.invInk, flex: '0 0 auto' }}>
+        <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.invInkSoft }}>{content.meta.address}</div>
+        <a style={{ background: c.invAccent, color: c.invBg, padding: '9px 16px', borderRadius: r.btn, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{content.cta.primary.label} →</a>
+      </div>
     </div>
   );
 }
@@ -876,71 +564,33 @@ export function DisplayFamily({ theme, content }: { theme: Theme; content: SlotC
 
 export function SplitFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
+  const s = content.stats;
   const heading = content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '');
+  const div = `1px solid ${c.invInkSoft}55`;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: 'flex', flexDirection: 'column', fontVariantNumeric: 'tabular-nums' }}>
-      {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: `1px solid ${c.line}` }}>
-        <div style={{ fontFamily: f.display, fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em' }}>{content.meta.brand}<span style={{ color: c.accent }}>.</span></div>
-        <a style={{ background: c.accent, color: c.accentInk, padding: '7px 14px', borderRadius: r.btn, fontSize: 11, fontWeight: 600 }}>{content.cta.primary.label.split(' ')[0]}</a>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ width: '42%', minHeight: 0, overflow: 'hidden' }}>
+        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
       </div>
-      {/* split hero */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: `1px solid ${c.line}` }}>
-        <div style={{ aspectRatio: '4/3', overflow: 'hidden', borderRight: `1px solid ${c.line}` }}>
-          <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+      <div style={{ flex: 1, minWidth: 0, background: c.invBg, color: c.invInk, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: '0 0 auto' }}>
+          <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700 }}>{content.meta.brand}<span style={{ color: c.invAccent }}>.</span></div>
+          <span style={{ fontFamily: f.mono, fontSize: 8, opacity: 0.7 }}>★ {content.meta.rating}</span>
         </div>
-        <div style={{ padding: '18px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 14, background: c.bgAlt }}>
-          <div>
-            <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: c.accent, marginBottom: 8 }}>{content.meta.category}</div>
-            <h1 style={{ fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.03em', margin: 0 }}>{heading}</h1>
-          </div>
-          <p style={{ fontSize: 11, lineHeight: 1.5, color: c.inkSoft, margin: 0 }}>{content.hero.leadParagraph?.slice(0, 110)}</p>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 16px' }}>
+          <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.12em', color: c.invAccent, marginBottom: 8 }}>{content.meta.category}</div>
+          <h1 style={{ fontFamily: f.display, fontSize: 25, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.03em', margin: 0 }}>{heading}</h1>
+          <p style={{ fontSize: 11, lineHeight: 1.5, opacity: 0.82, margin: '10px 0 0' }}>{content.hero.leadParagraph?.slice(0, 88)}…</p>
         </div>
-      </div>
-      {/* counters on accent */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', background: c.invBg, color: c.invInk }}>
-        {content.stats.map((s, i) => (
-          <div key={i} style={{ padding: '14px 10px', textAlign: 'center', borderRight: i < content.stats.length - 1 ? `1px solid ${c.invInkSoft}` : undefined }}>
-            <div style={{ fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em', color: c.invAccent, marginBottom: 4 }}>{s.num}<span style={{ fontSize: 12 }}>{s.unit}</span></div>
-            <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.08em', opacity: 0.75 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-      {/* how we work — текстом, без фото */}
-      <div style={{ padding: '18px 14px', borderBottom: `1px solid ${c.line}` }}>
-        <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.accent, marginBottom: 8 }}>как мы работаем</div>
-        <h3 style={{ fontFamily: f.display, fontSize: 17, fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0 }}>{content.quote.text.replace(/[«»"\[\]]/g, '')}</h3>
-        <div style={{ fontFamily: f.mono, fontSize: 9, color: c.inkSoft, marginTop: 8 }}>{content.quote.authorName} · {content.quote.authorSource}</div>
-      </div>
-      {/* pricing cards */}
-      {m && (
-        <div style={{ padding: '20px 14px', background: c.bgAlt, borderBottom: `1px solid ${c.line}` }}>
-          <h3 style={{ fontFamily: f.display, fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 14 }}>{m.eyebrow}</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {m.items.slice(0, 3).map((it, i) => (
-              <div key={i} style={{
-                background: i === 1 ? c.accent : c.bg, color: i === 1 ? c.accentInk : c.ink,
-                border: `1px solid ${i === 1 ? c.accent : c.line}`, borderRadius: r.card, padding: 14,
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
-              }}>
-                <div>
-                  <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700 }}>{it.name}</div>
-                  <div style={{ fontSize: 10, opacity: 0.8, marginTop: 2 }}>{it.desc}</div>
-                </div>
-                <div style={{ fontFamily: f.display, fontSize: 18, fontWeight: 800, whiteSpace: 'nowrap' }}>{it.price}</div>
-              </div>
-            ))}
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${s.length}, 1fr)`, borderTop: div, flex: '0 0 auto' }}>
+          {s.map((st, i) => (
+            <div key={i} style={{ padding: '9px 6px', textAlign: 'center', borderRight: i < s.length - 1 ? div : undefined }}>
+              <div style={{ fontFamily: f.display, fontSize: 16, fontWeight: 800, color: c.invAccent, lineHeight: 1 }}>{st.num}<span style={{ fontSize: 10 }}>{st.unit}</span></div>
+              <div style={{ fontFamily: f.mono, fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65, marginTop: 3 }}>{st.label}</div>
+            </div>
+          ))}
         </div>
-      )}
-      {/* contact */}
-      <div style={{ padding: '18px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <div>
-          <div style={{ fontFamily: f.mono, fontSize: 13, fontWeight: 500 }}>{content.cta.phone}</div>
-          <div style={{ fontSize: 10, color: c.inkSoft }}>{content.meta.address}</div>
-        </div>
-        <a style={{ background: c.invBg, color: c.invInk, padding: '11px 16px', borderRadius: r.btn, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>{content.cta.primary.label.split(' ')[0]} →</a>
+        <a style={{ background: c.accent, color: c.accentInk, padding: '12px 16px', textAlign: 'center', fontSize: 12, fontWeight: 700, flex: '0 0 auto' }}>{content.cta.primary.label.split(' ')[0]} →</a>
       </div>
     </div>
   );
@@ -952,63 +602,25 @@ export function SplitFamily({ theme, content }: { theme: Theme; content: SlotCon
 
 export function StackedFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const m = content.menu;
-  const cardBox: React.CSSProperties = { background: c.bgAlt, border: `1px solid ${c.line}`, borderRadius: r.card };
   const heading = content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '');
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, display: 'flex', flexDirection: 'column', fontVariantNumeric: 'tabular-nums' }}>
-      {/* header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: `1px solid ${c.line}` }}>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', borderBottom: `1px solid ${c.line}`, flex: '0 0 auto' }}>
         <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: '-0.015em' }}>{content.meta.brand}</div>
-        <a style={{ background: c.accent, color: c.accentInk, padding: '8px 14px', borderRadius: r.btn, fontSize: 12, fontWeight: 600 }}>Консультация</a>
+        <a style={{ background: c.accent, color: c.accentInk, padding: '7px 13px', borderRadius: r.btn, fontSize: 11, fontWeight: 600 }}>Записаться</a>
       </div>
-      {/* hero */}
-      <section style={{ padding: '18px 16px 20px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 11, fontWeight: 500, marginBottom: 12 }}>
-          <span style={{ width: 6, height: 6, background: c.accent, borderRadius: '50%' }} />{content.meta.category} · {content.meta.address.split(',').pop()?.trim()}
-        </div>
-        <h1 style={{ fontFamily: f.display, fontSize: 27, fontWeight: v.displayWeight, lineHeight: 1.05, letterSpacing: '-0.025em', margin: '0 0 10px' }}>{heading}</h1>
-        <p style={{ fontSize: 13, lineHeight: 1.5, color: c.inkSoft, marginBottom: 14 }}>{content.hero.leadParagraph}</p>
-        <div style={{ display: 'flex', gap: 10, fontSize: 12, color: c.inkSoft, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ color: c.accent }}>★★★★★</span><b>{content.meta.rating}</b><span style={{ color: c.inkFaint }}>·</span><span>{content.meta.reviewsN} отзывов</span><span style={{ color: c.inkFaint }}>·</span><span>с {content.meta.since}</span>
-        </div>
-        <div style={{ borderRadius: r.photo, overflow: 'hidden', aspectRatio: '16/10', marginBottom: 14 }}>
-          <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <a style={{ background: c.accent, color: c.accentInk, padding: 14, borderRadius: r.btn, textAlign: 'center', fontSize: 14, fontWeight: 600 }}>{content.cta.primary.label}</a>
-          <a style={{ padding: 12, border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: 'center', fontSize: 13 }}>{content.cta.phone}</a>
-        </div>
-      </section>
-      {/* services card */}
-      {m && (
-        <section style={{ padding: '22px 16px', borderTop: `1px solid ${c.line}` }}>
-          <h3 style={{ fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, letterSpacing: '-0.02em', marginBottom: 4 }}>Услуги и цены</h3>
-          <p style={{ fontSize: 11, color: c.inkSoft, marginBottom: 14 }}>{m.eyebrow}</p>
-          <div style={{ ...cardBox, padding: 14 }}>
-            {m.items.map((it, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '10px 0', borderBottom: i < m.items.length - 1 ? `1px solid ${c.line}` : undefined, gap: 12 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{it.name}</div>
-                  {it.desc && <div style={{ fontSize: 11, color: c.inkSoft }}>{it.desc}</div>}
-                </div>
-                <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>{it.price}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-      {/* quote strip — компактный отзыв одной строкой */}
-      <section style={{ padding: '18px 16px', borderTop: `1px solid ${c.line}` }}>
-        <div style={{ background: c.accentSoft, borderRadius: r.card, padding: '14px 16px' }}>
-          <p style={{ fontSize: 13, lineHeight: 1.5, margin: 0, color: c.ink }}>{content.quote.text.replace(/\[\[|\]\]/g, '')}</p>
-          <div style={{ fontSize: 10, color: c.inkSoft, marginTop: 8, display: 'flex', justifyContent: 'space-between' }}>
-            <span>{content.quote.authorName} · {content.quote.authorSource}</span>
-            <span style={{ color: c.accent }}>★★★★★</span>
-          </div>
-        </div>
-      </section>
-      {/* footer */}
+      <div style={{ padding: '18px 18px 12px', textAlign: 'center', flex: '0 0 auto' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 10, fontWeight: 500, marginBottom: 10 }}><span style={{ width: 5, height: 5, background: c.accent, borderRadius: '50%' }} />{content.meta.category} · {content.meta.address.split(',').pop()?.trim()}</div>
+        <h1 style={{ fontFamily: f.display, fontSize: 25, fontWeight: v.displayWeight, lineHeight: 1.04, letterSpacing: '-0.025em', margin: '0 auto', maxWidth: '94%' }}>{heading}</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, fontSize: 11, color: c.inkSoft, marginTop: 10, alignItems: 'center' }}><span style={{ color: c.accent }}>★★★★★</span><b>{content.meta.rating}</b><span style={{ color: c.inkFaint }}>·</span><span>{content.meta.reviewsN} отзывов</span></div>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, margin: '0 18px', borderRadius: r.photo, overflow: 'hidden' }}>
+        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+      </div>
+      <div style={{ padding: '14px 18px', display: 'flex', gap: 8, flex: '0 0 auto' }}>
+        <a style={{ flex: 1, background: c.accent, color: c.accentInk, padding: '12px', borderRadius: r.btn, textAlign: 'center', fontSize: 13, fontWeight: 600 }}>{content.cta.primary.label}</a>
+        <a style={{ padding: '12px 16px', border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: 'center', fontSize: 12, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', color: c.ink }}>{content.cta.phone}</a>
+      </div>
     </div>
   );
 }
@@ -1042,28 +654,20 @@ export function PresetRenderer({ preset, content }: { preset: Preset; content: S
 // MiniChrome — browser frame wrapper, canon-side (uses VT tokens)
 // ───────────────────────────────────────────────────────────────
 
-export function MiniChrome({ host, children }: { host: string; children: React.ReactNode }) {
+export function MiniChrome({ host, children, height = 460 }: { host: string; children: React.ReactNode; height?: number }) {
   return (
     <div style={{
       overflow: 'hidden', borderRadius: 12,
       border: `1px solid ${VT.lineSoft}`,
       display: 'flex', flexDirection: 'column',
-      width: '100%', minWidth: 0, height: '100%',
+      width: '100%', minWidth: 0, height,
       background: VT.white,
-      alignSelf: 'flex-start',
     }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '7px 10px', background: '#fff',
-        borderBottom: `1px solid ${VT.line}`, flex: '0 0 auto',
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 10px', background: '#fff', borderBottom: `1px solid ${VT.line}`, flex: '0 0 auto' }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#e3decf' }} />
-        <span style={{
-          marginLeft: 10, fontFamily: VT.font.mono,
-          fontSize: 11, color: VT.inkFaint,
-        }}>{host}.{BRAND.domain}</span>
+        <span style={{ marginLeft: 10, fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }}>{host}.{BRAND.domain}</span>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {children}
