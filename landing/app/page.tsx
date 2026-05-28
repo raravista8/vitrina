@@ -2,9 +2,10 @@
  * Landing root page — canon 0.6.0 v3 narrative composition.
  *
  * Sections per `packages/canon/CHANGELOG.md` §0.6.0 +
- * `CLAUDE_CODE_TZ_landing_v0.6.0.md` §3 (fixed order — narrative
- * breaks if reshuffled, especially Cycle BEFORE Monday and
- * Ownership AFTER Cycle + Monday):
+ * `CLAUDE_CODE_TZ_landing_v0.6.0.md` §3 (mostly fixed order — Cycle
+ * BEFORE Monday, Ownership AFTER Cycle + Monday). NB: Analytics ↔
+ * Ownership were swapped per product request (Ownership now sits
+ * UNDER Analytics) — see #8/#9 below:
  *
  *   1. SiteHeader  — sticky nav                       ← LOCAL (hand-rolled)
  *   2. Hero        — interactive input + CTA          ← LOCAL (interactive)
@@ -13,8 +14,8 @@
  *   5. Monday      — 3 weekly recommendation cards    ← canon · NEW
  *   6. BaseWork    — «ещё это из коробки»             ← canon · NEW
  *   7. Sources     — «у меня X, подойдёт?»            ← canon · NEW
- *   8. Ownership   — control panel demo               ← canon
- *   9. Analytics   — demo charts (substrate for Monday) ← canon
+ *   8. Analytics   — demo charts                      ← canon
+ *   9. Ownership   — control panel demo (moved below Analytics) ← canon
  *  10. Pricing     — 5-tier PricingMatrix (from 690 ₽) ← canon
  *  11. FAQ         — «про рекомендации» + остальные   ← canon
  *  12. FinalCta    — 3-step ladder                    ← canon · NEW
@@ -136,8 +137,8 @@ export default function HomePage() {
       <ResponsiveCanonSection id="monday" Component={MondaySection} />
       <ResponsiveCanonSection id="base-work" Component={BaseWorkSection} />
       <ResponsiveCanonSection id="sources" Component={SourcesSection} />
-      <ResponsiveCanonSection id="ownership" Component={OwnershipSection} />
       <ResponsiveCanonSection id="analytics" Component={AnalyticsSection} />
+      <ResponsiveCanonSection id="ownership" Component={OwnershipSection} />
       <ResponsiveCanonSection id="pricing" Component={PricingSection} />
       <ResponsiveCanonSection id="faq" Component={FaqSection} />
       <ResponsiveCanonSection id="final-cta" Component={FinalCtaSection} />
