@@ -101,6 +101,21 @@ describe("CanonCtaBindings — body CTA wiring + demo link rewrite", () => {
     main.remove();
   });
 
+  it("points the SourcesSection «Не нашли свою? Напишите →» link at /feedback", () => {
+    // canon ships this anchor with NO href (inert). We wire it by text,
+    // scoped to [data-section="sources"].
+    const main = setupMain(`
+      <div data-section="sources">
+        <a>Не нашли свою? Напишите →</a>
+      </div>
+    `);
+    render(<CanonCtaBindings />);
+    const link = main.querySelector<HTMLAnchorElement>('[data-section="sources"] a');
+    expect(link).not.toBeNull();
+    expect(link!.getAttribute("href")).toBe("/feedback");
+    main.remove();
+  });
+
   it("returns null (renders nothing into the DOM)", () => {
     setupMain("");
     const { container } = render(<CanonCtaBindings />);

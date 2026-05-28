@@ -13,7 +13,7 @@ import { BrandMark } from "@/components/BrandMark";
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-line bg-paper px-5 py-10 text-[13px] text-ink-faint sm:px-16">
+    <footer className="mt-16 border-t border-line bg-paper px-5 py-10 text-[13px] text-ink-faint sm:mt-24 sm:px-16">
       <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <BrandMark size={20} fontSize={15} textClassName="text-ink-soft" />
