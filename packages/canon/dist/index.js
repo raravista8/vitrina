@@ -1702,6 +1702,50 @@ var SOURCE_ICONS = [
     ] })
   }
 ];
+function ChipStrip({
+  mobile = false,
+  label = "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417",
+  items = SOURCE_ICONS,
+  align
+}) {
+  const alignItems = (align ?? (mobile ? "start" : "center")) === "center" ? "center" : "flex-start";
+  const justify = alignItems === "center" ? "center" : "flex-start";
+  return /* @__PURE__ */ jsxs3("div", { style: {
+    marginTop: mobile ? 22 : 36,
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    alignItems
+  }, children: [
+    label && /* @__PURE__ */ jsx4("div", { style: {
+      fontFamily: VT.font.mono,
+      fontSize: 11,
+      letterSpacing: "0.12em",
+      color: VT.inkFaint,
+      fontWeight: 600
+    }, children: label }),
+    /* @__PURE__ */ jsx4("div", { style: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 8,
+      justifyContent: justify
+    }, children: items.map((s) => /* @__PURE__ */ jsxs3("span", { style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 8,
+      padding: "5px 14px 5px 5px",
+      background: VT.white,
+      border: `1px solid ${VT.line}`,
+      borderRadius: 999,
+      fontSize: 13,
+      color: VT.ink,
+      fontWeight: 500
+    }, children: [
+      s.icon,
+      s.name
+    ] }, s.id)) })
+  ] });
+}
 function HeroBlock({ mobile }) {
   return /* @__PURE__ */ jsx4("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs3("div", { style: {
     maxWidth: mobile ? "100%" : 1120,
@@ -1821,41 +1865,7 @@ function HeroBlock({ mobile }) {
       "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0440\u044B",
       /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2193" })
     ] }) }),
-    /* @__PURE__ */ jsxs3("div", { style: {
-      marginTop: mobile ? 22 : 36,
-      display: "flex",
-      flexDirection: "column",
-      gap: 10,
-      alignItems: mobile ? "flex-start" : "center"
-    }, children: [
-      /* @__PURE__ */ jsx4("div", { style: {
-        fontFamily: VT.font.mono,
-        fontSize: 11,
-        letterSpacing: "0.12em",
-        color: VT.inkFaint,
-        fontWeight: 600
-      }, children: "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417" }),
-      /* @__PURE__ */ jsx4("div", { style: {
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 8,
-        justifyContent: mobile ? "flex-start" : "center"
-      }, children: SOURCE_ICONS.map((s) => /* @__PURE__ */ jsxs3("span", { style: {
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 8,
-        padding: "5px 14px 5px 5px",
-        background: VT.white,
-        border: `1px solid ${VT.line}`,
-        borderRadius: 999,
-        fontSize: 13,
-        color: VT.ink,
-        fontWeight: 500
-      }, children: [
-        s.icon,
-        s.name
-      ] }, s.id)) })
-    ] })
+    /* @__PURE__ */ jsx4(ChipStrip, { mobile })
   ] }) });
 }
 function ExamplesSection({ mobile }) {
@@ -4187,7 +4197,7 @@ function FinalCtaSection({ mobile }) {
   ] }) });
 }
 function StickyHeader({ mobile = false }) {
-  const px = mobile ? 20 : 80;
+  const px = mobile ? 20 : "clamp(24px, 4vw, 80px)";
   const primaryStyle = mobile ? {
     background: VT.accent,
     color: "#fff",
@@ -4199,7 +4209,9 @@ function StickyHeader({ mobile = false }) {
     display: "inline-flex",
     alignItems: "center",
     gap: 4,
-    border: "none"
+    border: "none",
+    whiteSpace: "nowrap",
+    flex: "0 0 auto"
   } : {
     background: VT.accent,
     color: "#fff",
@@ -4212,7 +4224,9 @@ function StickyHeader({ mobile = false }) {
     alignItems: "center",
     gap: 6,
     boxShadow: "0 6px 16px -8px rgba(120,60,30,0.4)",
-    border: "none"
+    border: "none",
+    whiteSpace: "nowrap",
+    flex: "0 0 auto"
   };
   const primaryLabel = mobile ? "\u0421\u043E\u0431\u0440\u0430\u0442\u044C" : "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0437\u0430 2 \u0447\u0430\u0441\u0430";
   return /* @__PURE__ */ jsxs3("div", { className: "ss-sticky-header", style: {
@@ -4243,14 +4257,15 @@ function StickyHeader({ mobile = false }) {
       gap: 16
     }, children: [
       /* @__PURE__ */ jsx4("a", { href: "#hero", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx4(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
-      !mobile ? /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 24, fontSize: 14 }, children: [
-        /* @__PURE__ */ jsx4("a", { href: "#examples", className: "ss-nav-link", children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
-        /* @__PURE__ */ jsx4("a", { href: "#pricing", className: "ss-nav-link", children: "\u0426\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx4("a", { href: "#faq", className: "ss-nav-link", children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
+      !mobile ? /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: "clamp(12px, 1.6vw, 24px)", fontSize: 14, flexWrap: "nowrap", minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx4("a", { href: "#examples", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+        /* @__PURE__ */ jsx4("a", { href: "#pricing", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u0426\u0435\u043D\u0430" }),
+        /* @__PURE__ */ jsx4("a", { href: "#faq", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
         /* @__PURE__ */ jsx4("a", { href: "#login", className: "ss-login-link", style: {
           fontWeight: 500,
           fontSize: 14,
-          padding: "8px 16px"
+          padding: "8px 16px",
+          whiteSpace: "nowrap"
         }, children: "\u0412\u043E\u0439\u0442\u0438" }),
         /* @__PURE__ */ jsxs3("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
@@ -10487,6 +10502,7 @@ export {
   CanonStyles,
   Card,
   Checkbox,
+  ChipStrip,
   ClientAdminDemo,
   ConceptA_Desktop,
   ConceptA_Mobile,
@@ -10545,6 +10561,7 @@ export {
   S7_SchemeSwatches,
   S8_LeadFormConfirm,
   S9_FeedbackPage,
+  SOURCE_ICONS,
   SOURCE_LIB,
   SamosaytLanding,
   SamosaytLandingV3,

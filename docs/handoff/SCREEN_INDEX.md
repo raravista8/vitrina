@@ -7,7 +7,7 @@
 ## P0 — Public (1–9)
 
 ### #1 · Landing — `samosite.online`
-- **Канон:** `@samosite/canon/landing` package — canon 0.7.1 v3 narrative (11 blocks). Source `packages/canon/src/landing/index.tsx`. 0.7.1: `ExamplesSection` = карусель 10 пресет-карточек (+ модуль `@samosite/canon/presets`, 5 семейств × 16 тем), `PricingSection` = 5-тарифная `PricingMatrix`.
+- **Канон:** `@samosite/canon/landing` package — canon 0.7.2 v3 narrative (11 blocks). Source `packages/canon/src/landing/index.tsx`. 0.7.1: `ExamplesSection` = карусель 10 пресет-карточек (+ модуль `@samosite/canon/presets`, 5 семейств × 16 тем), `PricingSection` = 5-тарифная `PricingMatrix`. 0.7.2: фикс респонсива хедера (CTA не обрезается 720–1000px), `ChipStrip` вынесен отдельным экспортом, Hero абзац 2 переписан. Полный per-component `DESIGN_SPEC.md` — в этой папке.
 - **HTML preview:** `packages/canon/canon-source/landing.html` (dev canvas) · canvas mirror `landing/tests/visual/canon-source/landing-samosite.jsx`
 - **Прод:** `landing/app/page.tsx` рендерит:
   - L1 Hero — hand-rolled `landing/components/Hero.tsx` (interactive)

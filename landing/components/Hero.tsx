@@ -41,9 +41,11 @@
  * the public brand strictly.
  */
 
-import { Link as LinkIcon, Paperclip, X } from "lucide-react";
+import { Link as LinkIcon, X } from "lucide-react";
 
 import { useDeferredValue, useEffect, useId, useState } from "react";
+
+import { ChipStrip } from "@samosite/canon/landing";
 
 import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/metrika";
@@ -321,20 +323,25 @@ export function Hero() {
             <span className="text-accent">сам становится лучше</span> каждую неделю
           </h1>
 
-          {/* Sub — canon 0.6.0 splits the old single paragraph into TWO:
-              (1) «Покажите Самосайту, где вы сейчас ведёте свои дела…»
-                  — lists the 5 source families inline so the user sees
-                  the promise scoped to their situation.
-              (2) «Через 2 часа сайт принимает заявки. Дальше работает
-                  сам…» — sets the timeline + introduces the «monday
-                  recommendations» killer-feature foreshadowed below. */}
+          {/* Sub — canon 0.7.2 two paragraphs (synced verbatim to
+              HeroBlock §Абзац 1/2, trailing period stripped per the
+              house typography rule — canon's own runtime pass strips
+              trailing dots from <p> too, so this matches the rendered
+              canon output):
+              (1) sources list scoped to the visitor's situation.
+              (2) «Самосайт соберёт сайт со всеми услугами…» — canon
+                  0.7.2 replaced the old «Через 2 часа сайт принимает
+                  заявки…» (which duplicated the H1 promise) with
+                  concrete value: what gets built + the monday-
+                  recommendations foreshadow. No bold span in the new
+                  copy (the old `<b>2 часа…</b>` is gone). */}
           <p className="mt-4 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-7 sm:max-w-[860px] sm:text-[20px]">
-            Покажите Самосайту, где вы сейчас ведёте свои дела: Яндекс.Карты, Telegram, 2ГИС, Avito
-            или Instagram. Если ничего этого нет — просто сфотографируйте меню или буклет
+            Покажите Самосайту, где вы ведёте дела: Яндекс.Карты, Telegram, 2ГИС, Avito или
+            Instagram. Если ничего нет, сфотографируйте меню или буклет
           </p>
           <p className="mt-2.5 max-w-full text-pretty text-[16.5px] leading-[1.5] text-ink-soft sm:mx-auto sm:mt-3 sm:max-w-[860px] sm:text-[20px]">
-            Через <b className="font-bold text-ink">2 часа сайт принимает заявки</b>. Дальше
-            работает сам: обновляет, по понедельникам подсказывает, что поправить ради новых заявок
+            Самосайт соберёт сайт со всеми услугами, ценами, отзывами и фото. Тексты напишет сам.
+            Когда придут первые посетители, начнёт подсказывать, что поправить ради новых заявок
           </p>
 
           {/* Input + CTA — single pill on desktop, stacked card on mobile */}
@@ -413,25 +420,14 @@ export function Hero() {
             {CTA_MICROCOPY}
           </div>
 
-          {/* Photo-link companion — canon 0.5.0 has this INSIDE its
-              HeroBlock (line 793-810), so it must be inside
-              `data-section-body="hero"` for the visual-regression
-              screenshot to match the canon baseline (was outside in
-              v2.1.3, missed when canon 0.3.0 moved it inside — caught
-              by hero-1440 height-shortfall on PR #142). The
-              SourceDetectionBadge stays outside (prod-only API
-              widget, no canon equivalent). */}
-          <div className="mt-3 flex justify-start text-sm sm:mt-[14px] sm:justify-center">
-            <button
-              type="button"
-              onClick={handlePhotoCta}
-              className="inline-flex items-center gap-2 text-accent underline decoration-accent-soft decoration-[1.5px] underline-offset-4 hover:decoration-accent"
-            >
-              <Paperclip aria-hidden className="h-3.5 w-3.5" strokeWidth={1.9} />
-              Нет ссылки? Загрузите фото буклета, меню или работ
-              <span aria-hidden>→</span>
-            </button>
-          </div>
+          {/* Photo-link companion «Нет ссылки? Загрузите фото…» removed
+              per canon 0.7.2 DESIGN_SPEC §1 NB — this line is NOT in
+              canon and shouldn't be on prod. The photo path is still
+              reachable: the input placeholder reads «Вставьте ссылку
+              или загрузите фото», the SubmitModal has a link/photo
+              mode-switcher, and `handlePhotoCta` is still wired to the
+              SourceDetectionBadge waitlist «создайте из фото» branch
+              below. */}
 
           {/* «Сначала посмотреть примеры ↓» — canon 0.6.0 secondary
               link under the microcopy. Skips Hero CTA, scrolls to the
@@ -446,12 +442,23 @@ export function Hero() {
             </a>
           </div>
 
-          {/* HeroPlatformStrip + free-month pill removed in canon 0.6.0:
-              the platform chip-strip is now the standalone <SourcesSection>
-              right below in the page composition, and the free-month
-              promise lives inside CTA_MICROCOPY above («первый месяц
-              бесплатно, карту привязывать не надо»). Keeping any of
-              the old blocks here would double up the messaging. */}
+          {/* «СОБИРАЕМ ИЗ» chip-strip — re-added per canon 0.7.2
+              DESIGN_SPEC §1/§1a. canon 0.7.2 extracted the Hero inline
+              chips into a standalone `ChipStrip` export precisely so
+              consumers can mount it WITHOUT transcribing canon JSX into
+              hand-rolled Tailwind (landing/CLAUDE.md rule). Dual-render
+              for responsive parity with the rest of the page
+              (`ResponsiveCanonSection` pattern): canon's ChipStrip takes
+              a `mobile` boolean, we pick via the sm: breakpoint.
+              Intentionally duplicates the platforms shown in
+              <SourcesSection> below — different context per the spec
+              (Hero = «принимаем на вход», Sources = «что распознаём»). */}
+          <div className="hidden sm:block">
+            <ChipStrip mobile={false} />
+          </div>
+          <div className="sm:hidden">
+            <ChipStrip mobile={true} />
+          </div>
         </div>
 
         {/* Hero extras — prod-only additions NOT in canon HeroBlock,

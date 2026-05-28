@@ -75,16 +75,17 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
     expect(screen.queryByText(/^Сам находится в поиске$/)).toBeNull();
   });
 
-  it("ships photo-link companion (canon 0.3.0) under the CTA", () => {
+  it("removes the photo-link companion + ships «СОБИРАЕМ ИЗ» chip-strip (canon 0.7.2)", () => {
     render(<Hero />);
-    // canon 0.3.0 §1 Hero: «или загрузите фото работ, буклета или меню»
-    // replaces the old «📷 Загрузить фото работ» button. Same plane as
-    // the CTA — link OR photo, never both.
-    expect(
-      screen.getByRole("button", { name: /Нет ссылки\? Загрузите фото буклета, меню или работ/i }),
-    ).toBeInTheDocument();
+    // canon 0.7.2 DESIGN_SPEC §1 NB: the «Нет ссылки? Загрузите фото…»
+    // line is NOT in canon and must not be on prod. Guards re-introduction.
+    expect(screen.queryByRole("button", { name: /Нет ссылки\? Загрузите фото/i })).toBeNull();
     // The «Закрытый TG-канал» link is gone (PR-G) and stays gone.
     expect(screen.queryByText(/Закрытый TG-канал/i)).toBeNull();
+    // canon 0.7.2 §1a: the «СОБИРАЕМ ИЗ» ChipStrip is re-added via the
+    // standalone canon export. Dual-render (sm: toggle) → appears twice
+    // in jsdom (both variants in DOM).
+    expect(screen.getAllByText(/СОБИРАЕМ ИЗ/i).length).toBeGreaterThanOrEqual(1);
   });
 
   it("anti-pattern guard — never uses banned wording", () => {
@@ -159,22 +160,13 @@ describe("Hero — interaction", () => {
     expect(screen.getByRole("button", { name: /Собрать сайт/ })).not.toBeDisabled();
   });
 
-  it("clicking the photo-link opens SubmitModal in photo mode (canon 0.3.0)", () => {
+  it("photo affordance lives in the input placeholder (canon 0.7.2)", () => {
     render(<Hero />);
-    // SubmitModal closed initially — canon's S3_Step1_Photo heading
-    // «Загрузите фото вашего дела» only appears after the trigger.
-    expect(
-      screen.queryByRole("heading", { name: /Покажите ваше дело — соберём из этого сайт/i }),
-    ).not.toBeInTheDocument();
-
-    fireEvent.click(
-      screen.getByRole("button", { name: /Нет ссылки\? Загрузите фото буклета, меню или работ/i }),
-    );
-
-    // Canon SubmitModal opens at Step 1 with photo-mode heading.
-    expect(
-      screen.getByRole("heading", { name: /Покажите ваше дело — соберём из этого сайт/i }),
-    ).toBeInTheDocument();
+    // canon 0.7.2 removed the standalone «Нет ссылки? Загрузите фото…»
+    // link; the photo path is signalled by the single input placeholder
+    // «Вставьте ссылку или загрузите фото» (actual upload via the
+    // SubmitModal link/photo mode-switcher, tested in SubmitModal specs).
+    expect(screen.getByPlaceholderText(/Вставьте ссылку или загрузите фото/i)).toBeInTheDocument();
   });
 });
 

@@ -1,5 +1,80 @@
 # Changelog
 
+## 0.7.2 — Header responsive fix + ChipStrip export + Hero copy · 2026-05-28
+
+> **MINOR / patch.** Only `src/landing/index.tsx` changed vs 0.7.1.
+> Three things: a header responsive fix, the extraction of the Hero
+> «СОБИРАЕМ ИЗ» chips into a standalone `ChipStrip` export, and a Hero
+> абзац-2 copy fix. Ships with a full per-component `DESIGN_SPEC.md`
+> (vendored into `docs/handoff/`).
+
+### Header responsive fix
+
+CTA «Собрать за 2 часа» was clipping in the ~720–1000 px band (desktop
+mode still active by the `<720` threshold, but the logo + menu + CTA row
+overflowed at the fixed 80 px side-padding). Fixed in `StickyHeader`:
+- side padding `80` → `clamp(24px, 4vw, 80px)`
+- menu gap `24` → `clamp(12px, 1.6vw, 24px)`, row `flexWrap: nowrap`,
+  `minWidth: 0`
+- all nav items + CTA get `whiteSpace: nowrap`; CTA gets `flex: 0 0 auto`
+
+Threshold stays single-step (`<720`); a real intermediate breakpoint /
+burger is still deferred.
+
+### New export: `ChipStrip` (+ `SOURCE_ICONS`, `ChipStripItem`)
+
+The Hero «СОБИРАЕМ ИЗ» source-chip strip was extracted from inline
+HeroBlock code into a standalone export from `@samosite/canon/landing`,
+**so consumers can mount it without transcribing canon JSX into
+hand-rolled Tailwind** (the landing/CLAUDE.md rule). `HeroBlock` now
+renders `<ChipStrip mobile={mobile} />` internally.
+
+```tsx
+import { ChipStrip, SOURCE_ICONS, type ChipStripItem } from '@samosite/canon/landing';
+<ChipStrip mobile={false} />   // label «СОБИРАЕМ ИЗ» + source chips
+```
+
+Props: `mobile?`, `label?` (default «СОБИРАЕМ ИЗ», empty hides it),
+`items?` (default `SOURCE_ICONS`), `align?`.
+
+### Hero абзац 2 copy fix
+
+Old абзац 2 «Через 2 часа сайт принимает заявки. Дальше работает сам…»
+duplicated the H1 promise. Replaced with concrete value: «Самосайт
+соберёт сайт со всеми услугами, ценами, отзывами и фото. Тексты напишет
+сам. Когда придут первые посетители, начнёт подсказывать, что поправить
+ради новых заявок» (no bold span).
+
+### Vitrina-side follow-through (this vendoring PR)
+
+The prod Hero is hand-rolled (canon's HeroBlock is non-interactive), so
+the canon copy/structure changes were mirrored by hand into
+`landing/components/Hero.tsx`:
+- абзац 1 + абзац 2 synced to canon 0.7.2 wording (trailing period
+  stripped — canon's runtime pass strips trailing dots from `<p>` too,
+  so this matches the rendered canon output)
+- removed the «Нет ссылки? Загрузите фото…» standalone link (canon
+  DESIGN_SPEC §1 NB — not in canon; photo path stays via the input
+  placeholder + SubmitModal mode-switcher + the SourceDetectionBadge
+  waitlist branch)
+- re-added the «СОБИРАЕМ ИЗ» strip via `<ChipStrip>` import (dual-render
+  for sm: responsive parity) — no transcription
+- `Hero.test.tsx` updated
+
+### Docs
+
+`DESIGN_SPEC.md` (per-component landing spec, source-of-truth values) +
+its 7-point prod-conformance checklist vendored into
+`docs/handoff/DESIGN_SPEC.md`.
+
+### No API/dep change
+
+Token surface, package exports (besides the additive `ChipStrip` named
+export on the existing `./landing` entry), and all other modules are
+unchanged. `tsup.config.ts` keeps the local `dts: false` carry-forward.
+
+---
+
 ## 0.7.1 — Preset architecture + pricing matrix · 2026-05-28
 
 > **MINOR.** Adds a new `@samosite/canon/presets` module and rewrites

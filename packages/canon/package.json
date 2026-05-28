@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.7.1",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.7.1: пресетная архитектура (5 семейств × 16 тем), полная тарифная сетка, синхронизированные цены (Старт бесплатно, платные от 690 ₽), карусель примеров.",
+  "version": "0.7.2",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.7.2: пресетная архитектура (5 семейств × 16 тем), синхронизированные цены, фикс хедера, полный design-spec для экспорта.",
   "type": "module",
   "sideEffects": [
     "*.css"
