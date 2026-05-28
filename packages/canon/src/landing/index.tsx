@@ -1873,12 +1873,12 @@ function MondaySection({ mobile }) {
 const BASE_ITEMS = [
   {
     title: 'Ловит заявки',
-    body: 'Клиент нажал «Записаться» — уведомление падает туда, где вам удобно: в Telegram, MAX, на почту или SMS. Без CRM и без отдельных кабинетов.',
+    body: 'Клиент нажал «Записаться», и уведомление падает туда, где вам удобно: в Telegram, MAX, на почту или SMS. Без CRM и отдельных кабинетов.',
     metric: '4 канала',
     metricNote: 'на выбор',
-    palette: { bg: 'oklch(0.94 0.045 40)', ink: 'oklch(0.42 0.16 35)', stroke: 'oklch(0.85 0.08 40)' },
+    palette: { bg: 'oklch(0.955 0.018 60)', ink: VT.accentInk, stroke: VT.line },
     icon: (
-      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 64 64" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="10" y="14" width="44" height="36" rx="5"/>
         <path d="M10 22 L32 36 L54 22"/>
       </svg>
@@ -1886,24 +1886,24 @@ const BASE_ITEMS = [
   },
   {
     title: 'Отбирает отзывы',
-    body: 'Читает все отзывы из источника. На сайт ставит 4–6 самых тёплых и конкретных. Появился отзыв сильнее — заменит сам.',
+    body: 'Читает все отзывы из источника, на сайт ставит 4–6 самых тёплых и конкретных. Придёт отзыв сильнее прежних — заменит сам.',
     metric: '4–6',
     metricNote: 'лучших в неделю',
-    palette: { bg: 'oklch(0.94 0.045 80)', ink: 'oklch(0.42 0.13 70)', stroke: 'oklch(0.86 0.08 80)' },
+    palette: { bg: 'oklch(0.955 0.018 60)', ink: VT.accentInk, stroke: VT.line },
     icon: (
-      <svg viewBox="0 0 64 64" width="36" height="36" fill="currentColor">
+      <svg viewBox="0 0 64 64" width="32" height="32" fill="currentColor">
         <path d="M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z"/>
       </svg>
     ),
   },
   {
-    title: 'Попадает в поиск',
-    body: 'Сразу в индексе Яндекса и Google. Защищённое соединение, разметка для карт и сниппетов. Работает из коробки.',
+    title: 'Готов к поиску',
+    body: 'Самосайт всё настраивает для Яндекса и Google: защищённое соединение, карта сайта, разметка цен и часов. Дальше поисковики подхватывают сайт сами, обычно за несколько дней.',
     metric: 'Яндекс',
     metricNote: '+ Google',
-    palette: { bg: 'oklch(0.94 0.04 145)', ink: 'oklch(0.40 0.11 145)', stroke: 'oklch(0.86 0.07 145)' },
+    palette: { bg: 'oklch(0.955 0.018 60)', ink: VT.accentInk, stroke: VT.line },
     icon: (
-      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 64 64" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="27" cy="27" r="14"/>
         <path d="M38 38 L54 54"/>
       </svg>
@@ -1911,12 +1911,12 @@ const BASE_ITEMS = [
   },
   {
     title: 'Отсекает спам',
-    body: 'Антибот-проверка, которую живой человек не замечает. Боты получают тишину. До вас доходят только настоящие заявки.',
+    body: 'Антибот-проверка, которую живой человек не замечает. Боты упираются в стену, до вас доходят только настоящие заявки.',
     metric: '0',
     metricNote: 'ботов в заявках',
-    palette: { bg: 'oklch(0.94 0.04 270)', ink: 'oklch(0.42 0.15 270)', stroke: 'oklch(0.85 0.08 270)' },
+    palette: { bg: 'oklch(0.955 0.018 60)', ink: VT.accentInk, stroke: VT.line },
     icon: (
-      <svg viewBox="0 0 64 64" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 64 64" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z"/>
         <path d="M22 32 L29 39 L42 24"/>
       </svg>
@@ -1930,7 +1930,7 @@ function BaseWorkSection({ mobile }) {
       <div style={{ textAlign: 'center' }}>
         <H2 mobile={mobile}>Базовая работа — тоже на нём</H2>
         <Sub mobile={mobile} maxWidth={720}>
-          Это то, что на других сайтах надо настраивать руками или платить SMM-щику. Здесь работает из коробки, без вашего участия.
+          Это то, что на других сайтах надо настраивать руками или платить SMM-щику. Здесь работает из коробки.
         </Sub>
       </div>
 
@@ -1960,20 +1960,20 @@ function BaseWorkSection({ mobile }) {
                 display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16,
               }}>
                 <div style={{
-                  flex: '0 0 auto', width: mobile ? 56 : 64, height: mobile ? 56 : 64,
-                  borderRadius: 16,
+                  flex: '0 0 auto', width: mobile ? 52 : 58, height: mobile ? 52 : 58,
+                  borderRadius: 14,
                   background: VT.white, color: pal.ink,
-                  border: `2px solid ${pal.ink}`,
+                  border: `1px solid ${VT.line}`,
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `3px 3px 0 0 ${pal.ink}`,
+                  boxShadow: '0 1px 2px rgba(40,28,18,0.04)',
                 }}>{item.icon}</div>
                 <div style={{
                   textAlign: 'right', minWidth: 0,
                   display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0,
                 }}>
                   <div style={{
-                    fontSize: mobile ? 26 : 34, fontWeight: 800,
-                    letterSpacing: '-0.035em', lineHeight: 1, color: pal.ink,
+                    fontSize: mobile ? 22 : 28, fontWeight: 700,
+                    letterSpacing: '-0.03em', lineHeight: 1, color: pal.ink,
                   }}>{item.metric}</div>
                   <div style={{
                     marginTop: 4,

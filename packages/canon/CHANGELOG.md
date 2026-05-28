@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.7.3 — BaseWorkSection copy + restrained visual · 2026-05-28
+
+> **PATCH.** Only `src/landing/index.tsx` changed vs 0.7.2 — a single
+> section (`BaseWorkSection`, block 6 «Базовая работа — тоже на нём»).
+> Pure canon-import on our side (`app/page.tsx` renders it via
+> `ResponsiveCanonSection id="base-work"`), so drift = 0 by construction
+> — no hand-rolled reconciliation, no Hero/test changes.
+
+### Copy
+
+Subheading + all 4 cards reworded. Card «Попадает в поиск» renamed to
+**«Готов к поиску»** with a new body (setup for Yandex + Google, sitemap,
+price/hours markup; search engines pick it up themselves within a few
+days). The other 3 cards got tightened wording.
+
+### Visual — dialled back to canon restraint
+
+Removed the «cartoonish» treatment from block 6:
+- icon offset-shadow `3px 3px 0 0` (hard) → `0 1px 2px` (soft)
+- 4 bright palettes (orange/yellow/green/purple) → 1 muted warm
+- icon frame `2px solid pal.ink` → `1px solid line`
+- icon stroke `2.6` → `2.2`, size 36 → 32, container 64 → 58
+- metric `34px/800` → `28px/700`
+
+### Vitrina side
+
+`cp` of `src/landing/index.tsx` + package.json 0.7.2 → 0.7.3 + dist
+rebuild (only landing+index chunks change). No consumer code touched —
+BaseWork was already a drift-0 canon-import. tsup keeps local `dts:false`.
+
+---
+
 ## 0.7.2 — Header responsive fix + ChipStrip export + Hero copy · 2026-05-28
 
 > **MINOR / patch.** Only `src/landing/index.tsx` changed vs 0.7.1.
