@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Самосайт — соберём за 2 часа сайт, который ловит заявки",
     description:
-      "ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт или фото. Для первой сотни — 490 ₽/мес навсегда.",
+      "ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт или фото. Тариф «Старт» бесплатно, платные от 690 ₽/мес.",
   },
   robots: { index: true, follow: true },
   // Y.Webmaster ownership verification. Conditionally included — when
@@ -125,7 +125,12 @@ const JSON_LD = {
       name: "Самосайт",
       operatingSystem: "Web",
       applicationCategory: "BusinessApplication",
-      offers: { "@type": "Offer", price: "990", priceCurrency: "RUB" },
+      // canon 0.7.x: freemium 5-tier model — «Старт» free forever, paid
+      // from 690 ₽/мес. Offer price reflects the free entry tier (0) to
+      // match the advertised landing (hero + PricingMatrix lead with
+      // «бесплатно навсегда»). Was stale single-plan "990". Backend
+      // ЮKassa reconciliation tracked in CANON_SWAP_PLAN.md §Pricing model.
+      offers: { "@type": "Offer", price: "0", priceCurrency: "RUB" },
       url: SITE_URL,
     },
   ],

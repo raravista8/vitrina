@@ -15,7 +15,7 @@
  *   7. Sources     — «у меня X, подойдёт?»            ← canon · NEW
  *   8. Ownership   — control panel demo               ← canon
  *   9. Analytics   — demo charts (substrate for Monday) ← canon
- *  10. Pricing     — 490 ₽ for first 100              ← canon
+ *  10. Pricing     — 5-tier PricingMatrix (from 690 ₽) ← canon
  *  11. FAQ         — «про рекомендации» + остальные   ← canon
  *  12. FinalCta    — 3-step ladder                    ← canon · NEW
  *  13. Footer      — © Самосайт                       ← LOCAL
@@ -32,10 +32,11 @@
  * BOTH mobile + desktop variants — Tailwind `sm:` media query
  * picks one. ~80 KB extra HTML, ISR-cached for 60 s.
  *
- * Pricing note (per TZ §5): «490 ₽ для первой сотни — навсегда»
- * is a FRONT-END promise only. Backend (ЮKassa) charges 990 ₽.
- * Cohort enforcement / manual reconciliation is out of scope
- * for this release.
+ * Pricing note (canon 0.7.x): the 5-tier `PricingMatrix` (Старт 0 ₽,
+ * платные 690 / 1490 / 2990 / 6990) is a FRONT-END model only. Backend
+ * (ЮKassa) still charges a single 990 ₽ plan. Plan-aware billing +
+ * reconciliation tracked in `docs/handoff/CANON_SWAP_PLAN.md`
+ * §«Pricing model» — out of scope for this release.
  *
  * See also:
  *   - `docs/handoff/CANON_PACKAGE_TZ.md` — canon-as-package spec
