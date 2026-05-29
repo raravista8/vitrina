@@ -1325,7 +1325,7 @@ function HeroBlock({ mobile }) {
       color: VT.inkSoft,
       margin: mobile ? "10px 0 0" : "12px auto 0",
       maxWidth: mobile ? "100%" : 860,
-      textWrap: "pretty"
+      textWrap: "balance"
     }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u0439\u0442 \u0441\u043E \u0432\u0441\u0435\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0444\u043E\u0442\u043E. \u0422\u0435\u043A\u0441\u0442\u044B \u043D\u0430\u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C. \u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0443\u0442 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438, \u043D\u0430\u0447\u043D\u0451\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C, \u0447\u0442\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0434\u0438 \u043D\u043E\u0432\u044B\u0445 \u0437\u0430\u044F\u0432\u043E\u043A." }),
     /* @__PURE__ */ jsxs3("div", { className: "ss-hero-pill", style: {
       marginTop: mobile ? 22 : 32,
@@ -3930,10 +3930,19 @@ function StickyHeader({ mobile = false }) {
     boxSizing: "border-box"
   }, children: [
     /* @__PURE__ */ jsx3("style", { children: `
-        .ss-sticky-header a.ss-nav-link { color: ${VT.inkSoft}; text-decoration: none; padding: 6px 2px; transition: color .15s ease; }
-        .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
-        .ss-sticky-header a.ss-login-link { color: ${VT.inkSoft}; text-decoration: none; border-radius: 999px; }
-        .ss-sticky-header a.ss-login-link:hover { color: ${VT.ink}; background: ${VT.bgSoft}; }
+        /* \u0415\u0434\u0438\u043D\u044B\u0439 hover \u0434\u043B\u044F \u0432\u0441\u0435\u0445 \u043F\u0443\u043D\u043A\u0442\u043E\u0432 \u043C\u0435\u043D\u044E (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \xAB\u0412\u043E\u0439\u0442\u0438\xBB).
+           !important \u2014 \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0435\u0436\u0438\u0432\u0430\u043B\u043E \u044D\u043A\u0441\u043F\u043E\u0440\u0442/\u0437\u0430\u043F\u0435\u043A\u0430\u043D\u0438\u0435
+           \u0432\u044B\u0447\u0438\u0441\u043B\u0435\u043D\u043D\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439 \u0438\u043D\u043B\u0430\u0439\u043D\u043E\u043C (\u0438\u043D\u043B\u0430\u0439\u043D\u043E\u0432\u044B\u0439 color/background
+           \u043F\u043E \u0441\u043F\u0435\u0446\u0438\u0444\u0438\u0447\u043D\u043E\u0441\u0442\u0438 \u0431\u044C\u0451\u0442 \u043F\u0440\u0430\u0432\u0438\u043B\u043E \u043A\u043B\u0430\u0441\u0441\u0430). */
+        .ss-sticky-header a.ss-nav-link {
+          color: ${VT.inkSoft}; text-decoration: none;
+          padding: 6px 12px; border-radius: 999px;
+          transition: color .15s ease, background .15s ease;
+        }
+        .ss-sticky-header a.ss-nav-link:hover {
+          color: ${VT.ink} !important;
+          background: ${VT.bgSoft} !important;
+        }
       ` }),
     /* @__PURE__ */ jsxs3("div", { style: {
       display: "flex",
@@ -3946,10 +3955,9 @@ function StickyHeader({ mobile = false }) {
         /* @__PURE__ */ jsx3("a", { href: "#examples", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
         /* @__PURE__ */ jsx3("a", { href: "#pricing", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u0426\u0435\u043D\u0430" }),
         /* @__PURE__ */ jsx3("a", { href: "#faq", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-login-link", style: {
+        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-nav-link", style: {
           fontWeight: 500,
           fontSize: 14,
-          padding: "8px 16px",
           whiteSpace: "nowrap"
         }, children: "\u0412\u043E\u0439\u0442\u0438" }),
         /* @__PURE__ */ jsxs3("a", { href: "#hero", style: primaryStyle, children: [
@@ -3958,7 +3966,7 @@ function StickyHeader({ mobile = false }) {
           /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
         ] })
       ] }) : /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-login-link", style: { fontWeight: 500, fontSize: 13.5, padding: "8px 12px" }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+        /* @__PURE__ */ jsx3("a", { href: "#login", className: "ss-nav-link", style: { fontWeight: 500, fontSize: 13.5 }, children: "\u0412\u043E\u0439\u0442\u0438" }),
         /* @__PURE__ */ jsxs3("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
           " ",

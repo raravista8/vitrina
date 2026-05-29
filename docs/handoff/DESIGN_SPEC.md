@@ -126,13 +126,13 @@ import { ChipStrip, SOURCE_ICONS, type ChipStripItem } from '@samosite/canon/lan
 Внутренний ряд: `flex, align center, justify space-between, gap 16`.
 
 - **Лого** (`BrandMark`): размер `mobile 22 / desktop 26`, `fontSize 18 / 20`.
-- **Десктоп-меню:** `flex, align center, gap clamp(12px, 1.6vw, 24px), fontSize 14, flexWrap nowrap`. Пункты (все `whiteSpace nowrap`): **Примеры** (`#examples`), **Цена** (`#pricing`), **Помощь** (`#faq`), **Войти** (`#login`, `padding 8px 16px`).
+- **Десктоп-меню:** `flex, align center, gap clamp(12px, 1.6vw, 24px), fontSize 14, flexWrap nowrap`. Пункты (все `whiteSpace nowrap`, все класс `.ss-nav-link`): **Примеры** (`#examples`), **Цена** (`#pricing`), **Помощь** (`#faq`), **Войти** (`#login`). 0.9.3: у «Войти» убран инлайн-`padding` — паддинг единый из класса (`6px 12px`).
   - ❌ удалены пункты «Цикл 4 сам» (`#cycle`) и «Понедельник» (`#monday`).
 - **CTA** (`#hero`): `background accent`, белый, `fontWeight 600`, `borderRadius 999`, `whiteSpace nowrap`, `flex 0 0 auto`. Десктоп: `padding 10px 20px, fontSize 14`, `boxShadow 0 6px 16px -8px rgba(120,60,30,0.4)`, лейбл «Собрать за 2 часа». Мобайл: `padding 8px 16px, fontSize 13.5`, лейбл «Собрать». Стрелка `→` после текста.
 
-**Ховеры (CSS):**
-- `.ss-nav-link`: цвет `inkSoft`, `padding 6px 2px`, `transition color .15s ease`; hover → `ink`.
-- `.ss-login-link`: hover → цвет `ink`, фон `bgSoft`, `borderRadius 999`.
+**Ховеры (CSS) — 0.9.3 унифицированы:**
+- `.ss-nav-link` (все пункты, включая «Войти»): цвет `inkSoft`, `padding 6px 12px`, `borderRadius 999`, `transition color/background .15s ease`; hover → цвет `ink` + фон `bgSoft`, оба с `!important` (чтобы ховер переживал инлайн-запекание при экспорте артборда).
+- ❌ Класс `.ss-login-link` удалён в 0.9.3 — «Войти» использует общий `.ss-nav-link`.
 
 **Мобайл:** меню сворачивается (показывается лого + CTA «Собрать»). Бургер-меню отсутствует — пункты на мобиле не показываются в ряду.
 

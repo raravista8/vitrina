@@ -114,7 +114,7 @@ import {
         <p style={{
               fontSize: mobile ? 16.5 : 20, lineHeight: 1.5, color: VT.inkSoft,
               margin: mobile ? '10px 0 0' : '12px auto 0',
-              maxWidth: mobile ? '100%' : 860, textWrap: 'pretty'
+              maxWidth: mobile ? '100%' : 860, textWrap: 'balance'
             }}>
           Самосайт соберёт сайт со всеми услугами, ценами, отзывами и фото. Тексты напишет сам. Когда придут первые посетители, начнёт подсказывать, что поправить ради новых заявок.
         </p>
@@ -2515,10 +2515,19 @@ function StickyHeader({ mobile = false }) {
       boxSizing: 'border-box',
     }}>
       <style>{`
-        .ss-sticky-header a.ss-nav-link { color: ${VT.inkSoft}; text-decoration: none; padding: 6px 2px; transition: color .15s ease; }
-        .ss-sticky-header a.ss-nav-link:hover { color: ${VT.ink}; }
-        .ss-sticky-header a.ss-login-link { color: ${VT.inkSoft}; text-decoration: none; border-radius: 999px; }
-        .ss-sticky-header a.ss-login-link:hover { color: ${VT.ink}; background: ${VT.bgSoft}; }
+        /* Единый hover для всех пунктов меню (включая «Войти»).
+           !important — чтобы наведение переживало экспорт/запекание
+           вычисленных стилей инлайном (инлайновый color/background
+           по специфичности бьёт правило класса). */
+        .ss-sticky-header a.ss-nav-link {
+          color: ${VT.inkSoft}; text-decoration: none;
+          padding: 6px 12px; border-radius: 999px;
+          transition: color .15s ease, background .15s ease;
+        }
+        .ss-sticky-header a.ss-nav-link:hover {
+          color: ${VT.ink} !important;
+          background: ${VT.bgSoft} !important;
+        }
       `}</style>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
@@ -2531,14 +2540,14 @@ function StickyHeader({ mobile = false }) {
             <a href="#examples" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Примеры</a>
             <a href="#pricing" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Цена</a>
             <a href="#faq" className="ss-nav-link" style={{ whiteSpace: 'nowrap' }}>Помощь</a>
-            <a href="#login" className="ss-login-link" style={{
-              fontWeight: 500, fontSize: 14, padding: '8px 16px', whiteSpace: 'nowrap',
+            <a href="#login" className="ss-nav-link" style={{
+              fontWeight: 500, fontSize: 14, whiteSpace: 'nowrap',
             }}>Войти</a>
             <a href="#hero" style={primaryStyle}>{primaryLabel} <span aria-hidden="true">→</span></a>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <a href="#login" className="ss-login-link" style={{ fontWeight: 500, fontSize: 13.5, padding: '8px 12px' }}>Войти</a>
+            <a href="#login" className="ss-nav-link" style={{ fontWeight: 500, fontSize: 13.5 }}>Войти</a>
             <a href="#hero" style={primaryStyle}>{primaryLabel} <span aria-hidden="true">→</span></a>
           </div>
         )}

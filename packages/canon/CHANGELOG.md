@@ -1,5 +1,56 @@
 # Changelog
 
+## 0.9.3 — StickyHeader: единый hover + экспорт-устойчивость · HeroBlock: orphan-fix · 2026-05-29
+
+> **PATCH.** Только `src/landing/index.tsx` (`StickyHeader` + `HeroBlock`). Публичные экспорты, типы, пропсы и разметка без изменений. Меняются CSS-ховеры навигации и `text-wrap` второго абзаца героя. Drop-in на прод.
+
+### Зачем
+
+Две проблемы в шапке:
+1. **Разный hover у пунктов меню.** У «Примеры / Цена / Помощь» при наведении менялся только цвет, а у «Войти» — цвет **и** фон. Выглядело несогласованно.
+2. **Hover не переживал экспорт артборда.** Экспорт canvas-артборда (`dcExport` → Download HTML/PNG) запекает вычисленные стили инлайном в каждый элемент. Инлайновый `color`/`background` по специфичности побеждает правило `.ss-nav-link:hover { … }` из `<style>`, поэтому в выгруженном файле наведение не работало.
+
+### Что изменилось — `StickyHeader`
+
+- **Единый класс `ss-nav-link` для всех пунктов**, включая «Войти». Класс `ss-login-link` удалён — «Войти» теперь использует тот же hover, что и остальные пункты (затемнение текста до `ink` + мягкая фоновая пилюля `bgSoft`, `border-radius: 999px`).
+- **Hover-правила с `!important`** (`color` и `background`) — чтобы наведение перебивало инлайновые вычисленные стили, которые запекает экспортер. Теперь hover корректно работает и в живом превью, и в выгруженном HTML.
+- Паддинг пунктов выровнен: `6px 12px` на всех (раньше у nav-ссылок было `6px 2px`, у «Войти» — `8px 16px`); inline-`padding` у «Войти» убран.
+
+### Что изменилось — `HeroBlock`
+
+- Второй абзац подзаголовка («Самосайт соберёт сайт…») переведён с `text-wrap: pretty` на **`text-wrap: balance`** — раньше фрагмент «новых заявок» висел сиротой на отдельной последней строке. Теперь строки выравниваются по длине, висячий хвост убран. Текст и стили не меняются.
+
+### Визуальные дельты
+
+Шапка — фоновая пилюля при наведении теперь появляется у всех пунктов одинаково. Геометрия ряда и высоты артбордов не меняются. Токены без изменений.
+
+### Migration
+
+```bash
+npm i @samosite/canon@0.9.3
+npm run build
+```
+
+Drop-in over 0.9.2. Никаких правок пропсов/импортов. Если где-то в форке встречается селектор `.ss-login-link` — он больше не используется в каноне (замените на `.ss-nav-link`).
+
+### Vitrina-side (this vendoring PR)
+
+`cp src/landing/index.tsx` + package.json 0.9.2→0.9.3 + dist rebuild
+(landing + index chunks; presets is bundled into landing so its chunk is
+re-emitted too). tsup keeps the local `dts: false` carry-forward.
+
+**Consumer reconciliation (`landing/components/SiteHeader.tsx`).** Our
+DOM-mutation wrapper repoints «Войти» → `/login` post-render. It keyed off
+`a.ss-login-link`, which 0.9.3 **removed** (every nav item now shares
+`.ss-nav-link`). Switched the selector to `a[href="#login"]` — a stable,
+unique hook (only «Войти» uses `#login`, unchanged across 0.9.x) that
+won't also grab Примеры/Цена/Помощь. The `.ss-sticky-header` host hook and
+the `a[href="#hero"]` brand/CTA logic are untouched by 0.9.3 and keep
+working. Landing markup, exports and props are otherwise unchanged — pure
+canon-import, drift = 0.
+
+---
+
 ## 0.9.2 — Examples previews → full multi-block sites · 2026-05-29
 
 > **PATCH.** Only `src/presets/index.tsx`. Public exports, types and API
