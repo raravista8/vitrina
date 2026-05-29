@@ -22,10 +22,21 @@
 
 import { AdminDashboard } from "@samosite/canon/admin-core";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AdminChrome } from "@/components/admin/AdminChrome";
-import { adminRequest, type DashboardData } from "@/lib/admin-api";
+import { DashboardPendingPanel } from "@/components/admin/DashboardPendingPanel";
+import { adminRequest, type AppRow, type DashboardData } from "@/lib/admin-api";
+
+interface AppsListData {
+  total: number;
+  items: AppRow[];
+  limit: number;
+  offset: number;
+}
+
+/** Top-N pending apps shown in canon's "ТОП-5 PENDING" slot. */
+const PENDING_PREVIEW_LIMIT = 5;
 
 type Section = "dashboard" | "apps" | "sites" | "leads" | "feedback" | "waitlist" | "settings";
 
@@ -43,30 +54,60 @@ export default function AdminHomePage() {
 
 function DashboardScreen() {
   const router = useRouter();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // KPI tiles + 14-day trend (canon reads these from `data`).
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
+  // Real "ТОП-5 PENDING" rows — canon hard-codes this slot, so we fetch
+  // and inject it ourselves (see DashboardPendingPanel).
+  const [pending, setPending] = useState<AppRow[] | null>(null);
+  const [pendingError, setPendingError] = useState<string | null>(null);
+  const [pendingLoading, setPendingLoading] = useState(true);
+
+  const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError(null);
     const result = await adminRequest<DashboardData>("/dashboard");
     setLoading(false);
-    if (result.ok) {
-      setData(result.data);
-    } else {
-      setError(result.error);
-    }
+    if (result.ok) setData(result.data);
+    else setError(result.error);
   }, []);
+
+  const loadPending = useCallback(async () => {
+    setPendingLoading(true);
+    setPendingError(null);
+    const result = await adminRequest<AppsListData>("/apps", {
+      query: { status: "pending", limit: PENDING_PREVIEW_LIMIT, offset: 0 },
+    });
+    setPendingLoading(false);
+    if (result.ok) setPending(result.data.items);
+    else setPendingError(result.error);
+  }, []);
+
+  const refresh = useCallback(() => {
+    void loadDashboard();
+    void loadPending();
+  }, [loadDashboard, loadPending]);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const result = await adminRequest<DashboardData>("/dashboard");
+      const [dash, apps] = await Promise.all([
+        adminRequest<DashboardData>("/dashboard"),
+        adminRequest<AppsListData>("/apps", {
+          query: { status: "pending", limit: PENDING_PREVIEW_LIMIT, offset: 0 },
+        }),
+      ]);
       if (cancelled) return;
       setLoading(false);
-      if (result.ok) setData(result.data);
-      else setError(result.error);
+      if (dash.ok) setData(dash.data);
+      else setError(dash.error);
+      setPendingLoading(false);
+      if (apps.ok) setPending(apps.data.items);
+      else setPendingError(apps.error);
     })();
     return () => {
       cancelled = true;
@@ -74,13 +115,23 @@ function DashboardScreen() {
   }, []);
 
   return (
-    <AdminDashboard
-      _embed={false}
-      data={data ?? undefined}
-      loading={loading}
-      error={error}
-      onNavigate={(section: Section) => router.push(sectionToPath(section))}
-      onRefresh={load}
-    />
+    <div ref={wrapperRef} data-admin-dashboard>
+      <AdminDashboard
+        _embed={false}
+        data={data ?? undefined}
+        loading={loading}
+        error={error}
+        onNavigate={(section: Section) => router.push(sectionToPath(section))}
+        onRefresh={refresh}
+      />
+      <DashboardPendingPanel
+        rootRef={wrapperRef}
+        items={pending}
+        loading={pendingLoading}
+        error={pendingError}
+        onSeeAll={() => router.push("/admin/apps")}
+        onRowClick={(appId: string) => router.push(`/admin/apps/${appId}`)}
+      />
+    </div>
   );
 }
