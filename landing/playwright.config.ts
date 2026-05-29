@@ -41,7 +41,13 @@ const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
 
 export default defineConfig({
   testDir: "./tests/visual",
-  timeout: 30_000,
+  /* 60s (was 30s): the suite runs serially (workers:1), so one slow
+     navigation under CI load shouldn't trip the per-test budget. Happy path
+     is ~1-3s/test, so this is headroom, not a slowdown. Pairs with the
+     `domcontentloaded` navigations in the specs so we never block on a live
+     Yandex Maps iframe / font CDN going idle. retries stays 0 — a flake here
+     should be a real layout shift to fix, not noise to paper over. */
+  timeout: 60_000,
   fullyParallel: false,
   workers: 1,
   retries: 0,

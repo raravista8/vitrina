@@ -124,7 +124,16 @@ test.describe("customer-site visual regression", () => {
       const widthMatch = testInfo.project.name.match(/-(\d+)$/);
       const viewport = (widthMatch ? widthMatch[1] : "390") as ViewportName;
 
-      await page.goto(BASE, { waitUntil: "networkidle" });
+      /* `domcontentloaded`, NOT `networkidle`: the customer fixture embeds a
+         live Yandex Maps widget iframe (booking section, index.html.j2) plus
+         Google Fonts CDN links. The map streams tiles/telemetry continuously,
+         so the page can never reach `networkidle` (no requests for 500ms).
+         Under CI network jitter that made `page.goto` consume the entire
+         30s test timeout and flake on a random section each run (#185 Reviews
+         @1440, #186 Social bar @768 — a different test each time = a random
+         bad-network window, not a real diff). `domcontentloaded` resolves on
+         HTML parse; the per-section `toBeVisible` below is the real gate. */
+      await page.goto(BASE, { waitUntil: "domcontentloaded" });
       await page.evaluate(() => document.fonts.ready);
 
       const locator = page.locator(`[data-section="${section.dataSection}"]`);

@@ -52,7 +52,13 @@ test.describe("landing visual regression", () => {
     test(`${section.label}`, async ({ page }, testInfo) => {
       const viewport = viewportNameFromProject(testInfo.project.name);
 
-      await page.goto("/", { waitUntil: "networkidle" });
+      /* `domcontentloaded`, NOT `networkidle`: a long-lived connection from
+         the prod server (or any late analytics/font beacon) can keep the page
+         from reaching `networkidle` (no requests for 500ms), making
+         `page.goto` burn the whole test timeout under CI load — the same
+         brittle pattern that flaked customer.spec.ts. The `toBeVisible` gate
+         plus `document.fonts.ready` below give us the determinism we need. */
+      await page.goto("/", { waitUntil: "domcontentloaded" });
       /* Belt-and-braces: wait for fonts before screenshotting, otherwise
          first paint can use Times-fallback for ~80ms. */
       await page.evaluate(() => document.fonts.ready);
