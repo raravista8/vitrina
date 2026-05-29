@@ -103,6 +103,28 @@ def _envelope_ok(data: Any) -> dict[str, Any]:
     return {"ok": True, "data": data}
 
 
+def _issue_admin_session_cookie(
+    *, response: Response, request: Request, store: AdminSessionStore, session_id: str
+) -> None:
+    """Set the signed ``admin_session`` cookie on the response.
+
+    ``Path=/`` so the Next.js admin (under ``/admin/*``) AND the JSON API
+    (``/admin/api/*``) both receive the cookie — the same browser treats them
+    as one origin in dev (Next dev proxies ``/admin`` → backend) and prod
+    (Caddy reverse-proxies both surfaces). Shared by the password-only login
+    branch and the post-2FA branch so both issue an identical cookie.
+    """
+    response.set_cookie(
+        key=ADMIN_SESSION_COOKIE,
+        value=store.sign_cookie(session_id),
+        max_age=ADMIN_SESSION_TTL_SECONDS,
+        httponly=True,
+        secure=request.url.scheme == "https",
+        samesite="strict",
+        path="/",
+    )
+
+
 class _LoginRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     username: str = Field(min_length=1, max_length=64)
@@ -124,17 +146,32 @@ class _LoginTotpRequest(BaseModel):
 async def admin_api_login(
     body: _LoginRequest,
     request: Request,
+    response: Response,
     session: Annotated[AsyncSession, Depends(get_session)],
     challenges: Annotated[LoginChallengeStore, Depends(get_login_challenge_store)],
+    store: Annotated[AdminSessionStore, Depends(get_admin_session_store)],
     _ratelimit: Annotated[None, Depends(admin_login_rate_limiter)],
 ) -> dict[str, Any]:
-    """Step 1: username + password → challenge_id (5min TTL).
+    """Step 1: username + password.
 
     On invalid credentials returns 401 with code ``invalid_credentials``
     — identical message for unknown-username and bad-password so
     timing-based enumeration is harder. Rate limit shared with the
     Jinja /admin/login route: 5/15min per IP, then 1h block.
+
+    Two outcomes depending on ``ADMIN_2FA_REQUIRED``:
+
+      - **true (default)** → mint a 5-minute challenge and return
+        ``{"challenge_id", "expires_in"}``; the client must complete step 2
+        (``/login/totp`` or ``/login/backup``).
+      - **false** → password alone authenticates: set the ``admin_session``
+        cookie here and return ``{"authenticated": true}`` (no challenge_id),
+        so the client skips step 2. The TOTP secret + backup codes stay in
+        the DB untouched — flipping the flag back restores the 2-step flow
+        with zero code change.
     """
+    from app.config import get_settings
+
     log = get_logger("admin.api.login")
     ip = get_client_ip(request)
 
@@ -147,6 +184,16 @@ async def admin_api_login(
     if creds is None or not verify_password(body.password, creds.password_hash):
         log.info("admin_login_step1_failed", ip=ip, reason="invalid_credentials")
         raise HTTPException(status_code=401, detail="invalid_credentials")
+
+    if not get_settings().admin_2fa_required:
+        creds.last_login_at = datetime.now(UTC)
+        record = await store.create(creds.id)
+        await session.commit()
+        _issue_admin_session_cookie(
+            response=response, request=request, store=store, session_id=record.session_id
+        )
+        log.info("admin_login_success", ip=ip, admin_id=str(creds.id), method="password_only")
+        return _envelope_ok({"authenticated": True})
 
     challenge_id, ttl = await challenges.mint(creds.id)
     log.info("admin_login_step1_ok", ip=ip, admin_id=str(creds.id))
@@ -240,18 +287,8 @@ async def _consume_challenge_with_code(
     await session.commit()
     log.info("admin_login_success", ip=ip, admin_id=str(record.admin_id), method=kind)
 
-    response.set_cookie(
-        key=ADMIN_SESSION_COOKIE,
-        value=store.sign_cookie(record.session_id),
-        max_age=ADMIN_SESSION_TTL_SECONDS,
-        httponly=True,
-        secure=request.url.scheme == "https",
-        samesite="strict",
-        # Path=/ so the Next.js admin (under /admin/*) AND the JSON
-        # API (/admin/api/*) both receive the cookie — same browser
-        # treats them as one origin in dev (Next dev proxies /admin
-        # → backend) and prod (Caddy reverse-proxies both surfaces).
-        path="/",
+    _issue_admin_session_cookie(
+        response=response, request=request, store=store, session_id=record.session_id
     )
     return _envelope_ok({"backup_codes_remaining": len(creds.backup_codes_hashes)})
 

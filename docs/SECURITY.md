@@ -529,6 +529,7 @@ Authorization model: **RBAC with ownership-based ABAC overlay** (end-user can do
 | Manual restore drill раз в месяц, не еженедельно | Solo founder time constraint | When team ≥2 |
 | Pen-test postponed to pre-public-launch | Bootstrap budget | At first 10 paying users |
 | **Serial trial signups (один человек создаёт N free-аккаунтов без карты)** | По COPY.md trial = «без карты при регистрации» — это и есть USP, защита от serial-abuse через card не подходит. Митигейшн в MVP: rate-limit по contact_value (одна заявка = один email/phone/TG/MAX hash); manual review founder'ом первых 50 заявок | When >10% подозрительных signups OR cost-per-trial exceeds 100₽ |
+| **Admin 2FA отключаемо флагом `ADMIN_2FA_REQUIRED` (на проде = `false` в pre-launch)** | Founder проверяет гипотезу «нужен ли второй фактор кому-то на этом этапе» при единственном админе (он сам). Флаг **default `true`** (secure); на проде временно `false` → вход только по bcrypt-паролю (cost=12). Остаётся в силе: 5/15min IP rate-limit + 1h lockout (T7.1), signed httpOnly+Secure+SameSite=Strict session-cookie (4h TTL), отдельный сильный пароль. TOTP-секрет + backup-коды **остаются** в БД — возврат к 2FA = `ADMIN_2FA_REQUIRED=true` + recreate api, без миграций и потери секретов. Формально временно ослабляет FR-060 / A07 на одном эндпоинте. | **До публичного запуска формы лидов** (или при ≥2 админах, или при первом подозрении на компрометацию пароля) — вернуть `true`. Pre-launch checklist §10 пункт «Admin за паролем+TOTP» — обязательный gate. |
 
 ---
 

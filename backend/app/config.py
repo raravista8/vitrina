@@ -158,6 +158,16 @@ class Settings(BaseSettings):
     # validator below refuses to start without it.
     session_secret_key: str = "dev-only-not-secure"  # noqa: S105 # pragma: allowlist secret
 
+    # Gate the admin login's second factor. Default True = secure (password
+    # → TOTP/backup, the FR-060 contract). Set ADMIN_2FA_REQUIRED=false to
+    # collapse login to password-only — a single env-var kill-switch for the
+    # founder's pre-launch "does anyone even need 2FA" hypothesis. Reversible:
+    # flip back to true and the 2-step flow returns with no code change. The
+    # TOTP secret + backup codes stay provisioned in the DB the whole time.
+    # NB: this only governs the second factor — bcrypt password, the 5/15min
+    # IP rate-limit and the signed-cookie session are unchanged either way.
+    admin_2fa_required: bool = True
+
     # ---- Feature flags -----------------------------------------------------
     feature_max_bot: bool = False
     feature_auto_sync: bool = False
