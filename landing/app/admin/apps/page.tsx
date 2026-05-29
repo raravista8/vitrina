@@ -59,7 +59,9 @@ export default function AppsListPage() {
 
 function AppsListScreen() {
   const router = useRouter();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("pending");
+  // Default to «Все» so the moderation queue opens showing every application
+  // (pending + approved + rejected), not just pending.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [offset, setOffset] = useState(0);
   const [data, setData] = useState<AppsListData | null>(null);
   const [error, setError] = useState<string | null>(null);
