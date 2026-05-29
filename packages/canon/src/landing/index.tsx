@@ -12,13 +12,8 @@ import {
   type Preset, type SlotContent, type Theme,
 } from '../presets';
 
-// ── from landing-v3-a.jsx ──
-// Самосайт · Landing v3 — part A (helpers + blocks 1-2: Hero, Examples)
-// Use tokens from tokens.jsx (VT, BRAND, BrandMark, Btn, IconArrow, IconLink).
-//
-// [vitrina] Upstream 0.8.0 preview→package conversion leaked one stray
-// IIFE opener here; removed it to balance braces so the ESM module builds.
-// Pure de-wrapping, no markup/logic change.
+// ── from landing-v3-a.jsx ── (helpers + blocks 1-2: Hero, Examples)
+// Tokens from ../tokens (VT, BRAND, BrandMark, Btn, IconArrow, IconLink).
 
     // ───────── helpers ─────────
 
@@ -396,10 +391,6 @@ import {
 
     function ExamplesSection({ mobile }) {
       const showcase = samplePresets || [];
-      // [vitrina] Upstream converter emitted `const PresetRenderer =
-      // PresetRenderer;` here (was `window.PresetRenderer` in the preview)
-      // — a self-referential TDZ that crashed SSR. Removed; the JSX below
-      // uses the `PresetRenderer` imported from '../presets' at the top.
       const MiniChrome = PresetMiniChrome;
 
       const ExampleCard = ({ item }) => {

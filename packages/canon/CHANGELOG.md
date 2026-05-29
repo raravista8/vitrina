@@ -1,5 +1,74 @@
 # Changelog
 
+## 0.9.0 — Feedback #9 → vote-first modal · 2026-05-29
+
+> **MINOR.** Over 0.8.0. Screen #9 (feedback) moves from a standalone
+> `/feedback` page to a **modal over any page** (ADR-0009 rev.2). Behaviour
+> and the `/api/feedback` contract change — see
+> `docs/handoff/FEEDBACK_BACKEND.md`. Public landing exports
+> (`SamosaytLandingV3`, all section components) are **unchanged**; only the
+> `customer` module gains an export. This is the canon-vendor step (PR1 of
+> a 3-PR rollout); the consumer-side modal swap + backend votes/tally land
+> in follow-up PRs.
+
+### Feedback (#9) — `src/customer/index.tsx`
+
+- Was `S9_FeedbackPage` (standalone page: contact on top, then checkboxes)
+  → now `S9_FeedbackModal` (modal). **New export `S9_FeedbackModal`** on the
+  `@samosite/canon/customer` entry; `S9_FeedbackPage` and `FeedbackPage` are
+  kept as **aliases that now resolve to the modal** (`const S9_FeedbackPage =
+  S9_FeedbackModal`, `const FeedbackPage = S9_FeedbackModal`). There is no
+  bare `FeedbackModal` export — use `S9_FeedbackModal`.
+- **Vote-first / «foot in the door»:** the form opens straight into voting;
+  the contact block is asleep (`opacity .5`, `pointer-events:none`) until at
+  least one item is ticked, then «wakes up» with «напишем, когда добавим» +
+  privacy promise.
+- **Vote counters:** every item has a progress bar + `X/10`; ticking a box
+  bumps +1 live; a running «за неделю» counter in the header.
+- Lighter form: «+ свой вариант» / «+ комментарий» hidden behind links
+  (progressive disclosure); duplicate subheading removed.
+- Submit button counts votes («Отправить N голос/голоса/голосов») +
+  thank-you screen.
+- **Mobile:** `mobile` prop — fullscreen modal, single-column contact,
+  full-width progress under each item, full-width button.
+- **Selectors:** `[data-feedback-modal]`, `[data-floating-feedback-btn]`.
+
+### Component shape (consumer note)
+
+`S9_FeedbackModal({ mobile })` is **presentational** — internal `useState`
+for votes, baked `[base]` tally, no `tally`/`onSubmit`/`onChange` props (the
+`<FeedbackModal tally={…}/>` in `FEEDBACK_BACKEND.md` is aspirational). Wiring
+it to a real backend needs the same controlled-wrapper / DOM-binding
+compromise vitrina uses for `Hero` / `SubmitModal` — done consumer-side in
+PR2, not here.
+
+### Backend (out of package — `docs/handoff/FEEDBACK_BACKEND.md`)
+
+New `GET /api/feedback/tally`, `POST /api/feedback` takes a `votes[]` batch,
+`feedback_submission` + `feedback_vote` schema, dedupe/per-IP-cap, 10-vote
+threshold → founder alert, admin-inbox rollup. Landing in PR3.
+
+### Vitrina-side follow-through (this vendoring PR)
+
+- `src/landing/index.tsx` — upstream 0.9.0 **absorbed the 0.8.0 converter
+  fix** (the leaked IIFE opener + self-referential `const PresetRenderer =
+  PresetRenderer;` are gone at source). Vendored as-is; functionally
+  identical to our repaired 0.8.0 (only our `[vitrina]` repair comments are
+  replaced by upstream's clean version — the built landing chunk is
+  byte-identical). No consumer reconciliation needed.
+- `tsup.config.ts` keeps the local `dts: false` carry-forward + the
+  `src/presets/index.tsx` entry. Dist rebuilt (customer chunk changes;
+  landing/presets chunks unchanged).
+- No prod behaviour change in this PR — the modal export is **unconsumed**
+  until PR2; landing renders the same 10 canon sections, drift = 0.
+
+### No other module changed
+
+`tokens` / `primitives` / `intake` / `admin-*` / `auth` / `source` /
+`presets` are byte-identical to 0.8.0.
+
+---
+
 ## 0.8.0 — Examples carousel + pricing matrix + block redesign · 2026-05-28
 
 > **MINOR.** Over 0.7.2/0.7.3. Public landing exports unchanged

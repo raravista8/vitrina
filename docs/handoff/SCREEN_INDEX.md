@@ -63,10 +63,10 @@
 - **Спека:** `specs/00 §6`
 - **API:** `POST /api/leads`, rate-limit >3/час/IP → 429 (FR-052), SmartCaptcha + honeypot
 
-### #9 · Feedback form — `/feedback`
-- **Канон:** `canon/screens-intake.jsx` → `S9_FeedbackPage`
-- **Прод:** `code/FeedbackForm.tsx`
-- **Спека:** `specs/00 §7` (ADR-0009)
+### #9 · Feedback — vote-first modal (canon 0.9.0)
+- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.0 — vote-first модалка X/10; алиасы `S9_FeedbackPage` / `FeedbackPage` теперь резолвятся в модалку). ADR-0009 rev.2.
+- **Прод:** hand-rolled `landing/components/FeedbackForm.tsx` + `/feedback` страница — **остаётся до PR2** (canon 0.9.0 завендорен в PR1, модалка пока не консьюмится). PR2 монтирует модалку глобально + ретайрит `/feedback` (301 → `/`); PR3 — backend votes/tally + миграция (`docs/handoff/FEEDBACK_BACKEND.md`).
+- **Спека:** `specs/00 §7` (ADR-0009) + `docs/handoff/FEEDBACK_BACKEND.md` (0.9.0 backend contract)
 
 ---
 

@@ -1111,109 +1111,324 @@ function S7_SchemeSwatches() {
 }
 
 // ── #9 Feedback form ───────────────────────────────────────
-const WAITLIST_SOURCES = [
-  ['vk', 'ВКонтакте'],
-  ['ozon', 'Ozon-витрина'],
-  ['youtube', 'YouTube / Shorts'],
-  ['dzen', 'Дзен'],
-  ['max', 'MAX-канал'],
+// ADR-0009 rev.2: NOT a standalone /feedback page — a modal over any page.
+// Foot-in-the-door: easy action first (one checkbox vote); the contact block
+// wakes up only after the first vote. X/10 counters + progress bars give
+// social proof and the "push it to 10" pull. [base] = current tally from API.
+const FB_SOURCES = [
+  ['vk', 'ВКонтакте', 9],
+  ['ozon', 'Ozon-витрина', 7],
+  ['youtube', 'YouTube / Shorts', 6],
+  ['dzen', 'Дзен', 4],
+  ['max', 'MAX-канал', 2],
 ];
 
-const FEATURE_LIST = [
-  ['yclients', 'YCLIENTS интеграция'],
-  ['amocrm', 'amoCRM интеграция'],
-  ['custom_domain', 'Свой домен'],
-  ['no_watermark', 'Убрать «Сделано на Самосайте»'],
-  ['multilang', 'Несколько языков'],
-  ['payments', 'Онлайн-оплата'],
-  ['blog', 'Блог-CMS'],
-  ['stats', 'Статистика посетителей'],
+const FB_FEATURES = [
+  ['yclients', 'YCLIENTS интеграция', 8],
+  ['amocrm', 'amoCRM интеграция', 5],
+  ['custom_domain', 'Свой домен', 9],
+  ['no_watermark', 'Убрать «Сделано на Самосайте»', 7],
+  ['multilang', 'Несколько языков', 3],
+  ['payments', 'Онлайн-оплата', 6],
+  ['blog', 'Блог-CMS', 4],
+  ['stats', 'Статистика посетителей', 5],
 ];
 
-function FBSection({ title, items }) {
+// Backward-compat: data names from 0.1.x.
+const WAITLIST_SOURCES = FB_SOURCES.map(([k, l]) => [k, l]);
+const FEATURE_LIST = FB_FEATURES.map(([k, l]) => [k, l]);
+
+function fbPlural(n) {
+  const d = n % 10, h = n % 100;
+  if (h >= 11 && h <= 14) return 'голосов';
+  if (d === 1) return 'голос';
+  if (d >= 2 && d <= 4) return 'голоса';
+  return 'голосов';
+}
+
+// One vote line: checkbox + label + meter (bar + X/10). +1 on check.
+// On mobile the meter drops below the label (full-width bar), indented to align.
+function FBVoteRow({ label, base, checked, onToggle, first, mobile }) {
+  const v = base + (checked ? 1 : 0);
+  const done = v >= 10;
+  const pct = Math.min(v, 10) / 10 * 100;
   return (
-    <Card style={{ padding: 22 }}>
-      <h3 style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', margin: '0 0 6px' }}>{title}</h3>
-      <p style={{ fontSize: 13, color: VT.inkSoft, margin: '0 0 14px' }}>
-        Поставьте галочку напротив того, что нужно. Когда соберём 10 голосов — добавим.
-      </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
-        {items.map(([key, label]) => (
-          <Checkbox key={key} checked={false} label={label} />
-        ))}
-      </div>
-      <div style={{ marginTop: 14 }}>
-        <label style={{ display: 'block', fontSize: 12, color: VT.inkSoft, marginBottom: 4 }}>Своё (опционально)</label>
-        <div style={{
-          padding: '10px 12px', background: VT.white, border: `1px solid ${VT.line}`,
-          borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint,
-        }}>укажите название</div>
-      </div>
-    </Card>
+    <label
+      onClick={onToggle}
+      style={{
+        display: 'flex', flexDirection: mobile ? 'column' : 'row',
+        alignItems: mobile ? 'stretch' : 'center', gap: mobile ? 7 : 13,
+        padding: '11px 0',
+        borderTop: first ? 'none' : `1px solid ${VT.lineSoft}`,
+        cursor: 'pointer', userSelect: 'none',
+      }}
+    >
+      <span style={{ display: 'flex', alignItems: 'center', gap: 13, flex: 1, minWidth: 0 }}>
+        <span style={{
+          flex: '0 0 auto', width: 21, height: 21, borderRadius: 6,
+          border: `2px solid ${checked ? VT.accent : VT.line}`,
+          background: checked ? VT.accent : VT.white,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all .16s',
+        }}>
+          {checked && (
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.4"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          )}
+        </span>
+        <span style={{ flex: 1, minWidth: 0, fontSize: 15, fontWeight: 500, lineHeight: 1.25, color: VT.ink }}>{label}</span>
+      </span>
+      <span style={{
+        flex: '0 0 auto', width: mobile ? 'auto' : 116,
+        paddingLeft: mobile ? 34 : 0,
+        display: 'flex', alignItems: 'center', gap: 9,
+      }}>
+        <span style={{ flex: 1, height: 5, borderRadius: 99, background: VT.bgSoft, overflow: 'hidden' }}>
+          <span style={{ display: 'block', height: '100%', width: pct + '%', background: VT.accent, borderRadius: 99, transition: 'width .35s cubic-bezier(.2,.7,.2,1)' }} />
+        </span>
+        <span style={{
+          fontFamily: VT.font.mono, fontSize: 12, fontWeight: 500,
+          fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap',
+          color: done ? VT.accent : VT.inkFaint,
+        }}>{Math.min(v, 10)}/10</span>
+      </span>
+    </label>
   );
 }
 
-function S9_FeedbackPage() {
+// Small inline "+ свой вариант" / "+ комментарий" reveal link.
+function FBReveal({ label, shown, onShow, children }) {
+  if (shown) return <div style={{ marginTop: 10 }}>{children}</div>;
   return (
-    <div style={{
-      background: VT.bg, color: VT.ink, fontFamily: VT.font.sans,
-      padding: '24px 40px 48px', minHeight: '100%', letterSpacing: '-0.01em',
-    }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.025em', margin: '0 0 6px', lineHeight: 1.15 }}>
-        Скажите, чего не хватает
-      </h1>
-      <p style={{ fontSize: 14, color: VT.inkSoft, maxWidth: 600, margin: '0 0 18px' }}>
-        Делаем по запросу. Чем больше людей просят одно и то же — тем быстрее запускаем
-      </p>
+    <button
+      type="button"
+      onClick={onShow}
+      style={{
+        marginTop: 12, background: 'none', border: 'none', cursor: 'pointer',
+        color: VT.accent, fontFamily: VT.font.sans, fontSize: 13.5, fontWeight: 600,
+        padding: '2px 0',
+      }}
+    >{label}</button>
+  );
+}
 
-      {/* 1. Name + Contact */}
-      <Card style={{ padding: 16 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }}>Как вас зовут</label>
-            <div style={{ padding: '8px 10px', background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }}>имя</div>
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }}>Email, телефон или @telegram</label>
-            <div style={{ padding: '8px 10px', background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint }}>контакт</div>
-          </div>
-        </div>
-      </Card>
+function FBField({ placeholder, value, onChange, textarea }) {
+  const common = {
+    width: '100%', boxSizing: 'border-box', fontFamily: VT.font.sans, fontSize: 16,
+    color: VT.ink, background: VT.white, border: `1.5px solid ${VT.line}`,
+    borderRadius: VT.r.md, padding: '11px 13px', outline: 'none',
+  };
+  return textarea
+    ? <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...common, resize: 'vertical', minHeight: 84 }} />
+    : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={common} />;
+}
 
-      {/* 2. Source + Feature */}
-      <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <FBSection title="Хочу источник" items={WAITLIST_SOURCES} />
-        <FBSection title="Хочу фичу" items={FEATURE_LIST} />
+function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
+  return (
+    <div style={{ marginTop: 18 }}>
+      <h3 style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em', margin: '0 0 2px' }}>{title}</h3>
+      <p style={{ fontSize: 12.5, color: VT.inkFaint, margin: '0 0 8px' }}>Отметьте нужное — голос засчитается сразу</p>
+      <div>
+        {items.map(([key, label, base], i) => (
+          <FBVoteRow key={key} label={label} base={base} first={i === 0} mobile={mobile}
+            checked={!!votes[key]} onToggle={() => onToggle(key)} />
+        ))}
       </div>
-
-      {/* 3. Message + Submit */}
-      <Card style={{ marginTop: 12, padding: 16 }}>
-        <label style={{ display: 'block', fontSize: 11.5, color: VT.inkSoft, marginBottom: 4 }}>Сообщение (опционально)</label>
-        <div style={{ padding: '8px 10px', background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.md, fontSize: 13.5, color: VT.inkFaint, minHeight: 72 }}>что хотите рассказать</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-          <Btn size="sm">Отправить</Btn>
-        </div>
-      </Card>
-
-      {/* Floating button */}
-      <div style={{
-        position: 'absolute', right: 24, bottom: 24,
-        background: VT.ink, color: VT.white,
-        padding: '12px 18px', borderRadius: 999,
-        fontSize: 14, fontWeight: 500,
-        display: 'inline-flex', alignItems: 'center', gap: 8,
-        boxShadow: '0 8px 24px -8px rgba(0,0,0,0.3)',
-      }}>
-        <span style={{ fontSize: 16 }}>💬</span>
-        Чего не хватает?
-      </div>
+      <FBReveal label="+ свой вариант" shown={ownShown} onShow={onOwnShow}>
+        <FBField placeholder={ownPlaceholder} value={ownVal} onChange={onOwnChange} />
+      </FBReveal>
     </div>
   );
 }
 
+function S9_FeedbackModal({ mobile }) {
+  const { useState } = React;
+  const [open, setOpen] = useState(true);
+  const [votes, setVotes] = useState({});
+  const [ownSrc, setOwnSrc] = useState('');
+  const [ownFeat, setOwnFeat] = useState('');
+  const [showOwnSrc, setShowOwnSrc] = useState(false);
+  const [showOwnFeat, setShowOwnFeat] = useState(false);
+  const [showMsg, setShowMsg] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [name, setName] = useState('');
+  const [contact, setContact] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const baseTotal = 340;
+  const checkedCount = Object.values(votes).filter(Boolean).length;
+  const ownCount = (ownSrc.trim() ? 1 : 0) + (ownFeat.trim() ? 1 : 0);
+  const n = checkedCount + ownCount;
+  const awake = n > 0;
+
+  const toggle = (key) => setVotes(v => ({ ...v, [key]: !v[key] }));
+  const reset = () => {
+    setVotes({}); setOwnSrc(''); setOwnFeat(''); setShowOwnSrc(false);
+    setShowOwnFeat(false); setShowMsg(false); setMsg(''); setName('');
+    setContact(''); setSubmitted(false);
+  };
+
+  // Faux page behind, so the frame reads as a modal sitting over content.
+  const FauxPage = () => (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', padding: mobile ? '20px' : '32px 48px', filter: open ? 'blur(2px)' : 'none' }}>
+      <div style={{ height: 18, width: mobile ? 120 : 180, background: VT.line, borderRadius: 6, opacity: .6 }} />
+      <div style={{ height: mobile ? 32 : 46, width: '70%', background: VT.line, borderRadius: 10, opacity: .5, marginTop: 22 }} />
+      <div style={{ height: 14, width: '52%', background: VT.line, borderRadius: 6, opacity: .4, marginTop: 16 }} />
+      <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', gap: 16, marginTop: 30 }}>
+        {[0, 1, 2].map(i => <div key={i} style={{ flex: 1, height: mobile ? 90 : 150, background: VT.line, borderRadius: 14, opacity: .35 }} />)}
+      </div>
+    </div>
+  );
+
+  return (
+    <div data-feedback-modal style={{ position: 'relative', width: '100%', minHeight: '100%', background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: '-0.01em' }}>
+      <FauxPage />
+
+      {!open && (
+        <button
+          type="button"
+          data-floating-feedback-btn
+          onClick={() => { reset(); setOpen(true); }}
+          style={{
+            position: 'absolute', right: mobile ? 16 : 28, bottom: mobile ? 16 : 28, zIndex: 3,
+            background: VT.accent, color: VT.white, border: 'none', cursor: 'pointer',
+            padding: '14px 20px', borderRadius: VT.r.pill,
+            fontFamily: VT.font.sans, fontSize: 14.5, fontWeight: 600,
+            display: 'inline-flex', alignItems: 'center', gap: 9,
+            boxShadow: VT.shadow.pop,
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Чего не хватает?
+        </button>
+      )}
+
+      {open && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 4,
+          background: 'oklch(0.30 0.02 60 / 0.46)',
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+          padding: mobile ? '14px 10px' : '40px 24px',
+        }}>
+          <div style={{
+            position: 'relative', width: '100%', maxWidth: mobile ? 9999 : 560,
+            background: VT.bg, border: `1px solid ${VT.line}`, borderRadius: VT.r.xl,
+            boxShadow: VT.shadow.pop, overflow: 'hidden',
+          }}>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Закрыть"
+              style={{
+                position: 'absolute', top: 14, right: 14, zIndex: 2,
+                width: 34, height: 34, borderRadius: VT.r.pill,
+                border: 'none', background: VT.bgSoft, color: VT.inkSoft,
+                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+
+            {submitted ? (
+              <div style={{ textAlign: 'center', padding: mobile ? '48px 24px' : '56px 36px' }}>
+                <div style={{
+                  width: 60, height: 60, borderRadius: '50%', background: VT.success, color: '#fff',
+                  display: 'grid', placeItems: 'center', margin: '0 auto 20px',
+                  boxShadow: `0 0 0 8px ${VT.successSoft}`,
+                }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <h2 style={{ fontSize: 23, fontWeight: 700, letterSpacing: '-0.02em', margin: 0 }}>Спасибо, голос учли</h2>
+                <p style={{ fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: '10px auto 0', lineHeight: 1.5 }}>
+                  Засчитали {n} {fbPlural(n)}. Как только по пункту наберётся 10 — берём в работу
+                  {contact.trim() ? ' и напишем вам.' : '. Хотите узнать о запуске — оставьте контакт.'}
+                </p>
+                <div style={{ marginTop: 24 }} onClick={() => setOpen(false)}>
+                  <Btn variant="secondary" size="sm" style={{ cursor: 'pointer' }}>Готово</Btn>
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding: mobile ? '26px 20px 22px' : '30px 32px 26px' }}>
+                <h2 style={{ fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: '-0.025em', margin: '0 40px 8px 0', lineHeight: 1.12 }}>
+                  Скажите, чего не хватает
+                </h2>
+                <p style={{ fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }}>
+                  Набираем 10 голосов по пункту — берём в работу. Чем больше людей просят одно и то же, тем быстрее запускаем.
+                </p>
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14,
+                  fontSize: 12.5, color: VT.inkSoft, fontWeight: 500,
+                  background: VT.white, border: `1px solid ${VT.line}`, padding: '6px 12px', borderRadius: VT.r.pill, whiteSpace: 'nowrap',
+                }}>
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` }} />
+                  <b style={{ color: VT.ink, fontVariantNumeric: 'tabular-nums' }}>{baseTotal + n}</b>&nbsp;голосов за неделю
+                </span>
+
+                <FBVoteSection
+                  title="Хочу источник" items={FB_SOURCES} votes={votes} onToggle={toggle} mobile={mobile}
+                  ownVal={ownSrc} ownShown={showOwnSrc} onOwnShow={() => setShowOwnSrc(true)}
+                  onOwnChange={setOwnSrc} ownPlaceholder="укажите название источника"
+                />
+                <FBVoteSection
+                  title="Хочу фичу" items={FB_FEATURES} votes={votes} onToggle={toggle} mobile={mobile}
+                  ownVal={ownFeat} ownShown={showOwnFeat} onOwnShow={() => setShowOwnFeat(true)}
+                  onOwnChange={setOwnFeat} ownPlaceholder="укажите название фичи"
+                />
+
+                <div style={{
+                  marginTop: 20, paddingLeft: 15,
+                  borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
+                  opacity: awake ? 1 : 0.5,
+                  pointerEvents: awake ? 'auto' : 'none',
+                  transition: 'opacity .3s, border-color .3s',
+                }}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <span style={{
+                      flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%', marginTop: 1,
+                      border: `2px solid ${awake ? VT.success : VT.line}`,
+                      background: awake ? VT.success : VT.white, color: '#fff',
+                      display: 'grid', placeItems: 'center', transition: 'all .3s',
+                    }}>
+                      {awake && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                    </span>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: 15.5, fontWeight: 700 }}>Напишем, когда добавим</strong>
+                      <span style={{ display: 'block', fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }}>
+                        Оставьте контакт — сообщим, как только ваш голос наберёт 10 и пункт попадёт в работу. Никому не покажем и спамить не будем.
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 11, marginTop: 14 }}>
+                    <FBField placeholder="Имя" value={name} onChange={setName} />
+                    <FBField placeholder="Email, телефон или @telegram" value={contact} onChange={setContact} />
+                  </div>
+                  <FBReveal label="+ комментарий" shown={showMsg} onShow={() => setShowMsg(true)}>
+                    <FBField textarea placeholder="что хотите рассказать" value={msg} onChange={setMsg} />
+                  </FBReveal>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 24, flexWrap: 'wrap' }}>
+                  <div onClick={() => { if (n > 0) setSubmitted(true); }} style={{ width: mobile ? '100%' : 'auto' }}>
+                    <Btn size="md" style={{ width: mobile ? '100%' : 'auto', opacity: n === 0 ? 0.45 : 1, cursor: n === 0 ? 'not-allowed' : 'pointer' }}>
+                      {n > 0 ? `Отправить ${n} ${fbPlural(n)}` : 'Отправить голос'}
+                    </Btn>
+                  </div>
+                  {n === 0 && !mobile && <span style={{ fontSize: 13.5, color: VT.inkFaint }}>Отметьте хотя бы один пункт</span>}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Back-compat alias: index/canvas still reference S9_FeedbackPage.
+const S9_FeedbackPage = S9_FeedbackModal;
+
 const CustomerSite = S7_CustomerSite;
 const LeadForm = S8_LeadFormConfirm;
-const FeedbackPage = S9_FeedbackPage;
+const FeedbackPage = S9_FeedbackModal;
 
 
 
@@ -1222,6 +1437,7 @@ export {
   S7_SchemeSwatches,
   S8_LeadFormConfirm,
   S9_FeedbackPage,
+  S9_FeedbackModal,
   CustomerSite,
   LeadForm,
   FeedbackPage
