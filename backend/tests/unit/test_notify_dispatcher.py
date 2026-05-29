@@ -85,6 +85,56 @@ class TestFounder:
         assert not result.delivered
         assert tg.calls == []
 
+    async def test_founder_notified_via_email(self) -> None:
+        email = _FakeChannel(ChannelType.email)
+        dispatcher = NotificationDispatcher(
+            channels={ChannelType.email: email},
+            founder_email="raravista@gmail.com",
+        )
+        result = await dispatcher.notify_founder(NotificationKind.application_received, MSG)
+        assert result.delivered
+        assert email.calls == [("raravista@gmail.com", MSG)]
+
+    async def test_founder_email_subject_override_from_metadata(self) -> None:
+        email = _FakeChannel(ChannelType.email)
+        dispatcher = NotificationDispatcher(
+            channels={ChannelType.email: email},
+            founder_email="raravista@gmail.com",
+        )
+        msg = NotificationMessage(
+            title="🆕 Заявка #abc",
+            body="b",
+            metadata={"email_subject": "новая заявка на сайт"},
+        )
+        await dispatcher.notify_founder(NotificationKind.application_received, msg)
+        recipient, sent = email.calls[0]
+        assert recipient == "raravista@gmail.com"
+        # The email channel uses message.title as the Subject — override applied.
+        assert sent.title == "новая заявка на сайт"
+
+    async def test_founder_fans_out_to_telegram_and_email(self) -> None:
+        tg = _FakeChannel(ChannelType.telegram)
+        email = _FakeChannel(ChannelType.email)
+        dispatcher = NotificationDispatcher(
+            channels={ChannelType.telegram: tg, ChannelType.email: email},
+            founder_telegram_chat_id="-1001",
+            founder_email="raravista@gmail.com",
+        )
+        result = await dispatcher.notify_founder(NotificationKind.application_received, MSG)
+        assert result.delivered
+        assert tg.calls == [("-1001", MSG)]  # TG gets the original title
+        assert email.calls[0][0] == "raravista@gmail.com"
+
+    async def test_founder_email_skipped_when_address_unset(self) -> None:
+        email = _FakeChannel(ChannelType.email)
+        dispatcher = NotificationDispatcher(
+            channels={ChannelType.email: email},
+            founder_email=None,
+        )
+        result = await dispatcher.notify_founder(NotificationKind.application_received, MSG)
+        assert not result.delivered
+        assert email.calls == []
+
 
 @pytest.mark.unit
 class TestFallbackChain:

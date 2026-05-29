@@ -10,9 +10,12 @@ Two public entry-points:
     an alternate contact for this user. SMS-safety (FR-002c) is
     enforced via ``ALLOWED_CHANNELS_FOR_KIND``.
 
-  - ``notify_founder(kind, message)`` — admin alerts. Always Telegram,
-    always to ``TG_ADMIN_CHAT_ID`` (from settings). Simpler path: no
-    fallback chain, no User row needed.
+  - ``notify_founder(kind, message)`` — admin alerts. Fan-out to every
+    configured founder channel: Telegram (``TG_ADMIN_CHAT_ID``) and/or
+    email (``FOUNDER_EMAIL``). Each leg is best-effort and independent —
+    a missing/failed channel is logged, never raised. The email subject
+    can be overridden per-call via ``message.metadata["email_subject"]``
+    (else the title is used).
 
 The class accepts channels in its constructor — this is the composition
 root pattern. Tests pass in fakes; production wires the real adapters in
@@ -21,7 +24,7 @@ root pattern. Tests pass in fakes; production wires the real adapters in
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from app.core.notify.ports import (
     ALLOWED_CHANNELS_FOR_KIND,
@@ -55,10 +58,12 @@ class NotificationDispatcher:
         channels: dict[ChannelType, NotificationChannel],
         *,
         founder_telegram_chat_id: str | None = None,
+        founder_email: str | None = None,
         fallback_chain: tuple[ChannelType, ...] = DEFAULT_FALLBACK_CHAIN,
     ) -> None:
         self._channels = channels
         self._founder_chat_id = founder_telegram_chat_id
+        self._founder_email = founder_email
         self._fallback_chain = fallback_chain
         self._log = get_logger("core.notify.dispatcher")
 
@@ -67,31 +72,66 @@ class NotificationDispatcher:
     async def notify_founder(
         self, kind: NotificationKind, message: NotificationMessage
     ) -> DeliveryResult:
-        """Best-effort admin alert. Logs (does not raise) when the bot
-        token isn't configured or TG_ADMIN_CHAT_ID is missing — admin
-        alerts must never crash a production code path."""
+        """Best-effort admin alert, fanned out to every configured founder
+        channel (Telegram + email). Each leg is independent — a missing or
+        failing channel is logged, never raised, so admin alerts can't crash
+        a production code path. Returns the first successful delivery (or the
+        last failure if none succeeded)."""
+        results: list[DeliveryResult] = []
+
+        # ── Telegram (TG_ADMIN_CHAT_ID) ───────────────────────────────────
         tg = self._channels.get(ChannelType.telegram)
-        if tg is None or not tg.is_available() or not self._founder_chat_id:
+        if tg is not None and tg.is_available() and self._founder_chat_id:
+            r = await tg.send(recipient=self._founder_chat_id, message=message)
+            results.append(r)
+            self._log.info(
+                "founder_notified",
+                channel="telegram",
+                kind=kind.value,
+                delivered=r.delivered,
+                reason=r.reason,
+            )
+        else:
             self._log.warning(
                 "founder_notify_skipped",
+                channel="telegram",
                 kind=kind.value,
                 reason="telegram_unavailable_or_chat_id_missing",
             )
-            return DeliveryResult(
-                delivered=False,
-                channel=ChannelType.telegram,
-                recipient=self._founder_chat_id or "",
-                reason="founder_channel_unavailable",
+
+        # ── Email (FOUNDER_EMAIL) — subject from metadata override or title ─
+        email = self._channels.get(ChannelType.email)
+        if email is not None and email.is_available() and self._founder_email:
+            subject = message.metadata.get("email_subject") if message.metadata else None
+            email_message = replace(message, title=subject) if subject else message
+            r = await email.send(recipient=self._founder_email, message=email_message)
+            results.append(r)
+            self._log.info(
+                "founder_notified",
+                channel="email",
+                kind=kind.value,
+                delivered=r.delivered,
+                reason=r.reason,
+            )
+        elif self._founder_email:
+            self._log.warning(
+                "founder_notify_skipped",
+                channel="email",
+                kind=kind.value,
+                reason="email_unavailable",
             )
 
-        result = await tg.send(recipient=self._founder_chat_id, message=message)
-        self._log.info(
-            "founder_notified",
-            kind=kind.value,
-            delivered=result.delivered,
-            reason=result.reason,
+        delivered = next((r for r in results if r.delivered), None)
+        if delivered is not None:
+            return delivered
+        if results:
+            return results[-1]
+        return DeliveryResult(
+            delivered=False,
+            channel=ChannelType.telegram,
+            recipient=self._founder_chat_id or "",
+            reason="founder_channel_unavailable",
         )
-        return result
 
     # ---- end user --------------------------------------------------------
 
