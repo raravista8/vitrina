@@ -64,7 +64,7 @@
 - **API:** `POST /api/leads`, rate-limit >3/час/IP → 429 (FR-052), SmartCaptcha + honeypot
 
 ### #9 · Feedback — vote-first modal (canon 0.9.1 controlled API)
-- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.1 — **controlled** API: `open`/`onOpenChange`/`tally`/`onSubmit`/`submitting`/`error`/`embedded` + 5 TS-типов; zero-prop = canvas-mock). Алиасы `S9_FeedbackPage` / `FeedbackPage` резолвятся в модалку. ADR-0009 rev.2.
+- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.1 — **controlled** API: `open`/`onOpenChange`/`tally`/`onSubmit`/`submitting`/`error`/`embedded` + 5 TS-типов; zero-prop = canvas-mock; 0.9.5 — фикс ремаунта: `Dialog`/`FauxPage`/`FloatingBtn` вызываются функциями, не монтируются, иначе скролл/фокус слетали на каждый клик/ввод). Алиасы `S9_FeedbackPage` / `FeedbackPage` резолвятся в модалку. ADR-0009 rev.2.
 - **Прод:** `landing/components/FeedbackModal.tsx` — тонкий адаптер вокруг canon `S9_FeedbackModal`, смонтирован глобально в `app/layout.tsx` (`tally`←`GET /api/feedback/tally`, `onSubmit`→`POST /api/feedback` votes[], `embedded={false}`; self-hide на `/admin*`+`/login`). `/feedback` ретайрнут (301 → `/`), hand-rolled `FeedbackForm` удалён. Backend (votes/tally + миграция 0012) — live (PR3).
 - **Спека:** `specs/00 §7` (ADR-0009) + `docs/handoff/FEEDBACK_BACKEND.md` (backend contract) + `docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md` (controlled-API ТЗ)
 

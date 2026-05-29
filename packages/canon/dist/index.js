@@ -6913,14 +6913,14 @@ function S9_FeedbackModal(props = {}) {
   );
   if (embedded) {
     return /* @__PURE__ */ jsxs5("div", { style: { position: "relative", width: "100%", minHeight: "100%", background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: "-0.01em" }, children: [
-      /* @__PURE__ */ jsx6(FauxPage, {}),
-      !isOpen && /* @__PURE__ */ jsx6(FloatingBtn, { fixed: false }),
-      isOpen && /* @__PURE__ */ jsx6(Dialog, {})
+      FauxPage(),
+      !isOpen && FloatingBtn({ fixed: false }),
+      isOpen && Dialog()
     ] });
   }
   return /* @__PURE__ */ jsxs5(React3.Fragment, { children: [
-    !isOpen && /* @__PURE__ */ jsx6(FloatingBtn, { fixed: true }),
-    isOpen && /* @__PURE__ */ jsx6(Dialog, {})
+    !isOpen && FloatingBtn({ fixed: true }),
+    isOpen && Dialog()
   ] });
 }
 var S9_FeedbackPage = S9_FeedbackModal;

@@ -15,6 +15,48 @@
 >   — same controlled pattern as the other admin screens (0.2.x).
 >   Remove the consumer workaround once shipped.
 
+---
+
+## 0.9.5 — Feedback-модалка: фикс ремаунта (прыжок скролла + потеря фокуса) · 2026-05-29
+
+> **PATCH.** Только `src/customer/index.tsx` → `S9_FeedbackModal`. Публичные экспорты, типы, пропсы, разметка и стили без изменений — чисто фикс рендера. Включает все landing-фиксы 0.9.3/0.9.4. Drop-in на прод.
+
+### Симптом
+
+Модалка «дёргалась»: после клика по пункту голосования или ввода одного символа в инпут скролл модалки прыгал вверх, а поле ввода теряло фокус (нельзя было печатать подряд).
+
+### Причина
+
+`Dialog`, `FauxPage` и `FloatingBtn` объявлены как функции-компоненты **внутри** `S9_FeedbackModal` и рендерились как JSX-элементы (`<Dialog/>`). На каждый ре-рендер родителя у этих функций менялась идентичность → React видел «новый тип компонента» → **размонтировал и заново монтировал всё поддерево** на каждое изменение состояния. Ремаунт сбрасывал `scrollTop` контейнера-оверлея (`overflowY: auto`) и убивал фокус инпута.
+
+### Фикс
+
+Вызываем их как обычные функции (`{Dialog()}`, `{FauxPage()}`, `{FloatingBtn({ fixed })}`) вместо монтирования как элементов. Они не используют хуки и читают только замыкание — поэтому их JSX просто вставляется в дерево родителя, и изменение состояния теперь приводит к обычному ре-рендеру без ремаунта. Проверено: внутренние узлы сохраняют идентичность (`node === node`), `scrollTop` не сбрасывается, фокус инпута держится.
+
+### Migration
+
+```bash
+npm i @samosite/canon@0.9.5
+npm run build
+```
+
+Drop-in. Никаких правок пропсов/импортов. Если в форке `S9_FeedbackModal` встречается `<Dialog/>` / `<FauxPage/>` / `<FloatingBtn/>` — замените на вызовы `Dialog()` / `FauxPage()` / `FloatingBtn({ fixed })`.
+
+### Vitrina-side (this vendoring PR)
+
+`cp src/customer/index.tsx` + package.json 0.9.4→0.9.5 + dist rebuild
+(customer + index-barrel chunks). tsup keeps the local `dts: false`.
+
+**No consumer change.** The fix is internal to `S9_FeedbackModal` (mount →
+function-call); public exports, props and the controlled API are unchanged,
+so our adapter `landing/components/FeedbackModal.tsx` is untouched — pure
+canon-import, drift = 0. We don't fork the component, so the «replace
+<Dialog/> with Dialog()» migration note doesn't apply to us. Fixes the
+scroll-jump + input-focus-loss on every vote-tick / keystroke in the live
+feedback modal.
+
+---
+
 ## 0.9.4 — Переиздание landing-фиксов (коллизия версий 0.9.3) · 2026-05-29
 
 > **PATCH.** Идентичен 0.9.3 по коду, но с уникальным номером версии. На прод под номером `0.9.3` уехал пакет БЕЗ landing-фиксов (StickyHeader/HeroBlock) — версию бампнули, а изменения `src/landing/index.tsx` в сборку не попали (признак: `description` в том пакете остался 0.9.2-шным). Из-за совпадения номера версии CI считал «изменений нет» и не пересобирал. 0.9.4 ломает коллизию — гарантированно подхватывается пайплайном.

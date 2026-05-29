@@ -1527,12 +1527,17 @@ function S9_FeedbackModal(props: S9_FeedbackModalProps = {}) {
   );
 
   // ── Canvas artboard: FauxPage behind, overlay anchored to the container ──
+  // NB: FauxPage/FloatingBtn/Dialog are INVOKED as functions ({Dialog()}), not
+  // mounted as elements (<Dialog/>). Mounting them would give React a new
+  // component type every render → full unmount/remount of the subtree on each
+  // keystroke/toggle → scroll jumps to top + inputs lose focus. Calling them
+  // inlines their JSX into this component's tree, so state edits just re-render.
   if (embedded) {
     return (
       <div style={{ position: 'relative', width: '100%', minHeight: '100%', background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: '-0.01em' }}>
-        <FauxPage />
-        {!isOpen && <FloatingBtn fixed={false} />}
-        {isOpen && <Dialog />}
+        {FauxPage()}
+        {!isOpen && FloatingBtn({ fixed: false })}
+        {isOpen && Dialog()}
       </div>
     );
   }
@@ -1540,8 +1545,8 @@ function S9_FeedbackModal(props: S9_FeedbackModalProps = {}) {
   // ── Real mount: no FauxPage, overlay fixed to the viewport ──
   return (
     <React.Fragment>
-      {!isOpen && <FloatingBtn fixed={true} />}
-      {isOpen && <Dialog />}
+      {!isOpen && FloatingBtn({ fixed: true })}
+      {isOpen && Dialog()}
     </React.Fragment>
   );
 }
