@@ -77,6 +77,16 @@ def _build_feedback_rate_limiter() -> RateLimiter:
 feedback_rate_limiter = _build_feedback_rate_limiter()
 
 
+def _build_feedback_tally_rate_limiter() -> RateLimiter:
+    """``GET /api/feedback/tally`` — public aggregate read on every modal
+    open. Cached ~45s, so this is a generous recon guard (60/min/IP), not a
+    hot-path throttle."""
+    return RateLimiter(limit=60, window_seconds=60, scope="feedback_tally")
+
+
+feedback_tally_rate_limiter = _build_feedback_tally_rate_limiter()
+
+
 def _build_preview_rate_limiter() -> RateLimiter:
     """FR-005a: 10 req/min/IP keeps the preview endpoint useless for
     upstream-reconnaissance / harvesting attacks."""

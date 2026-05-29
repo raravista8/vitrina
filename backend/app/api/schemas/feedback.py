@@ -89,10 +89,88 @@ class SubmitFeedbackResponse(BaseModel):
     data: SubmitFeedbackData
 
 
+# ---------------------------------------------------------------------------
+# Vote-first modal (canon 0.9.0 / ADR-0009 rev.2). One submit carries a batch
+# of votes + an optional contact. Routed on `POST /api/feedback` alongside the
+# legacy `SubmitFeedbackRequest` via a Pydantic smart-union — the two models
+# have disjoint required fields, so each payload matches exactly one.
+# See `docs/handoff/FEEDBACK_BACKEND.md`.
+# ---------------------------------------------------------------------------
+
+VoteKind = Literal["source", "feature"]
+
+# option_key is a frontend-supplied slug (vk / yclients / custom_domain / …).
+# Not constrained to a fixed list — canon adds options over time; we only
+# enforce a safe slug shape so it can't carry markup / injection.
+_OPTION_KEY = r"^[a-z0-9_-]{1,64}$"
+
+
+class FeedbackVoteIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    kind: VoteKind
+    key: Annotated[str, Field(pattern=_OPTION_KEY, max_length=64)]
+
+
+class SubmitVotesRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    votes: Annotated[
+        list[FeedbackVoteIn],
+        Field(min_length=1, max_length=40, description="Ticked options (≥1)"),
+    ]
+    own_source: Annotated[str | None, Field(default=None, max_length=200)] = None
+    own_feature: Annotated[str | None, Field(default=None, max_length=200)] = None
+    message: Annotated[str | None, Field(default=None, max_length=4096)] = None
+    name: Annotated[str | None, Field(default=None, max_length=200)] = None
+    contact: Annotated[str | None, Field(default=None, max_length=320)] = None
+    # Honeypot — must stay empty; a filled value means a bot (silently 200).
+    honeypot: Annotated[str | None, Field(default=None, max_length=512)] = None
+    # The vote-first modal has no captcha UI, but if a token is supplied
+    # (e.g. a future interactive variant wires SmartCaptcha) we verify it.
+    captcha_token: Annotated[str | None, Field(default=None, max_length=4096)] = None
+
+
+class FeedbackTallyData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    # option_key → distinct-voter count (real number; the UI clamps to 10).
+    items: dict[str, int]
+    total_week: int
+
+
+class FeedbackTallyResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ok: Literal[True] = True
+    data: FeedbackTallyData
+
+
+class SubmitVotesData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    accepted: int
+    tally: FeedbackTallyData
+
+
+class SubmitVotesResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ok: Literal[True] = True
+    data: SubmitVotesData
+
+
 __all__ = [
     "WAITLIST_SOURCE_NAMES",
+    "FeedbackTallyData",
+    "FeedbackTallyResponse",
     "FeedbackType",
+    "FeedbackVoteIn",
     "SubmitFeedbackData",
     "SubmitFeedbackRequest",
     "SubmitFeedbackResponse",
+    "SubmitVotesData",
+    "SubmitVotesRequest",
+    "SubmitVotesResponse",
+    "VoteKind",
 ]

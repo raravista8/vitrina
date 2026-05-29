@@ -268,6 +268,75 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
 
 
 # =============================================================================
+# feedback votes (ADR-0009 rev.2 — canon 0.9.0 vote-first modal)
+# =============================================================================
+#
+# The 0.9.0 feedback modal submits a *batch of votes* (one option_key per
+# ticked item) plus an optional contact, instead of one free-text row. The
+# legacy `feedback` table above stays as-is for the old single-row callers
+# (SourceDetectionBadge / WaitlistCapture) and for `own_source`/`own_feature`
+# free-text — see `docs/handoff/FEEDBACK_BACKEND.md`.
+
+FEEDBACK_VOTE_KINDS: Final = ("source", "feature")
+
+
+class FeedbackSubmission(UUIDPrimaryKey, Timestamped, Base):
+    """One modal submit. Carries the optional contact block + free-text.
+
+    `contact` is PII-when-set — same sensitivity tier as `feedback.email`
+    (plaintext; masked in logs). `ip_hash` is a salted SHA-256 of the client
+    IP — the raw IP is NEVER stored (matches the logging PII policy + the
+    fact the legacy feedback path only put IP in the consent ledger).
+    """
+
+    __tablename__ = "feedback_submission"  # singular; this is a submit event
+
+    name: Mapped[str | None] = mapped_column(Text, nullable=True)  # PII when set
+    contact: Mapped[str | None] = mapped_column(Text, nullable=True)  # PII when set
+    message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ip_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+
+
+class FeedbackVote(UUIDPrimaryKey, Timestamped, Base):
+    """One ticked option inside a submission. Rolls up by `option_key`."""
+
+    __tablename__ = "feedback_vote"  # singular pair with feedback_submission
+
+    submission_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("feedback_submission.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    option_key: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+
+    __table_args__ = (
+        CheckConstraint(
+            f"kind IN {FEEDBACK_VOTE_KINDS!r}",
+            name="feedback_vote_kind_valid",
+        ),
+        # total_week query filters on created_at; index keeps it cheap.
+        Index("ix_feedback_vote_created_at", "created_at"),
+    )
+
+
+class FeedbackThresholdAlert(Base):
+    """Idempotency marker — one row per option_key once it has crossed the
+    10-distinct-voter threshold and the founder has been alerted. Prevents
+    re-alerting on every subsequent vote (INSERT … ON CONFLICT DO NOTHING).
+    """
+
+    __tablename__ = "feedback_threshold_alert"  # singular; PK is the key itself
+
+    option_key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    alerted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+
+
+# =============================================================================
 # sync_runs (FR-040)
 # =============================================================================
 

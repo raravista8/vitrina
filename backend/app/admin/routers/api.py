@@ -72,6 +72,7 @@ from app.core.auth.sessions import (
     AdminSession,
     AdminSessionStore,
 )
+from app.core.feedback.service import get_tally
 from app.core.leads.encryption import LeadDecryptionError
 from app.core.leads.encryption import decrypt as decrypt_lead_field
 from app.core.leads.encryption import decrypt as fernet_decrypt
@@ -934,6 +935,27 @@ async def admin_api_waitlist(
         for r in rows
     ]
     return _envelope_ok({"items": items, "threshold": 10})
+
+
+@router.get("/feedback/votes", status_code=200)
+async def admin_api_feedback_votes(
+    _admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """Roll up canon-0.9.0 modal votes by `option_key` (ADR-0009 rev.2 /
+    `docs/handoff/FEEDBACK_BACKEND.md` §5).
+
+    Distinct-voter count per key; `ready=true` once it reached the 10-vote
+    threshold (the founder was already TG-alerted on crossing). Separate from
+    `/waitlist`, which aggregates the legacy `feedback.source_name` rows —
+    the vote modal and the old single-row callers feed different tables.
+    """
+    tally = await get_tally(session)
+    items = [
+        {"option_key": key, "votes": votes, "ready": votes >= 10}
+        for key, votes in sorted(tally.items.items(), key=lambda kv: kv[1], reverse=True)
+    ]
+    return _envelope_ok({"items": items, "total_week": tally.total_week, "threshold": 10})
 
 
 @router.post(
