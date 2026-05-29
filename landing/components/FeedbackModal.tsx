@@ -58,6 +58,45 @@ type S9Props = {
 };
 const Modal = CanonFeedbackModal as unknown as ComponentType<S9Props>;
 
+// Canon seeds each vote row with a baked "base" count (FB_SOURCES / FB_FEATURES
+// inside @samosite/canon/customer — e.g. vk 9, custom_domain 9, yclients 8)
+// that it renders whenever the API tally has NO entry for that key. That's
+// demo social-proof for the design canvas; in prod we want honest counts —
+// 0 until someone actually votes. Canon's `baseOf(key, base)` uses
+// `items[key]` whenever it's non-null, so an explicit 0 beats the seed.
+//
+// We therefore zero-fill every known key and overlay the real API tally on
+// top. Keys mirror canon FB_SOURCES + FB_FEATURES, which canon does NOT export
+// (@todo canon-gap: export the key list, or default `base` to 0 so consumers
+// don't have to mirror it). If canon adds a key, it shows its seed number
+// until this list is updated — self-healing, low-risk.
+const FEEDBACK_KEYS = [
+  // sources (FB_SOURCES)
+  "vk",
+  "ozon",
+  "youtube",
+  "dzen",
+  "max",
+  // features (FB_FEATURES)
+  "yclients",
+  "amocrm",
+  "custom_domain",
+  "no_watermark",
+  "multilang",
+  "payments",
+  "blog",
+  "stats",
+] as const;
+
+/** Honest tally for canon: every known key at 0, real API counts overlaid.
+ *  Always returns a defined tally so canon never falls back to its baked seeds. */
+function honestTally(t: FbTally | undefined): FbTally {
+  const items: Record<string, number> = {};
+  for (const k of FEEDBACK_KEYS) items[k] = 0;
+  if (t) for (const [k, v] of Object.entries(t.items)) items[k] = v;
+  return { items, total_week: t?.total_week ?? 0 };
+}
+
 /** Window event other components dispatch to open the modal (with a source). */
 export const SAMOSITE_OPEN_FEEDBACK = "samosite:open-feedback";
 
@@ -114,7 +153,7 @@ export function FeedbackModal() {
         if (j?.ok && j.data) setTally(j.data as FbTally);
       })
       .catch(() => {
-        /* canon falls back to baked base counts when `tally` is absent */
+        /* leave `tally` undefined → honestTally() still yields all-zero counts */
       });
     return () => controller.abort();
   }, [open]);
@@ -161,7 +200,7 @@ export function FeedbackModal() {
       embedded={false}
       open={open}
       onOpenChange={onOpenChange}
-      tally={tally}
+      tally={honestTally(tally)}
       submitting={submitting}
       error={error}
       onSubmit={onSubmit}
