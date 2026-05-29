@@ -36,8 +36,9 @@
  * ── Вторичные действия (P2) ──
  *   examples_anchor_click — «Сначала посмотреть примеры ↓» в Hero
  *   login_click           — «Войти» в шапке (→ /login)
- *   feedback_open         — вход в фидбек; param `source`: fab | sources |
- *                           footer | final
+ *   feedback_open         — открытие feedback-модалки; param `source`: fab |
+ *                           sources | footer | event
+ *   feedback_submit       — успешная отправка голосов; param `votes` (кол-во)
  *   analytics_demo_click  — «Посмотреть демо ЛК» под аналитикой (→ /admin-demo)
  *
  * Removed (секций больше нет в canon 0.7.x — НЕ удалять в metrika.yandex.ru,
@@ -70,6 +71,7 @@ export type MetrikaGoal =
   | "examples_anchor_click"
   | "login_click"
   | "feedback_open"
+  | "feedback_submit"
   | "analytics_demo_click";
 
 const METRIKA_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";

@@ -59,7 +59,6 @@ import {
 } from "@samosite/canon/landing";
 
 import { CanonCtaBindings } from "@/components/CanonCtaBindings";
-import { FeedbackFloatingButton } from "@/components/FeedbackForm";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { MetrikaGoals } from "@/components/MetrikaGoals";
@@ -149,12 +148,9 @@ export default function HomePage() {
       <ResponsiveCanonSection id="faq" Component={FaqSection} />
       <ResponsiveCanonSection id="final-cta" Component={FinalCtaSection} />
       <Footer />
-      {/* Sticky bottom-right «Чего не хватает?» → /feedback. Was global
-          in app/layout.tsx, removed in PR-G (paid-service polish), now
-          re-added landing-only per user request — keeps it off /feedback
-          (redundant) and /login (wrong context). `position: fixed` so
-          tree placement is purely logical. */}
-      <FeedbackFloatingButton />
+      {/* The «Чего не хватает?» FAB + feedback modal now mount globally in
+          app/layout.tsx (canon 0.9.1 `<FeedbackModal />`), so there's no
+          landing-local mount here anymore. */}
     </main>
   );
 }

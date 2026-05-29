@@ -45,6 +45,12 @@ const nextConfig = {
       { source: "/admin/api/:path*", destination: `${backend}/admin/api/:path*` },
     ];
   },
+  // `/feedback` retired (canon 0.9.1 — feedback is now a modal over any page).
+  // 301 the old standalone route home so stale links / search-index entries
+  // don't 404. The modal's FAB + Footer link cover the entry points.
+  async redirects() {
+    return [{ source: "/feedback", destination: "/", permanent: true }];
+  },
 };
 
 export default nextConfig;

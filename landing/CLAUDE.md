@@ -22,7 +22,8 @@ Per `docs/handoff/VISUAL_COVERAGE.md` and `landing/app/page.tsx`:
 
 - `landing/app/page.tsx` — 10 sections via `<ResponsiveCanonSection>` (canon 0.9.1 v3 narrative — landing markup unchanged since 0.8.0; 0.9.x only touches the customer `S9_FeedbackModal` (0.9.1 = controlled API: `open`/`onOpenChange`/`tally`/`onSubmit`/`embedded`). Fixed order: Examples → Cycle → Monday → BaseWork → Sources → Analytics → Ownership → Pricing → FAQ → FinalCta — Analytics sits ABOVE Ownership, which canon 0.8.0 now bakes in too), each renders BOTH mobile and desktop variants, CSS media query picks one. canon 0.8.0: `ExamplesSection` is a fixed-height (460px) preview **carousel** (`ExamplesCarousel`) + the `HowItPicks` «Дизайн собирается из ваших материалов» block; `PricingSection` is the 5-tier `PricingMatrix`; `BaseWorkSection`/`OwnershipSection` re-laid-out (editorial cards / 2×2 mini-controls). The `@samosite/canon/presets` module (`PresetRenderer`, `MiniChrome` with `height` prop, 5 families × 16 themes) is bundled into the landing chunk via canon's internal `../presets` import — we don't import `@samosite/canon/presets` directly (no prod consumer yet)
 - `landing/components/Hero.tsx` (hand-rolled) imports `ChipStrip` from `@samosite/canon/landing` (canon 0.7.2 standalone export) for the «СОБИРАЕМ ИЗ» source-chip strip — dual-rendered (sm: toggle) for responsive parity. This is the canon-sanctioned way to reuse a Hero sub-block without transcribing JSX. Hero copy (абзацы 1/2) is hand-mirrored to canon 0.7.2 HeroBlock; see `docs/handoff/DESIGN_SPEC.md` for the per-component spec + the 7-point prod-conformance checklist
-- `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`
+- `landing/app/layout.tsx` — `<CanonStyles />` mounted in `<body>`; `<FeedbackModal />` mounted globally (self-hides on `/admin*` + `/login`)
+- `landing/components/FeedbackModal.tsx` — thin adapter around canon `S9_FeedbackModal` (canon 0.9.1 controlled API): `tally`←`GET /api/feedback/tally`, `onSubmit`→`POST /api/feedback` votes[], `embedded={false}`. Canon renders its own FAB; Footer + Sources «Не нашли свою» open it via the `samosite:open-feedback` event / `data-ss-feedback` hook. Replaced the hand-rolled `FeedbackForm` + `/feedback` page (retired, 301 → `/`)
 - `landing/app/admin-demo/page.tsx` — `<ClientAdminDemo />` drop-in (PR #122)
 - `landing/app/customer-demo/page.tsx` — customer-site palette preview through canon (PR #124)
 
@@ -31,7 +32,7 @@ Per `docs/handoff/VISUAL_COVERAGE.md` and `landing/app/page.tsx`:
 - **`Hero`** (`landing/components/Hero.tsx`) — canon's `HeroBlock` is read-only (input is `<span>` placeholder, CTA is `<a href="#hero">`). Replacing breaks the entire signup conversion funnel (paste URL → debounced live preview → SubmitModal wizard → POST `/api/submit-application`). Stays hand-rolled until canon ships interactive variant (canon 0.2.x).
 - **`Footer`** (`landing/components/Footer.tsx`) — canon doesn't export standalone (inlined in `<SamosaytLanding>`). Already matches canon's slim footer pattern; canon-side extraction pending.
 - **`SubmitModal`** — canon 0.3.0 controlled-API wrapper around `@samosite/canon/intake::SubmitModal`. Owns state (mode='link'|'photo', step 1-4) + backend wiring. Renders canon's step components for the actual UI.
-- **`SourceDetectionBadge`**, **`FeedbackForm`**, **`ApplicationForm`** — interactive, same compromise as Hero.
+- **`SourceDetectionBadge`**, **`ApplicationForm`** — interactive, same compromise as Hero.
 - ~~`PhotoDrawer`~~ — deleted in 0.3.0; absorbed into `SubmitModal` mode='photo' (Step 1 photos + Step 2 description+files).
 
 **Update these two lists in the same commit when migrating a component.**

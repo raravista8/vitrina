@@ -18,12 +18,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1.0,
     },
-    {
-      url: `${SITE_URL}/feedback`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
+    // `/feedback` retired (canon 0.9.1 — feedback is a modal over any page;
+    // the route 301-redirects to `/`). Dropped from the sitemap so crawlers
+    // don't index a redirect.
     {
       url: `${SITE_URL}/privacy`,
       lastModified: now,

@@ -94,18 +94,9 @@ export function MetrikaGoals() {
       if (!a) return;
       const href = a.getAttribute("href") ?? "";
 
-      // Feedback entries — all resolve to /feedback; attribute by context.
-      if (href.includes("/feedback")) {
-        let source = "footer";
-        if (a.closest("footer")) source = "footer";
-        else if (a.closest('[data-section="sources"]')) source = "sources";
-        else if (a.closest('[data-section="final-cta"]')) source = "final";
-        else if (a.classList.contains("fixed")) source = "fab";
-        reachGoal("feedback_open", { source });
-        return;
-      }
-      // Floating «Чего не хватает?» FAB → /feedback (Next <Link> renders
-      // the same href; covered above). Kept explicit comment for clarity.
+      // Feedback (`feedback_open`, source-attributed) is fired by the
+      // FeedbackModal adapter on open — covers the FAB + every
+      // `data-ss-feedback` entry uniformly, so no href-based tracking here.
 
       if (href === "/login") {
         reachGoal("login_click");
