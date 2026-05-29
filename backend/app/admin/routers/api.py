@@ -83,6 +83,8 @@ from app.infrastructure.postgres.models import (
     ApplicationTextFile,
     Consent,
     Feedback,
+    FeedbackSubmission,
+    FeedbackVote,
     Lead,
     Site,
     User,
@@ -1081,24 +1083,73 @@ async def admin_api_feedback_list(
 ) -> dict[str, Any]:
     limit = max(1, min(limit, 200))
     offset = max(0, offset)
-    stmt = select(Feedback).order_by(Feedback.created_at.desc())
+    # Two stores feed the inbox: the legacy `feedback` table (old single-row
+    # callers + own_source/own_feature free-text) AND `feedback_submission`
+    # (the 0.9.x vote-modal — the live entry point). Fetch the newest `window`
+    # from each, merge by created_at, then page in Python. Volumes are tiny
+    # (pre-launch micro-SaaS); the per-source `window` cap keeps it bounded.
+    window = offset + limit
+    pattern = f"%{q}%" if q else None
+
+    # ── legacy feedback ──────────────────────────────────────────────────
+    fstmt = select(Feedback).order_by(Feedback.created_at.desc())
     if type_filter:
-        stmt = stmt.where(Feedback.type == type_filter)
-    if q:
-        pattern = f"%{q}%"
-        stmt = stmt.where(
+        fstmt = fstmt.where(Feedback.type == type_filter)
+    if pattern is not None:
+        fstmt = fstmt.where(
             or_(
                 Feedback.message.ilike(pattern),
                 Feedback.source_name.ilike(pattern),
                 Feedback.email.ilike(pattern),
             )
         )
-    rows = (await session.execute(stmt.limit(limit).offset(offset))).scalars().all()
-    total = (await session.execute(select(func.count()).select_from(Feedback))).scalar_one()
+    legacy = (await session.execute(fstmt.limit(window))).scalars().all()
+
+    # ── 0.9.x modal submissions — shown under «all» + «general» (their
+    #    source/feature votes render inside the row's checkboxes block) ─────
+    submissions: list[FeedbackSubmission] = []
+    votes_by_sub: dict[uuid.UUID, list[tuple[str, str]]] = {}
+    if type_filter in (None, "general"):
+        sstmt = select(FeedbackSubmission).order_by(FeedbackSubmission.created_at.desc())
+        if pattern is not None:
+            sstmt = sstmt.where(
+                or_(
+                    FeedbackSubmission.message.ilike(pattern),
+                    FeedbackSubmission.name.ilike(pattern),
+                )
+            )
+        submissions = list((await session.execute(sstmt.limit(window))).scalars().all())
+        sub_ids = [s.id for s in submissions]
+        if sub_ids:
+            vrows = (
+                await session.execute(
+                    select(
+                        FeedbackVote.submission_id,
+                        FeedbackVote.kind,
+                        FeedbackVote.option_key,
+                    )
+                    .where(FeedbackVote.submission_id.in_(sub_ids))
+                    .order_by(FeedbackVote.created_at)
+                )
+            ).all()
+            for sid, kind, key in vrows:
+                votes_by_sub.setdefault(sid, []).append((kind, key))
+
+    # ── merge by created_at desc, page in Python ─────────────────────────
+    merged: list[tuple[datetime, dict[str, Any]]] = [
+        (r.created_at, _feedback_row(r)) for r in legacy
+    ] + [(s.created_at, _submission_inbox_row(s, votes_by_sub.get(s.id, []))) for s in submissions]
+    merged.sort(key=lambda t: t[0], reverse=True)
+    page = [row for _, row in merged[offset : offset + limit]]
+
+    legacy_total = (await session.execute(select(func.count()).select_from(Feedback))).scalar_one()
+    sub_total = (
+        await session.execute(select(func.count()).select_from(FeedbackSubmission))
+    ).scalar_one()
     return _envelope_ok(
         {
-            "total": total,
-            "items": [_feedback_row(r) for r in rows],
+            "total": legacy_total + sub_total,
+            "items": page,
             "limit": limit,
             "offset": offset,
         }
@@ -1205,6 +1256,26 @@ def _feedback_row(row: Feedback) -> dict[str, Any]:
     }
 
 
+def _submission_inbox_row(sub: FeedbackSubmission, votes: list[tuple[str, str]]) -> dict[str, Any]:
+    """Map a 0.9.x vote-modal submission into the same inbox-row shape the
+    canon `S18_FeedbackInbox` renders for legacy `Feedback`. Submissions are
+    surfaced as ``type='general'`` (modal feedback); the ticked source/feature
+    options + the submitter name go into ``checkboxes``, which the inbox shows
+    as a collapsible block. ``contact`` is PII → masked, never raw."""
+    return {
+        "id": str(sub.id),
+        "type": "general",
+        "source_name": None,
+        "email_or_contact_masked": _mask_freeform_contact(sub.contact),
+        "message": sub.message,
+        "checkboxes": {
+            **({"name": sub.name} if sub.name else {}),
+            "votes": [f"{kind}:{key}" for kind, key in votes],
+        },
+        "created_at": sub.created_at.isoformat() if sub.created_at else None,
+    }
+
+
 def _user_row(user: User) -> dict[str, Any]:
     return {
         "id": str(user.id),
@@ -1246,6 +1317,17 @@ def _mask_email(value: str | None) -> str | None:
     if "@" in value:
         return _mask_contact_value(value, "email")
     return _mask_contact_value(value, "telegram")
+
+
+def _mask_freeform_contact(value: str | None) -> str | None:
+    """Mask a feedback-submission contact (could be phone / @tg / email / MAX —
+    free-form). Email-shaped → email mask; else show first 2 + last 2 chars."""
+    if not value:
+        return None
+    v = value.strip()
+    if "@" in v and "." in v.rsplit("@", 1)[-1]:
+        return _mask_contact_value(v, "email")
+    return f"{v[:2]}***{v[-2:]}" if len(v) > 4 else "***"
 
 
 def _ip_prefix(ip: str | None) -> str | None:
