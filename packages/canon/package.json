@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.8.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.8.0: витрина-карусель с компактными превью (5 семейств), полная тарифная сетка (5 планов), редизайн блоков «Базовая работа» и «Вы — главный».",
+  "version": "0.9.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.0: feedback #9 переведён со standalone-страницы на vote-first модалку (счётчики X/10, контакт после первого голоса, экран благодарности), адаптив для мобайла.",
   "type": "module",
   "sideEffects": [
     "*.css"
