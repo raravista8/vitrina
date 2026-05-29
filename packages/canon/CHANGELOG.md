@@ -35,12 +35,22 @@
 
 ### Component shape (consumer note)
 
-`S9_FeedbackModal({ mobile })` is **presentational** — internal `useState`
-for votes, baked `[base]` tally, no `tally`/`onSubmit`/`onChange` props (the
-`<FeedbackModal tally={…}/>` in `FEEDBACK_BACKEND.md` is aspirational). Wiring
-it to a real backend needs the same controlled-wrapper / DOM-binding
-compromise vitrina uses for `Hero` / `SubmitModal` — done consumer-side in
-PR2, not here.
+`S9_FeedbackModal({ mobile })` is **presentational — actually a canvas
+artboard**, not a mountable component: `open` defaults to `true`, it renders a
+blurred `FauxPage` mock behind itself, the overlay is `position:absolute`
+(scoped to its container, not viewport-fixed), it has no
+`open`/`tally`/`onSubmit` props, submit just sets local `submitted=true` (no
+network), and the sub-primitives (`FBVoteRow`/`FBField`/…) aren't exported.
+**It cannot be dropped onto a real page** (would show a fake skeleton behind a
+scrim, open-on-load, submitting nothing).
+
+> **KNOWN GAP (canon-gap-0900-feedback):** an **interactive variant** is
+> requested — `open`/`onOpenChange`/`tally`/`onSubmit` props + an `embedded`
+> flag that drops `FauxPage` and switches the overlay to `position:fixed`.
+> Same pattern that unblocked `SubmitModal` (canon 0.3.0) and admin (0.2.x).
+> Full prop contract + acceptance: **`docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md`**.
+> Until it ships, vitrina prod keeps the hand-rolled `/feedback` page (PR2 is
+> deferred); the backend votes/tally (PR3) is independent and proceeds now.
 
 ### Backend (out of package — `docs/handoff/FEEDBACK_BACKEND.md`)
 
