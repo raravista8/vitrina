@@ -622,13 +622,15 @@ async def test_feedback_inbox_includes_modal_submissions(
     row = next((it for it in body["items"] if it["id"] == str(sub.id)), None)
     assert row is not None, "modal submission missing from inbox"
     assert row["type"] == "general"
-    # votes + name surfaced in the collapsible checkboxes block
-    assert set(row["checkboxes"]["votes"]) == {"feature:payments", "source:max"}
-    assert row["checkboxes"]["name"] == "Павел"
-    # contact is PII → masked, never raw
-    masked = row["email_or_contact_masked"]
-    assert masked
-    assert "79991234567" not in masked
+    # picks render as readable RU labels in the prominent «Сообщение» field,
+    # with the submitter name — not a raw checkboxes JSON dump.
+    msg = row["message"]
+    assert "Павел" in msg
+    assert "Онлайн-оплата" in msg  # feature:payments → label
+    assert "MAX-канал" in msg  # source:max → label
+    assert row["checkboxes"] == {}  # no JSON block
+    # contact shown IN FULL so the founder can reply
+    assert row["email_or_contact_masked"] == "+79991234567"
     # it appears under the «general» filter, and NOT under an unrelated type
     r_gen = await client.get(
         "/admin/api/feedback?type_filter=general", cookies={"admin_session": cookie}
