@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.9.4 — Переиздание landing-фиксов (коллизия версий 0.9.3) · 2026-05-29
+
+> **PATCH.** Идентичен 0.9.3 по коду, но с уникальным номером версии. На прод под номером `0.9.3` уехал пакет БЕЗ landing-фиксов (StickyHeader/HeroBlock) — версию бампнули, а изменения `src/landing/index.tsx` в сборку не попали (признак: `description` в том пакете остался 0.9.2-шным). Из-за совпадения номера версии CI считал «изменений нет» и не пересобирал. 0.9.4 ломает коллизию — гарантированно подхватывается пайплайном.
+
+### Что входит (то, что должно было приехать в 0.9.3)
+
+**`StickyHeader`**
+- Единый класс `ss-nav-link` для всех пунктов, включая «Войти» (класс `ss-login-link` удалён). Hover одинаковый: текст → `ink` + мягкая фоновая пилюля `bgSoft`, `border-radius: 999px`, паддинг `6px 12px`.
+- Hover-правила с `!important` (`color`, `background`) — переживают инлайновые вычисленные стили, которые запекает экспортер артборда.
+
+**`HeroBlock`**
+- Второй абзац подзаголовка переведён на `text-wrap: balance` — убран висячий «новых заявок» на отдельной последней строке.
+
+### Migration
+
+```bash
+npm i @samosite/canon@0.9.4
+npm run build   # дальше обычный деплой
+```
+
+Drop-in. Никаких правок пропсов/импортов. **Важно:** убедись, что в `node_modules/@samosite/canon/package.json` после установки `version: 0.9.4` и `description` упоминает StickyHeader/HeroBlock — это маркер, что подхватился правильный пакет (именно его отсутствие выдало проблему в 0.9.3).
+
+### Vitrina-side (this vendoring PR)
+
+**Version-sync only — zero code/dist delta on our side.** The collision
+0.9.4 fixes was on the canon team's *npm-publish* pipeline (their published
+`0.9.3` tarball shipped without the landing fixes). We don't consume from
+their registry — we vendor `src/` directly, and our 0.9.3 vendor (PR #178,
+prod `/version` 541efe3) **already carried the real fixes**, verified at the
+byte level: `ss-nav-link`=7 / `ss-login-link`=0 / `textWrap: 'balance'` /
+`!important` hover, and confirmed live (served HTML has `ss-nav-link`×9,
+zero `ss-login-link`).
+
+Diffed all 17 `src/` files of the 0.9.4 tarball against our vendored
+0.9.3 → **byte-identical**. So this PR only bumps `package.json`
+0.9.3→0.9.4 + description + this CHANGELOG entry, to stay in lockstep with
+the canon team's canonical version number. `dist` rebuilds byte-identical
+(no src change), `tsup.config.ts` keeps the local `dts:false`. **No
+redeploy needed** — the landing bundle prod already serves is unchanged.
+
+---
+
 ## 0.9.3 — StickyHeader: единый hover + экспорт-устойчивость · HeroBlock: orphan-fix · 2026-05-29
 
 > **PATCH.** Только `src/landing/index.tsx` (`StickyHeader` + `HeroBlock`). Публичные экспорты, типы, пропсы и разметка без изменений. Меняются CSS-ховеры навигации и `text-wrap` второго абзаца героя. Drop-in на прод.
