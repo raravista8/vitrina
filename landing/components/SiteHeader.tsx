@@ -50,8 +50,13 @@ export function SiteHeader() {
     const fixHrefs = () => {
       const hosts = document.querySelectorAll<HTMLElement>(".ss-sticky-header");
       for (const host of Array.from(hosts)) {
-        // «Войти» — canon ships `#login`, we want `/login`.
-        for (const a of Array.from(host.querySelectorAll<HTMLAnchorElement>("a.ss-login-link"))) {
+        // «Войти» — canon ships `<a href="#login">`, we want `/login`.
+        // Select by the `#login` href (stable hook), NOT by class: canon
+        // 0.9.3 dropped the dedicated `.ss-login-link` class — every nav
+        // item (incl. «Войти») now shares `.ss-nav-link`, so class-matching
+        // would also grab Примеры/Цена/Помощь. The `#login` href is unique
+        // to «Войти» and unchanged across 0.9.x.
+        for (const a of Array.from(host.querySelectorAll<HTMLAnchorElement>('a[href="#login"]'))) {
           a.setAttribute("href", "/login");
         }
         // Brand-mark + primary CTA both ship as `<a href="#hero">`.
