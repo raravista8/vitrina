@@ -80,59 +80,51 @@ export function DashboardPendingPanel({
     if (!root) return;
 
     let hostEl: HTMLDivElement | null = null;
-    let observer: MutationObserver | null = null;
 
-    // Canon's label only — exclude the one inside our own portal host
-    // (our replacement card carries the same "ТОП-5 PENDING" text).
-    const findCanonLabel = () =>
-      Array.from(root.querySelectorAll("span")).find(
+    // Idempotent: (1) hide canon's mock pending card, (2) ensure our portal
+    // host sits in the same grid slot. Runs on mount AND on EVERY DOM
+    // mutation (persistent observer) — so it survives canon re-renders
+    // (loading→loaded swaps the card's children) and any node re-creation
+    // that would otherwise un-hide the mock. Self-healing: if React drops our
+    // host, the next mutation re-creates it.
+    const apply = () => {
+      // Canon's label only — exclude the one inside our own portal host
+      // (our replacement card carries the same "ТОП-5 PENDING" text).
+      const label = Array.from(root.querySelectorAll("span")).find(
         (el) => el.textContent?.includes(LABEL) && !el.closest(`[${HOST_ATTR}]`),
       );
-
-    const mount = (): boolean => {
-      const existing = root.querySelector<HTMLDivElement>(`[${HOST_ATTR}]`);
-      if (existing) {
-        hostEl = existing;
-        setHost(existing);
-        return true;
+      const card = label?.parentElement?.parentElement as HTMLElement | undefined; // <Card>
+      const grid = card?.parentElement as HTMLElement | undefined; // chart | pending grid
+      if (!label || !card || !grid) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`[${GAP_ID}] pending card not located yet — observing DOM`);
+        }
+        return;
       }
-      const label = findCanonLabel();
-      const header = label?.parentElement; // flex header (label + "все →")
-      const card = header?.parentElement; // canon's <Card>
-      const grid = card?.parentElement; // 2-col grid (chart | pending)
-      if (!label || !header || !card || !grid) return false;
 
       // Hide canon's mock card. `display` is absent from Card's base style
-      // (see canon primitives), so React's reconciler never re-writes it.
-      (card as HTMLElement).style.display = "none";
+      // (canon primitives), so React's style-diff never re-writes it — but if
+      // canon ever re-creates the node, this re-applies on the next mutation.
+      if (card.style.display !== "none") card.style.display = "none";
 
       // `display:contents` host → our <Card> becomes the grid item directly,
       // landing in the same 1fr column canon's card occupied.
-      hostEl = document.createElement("div");
-      hostEl.setAttribute(HOST_ATTR, "1");
-      hostEl.style.display = "contents";
-      grid.appendChild(hostEl);
-      setHost(hostEl);
-      return true;
+      if (!hostEl || !hostEl.isConnected) {
+        hostEl = document.createElement("div");
+        hostEl.setAttribute(HOST_ATTR, "1");
+        hostEl.style.display = "contents";
+        grid.appendChild(hostEl);
+        setHost(hostEl);
+      }
     };
 
-    if (!mount()) {
-      // Canon DOM not ready yet (or structure changed) — watch + retry.
-      observer = new MutationObserver(() => {
-        if (mount()) observer?.disconnect();
-      });
-      observer.observe(root, { childList: true, subtree: true });
-      if (process.env.NODE_ENV !== "production") {
-        console.warn(`[${GAP_ID}] pending card not located yet — observing DOM`);
-      }
-    }
+    apply();
+    const observer = new MutationObserver(apply);
+    observer.observe(root, { childList: true, subtree: true });
 
     return () => {
-      observer?.disconnect();
+      observer.disconnect();
       if (hostEl?.parentElement) hostEl.parentElement.removeChild(hostEl);
-      // Restore canon's card (defensive — usually unmounts with the page).
-      const card = findCanonLabel()?.parentElement?.parentElement as HTMLElement | undefined;
-      if (card) card.style.display = "";
       setHost(null);
     };
   }, [rootRef]);
