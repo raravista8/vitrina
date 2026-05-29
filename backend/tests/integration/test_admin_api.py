@@ -303,6 +303,52 @@ async def test_login_backup_code_path(client: httpx.AsyncClient, admin_creds) ->
     assert r2.json()["data"]["backup_codes_remaining"] == 2
 
 
+async def test_login_password_only_when_2fa_disabled(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """ADMIN_2FA_REQUIRED=false → step 1 password alone authenticates.
+
+    The body carries ``{"authenticated": true}`` with no ``challenge_id``,
+    the ``admin_session`` cookie is set right here, and that cookie grants
+    access to /me — i.e. the second factor is genuinely skipped, not just
+    visually hidden.
+    """
+    from app.config import get_settings
+
+    _, password, _ = admin_creds
+    monkeypatch.setattr(get_settings(), "admin_2fa_required", False)
+
+    r = await client.post("/admin/api/login", json={"username": "founder", "password": password})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["ok"] is True
+    assert body["data"]["authenticated"] is True
+    assert "challenge_id" not in body["data"]
+
+    cookie = r.cookies.get("admin_session")
+    assert cookie is not None
+    me = await client.get("/admin/api/me", cookies={"admin_session": cookie})
+    assert me.status_code == 200
+    assert "admin_id" in me.json()["data"]
+
+
+async def test_login_password_only_still_rejects_bad_password(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """With 2FA off, the bcrypt password is the *only* gate — a wrong
+    password must still 401 and set no session cookie."""
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "admin_2fa_required", False)
+    r = await client.post("/admin/api/login", json={"username": "founder", "password": _WRONG_PW})
+    assert r.status_code == 401
+    assert r.cookies.get("admin_session") is None
+
+
 async def test_me_requires_session(client: httpx.AsyncClient) -> None:
     r = await client.get("/admin/api/me")
     assert r.status_code == 303

@@ -104,18 +104,31 @@ export default function AdminLoginPage() {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   // Step 1 submit: POST /admin/api/login {username, password} →
-  // challenge_id (5min TTL) or 401 invalid_credentials / 429 rate-limit.
+  // challenge_id (5min TTL) for step 2, OR — when the backend has
+  // ADMIN_2FA_REQUIRED=false — {authenticated:true} + session cookie set
+  // (we go straight to /admin). 401 invalid_credentials / 429 rate-limit.
   const onSubmitCredentials = useCallback(
     async (u: string, p: string) => {
       if (loading) return;
       setError(null);
       setLoading(true);
-      const result = await adminRequest<{ challenge_id: string; expires_in: number }>("/login", {
+      const result = await adminRequest<{
+        challenge_id?: string;
+        expires_in?: number;
+        authenticated?: boolean;
+      }>("/login", {
         method: "POST",
         body: { username: u, password: p },
       });
       setLoading(false);
       if (result.ok) {
+        // ADMIN_2FA_REQUIRED=false → password alone authenticated; the
+        // backend already set the admin_session cookie and returns no
+        // challenge_id. Skip the TOTP step and go straight to /admin.
+        if (result.data.authenticated || !result.data.challenge_id) {
+          router.replace("/admin");
+          return;
+        }
         setChallengeId(result.data.challenge_id);
         setTotp("");
         setBackupCode("");
@@ -130,7 +143,7 @@ export default function AdminLoginPage() {
       }
       setError(mapError(result.error));
     },
-    [loading],
+    [loading, router],
   );
 
   // Step 2 submit: POST /admin/api/login/{totp,backup} {challenge_id, code}
