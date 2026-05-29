@@ -43,7 +43,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Final, Literal
 
 from cryptography.fernet import MultiFernet
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -1244,12 +1244,36 @@ def _lead_row_masked(row: Lead) -> dict[str, Any]:
     }
 
 
+# Human RU labels for vote option_keys, mirrored from canon FB_SOURCES /
+# FB_FEATURES (@samosite/canon/customer — canon doesn't export them; keep in
+# sync if canon adds/renames options). @todo canon-gap: export key→label map.
+_VOTE_LABELS: Final[dict[str, str]] = {
+    "source:vk": "ВКонтакте",
+    "source:ozon": "Ozon-витрина",
+    "source:youtube": "YouTube / Shorts",
+    "source:dzen": "Дзен",
+    "source:max": "MAX-канал",
+    "feature:yclients": "YCLIENTS интеграция",
+    "feature:amocrm": "amoCRM интеграция",
+    "feature:custom_domain": "Свой домен",
+    "feature:no_watermark": "Убрать «Сделано на Самосайте»",
+    "feature:multilang": "Несколько языков",
+    "feature:payments": "Онлайн-оплата",
+    "feature:blog": "Блог-CMS",
+    "feature:stats": "Статистика посетителей",
+}
+
+
 def _feedback_row(row: Feedback) -> dict[str, Any]:
     return {
         "id": str(row.id),
         "type": row.type,
         "source_name": row.source_name,
-        "email_or_contact_masked": _mask_email(row.email),
+        # Full contact (not masked): feedback contact is the follow-up address
+        # the visitor gave so the founder can REPLY. Founder-only inbox behind
+        # admin auth. Distinct from end-customer leads (Fernet-encrypted +
+        # TOTP-gated decrypt) — those stay masked.
+        "email_or_contact_masked": row.email,
         "message": row.message,
         "checkboxes": row.checkboxes,
         "created_at": row.created_at.isoformat() if row.created_at else None,
@@ -1257,21 +1281,31 @@ def _feedback_row(row: Feedback) -> dict[str, Any]:
 
 
 def _submission_inbox_row(sub: FeedbackSubmission, votes: list[tuple[str, str]]) -> dict[str, Any]:
-    """Map a 0.9.x vote-modal submission into the same inbox-row shape the
-    canon `S18_FeedbackInbox` renders for legacy `Feedback`. Submissions are
-    surfaced as ``type='general'`` (modal feedback); the ticked source/feature
-    options + the submitter name go into ``checkboxes``, which the inbox shows
-    as a collapsible block. ``contact`` is PII → masked, never raw."""
+    """Map a 0.9.x vote-modal submission into the canon `S18_FeedbackInbox`
+    row shape (``type='general'``). The picked options render as a readable
+    list in the prominent «Сообщение» field (canon's <p> collapses newlines,
+    so we join inline) — NOT the raw `checkboxes` JSON dump (left empty so the
+    inbox skips that block). ``contact`` is shown IN FULL so the founder can
+    reply (same rationale as `_feedback_row`)."""
+    labels = [_VOTE_LABELS.get(f"{kind}:{key}", key) for kind, key in votes]
+    name = (sub.name or "").strip()
+    comment = (sub.message or "").strip()
+    segments: list[str] = []
+    if name and comment:
+        segments.append(f"{name}: {comment}")
+    elif comment:
+        segments.append(comment)
+    elif name:
+        segments.append(name)
+    if labels:
+        segments.append("Голоса: " + ", ".join(labels))
     return {
         "id": str(sub.id),
         "type": "general",
         "source_name": None,
-        "email_or_contact_masked": _mask_freeform_contact(sub.contact),
-        "message": sub.message,
-        "checkboxes": {
-            **({"name": sub.name} if sub.name else {}),
-            "votes": [f"{kind}:{key}" for kind, key in votes],
-        },
+        "email_or_contact_masked": sub.contact or None,
+        "message": " · ".join(segments) or None,
+        "checkboxes": {},
         "created_at": sub.created_at.isoformat() if sub.created_at else None,
     }
 
@@ -1309,25 +1343,6 @@ def _mask_contact_value(value: str, contact_type: str) -> str:
         body = value[1:]
         return f"@{body[:2]}***{body[-2:]}" if len(body) > 4 else "@***"
     return "***"
-
-
-def _mask_email(value: str | None) -> str | None:
-    if not value:
-        return None
-    if "@" in value:
-        return _mask_contact_value(value, "email")
-    return _mask_contact_value(value, "telegram")
-
-
-def _mask_freeform_contact(value: str | None) -> str | None:
-    """Mask a feedback-submission contact (could be phone / @tg / email / MAX —
-    free-form). Email-shaped → email mask; else show first 2 + last 2 chars."""
-    if not value:
-        return None
-    v = value.strip()
-    if "@" in v and "." in v.rsplit("@", 1)[-1]:
-        return _mask_contact_value(v, "email")
-    return f"{v[:2]}***{v[-2:]}" if len(v) > 4 else "***"
 
 
 def _ip_prefix(ip: str | None) -> str | None:
