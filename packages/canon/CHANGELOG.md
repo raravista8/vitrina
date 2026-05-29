@@ -1,5 +1,58 @@
 # Changelog
 
+## 0.9.1 — Feedback #9 → controlled API · 2026-05-29
+
+> **MINOR.** `S9_FeedbackModal` goes from a presentational canvas artboard
+> to a **controlled component with props** — drop-in for prod (same pattern
+> as `SubmitModal` 0.3.0 / admin 0.2.x). 0.9.0 visual/copy unchanged. A
+> zero-prop call stays a canvas mock (back-compat). Closes the gap filed in
+> `docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md` (canon-gap-0900-feedback).
+
+### Feedback (#9) — `src/customer/index.tsx`
+
+- **Controlled API.** New props: `open` / `onOpenChange` (controlled; else
+  internal state), `tally` (`{ items, total_week }` from
+  `GET /api/feedback/tally`), `onSubmit(payload)`, `submitting`, `error`,
+  `embedded`. Signature is now `S9_FeedbackModal(props: S9_FeedbackModalProps)`.
+- **`embedded` branch.** `false` (prod): **no FauxPage**, overlay
+  `position: fixed` to the viewport, high z-index — a real global modal.
+  `true` (canvas): FauxPage + `position: absolute` (the 0.9.0 artboard).
+  Default is derived — canvas mode only on a zero-prop / uncontrolled mount,
+  so `<S9_FeedbackModal />` stays pixel-identical.
+- **`tally` injection.** `X/10` bars + «за неделю» read from
+  `tally.items` / `tally.total_week`; the optimistic `+1` on tick is kept;
+  falls back to baked `base` if `tally` is omitted.
+- **`onSubmit`.** Receives `{ votes[], own_source, own_feature, message,
+  name, contact }`; thank-you shows after it resolves; on reject the modal
+  stays open, `error` renders inline, `submitting` spins the button. No
+  network inside the component — captcha + POST live on the consumer.
+- **Floating button** stays internal; in controlled mode its click
+  delegates to `onOpenChange(true)`. Backdrop click closes.
+- **TS types exported:** `S9_FeedbackModalProps`, `FbTally`, `FbVote`,
+  `FbSubmitPayload`, `FbKind` (barrel `export * from './customer'`).
+- **Unchanged:** export paths (`S9_FeedbackModal` + aliases
+  `S9_FeedbackPage` / `FeedbackPage`), selectors `[data-feedback-modal]` /
+  `[data-floating-feedback-btn]`, the 0.9.0 mobile layout.
+
+### Re-cut note
+
+The first 0.9.1 zip shipped 0.9.0 `src/customer/index.tsx` by accident (a
+recursive 0.9.0→0.9.1 copy clobbered the fresh file in the archive only —
+the working source was correct). Flagged by vitrina; this re-cut carries the
+real controlled source. Verified on vendor: `grep -c onOpenChange
+src/customer/index.tsx` > 0, the 5 types resolve, zero-prop still renders
+the artboard.
+
+### Vitrina-side (this vendoring PR)
+
+`cp src/customer/index.tsx` + package.json 0.9.0→0.9.1 + dist rebuild
+(customer + index-barrel chunks). tsup keeps the local `dts: false`
+carry-forward. The consumer swap (mount globally + retire `/feedback`) is a
+follow-up PR — the modal stays unconsumed here, so prod behaviour is
+unchanged and drift = 0. No other module touched.
+
+---
+
 ## 0.9.0 — Feedback #9 → vote-first modal · 2026-05-29
 
 > **MINOR.** Over 0.8.0. Screen #9 (feedback) moves from a standalone

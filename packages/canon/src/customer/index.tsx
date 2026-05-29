@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, Fragment } from 'react';
 import { VT } from '../tokens';
-import { Mono, Card, Btn, Checkbox, IconArrow } from '../primitives';
+import { Mono, Card, Btn, Checkbox, IconArrow, Spinner } from '../primitives';
 
 
 // ── #7 Customer site template ──────────────────────────────
@@ -1115,6 +1115,43 @@ function S7_SchemeSwatches() {
 // Foot-in-the-door: easy action first (one checkbox vote); the contact block
 // wakes up only after the first vote. X/10 counters + progress bars give
 // social proof and the "push it to 10" pull. [base] = current tally from API.
+// ── #9 Feedback · public types (controlled API, ADR-0009 rev.2) ──
+export type FbKind = 'source' | 'feature';
+export type FbVote = { kind: FbKind; key: string };
+
+export interface FbTally {
+  /** option_key → votes (real count; UI clamps to 10) */
+  items: Record<string, number>;
+  /** votes in the trailing 7 days (shown in the header pill) */
+  total_week: number;
+}
+
+export interface FbSubmitPayload {
+  votes: FbVote[];
+  own_source: string | null;
+  own_feature: string | null;
+  message: string | null;
+  name: string | null;
+  contact: string | null;
+}
+
+export interface S9_FeedbackModalProps {
+  mobile?: boolean;
+  /** controlled open; omit for canvas/uncontrolled */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** live counts from GET /api/feedback/tally; falls back to baked base */
+  tally?: FbTally;
+  /** receives the full payload; consumer does the POST + captcha around it */
+  onSubmit?: (payload: FbSubmitPayload) => void | Promise<void>;
+  submitting?: boolean;
+  error?: string | null;
+  /** false (prod): no FauxPage, overlay fixed to viewport.
+   *  true (canvas): FauxPage behind + overlay absolute.
+   *  Defaults to canvas mode only on a zero-prop / uncontrolled mount. */
+  embedded?: boolean;
+}
+
 const FB_SOURCES = [
   ['vk', 'ВКонтакте', 9],
   ['ozon', 'Ozon-витрина', 7],
@@ -1146,7 +1183,7 @@ function fbPlural(n) {
   return 'голосов';
 }
 
-// One vote line: checkbox + label + meter (bar + X/10). +1 on check.
+// One vote line: checkbox + label + meter (bar + X/10). +1 on check (optimistic).
 // On mobile the meter drops below the label (full-width bar), indented to align.
 function FBVoteRow({ label, base, checked, onToggle, first, mobile }) {
   const v = base + (checked ? 1 : 0);
@@ -1222,14 +1259,15 @@ function FBField({ placeholder, value, onChange, textarea }) {
     : <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={common} />;
 }
 
-function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
+// `baseOf(key, fallback)` lets the section read live tally numbers (or baked base).
+function FBVoteSection({ title, items, votes, onToggle, baseOf, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
   return (
     <div style={{ marginTop: 18 }}>
       <h3 style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em', margin: '0 0 2px' }}>{title}</h3>
       <p style={{ fontSize: 12.5, color: VT.inkFaint, margin: '0 0 8px' }}>Отметьте нужное — голос засчитается сразу</p>
       <div>
         {items.map(([key, label, base], i) => (
-          <FBVoteRow key={key} label={label} base={base} first={i === 0} mobile={mobile}
+          <FBVoteRow key={key} label={label} base={baseOf(key, base)} first={i === 0} mobile={mobile}
             checked={!!votes[key]} onToggle={() => onToggle(key)} />
         ))}
       </div>
@@ -1240,9 +1278,36 @@ function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnS
   );
 }
 
-function S9_FeedbackModal({ mobile }) {
+// ── #9 Feedback · vote-first modal · controlled API (ADR-0009 rev.2) ──
+// Zero-prop  → canvas mock (open=true, FauxPage behind, position:absolute).
+// Prod mount → pass {open,onOpenChange,tally,onSubmit}; embedded=false drops
+// the FauxPage and fixes the overlay to the viewport.
+function S9_FeedbackModal(props: S9_FeedbackModalProps = {}) {
+  const p = props;
+  const {
+    mobile,
+    open: openProp,
+    onOpenChange,
+    tally,
+    onSubmit,
+    submitting = false,
+    error = null,
+    embedded: embeddedProp,
+  } = p;
   const { useState } = React;
-  const [open, setOpen] = useState(true);
+
+  // controlled vs canvas/mock
+  const isControlled = openProp !== undefined;
+  const isCanvas = !isControlled && typeof onSubmit !== 'function';
+  const embedded = embeddedProp !== undefined ? embeddedProp : isCanvas;
+
+  const [internalOpen, setInternalOpen] = useState(isCanvas); // canvas opens by default
+  const isOpen = isControlled ? openProp : internalOpen;
+  const setOpen = (v) => {
+    if (onOpenChange) onOpenChange(v);
+    if (!isControlled) setInternalOpen(v);
+  };
+
   const [votes, setVotes] = useState({});
   const [ownSrc, setOwnSrc] = useState('');
   const [ownFeat, setOwnFeat] = useState('');
@@ -1254,7 +1319,11 @@ function S9_FeedbackModal({ mobile }) {
   const [contact, setContact] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const baseTotal = 340;
+  // tally injection: real numbers from GET /api/feedback/tally, else baked base.
+  const tallyItems = (tally && tally.items) || null;
+  const baseOf = (key, fallback) => (tallyItems && tallyItems[key] != null ? tallyItems[key] : fallback);
+  const baseTotal = (tally && tally.total_week != null) ? tally.total_week : 340;
+
   const checkedCount = Object.values(votes).filter(Boolean).length;
   const ownCount = (ownSrc.trim() ? 1 : 0) + (ownFeat.trim() ? 1 : 0);
   const n = checkedCount + ownCount;
@@ -1267,9 +1336,35 @@ function S9_FeedbackModal({ mobile }) {
     setContact(''); setSubmitted(false);
   };
 
-  // Faux page behind, so the frame reads as a modal sitting over content.
+  const buildPayload = () => ({
+    votes: [
+      ...FB_SOURCES.filter(([k]) => votes[k]).map(([k]) => ({ kind: 'source', key: k })),
+      ...FB_FEATURES.filter(([k]) => votes[k]).map(([k]) => ({ kind: 'feature', key: k })),
+    ],
+    own_source: ownSrc.trim() || null,
+    own_feature: ownFeat.trim() || null,
+    message: msg.trim() || null,
+    name: name.trim() || null,
+    contact: contact.trim() || null,
+  });
+
+  const handleSubmit = async () => {
+    if (n === 0 || submitting) return;
+    if (typeof onSubmit === 'function') {
+      try {
+        await onSubmit(buildPayload());
+        setSubmitted(true);
+      } catch (e) {
+        /* consumer surfaces failure via `error` prop; keep modal open */
+      }
+    } else {
+      setSubmitted(true); // canvas / uncontrolled mock
+    }
+  };
+
+  // Faux page behind — canvas artboard only (embedded=true).
   const FauxPage = () => (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', padding: mobile ? '20px' : '32px 48px', filter: open ? 'blur(2px)' : 'none' }}>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', padding: mobile ? '20px' : '32px 48px', filter: isOpen ? 'blur(2px)' : 'none' }}>
       <div style={{ height: 18, width: mobile ? 120 : 180, background: VT.line, borderRadius: 6, opacity: .6 }} />
       <div style={{ height: mobile ? 32 : 46, width: '70%', background: VT.line, borderRadius: 10, opacity: .5, marginTop: 22 }} />
       <div style={{ height: 14, width: '52%', background: VT.line, borderRadius: 6, opacity: .4, marginTop: 16 }} />
@@ -1279,147 +1374,175 @@ function S9_FeedbackModal({ mobile }) {
     </div>
   );
 
-  return (
-    <div data-feedback-modal style={{ position: 'relative', width: '100%', minHeight: '100%', background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: '-0.01em' }}>
-      <FauxPage />
+  const FloatingBtn = ({ fixed }) => (
+    <button
+      type="button"
+      data-floating-feedback-btn
+      onClick={() => setOpen(true)}
+      style={{
+        position: fixed ? 'fixed' : 'absolute', right: mobile ? 16 : 28, bottom: mobile ? 16 : 28,
+        zIndex: fixed ? 2147483000 : 3,
+        background: VT.accent, color: VT.white, border: 'none', cursor: 'pointer',
+        padding: '14px 20px', borderRadius: VT.r.pill,
+        fontFamily: VT.font.sans, fontSize: 14.5, fontWeight: 600,
+        display: 'inline-flex', alignItems: 'center', gap: 9,
+        boxShadow: VT.shadow.pop,
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Чего не хватает?
+    </button>
+  );
 
-      {!open && (
+  const Dialog = () => (
+    <div
+      data-feedback-modal
+      style={{
+        position: embedded ? 'absolute' : 'fixed', inset: 0,
+        zIndex: embedded ? 4 : 2147483600,
+        background: 'oklch(0.30 0.02 60 / 0.46)',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        padding: mobile ? '14px 10px' : '40px 24px',
+        overflowY: 'auto',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}
+    >
+      <div style={{
+        position: 'relative', width: '100%', maxWidth: mobile ? 9999 : 560,
+        background: VT.bg, border: `1px solid ${VT.line}`, borderRadius: VT.r.xl,
+        boxShadow: VT.shadow.pop, overflow: 'hidden',
+      }}>
         <button
           type="button"
-          data-floating-feedback-btn
-          onClick={() => { reset(); setOpen(true); }}
+          onClick={() => setOpen(false)}
+          aria-label="Закрыть"
           style={{
-            position: 'absolute', right: mobile ? 16 : 28, bottom: mobile ? 16 : 28, zIndex: 3,
-            background: VT.accent, color: VT.white, border: 'none', cursor: 'pointer',
-            padding: '14px 20px', borderRadius: VT.r.pill,
-            fontFamily: VT.font.sans, fontSize: 14.5, fontWeight: 600,
-            display: 'inline-flex', alignItems: 'center', gap: 9,
-            boxShadow: VT.shadow.pop,
+            position: 'absolute', top: 14, right: 14, zIndex: 2,
+            width: 34, height: 34, borderRadius: VT.r.pill,
+            border: 'none', background: VT.bgSoft, color: VT.inkSoft,
+            cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          Чего не хватает?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
-      )}
 
-      {open && (
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 4,
-          background: 'oklch(0.30 0.02 60 / 0.46)',
-          display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-          padding: mobile ? '14px 10px' : '40px 24px',
-        }}>
-          <div style={{
-            position: 'relative', width: '100%', maxWidth: mobile ? 9999 : 560,
-            background: VT.bg, border: `1px solid ${VT.line}`, borderRadius: VT.r.xl,
-            boxShadow: VT.shadow.pop, overflow: 'hidden',
-          }}>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Закрыть"
-              style={{
-                position: 'absolute', top: 14, right: 14, zIndex: 2,
-                width: 34, height: 34, borderRadius: VT.r.pill,
-                border: 'none', background: VT.bgSoft, color: VT.inkSoft,
-                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
-
-            {submitted ? (
-              <div style={{ textAlign: 'center', padding: mobile ? '48px 24px' : '56px 36px' }}>
-                <div style={{
-                  width: 60, height: 60, borderRadius: '50%', background: VT.success, color: '#fff',
-                  display: 'grid', placeItems: 'center', margin: '0 auto 20px',
-                  boxShadow: `0 0 0 8px ${VT.successSoft}`,
-                }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
-                <h2 style={{ fontSize: 23, fontWeight: 700, letterSpacing: '-0.02em', margin: 0 }}>Спасибо, голос учли</h2>
-                <p style={{ fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: '10px auto 0', lineHeight: 1.5 }}>
-                  Засчитали {n} {fbPlural(n)}. Как только по пункту наберётся 10 — берём в работу
-                  {contact.trim() ? ' и напишем вам.' : '. Хотите узнать о запуске — оставьте контакт.'}
-                </p>
-                <div style={{ marginTop: 24 }} onClick={() => setOpen(false)}>
-                  <Btn variant="secondary" size="sm" style={{ cursor: 'pointer' }}>Готово</Btn>
-                </div>
-              </div>
-            ) : (
-              <div style={{ padding: mobile ? '26px 20px 22px' : '30px 32px 26px' }}>
-                <h2 style={{ fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: '-0.025em', margin: '0 40px 8px 0', lineHeight: 1.12 }}>
-                  Скажите, чего не хватает
-                </h2>
-                <p style={{ fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }}>
-                  Набираем 10 голосов по пункту — берём в работу. Чем больше людей просят одно и то же, тем быстрее запускаем.
-                </p>
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14,
-                  fontSize: 12.5, color: VT.inkSoft, fontWeight: 500,
-                  background: VT.white, border: `1px solid ${VT.line}`, padding: '6px 12px', borderRadius: VT.r.pill, whiteSpace: 'nowrap',
-                }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` }} />
-                  <b style={{ color: VT.ink, fontVariantNumeric: 'tabular-nums' }}>{baseTotal + n}</b>&nbsp;голосов за неделю
-                </span>
-
-                <FBVoteSection
-                  title="Хочу источник" items={FB_SOURCES} votes={votes} onToggle={toggle} mobile={mobile}
-                  ownVal={ownSrc} ownShown={showOwnSrc} onOwnShow={() => setShowOwnSrc(true)}
-                  onOwnChange={setOwnSrc} ownPlaceholder="укажите название источника"
-                />
-                <FBVoteSection
-                  title="Хочу фичу" items={FB_FEATURES} votes={votes} onToggle={toggle} mobile={mobile}
-                  ownVal={ownFeat} ownShown={showOwnFeat} onOwnShow={() => setShowOwnFeat(true)}
-                  onOwnChange={setOwnFeat} ownPlaceholder="укажите название фичи"
-                />
-
-                <div style={{
-                  marginTop: 20, paddingLeft: 15,
-                  borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
-                  opacity: awake ? 1 : 0.5,
-                  pointerEvents: awake ? 'auto' : 'none',
-                  transition: 'opacity .3s, border-color .3s',
-                }}>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                    <span style={{
-                      flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%', marginTop: 1,
-                      border: `2px solid ${awake ? VT.success : VT.line}`,
-                      background: awake ? VT.success : VT.white, color: '#fff',
-                      display: 'grid', placeItems: 'center', transition: 'all .3s',
-                    }}>
-                      {awake && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                    </span>
-                    <div>
-                      <strong style={{ display: 'block', fontSize: 15.5, fontWeight: 700 }}>Напишем, когда добавим</strong>
-                      <span style={{ display: 'block', fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }}>
-                        Оставьте контакт — сообщим, как только ваш голос наберёт 10 и пункт попадёт в работу. Никому не покажем и спамить не будем.
-                      </span>
-                    </div>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 11, marginTop: 14 }}>
-                    <FBField placeholder="Имя" value={name} onChange={setName} />
-                    <FBField placeholder="Email, телефон или @telegram" value={contact} onChange={setContact} />
-                  </div>
-                  <FBReveal label="+ комментарий" shown={showMsg} onShow={() => setShowMsg(true)}>
-                    <FBField textarea placeholder="что хотите рассказать" value={msg} onChange={setMsg} />
-                  </FBReveal>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 24, flexWrap: 'wrap' }}>
-                  <div onClick={() => { if (n > 0) setSubmitted(true); }} style={{ width: mobile ? '100%' : 'auto' }}>
-                    <Btn size="md" style={{ width: mobile ? '100%' : 'auto', opacity: n === 0 ? 0.45 : 1, cursor: n === 0 ? 'not-allowed' : 'pointer' }}>
-                      {n > 0 ? `Отправить ${n} ${fbPlural(n)}` : 'Отправить голос'}
-                    </Btn>
-                  </div>
-                  {n === 0 && !mobile && <span style={{ fontSize: 13.5, color: VT.inkFaint }}>Отметьте хотя бы один пункт</span>}
-                </div>
-              </div>
-            )}
+        {submitted ? (
+          <div style={{ textAlign: 'center', padding: mobile ? '48px 24px' : '56px 36px' }}>
+            <div style={{
+              width: 60, height: 60, borderRadius: '50%', background: VT.success, color: '#fff',
+              display: 'grid', placeItems: 'center', margin: '0 auto 20px',
+              boxShadow: `0 0 0 8px ${VT.successSoft}`,
+            }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <h2 style={{ fontSize: 23, fontWeight: 700, letterSpacing: '-0.02em', margin: 0 }}>Спасибо, голос учли</h2>
+            <p style={{ fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: '10px auto 0', lineHeight: 1.5 }}>
+              Засчитали {n} {fbPlural(n)}. Как только по пункту наберётся 10 — берём в работу
+              {contact.trim() ? ' и напишем вам.' : '. Хотите узнать о запуске — оставьте контакт.'}
+            </p>
+            <div style={{ marginTop: 24 }} onClick={() => setOpen(false)}>
+              <Btn variant="secondary" size="sm" style={{ cursor: 'pointer' }}>Готово</Btn>
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{ padding: mobile ? '26px 20px 22px' : '30px 32px 26px' }}>
+            <h2 style={{ fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: '-0.025em', margin: '0 40px 8px 0', lineHeight: 1.12 }}>
+              Скажите, чего не хватает
+            </h2>
+            <p style={{ fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }}>
+              Набираем 10 голосов по пункту — берём в работу. Чем больше людей просят одно и то же, тем быстрее запускаем.
+            </p>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14,
+              fontSize: 12.5, color: VT.inkSoft, fontWeight: 500,
+              background: VT.white, border: `1px solid ${VT.line}`, padding: '6px 12px', borderRadius: VT.r.pill, whiteSpace: 'nowrap',
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` }} />
+              <b style={{ color: VT.ink, fontVariantNumeric: 'tabular-nums' }}>{baseTotal + n}</b>&nbsp;голосов за неделю
+            </span>
+
+            <FBVoteSection
+              title="Хочу источник" items={FB_SOURCES} votes={votes} onToggle={toggle} mobile={mobile} baseOf={baseOf}
+              ownVal={ownSrc} ownShown={showOwnSrc} onOwnShow={() => setShowOwnSrc(true)}
+              onOwnChange={setOwnSrc} ownPlaceholder="укажите название источника"
+            />
+            <FBVoteSection
+              title="Хочу фичу" items={FB_FEATURES} votes={votes} onToggle={toggle} mobile={mobile} baseOf={baseOf}
+              ownVal={ownFeat} ownShown={showOwnFeat} onOwnShow={() => setShowOwnFeat(true)}
+              onOwnChange={setOwnFeat} ownPlaceholder="укажите название фичи"
+            />
+
+            <div style={{
+              marginTop: 20, paddingLeft: 15,
+              borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
+              opacity: awake ? 1 : 0.5,
+              pointerEvents: awake ? 'auto' : 'none',
+              transition: 'opacity .3s, border-color .3s',
+            }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <span style={{
+                  flex: '0 0 auto', width: 28, height: 28, borderRadius: '50%', marginTop: 1,
+                  border: `2px solid ${awake ? VT.success : VT.line}`,
+                  background: awake ? VT.success : VT.white, color: '#fff',
+                  display: 'grid', placeItems: 'center', transition: 'all .3s',
+                }}>
+                  {awake && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M5 12l4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                </span>
+                <div>
+                  <strong style={{ display: 'block', fontSize: 15.5, fontWeight: 700 }}>Напишем, когда добавим</strong>
+                  <span style={{ display: 'block', fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }}>
+                    Оставьте контакт — сообщим, как только ваш голос наберёт 10 и пункт попадёт в работу. Никому не покажем и спамить не будем.
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: mobile ? '1fr' : '1fr 1fr', gap: 11, marginTop: 14 }}>
+                <FBField placeholder="Имя" value={name} onChange={setName} />
+                <FBField placeholder="Email, телефон или @telegram" value={contact} onChange={setContact} />
+              </div>
+              <FBReveal label="+ комментарий" shown={showMsg} onShow={() => setShowMsg(true)}>
+                <FBField textarea placeholder="что хотите рассказать" value={msg} onChange={setMsg} />
+              </FBReveal>
+            </div>
+
+            {error && (
+              <p style={{ marginTop: 14, marginBottom: 0, fontSize: 13.5, fontWeight: 500, color: VT.danger }}>{error}</p>
+            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: error ? 12 : 24, flexWrap: 'wrap' }}>
+              <div onClick={handleSubmit} style={{ width: mobile ? '100%' : 'auto' }}>
+                <Btn
+                  size="md"
+                  icon={submitting ? <Spinner size={15} /> : undefined}
+                  style={{ width: mobile ? '100%' : 'auto', opacity: (n === 0 || submitting) ? 0.55 : 1, cursor: (n === 0 || submitting) ? 'not-allowed' : 'pointer' }}
+                >
+                  {submitting ? 'Отправляем…' : (n > 0 ? `Отправить ${n} ${fbPlural(n)}` : 'Отправить голос')}
+                </Btn>
+              </div>
+              {n === 0 && !mobile && !submitting && <span style={{ fontSize: 13.5, color: VT.inkFaint }}>Отметьте хотя бы один пункт</span>}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
+  );
+
+  // ── Canvas artboard: FauxPage behind, overlay anchored to the container ──
+  if (embedded) {
+    return (
+      <div style={{ position: 'relative', width: '100%', minHeight: '100%', background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: '-0.01em' }}>
+        <FauxPage />
+        {!isOpen && <FloatingBtn fixed={false} />}
+        {isOpen && <Dialog />}
+      </div>
+    );
+  }
+
+  // ── Real mount: no FauxPage, overlay fixed to the viewport ──
+  return (
+    <React.Fragment>
+      {!isOpen && <FloatingBtn fixed={true} />}
+      {isOpen && <Dialog />}
+    </React.Fragment>
   );
 }
 
