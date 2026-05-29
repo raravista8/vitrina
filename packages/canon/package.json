@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.9.4",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.4: переиздание landing-фиксов 0.9.3, не доехавших до прода из-за коллизии версий. StickyHeader — единый hover для всех пунктов меню («Войти» как остальные: цвет + мягкая фоновая пилюля), правила с !important переживают запекание инлайн-стилей при экспорте. HeroBlock — второй абзац подзаголовка на text-wrap: balance (убран висячий «новых заявок»). Drop-in на прод.",
+  "version": "0.9.5",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.5: фикс S9_FeedbackModal — вложенные Dialog/FauxPage/FloatingBtn вызываются как функции, а не монтируются как <Dialog/>, иначе React пересоздавал поддерево на каждый клик/ввод (скролл прыгал, инпут терял фокус). Включает landing-фиксы 0.9.3/0.9.4 (StickyHeader hover + HeroBlock text-wrap). Drop-in на прод.",
   "type": "module",
   "sideEffects": [
     "*.css"
