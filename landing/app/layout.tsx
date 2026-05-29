@@ -98,18 +98,21 @@ const SEO_KEYWORDS = [
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  // Copy synced to canon 0.5.0 / packages/canon/docs/COPY.md. Когда
-  // обновляешь visible H1 в `Hero.tsx`, синхронизируй ВСЕ четыре копии
-  // ниже: SEO `title`, `description`, OG `title/description`, Twitter
-  // `title/description` + `opengraph-image.tsx` alt + body. Иначе
-  // расхождение между SERP-snippet'ом / соц-шерингом и landing-
-  // страницей даёт «not what I expected» bounce.
+  // Two registers on purpose:
+  //   • SEO `title` / `description` (this block) — SERP-facing, front-loaded
+  //     with high-volume queries (конструктор сайтов / создать сайт / на
+  //     нейросети). Kept truthful to the product, so no SERP↔landing
+  //     mismatch bounce vs the Hero H1.
+  //   • OG / Twitter `title/description` + `opengraph-image.tsx` — social-
+  //     share-facing, kept promise-focused («за 2 часа, ловит заявки»);
+  //     keyword-stuffing там бьёт по CTR. Держи их синхронными с visible
+  //     H1 в `Hero.tsx` (canon 0.5.0 / packages/canon/docs/COPY.md).
   title: {
-    default: "Самосайт — соберём за 2 часа сайт, который ловит заявки",
+    default: "Самосайт — конструктор сайтов на нейросети: сайт за 2 часа",
     template: "%s · Самосайт",
   },
   description:
-    "Соберём за 2 часа сайт из вашего Telegram-канала, Яндекс.Карт, 2ГИС, Avito или фото меню. Дальше он сам становится лучше каждую неделю — по понедельникам подсказывает, что поправить ради новых заявок.",
+    "Создать сайт за 2 часа на нейросети — из Telegram-канала, Яндекс.Карт, Avito или фото. Конструктор сайтов для услуг и малого бизнеса: форма онлайн-записи, приём заявок. Тариф «Старт» — бесплатно.",
   applicationName: "Самосайт",
   authors: [{ name: "Самосайт" }],
   keywords: SEO_KEYWORDS,
