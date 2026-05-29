@@ -1,5 +1,49 @@
 # Changelog
 
+## 0.9.2 — Examples previews → full multi-block sites · 2026-05-29
+
+> **PATCH.** Only `src/presets/index.tsx`. Public exports, types and API
+> unchanged (`PresetRenderer`, `MiniChrome`, `samplePresets`, the 5
+> families). Internal preview composition changes + one fixture photo.
+> Landing/prod pick it up automatically — `ExamplesSection` renders
+> `MiniChrome` without an explicit `height`, so the new default applies on
+> its own. **drift = 0 on our side** (pure canon-import; no consumer hardcodes
+> `height={460}` and we don't import `@samosite/canon/presets` directly).
+
+### `MiniChrome`
+
+- Default `height` raised **460 → 720px**. The prop stays (override per-call),
+  but every default consumer gets taller previews with no code change.
+
+### 5 families (editorial / bento / display / split / stacked)
+
+Each rewritten from a one-screen «hero» into a **full multi-block page**,
+using already-existing-but-unused content slots (`stats`, `menu.items`,
+`quote`): price lists with leader dots, stat strips, pull-quote reviews,
+dark footer-CTAs. All families now lay out via `flex` with `flex: 1 1 auto`
+on the photo block (photo takes the remaining height — sections fill 720px
+with no gaps). `menu` access made null-safe (`mn?.items`).
+
+### Fixtures
+
+- `brows-sochi` (display family): swapped a portrait photo that cropped badly
+  in the wide display strip for a studio-interior shot; caption
+  «ламинирование» → «студия». `gallery` unchanged.
+
+### Visual deltas (canvas baselines need regen)
+
+Examples carousel cards grew ~260px taller (block 02). Desktop artboard
+11 900 → 12 300px, mobile 15 200 → 15 600px. Tokens unchanged. Our landing
+visual suite is smoke-only (not enforced), so no baseline regen blocks this.
+
+### Vitrina-side (this vendoring PR)
+
+`cp src/presets/index.tsx` + package.json 0.9.1→0.9.2 + dist rebuild (presets
++ landing + index chunks — presets is bundled into landing via the internal
+`../presets` import). tsup keeps the local `dts: false`. No consumer change.
+
+---
+
 ## 0.9.1 — Feedback #9 → controlled API · 2026-05-29
 
 > **MINOR.** `S9_FeedbackModal` goes from a presentational canvas artboard

@@ -438,37 +438,56 @@ export function getTheme(themeId: string): Theme {
 
 export function EditorialFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.meta, mn = content.menu, q = content.quote;
   const accentEm = (text) => text.split(/\[\[(.+?)\]\]/g).map((p, i) =>
     i % 2 === 0
       ? <React.Fragment key={i}>{p}</React.Fragment>
       : <em key={i} style={{ fontStyle: v.italicAccent ? 'italic' : 'normal', color: c.accent }}>{p}</em>
   );
   const rule = `1px solid ${c.line}`;
+  const ruleSoft = `1px solid ${c.lineSoft}`;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
       {/* masthead */}
-      <div style={{ padding: '11px 16px 9px', borderBottom: `2px solid ${c.ink}`, textAlign: 'center' }}>
-        <div style={{ fontFamily: f.mono, fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.inkSoft, marginBottom: 4 }}>с {content.meta.since} · {content.meta.category}</div>
-        <div style={{ fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal', fontSize: 27, fontWeight: v.displayWeight, letterSpacing: '-0.02em', lineHeight: 1 }}>{content.meta.brand}</div>
+      <div style={{ padding: '10px 16px 8px', borderBottom: `2px solid ${c.ink}`, textAlign: 'center', flex: '0 0 auto' }}>
+        <div style={{ fontFamily: f.mono, fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.inkSoft, marginBottom: 3 }}>с {m.since} · {m.category}</div>
+        <div style={{ fontFamily: f.display, fontStyle: v.italicAccent ? 'italic' : 'normal', fontSize: 25, fontWeight: v.displayWeight, letterSpacing: '-0.02em', lineHeight: 1 }}>{m.brand}</div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 16px', borderBottom: rule, fontFamily: f.mono, fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkSoft }}>
-        <span>★★★★★ {content.meta.rating}</span><span>{content.meta.reviewsN} отзывов</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 16px', borderBottom: rule, fontFamily: f.mono, fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.inkSoft, flex: '0 0 auto' }}>
+        <span>★★★★★ {m.rating}</span><span>{m.reviewsN} отзывов</span>
       </div>
       {/* headline */}
-      <div style={{ padding: '14px 16px 12px', borderBottom: rule }}>
-        <h1 style={{ fontFamily: f.display, fontSize: 30, fontWeight: v.displayWeight, lineHeight: 0.95, letterSpacing: '-0.03em', margin: 0 }}>
+      <div style={{ padding: '12px 16px 10px', borderBottom: rule, flex: '0 0 auto' }}>
+        <h1 style={{ fontFamily: f.display, fontSize: 26, fontWeight: v.displayWeight, lineHeight: 0.96, letterSpacing: '-0.03em', margin: 0 }}>
           {content.hero.headingLines.map((l, i) => (
             <React.Fragment key={i}>{accentEm(l)}{i < content.hero.headingLines.length - 1 && <br />}</React.Fragment>
           ))}
         </h1>
       </div>
-      {/* photo fills remaining height */}
-      <div style={{ flex: 1, minHeight: 0, position: 'relative', overflow: 'hidden', borderBottom: rule }}>
+      {/* photo fills remaining slack */}
+      <div style={{ flex: '1 1 auto', minHeight: 70, position: 'relative', overflow: 'hidden', borderBottom: rule }}>
         <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        <div style={{ position: 'absolute', left: 0, bottom: 0, padding: '4px 10px', background: c.bg, borderTop: rule, borderRight: rule, fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.inkSoft }}>{content.hero.photoCaption || content.meta.address}</div>
+        <div style={{ position: 'absolute', left: 0, bottom: 0, padding: '4px 10px', background: c.bg, borderTop: rule, borderRight: rule, fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.inkSoft }}>{content.hero.photoCaption || m.address}</div>
+      </div>
+      {/* price list */}
+      <div style={{ flex: '0 0 auto', borderBottom: rule }}>
+        <div style={{ padding: '7px 16px 5px', fontFamily: f.mono, fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: c.inkSoft }}>{mn?.eyebrow}</div>
+        {(mn?.items || []).slice(0, 3).map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 8, padding: '5px 16px', borderTop: i ? ruleSoft : 'none' }}>
+            <span style={{ fontFamily: f.mono, fontSize: 9, color: c.inkFaint, flex: '0 0 auto' }}>{it.num}</span>
+            <span style={{ fontFamily: f.display, fontSize: 13, fontWeight: v.displayWeight, whiteSpace: 'nowrap', flex: '0 0 auto' }}>{it.name}</span>
+            <span style={{ flex: 1, borderBottom: `1px dotted ${c.lineSoft}`, transform: 'translateY(-3px)' }} />
+            <span style={{ fontFamily: f.mono, fontSize: 10, fontWeight: 600, flex: '0 0 auto' }}>{it.price}</span>
+          </div>
+        ))}
+      </div>
+      {/* pull quote */}
+      <div style={{ flex: '0 0 auto', padding: '9px 16px', borderBottom: rule }}>
+        <div style={{ fontFamily: f.display, fontStyle: 'italic', fontSize: 13, lineHeight: 1.3 }}>{accentEm(q.text)}</div>
+        <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.inkSoft, marginTop: 5 }}>{q.authorName} · {q.authorSource}</div>
       </div>
       {/* footer CTA */}
-      <div style={{ display: 'flex', alignItems: 'stretch' }}>
+      <div style={{ display: 'flex', alignItems: 'stretch', flex: '0 0 auto' }}>
         <a style={{ flex: 1, background: c.accent, color: c.accentInk, padding: '12px 16px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
           {content.cta.primary.label}<span style={{ fontFamily: f.display, fontSize: 18, fontStyle: v.italicAccent ? 'italic' : 'normal' }}>→</span>
         </a>
@@ -497,31 +516,54 @@ function renderEm(text: string, color: string, italic: boolean) {
 
 export function BentoFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const s = content.stats;
-  const tile = { background: c.bgAlt, borderRadius: r.card, border: `1px solid ${c.line}`, padding: 12, overflow: 'hidden' };
-  const lbl = { fontFamily: f.mono, fontSize: 8, color: c.inkFaint, textTransform: 'uppercase', letterSpacing: '0.06em' };
+  const m = content.meta, s = content.stats, mn = content.menu, q = content.quote;
+  const tile = { background: c.bgAlt, borderRadius: r.card, border: `1px solid ${c.line}`, padding: 11, overflow: 'hidden' } as React.CSSProperties;
+  const lbl = { fontFamily: f.mono, fontSize: 8, color: c.inkFaint, textTransform: 'uppercase', letterSpacing: '0.06em' } as React.CSSProperties;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 12, gap: 8, fontVariantNumeric: 'tabular-nums' }}>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 11, gap: 7, fontVariantNumeric: 'tabular-nums' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: '0 0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontFamily: f.display, fontWeight: 700, fontSize: 13, letterSpacing: '-0.02em' }}>
-          <span style={{ width: 20, height: 20, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{content.meta.brand[0]}</span>{content.meta.brand}
+          <span style={{ width: 20, height: 20, background: c.accent, color: c.accentInk, borderRadius: r.mark, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{m.brand[0]}</span>{m.brand}
         </div>
-        <span style={{ fontFamily: f.mono, fontSize: 9, color: c.inkSoft }}>★ {content.meta.rating}</span>
+        <span style={{ fontFamily: f.mono, fontSize: 9, color: c.inkSoft }}>★ {m.rating}</span>
       </div>
-      <div style={{ flex: 1, minHeight: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr', gap: 8 }}>
-        <div style={{ ...tile, gridColumn: 'span 2', background: c.accent, color: c.accentInk, border: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <span style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 5, background: c.bg, color: c.accent, padding: '4px 8px', borderRadius: 999, fontSize: 8, fontWeight: 700, fontFamily: f.mono, textTransform: 'uppercase', letterSpacing: '0.05em' }}><span style={{ width: 4, height: 4, background: c.accent, borderRadius: '50%' }} />свободно сегодня</span>
-          <h1 style={{ fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.035em', margin: '10px 0 0' }}>{content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '')}</h1>
-        </div>
-        {s[0] && <div style={tile}><div style={lbl}>{s[0].label}</div><div style={{ fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 4 }}>{s[0].num}<span style={{ fontSize: 13, color: c.inkFaint }}>{s[0].unit}</span></div></div>}
-        {s[1] && <div style={tile}><div style={lbl}>{s[1].label}</div><div style={{ fontFamily: f.display, fontSize: 23, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 4, color: c.accent }}>{s[1].num}<span style={{ fontSize: 13, color: c.inkFaint }}>{s[1].unit}</span></div></div>}
-        <div style={{ gridColumn: 'span 2', borderRadius: r.card, overflow: 'hidden', minHeight: 0 }}>
-          <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
-        </div>
+      {/* hero tile */}
+      <div style={{ ...tile, background: c.accent, color: c.accentInk, border: 'none', flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: 8, padding: 13 }}>
+        <span style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 5, background: c.bg, color: c.accent, padding: '4px 8px', borderRadius: 999, fontSize: 8, fontWeight: 700, fontFamily: f.mono, textTransform: 'uppercase', letterSpacing: '0.05em' }}><span style={{ width: 4, height: 4, background: c.accent, borderRadius: '50%' }} />свободно сегодня</span>
+        <h1 style={{ fontFamily: f.display, fontSize: 22, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.035em', margin: 0 }}>{content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '')}</h1>
       </div>
+      {/* stats row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 7, flex: '0 0 auto' }}>
+        {s.slice(0, 3).map((st, i) => (
+          <div key={i} style={tile}>
+            <div style={lbl}>{st.label}</div>
+            <div style={{ fontFamily: f.display, fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 3, color: i === 1 ? c.accent : c.ink }}>{st.num}<span style={{ fontSize: 11, color: c.inkFaint }}>{st.unit}</span></div>
+          </div>
+        ))}
+      </div>
+      {/* photo */}
+      <div style={{ borderRadius: r.card, overflow: 'hidden', flex: '1 1 auto', minHeight: 50 }}>
+        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+      </div>
+      {/* services tile */}
+      <div style={{ ...tile, flex: '0 0 auto' }}>
+        <div style={{ ...lbl, marginBottom: 6 }}>{mn?.eyebrow}</div>
+        {(mn?.items || []).slice(0, 3).map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, paddingTop: i ? 6 : 0, marginTop: i ? 6 : 0, borderTop: i ? `1px solid ${c.line}` : 'none' }}>
+            <span style={{ fontSize: 11.5, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</span>
+            <span style={{ fontFamily: f.mono, fontSize: 10, color: c.accent, fontWeight: 700, flex: '0 0 auto' }}>{it.price}</span>
+          </div>
+        ))}
+      </div>
+      {/* review tile */}
+      <div style={{ ...tile, flex: '0 0 auto' }}>
+        <div style={{ fontSize: 11, lineHeight: 1.35 }}>{renderEm(q.text, c.accent, false)}</div>
+        <div style={{ ...lbl, marginTop: 6 }}>{q.authorName} · {q.authorSource}</div>
+      </div>
+      {/* footer cta */}
       <div style={{ ...tile, flex: '0 0 auto', background: c.invBg, color: c.invInk, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px' }}>
         <div><div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '-0.02em' }}>{content.cta.primary.label}</div><div style={{ fontFamily: f.mono, fontSize: 9, color: c.invInkSoft, marginTop: 1 }}>{content.cta.phone}</div></div>
-        <span style={{ width: 28, height: 28, background: c.accent, color: c.accentInk, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>→</span>
+        <span style={{ width: 28, height: 28, background: c.accent, color: c.accentInk, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flex: '0 0 auto' }}>→</span>
       </div>
     </div>
   );
@@ -533,26 +575,46 @@ export function BentoFamily({ theme, content }: { theme: Theme; content: SlotCon
 
 export function DisplayFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.meta, s = content.stats, mn = content.menu;
   const lines = content.hero.headingLines;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', flex: '0 0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 600 }}><span style={{ width: 6, height: 6, background: c.accent, borderRadius: '50%' }} />{content.meta.brand}</div>
-        <span style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.ink, padding: '5px 10px', border: `1px solid ${c.ink}`, borderRadius: 999 }}>★ {content.meta.rating}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 600 }}><span style={{ width: 6, height: 6, background: c.accent, borderRadius: '50%' }} />{m.brand}</div>
+        <span style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.08em', color: c.ink, padding: '5px 10px', border: `1px solid ${c.ink}`, borderRadius: 999 }}>★ {m.rating}</span>
       </div>
-      <div style={{ padding: '2px 16px 14px', flex: '0 0 auto' }}>
-        <h1 style={{ fontFamily: f.display, fontSize: 50, fontWeight: v.displayWeight, lineHeight: 0.84, letterSpacing: '-0.045em', margin: 0 }}>
+      <div style={{ padding: '2px 16px 12px', flex: '0 0 auto' }}>
+        <h1 style={{ fontFamily: f.display, fontSize: 44, fontWeight: v.displayWeight, lineHeight: 0.84, letterSpacing: '-0.045em', margin: 0 }}>
           {lines.map((l, i) => (
             <span key={i} style={{ display: 'block', color: i === 1 ? c.accent : c.ink, fontStyle: i === 1 && v.italicAccent ? 'italic' : 'normal', textIndent: i === 1 ? 16 : 0, textAlign: i === 2 ? 'right' : 'left' }}>{renderEm(l, c.accent, v.italicAccent)}</span>
           ))}
         </h1>
       </div>
-      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      <div style={{ flex: '1 1 auto', minHeight: 60, overflow: 'hidden' }}>
         <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
       </div>
+      {/* stats strip */}
+      <div style={{ display: 'flex', borderTop: `1px solid ${c.line}`, borderBottom: `1px solid ${c.line}`, flex: '0 0 auto' }}>
+        {s.slice(0, 3).map((st, i) => (
+          <div key={i} style={{ flex: 1, padding: '8px 10px', textAlign: 'center', borderRight: i < 2 ? `1px solid ${c.line}` : 'none' }}>
+            <div style={{ fontFamily: f.display, fontSize: 18, fontWeight: v.displayWeight, lineHeight: 1, color: c.accent }}>{st.num}<span style={{ fontSize: 11, color: c.inkFaint }}>{st.unit}</span></div>
+            <div style={{ fontFamily: f.mono, fontSize: 7.5, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.inkSoft, marginTop: 3 }}>{st.label}</div>
+          </div>
+        ))}
+      </div>
+      {/* services */}
+      <div style={{ padding: '8px 16px 4px', flex: '0 0 auto' }}>
+        {(mn?.items || []).slice(0, 3).map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, padding: '4px 0', borderTop: i ? `1px solid ${c.lineSoft}` : 'none' }}>
+            <span style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</span>
+            <span style={{ fontFamily: f.mono, fontSize: 10, color: c.inkSoft, flex: '0 0 auto' }}>{it.price}</span>
+          </div>
+        ))}
+      </div>
+      {/* footer cta */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '11px 16px', background: c.invBg, color: c.invInk, flex: '0 0 auto' }}>
-        <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.invInkSoft }}>{content.meta.address}</div>
-        <a style={{ background: c.invAccent, color: c.invBg, padding: '9px 16px', borderRadius: r.btn, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{content.cta.primary.label} →</a>
+        <div style={{ fontFamily: f.mono, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.invInkSoft, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.address}</div>
+        <a style={{ background: c.invAccent, color: c.invBg, padding: '9px 16px', borderRadius: r.btn, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', flex: '0 0 auto' }}>{content.cta.primary.label.split(' ')[0]} →</a>
       </div>
     </div>
   );
@@ -564,34 +626,56 @@ export function DisplayFamily({ theme, content }: { theme: Theme; content: SlotC
 
 export function SplitFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
-  const s = content.stats;
+  const m = content.meta, s = content.stats, mn = content.menu, q = content.quote;
   const heading = content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '');
   const div = `1px solid ${c.invInkSoft}55`;
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
-      <div style={{ width: '42%', minHeight: 0, overflow: 'hidden' }}>
-        <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      {/* hero split */}
+      <div style={{ display: 'flex', flex: '1 1 auto', minHeight: 0 }}>
+        <div style={{ width: '42%', minHeight: 0, overflow: 'hidden' }}>
+          <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0, background: c.invBg, color: c.invInk, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: '0 0 auto' }}>
+            <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700 }}>{m.brand}<span style={{ color: c.invAccent }}>.</span></div>
+            <span style={{ fontFamily: f.mono, fontSize: 8, opacity: 0.7 }}>★ {m.rating}</span>
+          </div>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 14px' }}>
+            <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.12em', color: c.invAccent, marginBottom: 8 }}>{m.category}</div>
+            <h1 style={{ fontFamily: f.display, fontSize: 24, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.03em', margin: 0 }}>{heading}</h1>
+            <p style={{ fontSize: 11, lineHeight: 1.5, opacity: 0.82, margin: '10px 0 0' }}>{content.hero.leadParagraph?.slice(0, 96)}…</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${s.length}, 1fr)`, borderTop: div, flex: '0 0 auto' }}>
+            {s.map((st, i) => (
+              <div key={i} style={{ padding: '9px 6px', textAlign: 'center', borderRight: i < s.length - 1 ? div : undefined }}>
+                <div style={{ fontFamily: f.display, fontSize: 16, fontWeight: 800, color: c.invAccent, lineHeight: 1 }}>{st.num}<span style={{ fontSize: 10 }}>{st.unit}</span></div>
+                <div style={{ fontFamily: f.mono, fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65, marginTop: 3 }}>{st.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div style={{ flex: 1, minWidth: 0, background: c.invBg, color: c.invInk, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: '0 0 auto' }}>
-          <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700 }}>{content.meta.brand}<span style={{ color: c.invAccent }}>.</span></div>
-          <span style={{ fontFamily: f.mono, fontSize: 8, opacity: 0.7 }}>★ {content.meta.rating}</span>
-        </div>
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 16px' }}>
-          <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.12em', color: c.invAccent, marginBottom: 8 }}>{content.meta.category}</div>
-          <h1 style={{ fontFamily: f.display, fontSize: 25, fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.03em', margin: 0 }}>{heading}</h1>
-          <p style={{ fontSize: 11, lineHeight: 1.5, opacity: 0.82, margin: '10px 0 0' }}>{content.hero.leadParagraph?.slice(0, 88)}…</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${s.length}, 1fr)`, borderTop: div, flex: '0 0 auto' }}>
-          {s.map((st, i) => (
-            <div key={i} style={{ padding: '9px 6px', textAlign: 'center', borderRight: i < s.length - 1 ? div : undefined }}>
-              <div style={{ fontFamily: f.display, fontSize: 16, fontWeight: 800, color: c.invAccent, lineHeight: 1 }}>{st.num}<span style={{ fontSize: 10 }}>{st.unit}</span></div>
-              <div style={{ fontFamily: f.mono, fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.06em', opacity: 0.65, marginTop: 3 }}>{st.label}</div>
+      {/* services */}
+      <div style={{ flex: '0 0 auto', padding: '11px 16px 9px', borderTop: `1px solid ${c.line}` }}>
+        <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.12em', color: c.accent, marginBottom: 7 }}>{mn?.eyebrow}</div>
+        {(mn?.items || []).slice(0, 3).map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, padding: '5px 0', borderTop: i ? `1px solid ${c.lineSoft}` : 'none' }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</div>
+              <div style={{ fontFamily: f.mono, fontSize: 8.5, color: c.inkFaint, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.desc}</div>
             </div>
-          ))}
-        </div>
-        <a style={{ background: c.accent, color: c.accentInk, padding: '12px 16px', textAlign: 'center', fontSize: 12, fontWeight: 700, flex: '0 0 auto' }}>{content.cta.primary.label.split(' ')[0]} →</a>
+            <span style={{ fontFamily: f.mono, fontSize: 10, fontWeight: 700, color: c.accent, flex: '0 0 auto' }}>{it.price}</span>
+          </div>
+        ))}
       </div>
+      {/* review */}
+      <div style={{ flex: '0 0 auto', padding: '9px 16px', background: c.bgAlt, borderTop: `1px solid ${c.line}` }}>
+        <div style={{ fontSize: 11, lineHeight: 1.4 }}>{renderEm(q.text, c.accent, false)}</div>
+        <div style={{ fontFamily: f.mono, fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.06em', color: c.inkSoft, marginTop: 5 }}>{q.authorName} · {q.authorSource}</div>
+      </div>
+      {/* footer cta */}
+      <a style={{ background: c.accent, color: c.accentInk, padding: '13px 16px', textAlign: 'center', fontSize: 12, fontWeight: 700, flex: '0 0 auto', display: 'block' }}>{content.cta.primary.label} →</a>
     </div>
   );
 }
@@ -602,22 +686,43 @@ export function SplitFamily({ theme, content }: { theme: Theme; content: SlotCon
 
 export function StackedFamily({ theme, content }: { theme: Theme; content: SlotContent }) {
   const c = theme.colors, f = theme.fonts, r = theme.radii, v = theme.voice;
+  const m = content.meta, mn = content.menu, q = content.quote;
   const heading = content.hero.headingLines.join(' ').replace(/\[\[|\]\]/g, '');
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', borderBottom: `1px solid ${c.line}`, flex: '0 0 auto' }}>
-        <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: '-0.015em' }}>{content.meta.brand}</div>
+    <div style={{ background: c.bg, color: c.ink, fontFamily: f.body, height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: `1px solid ${c.line}`, flex: '0 0 auto' }}>
+        <div style={{ fontFamily: f.display, fontSize: 14, fontWeight: 700, letterSpacing: '-0.015em' }}>{m.brand}</div>
         <a style={{ background: c.accent, color: c.accentInk, padding: '7px 13px', borderRadius: r.btn, fontSize: 11, fontWeight: 600 }}>Записаться</a>
       </div>
-      <div style={{ padding: '18px 18px 12px', textAlign: 'center', flex: '0 0 auto' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 10, fontWeight: 500, marginBottom: 10 }}><span style={{ width: 5, height: 5, background: c.accent, borderRadius: '50%' }} />{content.meta.category} · {content.meta.address.split(',').pop()?.trim()}</div>
-        <h1 style={{ fontFamily: f.display, fontSize: 25, fontWeight: v.displayWeight, lineHeight: 1.04, letterSpacing: '-0.025em', margin: '0 auto', maxWidth: '94%' }}>{heading}</h1>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, fontSize: 11, color: c.inkSoft, marginTop: 10, alignItems: 'center' }}><span style={{ color: c.accent }}>★★★★★</span><b>{content.meta.rating}</b><span style={{ color: c.inkFaint }}>·</span><span>{content.meta.reviewsN} отзывов</span></div>
+      <div style={{ padding: '14px 18px 10px', textAlign: 'center', flex: '0 0 auto' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: c.accentSoft, color: c.accent, borderRadius: 999, fontSize: 10, fontWeight: 500, marginBottom: 9 }}><span style={{ width: 5, height: 5, background: c.accent, borderRadius: '50%' }} />{m.category} · {m.address.split(',').pop()?.trim()}</div>
+        <h1 style={{ fontFamily: f.display, fontSize: 23, fontWeight: v.displayWeight, lineHeight: 1.04, letterSpacing: '-0.025em', margin: '0 auto', maxWidth: '94%' }}>{heading}</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, fontSize: 11, color: c.inkSoft, marginTop: 9, alignItems: 'center' }}><span style={{ color: c.accent }}>★★★★★</span><b>{m.rating}</b><span style={{ color: c.inkFaint }}>·</span><span>{m.reviewsN} отзывов</span></div>
       </div>
-      <div style={{ flex: 1, minHeight: 0, margin: '0 18px', borderRadius: r.photo, overflow: 'hidden' }}>
+      <div style={{ flex: '1 1 auto', minHeight: 50, margin: '0 18px', borderRadius: r.photo, overflow: 'hidden' }}>
         <img src={content.hero.photoSrc} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: v.photoFilter, display: 'block' }} />
       </div>
-      <div style={{ padding: '14px 18px', display: 'flex', gap: 8, flex: '0 0 auto' }}>
+      {/* services cards */}
+      <div style={{ padding: '11px 18px 4px', flex: '0 0 auto' }}>
+        {(mn?.items || []).slice(0, 3).map((it, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '8px 11px', marginBottom: 6, border: `1px solid ${c.line}`, borderRadius: r.btn, background: c.bgAlt }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.name}</div>
+              <div style={{ fontSize: 9.5, color: c.inkFaint, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.desc}</div>
+            </div>
+            <span style={{ fontSize: 11.5, fontWeight: 700, color: c.accent, whiteSpace: 'nowrap', flex: '0 0 auto' }}>{it.price}</span>
+          </div>
+        ))}
+      </div>
+      {/* review */}
+      <div style={{ padding: '6px 18px 10px', flex: '0 0 auto' }}>
+        <div style={{ padding: '10px 12px', borderRadius: r.card, background: c.accentSoft, fontSize: 11, lineHeight: 1.4 }}>
+          {renderEm(q.text, c.accent, false)}
+          <div style={{ fontSize: 9, color: c.inkSoft, marginTop: 5 }}>{q.authorName} · {q.authorSource}</div>
+        </div>
+      </div>
+      {/* footer cta */}
+      <div style={{ padding: '12px 18px', display: 'flex', gap: 8, flex: '0 0 auto', borderTop: `1px solid ${c.line}` }}>
         <a style={{ flex: 1, background: c.accent, color: c.accentInk, padding: '12px', borderRadius: r.btn, textAlign: 'center', fontSize: 13, fontWeight: 600 }}>{content.cta.primary.label}</a>
         <a style={{ padding: '12px 16px', border: `1px solid ${c.line}`, borderRadius: r.btn, textAlign: 'center', fontSize: 12, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', color: c.ink }}>{content.cta.phone}</a>
       </div>
@@ -654,7 +759,7 @@ export function PresetRenderer({ preset, content }: { preset: Preset; content: S
 // MiniChrome — browser frame wrapper, canon-side (uses VT tokens)
 // ───────────────────────────────────────────────────────────────
 
-export function MiniChrome({ host, children, height = 460 }: { host: string; children: React.ReactNode; height?: number }) {
+export function MiniChrome({ host, children, height = 720 }: { host: string; children: React.ReactNode; height?: number }) {
   return (
     <div style={{
       overflow: 'hidden', borderRadius: 12,
@@ -798,9 +903,9 @@ export const fixtureBrowsSochi: SlotContent = {
   hero: {
     headingLines: ['Брови', 'по [[вашей]]', 'форме лица'],
     leadParagraph: 'Не рисуем чужую форму — подчёркиваем вашу. Коррекция, ламинирование, окрашивание за один визит. Держится 6 недель.',
-    photoSrc: EX_U('photo-1487412947147-5cebf100ffc2', 720),
+    photoSrc: EX_U('photo-1633681926022-84c23e8cb2d6', 720),
     gallery: [EX_U('photo-1522335789203-aabd1fc54bc9', 480), EX_U('photo-1457972729786-0411a3b2b626', 480)],
-    photoCaption: 'Фото · ламинирование, среда',
+    photoCaption: 'Фото · студия, среда',
   },
   stats: [
     { num: '6', unit: ' нед', label: 'держится' },

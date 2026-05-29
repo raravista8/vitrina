@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.9.1",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.1: feedback #9 (S9_FeedbackModal) переведён на controlled API (open/onOpenChange/tally/onSubmit/submitting/error + embedded). Zero-prop остаётся canvas-mock. Экспортированы TS-типы. Drop-in на прод.",
+  "version": "0.9.2",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.2: витрина-превью (блок 02) выросли с 460→720px и стали полноценными многоблочными сайтами — все 5 семейств получили статистику, прайс-лист, отзыв и футер-CTA. Заменено неподходящее фото в фикстуре brows-sochi. Drop-in на прод.",
   "type": "module",
   "sideEffects": [
     "*.css"
