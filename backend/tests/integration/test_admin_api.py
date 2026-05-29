@@ -46,6 +46,8 @@ from app.infrastructure.postgres.models import (
     AdminCredentials,
     Application,
     Feedback,
+    FeedbackSubmission,
+    FeedbackVote,
     Lead,
     Site,
     User,
@@ -596,6 +598,46 @@ async def test_feedback_list_filters(
     assert r.status_code == 200
     items = r.json()["data"]["items"]
     assert all(it["type"] == "feature_request" for it in items)
+
+
+async def test_feedback_inbox_includes_modal_submissions(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """0.9.x vote-modal submissions (feedback_submission + feedback_vote) must
+    surface in the inbox — they don't write the legacy `feedback` table."""
+    _, password, totp_secret = admin_creds
+    sub = FeedbackSubmission(name="Павел", contact="+79991234567", message=None, ip_hash=None)
+    db_session.add(sub)
+    await db_session.flush()
+    db_session.add(FeedbackVote(submission_id=sub.id, kind="feature", option_key="payments"))
+    db_session.add(FeedbackVote(submission_id=sub.id, kind="source", option_key="max"))
+    await db_session.commit()
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.get("/admin/api/feedback", cookies={"admin_session": cookie})
+    assert r.status_code == 200
+    body = r.json()["data"]
+    row = next((it for it in body["items"] if it["id"] == str(sub.id)), None)
+    assert row is not None, "modal submission missing from inbox"
+    assert row["type"] == "general"
+    # votes + name surfaced in the collapsible checkboxes block
+    assert set(row["checkboxes"]["votes"]) == {"feature:payments", "source:max"}
+    assert row["checkboxes"]["name"] == "Павел"
+    # contact is PII → masked, never raw
+    masked = row["email_or_contact_masked"]
+    assert masked
+    assert "79991234567" not in masked
+    # it appears under the «general» filter, and NOT under an unrelated type
+    r_gen = await client.get(
+        "/admin/api/feedback?type_filter=general", cookies={"admin_session": cookie}
+    )
+    assert any(it["id"] == str(sub.id) for it in r_gen.json()["data"]["items"])
+    r_bug = await client.get(
+        "/admin/api/feedback?type_filter=bug", cookies={"admin_session": cookie}
+    )
+    assert all(it["id"] != str(sub.id) for it in r_bug.json()["data"]["items"])
 
 
 async def test_settings_echoes_flags_without_secrets(
