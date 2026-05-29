@@ -63,10 +63,10 @@
 - **Спека:** `specs/00 §6`
 - **API:** `POST /api/leads`, rate-limit >3/час/IP → 429 (FR-052), SmartCaptcha + honeypot
 
-### #9 · Feedback — vote-first modal (canon 0.9.0)
-- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.0 — vote-first модалка X/10; алиасы `S9_FeedbackPage` / `FeedbackPage` теперь резолвятся в модалку). ADR-0009 rev.2.
-- **Прод:** hand-rolled `landing/components/FeedbackForm.tsx` + `/feedback` страница — **остаётся до PR2** (canon 0.9.0 завендорен в PR1, модалка пока не консьюмится). PR2 монтирует модалку глобально + ретайрит `/feedback` (301 → `/`); PR3 — backend votes/tally + миграция (`docs/handoff/FEEDBACK_BACKEND.md`).
-- **Спека:** `specs/00 §7` (ADR-0009) + `docs/handoff/FEEDBACK_BACKEND.md` (0.9.0 backend contract)
+### #9 · Feedback — vote-first modal (canon 0.9.1 controlled API)
+- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.1 — **controlled** API: `open`/`onOpenChange`/`tally`/`onSubmit`/`submitting`/`error`/`embedded` + 5 TS-типов; zero-prop = canvas-mock). Алиасы `S9_FeedbackPage` / `FeedbackPage` резолвятся в модалку. ADR-0009 rev.2.
+- **Прод:** PR-B монтирует модалку глобально через тонкий адаптер (`tally`←`GET /api/feedback/tally`, `onSubmit`→`POST /api/feedback` votes[], `embedded={false}`) + ретайрит `/feedback` (301 → `/`). Backend (votes/tally + миграция 0012) — **live** (PR3, `efccafc`). До мёржа PR-B прод остаётся на hand-rolled `/feedback` странице.
+- **Спека:** `specs/00 §7` (ADR-0009) + `docs/handoff/FEEDBACK_BACKEND.md` (backend contract) + `docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md` (controlled-API ТЗ)
 
 ---
 

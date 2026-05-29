@@ -132,6 +132,9 @@ function Checkbox({ checked = false, label, link }) {
 function IconArrow({ size = 18 }) {
   return /* @__PURE__ */ jsx("span", { style: { fontSize: size, lineHeight: 1 }, children: "\u2192" });
 }
+function Spinner({ size = 14 }) {
+  return /* @__PURE__ */ jsx("svg", { width: size, height: size, viewBox: "0 0 24 24", style: { animation: "vt-spin 0.9s linear infinite" }, children: /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 9, fill: "none", stroke: "currentColor", strokeWidth: 2.5, strokeDasharray: "40 20", strokeLinecap: "round" }) });
+}
 
 // src/customer/index.tsx
 import { Fragment as Fragment3, jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
@@ -1391,7 +1394,7 @@ function FBField({ placeholder, value, onChange, textarea }) {
   };
   return textarea ? /* @__PURE__ */ jsx2("textarea", { value, onChange: (e) => onChange(e.target.value), placeholder, style: { ...common, resize: "vertical", minHeight: 84 } }) : /* @__PURE__ */ jsx2("input", { value, onChange: (e) => onChange(e.target.value), placeholder, style: common });
 }
-function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
+function FBVoteSection({ title, items, votes, onToggle, baseOf, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
   return /* @__PURE__ */ jsxs2("div", { style: { marginTop: 18 }, children: [
     /* @__PURE__ */ jsx2("h3", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", margin: "0 0 2px" }, children: title }),
     /* @__PURE__ */ jsx2("p", { style: { fontSize: 12.5, color: VT.inkFaint, margin: "0 0 8px" }, children: "\u041E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u043D\u0443\u0436\u043D\u043E\u0435 \u2014 \u0433\u043E\u043B\u043E\u0441 \u0437\u0430\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u0441\u0440\u0430\u0437\u0443" }),
@@ -1399,7 +1402,7 @@ function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnS
       FBVoteRow,
       {
         label,
-        base,
+        base: baseOf(key, base),
         first: i === 0,
         mobile,
         checked: !!votes[key],
@@ -1410,9 +1413,28 @@ function FBVoteSection({ title, items, votes, onToggle, ownVal, ownShown, onOwnS
     /* @__PURE__ */ jsx2(FBReveal, { label: "+ \u0441\u0432\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442", shown: ownShown, onShow: onOwnShow, children: /* @__PURE__ */ jsx2(FBField, { placeholder: ownPlaceholder, value: ownVal, onChange: onOwnChange }) })
   ] });
 }
-function S9_FeedbackModal({ mobile }) {
+function S9_FeedbackModal(props = {}) {
+  const p = props;
+  const {
+    mobile,
+    open: openProp,
+    onOpenChange,
+    tally,
+    onSubmit,
+    submitting = false,
+    error = null,
+    embedded: embeddedProp
+  } = p;
   const { useState: useState2 } = React;
-  const [open, setOpen] = useState2(true);
+  const isControlled = openProp !== void 0;
+  const isCanvas = !isControlled && typeof onSubmit !== "function";
+  const embedded = embeddedProp !== void 0 ? embeddedProp : isCanvas;
+  const [internalOpen, setInternalOpen] = useState2(isCanvas);
+  const isOpen = isControlled ? openProp : internalOpen;
+  const setOpen = (v) => {
+    if (onOpenChange) onOpenChange(v);
+    if (!isControlled) setInternalOpen(v);
+  };
   const [votes, setVotes] = useState2({});
   const [ownSrc, setOwnSrc] = useState2("");
   const [ownFeat, setOwnFeat] = useState2("");
@@ -1423,7 +1445,9 @@ function S9_FeedbackModal({ mobile }) {
   const [name, setName] = useState2("");
   const [contact, setContact] = useState2("");
   const [submitted, setSubmitted] = useState2(false);
-  const baseTotal = 340;
+  const tallyItems = tally && tally.items || null;
+  const baseOf = (key, fallback) => tallyItems && tallyItems[key] != null ? tallyItems[key] : fallback;
+  const baseTotal = tally && tally.total_week != null ? tally.total_week : 340;
   const checkedCount = Object.values(votes).filter(Boolean).length;
   const ownCount = (ownSrc.trim() ? 1 : 0) + (ownFeat.trim() ? 1 : 0);
   const n = checkedCount + ownCount;
@@ -1441,206 +1465,254 @@ function S9_FeedbackModal({ mobile }) {
     setContact("");
     setSubmitted(false);
   };
-  const FauxPage = () => /* @__PURE__ */ jsxs2("div", { style: { position: "absolute", inset: 0, overflow: "hidden", padding: mobile ? "20px" : "32px 48px", filter: open ? "blur(2px)" : "none" }, children: [
+  const buildPayload = () => ({
+    votes: [
+      ...FB_SOURCES.filter(([k]) => votes[k]).map(([k]) => ({ kind: "source", key: k })),
+      ...FB_FEATURES.filter(([k]) => votes[k]).map(([k]) => ({ kind: "feature", key: k }))
+    ],
+    own_source: ownSrc.trim() || null,
+    own_feature: ownFeat.trim() || null,
+    message: msg.trim() || null,
+    name: name.trim() || null,
+    contact: contact.trim() || null
+  });
+  const handleSubmit = async () => {
+    if (n === 0 || submitting) return;
+    if (typeof onSubmit === "function") {
+      try {
+        await onSubmit(buildPayload());
+        setSubmitted(true);
+      } catch (e) {
+      }
+    } else {
+      setSubmitted(true);
+    }
+  };
+  const FauxPage = () => /* @__PURE__ */ jsxs2("div", { style: { position: "absolute", inset: 0, overflow: "hidden", padding: mobile ? "20px" : "32px 48px", filter: isOpen ? "blur(2px)" : "none" }, children: [
     /* @__PURE__ */ jsx2("div", { style: { height: 18, width: mobile ? 120 : 180, background: VT.line, borderRadius: 6, opacity: 0.6 } }),
     /* @__PURE__ */ jsx2("div", { style: { height: mobile ? 32 : 46, width: "70%", background: VT.line, borderRadius: 10, opacity: 0.5, marginTop: 22 } }),
     /* @__PURE__ */ jsx2("div", { style: { height: 14, width: "52%", background: VT.line, borderRadius: 6, opacity: 0.4, marginTop: 16 } }),
     /* @__PURE__ */ jsx2("div", { style: { display: "flex", flexDirection: mobile ? "column" : "row", gap: 16, marginTop: 30 }, children: [0, 1, 2].map((i) => /* @__PURE__ */ jsx2("div", { style: { flex: 1, height: mobile ? 90 : 150, background: VT.line, borderRadius: 14, opacity: 0.35 } }, i)) })
   ] });
-  return /* @__PURE__ */ jsxs2("div", { "data-feedback-modal": true, style: { position: "relative", width: "100%", minHeight: "100%", background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: "-0.01em" }, children: [
-    /* @__PURE__ */ jsx2(FauxPage, {}),
-    !open && /* @__PURE__ */ jsxs2(
-      "button",
-      {
-        type: "button",
-        "data-floating-feedback-btn": true,
-        onClick: () => {
-          reset();
-          setOpen(true);
-        },
-        style: {
-          position: "absolute",
-          right: mobile ? 16 : 28,
-          bottom: mobile ? 16 : 28,
-          zIndex: 3,
-          background: VT.accent,
-          color: VT.white,
-          border: "none",
-          cursor: "pointer",
-          padding: "14px 20px",
-          borderRadius: VT.r.pill,
-          fontFamily: VT.font.sans,
-          fontSize: 14.5,
-          fontWeight: 600,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 9,
-          boxShadow: VT.shadow.pop
-        },
-        children: [
-          /* @__PURE__ */ jsx2("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx2("path", { d: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" }) }),
-          "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
-        ]
-      }
-    ),
-    open && /* @__PURE__ */ jsx2("div", { style: {
-      position: "absolute",
-      inset: 0,
-      zIndex: 4,
-      background: "oklch(0.30 0.02 60 / 0.46)",
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "center",
-      padding: mobile ? "14px 10px" : "40px 24px"
-    }, children: /* @__PURE__ */ jsxs2("div", { style: {
-      position: "relative",
-      width: "100%",
-      maxWidth: mobile ? 9999 : 560,
-      background: VT.bg,
-      border: `1px solid ${VT.line}`,
-      borderRadius: VT.r.xl,
-      boxShadow: VT.shadow.pop,
-      overflow: "hidden"
-    }, children: [
-      /* @__PURE__ */ jsx2(
-        "button",
-        {
-          type: "button",
-          onClick: () => setOpen(false),
-          "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
-          style: {
-            position: "absolute",
-            top: 14,
-            right: 14,
-            zIndex: 2,
-            width: 34,
-            height: 34,
-            borderRadius: VT.r.pill,
-            border: "none",
-            background: VT.bgSoft,
-            color: VT.inkSoft,
-            cursor: "pointer",
+  const FloatingBtn = ({ fixed }) => /* @__PURE__ */ jsxs2(
+    "button",
+    {
+      type: "button",
+      "data-floating-feedback-btn": true,
+      onClick: () => setOpen(true),
+      style: {
+        position: fixed ? "fixed" : "absolute",
+        right: mobile ? 16 : 28,
+        bottom: mobile ? 16 : 28,
+        zIndex: fixed ? 2147483e3 : 3,
+        background: VT.accent,
+        color: VT.white,
+        border: "none",
+        cursor: "pointer",
+        padding: "14px 20px",
+        borderRadius: VT.r.pill,
+        fontFamily: VT.font.sans,
+        fontSize: 14.5,
+        fontWeight: 600,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 9,
+        boxShadow: VT.shadow.pop
+      },
+      children: [
+        /* @__PURE__ */ jsx2("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx2("path", { d: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" }) }),
+        "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
+      ]
+    }
+  );
+  const Dialog = () => /* @__PURE__ */ jsx2(
+    "div",
+    {
+      "data-feedback-modal": true,
+      style: {
+        position: embedded ? "absolute" : "fixed",
+        inset: 0,
+        zIndex: embedded ? 4 : 2147483600,
+        background: "oklch(0.30 0.02 60 / 0.46)",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        padding: mobile ? "14px 10px" : "40px 24px",
+        overflowY: "auto"
+      },
+      onClick: (e) => {
+        if (e.target === e.currentTarget) setOpen(false);
+      },
+      children: /* @__PURE__ */ jsxs2("div", { style: {
+        position: "relative",
+        width: "100%",
+        maxWidth: mobile ? 9999 : 560,
+        background: VT.bg,
+        border: `1px solid ${VT.line}`,
+        borderRadius: VT.r.xl,
+        boxShadow: VT.shadow.pop,
+        overflow: "hidden"
+      }, children: [
+        /* @__PURE__ */ jsx2(
+          "button",
+          {
+            type: "button",
+            onClick: () => setOpen(false),
+            "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
+            style: {
+              position: "absolute",
+              top: 14,
+              right: 14,
+              zIndex: 2,
+              width: 34,
+              height: 34,
+              borderRadius: VT.r.pill,
+              border: "none",
+              background: VT.bgSoft,
+              color: VT.inkSoft,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center"
+            },
+            children: /* @__PURE__ */ jsx2("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", children: /* @__PURE__ */ jsx2("path", { d: "M6 6l12 12M18 6L6 18" }) })
+          }
+        ),
+        submitted ? /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center", padding: mobile ? "48px 24px" : "56px 36px" }, children: [
+          /* @__PURE__ */ jsx2("div", { style: {
+            width: 60,
+            height: 60,
+            borderRadius: "50%",
+            background: VT.success,
+            color: "#fff",
+            display: "grid",
+            placeItems: "center",
+            margin: "0 auto 20px",
+            boxShadow: `0 0 0 8px ${VT.successSoft}`
+          }, children: /* @__PURE__ */ jsx2("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx2("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
+          /* @__PURE__ */ jsx2("h2", { style: { fontSize: 23, fontWeight: 700, letterSpacing: "-0.02em", margin: 0 }, children: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E, \u0433\u043E\u043B\u043E\u0441 \u0443\u0447\u043B\u0438" }),
+          /* @__PURE__ */ jsxs2("p", { style: { fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: "10px auto 0", lineHeight: 1.5 }, children: [
+            "\u0417\u0430\u0441\u0447\u0438\u0442\u0430\u043B\u0438 ",
+            n,
+            " ",
+            fbPlural(n),
+            ". \u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u043D\u0430\u0431\u0435\u0440\u0451\u0442\u0441\u044F 10 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443",
+            contact.trim() ? " \u0438 \u043D\u0430\u043F\u0438\u0448\u0435\u043C \u0432\u0430\u043C." : ". \u0425\u043E\u0442\u0438\u0442\u0435 \u0443\u0437\u043D\u0430\u0442\u044C \u043E \u0437\u0430\u043F\u0443\u0441\u043A\u0435 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442."
+          ] }),
+          /* @__PURE__ */ jsx2("div", { style: { marginTop: 24 }, onClick: () => setOpen(false), children: /* @__PURE__ */ jsx2(Btn, { variant: "secondary", size: "sm", style: { cursor: "pointer" }, children: "\u0413\u043E\u0442\u043E\u0432\u043E" }) })
+        ] }) : /* @__PURE__ */ jsxs2("div", { style: { padding: mobile ? "26px 20px 22px" : "30px 32px 26px" }, children: [
+          /* @__PURE__ */ jsx2("h2", { style: { fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 40px 8px 0", lineHeight: 1.12 }, children: "\u0421\u043A\u0430\u0436\u0438\u0442\u0435, \u0447\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442" }),
+          /* @__PURE__ */ jsx2("p", { style: { fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }, children: "\u041D\u0430\u0431\u0438\u0440\u0430\u0435\u043C 10 \u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u0427\u0435\u043C \u0431\u043E\u043B\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439 \u043F\u0440\u043E\u0441\u044F\u0442 \u043E\u0434\u043D\u043E \u0438 \u0442\u043E \u0436\u0435, \u0442\u0435\u043C \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u043C." }),
+          /* @__PURE__ */ jsxs2("span", { style: {
             display: "inline-flex",
             alignItems: "center",
-            justifyContent: "center"
-          },
-          children: /* @__PURE__ */ jsx2("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", children: /* @__PURE__ */ jsx2("path", { d: "M6 6l12 12M18 6L6 18" }) })
-        }
-      ),
-      submitted ? /* @__PURE__ */ jsxs2("div", { style: { textAlign: "center", padding: mobile ? "48px 24px" : "56px 36px" }, children: [
-        /* @__PURE__ */ jsx2("div", { style: {
-          width: 60,
-          height: 60,
-          borderRadius: "50%",
-          background: VT.success,
-          color: "#fff",
-          display: "grid",
-          placeItems: "center",
-          margin: "0 auto 20px",
-          boxShadow: `0 0 0 8px ${VT.successSoft}`
-        }, children: /* @__PURE__ */ jsx2("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx2("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-        /* @__PURE__ */ jsx2("h2", { style: { fontSize: 23, fontWeight: 700, letterSpacing: "-0.02em", margin: 0 }, children: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E, \u0433\u043E\u043B\u043E\u0441 \u0443\u0447\u043B\u0438" }),
-        /* @__PURE__ */ jsxs2("p", { style: { fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: "10px auto 0", lineHeight: 1.5 }, children: [
-          "\u0417\u0430\u0441\u0447\u0438\u0442\u0430\u043B\u0438 ",
-          n,
-          " ",
-          fbPlural(n),
-          ". \u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u043D\u0430\u0431\u0435\u0440\u0451\u0442\u0441\u044F 10 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443",
-          contact.trim() ? " \u0438 \u043D\u0430\u043F\u0438\u0448\u0435\u043C \u0432\u0430\u043C." : ". \u0425\u043E\u0442\u0438\u0442\u0435 \u0443\u0437\u043D\u0430\u0442\u044C \u043E \u0437\u0430\u043F\u0443\u0441\u043A\u0435 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442."
-        ] }),
-        /* @__PURE__ */ jsx2("div", { style: { marginTop: 24 }, onClick: () => setOpen(false), children: /* @__PURE__ */ jsx2(Btn, { variant: "secondary", size: "sm", style: { cursor: "pointer" }, children: "\u0413\u043E\u0442\u043E\u0432\u043E" }) })
-      ] }) : /* @__PURE__ */ jsxs2("div", { style: { padding: mobile ? "26px 20px 22px" : "30px 32px 26px" }, children: [
-        /* @__PURE__ */ jsx2("h2", { style: { fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 40px 8px 0", lineHeight: 1.12 }, children: "\u0421\u043A\u0430\u0436\u0438\u0442\u0435, \u0447\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442" }),
-        /* @__PURE__ */ jsx2("p", { style: { fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }, children: "\u041D\u0430\u0431\u0438\u0440\u0430\u0435\u043C 10 \u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u0427\u0435\u043C \u0431\u043E\u043B\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439 \u043F\u0440\u043E\u0441\u044F\u0442 \u043E\u0434\u043D\u043E \u0438 \u0442\u043E \u0436\u0435, \u0442\u0435\u043C \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u043C." }),
-        /* @__PURE__ */ jsxs2("span", { style: {
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          marginTop: 14,
-          fontSize: 12.5,
-          color: VT.inkSoft,
-          fontWeight: 500,
-          background: VT.white,
-          border: `1px solid ${VT.line}`,
-          padding: "6px 12px",
-          borderRadius: VT.r.pill,
-          whiteSpace: "nowrap"
-        }, children: [
-          /* @__PURE__ */ jsx2("span", { style: { width: 7, height: 7, borderRadius: "50%", background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` } }),
-          /* @__PURE__ */ jsx2("b", { style: { color: VT.ink, fontVariantNumeric: "tabular-nums" }, children: baseTotal + n }),
-          "\xA0\u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E"
-        ] }),
-        /* @__PURE__ */ jsx2(
-          FBVoteSection,
-          {
-            title: "\u0425\u043E\u0447\u0443 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
-            items: FB_SOURCES,
-            votes,
-            onToggle: toggle,
-            mobile,
-            ownVal: ownSrc,
-            ownShown: showOwnSrc,
-            onOwnShow: () => setShowOwnSrc(true),
-            onOwnChange: setOwnSrc,
-            ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430"
-          }
-        ),
-        /* @__PURE__ */ jsx2(
-          FBVoteSection,
-          {
-            title: "\u0425\u043E\u0447\u0443 \u0444\u0438\u0447\u0443",
-            items: FB_FEATURES,
-            votes,
-            onToggle: toggle,
-            mobile,
-            ownVal: ownFeat,
-            ownShown: showOwnFeat,
-            onOwnShow: () => setShowOwnFeat(true),
-            onOwnChange: setOwnFeat,
-            ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0438\u0447\u0438"
-          }
-        ),
-        /* @__PURE__ */ jsxs2("div", { style: {
-          marginTop: 20,
-          paddingLeft: 15,
-          borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
-          opacity: awake ? 1 : 0.5,
-          pointerEvents: awake ? "auto" : "none",
-          transition: "opacity .3s, border-color .3s"
-        }, children: [
-          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 12, alignItems: "flex-start" }, children: [
-            /* @__PURE__ */ jsx2("span", { style: {
-              flex: "0 0 auto",
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              marginTop: 1,
-              border: `2px solid ${awake ? VT.success : VT.line}`,
-              background: awake ? VT.success : VT.white,
-              color: "#fff",
-              display: "grid",
-              placeItems: "center",
-              transition: "all .3s"
-            }, children: awake && /* @__PURE__ */ jsx2("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx2("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-            /* @__PURE__ */ jsxs2("div", { children: [
-              /* @__PURE__ */ jsx2("strong", { style: { display: "block", fontSize: 15.5, fontWeight: 700 }, children: "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C" }),
-              /* @__PURE__ */ jsx2("span", { style: { display: "block", fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }, children: "\u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0441\u043E\u043E\u0431\u0449\u0438\u043C, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0430\u0448 \u0433\u043E\u043B\u043E\u0441 \u043D\u0430\u0431\u0435\u0440\u0451\u0442 10 \u0438 \u043F\u0443\u043D\u043A\u0442 \u043F\u043E\u043F\u0430\u0434\u0451\u0442 \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u041D\u0438\u043A\u043E\u043C\u0443 \u043D\u0435 \u043F\u043E\u043A\u0430\u0436\u0435\u043C \u0438 \u0441\u043F\u0430\u043C\u0438\u0442\u044C \u043D\u0435 \u0431\u0443\u0434\u0435\u043C." })
-            ] })
+            gap: 8,
+            marginTop: 14,
+            fontSize: 12.5,
+            color: VT.inkSoft,
+            fontWeight: 500,
+            background: VT.white,
+            border: `1px solid ${VT.line}`,
+            padding: "6px 12px",
+            borderRadius: VT.r.pill,
+            whiteSpace: "nowrap"
+          }, children: [
+            /* @__PURE__ */ jsx2("span", { style: { width: 7, height: 7, borderRadius: "50%", background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` } }),
+            /* @__PURE__ */ jsx2("b", { style: { color: VT.ink, fontVariantNumeric: "tabular-nums" }, children: baseTotal + n }),
+            "\xA0\u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E"
           ] }),
-          /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: 11, marginTop: 14 }, children: [
-            /* @__PURE__ */ jsx2(FBField, { placeholder: "\u0418\u043C\u044F", value: name, onChange: setName }),
-            /* @__PURE__ */ jsx2(FBField, { placeholder: "Email, \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", value: contact, onChange: setContact })
+          /* @__PURE__ */ jsx2(
+            FBVoteSection,
+            {
+              title: "\u0425\u043E\u0447\u0443 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
+              items: FB_SOURCES,
+              votes,
+              onToggle: toggle,
+              mobile,
+              baseOf,
+              ownVal: ownSrc,
+              ownShown: showOwnSrc,
+              onOwnShow: () => setShowOwnSrc(true),
+              onOwnChange: setOwnSrc,
+              ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430"
+            }
+          ),
+          /* @__PURE__ */ jsx2(
+            FBVoteSection,
+            {
+              title: "\u0425\u043E\u0447\u0443 \u0444\u0438\u0447\u0443",
+              items: FB_FEATURES,
+              votes,
+              onToggle: toggle,
+              mobile,
+              baseOf,
+              ownVal: ownFeat,
+              ownShown: showOwnFeat,
+              onOwnShow: () => setShowOwnFeat(true),
+              onOwnChange: setOwnFeat,
+              ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0438\u0447\u0438"
+            }
+          ),
+          /* @__PURE__ */ jsxs2("div", { style: {
+            marginTop: 20,
+            paddingLeft: 15,
+            borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
+            opacity: awake ? 1 : 0.5,
+            pointerEvents: awake ? "auto" : "none",
+            transition: "opacity .3s, border-color .3s"
+          }, children: [
+            /* @__PURE__ */ jsxs2("div", { style: { display: "flex", gap: 12, alignItems: "flex-start" }, children: [
+              /* @__PURE__ */ jsx2("span", { style: {
+                flex: "0 0 auto",
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                marginTop: 1,
+                border: `2px solid ${awake ? VT.success : VT.line}`,
+                background: awake ? VT.success : VT.white,
+                color: "#fff",
+                display: "grid",
+                placeItems: "center",
+                transition: "all .3s"
+              }, children: awake && /* @__PURE__ */ jsx2("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx2("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
+              /* @__PURE__ */ jsxs2("div", { children: [
+                /* @__PURE__ */ jsx2("strong", { style: { display: "block", fontSize: 15.5, fontWeight: 700 }, children: "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C" }),
+                /* @__PURE__ */ jsx2("span", { style: { display: "block", fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }, children: "\u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0441\u043E\u043E\u0431\u0449\u0438\u043C, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0430\u0448 \u0433\u043E\u043B\u043E\u0441 \u043D\u0430\u0431\u0435\u0440\u0451\u0442 10 \u0438 \u043F\u0443\u043D\u043A\u0442 \u043F\u043E\u043F\u0430\u0434\u0451\u0442 \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u041D\u0438\u043A\u043E\u043C\u0443 \u043D\u0435 \u043F\u043E\u043A\u0430\u0436\u0435\u043C \u0438 \u0441\u043F\u0430\u043C\u0438\u0442\u044C \u043D\u0435 \u0431\u0443\u0434\u0435\u043C." })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxs2("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: 11, marginTop: 14 }, children: [
+              /* @__PURE__ */ jsx2(FBField, { placeholder: "\u0418\u043C\u044F", value: name, onChange: setName }),
+              /* @__PURE__ */ jsx2(FBField, { placeholder: "Email, \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", value: contact, onChange: setContact })
+            ] }),
+            /* @__PURE__ */ jsx2(FBReveal, { label: "+ \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439", shown: showMsg, onShow: () => setShowMsg(true), children: /* @__PURE__ */ jsx2(FBField, { textarea: true, placeholder: "\u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0440\u0430\u0441\u0441\u043A\u0430\u0437\u0430\u0442\u044C", value: msg, onChange: setMsg }) })
           ] }),
-          /* @__PURE__ */ jsx2(FBReveal, { label: "+ \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439", shown: showMsg, onShow: () => setShowMsg(true), children: /* @__PURE__ */ jsx2(FBField, { textarea: true, placeholder: "\u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0440\u0430\u0441\u0441\u043A\u0430\u0437\u0430\u0442\u044C", value: msg, onChange: setMsg }) })
-        ] }),
-        /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 16, marginTop: 24, flexWrap: "wrap" }, children: [
-          /* @__PURE__ */ jsx2("div", { onClick: () => {
-            if (n > 0) setSubmitted(true);
-          }, style: { width: mobile ? "100%" : "auto" }, children: /* @__PURE__ */ jsx2(Btn, { size: "md", style: { width: mobile ? "100%" : "auto", opacity: n === 0 ? 0.45 : 1, cursor: n === 0 ? "not-allowed" : "pointer" }, children: n > 0 ? `\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C ${n} ${fbPlural(n)}` : "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0433\u043E\u043B\u043E\u0441" }) }),
-          n === 0 && !mobile && /* @__PURE__ */ jsx2("span", { style: { fontSize: 13.5, color: VT.inkFaint }, children: "\u041E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043F\u0443\u043D\u043A\u0442" })
+          error && /* @__PURE__ */ jsx2("p", { style: { marginTop: 14, marginBottom: 0, fontSize: 13.5, fontWeight: 500, color: VT.danger }, children: error }),
+          /* @__PURE__ */ jsxs2("div", { style: { display: "flex", alignItems: "center", gap: 16, marginTop: error ? 12 : 24, flexWrap: "wrap" }, children: [
+            /* @__PURE__ */ jsx2("div", { onClick: handleSubmit, style: { width: mobile ? "100%" : "auto" }, children: /* @__PURE__ */ jsx2(
+              Btn,
+              {
+                size: "md",
+                icon: submitting ? /* @__PURE__ */ jsx2(Spinner, { size: 15 }) : void 0,
+                style: { width: mobile ? "100%" : "auto", opacity: n === 0 || submitting ? 0.55 : 1, cursor: n === 0 || submitting ? "not-allowed" : "pointer" },
+                children: submitting ? "\u041E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u043C\u2026" : n > 0 ? `\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C ${n} ${fbPlural(n)}` : "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0433\u043E\u043B\u043E\u0441"
+              }
+            ) }),
+            n === 0 && !mobile && !submitting && /* @__PURE__ */ jsx2("span", { style: { fontSize: 13.5, color: VT.inkFaint }, children: "\u041E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043F\u0443\u043D\u043A\u0442" })
+          ] })
         ] })
       ] })
-    ] }) })
+    }
+  );
+  if (embedded) {
+    return /* @__PURE__ */ jsxs2("div", { style: { position: "relative", width: "100%", minHeight: "100%", background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: "-0.01em" }, children: [
+      /* @__PURE__ */ jsx2(FauxPage, {}),
+      !isOpen && /* @__PURE__ */ jsx2(FloatingBtn, { fixed: false }),
+      isOpen && /* @__PURE__ */ jsx2(Dialog, {})
+    ] });
+  }
+  return /* @__PURE__ */ jsxs2(React.Fragment, { children: [
+    !isOpen && /* @__PURE__ */ jsx2(FloatingBtn, { fixed: true }),
+    isOpen && /* @__PURE__ */ jsx2(Dialog, {})
   ] });
 }
 var S9_FeedbackPage = S9_FeedbackModal;
