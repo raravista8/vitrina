@@ -88,16 +88,9 @@ describe("MetrikaGoals — secondary click delegation", () => {
     expect(reachGoalMock).toHaveBeenCalledWith("faq_open", { question: "Как это работает?" });
   });
 
-  it("feedback_open attributes source by context", () => {
-    const host = mount(`
-      <footer><a href="/feedback">Обратная связь</a></footer>
-      <div data-section="sources"><a href="/feedback">Не нашли свою? Напишите →</a></div>
-    `);
-    fireEvent.click(host.querySelector("footer a")!);
-    expect(reachGoalMock).toHaveBeenCalledWith("feedback_open", { source: "footer" });
-    fireEvent.click(host.querySelector('[data-section="sources"] a')!);
-    expect(reachGoalMock).toHaveBeenCalledWith("feedback_open", { source: "sources" });
-  });
+  // NB: `feedback_open` is no longer fired here — it moved to the
+  // FeedbackModal adapter (fires on modal open, source-attributed), covering
+  // the FAB + every `data-ss-feedback` entry uniformly. See FeedbackModal.test.
 
   it("login_click + analytics_demo_click fire on their hrefs", () => {
     const host = mount('<a href="/login">Войти</a><a href="/admin-demo">Демо</a>');

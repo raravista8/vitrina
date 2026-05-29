@@ -35,8 +35,10 @@
  *    keep their `href` rewritten to `/admin-demo` (the real Next.js
  *    route at `landing/app/admin-demo/page.tsx`). Native click navigates.
  *  - SourcesSection «Не нашли свою? Напишите →» — canon ships it as an
- *    `<a>` with NO href (inert). We point it at `/feedback` (matched by
- *    text, scoped to `[data-section="sources"]`).
+ *    `<a>` with NO href (inert). We tag it `data-ss-feedback="sources"` so
+ *    the global `<FeedbackModal />` opens it (canon 0.9.1), + keep
+ *    `href="/feedback"` as a no-JS fallback (301 → `/`). Matched by text,
+ *    scoped to `[data-section="sources"]`.
  *
  * MutationObserver scoped to `<main>` re-applies the bindings every
  * time canon re-renders (mobile-toggle, hover state, any future canon
@@ -109,14 +111,17 @@ export function CanonCtaBindings() {
         a.setAttribute("href", "/admin-demo");
       }
       /* SourcesSection «Не нашли свою? Напишите →» — canon ships this
-       * `<a>` with NO href (styled like a link but inert). Point it at
-       * `/feedback`. Matched by text (no href to query on); scoped to
-       * `[data-section="sources"]`. Idempotent. */
+       * `<a>` with NO href (styled like a link but inert). Open the global
+       * feedback modal (canon 0.9.1) via its `data-ss-feedback` hook;
+       * keep `href="/feedback"` as a no-JS fallback (301 → `/`). Matched by
+       * text (no href to query on); scoped to `[data-section="sources"]`.
+       * Idempotent. */
       for (const a of Array.from(
         main.querySelectorAll<HTMLAnchorElement>('[data-section="sources"] a'),
       )) {
         if ((a.textContent ?? "").includes("Не нашли свою")) {
           a.setAttribute("href", "/feedback");
+          a.setAttribute("data-ss-feedback", "sources");
         }
       }
     };

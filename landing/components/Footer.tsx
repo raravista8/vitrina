@@ -26,9 +26,13 @@ export function Footer() {
           <Link className="hover:text-ink hover:underline" href="/offer">
             Оферта
           </Link>
-          <Link className="hover:text-ink hover:underline" href="/feedback">
+          {/* Feedback is a modal now (canon 0.9.1) — `/feedback` is retired
+              (301 → `/`). This anchor opens the global `<FeedbackModal />` via
+              its document-delegated `data-ss-feedback` hook. `href="/feedback"`
+              stays as a no-JS fallback (the 301 lands users home). */}
+          <a className="hover:text-ink hover:underline" href="/feedback" data-ss-feedback="footer">
             Обратная связь
-          </Link>
+          </a>
         </nav>
       </div>
     </footer>

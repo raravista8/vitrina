@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 
-// `FeedbackFloatingButton` («Чего не хватает?») was removed from the
-// global layout in PR-G (paid-service polish), then re-added per user
-// request — but landing-only, mounted in `app/page.tsx` (not here in
-// the root layout). Landing-only keeps it off `/feedback` (redundant)
-// and `/login` / admin (wrong context). The form itself stays at
-// `/feedback` (see nav-link).
+// Feedback («Чего не хватает?») is now the canon 0.9.1 controlled modal,
+// mounted globally below via `<FeedbackModal />` (its own fixed FAB). The
+// adapter self-hides on `/admin*` + `/login`, so the FAB stays off the
+// founder area + auth. The standalone `/feedback` page was retired this PR
+// (301 → `/`); entry points (FAB, Footer, Sources link) open the modal.
 import "./globals.css";
 
 import { CanonStyles } from "@samosite/canon";
+
+import { FeedbackModal } from "@/components/FeedbackModal";
 import { BUILD_TAG } from "@/lib/build-info";
 
 const SITE_URL = process.env["NEXT_PUBLIC_SITE_URL"] ?? "https://samosite.online";
@@ -197,6 +198,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `import '@samosite/canon/styles.css'` in globals.css. */}
         <CanonStyles />
         {children}
+        {/* Global feedback modal (canon 0.9.1 S9_FeedbackModal via a thin
+            adapter — tally←GET / onSubmit→POST, embedded). Renders its own
+            fixed «Чего не хватает?» FAB; self-hides on /admin* and /login.
+            Zero layout footprint (position:fixed only). Replaces the retired
+            /feedback page. */}
+        <FeedbackModal />
         <script
           type="application/ld+json"
           // Structured data must be a single literal JSON string; Next handles
