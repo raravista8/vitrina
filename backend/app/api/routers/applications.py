@@ -141,6 +141,8 @@ async def post_submit_application(
                 f"({application.contact_type})"
                 f"\nURL: {application.source_url or '—'}"
             ),
+            # Email subject for the founder alert (TG keeps the #id title).
+            metadata={"email_subject": "новая заявка на сайт"},
         ),
     )
 
@@ -443,6 +445,8 @@ async def post_submit_application_photo(
                 f"\nТекст. файлов: {len(text_payloads)}"
                 f"\nОписание: {description_snip}"
             ),
+            # Email subject for the founder alert (TG keeps the #id title).
+            metadata={"email_subject": "новая заявка на сайт"},
         ),
     )
 

@@ -88,6 +88,7 @@ async def _lifespan(app: FastAPI) -> Any:
             ChannelType.email: EmailChannel(smtp_client),
         },
         founder_telegram_chat_id=settings.tg_admin_chat_id,
+        founder_email=settings.founder_email,
     )
     app.state.notification_dispatcher = dispatcher
     log.info(
@@ -95,6 +96,7 @@ async def _lifespan(app: FastAPI) -> Any:
         telegram=tg_client.is_available(),
         smtp=smtp_client.is_available(),
         founder_chat_set=bool(settings.tg_admin_chat_id),
+        founder_email_set=bool(settings.founder_email),
     )
 
     # Preview (T1.4b) — same TG bot client is reused for get_chat;
