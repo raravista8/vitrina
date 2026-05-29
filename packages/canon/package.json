@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
   "version": "0.9.3",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.2: витрина-превью (блок 02) выросли с 460→720px и стали полноценными многоблочными сайтами — все 5 семейств получили статистику, прайс-лист, отзыв и футер-CTA. Заменено неподходящее фото в фикстуре brows-sochi. Drop-in на прод.",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.3: StickyHeader — единый hover для всех пунктов меню («Войти» теперь как остальные: цвет + мягкая фоновая пилюля), hover-правила с !important переживают запекание инлайн-стилей при экспорте. HeroBlock — второй абзац подзаголовка на text-wrap: balance (убран висячий «новых заявок»). Drop-in на прод.",
   "type": "module",
   "sideEffects": [
     "*.css"
