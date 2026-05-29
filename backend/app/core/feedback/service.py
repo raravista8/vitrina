@@ -23,13 +23,37 @@ service boundary).
 
 from __future__ import annotations
 
+import hashlib
+from dataclasses import dataclass, field
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import get_settings
 from app.core.consent.ledger import record_consent
-from app.infrastructure.postgres.models import Feedback
+from app.infrastructure.postgres.models import (
+    Feedback,
+    FeedbackSubmission,
+    FeedbackThresholdAlert,
+    FeedbackVote,
+)
 from app.utils.errors import DomainError, DomainResult, Err, Ok
+
+# Vote-first modal abuse limits (ADR-0009 rev.2 / FEEDBACK_BACKEND.md §2).
+VOTE_PER_IP_HOURLY_CAP = 20  # votes (not requests) per IP per hour
+VOTE_DEDUPE_DAYS = 30  # ignore a (voter, option_key) repeat within this window
+VOTE_THRESHOLD = 10  # distinct voters that trigger the founder alert
+
+# Consent basis snapshot recorded when a voter leaves a contact (the modal
+# shows this promise next to the optional contact block — canon 0.9.0).
+_VOTE_CONSENT_TEXT = (
+    "Согласие на обработку контакта для уведомления о запуске запрошенного "
+    "пункта (Самосайт, форма «Чего не хватает?»). Контакт не передаётся "
+    "третьим лицам и не используется для рассылок."
+)
 
 
 async def submit_feedback(
@@ -72,3 +96,206 @@ async def submit_feedback(
     await session.flush()
     await session.commit()
     return Ok(feedback)
+
+
+# ===========================================================================
+# Vote-first modal (canon 0.9.0 / ADR-0009 rev.2)
+# ===========================================================================
+#
+# Returns plain dataclasses (not api schemas) — the router maps them to the
+# Pydantic response. Keeps core/ from importing api/ (import-linter).
+
+
+@dataclass(frozen=True)
+class TallyResult:
+    items: dict[str, int]  # option_key → distinct-voter count
+    total_week: int
+
+
+@dataclass(frozen=True)
+class VotesResult:
+    accepted: int
+    crossed_keys: list[str] = field(default_factory=list)  # keys that just hit 10
+    tally: TallyResult = field(default_factory=lambda: TallyResult({}, 0))
+
+
+def hash_ip(ip: str | None) -> str | None:
+    """Salted SHA-256 of the client IP — stable per IP for dedupe/cap, but
+    not reversible to the raw address. Salt = the always-present session
+    secret (no new config). Raw IP is never persisted."""
+    if not ip:
+        return None
+    salt = get_settings().session_secret_key
+    return hashlib.sha256(f"{salt}:{ip}".encode()).hexdigest()
+
+
+# Distinct voter = the contact (lower-cased) if given, else the ip_hash.
+_VOTER_KEY = func.coalesce(func.lower(FeedbackSubmission.contact), FeedbackSubmission.ip_hash)
+
+
+async def get_tally(session: AsyncSession) -> TallyResult:
+    """Distinct-voter count per option_key + total votes in the trailing 7d.
+    Cheap + cacheable (router caches in Redis)."""
+    rows = (
+        await session.execute(
+            select(FeedbackVote.option_key, func.count(func.distinct(_VOTER_KEY)))
+            .select_from(FeedbackVote)
+            .join(FeedbackSubmission, FeedbackVote.submission_id == FeedbackSubmission.id)
+            .group_by(FeedbackVote.option_key)
+        )
+    ).all()
+    items = {key: int(count) for key, count in rows}
+
+    week_ago = datetime.now(UTC) - timedelta(days=7)
+    total_week = (
+        await session.scalar(
+            select(func.count())
+            .select_from(FeedbackVote)
+            .where(FeedbackVote.created_at >= week_ago)
+        )
+    ) or 0
+    return TallyResult(items=items, total_week=int(total_week))
+
+
+async def _distinct_voters_for_key(session: AsyncSession, option_key: str) -> int:
+    count = (
+        await session.scalar(
+            select(func.count(func.distinct(_VOTER_KEY)))
+            .select_from(FeedbackVote)
+            .join(FeedbackSubmission, FeedbackVote.submission_id == FeedbackSubmission.id)
+            .where(FeedbackVote.option_key == option_key)
+        )
+    ) or 0
+    return int(count)
+
+
+async def submit_votes(
+    *,
+    session: AsyncSession,
+    votes: list[tuple[str, str]],  # (kind, option_key)
+    own_source: str | None = None,
+    own_feature: str | None = None,
+    message: str | None = None,
+    name: str | None = None,
+    contact: str | None = None,
+    ip: str | None = None,
+    user_agent: str | None = None,
+) -> VotesResult:
+    """Persist one modal submit: a `feedback_submission` + N `feedback_vote`
+    rows. Idempotent + abuse-resistant per FEEDBACK_BACKEND.md §2:
+
+      - per-IP cap: ≤ ``VOTE_PER_IP_HOURLY_CAP`` *votes*/hour/IP — excess
+        silently dropped (still counts as a success; never an error).
+      - dedupe: a (voter, option_key) already voted within
+        ``VOTE_DEDUPE_DAYS`` is not re-inserted, but still reported accepted
+        (idempotent — the user never sees an error).
+      - own_source/own_feature free-text → legacy `feedback` rows so they
+        flow into the existing admin inbox + waitlist aggregation.
+      - consent recorded only when a contact is supplied (PII).
+      - crossing ``VOTE_THRESHOLD`` distinct voters on an option_key is
+        reported in ``crossed_keys`` exactly once (idempotency table).
+
+    Never returns an error for a well-formed batch — the modal is a
+    foot-in-the-door, so we always 200.
+    """
+    now = datetime.now(UTC)
+    ip_hash = hash_ip(ip)
+    contact_norm = contact.strip() if contact and contact.strip() else None
+    voter_key = (contact_norm.lower() if contact_norm else None) or ip_hash
+
+    # Per-IP hourly cap — count votes already cast from this IP in the window.
+    remaining = VOTE_PER_IP_HOURLY_CAP
+    if ip_hash:
+        recent = (
+            await session.scalar(
+                select(func.count())
+                .select_from(FeedbackVote)
+                .join(FeedbackSubmission, FeedbackVote.submission_id == FeedbackSubmission.id)
+                .where(FeedbackSubmission.ip_hash == ip_hash)
+                .where(FeedbackVote.created_at >= now - timedelta(hours=1))
+            )
+        ) or 0
+        remaining = max(0, VOTE_PER_IP_HOURLY_CAP - int(recent))
+
+    submission = FeedbackSubmission(
+        name=(name.strip() if name and name.strip() else None),
+        contact=contact_norm,
+        message=(message.strip() if message and message.strip() else None),
+        ip_hash=ip_hash,
+    )
+    session.add(submission)
+    await session.flush()  # assign submission.id
+
+    accepted = 0
+    inserted = 0
+    affected: set[str] = set()
+    for kind, key in votes:
+        affected.add(key)
+        # Dedupe against prior submissions (not the current one — the modal
+        # never sends the same key twice in one batch).
+        if voter_key:
+            dup = (
+                await session.scalar(
+                    select(func.count())
+                    .select_from(FeedbackVote)
+                    .join(
+                        FeedbackSubmission,
+                        FeedbackVote.submission_id == FeedbackSubmission.id,
+                    )
+                    .where(FeedbackVote.option_key == key)
+                    .where(FeedbackVote.created_at >= now - timedelta(days=VOTE_DEDUPE_DAYS))
+                    .where(_VOTER_KEY == voter_key)  # noqa: SIM300 — SQLAlchemy column op, not a bool
+                )
+            ) or 0
+            if dup:
+                accepted += 1  # idempotent — count it, don't double-insert
+                continue
+        if inserted >= remaining:
+            continue  # over per-IP cap → silently drop (still 200)
+        session.add(FeedbackVote(submission_id=submission.id, kind=kind, option_key=key))
+        inserted += 1
+        accepted += 1
+
+    # Free-text «+ свой вариант» → legacy feedback rows (existing inbox/waitlist).
+    if own_source and own_source.strip():
+        session.add(
+            Feedback(type="source_request", message=own_source.strip()[:4096], checkboxes={})
+        )
+        accepted += 1
+    if own_feature and own_feature.strip():
+        session.add(
+            Feedback(type="feature_request", message=own_feature.strip()[:4096], checkboxes={})
+        )
+        accepted += 1
+
+    # Consent — only when PII (a contact) is collected.
+    if contact_norm:
+        await record_consent(
+            session=session,
+            user_id=None,
+            ip=ip,
+            user_agent=user_agent,
+            consent_text=_VOTE_CONSENT_TEXT,
+        )
+
+    await session.flush()
+
+    # Threshold: report each key that just reached VOTE_THRESHOLD distinct
+    # voters, exactly once (ON CONFLICT DO NOTHING on the alert table).
+    crossed: list[str] = []
+    for key in affected:
+        if await _distinct_voters_for_key(session, key) >= VOTE_THRESHOLD:
+            # RETURNING distinguishes a real insert (just crossed) from an
+            # ON CONFLICT no-op (already alerted) — concurrency-safe + typed.
+            inserted_key = await session.scalar(
+                pg_insert(FeedbackThresholdAlert)
+                .values(option_key=key)
+                .on_conflict_do_nothing(index_elements=["option_key"])
+                .returning(FeedbackThresholdAlert.option_key)
+            )
+            if inserted_key is not None:
+                crossed.append(key)
+
+    await session.commit()
+    tally = await get_tally(session)
+    return VotesResult(accepted=accepted, crossed_keys=crossed, tally=tally)

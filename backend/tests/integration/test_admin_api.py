@@ -812,3 +812,43 @@ async def test_waitlist_mark_in_development_requires_auth(
 ) -> None:
     r = await client.post("/admin/api/waitlist/instagram/mark-in-development")
     assert r.status_code == 303
+
+
+async def test_feedback_votes_rollup(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """`GET /admin/api/feedback/votes` rolls up canon-0.9.0 modal votes by
+    option_key with distinct-voter counts + a `ready` flag at ≥10."""
+    from app.infrastructure.postgres.models import FeedbackSubmission, FeedbackVote
+
+    _, password, totp_secret = admin_creds
+
+    # Two distinct voters both vote "vk"; voter @x also votes "blog".
+    sub_x = FeedbackSubmission(contact="@x")
+    sub_y = FeedbackSubmission(contact="@y")
+    db_session.add_all([sub_x, sub_y])
+    await db_session.flush()
+    db_session.add_all(
+        [
+            FeedbackVote(submission_id=sub_x.id, kind="source", option_key="vk"),
+            FeedbackVote(submission_id=sub_y.id, kind="source", option_key="vk"),
+            FeedbackVote(submission_id=sub_x.id, kind="feature", option_key="blog"),
+        ]
+    )
+    await db_session.commit()
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.get("/admin/api/feedback/votes", cookies={"admin_session": cookie})
+    assert r.status_code == 200, r.text
+    data = r.json()["data"]
+    by_key = {row["option_key"]: row for row in data["items"]}
+    assert by_key["vk"]["votes"] == 2
+    assert by_key["vk"]["ready"] is False
+    assert data["threshold"] == 10
+
+
+async def test_feedback_votes_requires_auth(client: httpx.AsyncClient) -> None:
+    r = await client.get("/admin/api/feedback/votes")
+    assert r.status_code in (303, 401)  # require_admin gate
