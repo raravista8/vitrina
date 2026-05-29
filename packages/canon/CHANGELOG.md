@@ -1,5 +1,20 @@
 # Changelog
 
+> **Known gaps (consumer-side workarounds active in vitrina):**
+>
+> - **`canon-gap-0903-dashboard-pending`** — `S11_Dashboard`'s
+>   "QUICK · ТОП-5 PENDING" card hard-codes 5 mock rows (`#A-1842
+>   studia-anna · 47 постов`, …) inline in JSX. It exposes **no prop**
+>   for them and ignores `data` (only the KPI tiles + 14-day chart read
+>   `data`), so prod always shows fake pending applications. Worked
+>   around in `landing/components/admin/DashboardPendingPanel.tsx`
+>   (hides the mock card, portals a real list from `GET
+>   /admin/api/apps?status=pending` built from canon primitives).
+>   **Fix wanted:** an interactive `S11_Dashboard` with a `pending`
+>   prop (or `data.pending_preview: [{ id, source_type, label, ago }]`)
+>   — same controlled pattern as the other admin screens (0.2.x).
+>   Remove the consumer workaround once shipped.
+
 ## 0.9.4 — Переиздание landing-фиксов (коллизия версий 0.9.3) · 2026-05-29
 
 > **PATCH.** Идентичен 0.9.3 по коду, но с уникальным номером версии. На прод под номером `0.9.3` уехал пакет БЕЗ landing-фиксов (StickyHeader/HeroBlock) — версию бампнули, а изменения `src/landing/index.tsx` в сборку не попали (признак: `description` в том пакете остался 0.9.2-шным). Из-за совпадения номера версии CI считал «изменений нет» и не пересобирал. 0.9.4 ломает коллизию — гарантированно подхватывается пайплайном.
