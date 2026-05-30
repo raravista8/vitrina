@@ -167,6 +167,32 @@ def test_signaling_aspects_present(site):
     assert "Два жёлтых огня" in page
 
 
+def test_signaling_materials_link_to_real_isi(site):
+    page = _html(site, "signaling.html")
+    assert "/isi/" in page  # material cards point at the real interactive isi pages
+    assert 'class="idx-card" href="#"' not in page  # no dead canon links
+
+
+def test_doc_pages_rendered(site):
+    page = _html(site, "doc-roszheldor_07_316.html")
+    assert "приказываю" in page  # real full приказ text
+    assert "КИВИЯРВИ" in page
+    assert f'<link rel="canonical" href="{BASE_URL}/doc-roszheldor_07_316.html"' in page
+    assert '"@type": "Article"' in page or '"@type":"Article"' in page
+
+
+def test_docs_table_and_news_link_to_doc_pages(site):
+    assert 'href="doc-' in _html(site, "docs.html")
+    assert "doc-sovmin_63_174.html" in site  # a real doc page is rendered
+    assert "doc-roszheldor_07_316.html" in _html(site, "index.html")  # news links to it
+
+
+def test_reports_entries_are_real_external(site):
+    page = _html(site, "reports.html")
+    assert "Каламбака" in page  # real travelogue, not a fabricated station report
+    assert "milreview.ru/events/" in page
+
+
 # ── invariants: no watermark, no «милитари» ────────────────────────────────────
 
 
