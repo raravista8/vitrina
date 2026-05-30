@@ -57,7 +57,7 @@ _ALLOWED_ATTRS = {"a": ["href", "target", "rel"]}
 
 # ``station.html?id=NNNN`` (canon link format) → ``station-NNNN.html`` (our flat
 # per-station static files — distinct crawlable URLs).
-_STATION_LINK_RE = re.compile(r"station\.html\?id=(\d+)")
+_STATION_LINK_RE = re.compile(r"(?<!rail)station\.html\?id=(\d+)")
 
 # directory abbreviation → full kind label for stub station cards
 _KIND_FULL = {
@@ -191,7 +191,8 @@ def build_stations(
     def _normalise_full(sid: str, card: dict[str, Any]) -> dict[str, Any]:
         st = dict(card)
         st["slug"] = f"station-{sid}.html"
-        st.setdefault("photos", ["", "", ""])
+        st.setdefault("photos", [])
+        st.setdefault("scheme_imgs", [])
         st.setdefault("neighbors", [])
         st.setdefault("docs", [])
         st.setdefault("history", "")
@@ -214,7 +215,8 @@ def build_stations(
                 "region": group["region"],
                 "line": f"{kind} {group['road']} железной дороги. Подробная карточка готовится.",
                 "spec": [["Дорога", group["road"]], ["Тип", kind]],
-                "photos": ["", "", ""],
+                "photos": [],
+                "scheme_imgs": [],
                 "history": "",
                 "neighbors": [],
                 "docs": [],
