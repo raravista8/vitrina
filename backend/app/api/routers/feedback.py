@@ -176,6 +176,29 @@ async def _handle_votes(
         has_contact=bool(body.contact),
     )
 
+    # Founder heads-up on EVERY new submission (the threshold loop below is an
+    # extra, louder ping when an option hits 10 votes). Skip pure-duplicate
+    # submits that recorded nothing new. Full contact/message live in the admin
+    # Отзывы inbox — the alert is a teaser, not a PII dump.
+    if result.accepted or body.message or body.own_source or body.own_feature or body.contact:
+        picks = ", ".join(v.key for v in body.votes) or "—"
+        lines = [f"Голосов: {len(body.votes)} ({picks})"]
+        if body.message and body.message.strip():
+            lines.append(f"Сообщение: {body.message.strip()[:300]}")
+        for own in (body.own_source, body.own_feature):
+            if own and own.strip():
+                lines.append(f"Свой вариант: {own.strip()[:120]}")
+        lines.append("Контакт оставлен" if body.contact else "Без контакта")
+        lines.append("Подробнее: админка → Отзывы")
+        await notifier.notify_founder(
+            kind=NotificationKind.application_received,
+            message=NotificationMessage(
+                title="💬 Новый фидбек на сайте",
+                body="\n".join(lines),
+                metadata={"email_subject": "новый фидбек на сайте"},
+            ),
+        )
+
     # Founder alert when an option just crossed the 10-vote threshold.
     for key in result.crossed_keys:
         await notifier.notify_founder(
