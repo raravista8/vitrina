@@ -109,6 +109,14 @@ samosite.online, www.samosite.online {
 # wildcard DNS, same validation path as the apex. CSP is set by the api route;
 # HSTS is added automatically by `tls`.
 milreview.samosite.online {
+	# Force a dedicated public ACME cert. Without this, Caddy groups the host
+	# under the `*.samosite.online { tls internal }` policy below (the wildcard
+	# subject matches this subdomain) and serves the self-signed cert. An
+	# explicit `issuer acme` gives milreview its own automation policy →
+	# Let's Encrypt via tls-alpn-01 (the apex proves ACME works on this VPS).
+	tls {
+		issuer acme
+	}
 	import security_headers
 	reverse_proxy api:8000 {
 		header_up X-Real-IP {remote_host}
