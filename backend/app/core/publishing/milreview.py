@@ -79,7 +79,16 @@ _TAG_CLASS = {
     "report": "t-event",
 }
 
-_CONTENT_FILES = ("site", "news", "docs", "directory", "stations", "signaling", "reports")
+_CONTENT_FILES = (
+    "site",
+    "news",
+    "docs",
+    "doc_pages",
+    "directory",
+    "stations",
+    "signaling",
+    "reports",
+)
 
 
 def resolve_milreview_dir(sites_template_dir: str | None = None) -> Path:
@@ -359,7 +368,37 @@ def render_all(
             _HTML,
         )
 
+    # per-document pages (real приказ/постановление full texts)
+    doc_pages: dict[str, Any] = content["doc_pages"]
+    docs_by_slug = {d["slug"]: d for d in docs}
+    doc_tpl = env.get_template("doc.html.j2")
+    for slug, page in doc_pages.items():
+        row = docs_by_slug.get(slug, {})
+        doc_ctx = {**row, **page, "slug": slug, "slug_path": f"doc-{slug}.html"}
+        jsonld_doc = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": row.get("t") or row.get("num") or slug,
+            "description": f"{row.get('org', '')} {row.get('num', '')} от {row.get('d', '')}".strip(),
+            "inLanguage": "ru",
+            "mainEntityOfPage": f"{base_url}/doc-{slug}.html",
+            "isPartOf": {"@type": "WebSite", "name": site["title"], "url": f"{base_url}/"},
+        }
+        out[f"doc-{slug}.html"] = (
+            doc_tpl.render(**common, doc=doc_ctx, jsonld_article=jsonld_doc),
+            _HTML,
+        )
+
     pages = _sitemap_pages(base_url, stations, lastmod)
+    pages += [
+        {
+            "loc": f"{base_url}/doc-{slug}.html",
+            "lastmod": lastmod,
+            "changefreq": "yearly",
+            "priority": "0.4",
+        }
+        for slug in doc_pages
+    ]
     out["sitemap.xml"] = (
         env.get_template("sitemap.xml.j2").render(**common, pages=pages, lastmod=lastmod),
         _XML,

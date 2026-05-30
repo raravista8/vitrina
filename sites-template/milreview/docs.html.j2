@@ -43,7 +43,7 @@
         {% for x in docs %}
         <tr data-org="{{ x.org }}" data-road="{{ x.road }}">
           <td class="mono" data-l="Дата">{{ x.d }}</td>
-          <td class="mono" data-l="Номер"><a class="doc-num" href="#">{{ x.num }}</a></td>
+          <td class="mono" data-l="Номер"><a class="doc-num" href="doc-{{ x.slug }}.html">{{ x.num }}</a></td>
           <td data-l="Орган"><span class="badge">{{ x.org }}</span></td>
           <td data-l="Содержание">{{ x.t | nbsp }}</td>
           <td data-l="Дорога">{{ x.roadLabel }}</td>

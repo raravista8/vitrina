@@ -26,7 +26,7 @@
         <div class="eyebrow" style="margin-bottom:10px">{{ r.featured.eyebrow }}</div>
         <h2 style="font-size:clamp(24px,3.2vw,34px);margin-bottom:12px">{{ r.featured.title | nbsp }}</h2>
         <p>{{ r.featured.body | rich }}</p>
-        <a class="btn btn-ghost" href="{{ r.featured.link_href }}">{{ r.featured.link_label }}
+        <a class="btn btn-ghost" href="{{ r.featured.link_href }}"{% if r.featured.link_external %} target="_blank" rel="noopener"{% endif %}>{{ r.featured.link_label }}
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h9"/><path d="M8 4l4 4-4 4"/></svg>
         </a>
       </div>
@@ -37,7 +37,7 @@
       {% for e in r.entries %}
       <article class="entry">
         <div class="e-date">{{ e.year }}</div>
-        <div><h3><a href="{{ e.href | relink }}">{{ e.title | nbsp }}</a></h3>
+        <div><h3><a href="{{ e.href | relink }}"{% if e.external %} target="_blank" rel="noopener"{% endif %}>{{ e.title | nbsp }}</a></h3>
           <p>{{ e.body | nbsp }}</p></div>
         <div class="e-meta">{{ e.road }}</div>
       </article>
