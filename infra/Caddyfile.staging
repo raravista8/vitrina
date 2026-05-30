@@ -109,28 +109,18 @@ samosite.online, www.samosite.online {
 # wildcard DNS, same validation path as the apex. CSP is set by the api route;
 # HSTS is added automatically by `tls`.
 milreview.samosite.online {
-	# Force a dedicated public ACME cert. Without this, Caddy groups the host
-	# under the `*.samosite.online { tls internal }` policy below (the wildcard
-	# subject matches this subdomain) and serves the self-signed cert. An
-	# explicit `issuer acme` gives milreview its own automation policy →
-	# Let's Encrypt via tls-alpn-01 (the apex proves ACME works on this VPS).
-	tls {
-		issuer acme
-	}
+	# Real public cert via Let's Encrypt (tls-alpn-01) — the apex proves ACME
+	# works on this VPS. NB: there is deliberately NO `*.samosite.online { tls
+	# internal }` placeholder block — a self-signed wildcard cert covers this
+	# subdomain and wins a startup race in certmagic, so Caddy would skip
+	# obtaining milreview's public cert and serve the self-signed one. Dropping
+	# the placeholder lets milreview get a valid cert. (The trade-off: a request
+	# to a not-yet-published subdomain now fails the TLS handshake instead of
+	# showing a 404 page — acceptable, no customer subdomains are live, and the
+	# DNS-01 wildcard in infra/Caddyfile supersedes all this once issued.)
 	import security_headers
 	reverse_proxy api:8000 {
 		header_up X-Real-IP {remote_host}
 		header_up X-Forwarded-For {remote_host}
 	}
-}
-
-# Wildcard host for customer subdomains.
-# Until the DNS-01 cert is issued, this uses Caddy's self-signed CA so
-# users hitting a subdomain that doesn't yet exist get a TLS-warned 404
-# rather than a connection error. Browsers will show "Not Secure" — this
-# is by design (placeholder), and is replaced once `infra/acme/` issues
-# the real wildcard.
-*.samosite.online {
-	tls internal
-	respond "Site not yet published. Visit https://samosite.online to create one." 404
 }
