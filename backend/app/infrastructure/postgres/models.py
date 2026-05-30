@@ -92,7 +92,12 @@ class User(UUIDPrimaryKey, Timestamped, Base):
 # sites
 # =============================================================================
 
-SOURCE_TYPES = ("ymaps", "telegram", "photo")  # extend per ADR-0009 waitlist
+SOURCE_TYPES = (
+    "ymaps",
+    "telegram",
+    "photo",
+    "website",
+)  # "website" = pasted link to an unrecognised site (manual review); extend per ADR-0009 waitlist
 SITE_STATUSES = (
     "pending",  # application submitted, not yet processed
     "parsing",  # parser-worker running

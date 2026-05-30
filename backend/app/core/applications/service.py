@@ -37,7 +37,7 @@ from app.utils.errors import DomainError, DomainResult, Err, Ok
 POLICY_VERSION: Final[int] = CURRENT_POLICY_VERSION
 CONSENT_TEXT_V1: Final[str] = CURRENT_POLICY_TEXT
 
-SUPPORTED_SOURCE_TYPES: Final[frozenset[str]] = frozenset({"ymaps", "telegram", "photo"})
+SUPPORTED_SOURCE_TYPES: Final[frozenset[str]] = frozenset({"ymaps", "telegram", "photo", "website"})
 
 
 async def submit_application(

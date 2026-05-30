@@ -244,6 +244,7 @@ const SOURCE_LABELS: Record<string, string> = {
   telegram: "TG",
   ymaps: "YM",
   photo: "Photo",
+  website: "Сайт",
 };
 
 function sourceLabel(source: AppRow["source_type"]): string {

@@ -354,10 +354,12 @@ export function SubmitModal({
     let result: SubmitResult;
     if (mode === "link") {
       // Re-classify on submit (not initialDetection from Hero) — the
-      // user may have edited the URL inside the modal. Falls back to
-      // 'photo' for unknown/non-URL inputs to match the prior shape.
+      // user may have edited the URL inside the modal. Anything that isn't
+      // a recognised MVP source (Telegram / Я.Карты) is a pasted link to
+      // some other site → `website` (captured for manual review). Was
+      // `photo`, which mislabeled pure link-pastes as photo uploads.
       const liveDetection = detectSource(url);
-      const sourceType = liveDetection.kind === "mvp" ? liveDetection.type : "photo";
+      const sourceType = liveDetection.kind === "mvp" ? liveDetection.type : "website";
       result = await submitLink({
         url,
         source_type: sourceType,

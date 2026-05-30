@@ -185,6 +185,25 @@ async def test_submit_application_happy_path(
     assert "application_id" in body["data"]
 
 
+async def test_submit_application_website_source_accepted(client: httpx.AsyncClient) -> None:
+    """A pasted link to an unrecognised site is accepted as source_type=website
+    (not shoehorned into 'photo'). Captured for manual founder review."""
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "website",
+            "source_url": "https://milreview.ru/",
+            "contact": "+79991234567",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert resp.status_code == 202, resp.text
+    body = resp.json()
+    assert body["ok"] is True
+    assert "application_id" in body["data"]
+
+
 # --------------------------------------------------------------------------- #
 # Validation failures
 # --------------------------------------------------------------------------- #
