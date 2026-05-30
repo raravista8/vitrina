@@ -10,6 +10,13 @@
 > Source of truth: templates + content store in `sites-template/milreview/`,
 > rendered by `backend/app/core/publishing/milreview.py`.
 
+> **Serving model (this prod): app-server origin, not Object Storage.** This VPS
+> has no S3 write path (the `vitrina-prod` bucket exists as the wildcard origin,
+> but the api has no write credentials — so no customer site is served from S3
+> today). milreview is therefore served **directly by the api**: it renders the
+> whole site once at startup and serves it by Host, and Caddy routes
+> `milreview.samosite.online` → `api:8000` via a dedicated block. No S3 needed.
+
 ---
 
 ## 1. How it's wired
@@ -17,39 +24,53 @@
 - **Templates:** `sites-template/milreview/*.j2` (`_layout` + 6 pages + per-station).
 - **Content store:** `sites-template/milreview/content/*.json` (news, docs,
   directory, stations, signaling, reports, site meta) — committed, editable.
-- **Render:** `app.core.publishing.milreview.render_all()` → `{key: (html, ctype)}`.
-- **Publish:** `python -m app.workers.publish_milreview` uploads each key under
-  the `milreview/` S3 prefix. Caddy rewrites `milreview.samosite.online/<path>`
-  → `<bucket>/milreview/<path>`, so `index.html`, `station-1706.html`,
-  `styles.css`, `sitemap.xml`, `robots.txt` all resolve.
+- **Render:** `app.core.publishing.milreview.render_all()` → `{key: (html, ctype)}`,
+  run once in the api lifespan (`app.state.milreview_files`).
+- **Serve:** `app/api/routers/milreview_site.py` — a Host-guarded catch-all GET
+  returns those files (404 for any non-milreview Host). Caddy block
+  `milreview.samosite.online` (`infra/Caddyfile`) reverse-proxies everything to
+  `api:8000`, so `/`, `index.html`, `station-1706.html`, `styles.css`,
+  `sitemap.xml`, `robots.txt` and `/api/*` all resolve.
 - **SEO baked in:** server-rendered chronicle/docs (crawlable; JS only filters
-  the DOM), one static page per station with unique `<title>`/description/
-  canonical + JSON-LD `Article`, site-wide JSON-LD `WebSite`, OG/Twitter,
-  `sitemap.xml` (home + all pages + all stations), `robots.txt`. CSP/HSTS come
-  from the Caddy edge like every other `*.samosite.online` site. **No watermark.**
+  the DOM), one page per station with unique `<title>`/description/canonical +
+  JSON-LD `Article`, site-wide JSON-LD `WebSite`, OG/Twitter, `sitemap.xml`
+  (home + all pages + all stations), `robots.txt`. CSP set by the route
+  (content-site policy); HSTS/X-Frame-Options from the Caddy `security_headers`
+  snippet. **No watermark.**
 
-## 2. Publish (run on the VPS, inside the api container)
+## 2. Publish = deploy the api (run on the VPS)
+
+milreview is rendered at api startup, so "publishing" is just a normal **backend
+deploy** (templates + content travel in the api image):
 
 ```bash
 ssh deploy@135.106.137.30
 cd /opt/vitrina && git pull --ff-only origin main
 C="docker compose --env-file .env -f infra/docker-compose.yml -f infra/docker-compose.staging.yml"
 
-# optional dry-run: render to a temp dir and eyeball (no S3 needed)
+# rebuild + recreate api (renders milreview on boot)
+$C build api && $C up -d --no-deps api
+
+# reload Caddy so the new milreview.samosite.online block is live (first deploy only)
+$C exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+
+# optional: eyeball the rendered output without serving (no S3 needed)
 $C exec -T api python -m app.workers.publish_milreview --out /tmp/milreview-dist
 $C exec -T api ls /tmp/milreview-dist | wc -l        # expect ~64 files
-
-# publish to S3 (Yandex Object Storage) under milreview/
-$C exec -T api python -m app.workers.publish_milreview
-# → "Published N objects under milreview/ (https://milreview.samosite.online)"
 ```
 
-The api image already contains `sites-template/` (Dockerfile copies it) and the
-S3 credentials live in `/opt/vitrina/.env` — no extra config.
+`caddy reload` is **atomic** — if the new config fails to validate, Caddy keeps
+running the previous one (the live site is never dropped). The Caddy block only
+needs reloading on the *first* deploy (or when `infra/Caddyfile` changes);
+content-only updates just need the api rebuilt + recreated.
 
-Re-publish any time content changes: edit `sites-template/milreview/content/*.json`,
-merge to `main`, `git pull` on the VPS, re-run the publish command. CDN
-`Cache-Control` is 5 min, so changes appear within ~5 minutes.
+Re-publish on content change: edit `sites-template/milreview/content/*.json`,
+merge to `main`, `git pull` on the VPS, `$C build api && $C up -d --no-deps api`.
+
+**Future (when Object Storage write creds land):** `python -m
+app.workers.publish_milreview` uploads the same render to S3 under the
+`milreview/` prefix; point a wildcard/CDN origin at it and drop the dedicated
+Caddy block. The CLI + `--out` dry-run already work for that path.
 
 ## 3. Create the client login (one-off)
 
@@ -122,6 +143,8 @@ These are **flagged, not done** in the initial build:
 | Content store | `sites-template/milreview/content/*.json` |
 | Styles (from canon) | `sites-template/milreview/styles.css` |
 | Renderer | `backend/app/core/publishing/milreview.py` |
-| Publish CLI | `backend/app/workers/publish_milreview.py` |
+| Serving route (Host-guarded) | `backend/app/api/routers/milreview_site.py` (rendered in `app/main.py` lifespan) |
+| Caddy edge block | `infra/Caddyfile` (`milreview.samosite.online`) |
+| Publish CLI (S3 / dry-run) | `backend/app/workers/publish_milreview.py` |
 | Login seed | `backend/app/workers/seed_milreview_user.py` |
 | Tests | `backend/tests/unit/publishing/test_milreview.py` |
