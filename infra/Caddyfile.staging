@@ -97,6 +97,25 @@ samosite.online, www.samosite.online {
 	}
 }
 
+# milreview content site («Железнодорожный путеводитель»). This overlay has no
+# Object Storage origin, so the site is served by the app server: every path
+# (incl. /api/*) is proxied to the api, which serves the pre-rendered static
+# pages by Host (app/api/routers/milreview_site.py). A specific host block
+# overrides the *.samosite.online placeholder below.
+#
+# No explicit `tls`: unlike the wildcard (which needs DNS-01, still blocked on
+# SELECTEL_DNS_API_TOKEN), a single hostname can get a real Let's Encrypt cert
+# via tls-alpn-01 — it resolves to this VPS through the *.samosite.online
+# wildcard DNS, same validation path as the apex. CSP is set by the api route;
+# HSTS is added automatically by `tls`.
+milreview.samosite.online {
+	import security_headers
+	reverse_proxy api:8000 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+	}
+}
+
 # Wildcard host for customer subdomains.
 # Until the DNS-01 cert is issued, this uses Caddy's self-signed CA so
 # users hitting a subdomain that doesn't yet exist get a TLS-warned 404

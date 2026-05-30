@@ -96,7 +96,26 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
   is fine — `ya.ru`, `storage.yandexcloud.net`, `smtp.yandex.ru:465` are all
   reachable. ⇒ founder alerts go via **email (Yandex SMTP)** or a proxy, not
   direct Telegram.
-- **YandexGPT / Yandex Object Storage** — reachable (we use them).
+- **YandexGPT** — reachable (we use it). **Object Storage write path is NOT set
+  up** on prod: the api has no `S3_*` creds, so the booking-site publish flow
+  (render→S3) and the `*.samosite.online`→S3 origin are inert — no customer site
+  is actually served from storage today. (The `vitrina-prod` bucket is named as
+  the origin in `infra/Caddyfile`, but nothing can write to it.)
+- **Active edge config is `infra/Caddyfile.staging`, NOT `infra/Caddyfile`.** The
+  prod stack runs with `-f docker-compose.staging.yml`, which **remounts**
+  `./Caddyfile.staging:/etc/caddy/Caddyfile:ro` (overriding the base compose's
+  `./Caddyfile`). So edge changes must go in `Caddyfile.staging` (the apex uses
+  Let's Encrypt tls-alpn-01; the `*.samosite.online` wildcard is a self-signed
+  `tls internal` + "not yet published" 404 placeholder until
+  `SELECTEL_DNS_API_TOKEN` lands). `infra/Caddyfile` is the canonical/future
+  config (volume wildcard cert + Object Storage origin) — keep both in sync.
+  Caddyfile is **bind-mounted**, so after `git pull` apply with:
+  `$C exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile`
+  (atomic — bad config keeps the previous one; no caddy rebuild needed).
+- **milreview content site** (`milreview.samosite.online`) is served by the **api**
+  (app-server origin, no S3): a dedicated `Caddyfile.staging` host block proxies
+  it to api:8000, which renders + serves the static pages by Host. Single
+  hostname → real LE cert via tls-alpn-01. See `docs/runbooks/publish-milreview.md`.
 - **Pricing** is frontend-only (canon 5-tier matrix); ЮKassa is still single-plan
   990 ₽. See `docs/handoff/CANON_SWAP_PLAN.md` §Pricing.
 

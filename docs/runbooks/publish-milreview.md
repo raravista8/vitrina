@@ -144,7 +144,7 @@ These are **flagged, not done** in the initial build:
 | Styles (from canon) | `sites-template/milreview/styles.css` |
 | Renderer | `backend/app/core/publishing/milreview.py` |
 | Serving route (Host-guarded) | `backend/app/api/routers/milreview_site.py` (rendered in `app/main.py` lifespan) |
-| Caddy edge block | `infra/Caddyfile` (`milreview.samosite.online`) |
+| Caddy edge block | `infra/Caddyfile.staging` (**active on prod**) + `infra/Caddyfile` (canonical) — `milreview.samosite.online` |
 | Publish CLI (S3 / dry-run) | `backend/app/workers/publish_milreview.py` |
 | Login seed | `backend/app/workers/seed_milreview_user.py` |
 | Tests | `backend/tests/unit/publishing/test_milreview.py` |
