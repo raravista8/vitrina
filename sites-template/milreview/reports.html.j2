@@ -1,0 +1,48 @@
+{% extends "_layout.html.j2" %}
+{% block title %}Отчёты — {{ site.title }}{% endblock %}
+{% block description %}Отчёты о поездках и посещении железнодорожных станций в России и за рубежом.{% endblock %}
+{% block canonical_path %}reports.html{% endblock %}
+{% set active = 'reports' %}
+
+{% block main %}
+{% set r = reports %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Отчёты</div>
+    <div class="eyebrow">{{ r.page_eyebrow }}</div>
+    <h1>{{ r.page_h1 }}</h1>
+    <p class="ph-sub">{{ r.page_sub | nbsp }}</p>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap">
+    <article class="report-feature">
+      <div class="plate" style="margin:0">
+        <div class="plate-img"><div class="ph" style="display:grid">{{ r.featured.photo_placeholder | rich }}</div></div>
+        <figcaption class="caption"><span>{{ r.featured.photo_caption }}</span><span class="cap-date">{{ r.featured.photo_date }}</span></figcaption>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px">{{ r.featured.eyebrow }}</div>
+        <h2 style="font-size:clamp(24px,3.2vw,34px);margin-bottom:12px">{{ r.featured.title | nbsp }}</h2>
+        <p>{{ r.featured.body | rich }}</p>
+        <a class="btn btn-ghost" href="{{ r.featured.link_href }}">{{ r.featured.link_label }}
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h9"/><path d="M8 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <div class="section-head" style="margin-top:clamp(34px,5vw,52px)"><div><div class="eyebrow" style="margin-bottom:10px">{{ r.archive_eyebrow }}</div><h2>{{ r.archive_h2 }}</h2></div></div>
+    <div class="entry-list">
+      {% for e in r.entries %}
+      <article class="entry">
+        <div class="e-date">{{ e.year }}</div>
+        <div><h3><a href="{{ e.href | relink }}">{{ e.title | nbsp }}</a></h3>
+          <p>{{ e.body | nbsp }}</p></div>
+        <div class="e-meta">{{ e.road }}</div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

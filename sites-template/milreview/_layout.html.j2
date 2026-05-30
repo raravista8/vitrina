@@ -1,0 +1,106 @@
+{#
+  milreview — shared chassis for the «Железнодорожный путеводитель» content site.
+  Topbar / masthead / mainnav / footer live here once; pages override {% block main %}.
+  SEO (canonical, OG/Twitter, JSON-LD WebSite + per-page Article) is baked in.
+  JSON-LD is emitted via the `tojson` filter (autoescape-safe, script-embeddable),
+  not the raw passthrough filter — templates stay free of it.
+  Masthead uses the hairline (.mh-rule) variant on every page: the star / train
+  seals from the canon docs.html are deliberately dropped (no «милитари», TZ §9).
+#}<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{% block title %}{{ site.title }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ site.meta_description }}{% endblock %}" />
+<link rel="canonical" href="{{ base_url }}/{% block canonical_path %}{% endblock %}" />
+<meta name="robots" content="index, follow" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="{{ site.title }}" />
+<meta property="og:locale" content="ru_RU" />
+<meta property="og:title" content="{{ self.title() }}" />
+<meta property="og:description" content="{{ self.description() }}" />
+<meta property="og:url" content="{{ base_url }}/{{ self.canonical_path() }}" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="{{ self.title() }}" />
+<meta name="twitter:description" content="{{ self.description() }}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<script type="application/ld+json">{{ jsonld_website | tojson }}</script>
+{% block head_extra %}{% endblock %}
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span>{{ site.topbar.left }}</span>
+    <span class="tb-meta">
+      <span class="mono">{{ site.topbar.host }}</span>
+      <a href="signaling.html">Сигнализация</a>
+      <a href="{{ site.login_url }}">Войти</a>
+    </span>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="mh-rule"></span>
+    <div class="title-col">
+      <div class="eyebrow title-eyebrow">{{ site.masthead_eyebrow }}</div>
+      <a href="index.html" class="wordmark" style="text-decoration:none">{{ site.wordmark_lines[0] }}<br>{{ site.wordmark_lines[1] }}</a>
+      <div class="tagline">{{ site.tagline }}</div>
+    </div>
+    <span class="mh-rule"></span>
+  </div>
+</header>
+
+<nav class="mainnav">
+  <div class="wrap">
+    <div class="nav-links">
+      {% for n in site.nav %}
+      <a class="navlink{% if n.key == active %} active{% endif %}" href="{{ n.href }}">{% if n.num %}<span class="nl-num">{{ n.num }}</span> {% endif %}{{ n.label }}</a>
+      {% endfor %}
+    </div>
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="4.5"/><path d="M10 10l3 3" stroke-linecap="round"/></svg>
+      <input type="search" placeholder="Поиск по станциям…" aria-label="Поиск" />
+    </div>
+  </div>
+</nav>
+
+{% block main %}{% endblock %}
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="f-word">{{ site.footer.word }}</div>
+      <p>{{ site.footer.blurb }}</p>
+      <span class="counter"><span>счётчик посещений</span> <span class="ct-num">{{ site.footer.counter }}</span></span>
+    </div>
+    <div>
+      <h4>Разделы</h4>
+      <ul>
+        {% for s in site.footer.sections %}<li><a href="{{ s.href }}">{{ s.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h4>Связь</h4>
+      <ul>
+        {% for c in site.footer.contacts %}<li><a href="{{ c.href }}"{% if c.external %} target="_blank" rel="noopener"{% endif %}>{{ c.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="footer-base">
+      <span>{{ site.footer.base_left }}</span>
+      <span>{{ site.footer.base_right }}</span>
+    </div>
+  </div>
+</footer>
+{% block body_end %}{% endblock %}
+</body>
+</html>
