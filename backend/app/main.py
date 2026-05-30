@@ -32,6 +32,7 @@ from app.api.routers.billing import router as billing_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
 from app.api.routers.me import router as me_router
+from app.api.routers.milreview_site import router as milreview_site_router
 from app.api.routers.preview import router as preview_router
 from app.api.routers.track import router as track_router
 from app.config import get_settings
@@ -234,6 +235,22 @@ async def _lifespan(app: FastAPI) -> Any:
     )
     log.info("site_publisher_ready", template_dir=str(sites_template_dir))
 
+    # milreview content site — rendered once at startup and served by Host via
+    # `milreview_site_router` (this prod has no Object Storage write path, so the
+    # app server is the origin; Caddy routes milreview.samosite.online → api).
+    app.state.milreview_host = f"milreview.{settings.sites_base_domain}"
+    try:
+        from app.core.publishing.milreview import render_all, resolve_milreview_dir
+
+        app.state.milreview_files = render_all(
+            base_dir=resolve_milreview_dir(settings.sites_template_dir),
+            base_url=f"https://{app.state.milreview_host}",
+        )
+        log.info("milreview_site_rendered", files=len(app.state.milreview_files))
+    except Exception as exc:  # never block startup on a content-render error
+        app.state.milreview_files = {}
+        log.warning("milreview_site_render_failed", error=str(exc))
+
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
     from app.core.auth.customer import CustomerSessionStore
@@ -329,6 +346,11 @@ def create_app() -> FastAPI:
         all_ready = all(checks.values()) and len(checks) > 0
         body = {"ok": all_ready, "data": {"checks": checks}}
         return JSONResponse(body, status_code=200 if all_ready else 503)
+
+    # Registered LAST: a Host-guarded catch-all GET that serves the milreview
+    # content site. Only matches GETs no earlier router/route claimed, and only
+    # responds for the milreview Host — so it can't shadow api/admin/health.
+    app.include_router(milreview_site_router)
 
     return app
 

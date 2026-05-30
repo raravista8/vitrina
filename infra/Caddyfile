@@ -55,6 +55,23 @@ samosite.online, www.samosite.online {
 	}
 }
 
+# ---- milreview content site (app-server origin) ------------------------------
+# This subdomain has no Object Storage origin — the «Железнодорожный
+# путеводитель» static pages are rendered by the api at startup and served from
+# it (Host-guarded catch-all in app/api/routers/milreview_site.py). A specific
+# host block overrides the *.samosite.online wildcard for this host, so /api/*
+# and the static pages both go to the api. CSP is set by the api route
+# (content-site policy); HSTS/X-Frame-Options/etc come from security_headers.
+
+milreview.samosite.online {
+	import wildcard_tls
+	import security_headers
+
+	reverse_proxy api:8000 {
+		header_up X-Real-IP {remote_host}
+	}
+}
+
 # ---- Wildcard *.samosite.online ----------------------------------------------
 
 *.samosite.online {
