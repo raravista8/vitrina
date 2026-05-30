@@ -85,13 +85,25 @@ _CONTENT_FILES = ("site", "news", "docs", "directory", "stations", "signaling", 
 def resolve_milreview_dir(sites_template_dir: str | None = None) -> Path:
     """Locate ``sites-template/milreview/``, honouring ``SITES_TEMPLATE_DIR``.
 
-    Mirrors ``app.main``'s resolution of ``sites-template`` (its ``parents[2]``
-    from ``app/main.py`` equals this module's ``parents[4]``) so dev, Docker and
-    an explicit override all resolve the same directory.
+    The repo and the Docker image place ``sites-template`` at *different* depths
+    relative to the ``app`` package (monorepo: a sibling of ``backend/``; Docker:
+    ``/app/sites-template`` next to the ``app`` package). So we try both candidate
+    roots and return the one that actually contains ``milreview/`` — robust in
+    both layouts without depending on an env var being set. (``app.main`` resolves
+    ``sites-template`` via a fixed ``parents[2]`` that is only correct in the
+    monorepo — kept here as the fallback for sensible error messages.)
     """
     if sites_template_dir:
         return Path(sites_template_dir) / "milreview"
-    return Path(__file__).resolve().parents[4] / "sites-template" / "milreview"
+    here = Path(__file__).resolve()
+    candidates = (
+        here.parents[4] / "sites-template",  # monorepo: repo root
+        here.parents[3] / "sites-template",  # Docker: /app (the app-package parent)
+    )
+    for root in candidates:
+        if (root / "milreview").is_dir():
+            return root / "milreview"
+    return candidates[0] / "milreview"
 
 
 # ── Jinja filters ────────────────────────────────────────────────────────────
