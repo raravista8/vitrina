@@ -1,0 +1,89 @@
+{% extends "_layout.html.j2" %}
+{% block title %}Документы — {{ site.title }}{% endblock %}
+{% block description %}Тексты приказов Росжелдора и ОАО «РЖД», постановлений Совмина об открытии, закрытии и переименовании железнодорожных пунктов.{% endblock %}
+{% block canonical_path %}docs.html{% endblock %}
+{% set active = 'docs' %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Документы</div>
+    <div class="eyebrow">Раздел 02</div>
+    <h1>Документы и приказы</h1>
+    <p class="ph-sub">{{ "Полные тексты приказов Федерального агентства железнодорожного транспорта (Росжелдор) и ОАО «РЖД», а также постановлений Совета Министров об открытии, закрытии и переименовании железнодорожных пунктов." | nbsp }}</p>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap">
+    <div class="filters" id="filters">
+      <span class="fl-label">Орган</span>
+      <button class="chip active" data-f="org" data-v="all">Все</button>
+      <button class="chip" data-f="org" data-v="Росжелдор">Росжелдор</button>
+      <button class="chip" data-f="org" data-v="ОАО «РЖД»">ОАО «РЖД»</button>
+      <button class="chip" data-f="org" data-v="Совмин СССР">Совмин СССР</button>
+
+      <select class="fl-select" id="road-select" data-f="road" aria-label="Дорога" style="margin-left:14px">
+        <option value="all">Все дороги</option>
+        <option value="Октябрьская">Октябрьская</option>
+        <option value="Восточно-Сибирская">Восточно-Сибирская</option>
+        <option value="Дальневосточная">Дальневосточная</option>
+        <option value="Юго-Восточная">Юго-Восточная</option>
+        <option value="несколько">Несколько дорог</option>
+      </select>
+      <span class="sh-meta" id="doc-count" style="margin-left:auto">документов: {{ docs | length }} из {{ docs | length }}</span>
+    </div>
+
+    <table class="tbl">
+      <caption>Документы в архиве · обновляется по мере добавления</caption>
+      <thead>
+        <tr><th style="width:104px">Дата</th><th style="width:96px">Номер</th><th style="width:130px">Орган</th><th>Содержание</th><th style="width:150px">Дорога</th></tr>
+      </thead>
+      <tbody id="doc-body">
+        {% for x in docs %}
+        <tr data-org="{{ x.org }}" data-road="{{ x.road }}">
+          <td class="mono" data-l="Дата">{{ x.d }}</td>
+          <td class="mono" data-l="Номер"><a class="doc-num" href="#">{{ x.num }}</a></td>
+          <td data-l="Орган"><span class="badge">{{ x.org }}</span></td>
+          <td data-l="Содержание">{{ x.t | nbsp }}</td>
+          <td data-l="Дорога">{{ x.roadLabel }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block body_end %}
+<script>
+(function () {
+  var state = { org: 'all', road: 'all' };
+  var rows = [].slice.call(document.querySelectorAll('#doc-body tr'));
+  var cnt = document.getElementById('doc-count');
+  var total = rows.length;
+  function apply() {
+    var shown = 0;
+    rows.forEach(function (r) {
+      var ok = (state.org === 'all' || r.dataset.org === state.org)
+        && (state.road === 'all' || r.dataset.road === state.road);
+      r.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    if (cnt) cnt.textContent = 'документов: ' + shown + ' из ' + total;
+  }
+  var filters = document.getElementById('filters');
+  if (filters) filters.addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) return;
+    state[c.dataset.f] = c.dataset.v;
+    document.querySelectorAll('.chip[data-f="' + c.dataset.f + '"]').forEach(function (b) {
+      b.classList.toggle('active', b === c);
+    });
+    apply();
+  });
+  var sel = document.getElementById('road-select');
+  if (sel) sel.addEventListener('change', function (e) { state.road = e.target.value; apply(); });
+  apply();
+})();
+</script>
+{% endblock %}

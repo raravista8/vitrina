@@ -1,0 +1,171 @@
+{% extends "_layout.html.j2" %}
+{% block title %}{{ site.title }} — железные дороги бывшего СССР{% endblock %}
+{% block description %}{{ site.meta_description }}{% endblock %}
+{% block canonical_path %}{% endblock %}
+
+{% block main %}
+{% set h = site.home %}
+<section class="hero">
+  <div class="wrap">
+    <div class="welcome">
+      <div class="eyebrow" style="margin-bottom:14px">{{ h.welcome_eyebrow }}</div>
+      <h1>{{ h.welcome_h1 | nbsp }}</h1>
+      {% for p in h.welcome_paragraphs %}<p>{{ p | rich }}</p>
+      {% endfor %}
+
+      <div class="about-card">
+        <div class="eyebrow" style="margin-bottom:8px">{{ h.about_card.eyebrow }}</div>
+        <h3>{{ h.about_card.h3 | nbsp }}</h3>
+        <p>{{ h.about_card.body | nbsp }}</p>
+        <a class="btn btn-primary" href="{{ h.about_card.link_href }}">{{ h.about_card.link_label }}
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h9"/><path d="M8 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <aside>
+      <div class="eyebrow green" style="margin-bottom:12px">{{ h.featured_photo.eyebrow }}</div>
+      <figure class="plate" style="margin:0">
+        <div class="plate-img">
+          <img src="{{ h.featured_photo.img }}" alt="{{ h.featured_photo.alt }}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+          <div class="ph" style="display:none">схематический план<br>или фотография станции</div>
+        </div>
+        <figcaption class="caption">
+          <span>{{ h.featured_photo.caption_html | rich }}</span>
+          <span class="cap-date">{{ h.featured_photo.caption_date }}</span>
+        </figcaption>
+      </figure>
+
+      <div class="onthisday">
+        <div class="otd-head"><span class="otd-date">{{ h.on_this_day.date }}</span> в истории железных дорог</div>
+        <p><span class="mono otd-y">{{ h.on_this_day.year }}</span> {{ h.on_this_day.body | nbsp }}</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="chron-section" id="chronicle">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px">{{ h.chronicle.eyebrow }}</div>
+        <h2>{{ h.chronicle.h2 | nbsp }}</h2>
+      </div>
+      <div class="sh-meta" id="chron-count">показано: {{ news | length }} из {{ news | length }}</div>
+    </div>
+
+    <div class="filters" id="filters">
+      <span class="fl-label">Год</span>
+      <button class="chip active" data-f="year" data-v="all">Все</button>
+      <button class="chip" data-f="year" data-v="2026">2026</button>
+      <button class="chip" data-f="year" data-v="2025">2025</button>
+
+      <span class="fl-label" style="margin-left:14px">Тип</span>
+      <button class="chip active" data-f="type" data-v="all">Все</button>
+      <button class="chip" data-f="type" data-v="doc">Документы</button>
+      <button class="chip" data-f="type" data-v="scheme">Схемы</button>
+      <button class="chip" data-f="type" data-v="photo">Фотографии</button>
+      <button class="chip" data-f="type" data-v="move">Движение</button>
+      <button class="chip" data-f="type" data-v="signal">Сигнализация</button>
+
+      <select class="fl-select" id="road-select" data-f="road" aria-label="Дорога" style="margin-left:14px">
+        <option value="all">Все дороги</option>
+        <option value="Октябрьская">Октябрьская</option>
+        <option value="Восточно-Сибирская">Восточно-Сибирская</option>
+        <option value="Дальневосточная">Дальневосточная</option>
+        <option value="Юго-Восточная">Юго-Восточная</option>
+      </select>
+    </div>
+
+    <div class="chron" id="chron">
+      {% for n in news %}
+      <div class="chron-row{% if n.feature %} is-feature{% endif %}{% if n.type == 'holiday' %} is-holiday{% endif %}" data-year="{{ n.y }}" data-type="{{ n.type }}" data-road="{{ n.road }}">
+        <div class="c-date">{{ n.d }}</div>
+        <div class="c-body">{% if n.type != 'holiday' %}<span class="c-tag {{ n.tag_class }}">{{ n.tag }}</span>{% endif %}{{ n.html | rich }}</div>
+      </div>
+      {% endfor %}
+      <div class="chron-empty" id="chron-empty" style="display:none">По выбранным фильтрам записей не найдено</div>
+    </div>
+
+    <div class="archive-links">
+      {% for a in h.archive_links %}<a href="{{ a.href }}">{{ a.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="content" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px">{{ site.sitemap_section.eyebrow }}</div>
+        <h2>{{ site.sitemap_section.h2 }}</h2>
+      </div>
+    </div>
+    <div class="idx-grid">
+      {% for c in site.sitemap_section.cards %}
+      <a class="idx-card" href="{{ c.href }}">
+        <span class="ic-num">{{ c.num }}</span>
+        <h3>{{ c.title }}</h3>
+        <p>{{ c.body | nbsp }}</p>
+        <span class="ic-go">Открыть →</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap-narrow">
+    <div class="rule-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 9-9 9-9-9z"/></svg></div>
+    <div class="eyebrow" style="margin-bottom:14px">{{ site.sources.eyebrow }}</div>
+    <div class="notes">
+      <ol>
+        {% for s in site.sources['items'] %}<li>{{ s | rich }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block body_end %}
+<script>
+// Chronicle filters operate on the server-rendered rows (show/hide) — content
+// is crawlable; JS only toggles visibility + the "показано N из M" counter.
+(function () {
+  var state = { year: 'all', type: 'all', road: 'all' };
+  var rows = [].slice.call(document.querySelectorAll('#chron .chron-row'));
+  var countEl = document.getElementById('chron-count');
+  var emptyEl = document.getElementById('chron-empty');
+  var total = rows.length;
+  function apply() {
+    var shown = 0;
+    rows.forEach(function (r) {
+      var ok = (state.year === 'all' || r.dataset.year === state.year)
+        && (state.type === 'all' || r.dataset.type === state.type)
+        && (state.road === 'all' || r.dataset.road === state.road);
+      r.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    if (emptyEl) emptyEl.style.display = shown ? 'none' : '';
+    if (countEl) countEl.textContent = 'показано: ' + shown + ' из ' + total;
+  }
+  var filters = document.getElementById('filters');
+  if (filters) filters.addEventListener('click', function (e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    var f = chip.dataset.f, v = chip.dataset.v;
+    state[f] = v;
+    document.querySelectorAll('.chip[data-f="' + f + '"]').forEach(function (c) {
+      c.classList.toggle('active', c === chip);
+    });
+    apply();
+  });
+  var sel = document.getElementById('road-select');
+  if (sel) sel.addEventListener('change', function (e) { state.road = e.target.value; apply(); });
+  apply();
+})();
+</script>
+{% endblock %}

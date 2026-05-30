@@ -1,0 +1,64 @@
+{% extends "_layout.html.j2" %}
+{% block title %}Схема — {{ site.title }}{% endblock %}
+{% block description %}Карта железнодорожных линий и схемы путевого развития станций, разъездов и блок-постов бывшего СССР.{% endblock %}
+{% block canonical_path %}railmap.html{% endblock %}
+{% set active = 'railmap' %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Схема</div>
+    <div class="eyebrow">Раздел 01</div>
+    <h1>Карта линий и схемы станций</h1>
+    <p class="ph-sub">{{ "Интерактивная карта железнодорожных линий бывшего СССР. По щелчку на станции или разъезде открывается схема путевого развития, фотографии и историческая справка." | nbsp }}</p>
+  </div>
+</section>
+
+<section class="content" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="map-frame">
+      <div class="map-canvas" id="map">
+        <div style="position:absolute;inset:0">
+          <svg viewBox="0 0 1000 560" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
+            <path d="M60 460 L300 360 L470 380 L640 240 L820 200 L960 120" fill="none" stroke="#1f3d2b" stroke-width="2.5" opacity="0.5"/>
+            <path d="M120 120 L320 180 L470 380" fill="none" stroke="#b5552f" stroke-width="2.5" opacity="0.55"/>
+            <path d="M640 240 L700 420 L880 470" fill="none" stroke="#1f3d2b" stroke-width="2.5" stroke-dasharray="6 6" opacity="0.4"/>
+            <g fill="#1f3d2b">
+              <circle cx="300" cy="360" r="5"/><circle cx="470" cy="380" r="6"/><circle cx="640" cy="240" r="6"/><circle cx="820" cy="200" r="5"/><circle cx="320" cy="180" r="4"/><circle cx="700" cy="420" r="4"/>
+            </g>
+          </svg>
+        </div>
+        <div style="position:relative;background:rgba(246,243,236,0.86);padding:14px 18px;border:1px solid var(--line)">интерактивная карта линий · подключается из источника</div>
+      </div>
+      <div class="map-legend">
+        <span class="lg"><span class="sw" style="background:#1f3d2b"></span> действующая линия</span>
+        <span class="lg"><span class="sw" style="background:#1f3d2b;opacity:.4;background-image:repeating-linear-gradient(90deg,#1f3d2b 0 4px,transparent 4px 8px)"></span> закрытая / разобранная</span>
+        <span class="lg"><span class="sw" style="background:#b5552f"></span> в работе на сайте</span>
+        <span class="lg"><span style="width:9px;height:9px;border-radius:50%;background:#1f3d2b;display:inline-block"></span> станция</span>
+        <span class="lg"><span style="width:7px;height:7px;border-radius:50%;background:#847c6d;display:inline-block"></span> разъезд / о.п.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap">
+    <div class="section-head">
+      <div><div class="eyebrow" style="margin-bottom:10px">Справочник</div><h2>Станции и раздельные пункты</h2></div>
+      <div class="sh-meta">схемы путевого развития · по дорогам</div>
+    </div>
+    <div class="road-cols" id="dir">
+      {% for g in directory %}
+      <div class="road-col">
+        <div class="road-col-head"><h3>{{ g.road }}</h3><span>{{ g.region }}</span></div>
+        <ul class="st-list">
+          {% for item in g['items'] %}
+          <li><a href="{{ item[2] | station_url }}"><span class="st-kind">{{ item[1] }}</span> <span class="st-name">{{ item[0] }}</span></a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "_layout.html.j2" %}
+{% block title %}Сигнализация — {{ site.title }}{% endblock %}
+{% block description %}Интерактивные страницы о правилах применения светофорной и семафорной сигнализации на станциях и перегонах.{% endblock %}
+{% block canonical_path %}signaling.html{% endblock %}
+{% set active = 'signaling' %}
+
+{% block main %}
+{% set sig = signaling %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Сигнализация</div>
+    <div class="eyebrow">{{ sig.page_eyebrow }}</div>
+    <h1>{{ sig.page_h1 }}</h1>
+    <p class="ph-sub">{{ sig.page_sub | nbsp }}</p>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap">
+    <div class="sig-demo">
+      <div class="sig-stage">
+        <svg class="sig-signal" viewBox="0 0 120 320" aria-label="Светофор">
+          <rect x="55" y="220" width="10" height="96" fill="#3a3630"/>
+          <rect x="34" y="20" width="52" height="196" rx="12" fill="#15130f" stroke="#000" stroke-width="2"/>
+          <circle class="lamp" data-l="y1" cx="60" cy="50"  r="17" fill="#2a2620"/>
+          <circle class="lamp" data-l="g"  cx="60" cy="95"  r="17" fill="#2a2620"/>
+          <circle class="lamp" data-l="y2" cx="60" cy="140" r="17" fill="#2a2620"/>
+          <circle class="lamp" data-l="r"  cx="60" cy="185" r="17" fill="#2a2620"/>
+        </svg>
+      </div>
+      <div class="sig-info">
+        <div class="eyebrow green" id="sig-eyebrow">{{ sig.demo_eyebrow }}</div>
+        <h3 id="sig-title">{{ sig.aspects[0].title }}</h3>
+        <p id="sig-text">{{ sig.aspects[0].text | nbsp }}</p>
+        <div class="sig-controls" id="sig-controls">
+          {% for a in sig.aspects %}<button class="chip{% if loop.first %} active{% endif %}" data-i="{{ loop.index0 }}">{{ a.title }}</button>{% endfor %}
+        </div>
+        <button class="btn btn-primary" id="sig-next" style="margin-top:18px">Следующее показание
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h9"/><path d="M8 4l4 4-4 4"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head"><div><div class="eyebrow" style="margin-bottom:10px">{{ sig.materials_eyebrow }}</div><h2>{{ sig.materials_h2 }}</h2></div></div>
+    <div class="idx-grid sig-grid">
+      {% for m in sig.materials %}
+      <a class="idx-card" href="#"><span class="ic-num">{{ m.num }}</span><h3>{{ m.title }}</h3><p>{{ m.body | nbsp }}</p><span class="ic-go">Открыть →</span></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block body_end %}
+<script>
+(function () {
+  var ASPECTS = {{ signaling.aspects | tojson }};
+  var COLORS = { y1: '#f2c12e', y2: '#f2c12e', g: '#33b55a', r: '#e23b2e' };
+  var idx = 0;
+  var lamps = [].slice.call(document.querySelectorAll('.lamp'));
+  function paint() {
+    var a = ASPECTS[idx];
+    lamps.forEach(function (l) {
+      var id = l.dataset.l, active = a.on.indexOf(id) !== -1;
+      l.setAttribute('fill', active ? COLORS[id] : '#2a2620');
+      l.style.filter = active ? 'drop-shadow(0 0 9px ' + COLORS[id] + ')' : 'none';
+      l.classList.toggle('blink', a.blink === id);
+    });
+    document.getElementById('sig-title').textContent = a.title;
+    document.getElementById('sig-text').textContent = a.text;
+    document.querySelectorAll('.sig-controls .chip').forEach(function (c, i) {
+      c.classList.toggle('active', i === idx);
+    });
+  }
+  document.getElementById('sig-controls').addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) return; idx = +c.dataset.i; paint();
+  });
+  document.getElementById('sig-next').addEventListener('click', function () {
+    idx = (idx + 1) % ASPECTS.length; paint();
+  });
+  paint();
+})();
+</script>
+{% endblock %}
