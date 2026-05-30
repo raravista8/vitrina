@@ -43,15 +43,14 @@
 
 import { Badge, Card, Mono } from "@samosite/canon/primitives";
 import { VT } from "@samosite/canon/tokens";
-import { type RefObject, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { type RefObject, useEffect } from "react";
 
 import type { AppRow } from "@/lib/admin-api";
 
-const GAP_ID = "canon-gap-0903-dashboard-pending";
-/** Exact text of canon's Mono label — our DOM anchor for the card. */
+/** Exact text of canon's Mono label — our DOM anchor for the mock card. */
 const LABEL = "ТОП-5 PENDING";
-const HOST_ATTR = "data-ss-pending-real";
+/** Marker on our real panel so the mock-search never matches our own label. */
+const SELF_ATTR = "data-ss-pending-real";
 
 interface PendingPanelProps {
   /** Wrapper around `<AdminDashboard>` — scopes the DOM search. */
@@ -73,72 +72,43 @@ export function DashboardPendingPanel({
   onSeeAll,
   onRowClick,
 }: PendingPanelProps) {
-  const [host, setHost] = useState<HTMLElement | null>(null);
-
+  // Hide canon's hard-coded mock pending card (canon-gap-0903). We deliberately
+  // do NOT portal a replacement into canon's grid: appending a foreign node
+  // into React-managed DOM made the reconciler remove it on re-render while a
+  // persistent observer re-added it — an infinite loop that froze the whole
+  // admin (the bug this fixes). Instead the observer ONLY toggles `display:none`
+  // on the mock card — an attribute write, never a node op, so it cannot loop
+  // and isn't even seen as a (childList) mutation. The REAL list renders below
+  // as an ordinary React child (`<PanelBody>`), fully React-owned.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-
-    let hostEl: HTMLDivElement | null = null;
-
-    // Idempotent: (1) hide canon's mock pending card, (2) ensure our portal
-    // host sits in the same grid slot. Runs on mount AND on EVERY DOM
-    // mutation (persistent observer) — so it survives canon re-renders
-    // (loading→loaded swaps the card's children) and any node re-creation
-    // that would otherwise un-hide the mock. Self-healing: if React drops our
-    // host, the next mutation re-creates it.
-    const apply = () => {
-      // Canon's label only — exclude the one inside our own portal host
-      // (our replacement card carries the same "ТОП-5 PENDING" text).
+    const hideMock = () => {
       const label = Array.from(root.querySelectorAll("span")).find(
-        (el) => el.textContent?.includes(LABEL) && !el.closest(`[${HOST_ATTR}]`),
+        (el) => el.textContent?.includes(LABEL) && !el.closest(`[${SELF_ATTR}]`),
       );
-      const card = label?.parentElement?.parentElement as HTMLElement | undefined; // <Card>
-      const grid = card?.parentElement as HTMLElement | undefined; // chart | pending grid
-      if (!label || !card || !grid) {
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`[${GAP_ID}] pending card not located yet — observing DOM`);
-        }
-        return;
-      }
-
-      // Hide canon's mock card. `display` is absent from Card's base style
-      // (canon primitives), so React's style-diff never re-writes it — but if
-      // canon ever re-creates the node, this re-applies on the next mutation.
-      if (card.style.display !== "none") card.style.display = "none";
-
-      // `display:contents` host → our <Card> becomes the grid item directly,
-      // landing in the same 1fr column canon's card occupied.
-      if (!hostEl || !hostEl.isConnected) {
-        hostEl = document.createElement("div");
-        hostEl.setAttribute(HOST_ATTR, "1");
-        hostEl.style.display = "contents";
-        grid.appendChild(hostEl);
-        setHost(hostEl);
-      }
+      const card = label?.parentElement?.parentElement as HTMLElement | undefined; // canon <Card>
+      if (card && card.style.display !== "none") card.style.display = "none";
     };
-
-    apply();
-    const observer = new MutationObserver(apply);
+    hideMock();
+    // childList-only observer: setting `display` is an attribute change, so it
+    // never re-triggers this callback → no loop. Re-hides if canon re-creates
+    // the card (e.g. loading→loaded).
+    const observer = new MutationObserver(hideMock);
     observer.observe(root, { childList: true, subtree: true });
-
-    return () => {
-      observer.disconnect();
-      if (hostEl?.parentElement) hostEl.parentElement.removeChild(hostEl);
-      setHost(null);
-    };
+    return () => observer.disconnect();
   }, [rootRef]);
 
-  if (!host) return null;
-  return createPortal(
-    <PanelBody
-      items={items}
-      loading={loading}
-      error={error}
-      onSeeAll={onSeeAll}
-      onRowClick={onRowClick}
-    />,
-    host,
+  return (
+    <div data-ss-pending-real="1" style={{ marginTop: 14 }}>
+      <PanelBody
+        items={items}
+        loading={loading}
+        error={error}
+        onSeeAll={onSeeAll}
+        onRowClick={onRowClick}
+      />
+    </div>
   );
 }
 
