@@ -233,6 +233,7 @@ A task is NOT done until ALL apply:
 
 ### Always loaded (read at session start)
 
+- @docs/OPERATIONS.md — **how we ship & run prod**: deploy runbook, CI + flake handling, infra facts (Telegram blocked from the VPS), founder notifications, canon-vendoring checklist, local test setup. Read this before any deploy/CI/canon/infra work — it holds the operational knowledge that doesn't live anywhere else.
 - @docs/handoff/SCREEN_INDEX.md — map of 19 canonical screens (canon JSX ⇄ prod TSX)
 - @docs/handoff/VISUAL_COVERAGE.md — live tracker: canon-import vs hand-rolled, per-viewport status
 - @packages/canon/CHANGELOG.md — known gaps and recent canon releases
