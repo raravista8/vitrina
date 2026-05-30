@@ -74,8 +74,10 @@ class SubmitApplicationLinkRequest(_SharedSubmitFields):
     mode: Literal["link"] = "link"
     source_url: Annotated[HttpUrl | None, Field(description="Source-of-truth URL")] = None
     source_type: Annotated[
-        Literal["ymaps", "telegram", "photo"],
-        Field(description="MVP source classes per ADR-0009"),
+        Literal["ymaps", "telegram", "photo", "website"],
+        Field(
+            description="MVP source classes per ADR-0009 (+ 'website' = pasted link to an unrecognised site, manual review)"
+        ),
     ]
 
 

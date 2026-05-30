@@ -45,7 +45,7 @@ export interface AppRow {
   id: string;
   // canon 0.3.0: mode discriminator + photo-branch summary fields.
   mode: "link" | "photo";
-  source_type: "ymaps" | "telegram" | "photo";
+  source_type: "ymaps" | "telegram" | "photo" | "website";
   source_url: string | null;
   city: string | null;
   description_preview: string | null;
