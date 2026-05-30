@@ -104,10 +104,12 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
 - **Active edge config is `infra/Caddyfile.staging`, NOT `infra/Caddyfile`.** The
   prod stack runs with `-f docker-compose.staging.yml`, which **remounts**
   `./Caddyfile.staging:/etc/caddy/Caddyfile:ro` (overriding the base compose's
-  `./Caddyfile`). So edge changes must go in `Caddyfile.staging` (the apex uses
-  Let's Encrypt tls-alpn-01; the `*.samosite.online` wildcard is a self-signed
-  `tls internal` + "not yet published" 404 placeholder until
-  `SELECTEL_DNS_API_TOKEN` lands). `infra/Caddyfile` is the canonical/future
+  `./Caddyfile`). So edge changes must go in `Caddyfile.staging` (apex + milreview
+  use Let's Encrypt tls-alpn-01; the self-signed `*.samosite.online { tls internal }`
+  "not yet published" 404 placeholder was **removed** — its wildcard cert won a
+  certmagic startup race and shadowed milreview's public cert, and no other
+  subdomains are live; the real wildcard cert lands with `SELECTEL_DNS_API_TOKEN` +
+  DNS-01). `infra/Caddyfile` is the canonical/future
   config (volume wildcard cert + Object Storage origin) — keep both in sync.
   Caddyfile is **bind-mounted**, so after `git pull` apply with:
   `$C exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile`
