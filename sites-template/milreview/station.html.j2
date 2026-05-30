@@ -1,6 +1,6 @@
 {% extends "_layout.html.j2" %}
 {% block title %}{{ station.name }} — {{ site.title }}{% endblock %}
-{% block description %}{{ station.kind }} {{ station.name }} {{ station.road }} железной дороги: схема путевого развития, справка, фотографии и история.{% endblock %}
+{% block description %}{{ station.kind }} {{ station.name }}{% if station.road %} {{ station.road }} железной дороги{% endif %}: схема путевого развития, справка, фотографии и история.{% endblock %}
 {% block canonical_path %}{{ station.slug }}{% endblock %}
 {% set active = 'railmap' %}
 {% block head_extra %}<script type="application/ld+json">{{ jsonld_article | tojson }}</script>{% endblock %}
@@ -8,8 +8,8 @@
 {% block main %}
 <section class="page-head">
   <div class="wrap">
-    <div class="breadcrumb"><a href="index.html">Главная</a> / <a href="railmap.html">Схема</a> / {{ station.road }} / {{ station.name }}</div>
-    <div class="eyebrow">{{ station.kind }} · {{ station.road }} ж.д.</div>
+    <div class="breadcrumb"><a href="index.html">Главная</a> / <a href="railmap.html">Схема</a>{% if station.road %} / {{ station.road }}{% endif %} / {{ station.name }}</div>
+    <div class="eyebrow">{{ station.kind }}{% if station.road %} · {{ station.road }} ж.д.{% endif %}</div>
     <h1>{{ station.name }}</h1>
     <p class="ph-sub">{{ station.line | nbsp }}</p>
   </div>
@@ -20,6 +20,11 @@
     <div class="station-grid">
       <div>
         <div class="eyebrow green" style="margin-bottom:12px">Схема путевого развития</div>
+        {% if station.scheme_imgs %}
+        {% for img in station.scheme_imgs %}
+        <div class="map-frame" style="margin-bottom:10px"><img src="{{ img }}" alt="Схематический план — {{ station.name }}" loading="lazy" style="width:100%;display:block"></div>
+        {% endfor %}
+        {% else %}
         <div class="map-frame">
           <div class="map-canvas" style="aspect-ratio:16/7" id="st-scheme">
             <svg viewBox="0 0 1000 280" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%">
@@ -33,10 +38,12 @@
                 <text x="40" y="125">I</text><text x="330" y="78">II</text><text x="330" y="210">3</text>
               </g>
             </svg>
-            <div style="position:absolute;bottom:8px;right:12px;font-family:var(--f-mono);font-size:11px;color:var(--ink-4)">схема · упрощённо</div>
+            <div style="position:absolute;bottom:8px;right:12px;font-family:var(--f-mono);font-size:11px;color:var(--ink-4)">схема готовится</div>
           </div>
         </div>
+        {% endif %}
 
+        {% if station.photos %}
         <div class="eyebrow green" style="margin:28px 0 12px">Фотографии</div>
         <div class="photo-row" id="st-photos">
           {% for src in station.photos %}
@@ -45,11 +52,12 @@
           {% endif %}
           {% endfor %}
         </div>
+        {% endif %}
 
+        {% if station.history %}
         <div class="eyebrow green" style="margin:28px 0 12px">История</div>
-        <div id="st-history">
-          {% if station.history %}{{ station.history | rich }}{% else %}<p class="dim">Подробная историческая справка для этого пункта готовится.</p>{% endif %}
-        </div>
+        <div id="st-history">{{ station.history | rich }}</div>
+        {% endif %}
       </div>
 
       <aside>
@@ -70,14 +78,14 @@
         </div>
         {% endif %}
 
+        {% if station.docs %}
         <div class="eyebrow" style="margin:26px 0 12px">Связанные документы</div>
         <ul class="doc-mini" id="st-docs">
           {% for org, num, d in station.docs %}
           <li><a href="docs.html"><span class="dm-num">{{ num }}</span> <span class="dm-org">{{ org }}</span><span class="dm-date mono">{{ d }}</span></a></li>
-          {% else %}
-          <li class="dm-empty">документы не привязаны</li>
           {% endfor %}
         </ul>
+        {% endif %}
       </aside>
     </div>
   </div>

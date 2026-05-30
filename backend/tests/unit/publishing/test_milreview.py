@@ -59,21 +59,30 @@ def test_every_directory_station_has_a_page(site, content):
 def test_full_station_card(site):
     page = _html(site, "station-1706.html")
     assert "Северобайкальск" in page
-    assert "Байкало-Амурской магистрали" in page
+    assert "903204" in page  # real ЕСР code, re-pulled from milreview.ru
     assert f'<link rel="canonical" href="{BASE_URL}/station-1706.html"' in page
     # JSON-LD Article present
     assert '"@type": "Article"' in page or '"@type":"Article"' in page
-    assert "Тыя" in page  # neighbor rendered
 
 
-def test_stub_station_card_is_honest(site):
-    # Нижнеангарск (1711) is in the directory but has no full card → honest stub.
+def test_real_station_card(site):
+    # 1711 = Нижнеангарск — real station data re-pulled from milreview.ru.
     page = _html(site, "station-1711.html")
     assert "Нижнеангарск" in page
-    assert "Подробная карточка готовится" in page
-    # no fabricated photos/history blocks beyond placeholders
-    assert "Связанные документы" in page
-    assert "документы не привязаны" in page
+
+
+def test_build_stations_stub_for_missing_card():
+    # Directory entry without a full card → honest stub (no fabricated data).
+    from app.core.publishing.milreview import build_stations
+
+    directory = [{"road": "Тестовая", "region": "—", "items": [["Тест-Разъезд", "рзд.", 99999]]}]
+    out = build_stations(directory, {})
+    st = out["99999"]
+    assert st["name"] == "Тест-Разъезд"
+    assert st["kind"] == "Разъезд"
+    assert "готовится" in st["line"]
+    assert st["photos"] == []
+    assert st["docs"] == []
 
 
 # ── SEO ──────────────────────────────────────────────────────────────────────
@@ -118,11 +127,20 @@ def test_meta_description_per_page(site):
 def test_station_links_rewritten_everywhere(site):
     for key in ("index.html", "railmap.html", "reports.html"):
         page = _html(site, key)
-        assert "station.html?id=" not in page, f"un-rewritten station link in {key}"
+        # quote-anchored so it doesn't match the external `railstation.html?id=`
+        assert '"station.html?id=' not in page, f"un-rewritten station link in {key}"
     # the chronicle link to Алакуртти became station-1725.html
     assert "station-1725.html" in _html(site, "index.html")
     # the directory link
     assert "station-1706.html" in _html(site, "railmap.html")
+
+
+def test_external_milreview_links_not_corrupted(site):
+    # relink must NOT rewrite the external `railstation.html?id=` form into
+    # `railstation-N.html` (negative-lookbehind regression).
+    for key, (content_str, _ct) in site.items():
+        if key.endswith(".html"):
+            assert "railstation-" not in content_str, f"corrupted external link in {key}"
 
 
 # ── content store wiring ───────────────────────────────────────────────────────

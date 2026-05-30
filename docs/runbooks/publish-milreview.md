@@ -109,31 +109,46 @@ Browser smoke: home chronicle filters (год/тип/дорога) toggle rows +
 «показано N из M»; Схема directory links open station cards; Документы filters +
 newest-first; Сигнализация traffic-light cycles 4 aspects; «Войти» → login.
 
-## 5. ⚠️ Deferred — must do before calling it "done for the client"
+## 5. Content reconciliation — DONE (TZ §7) + what remains
 
-These are **flagged, not done** in the initial build:
+✅ **Content was re-pulled from the live `milreview.ru` (windows-1251 → UTF-8)**
+and the whole content store rebuilt from the real source (no fabrication; build
+scripts archived under `/tmp/milreview-src/*.py` in the session that did it):
 
-1. **Content reconciliation (TZ §7).** The content store was extracted from the
-   design canon, where some station names/regions/wording are *representative /
-   reconstructed*. The real `milreview.ru` source is **windows-1251**. Pull the
-   live content (decode cp1251 → UTF-8) and replace: station/разъезд/о.п. names,
-   regions, news/приказ texts, the «А знаете ли вы?» (ст. Обоянь) blurb, the
-   «N мая в истории» entry, photo captions. **Do not invent** — pull from the
-   source or ask the client. Edit `sites-template/milreview/content/*.json` and
-   re-publish.
-   - Known structural fixups already applied: a few duplicate station ids in the
-     canon directory were de-collided (Кичера/Кунерма/Гурское) so each station
-     gets its own page — re-verify these ids against the real source.
-2. **Images.** The home featured photo + full-station photos currently hot-link
-   `https://milreview.ru/pics/...`. For prod, pull them to our S3/CDN and update
-   the `img`/`photos` URLs in the content store.
-3. **Domain strategy (TZ §4.5).** `milreview.samosite.online` is live. Decide
+- **Homepage:** real meta/title («…России, стран СНГ и Прибалтики»), the real
+  «А знаете ли вы?» (Веребьинский овраг / Николай I — the earlier Обоянь blurb
+  was reconstructed), real «Случайное изображение» (разъезд 239 км), real
+  «30 мая в истории», real sources (incl. Google Maps).
+- **Хроника:** all **94** real news items (real dates/wording/links), типы/теги
+  inferred, links repointed (station→`station-N.html`, doc→`docs.html`,
+  isi→`signaling.html`, events→`reports.html`, railway-перегон / archives /
+  unknown stations → external `milreview.ru`).
+- **Станции:** **90 real station pages** re-pulled — real spec (Регион / Год
+  открытия / Код ЕСР / Статус / Принадлежность / Участок / Прежние названия),
+  real «Часть 1/2» prose, real schematic-plan images (replacing the canon's
+  generic SVG). The earlier reconstructed cards (e.g. Северобайкальск: was
+  1974/934505 → real 1979/903204/«Нижнеангарск-I») are corrected. Directory
+  regrouped by real road (Окт. 19 · ВСЖД 27 · ДВС 17 · ЮВС 11 · Моск. 1).
+
+**What remains:**
+
+1. **Images.** Station photos + schematic plans + the featured photo currently
+   hot-link `https://milreview.ru/pics/...` (works; CSP allows that origin).
+   Full localisation is **blocked on the same Object Storage gap** as everything
+   else — binary assets (~100 MB+ of `_large` PNGs/JPGs) can't live in the repo /
+   api image; they belong in the `vitrina-prod` bucket once write creds land.
+   Hot-linking is the correct interim while `milreview.ru` stays primary.
+2. **Domain strategy (TZ §4.5).** `milreview.samosite.online` is live. Decide
    with the client whether `milreview.ru` stays primary (then add a canonical /
-   redirect strategy) or fully moves to the subdomain. Affects canonical + 301s.
-4. **Nice-to-haves not in canon scope:** per-document full-text pages
-   (`/docs/<slug>` — canon links go to the table), real archive-year pages
-   (canon links are `#`), working station search (the nav box is inert, as in
-   canon).
+   redirect strategy) or fully moves to the subdomain. Affects canonical + 301s
+   **and** the external-link / hot-link strategy above.
+3. **Docs table depth.** `docs.json` is the canon-derived ~23-row table; the real
+   site has more приказы across per-issuer pages (`docs/rzd.html`,
+   `docs/roszheldor.html`, …) + per-document full texts. News «приказ» links go
+   to our table (`docs.html`), not the individual doc. Fetch + expand if wanted.
+4. **Nice-to-haves not in canon scope:** real archive-year pages (currently link
+   out to `milreview.ru/news20XX.html`), working station search (nav box inert,
+   as in canon).
 
 ## 6. Files
 
