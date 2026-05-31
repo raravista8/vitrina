@@ -131,10 +131,14 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
 - Alerts fire on **new application** (`POST /api/submit-application`) and **new
   feedback** (`POST /api/feedback` votes — per submission, plus a louder
   `🔥 10 голосов` threshold ping).
-- **Prod config today:** `FOUNDER_EMAIL=raravista@gmail.com` set; `TG_*` and
-  `SMTP_*` NOT set → alerts are emitted but skipped (nothing delivers).
-  (Telegram needs a proxy — see §4.)
-- **Turn on email via Yandex 360** (`samosite.online` mailbox). The
+- **Prod config today:** **email IS live via Yandex 360** — `SMTP_HOST=smtp.yandex.ru`,
+  `SMTP_PORT=465` (SSL), `SMTP_USER`/`SMTP_FROM=info@samosite.online`,
+  `SMTP_PASSWORD`=Yandex app-password all set in `/opt/vitrina/.env`; a real
+  test send (`info@`→`info@`) returned `SEND_OK`. `FOUNDER_EMAIL=raravista@gmail.com`
+  (where alerts land — change to `info@` if you want them in the new mailbox).
+  `TG_*` still NOT set (Telegram needs a proxy — see §4), so the TG leg skips.
+- **How email was turned on** (Yandex 360, `samosite.online` mailbox) — for
+  reference / a second mailbox. The
   `SmtpClient` auto-selects implicit TLS when `SMTP_PORT=465` (Yandex's
   canonical SMTPS endpoint — plain `SMTP`+STARTTLS does NOT work there; 587
   stays STARTTLS). Set in `/opt/vitrina/.env`, then recreate api:
