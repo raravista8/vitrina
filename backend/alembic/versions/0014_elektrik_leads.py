@@ -14,10 +14,12 @@ data, plaintext) + address (PII → Fernet ``address_enc``) + up to 5 photos.
   (``data_enc``) — this prod has no Object Storage write path, and a handful of
   photos per lead at one small site is fine in Postgres; bytes are encrypted at
   rest like every other lead PII (the image may show the customer's interior).
-- Seeds the owner ``User`` + published ``Site`` so leads have a valid FK and
-  pass the ``status='published'`` gate. The owner contact is a site-scoped
-  placeholder (``owner@elektrik-spb.samosite.online``) until the client provides
-  a real notify channel — see site.json.
+
+The owner ``User`` + published ``Site`` (whose ``site_id`` the landing posts
+with) are **provisioned separately**, NOT seeded here — seeding business rows in
+a migration pollutes the shared test DB (other tests assert global row counts).
+Provisioning is an idempotent prod step: ``infra/scripts/provision-elektrik.sql``
+(run once after ``alembic upgrade head``).
 """
 
 from __future__ import annotations
@@ -32,11 +34,6 @@ revision: str = "0014"
 down_revision: str | Sequence[str] | None = "0013"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
-
-_USER_ID = "e1ec0a17-0000-4000-8000-000000000002"
-_SITE_ID = (
-    "e1ec0a17-0000-4000-8000-000000000001"  # matches sites-template/elektrik/content/site.json
-)
 
 
 def upgrade() -> None:
@@ -77,36 +74,8 @@ def upgrade() -> None:
         sa.UniqueConstraint("lead_id", "index", name="uq_lead_photo_lead_index"),
     )
 
-    # — seed owner User + published Site (idempotent) —
-    op.execute(
-        sa.text(
-            """
-            INSERT INTO users (id, contact_type, contact_value, plan, login)
-            VALUES (CAST(:uid AS uuid), 'email', 'owner@elektrik-spb.samosite.online',
-                    'pro', 'elektrik-spb')
-            ON CONFLICT (id) DO NOTHING
-            """
-        ).bindparams(uid=_USER_ID)
-    )
-    op.execute(
-        sa.text(
-            """
-            INSERT INTO sites
-                (id, user_id, subdomain, source_type, source_url, status,
-                 settings, seo_submission_log, published_at)
-            VALUES
-                (CAST(:sid AS uuid), CAST(:uid AS uuid), 'elektrik-spb', 'website',
-                 'https://www.avito.ru/brands/i173924916', 'published',
-                 '{}'::jsonb, '{}'::jsonb, now())
-            ON CONFLICT (id) DO NOTHING
-            """
-        ).bindparams(sid=_SITE_ID, uid=_USER_ID)
-    )
-
 
 def downgrade() -> None:
-    op.execute(sa.text("DELETE FROM sites WHERE id = CAST(:sid AS uuid)").bindparams(sid=_SITE_ID))
-    op.execute(sa.text("DELETE FROM users WHERE id = CAST(:uid AS uuid)").bindparams(uid=_USER_ID))
     op.drop_table("lead_photo")
     op.drop_column("leads", "address_enc")
     op.drop_column("leads", "call_time")
