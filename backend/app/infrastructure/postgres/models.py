@@ -169,6 +169,13 @@ class Lead(UUIDPrimaryKey, Timestamped, Base):
     phone_enc: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     message_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
 
+    # Extended customer-site fields (elektrik-spb, migration 0014). NULL on
+    # base-form leads. Category data is plaintext; address is PII → Fernet.
+    object_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    service: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    call_time: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    address_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+
     status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="new")
 
     ip: Mapped[str | None] = mapped_column(INET, nullable=True)  # PII — masked in logs
@@ -180,6 +187,38 @@ class Lead(UUIDPrimaryKey, Timestamped, Base):
             name="leads_status_valid",
         ),
         Index("leads_created_at_idx", "created_at"),
+    )
+
+
+class LeadPhoto(UUIDPrimaryKey, Base):
+    """One uploaded photo for an extended (elektrik-spb) lead. Unlike
+    ``ApplicationPhoto`` (bytes on disk), the image is stored **Fernet-encrypted
+    in the DB** (``data_enc``) — this prod has no Object Storage write path and
+    a handful of photos per lead at one small site is fine in Postgres; the
+    image is PII (may show the customer's interior) so it's encrypted at rest
+    like every other lead field. Decrypted only in the client ЛК."""
+
+    __tablename__ = "lead_photo"
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    lead_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("leads.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    index: Mapped[int] = mapped_column(Integer, nullable=False)
+    mime: Mapped[str] = mapped_column(String(32), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    data_enc: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("index >= 0", name="lead_photo_index_nonneg"),
+        CheckConstraint("size_bytes > 0", name="lead_photo_size_positive"),
+        UniqueConstraint("lead_id", "index", name="uq_lead_photo_lead_index"),
     )
 
 
