@@ -428,8 +428,14 @@ async def test_apps_list_and_approve(
     cookie = await _login_and_get_cookie(client, password, totp_secret)
     listing = await client.get("/admin/api/apps?status=pending", cookies={"admin_session": cookie})
     assert listing.status_code == 200
-    ids = [item["id"] for item in listing.json()["data"]["items"]]
+    items = listing.json()["data"]["items"]
+    ids = [item["id"] for item in items]
     assert str(app_row.id) in ids
+    # The founder sees the applicant's FULL contact (their own customer) — not
+    # masked — so they can actually reach out. (Lead PII stays masked elsewhere.)
+    row = next(it for it in items if it["id"] == str(app_row.id))
+    assert row["contact_value_masked"] == "approve@b.c"
+    assert "***" not in row["contact_value_masked"]
 
     approve = await client.post(
         f"/admin/api/apps/{app_row.id}/approve", cookies={"admin_session": cookie}
