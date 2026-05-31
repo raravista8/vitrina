@@ -42,36 +42,36 @@
       "num": "03·1",
       "title": "Трёхзначная автоблокировка",
       "body": "Применение светофорной сигнализации: 3-значная автоблокировка, стрелки с крестовиной марки 1/11 и 1/9.",
-      "href": "https://milreview.ru/isi/1_isi.html",
-      "external": true
+      "href": "isi-1.html",
+      "external": false
     },
     {
       "num": "03·2",
       "title": "Разъезд продольного типа — вариант 1",
       "body": "Применение светофорной сигнализации на разъезде продольного типа (вариант 1).",
-      "href": "https://milreview.ru/isi/2_isi.html",
-      "external": true
+      "href": "isi-2.html",
+      "external": false
     },
     {
       "num": "03·3",
       "title": "Стрелки марки 1/18 — вариант 1",
       "body": "Применение светофорной сигнализации: стрелки с крестовиной марки 1/18 (вариант 1).",
-      "href": "https://milreview.ru/isi/3_isi.html",
-      "external": true
+      "href": "isi-3.html",
+      "external": false
     },
     {
       "num": "03·4",
       "title": "Путевой пост примыкания",
       "body": "Сигнализация путевого поста примыкания на двухпутной линии.",
-      "href": "https://milreview.ru/isi/4_isi.html",
-      "external": true
+      "href": "isi-4.html",
+      "external": false
     },
     {
       "num": "03·5",
       "title": "Разъезд продольного типа — вариант 2",
       "body": "Применение светофорной сигнализации на разъезде продольного типа (вариант 2).",
-      "href": "https://milreview.ru/isi/5_isi.html",
-      "external": true
+      "href": "isi-5.html",
+      "external": false
     }
   ]
 }

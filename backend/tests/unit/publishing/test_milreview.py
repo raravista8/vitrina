@@ -167,10 +167,11 @@ def test_signaling_aspects_present(site):
     assert "Два жёлтых огня" in page
 
 
-def test_signaling_materials_present_non_linking(site):
+def test_signaling_materials_link_to_internal_isi(site):
     page = _html(site, "signaling.html")
     assert "Путевой пост примыкания" in page  # material cards still informative
-    assert 'class="idx-card" href' not in page  # cards are non-linking (no isi external)
+    # cards now link to internally-hosted ИСИ pages (no milreview.ru externals)
+    assert 'class="idx-card" href="isi-4.html"' in page
 
 
 def test_doc_pages_rendered(site):
@@ -206,6 +207,34 @@ def test_archive_pages_rendered(site):
     assert 'class="chron-row"' in page  # dated chronicle rows
     # archive links cross-navigate internally
     assert "news-2017.html" in page
+
+
+def test_line_pages_rendered(site):
+    # railway.html?id=13 → internally-hosted line-13.html (Веребьинский обход)
+    page = _html(site, "line-13.html")
+    assert "Веребьинский" in page
+    assert f'<link rel="canonical" href="{BASE_URL}/line-13.html"' in page
+    assert '"@type": "Article"' in page or '"@type":"Article"' in page
+
+
+def test_isi_pages_rendered(site):
+    page = _html(site, "isi-4.html")
+    assert "примыкания" in page.lower()  # real ИСИ signalling text
+    assert f'<link rel="canonical" href="{BASE_URL}/isi-4.html"' in page
+    assert '"@type": "Article"' in page or '"@type":"Article"' in page
+
+
+def test_about_card_links_internal(site):
+    # the home "Читать полностью" about-card button points at an internal line page
+    page = _html(site, "index.html")
+    assert 'href="line-13.html"' in page
+
+
+def test_no_raw_railway_links(site):
+    # no inline-prose link should survive as `railway.html?id=N` (must be line-N.html)
+    for key, (content_str, _ct) in site.items():
+        if key.endswith(".html"):
+            assert "railway.html?id=" not in content_str, f"raw railway link in {key}"
 
 
 def test_no_search_box(site):
