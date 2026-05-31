@@ -7,13 +7,17 @@ scoping (a master never sees another site's leads).
 
 from __future__ import annotations
 
+import io
+import zipfile
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime, timedelta
 
 import httpx
 import pytest
 import pytest_asyncio
 from cryptography.fernet import Fernet, MultiFernet
 from fastapi import FastAPI
+from sqlalchemy import select
 
 from app.api.dependencies import (
     get_lead_fernet,
@@ -365,3 +369,94 @@ async def test_billing_free_stub(client: httpx.AsyncClient) -> None:
     assert d["free"] is True
     assert d["method"] is None
     assert d["history"] == []
+
+
+# ── LK4: archive + soft-delete + purge ────────────────────────────────────────
+
+
+async def test_site_archive_zip(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/lk/site/archive")
+    assert r.status_code == 200
+    assert r.headers["content-type"] == "application/zip"
+    zf = zipfile.ZipFile(io.BytesIO(r.content))
+    names = zf.namelist()
+    assert "leads.csv" in names
+    assert any(n.startswith("photos/") for n in names)
+    # decrypted PII is present in the owner's own export
+    assert "Сергей" in zf.read("leads.csv").decode("utf-8-sig")
+
+
+async def test_archive_requires_session(app: FastAPI) -> None:
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+        r = await ac.get("/api/lk/site/archive")
+    assert r.status_code == 401
+
+
+async def test_delete_confirm_mismatch_400(client: httpx.AsyncClient) -> None:
+    r = await client.request("DELETE", "/api/lk/site", json={"confirm": "nope"})
+    assert r.status_code == 400
+
+
+async def test_delete_soft_and_suppresses_host(
+    client: httpx.AsyncClient,
+    app: FastAPI,
+    seeded,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    _owner, site, _lead, _other = seeded
+    r = await client.request("DELETE", "/api/lk/site", json={"confirm": "elektrik-spb"})
+    assert r.status_code == 200
+    assert r.json()["data"]["status"] == "pending_purge"
+    await db_session.refresh(site)
+    assert site.status == "pending_purge"
+    assert site.deleted_at is not None
+    assert "elektrik-spb.samosite.online" in app.state.purged_hosts
+    # idempotent — a second call stays 200
+    r2 = await client.request("DELETE", "/api/lk/site", json={"confirm": "elektrik-spb"})
+    assert r2.status_code == 200
+
+
+async def test_purge_worker_hard_deletes_after_grace(
+    client: httpx.AsyncClient,
+    seeded,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    from app.workers.purge import purge_expired_sites
+
+    _owner, site, lead, _other = seeded
+    await client.request("DELETE", "/api/lk/site", json={"confirm": "elektrik-spb"})
+    # backdate the deletion past the grace window
+    await db_session.refresh(site)
+    site.deleted_at = datetime.now(UTC) - timedelta(days=11)
+    await db_session.commit()
+
+    # not purged before grace: a fresh row 1 day old stays
+    assert await purge_expired_sites(db_session, grace_days=10) == ["elektrik-spb"]
+
+    # site + its lead (cascade) are gone; the *other* owner's site survives
+    assert (
+        await db_session.execute(select(Site).where(Site.id == site.id))
+    ).scalar_one_or_none() is None
+    assert (
+        await db_session.execute(select(Lead).where(Lead.id == lead.id))
+    ).scalar_one_or_none() is None
+    assert (
+        await db_session.execute(select(Site).where(Site.id == _other.id))
+    ).scalar_one_or_none() is not None
+
+
+async def test_purge_worker_noop_within_grace(
+    client: httpx.AsyncClient,
+    seeded,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    from app.workers.purge import purge_expired_sites
+
+    _owner, site, _lead, _other = seeded
+    await client.request("DELETE", "/api/lk/site", json={"confirm": "elektrik-spb"})
+    # deleted_at is ~now → within the 10-day window → no purge
+    assert await purge_expired_sites(db_session, grace_days=10) == []
+    assert (
+        await db_session.execute(select(Site).where(Site.id == site.id))
+    ).scalar_one_or_none() is not None

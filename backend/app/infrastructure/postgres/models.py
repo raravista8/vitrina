@@ -106,6 +106,7 @@ SITE_STATUSES = (
     "published",  # live
     "sync_paused",  # 3 consecutive sync failures (FR-041)
     "archived",
+    "pending_purge",  # owner requested deletion; hard-purged after grace (LK4)
 )
 
 
@@ -132,6 +133,11 @@ class Site(UUIDPrimaryKey, Timestamped, Base):
 
     last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when the owner requests deletion (status → pending_purge). The cron
+    # purge worker hard-deletes the row (cascading leads/photos/change_requests)
+    # after a grace window; until then the site stops serving and the owner can
+    # still download an archive. NULL = live (LK4).
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     __table_args__ = (
         CheckConstraint(

@@ -25,17 +25,27 @@ Returned by `GET /api/lk/site`. Provisioned per client (see provision SQL).
   `GET /api/lk/leads` (decrypt, filters `status/q/from/to`, status counts),
   `GET /api/lk/leads/{id}`, `GET /api/lk/leads/{id}/photo/{idx}` (owner-only
   decrypted JPEG). `seed_elektrik_user.py` + lead_schema provisioning.
-- **PR-LK2** — `POST /api/lk/leads/{id}/status` (4-state) + `/note` (enc);
-  `change_request` table + `POST/GET /api/lk/change-requests` → surfaced in the
-  founder feedback inbox (`source=lk_change_request`), status synced back.
-- **PR-LK3** — `GET /api/lk/settings` + `POST /settings/contacts`
-  (server-validate phone/email/telegram, persist to `Site.settings`, flag site
-  re-render) + `/settings/notifications` + `POST /api/lk/password` (bcrypt,
-  invalidate other sessions, rate-limit); `GET /api/lk/billing` free-state stub.
-- **PR-LK4** — site soft-delete: `sites.deleted_at` + `pending_purge`; `DELETE
-  /api/lk/site` (site → 410 immediately, archive kept 10 days); `GET
-  /api/lk/site/archive` (on-the-fly ZIP: rendered HTML + lead photos); cron
-  hard-purge after 10 days + audit. **No pause** (intentionally dropped).
+- **PR-LK2 ✅ (#212)** — `POST /api/lk/leads/{id}/status` (4-state) + `/note` (enc);
+  migration 0016 `change_request` table + `POST/GET /api/lk/change-requests` →
+  surfaced in the founder feedback inbox (`source=lk_change_request`), status
+  synced back via `GET/POST /admin/api/change-requests`.
+- **PR-LK3 ✅ (#213)** — `GET /api/lk/settings` + `POST /settings/contacts`
+  (server-validate phone/email/telegram, per-field 400, persist to
+  `Site.settings`) + `/settings/notifications` + `POST /api/lk/password` (bcrypt
+  verify current, best-effort per-user Redis rate-limit 5/h); `GET /api/lk/billing`
+  free-state stub. No migration — settings live in `Site.settings` JSONB.
+- **PR-LK4 ✅** — site soft-delete: migration 0017 (`sites.deleted_at` + widen
+  status CHECK with `pending_purge`); `DELETE /api/lk/site` (typed `confirm`
+  guard = subdomain; status→`pending_purge` + `deleted_at`; host suppressed to
+  **410** immediately via `app.state.purged_hosts`, re-loaded from DB at startup;
+  founder alert); `GET /api/lk/site/archive` (on-the-fly ZIP: `leads.csv`
+  decrypted + lead photos + live rendered site HTML); cron hard-purge worker
+  `app/workers/purge.py` (`pending_purge` + `deleted_at < now-10d` → DELETE site
+  → DB cascades leads/photos/change-requests; structlog audit). **No pause**
+  (intentionally dropped).
+  - **Operator action:** schedule `python -m app.workers.purge` daily (RQ-scheduler
+    glue, like `analytics_digest`). Until scheduled, soft-deleted sites stay 410'd
+    but their lead data isn't hard-purged — run the command manually.
 - **Analytics** — none; UI shows "в разработке", no endpoint.
 
 ## Per client
