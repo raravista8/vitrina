@@ -13,7 +13,9 @@ static-origin + Caddy-wildcard path every customer site uses.
 SEO is baked in: server-rendered chronicle/docs (crawlable, JS only filters the
 DOM), one static file per station with a unique ``<title>``/description/canonical
 + JSON-LD ``Article``, a site-wide JSON-LD ``WebSite``, OG/Twitter tags, sitemap
-listing every page, and robots.txt. There is **no watermark** (TZ §4.4).
+listing every page, and robots.txt. The footer carries a plain «Сделано на
+Самосайте» attribution link to ``samosite.online`` — not the free-plan
+customer-site watermark (no ``?ref=`` PLG tag, no uppercase ribbon).
 
 Authored content is passed through a tight ``bleach`` allowlist before being
 marked safe (``rich`` filter) — defence-in-depth + keeps templates free of
