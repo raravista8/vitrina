@@ -15,7 +15,7 @@
     "photos/work-8.webp",
     "photos/work-9.webp"
   ];
-  var PHONE = window.__PHONE || "+7 911 000-00-00";
+  var PHONE = window.__PHONE || "+7 (921) 794-78-88";
 
   // ---- Render gallery ----
   var gallery = document.getElementById("gallery");
