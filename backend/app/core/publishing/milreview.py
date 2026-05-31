@@ -61,22 +61,30 @@ _STATION_LINK_RE = re.compile(r"(?<!rail)station\.html\?id=(\d+)")
 
 # Inline-prose link internalisation (nothing must link to a page on milreview.ru):
 #   <a …(rail)station.html?id=N…>label</a> → station-N.html if hosted, else plain label
-#   <a …railway.html?id=N…>label</a>       → plain label (we don't host line pages)
+#   <a …railway.html?id=N…>label</a>       → line-N.html if hosted, else plain label
 #   <a …href="https?://milreview.ru/…">…   → plain label (catch-all)
 _A_STATION = re.compile(r"<a\b[^>]*?(?:rail)?station\.html\?id=(\d+)[^>]*>(.*?)</a>", re.S | re.I)
-_A_RAILWAY = re.compile(r"<a\b[^>]*?railway\.html\?id=\d+[^>]*>(.*?)</a>", re.S | re.I)
+_A_RAILWAY = re.compile(r"<a\b[^>]*?railway\.html\?id=(\d+)[^>]*>(.*?)</a>", re.S | re.I)
 _A_MILREVIEW = re.compile(
     r'<a\b[^>]*?href="https?://milreview\.ru/[^"]*"[^>]*>(.*?)</a>', re.S | re.I
 )
 
 
-def _internalize_links(html: str, valid_station_ids: frozenset[str]) -> str:
+def _internalize_links(
+    html: str,
+    valid_station_ids: frozenset[str],
+    valid_line_ids: frozenset[str] = frozenset(),
+) -> str:
     def _st(m: re.Match[str]) -> str:
         sid, label = m.group(1), m.group(2)
         return f'<a href="station-{sid}.html">{label}</a>' if sid in valid_station_ids else label
 
+    def _ln(m: re.Match[str]) -> str:
+        lid, label = m.group(1), m.group(2)
+        return f'<a href="line-{lid}.html">{label}</a>' if lid in valid_line_ids else label
+
     html = _A_STATION.sub(_st, html)
-    html = _A_RAILWAY.sub(lambda m: m.group(1), html)
+    html = _A_RAILWAY.sub(_ln, html)
     return _A_MILREVIEW.sub(lambda m: m.group(1), html)
 
 
@@ -111,6 +119,8 @@ _CONTENT_FILES = (
     "reports",
     "report_pages",
     "archives",
+    "lines",
+    "isi",
 )
 
 
@@ -154,7 +164,11 @@ def _filter_station_url(station_id: Any) -> str:
     return f"station-{station_id}.html"
 
 
-def _make_env(base_dir: Path, valid_station_ids: frozenset[str] = frozenset()) -> Environment:
+def _make_env(
+    base_dir: Path,
+    valid_station_ids: frozenset[str] = frozenset(),
+    valid_line_ids: frozenset[str] = frozenset(),
+) -> Environment:
     env = make_environment(base_dir)
 
     def _filter_relink(value: Any) -> str:
@@ -165,12 +179,12 @@ def _make_env(base_dir: Path, valid_station_ids: frozenset[str] = frozenset()) -
         """Internalise links, sanitise authored inline HTML, glue nbsp, mark safe.
 
         ``_internalize_links`` first guarantees nothing points at a page on
-        milreview.ru (station → internal page if hosted, else plain text; line /
-        any other milreview link → plain text). The bleach pass is then
+        milreview.ru (station → ``station-N.html`` if hosted; line →
+        ``line-N.html`` if hosted; otherwise plain text). The bleach pass is then
         defence-in-depth (allowlist ``<a>``/``<strong>``/``<em>``/``<br>``) and
         keeps templates free of ``| safe``.
         """
-        s = _internalize_links(str(value), valid_station_ids)
+        s = _internalize_links(str(value), valid_station_ids, valid_line_ids)
         s = bleach.clean(s, tags=_ALLOWED_TAGS, attributes=_ALLOWED_ATTRS, strip=True)
         s = _glue_nbsp(s)
         # nosec B704 — `s` is bleach-sanitised (tight allowlist) immediately above,
@@ -353,7 +367,10 @@ def render_all(
     directory = content["directory"]
     stations = build_stations(directory, content["stations"])
     valid_station_ids = frozenset(stations.keys())
-    env = _make_env(base_dir, valid_station_ids)
+    lines: dict[str, Any] = content["lines"]
+    isi: dict[str, Any] = content["isi"]
+    valid_line_ids = frozenset(lines.keys())
+    env = _make_env(base_dir, valid_station_ids, valid_line_ids)
 
     common = {
         "site": site,
@@ -450,7 +467,59 @@ def render_all(
             _HTML,
         )
 
+    # railway-line pages (line-N.html) — internal targets for railway.html?id=N links
+    line_tpl = env.get_template("line.html.j2")
+    for lid, page in lines.items():
+        line_ctx = {**page, "id": lid}
+        jsonld_line = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": page.get("title", lid),
+            "inLanguage": "ru",
+            "mainEntityOfPage": f"{base_url}/line-{lid}.html",
+            "isPartOf": {"@type": "WebSite", "name": site["title"], "url": f"{base_url}/"},
+        }
+        out[f"line-{lid}.html"] = (
+            line_tpl.render(**common, line=line_ctx, jsonld_article=jsonld_line),
+            _HTML,
+        )
+
+    # ИСИ signalling pages (isi-N.html) — internal targets for the signaling cards
+    isi_tpl = env.get_template("isi.html.j2")
+    for n, page in isi.items():
+        isi_ctx = {**page, "n": n}
+        jsonld_isi = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": page.get("title", n),
+            "inLanguage": "ru",
+            "mainEntityOfPage": f"{base_url}/isi-{n}.html",
+            "isPartOf": {"@type": "WebSite", "name": site["title"], "url": f"{base_url}/"},
+        }
+        out[f"isi-{n}.html"] = (
+            isi_tpl.render(**common, isi=isi_ctx, jsonld_article=jsonld_isi),
+            _HTML,
+        )
+
     pages = _sitemap_pages(base_url, stations, lastmod)
+    pages += [
+        {
+            "loc": f"{base_url}/line-{lid}.html",
+            "lastmod": lastmod,
+            "changefreq": "monthly",
+            "priority": "0.5",
+        }
+        for lid in lines
+    ]
+    pages += [
+        {
+            "loc": f"{base_url}/isi-{n}.html",
+            "lastmod": lastmod,
+            "changefreq": "yearly",
+            "priority": "0.4",
+        }
+        for n in isi
+    ]
     pages += [
         {
             "loc": f"{base_url}/news-{y}.html",

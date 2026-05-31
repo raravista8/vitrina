@@ -1,0 +1,31 @@
+{% extends "_layout.html.j2" %}
+{% block title %}{{ isi.title }} — {{ site.title }}{% endblock %}
+{% block description %}{{ isi.title }}{% endblock %}
+{% block canonical_path %}isi-{{ isi.n }}.html{% endblock %}
+{% set active = 'signaling' %}
+{% block head_extra %}<script type="application/ld+json">{{ jsonld_article | tojson }}</script>{% endblock %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / <a href="signaling.html">Сигнализация</a></div>
+    <div class="eyebrow">Сигнализация</div>
+    <h1>{{ isi.title | nbsp }}</h1>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap-narrow">
+    {% if isi.body %}<div id="isi-body">{{ isi.body | rich }}</div>{% endif %}
+    {% if isi.images %}
+    <div class="eyebrow green" style="margin:26px 0 12px">Иллюстрации</div>
+    <div class="photo-row" style="grid-template-columns:repeat(3,1fr)">
+      {% for img in isi.images %}<figure class="ph-thumb"><img src="{{ img }}" alt="{{ isi.title }}" loading="lazy"></figure>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="rule-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 9-9 9-9-9z"/></svg></div>
+    <a class="btn btn-ghost" href="signaling.html">← Сигнализация</a>
+  </div>
+</section>
+{% endblock %}
