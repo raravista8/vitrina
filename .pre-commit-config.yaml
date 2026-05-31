@@ -65,7 +65,10 @@ repos:
         # which include `<script integrity="sha384-…">` SRI hashes. Those
         # are public CDN integrity attestations, not secrets — detect-secrets
         # flags them as Base64 high-entropy strings.
-        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|\.secrets\.baseline$|^landing/tests/visual/canon-source/
+        # `landing/public/yandex_*.html` is the Yandex domain-ownership
+        # verification file — the token in it is a PUBLIC attestation served in
+        # the page, not a secret (same rationale as the SRI hashes above).
+        exclude: ^backend/poetry\.lock$|^landing/package-lock\.json$|\.secrets\.baseline$|^landing/tests/visual/canon-source/|^landing/public/yandex_[0-9a-f]+\.html$
 
   # ---- Conventional commits (commit-msg stage) -----------------------------
   - repo: https://github.com/compilerla/conventional-pre-commit

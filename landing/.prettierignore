@@ -1,3 +1,6 @@
+# Yandex domain-ownership verification file — fixed external format, not source
+public/yandex_*.html
+
 # Standard ignores
 node_modules
 .next
