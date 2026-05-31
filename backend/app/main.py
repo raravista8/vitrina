@@ -270,6 +270,37 @@ async def _lifespan(app: FastAPI) -> Any:
         app.state.elektrik_files = {}
         log.warning("elektrik_site_render_failed", error=str(exc))
 
+    # Owner-deleted sites (status=pending_purge, LK4) must keep returning 410
+    # across restarts. Probe the DB once and suppress any matching static-site
+    # host + drop its rendered files. Best-effort — never block startup.
+    app.state.purged_hosts = set()
+    try:
+        from sqlalchemy import select as _select
+
+        from app.infrastructure.postgres.engine import get_sessionmaker
+        from app.infrastructure.postgres.models import Site as _Site
+
+        _sm = await get_sessionmaker()
+        async with _sm() as _s:
+            _rows = (
+                await _s.execute(
+                    _select(_Site.subdomain, _Site.custom_domain).where(
+                        _Site.status == "pending_purge"
+                    )
+                )
+            ).all()
+        for _sub, _custom in _rows:
+            _host = _custom or f"{_sub}.{settings.sites_base_domain}"
+            app.state.purged_hosts.add(_host)
+            if _host == app.state.milreview_host:
+                app.state.milreview_files = {}
+            elif _host == app.state.elektrik_host:
+                app.state.elektrik_files = {}
+        if app.state.purged_hosts:
+            log.info("purged_hosts_loaded", hosts=sorted(app.state.purged_hosts))
+    except Exception as exc:  # never block startup on the probe
+        log.warning("purged_hosts_probe_failed", error=str(exc))
+
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
     from app.core.auth.customer import CustomerSessionStore

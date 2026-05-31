@@ -15,8 +15,11 @@ PR-LK2…LK4. PII is decrypted only here, only for the authenticated owner.
 
 from __future__ import annotations
 
+import csv
+import io
 import re
-from datetime import date
+import zipfile
+from datetime import UTC, date, datetime, timedelta
 from typing import Annotated, Any
 from uuid import UUID
 
@@ -34,6 +37,7 @@ from app.api.dependencies import (
     get_session,
     require_customer_session,
 )
+from app.config import get_settings
 from app.core.auth.admin import hash_password, verify_password
 from app.core.leads.encryption import LeadDecryptionError, decrypt, encrypt
 from app.core.notify.dispatcher import NotificationDispatcher
@@ -68,6 +72,18 @@ router = APIRouter(prefix="/api/lk", tags=["lk"])
 # Fallback when a site has no explicit lead_schema in settings (e.g. milreview):
 # no lead fields → the ЛК shows the "no leads" state for that site.
 _NO_LEADS_SCHEMA: list[dict[str, Any]] = []
+
+# Grace window between an owner's delete request and the cron hard-purge (LK4).
+# During it the site stops serving (410) but the owner can still pull an archive.
+_PURGE_GRACE_DAYS = 10
+
+# (host_attr, files_attr) on app.state for each app-server-rendered static site,
+# so the archive can bundle the live HTML and delete can stop it serving. Mirror
+# of static_sites._SITES (kept tiny + local to avoid a cross-router import).
+_STATIC_SITE_STATE: tuple[tuple[str, str], ...] = (
+    ("milreview_host", "milreview_files"),
+    ("elektrik_host", "elektrik_files"),
+)
 
 
 def _dec(value: bytes | None, fernet: MultiFernet) -> str | None:
@@ -530,4 +546,177 @@ async def get_billing(
             "method": None,
             "history": [],
         },
+    }
+
+
+# ── site deletion (soft-delete + archive) ─────────────────────────────────────
+
+
+def _site_host(site: Site) -> str:
+    return site.custom_domain or f"{site.subdomain}.{get_settings().sites_base_domain}"
+
+
+_ARCHIVE_CSV_FIELDS = (
+    ("created_at", "Дата"),
+    ("status", "Статус"),
+    ("name", "Имя"),
+    ("phone", "Телефон"),
+    ("object_type", "Тип объекта"),
+    ("service", "Услуга"),
+    ("address", "Адрес"),
+    ("call_time", "Удобное время"),
+    ("comment", "Комментарий"),
+    ("note", "Заметка"),
+    ("photo_count", "Фото"),
+)
+_MIME_EXT = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+
+
+@router.get("/site/archive")
+async def get_site_archive(
+    request: Request,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    fernet: Annotated[MultiFernet, Depends(get_lead_fernet)],
+) -> Response:
+    """Owner's data export (FZ-152 portability): a ZIP with leads.csv (decrypted),
+    every lead photo, and the live rendered site HTML. Scoped to the own site."""
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+
+    leads = (
+        (
+            await session.execute(
+                select(Lead).where(Lead.site_id == ctx.site_id).order_by(Lead.created_at.asc())
+            )
+        )
+        .scalars()
+        .all()
+    )
+    photos = (
+        (
+            await session.execute(
+                select(LeadPhoto)
+                .where(LeadPhoto.lead_id.in_([lead.id for lead in leads]))
+                .order_by(LeadPhoto.lead_id, LeadPhoto.index)
+            )
+        )
+        .scalars()
+        .all()
+        if leads
+        else []
+    )
+    photo_counts: dict[UUID, int] = {}
+    for ph in photos:
+        photo_counts[ph.lead_id] = photo_counts.get(ph.lead_id, 0) + 1
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        # leads.csv (decrypted) — utf-8-sig so Excel opens Cyrillic cleanly
+        csv_buf = io.StringIO()
+        writer = csv.writer(csv_buf)
+        writer.writerow([label for _key, label in _ARCHIVE_CSV_FIELDS])
+        for lead in leads:
+            row = _lead_to_dict(lead, fernet, int(photo_counts.get(lead.id, 0)))
+            writer.writerow(
+                [row.get(key) if row.get(key) is not None else "" for key, _ in _ARCHIVE_CSV_FIELDS]
+            )
+        zf.writestr("leads.csv", csv_buf.getvalue().encode("utf-8-sig"))
+
+        # lead photos (decrypted bytes — MultiFernet.decrypt returns bytes)
+        for ph in photos:
+            try:
+                raw = fernet.decrypt(bytes(ph.data_enc))
+            except Exception as exc:  # skip an unreadable photo, keep the rest of the archive
+                get_logger("api.lk.archive").warning(
+                    "archive_photo_skipped", lead_id=str(ph.lead_id), error=str(exc)
+                )
+                continue
+            ext = _MIME_EXT.get(ph.mime or "", "bin")
+            zf.writestr(f"photos/{str(ph.lead_id)[:8]}_{ph.index}.{ext}", raw)
+
+        # live rendered site HTML/assets, if this site is one of the static sites
+        host = _site_host(site)
+        state = request.app.state
+        for host_attr, files_attr in _STATIC_SITE_STATE:
+            if getattr(state, host_attr, None) != host:
+                continue
+            files: dict[str, tuple[str | bytes, str]] = getattr(state, files_attr, {}) or {}
+            for path, (content, _ctype) in files.items():
+                data = content.encode("utf-8") if isinstance(content, str) else content
+                zf.writestr(f"site/{path}", data)
+            break
+
+    buf.seek(0)
+    fname = f"samosite-archive-{site.subdomain}.zip"
+    return Response(
+        content=buf.getvalue(),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{fname}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+class _DeleteBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    # must equal the site's subdomain — a typed confirmation guards against an
+    # accidental delete of a live client site.
+    confirm: Annotated[str, Field(max_length=63)]
+
+
+@router.delete("/site")
+async def delete_site(
+    body: _DeleteBody,
+    request: Request,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    notifier: Annotated[NotificationDispatcher, Depends(get_notification_dispatcher)],
+) -> dict[str, Any]:
+    """Soft-delete the owner's own site: status → pending_purge, deleted_at = now.
+    The site stops serving immediately (410); a cron hard-purges it (cascading
+    leads/photos/change-requests) after the grace window. Idempotent."""
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    if body.confirm.strip() != site.subdomain:
+        raise HTTPException(status_code=400, detail="confirm_mismatch")
+
+    if site.status != "pending_purge":
+        site.status = "pending_purge"
+        site.deleted_at = datetime.now(UTC)
+        await session.commit()
+        get_logger("api.lk.delete").info(
+            "site_delete_requested", site_id=str(site.id), subdomain=site.subdomain
+        )
+        # best-effort founder alert — a client wants out; founder can intervene
+        # within the grace window before the cron purges.
+        try:
+            await notifier.notify_founder(
+                kind=NotificationKind.application_received,
+                message=NotificationMessage(
+                    title="🗑 Запрос на удаление сайта из ЛК",
+                    body=(
+                        f"Сайт: {site.subdomain}\n"
+                        f"Удаление через {_PURGE_GRACE_DAYS} дн. (можно отменить вручную)\n"
+                        f"ID: {site.id}"
+                    ),
+                ),
+            )
+        except Exception as exc:
+            get_logger("api.lk.delete").warning("delete_notify_failed", error=str(exc))
+
+    # stop serving now: 410 via app.state.purged_hosts + drop rendered files
+    host = _site_host(site)
+    state = request.app.state
+    purged: set[str] = getattr(state, "purged_hosts", None) or set()
+    purged.add(host)
+    state.purged_hosts = purged
+    for host_attr, files_attr in _STATIC_SITE_STATE:
+        if getattr(state, host_attr, None) == host:
+            setattr(state, files_attr, {})
+            break
+
+    purge_after = (site.deleted_at or datetime.now(UTC)) + timedelta(days=_PURGE_GRACE_DAYS)
+    return {
+        "ok": True,
+        "data": {"status": site.status, "purge_after": purge_after.isoformat()},
     }

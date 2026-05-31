@@ -57,6 +57,11 @@ _SITES: tuple[tuple[str, str, str], ...] = (
 async def serve_static_site(file_path: str, request: Request) -> Response:
     host = (request.headers.get("host") or "").split(":")[0].lower()
     state = request.app.state
+    # owner-deleted sites (status=pending_purge) stop serving immediately — the
+    # delete endpoint adds the host here; survives restart via the startup probe.
+    purged = getattr(state, "purged_hosts", None)
+    if purged and host in purged:
+        return Response(status_code=410)
     for host_attr, files_attr, csp in _SITES:
         if getattr(state, host_attr, None) != host:
             continue
