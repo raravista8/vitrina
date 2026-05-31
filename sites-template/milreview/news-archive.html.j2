@@ -1,0 +1,34 @@
+{% extends "_layout.html.j2" %}
+{% block title %}{{ archive.label }} — {{ site.title }}{% endblock %}
+{% block description %}{{ archive.label }} сайта «Железнодорожный путеводитель».{% endblock %}
+{% block canonical_path %}news-{{ archive.year }}.html{% endblock %}
+{% set active = 'home' %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / Архив новостей</div>
+    <div class="eyebrow">Архив новостей</div>
+    <h1>{{ archive.label | nbsp }}</h1>
+  </div>
+</section>
+
+<section class="chron-section">
+  <div class="wrap">
+    <div class="chron">
+      {% for it in archive['items'] %}
+      <div class="chron-row">
+        <div class="c-date">{{ it.d }}</div>
+        <div class="c-body">{{ it.text | nbsp }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="archive-links" style="margin-top:30px">
+      <a href="index.html">← Свежие новости</a>
+      {% for a in site.home.archive_links %}<a href="{{ a.href }}">{{ a.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -59,6 +59,27 @@ _ALLOWED_ATTRS = {"a": ["href", "target", "rel"]}
 # per-station static files — distinct crawlable URLs).
 _STATION_LINK_RE = re.compile(r"(?<!rail)station\.html\?id=(\d+)")
 
+# Inline-prose link internalisation (nothing must link to a page on milreview.ru):
+#   <a …(rail)station.html?id=N…>label</a> → station-N.html if hosted, else plain label
+#   <a …railway.html?id=N…>label</a>       → plain label (we don't host line pages)
+#   <a …href="https?://milreview.ru/…">…   → plain label (catch-all)
+_A_STATION = re.compile(r"<a\b[^>]*?(?:rail)?station\.html\?id=(\d+)[^>]*>(.*?)</a>", re.S | re.I)
+_A_RAILWAY = re.compile(r"<a\b[^>]*?railway\.html\?id=\d+[^>]*>(.*?)</a>", re.S | re.I)
+_A_MILREVIEW = re.compile(
+    r'<a\b[^>]*?href="https?://milreview\.ru/[^"]*"[^>]*>(.*?)</a>', re.S | re.I
+)
+
+
+def _internalize_links(html: str, valid_station_ids: frozenset[str]) -> str:
+    def _st(m: re.Match[str]) -> str:
+        sid, label = m.group(1), m.group(2)
+        return f'<a href="station-{sid}.html">{label}</a>' if sid in valid_station_ids else label
+
+    html = _A_STATION.sub(_st, html)
+    html = _A_RAILWAY.sub(lambda m: m.group(1), html)
+    return _A_MILREVIEW.sub(lambda m: m.group(1), html)
+
+
 # directory abbreviation → full kind label for stub station cards
 _KIND_FULL = {
     "ст.": "Станция",
@@ -88,6 +109,8 @@ _CONTENT_FILES = (
     "stations",
     "signaling",
     "reports",
+    "report_pages",
+    "archives",
 )
 
 
@@ -127,36 +150,34 @@ def _filter_nbsp(value: Any) -> str:
     return _glue_nbsp(str(value))
 
 
-def _relink(value: str) -> str:
-    return _STATION_LINK_RE.sub(r"station-\1.html", value)
-
-
-def _filter_relink(value: Any) -> str:
-    """Rewrite a plain ``station.html?id=N`` href to ``station-N.html``."""
-    return _relink(str(value))
-
-
-def _filter_rich(value: Any) -> Markup:
-    """Sanitise authored inline HTML, rewrite station links, glue nbsp, mark safe.
-
-    The bleach pass is defence-in-depth on our own content and keeps templates
-    free of ``| safe``; the allowlist is ``<a>``/``<strong>``/``<em>``/``<br>``.
-    """
-    s = _relink(str(value))
-    s = bleach.clean(s, tags=_ALLOWED_TAGS, attributes=_ALLOWED_ATTRS, strip=True)
-    s = _glue_nbsp(s)
-    # nosec B704 — `s` is bleach-sanitised (tight allowlist) immediately above,
-    # so marking it safe is the sanctioned sanitise-then-render pattern, not an
-    # XSS sink. _glue_nbsp only inserts U+00A0 into text, adds no markup.
-    return Markup(s)  # nosec B704
-
-
 def _filter_station_url(station_id: Any) -> str:
     return f"station-{station_id}.html"
 
 
-def _make_env(base_dir: Path) -> Environment:
+def _make_env(base_dir: Path, valid_station_ids: frozenset[str] = frozenset()) -> Environment:
     env = make_environment(base_dir)
+
+    def _filter_relink(value: Any) -> str:
+        """Rewrite a plain ``station.html?id=N`` href to ``station-N.html``."""
+        return _STATION_LINK_RE.sub(r"station-\1.html", str(value))
+
+    def _filter_rich(value: Any) -> Markup:
+        """Internalise links, sanitise authored inline HTML, glue nbsp, mark safe.
+
+        ``_internalize_links`` first guarantees nothing points at a page on
+        milreview.ru (station → internal page if hosted, else plain text; line /
+        any other milreview link → plain text). The bleach pass is then
+        defence-in-depth (allowlist ``<a>``/``<strong>``/``<em>``/``<br>``) and
+        keeps templates free of ``| safe``.
+        """
+        s = _internalize_links(str(value), valid_station_ids)
+        s = bleach.clean(s, tags=_ALLOWED_TAGS, attributes=_ALLOWED_ATTRS, strip=True)
+        s = _glue_nbsp(s)
+        # nosec B704 — `s` is bleach-sanitised (tight allowlist) immediately above,
+        # so marking it safe is the sanctioned sanitise-then-render pattern, not an
+        # XSS sink. _glue_nbsp only inserts U+00A0 into text, adds no markup.
+        return Markup(s)  # nosec B704
+
     env.filters["nbsp"] = _filter_nbsp
     env.filters["relink"] = _filter_relink
     env.filters["rich"] = _filter_rich
@@ -328,7 +349,11 @@ def render_all(
 
     content = _load_content(base_dir)
     site = content["site"]
-    env = _make_env(base_dir)
+
+    directory = content["directory"]
+    stations = build_stations(directory, content["stations"])
+    valid_station_ids = frozenset(stations.keys())
+    env = _make_env(base_dir, valid_station_ids)
 
     common = {
         "site": site,
@@ -338,8 +363,6 @@ def render_all(
 
     news = _augment_news(content["news"])
     docs = sorted(content["docs"], key=lambda x: _doc_sort_key(x["d"]), reverse=True)
-    directory = content["directory"]
-    stations = build_stations(directory, content["stations"])
 
     out: dict[str, tuple[str, str]] = {}
     out["index.html"] = (env.get_template("index.html.j2").render(**common, news=news), _HTML)
@@ -389,7 +412,63 @@ def render_all(
             _HTML,
         )
 
+    # news archive pages (one dated text chronicle per year — fully internal)
+    archives: dict[str, Any] = content["archives"]
+    archive_tpl = env.get_template("news-archive.html.j2")
+    for year, arch in archives.items():
+        out[f"news-{year}.html"] = (
+            archive_tpl.render(**common, archive={**arch, "year": year}),
+            _HTML,
+        )
+
+    # report (travelogue) pages — full text, hosted internally
+    report_pages: dict[str, Any] = content["report_pages"]
+    reports = content["reports"]
+    road_of: dict[str, str] = {}
+    fhref = reports["featured"].get("link_href", "")
+    if fhref.startswith("report-"):
+        road_of[fhref[len("report-") : -len(".html")]] = (
+            reports["featured"].get("eyebrow", "").split("·")[-1].strip()
+        )
+    for e in reports["entries"]:
+        h = e.get("href", "")
+        if h.startswith("report-"):
+            road_of[h[len("report-") : -len(".html")]] = e.get("road", "")
+    report_tpl = env.get_template("report.html.j2")
+    for slug, page in report_pages.items():
+        rctx = {**page, "slug": slug, "road": road_of.get(slug, "")}
+        jsonld_rep = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": page.get("title", slug),
+            "inLanguage": "ru",
+            "mainEntityOfPage": f"{base_url}/report-{slug}.html",
+            "isPartOf": {"@type": "WebSite", "name": site["title"], "url": f"{base_url}/"},
+        }
+        out[f"report-{slug}.html"] = (
+            report_tpl.render(**common, report=rctx, jsonld_article=jsonld_rep),
+            _HTML,
+        )
+
     pages = _sitemap_pages(base_url, stations, lastmod)
+    pages += [
+        {
+            "loc": f"{base_url}/news-{y}.html",
+            "lastmod": lastmod,
+            "changefreq": "yearly",
+            "priority": "0.3",
+        }
+        for y in archives
+    ]
+    pages += [
+        {
+            "loc": f"{base_url}/report-{s}.html",
+            "lastmod": lastmod,
+            "changefreq": "yearly",
+            "priority": "0.4",
+        }
+        for s in report_pages
+    ]
     pages += [
         {
             "loc": f"{base_url}/doc-{slug}.html",

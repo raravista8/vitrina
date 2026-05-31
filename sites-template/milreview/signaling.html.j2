@@ -48,7 +48,7 @@
     <div class="section-head"><div><div class="eyebrow" style="margin-bottom:10px">{{ sig.materials_eyebrow }}</div><h2>{{ sig.materials_h2 }}</h2></div></div>
     <div class="idx-grid sig-grid">
       {% for m in sig.materials %}
-      <a class="idx-card" href="{{ m.href }}"{% if m.external %} target="_blank" rel="noopener"{% endif %}><span class="ic-num">{{ m.num }}</span><h3>{{ m.title }}</h3><p>{{ m.body | nbsp }}</p><span class="ic-go">Открыть →</span></a>
+      <div class="idx-card"><span class="ic-num">{{ m.num }}</span><h3>{{ m.title }}</h3><p>{{ m.body | nbsp }}</p></div>
       {% endfor %}
     </div>
   </div>
