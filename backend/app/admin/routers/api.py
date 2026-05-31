@@ -1212,7 +1212,14 @@ def _app_row(row: Application) -> dict[str, Any]:
         if row.description and len(row.description) > 140
         else row.description,
         "contact_type": row.contact_type,
-        "contact_value_masked": _mask_contact_value(row.contact_value, row.contact_type),
+        # FULL contact — this is the applicant's OWN contact (how the founder
+        # reaches THEIR customer to deliver/​support the site), given expressly
+        # to be contacted. Founder-only screen behind admin auth; same rationale
+        # as the feedback inbox (_feedback_row). The key keeps canon's name
+        # (`S12/S13` read `contact_value_masked` verbatim). End-visitor LEAD PII
+        # is a different layer — stays Fernet-encrypted + masked + decrypt-on-
+        # click (admin/routers/leads.py), untouched.
+        "contact_value_masked": row.contact_value,
         "status": row.status,
         "rejection_reason": row.rejection_reason,
         "is_manual_review": row.is_manual_review,
@@ -1316,7 +1323,9 @@ def _user_row(user: User) -> dict[str, Any]:
     return {
         "id": str(user.id),
         "contact_type": user.contact_type,
-        "contact_value_masked": _mask_contact_value(user.contact_value, user.contact_type),
+        # FULL contact — the site owner's own contact (founder reaches their
+        # client). See _app_row for the full rationale. Key keeps canon's name.
+        "contact_value_masked": user.contact_value,
         "plan": user.plan,
         "plan_until": user.plan_until.isoformat() if user.plan_until else None,
     }
@@ -1331,20 +1340,8 @@ def _consent_row(consent: Consent) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# PII masking — never log or render raw values without a fresh TOTP
+# IP truncation — lead rows expose only a /16 prefix, never the full visitor IP
 # ---------------------------------------------------------------------------
-
-
-def _mask_contact_value(value: str, contact_type: str) -> str:
-    if contact_type == "email":
-        local, _, domain = value.partition("@")
-        return f"{local[:1]}***@{domain}" if local else "***"
-    if contact_type == "phone":
-        return f"+7***{value[-4:]}" if len(value) >= 4 else "***"
-    if value.startswith("@"):
-        body = value[1:]
-        return f"@{body[:2]}***{body[-2:]}" if len(body) > 4 else "@***"
-    return "***"
 
 
 def _ip_prefix(ip: str | None) -> str | None:
