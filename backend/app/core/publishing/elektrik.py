@@ -68,20 +68,48 @@ def _phone_tel(phone: str) -> str:
 
 
 def _jsonld(site: dict[str, Any], base_url: str) -> dict[str, Any]:
+    seo = site.get("seo", {})
     reviews = site.get("reviews", {})
+    geo = seo.get("geo", {})
     rating = str(reviews.get("score", "4,9")).replace(",", ".")
-    return {
+    review_count = str((reviews.get("dist") and sum(d["count"] for d in reviews["dist"])) or 89)
+
+    # services → an OfferCatalog so search engines see the priced offering list
+    offers = []
+    for s in site.get("services", {}).get("items", []):
+        offers.append(
+            {
+                "@type": "Offer",
+                "itemOffered": {
+                    "@type": "Service",
+                    "name": s["title"],
+                    "description": s.get("body", ""),
+                },
+                "priceCurrency": "RUB",
+                "price": "".join(ch for ch in s.get("price", "") if ch.isdigit()) or None,
+                "description": s.get("price", ""),
+            }
+        )
+
+    ld: dict[str, Any] = {
         "@context": "https://schema.org",
         "@type": "Electrician",
         "name": site["brand_name"],
-        "description": site["seo"]["description"],
+        "description": seo.get("description", ""),
         "url": f"{base_url}/",
         "telephone": _phone_tel(site["phone"]),
         "image": f"{base_url}/{site['hero']['photo']}",
-        "areaServed": ["Санкт-Петербург", "Ленинградская область"],
+        "priceRange": seo.get("price_range", "от 500 ₽"),
+        "currenciesAccepted": "RUB",
+        "sameAs": [site["avito_url"]] if site.get("avito_url") else [],
+        "areaServed": [
+            {"@type": "City", "name": "Санкт-Петербург"},
+            {"@type": "State", "name": "Ленинградская область"},
+        ],
         "address": {
             "@type": "PostalAddress",
-            "addressRegion": "Санкт-Петербург и Ленинградская область",
+            "addressLocality": geo.get("locality", "Санкт-Петербург"),
+            "addressRegion": geo.get("region", "Санкт-Петербург и Ленинградская область"),
             "addressCountry": "RU",
         },
         "openingHoursSpecification": {
@@ -101,13 +129,19 @@ def _jsonld(site: dict[str, Any], base_url: str) -> dict[str, Any]:
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": rating,
-            "reviewCount": str(
-                (reviews.get("dist") and sum(d["count"] for d in reviews["dist"])) or 89
-            ),
+            "reviewCount": review_count,
             "bestRating": "5",
             "worstRating": "1",
         },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Электромонтажные работы",
+            "itemListElement": offers,
+        },
     }
+    if geo.get("lat") and geo.get("lon"):
+        ld["geo"] = {"@type": "GeoCoordinates", "latitude": geo["lat"], "longitude": geo["lon"]}
+    return ld
 
 
 def _sitemap(base_url: str, lastmod: str) -> str:

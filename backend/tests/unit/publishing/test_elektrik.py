@@ -79,6 +79,36 @@ def test_seo(site):
     assert f"Sitemap: {BASE_URL}/sitemap.xml" in _html(site, "robots.txt")
 
 
+def test_seo_keywords_geo_meta(site, config):
+    page = _html(site, "index.html")
+    # keywords meta carries every configured keyword
+    assert '<meta name="keywords"' in page
+    for kw in config["seo"]["keywords"][:3]:
+        assert kw in page
+    # geo meta + twitter image + og image alt
+    assert '<meta name="geo.placename" content="Санкт-Петербург"' in page
+    assert '<meta name="ICBM" content="59.9386, 30.3141"' in page
+    assert '<meta name="twitter:image"' in page
+    assert '<meta property="og:image:alt"' in page
+
+
+def test_jsonld_rich(site):
+    # parse the JSON-LD block (tojson escapes non-ASCII to \uXXXX — valid JSON,
+    # so assert on the decoded object, not raw substrings)
+    page = _html(site, "index.html")
+    raw = page.split('application/ld+json">', 1)[1].split("</script>", 1)[0]
+    ld = json.loads(raw)
+    assert ld["@type"] == "Electrician"
+    assert ld["priceRange"]
+    assert ld["geo"]["@type"] == "GeoCoordinates"
+    assert "avito.ru" in ld["sameAs"][0]
+    assert ld["address"]["addressLocality"] == "Санкт-Петербург"
+    assert {a["name"] for a in ld["areaServed"]} == {"Санкт-Петербург", "Ленинградская область"}
+    offers = ld["hasOfferCatalog"]["itemListElement"]
+    assert len(offers) == 6  # 6 services as priced Offers
+    assert offers[0]["price"] == "3500"
+
+
 def test_form_wiring(site, config):
     page = _html(site, "index.html")
     assert f'window.__SITE_ID = "{config["site_id"]}"' in page

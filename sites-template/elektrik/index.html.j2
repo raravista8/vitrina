@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{{ site.seo.title }}</title>
 <meta name="description" content="{{ site.seo.description }}" />
+{% if site.seo.keywords %}<meta name="keywords" content="{{ site.seo.keywords | join(', ') }}" />{% endif %}
 <link rel="canonical" href="{{ base_url }}/" />
 <meta name="robots" content="index, follow" />
+<meta name="geo.region" content="RU-SPE" />
+<meta name="geo.placename" content="{{ site.seo.geo.locality }}" />
+{% if site.seo.geo.lat and site.seo.geo.lon %}<meta name="ICBM" content="{{ site.seo.geo.lat }}, {{ site.seo.geo.lon }}" />{% endif %}
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="{{ site.brand_name }}" />
 <meta property="og:locale" content="ru_RU" />
@@ -14,7 +18,9 @@
 <meta property="og:description" content="{{ site.seo.description }}" />
 <meta property="og:url" content="{{ base_url }}/" />
 <meta property="og:image" content="{{ base_url }}/{{ site.hero.photo }}" />
+<meta property="og:image:alt" content="{{ site.hero.photo_alt }}" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="{{ base_url }}/{{ site.hero.photo }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet" />
