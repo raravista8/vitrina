@@ -124,3 +124,17 @@ milreview.samosite.online {
 		header_up X-Forwarded-For {remote_host}
 	}
 }
+
+# elektrik-spb customer site («Электромонтаж под ключ», СПб и Ленобласть).
+# Same app-server origin as milreview (no Object Storage write path on this
+# prod): every path → api, which serves the pre-rendered landing by Host
+# (app/api/routers/elektrik_site.py) and the lead form's POST /api/leads/elektrik.
+# Single hostname → real Let's Encrypt cert via tls-alpn-01 (resolves to this
+# VPS through the *.samosite.online wildcard DNS); CSP is set by the api route.
+elektrik-spb.samosite.online {
+	import security_headers
+	reverse_proxy api:8000 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+	}
+}

@@ -72,6 +72,20 @@ milreview.samosite.online {
 	}
 }
 
+# elektrik-spb customer site («Электромонтаж под ключ»). Same app-server origin
+# as milreview: the landing is rendered at startup and served by the api
+# (app/api/routers/elektrik_site.py); the lead form posts to /api/leads/elektrik.
+# Specific host block overrides the *.samosite.online wildcard. CSP is set by the
+# api route (customer-site policy).
+elektrik-spb.samosite.online {
+	import wildcard_tls
+	import security_headers
+
+	reverse_proxy api:8000 {
+		header_up X-Real-IP {remote_host}
+	}
+}
+
 # ---- Wildcard *.samosite.online ----------------------------------------------
 
 *.samosite.online {
