@@ -29,6 +29,7 @@ from app.api.middleware import (
 from app.api.routers.applications import router as applications_router
 from app.api.routers.auth import router as auth_router
 from app.api.routers.billing import router as billing_router
+from app.api.routers.elektrik_site import router as elektrik_site_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
 from app.api.routers.me import router as me_router
@@ -251,6 +252,23 @@ async def _lifespan(app: FastAPI) -> Any:
         app.state.milreview_files = {}
         log.warning("milreview_site_render_failed", error=str(exc))
 
+    # elektrik-spb customer site — same startup-render + Host-served model as
+    # milreview (no Object Storage write path on this prod). Caddy routes
+    # elektrik-spb.samosite.online → api.
+    app.state.elektrik_host = f"elektrik-spb.{settings.sites_base_domain}"
+    try:
+        from app.core.publishing.elektrik import render_all as render_elektrik
+        from app.core.publishing.elektrik import resolve_elektrik_dir
+
+        app.state.elektrik_files = render_elektrik(
+            base_dir=resolve_elektrik_dir(settings.sites_template_dir),
+            base_url=f"https://{app.state.elektrik_host}",
+        )
+        log.info("elektrik_site_rendered", files=len(app.state.elektrik_files))
+    except Exception as exc:  # never block startup on a content-render error
+        app.state.elektrik_files = {}
+        log.warning("elektrik_site_render_failed", error=str(exc))
+
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
     from app.core.auth.customer import CustomerSessionStore
@@ -351,6 +369,11 @@ def create_app() -> FastAPI:
     # content site. Only matches GETs no earlier router/route claimed, and only
     # responds for the milreview Host — so it can't shadow api/admin/health.
     app.include_router(milreview_site_router)
+    # Same Host-guarded catch-all for the elektrik-spb customer site. Registered
+    # after milreview; both only match their own Host so order between them is
+    # irrelevant. Its lead form posts to /api/leads/elektrik (a POST route
+    # included via leads_router, matched before this GET catch-all).
+    app.include_router(elektrik_site_router)
 
     return app
 
