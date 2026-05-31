@@ -151,7 +151,20 @@ class Site(UUIDPrimaryKey, Timestamped, Base):
 # leads
 # =============================================================================
 
-LEAD_STATUSES = ("new", "seen", "contacted", "archived", "spam")
+# Operator set (new/seen/contacted/archived/spam) + the client-ЛК owner
+# workflow (in_progress/done/declined) — union, see migration 0015.
+LEAD_STATUSES = (
+    "new",
+    "seen",
+    "contacted",
+    "archived",
+    "spam",
+    "in_progress",
+    "done",
+    "declined",
+)
+# The 4 statuses the client ЛК lets the owner set/see.
+LK_LEAD_STATUSES = ("new", "in_progress", "done", "declined")
 
 
 class Lead(UUIDPrimaryKey, Timestamped, Base):
@@ -175,6 +188,8 @@ class Lead(UUIDPrimaryKey, Timestamped, Base):
     service: Mapped[str | None] = mapped_column(String(80), nullable=True)
     call_time: Mapped[str | None] = mapped_column(String(40), nullable=True)
     address_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    # owner's private internal note (client ЛК, migration 0015) — Fernet PII
+    note_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
 
     status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="new")
 
