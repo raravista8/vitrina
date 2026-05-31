@@ -29,12 +29,11 @@ from app.api.middleware import (
 from app.api.routers.applications import router as applications_router
 from app.api.routers.auth import router as auth_router
 from app.api.routers.billing import router as billing_router
-from app.api.routers.elektrik_site import router as elektrik_site_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
 from app.api.routers.me import router as me_router
-from app.api.routers.milreview_site import router as milreview_site_router
 from app.api.routers.preview import router as preview_router
+from app.api.routers.static_sites import router as static_site_router
 from app.api.routers.track import router as track_router
 from app.config import get_settings
 from app.utils.logging import configure_logging, get_logger
@@ -365,15 +364,12 @@ def create_app() -> FastAPI:
         body = {"ok": all_ready, "data": {"checks": checks}}
         return JSONResponse(body, status_code=200 if all_ready else 503)
 
-    # Registered LAST: a Host-guarded catch-all GET that serves the milreview
-    # content site. Only matches GETs no earlier router/route claimed, and only
-    # responds for the milreview Host — so it can't shadow api/admin/health.
-    app.include_router(milreview_site_router)
-    # Same Host-guarded catch-all for the elektrik-spb customer site. Registered
-    # after milreview; both only match their own Host so order between them is
-    # irrelevant. Its lead form posts to /api/leads/elektrik (a POST route
-    # included via leads_router, matched before this GET catch-all).
-    app.include_router(elektrik_site_router)
+    # Registered LAST: one Host-dispatching catch-all GET that serves the
+    # app-rendered static sites (milreview + elektrik-spb). Only matches GETs no
+    # earlier router/route claimed, and only responds for a registered Host — so
+    # it can't shadow api/admin/health. (A single catch-all, not one per site:
+    # two `/{file_path:path}` routes would conflict on path match.)
+    app.include_router(static_site_router)
 
     return app
 

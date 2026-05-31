@@ -2,9 +2,9 @@
 («Электромонтаж под ключ», served at ``elektrik-spb.samosite.online``).
 
 Like ``milreview.py`` (and for the same reason — this prod has no Object
-Storage write path), the site is rendered once at api startup and served by a
-Host-guarded route (``app.api.routers.elektrik_site``); Caddy proxies
-``elektrik-spb.samosite.online/*`` → ``api:8000``.
+Storage write path), the site is rendered once at api startup and served by the
+shared Host-dispatching catch-all (``app.api.routers.static_sites``); Caddy
+proxies ``elektrik-spb.samosite.online/*`` → ``api:8000``.
 
 Content lives in ``sites-template/elektrik/content/site.json`` (the per-site
 config — NOT hard-coded in markup), the layout in ``index.html.j2``, and the
