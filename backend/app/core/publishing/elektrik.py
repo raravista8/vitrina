@@ -150,6 +150,8 @@ def _sitemap(base_url: str, lastmod: str) -> str:
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         f"  <url><loc>{base_url}/</loc><lastmod>{lastmod}</lastmod>"
         "<changefreq>weekly</changefreq><priority>1.0</priority></url>\n"
+        f"  <url><loc>{base_url}/privacy</loc><lastmod>{lastmod}</lastmod>"
+        "<changefreq>yearly</changefreq><priority>0.3</priority></url>\n"
         "</urlset>\n"
     )
 
@@ -167,8 +169,9 @@ def render_all(
     """Render the elektrik customer site → ``{key: (content, content_type)}``.
 
     ``key`` is the path relative to the site root (``index.html``,
-    ``styles.css``, ``app.js``, ``hero.webp``, ``photos/work-1.webp`` …,
-    ``sitemap.xml``, ``robots.txt``). Image values are ``bytes``.
+    ``privacy`` / ``privacy.html``, ``styles.css``, ``app.js``, ``hero.webp``,
+    ``photos/work-1.webp`` …, ``sitemap.xml``, ``robots.txt``). Image values
+    are ``bytes``.
     """
     base_dir = base_dir or resolve_elektrik_dir()
     base_url = base_url.rstrip("/")
@@ -192,6 +195,16 @@ def render_all(
         ),
         _HTML,
     )
+    # Privacy policy — served at /privacy (canonical) + /privacy.html (alias).
+    # The lead form's consent checkbox links to /privacy; the static router keys
+    # on the exact path, so register both spellings.
+    privacy_html = env.get_template("privacy.html.j2").render(
+        site=content,
+        base_url=base_url,
+        phone_tel=_phone_tel(content["phone"]),
+    )
+    out["privacy"] = (privacy_html, _HTML)
+    out["privacy.html"] = (privacy_html, _HTML)
     out["styles.css"] = ((base_dir / "styles.css").read_text(encoding="utf-8"), _CSS)
     out["app.js"] = ((base_dir / "app.js").read_text(encoding="utf-8"), _JS)
     out["hero.webp"] = ((base_dir / "hero.webp").read_bytes(), _WEBP)
