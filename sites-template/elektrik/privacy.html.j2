@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Политика конфиденциальности — {{ site.brand_name }}</title>
+<meta name="description" content="Политика обработки персональных данных {{ site.brand_name }} ({{ site.region }}). Какие данные мы собираем через форму заявки, зачем и как их защищаем." />
+<link rel="canonical" href="{{ base_url }}/privacy" />
+<meta name="robots" content="index, follow" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="{{ site.brand_name }}" />
+<meta property="og:locale" content="ru_RU" />
+<meta property="og:title" content="Политика конфиденциальности — {{ site.brand_name }}" />
+<meta property="og:url" content="{{ base_url }}/privacy" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .legal-shell { padding: 40px 0 64px; }
+  .legal-back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--sans); font-weight: 700; font-size: 15px;
+    color: var(--accent); text-decoration: none; margin-bottom: 22px;
+  }
+  .legal-back:hover { color: var(--accent-deep); }
+  .legal { max-width: 760px; }
+  .legal h1 { font-size: clamp(28px, 5vw, 40px); margin-bottom: 10px; }
+  .legal .legal-meta { color: var(--ink-faint); font-size: 15px; margin-bottom: 8px; }
+  .legal .legal-lead { color: var(--ink-soft); font-size: 18px; margin: 14px 0 30px; }
+  .legal h2 {
+    font-size: 21px; margin: 34px 0 12px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .legal h2:first-of-type { border-top: none; padding-top: 0; }
+  .legal p { margin: 0 0 14px; color: var(--ink); }
+  .legal ul { margin: 0 0 14px; padding-left: 22px; }
+  .legal li { margin: 0 0 8px; color: var(--ink); }
+  .legal a { color: var(--accent); }
+  .legal strong { font-weight: 600; }
+  .legal .legal-contact {
+    margin-top: 30px; padding: 20px 22px; background: var(--accent-soft);
+    border-radius: var(--r-md); font-size: 16px;
+  }
+  .legal .legal-contact a { font-weight: 600; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="hazard"></div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M13.5 2 4 13.5h6L9 22l9.5-12H12l1.5-8Z" fill="#fff"/></svg>
+      </span>
+      <span>
+        <span class="brand-name">Электромонтаж<br>под ключ</span>
+      </span>
+    </a>
+    <a class="btn btn-primary" href="tel:{{ phone_tel }}">{{ site.phone }}</a>
+  </div>
+</header>
+
+<main class="legal-shell">
+  <div class="wrap">
+    <a class="legal-back" href="/">← На главную</a>
+    <article class="legal">
+      <h1>Политика конфиденциальности</h1>
+      <div class="legal-meta">Обновлено: {{ site.legal.updated }}</div>
+      <p class="legal-lead">
+        Эта политика объясняет, какие персональные данные мы собираем на сайте
+        <strong>{{ base_url.split('//')[-1] }}</strong>, зачем они нужны и как мы их защищаем.
+        Оставляя заявку, вы соглашаетесь с условиями этой политики.
+      </p>
+
+      <h2>1. Кто обрабатывает ваши данные</h2>
+      <p>
+        Оператор персональных данных — <strong>{{ site.legal.operator_name }}</strong>{% if site.legal.operator_note %},
+        {{ site.legal.operator_note }}{% endif %}{% if site.legal.operator_inn %} (ИНН {{ site.legal.operator_inn }}){% endif %}.
+      </p>
+      <p>
+        Сайт работает на технической платформе «Самосайт» (<a href="https://samosite.online" target="_blank" rel="noopener">samosite.online</a>),
+        которая по поручению Оператора обеспечивает работу сайта и хранение данных
+        <strong>на серверах в Российской Федерации</strong>. Платформа выступает обработчиком
+        и не использует ваши данные в собственных целях.
+      </p>
+
+      <h2>2. Какие данные мы собираем</h2>
+      <p>Через форму «Оставить заявку» вы можете передать нам:</p>
+      <ul>
+        <li>имя (как к вам обращаться);</li>
+        <li>номер телефона;</li>
+        <li>тип объекта (квартира, дом, офис, коммерция);</li>
+        <li>нужную услугу;</li>
+        <li>адрес или район объекта;</li>
+        <li>удобное время для звонка;</li>
+        <li>комментарий с описанием задачи;</li>
+        <li>фотографии объекта — если вы решите их приложить.</li>
+      </ul>
+      <p>
+        Обязательны только имя и телефон — без них мы не сможем перезвонить.
+        Остальные поля заполняются по вашему желанию и помогают точнее оценить работу.
+      </p>
+
+      <h2>3. Зачем мы используем эти данные</h2>
+      <ul>
+        <li>связаться с вами по оставленной заявке;</li>
+        <li>уточнить детали, рассчитать стоимость и согласовать время выезда;</li>
+        <li>выполнить электромонтажные работы, о которых вы просите.</li>
+      </ul>
+      <p>Мы не используем ваши данные для рекламных рассылок и не продаём их.</p>
+
+      <h2>4. На каком основании</h2>
+      <p>
+        Мы обрабатываем данные на основании вашего <strong>согласия</strong>
+        (ст. 6 ч. 1 п. 1 Федерального закона № 152-ФЗ «О персональных данных»),
+        которое вы даёте, отмечая галочку и нажимая кнопку отправки в форме заявки.
+        Согласие можно отозвать в любой момент (см. п. 7).
+      </p>
+
+      <h2>5. Как мы храним и защищаем данные</h2>
+      <ul>
+        <li>данные хранятся на серверах в Российской Федерации;</li>
+        <li>контактные данные (имя, телефон) хранятся в зашифрованном виде;</li>
+        <li>доступ к заявкам есть только у мастера и платформы для технической поддержки;</li>
+        <li>соединение с сайтом защищено протоколом HTTPS.</li>
+      </ul>
+
+      <h2>6. Передаём ли мы данные третьим лицам</h2>
+      <p>
+        Мы не передаём ваши персональные данные третьим лицам, за исключением
+        платформы-обработчика «Самосайт» (техническое хранение по нашему поручению)
+        и случаев, прямо предусмотренных законодательством Российской Федерации.
+      </p>
+
+      <h2>7. Ваши права</h2>
+      <p>Вы вправе в любой момент:</p>
+      <ul>
+        <li>узнать, какие ваши данные у нас есть;</li>
+        <li>попросить уточнить или исправить их;</li>
+        <li>попросить удалить их;</li>
+        <li>отозвать согласие на обработку.</li>
+      </ul>
+      <p>
+        Для этого свяжитесь с нами по телефону
+        <a href="tel:{{ phone_tel }}">{{ site.phone }}</a>{% if site.legal.contact_email %}
+        или по почте <a href="mailto:{{ site.legal.contact_email }}">{{ site.legal.contact_email }}</a>{% endif %}.
+        После отзыва согласия мы удалим ваши данные, если нет законной причины их хранить.
+      </p>
+
+      <h2>8. Сколько мы храним данные</h2>
+      <p>
+        Мы храним данные ровно столько, сколько нужно для обработки вашей заявки
+        и выполнения работ, либо до тех пор, пока вы не отзовёте согласие.
+      </p>
+
+      <h2>9. Файлы cookie и аналитика</h2>
+      <p>
+        Сайт может использовать технические файлы cookie, необходимые для его работы,
+        и сервисы веб-аналитики для подсчёта посещений в обезличенном виде.
+        Эти данные не позволяют идентифицировать вас лично.
+      </p>
+
+      <h2>10. Изменения политики</h2>
+      <p>
+        Мы можем обновлять эту политику. Актуальная версия всегда находится на этой странице;
+        дата последнего изменения указана вверху.
+      </p>
+
+      <div class="legal-contact">
+        Вопросы по обработке данных — звоните:
+        <a href="tel:{{ phone_tel }}">{{ site.phone }}</a>{% if site.legal.contact_email %},
+        или пишите на <a href="mailto:{{ site.legal.contact_email }}">{{ site.legal.contact_email }}</a>{% endif %}.
+        {{ site.brand_name }}, {{ site.region }}.
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-base">
+      <span>{{ site.brand_name }} · {{ site.region }}</span>
+      <a class="made-badge" href="https://samosite.online" target="_blank" rel="noopener">
+        <span class="mb-mark">С</span>
+        Сделано на Самосайт
+      </a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

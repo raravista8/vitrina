@@ -127,6 +127,30 @@ def test_made_on_samosite_badge(site):
     assert "Сделано на Самосайт" in page
 
 
+def test_privacy_page(site, config):
+    # served at both /privacy (canonical, what the consent link points at) and
+    # /privacy.html (alias); same HTML, correct content-type
+    assert site["privacy"][1].startswith("text/html")
+    assert site["privacy.html"][1].startswith("text/html")
+    assert site["privacy"][0] == site["privacy.html"][0]
+
+    page = _html(site, "privacy")
+    # FZ-152 essentials + the actual data categories the lead form collects
+    assert "Политика конфиденциальности" in page
+    assert "152-ФЗ" in page
+    assert config["brand_name"] in page
+    assert config["phone"] in page
+    for category in ("номер телефона", "адрес", "фотографии объекта"):
+        assert category in page
+    assert "Российской Федерации" in page  # data residency
+    assert f'<link rel="canonical" href="{BASE_URL}/privacy"' in page
+    assert "Сделано на Самосайт" in page  # footer badge present
+
+    # discoverable + indexable: footer link on the home page + sitemap entry
+    assert 'href="/privacy"' in _html(site, "index.html")
+    assert f"<loc>{BASE_URL}/privacy</loc>" in _html(site, "sitemap.xml")
+
+
 def test_no_safe_filter_in_template():
     import re
 
