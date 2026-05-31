@@ -29,7 +29,8 @@ ON CONFLICT (id) DO NOTHING;
 
 -- settings.lead_schema = the per-site lead field structure the client ЛК renders
 -- (electrician's 8 fields). settings.display_name = the name shown in the cabinet.
-\set elektrik_settings '{"display_name":"Электромонтаж под ключ","lead_schema":[{"key":"name","label":"Имя","type":"text","pii":true},{"key":"phone","label":"Телефон","type":"tel","pii":true},{"key":"object_type","label":"Тип объекта","type":"text","pii":false},{"key":"service","label":"Услуга","type":"text","pii":false},{"key":"address","label":"Адрес / район","type":"text","pii":true},{"key":"call_time","label":"Удобное время","type":"text","pii":false},{"key":"comment","label":"Комментарий","type":"textarea","pii":true},{"key":"photos","label":"Фото объекта","type":"photos","pii":true}]}'
+-- settings.niche = drives the per-site minus-word list (LK5 «Ключевые слова»).
+\set elektrik_settings '{"display_name":"Электромонтаж под ключ","niche":"electrician","lead_schema":[{"key":"name","label":"Имя","type":"text","pii":true},{"key":"phone","label":"Телефон","type":"tel","pii":true},{"key":"object_type","label":"Тип объекта","type":"text","pii":false},{"key":"service","label":"Услуга","type":"text","pii":false},{"key":"address","label":"Адрес / район","type":"text","pii":true},{"key":"call_time","label":"Удобное время","type":"text","pii":false},{"key":"comment","label":"Комментарий","type":"textarea","pii":true},{"key":"photos","label":"Фото объекта","type":"photos","pii":true}]}'
 
 INSERT INTO sites (
     id, user_id, subdomain, source_type, source_url, status,

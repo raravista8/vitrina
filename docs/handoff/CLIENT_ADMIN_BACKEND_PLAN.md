@@ -46,6 +46,17 @@ Returned by `GET /api/lk/site`. Provisioned per client (see provision SQL).
   - **Operator action:** schedule `python -m app.workers.purge` daily (RQ-scheduler
     glue, like `analytics_digest`). Until scheduled, soft-deleted sites stay 410'd
     but their lead data isn't hard-purged — run the command manually.
+- **PR-LK5 ✅** — «Ключевые слова» (SEO), spec `specs/03_keywords.md`. New
+  `core/keywords/` (pure): parse 4 groups from the rendered page (Title/H1→main,
+  H2→h2, `<meta keywords>`→text, blog empty), apply groups to the live page's
+  `<meta keywords>` (layout-neutral — visible Title/H1/H2 untouched, §6 fallback;
+  full visible-copy rewrite is the customer-SSR pipeline's job), generate
+  per-niche minus-words. `GET /api/lk/keywords` (stored-or-parse + persist),
+  `PUT /api/lk/keywords` (sanitize/dedup/cap → store in `Site.settings['keywords']`
+  + apply to served HTML in-process), `GET /api/lk/keywords/minus` (read-only,
+  base + niche from `settings['niche']`). Startup re-applies stored keywords to
+  the served page (survives restart). No migration. Niche `electrician` added to
+  the elektrik provision + a one-off prod `settings || '{"niche":"electrician"}'`.
 - **Analytics** — none; UI shows "в разработке", no endpoint.
 
 ## Per client

@@ -39,6 +39,15 @@ from app.api.dependencies import (
 )
 from app.config import get_settings
 from app.core.auth.admin import hash_password, verify_password
+from app.core.keywords import (
+    GROUP_KEYS,
+    apply_keywords_to_html,
+    empty_groups,
+    generate_minus_words,
+    parse_keywords_from_html,
+    sanitize_groups,
+    source_rev,
+)
 from app.core.leads.encryption import LeadDecryptionError, decrypt, encrypt
 from app.core.notify.dispatcher import NotificationDispatcher
 from app.core.notify.ports import NotificationKind, NotificationMessage
@@ -719,4 +728,111 @@ async def delete_site(
     return {
         "ok": True,
         "data": {"status": site.status, "purge_after": purge_after.isoformat()},
+    }
+
+
+# ── keywords (SEO) — spec 03_keywords.md ──────────────────────────────────────
+
+
+def _host_index_html(state: Any, host: str) -> str | None:
+    """The site's served ``index.html`` string, for first-time keyword parsing."""
+    for host_attr, files_attr in _STATIC_SITE_STATE:
+        if getattr(state, host_attr, None) == host:
+            entry = (getattr(state, files_attr, {}) or {}).get("index.html")
+            if entry is not None and isinstance(entry[0], str):
+                return entry[0]
+    return None
+
+
+def _apply_keywords_to_host(state: Any, host: str, groups: dict[str, list[str]]) -> None:
+    """Write the keyword set into the live served page's ``<meta keywords>``
+    (in-process; startup re-applies from the DB so it survives restarts).
+    Layout-neutral — only the meta tag changes."""
+    for host_attr, files_attr in _STATIC_SITE_STATE:
+        if getattr(state, host_attr, None) == host:
+            files = getattr(state, files_attr, {}) or {}
+            entry = files.get("index.html")
+            if entry is not None and isinstance(entry[0], str):
+                files["index.html"] = (apply_keywords_to_html(entry[0], groups), entry[1])
+                setattr(state, files_attr, files)
+            return
+
+
+def _keywords_payload(rec: dict[str, Any]) -> dict[str, Any]:
+    groups = rec.get("groups") or {}
+    return {
+        "groups": {k: list(groups.get(k, [])) for k in GROUP_KEYS},
+        "updated_at": rec.get("updated_at"),
+        "source_rev": rec.get("source_rev"),
+    }
+
+
+@router.get("/keywords")
+async def get_keywords(
+    request: Request,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """4 content groups for the session's site. Primary fill: if nothing is
+    stored yet, parse the site's live page (Title/H1 → main, H2 → h2, meta
+    keywords → text, blog empty) so the client sees what's really on the site."""
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    settings: dict[str, Any] = site.settings or {}
+    rec = settings.get("keywords")
+    if isinstance(rec, dict) and isinstance(rec.get("groups"), dict):
+        return {"ok": True, "data": _keywords_payload(rec)}
+
+    html = _host_index_html(request.app.state, _site_host(site))
+    groups = parse_keywords_from_html(html) if html else empty_groups()
+    new_rec = {
+        "groups": groups,
+        "updated_at": datetime.now(UTC).isoformat(),
+        "source_rev": source_rev(groups),
+    }
+    site.settings = {**settings, "keywords": new_rec}
+    await session.commit()
+    return {"ok": True, "data": _keywords_payload(new_rec)}
+
+
+class _KeywordsBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    groups: dict[str, list[str]]
+
+
+@router.put("/keywords")
+async def put_keywords(
+    body: _KeywordsBody,
+    request: Request,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """Save the 4 groups and apply them to the live site (layout-neutral: the
+    page's keywords meta). Server-side sanitize: trim/dedup/cap."""
+    groups = sanitize_groups(dict(body.groups))
+    rec = {
+        "groups": groups,
+        "updated_at": datetime.now(UTC).isoformat(),
+        "source_rev": source_rev(groups),
+    }
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    site.settings = {**(site.settings or {}), "keywords": rec}
+    await session.commit()
+    # apply to the live served page in-process (startup re-applies from DB)
+    _apply_keywords_to_host(request.app.state, _site_host(site), groups)
+    return {"ok": True, "data": _keywords_payload(rec)}
+
+
+@router.get("/keywords/minus")
+async def get_minus_words(
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """Read-only minus-words for Yandex.Direct, generated per niche. NOT written
+    to the site — the client copies them into the ad campaign."""
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    niche = (site.settings or {}).get("niche")
+    words = generate_minus_words(niche if isinstance(niche, str) else None)
+    return {
+        "ok": True,
+        "data": {"words": words, "generated_at": datetime.now(UTC).isoformat()},
     }

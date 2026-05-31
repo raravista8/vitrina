@@ -301,6 +301,48 @@ async def _lifespan(app: FastAPI) -> Any:
     except Exception as exc:  # never block startup on the probe
         log.warning("purged_hosts_probe_failed", error=str(exc))
 
+    # Re-apply owner-edited SEO keywords (client ЛК «Ключевые слова», LK5) to the
+    # served pages so a `PUT /api/lk/keywords` survives api restarts (it writes
+    # the page's <meta keywords> in-process; the source of truth is
+    # Site.settings['keywords']). Runs AFTER the purge probe so purged hosts
+    # (files={}) are skipped. Best-effort — never block startup.
+    try:
+        from sqlalchemy import select as _select
+
+        from app.core.keywords import GROUP_KEYS, apply_keywords_to_html
+        from app.infrastructure.postgres.engine import get_sessionmaker
+        from app.infrastructure.postgres.models import Site as _Site
+
+        _host_attr = {
+            app.state.milreview_host: "milreview_files",
+            app.state.elektrik_host: "elektrik_files",
+        }
+        _sm = await get_sessionmaker()
+        async with _sm() as _s:
+            _rows = (
+                await _s.execute(_select(_Site.subdomain, _Site.custom_domain, _Site.settings))
+            ).all()
+        _applied = 0
+        for _sub, _custom, _st in _rows:
+            _kw = (_st or {}).get("keywords")
+            if not (isinstance(_kw, dict) and isinstance(_kw.get("groups"), dict)):
+                continue
+            _attr = _host_attr.get(_custom or f"{_sub}.{settings.sites_base_domain}")
+            if _attr is None:
+                continue
+            _files = getattr(app.state, _attr, {}) or {}
+            _entry = _files.get("index.html")
+            if _entry is None or not isinstance(_entry[0], str):
+                continue
+            _groups = {k: list(_kw["groups"].get(k, [])) for k in GROUP_KEYS}
+            _files["index.html"] = (apply_keywords_to_html(_entry[0], _groups), _entry[1])
+            setattr(app.state, _attr, _files)
+            _applied += 1
+        if _applied:
+            log.info("keywords_reapplied", sites=_applied)
+    except Exception as exc:  # never block startup on the probe
+        log.warning("keywords_reapply_failed", error=str(exc))
+
     # Admin session store (T2.1). Disabled when Redis is unavailable —
     # /admin/login then 503s instead of letting users in without sessions.
     from app.core.auth.customer import CustomerSessionStore

@@ -92,7 +92,11 @@ async def seeded(db_session, fernet):  # type: ignore[no-untyped-def]
         subdomain="elektrik-spb",
         source_type="website",
         status="published",
-        settings={"display_name": "Электромонтаж", "lead_schema": _LEAD_SCHEMA},
+        settings={
+            "display_name": "Электромонтаж",
+            "niche": "electrician",
+            "lead_schema": _LEAD_SCHEMA,
+        },
     )
     db_session.add(site)
     await db_session.flush()
@@ -149,6 +153,20 @@ async def app(db_session, fernet) -> AsyncIterator[FastAPI]:  # type: ignore[no-
         yield db_session
 
     fastapi_app.state.redis = _FakeRedis()
+    # static-site host + served page (LK5 keyword parse/apply targets this)
+    fastapi_app.state.milreview_host = "milreview.samosite.online"
+    fastapi_app.state.elektrik_host = "elektrik-spb.samosite.online"
+    fastapi_app.state.milreview_files = {}
+    fastapi_app.state.elektrik_files = {
+        "index.html": (
+            "<html><head>"
+            "<title>Электромонтаж под ключ в СПб — электрик</title>"
+            '<meta name="keywords" content="электрик спб, замена проводки" />'
+            "</head><body><h1>Электромонтаж под ключ в СПб</h1>"
+            "<h2>Электромонтажные работы в СПб — полный спектр</h2></body></html>",
+            "text/html; charset=utf-8",
+        )
+    }
     fastapi_app.state.customer_session_store = CustomerSessionStore(
         fastapi_app.state.redis,
         secret_key="test-secret",  # pragma: allowlist secret
@@ -460,3 +478,73 @@ async def test_purge_worker_noop_within_grace(
     assert (
         await db_session.execute(select(Site).where(Site.id == site.id))
     ).scalar_one_or_none() is not None
+
+
+# ── LK5: keywords (SEO) ───────────────────────────────────────────────────────
+
+
+async def test_keywords_get_parses_from_live_site(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/lk/keywords")
+    assert r.status_code == 200
+    d = r.json()["data"]
+    assert set(d["groups"]) == {"main", "h2", "text", "blog"}
+    # main from Title/H1, h2 from heading, text from the page's <meta keywords>
+    assert any("Электромонтаж под ключ в СПб" in p for p in d["groups"]["main"])
+    assert any("Электромонтажные работы в СПб" in p for p in d["groups"]["h2"])
+    assert "электрик спб" in d["groups"]["text"]
+    assert d["groups"]["blog"] == []
+    assert d["source_rev"]
+
+
+async def test_keywords_get_requires_session(app: FastAPI) -> None:
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
+        r = await ac.get("/api/lk/keywords")
+    assert r.status_code == 401
+
+
+async def test_keywords_put_saves_sanitizes_and_applies(
+    client: httpx.AsyncClient,
+    app: FastAPI,
+) -> None:
+    body = {
+        "groups": {
+            "main": ["  Электрик СПб  ", "электрик спб"],  # dup (case/space) → 1
+            "h2": ["замена проводки"],
+            "text": ["вызов электрика на дом"],
+            "blog": [],
+            "evil": ["ignored"],  # unknown key dropped
+        }
+    }
+    r = await client.put("/api/lk/keywords", json=body)
+    assert r.status_code == 200
+    d = r.json()["data"]
+    assert d["groups"]["main"] == ["Электрик СПб"]
+    assert "evil" not in d["groups"]
+    # applied to the live served page's <meta keywords> (layout-neutral)
+    html = app.state.elektrik_files["index.html"][0]
+    meta = html.split('name="keywords" content="')[1].split('"')[0]
+    assert "вызов электрика на дом" in meta
+    assert "замена проводки" in meta
+    # visible Title untouched
+    assert "<title>Электромонтаж под ключ в СПб — электрик</title>" in html
+    # round-trips: a subsequent GET returns the stored groups (not a re-parse)
+    r2 = await client.get("/api/lk/keywords")
+    assert r2.json()["data"]["groups"]["text"] == ["вызов электрика на дом"]
+
+
+async def test_keywords_minus_is_per_niche_readonly(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/lk/keywords/minus")
+    assert r.status_code == 200
+    d = r.json()["data"]
+    assert "вакансии" in d["words"]
+    assert "работа" in d["words"]
+    # seeded site niche=electrician → niche terms present
+    assert "кабель купить" in d["words"]
+    assert "удостоверение" in d["words"]
+    assert d["generated_at"]
+    # no write endpoint
+    assert (await client.put("/api/lk/keywords/minus", json={"words": []})).status_code in (
+        405,
+        404,
+    )
