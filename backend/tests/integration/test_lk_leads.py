@@ -21,6 +21,7 @@ from app.api.dependencies import (
     get_session,
     require_admin,
 )
+from app.core.auth.admin import hash_password, verify_password
 from app.core.auth.customer import CustomerSessionStore
 from app.core.leads.encryption import encrypt
 from app.core.notify.dispatcher import NotificationDispatcher
@@ -41,6 +42,7 @@ class _FakeRedis:
 
     def __init__(self) -> None:
         self.kv: dict[str, bytes] = {}
+        self.counters: dict[str, int] = {}
 
     async def set(self, key, value, ex=None):  # type: ignore[no-untyped-def]
         self.kv[key] = value if isinstance(value, bytes) else str(value).encode()
@@ -52,6 +54,13 @@ class _FakeRedis:
     async def delete(self, *keys):  # type: ignore[no-untyped-def]
         for k in keys:
             self.kv.pop(k, None)
+        return True
+
+    async def incr(self, key):  # type: ignore[no-untyped-def]
+        self.counters[key] = self.counters.get(key, 0) + 1
+        return self.counters[key]
+
+    async def expire(self, key, seconds):  # type: ignore[no-untyped-def]
         return True
 
     async def ping(self) -> bool:
@@ -66,7 +75,12 @@ async def fernet() -> MultiFernet:
 @pytest_asyncio.fixture
 async def seeded(db_session, fernet):  # type: ignore[no-untyped-def]
     # owner + their site (with a per-site lead_schema)
-    owner = User(contact_type="email", contact_value="owner@elektrik.test", login="elektrik-spb")
+    owner = User(
+        contact_type="email",
+        contact_value="owner@elektrik.test",
+        login="elektrik-spb",
+        password_hash=hash_password("oldpass123"),  # pragma: allowlist secret
+    )
     db_session.add(owner)
     await db_session.flush()
     site = Site(
@@ -278,3 +292,76 @@ async def test_change_request_flow_and_founder_sync(client: httpx.AsyncClient) -
 async def test_change_request_too_short_422(client: httpx.AsyncClient) -> None:
     r = await client.post("/api/lk/change-requests", json={"text": "hi"})
     assert r.status_code == 422
+
+
+# ── PR-LK3: settings + billing ────────────────────────────────────────────────
+
+
+async def test_settings_get_and_contacts(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/lk/settings")
+    assert r.status_code == 200, r.text
+    assert r.json()["data"]["site"]["domain"] == "elektrik-spb.samosite.online"
+
+    save = await client.post(
+        "/api/lk/settings/contacts",
+        json={
+            "person": "Сергей",
+            "phone": "+7 (921) 111-22-33",
+            "email": "s@example.ru",
+            "telegram": "sergey_e",
+            "zone": "СПб и Ленобласть",
+        },
+    )
+    assert save.status_code == 200, save.text
+    c = save.json()["data"]["contacts"]
+    assert c["phone"] == "+79211112233"  # normalised E.164
+    assert c["telegram"] == "@sergey_e"
+    # persisted → GET reflects it
+    again = await client.get("/api/lk/settings")
+    assert again.json()["data"]["contacts"]["person"] == "Сергей"
+
+
+async def test_contacts_validation_400(client: httpx.AsyncClient) -> None:
+    r = await client.post(
+        "/api/lk/settings/contacts",
+        json={"person": "", "phone": "123", "email": "nope", "telegram": "ok", "zone": ""},
+    )
+    assert r.status_code == 400
+    body = r.json()
+    assert body["ok"] is False
+    assert body["error"] == "validation"
+    assert {"person", "phone", "email", "telegram", "zone"} == set(body["fields"])
+
+
+async def test_notifications(client: httpx.AsyncClient) -> None:
+    r = await client.post("/api/lk/settings/notifications", json={"tg": False, "email": True})
+    assert r.status_code == 200
+    assert r.json()["data"]["notifications"] == {"tg": False, "email": True}
+
+
+async def test_password_change(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+    seeded,  # type: ignore[no-untyped-def]
+) -> None:
+    owner, _s, _l, _o = seeded
+    bad = await client.post("/api/lk/password", json={"current": "wrong", "next": "newpass456"})
+    assert bad.status_code == 400
+    ok = await client.post("/api/lk/password", json={"current": "oldpass123", "next": "newpass456"})
+    assert ok.status_code == 200
+    await db_session.refresh(owner)
+    assert verify_password("newpass456", owner.password_hash)
+
+
+async def test_password_too_short_422(client: httpx.AsyncClient) -> None:
+    r = await client.post("/api/lk/password", json={"current": "oldpass123", "next": "short"})
+    assert r.status_code == 422
+
+
+async def test_billing_free_stub(client: httpx.AsyncClient) -> None:
+    r = await client.get("/api/lk/billing")
+    assert r.status_code == 200
+    d = r.json()["data"]
+    assert d["free"] is True
+    assert d["method"] is None
+    assert d["history"] == []
