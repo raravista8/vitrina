@@ -1,0 +1,24 @@
+{% extends "_layout.html.j2" %}
+{% block title %}{{ report.title }} — {{ site.title }}{% endblock %}
+{% block description %}{{ report.title }}{% endblock %}
+{% block canonical_path %}report-{{ report.slug }}.html{% endblock %}
+{% set active = 'reports' %}
+{% block head_extra %}<script type="application/ld+json">{{ jsonld_article | tojson }}</script>{% endblock %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Главная</a> / <a href="reports.html">Отчёты</a></div>
+    <div class="eyebrow">Отчёт{% if report.road %} · {{ report.road }}{% endif %}</div>
+    <h1>{{ report.title | nbsp }}</h1>
+  </div>
+</section>
+
+<section class="content">
+  <div class="wrap-narrow">
+    <div id="report-body">{{ report.body | rich }}</div>
+    <div class="rule-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 9-9 9-9-9z"/></svg></div>
+    <a class="btn btn-ghost" href="reports.html">← Все отчёты</a>
+  </div>
+</section>
+{% endblock %}

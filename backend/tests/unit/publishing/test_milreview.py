@@ -167,10 +167,10 @@ def test_signaling_aspects_present(site):
     assert "Два жёлтых огня" in page
 
 
-def test_signaling_materials_link_to_real_isi(site):
+def test_signaling_materials_present_non_linking(site):
     page = _html(site, "signaling.html")
-    assert "/isi/" in page  # material cards point at the real interactive isi pages
-    assert 'class="idx-card" href="#"' not in page  # no dead canon links
+    assert "Путевой пост примыкания" in page  # material cards still informative
+    assert 'class="idx-card" href' not in page  # cards are non-linking (no isi external)
 
 
 def test_doc_pages_rendered(site):
@@ -187,10 +187,47 @@ def test_docs_table_and_news_link_to_doc_pages(site):
     assert "doc-roszheldor_07_316.html" in _html(site, "index.html")  # news links to it
 
 
-def test_reports_entries_are_real_external(site):
+def test_reports_entries_internal(site):
     page = _html(site, "reports.html")
     assert "Каламбака" in page  # real travelogue, not a fabricated station report
-    assert "milreview.ru/events/" in page
+    assert "report-kalambaka.html" in page  # links to the internal report page
+
+
+def test_report_pages_rendered(site):
+    page = _html(site, "report-port-aventura.html")
+    assert "Салоу" in page or "Renfe" in page or "Каталони" in page  # real article text
+    assert f'<link rel="canonical" href="{BASE_URL}/report-port-aventura.html"' in page
+    assert '"@type": "Article"' in page or '"@type":"Article"' in page
+
+
+def test_archive_pages_rendered(site):
+    page = _html(site, "news-2018.html")
+    assert "Архив новостей за 2018 год" in page
+    assert 'class="chron-row"' in page  # dated chronicle rows
+    # archive links cross-navigate internally
+    assert "news-2017.html" in page
+
+
+def test_no_search_box(site):
+    page = _html(site, "index.html")
+    assert "nav-search" not in page
+    assert 'type="search"' not in page
+
+
+def test_no_external_milreview_page_links(site):
+    # The whole point: nothing anchors to a PAGE on milreview.ru. (Image src,
+    # the contact mailto, and brand text are allowed — they aren't page links.)
+    import re as _re
+
+    anchor_href = _re.compile(r'<a\b[^>]*\shref="([^"]*)"')
+    for key, (content_str, _ct) in site.items():
+        if not key.endswith(".html"):
+            continue
+        for href in anchor_href.findall(content_str):
+            if href.startswith("mailto:"):
+                continue
+            assert "milreview.ru" not in href, f"milreview page link in {key}: {href}"
+            assert "railway.html?id=" not in href, f"railway page link in {key}: {href}"
 
 
 # ── invariants: no watermark, no «милитари» ────────────────────────────────────

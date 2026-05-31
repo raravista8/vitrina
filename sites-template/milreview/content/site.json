@@ -77,38 +77,31 @@
     "archive_links": [
       {
         "label": "Архив новостей за 2024 год",
-        "href": "https://milreview.ru/news2024.html",
-        "external": true
+        "href": "news-2024.html"
       },
       {
-        "label": "Архив за 2022–2023 годы",
-        "href": "https://milreview.ru/news2022.html",
-        "external": true
+        "label": "Архив новостей за 2022–2023 годы",
+        "href": "news-2022.html"
       },
       {
-        "label": "Архив за 2021 год",
-        "href": "https://milreview.ru/news2021.html",
-        "external": true
+        "label": "Архив новостей за 2021 год",
+        "href": "news-2021.html"
       },
       {
         "label": "2020",
-        "href": "https://milreview.ru/news2020.html",
-        "external": true
+        "href": "news-2020.html"
       },
       {
         "label": "2019",
-        "href": "https://milreview.ru/news2019.html",
-        "external": true
+        "href": "news-2019.html"
       },
       {
         "label": "2018",
-        "href": "https://milreview.ru/news2018.html",
-        "external": true
+        "href": "news-2018.html"
       },
       {
         "label": "2017",
-        "href": "https://milreview.ru/news2017.html",
-        "external": true
+        "href": "news-2017.html"
       }
     ]
   },
