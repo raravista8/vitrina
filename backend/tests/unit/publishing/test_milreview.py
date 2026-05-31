@@ -262,10 +262,14 @@ def test_no_external_milreview_page_links(site):
 # ── invariants: no watermark, no «милитари» ────────────────────────────────────
 
 
-def test_no_watermark(site):
+def test_footer_attribution_not_ref_watermark(site):
+    # milreview credits Самосайт via a plain footer link (founder request), but it
+    # must NOT be the free-plan customer-site watermark: no ?ref= PLG tag, no
+    # uppercase «СДЕЛАНО НА САМОСАЙТЕ» ribbon.
     for key, (content_str, _ct) in site.items():
         if key.endswith(".html"):
-            assert "Сделано на Самосайте" not in content_str, f"watermark leaked into {key}"
+            assert "samosite.online?ref=" not in content_str, f"ref-watermark in {key}"
+            assert "СДЕЛАНО НА САМОСАЙТЕ" not in content_str, f"uppercase ribbon in {key}"
 
 
 def test_no_military_seals(site):
@@ -280,6 +284,14 @@ def test_login_link_present(site):
     page = _html(site, "index.html")
     assert 'href="https://samosite.online/login"' in page
     assert ">Войти<" in page
+
+
+def test_made_on_footer_link(site):
+    # footer attribution → samosite.online (brand «Самосайте», prepositional case)
+    for key in ("index.html", "railmap.html", "line-13.html"):
+        page = _html(site, key)
+        assert 'href="https://samosite.online"' in page
+        assert "Сделано на Самосайте" in page
 
 
 # ── typography ─────────────────────────────────────────────────────────────────
