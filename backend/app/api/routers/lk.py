@@ -15,12 +15,14 @@ PR-LK2…LK4. PII is decrypted only here, only for the authenticated owner.
 
 from __future__ import annotations
 
+import re
 from datetime import date
 from typing import Annotated, Any
 from uuid import UUID
 
 from cryptography.fernet import MultiFernet
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,6 +34,7 @@ from app.api.dependencies import (
     get_session,
     require_customer_session,
 )
+from app.core.auth.admin import hash_password, verify_password
 from app.core.leads.encryption import LeadDecryptionError, decrypt, encrypt
 from app.core.notify.dispatcher import NotificationDispatcher
 from app.core.notify.ports import NotificationKind, NotificationMessage
@@ -41,8 +44,24 @@ from app.infrastructure.postgres.models import (
     Lead,
     LeadPhoto,
     Site,
+    User,
 )
 from app.utils.logging import get_logger
+
+# Settings-form validation (mirrors the client; mandatory server-side)
+_PHONE_RE = re.compile(r"^\+?[0-9()\s-]{10,18}$")
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+_TG_RE = re.compile(r"^@?[a-z0-9_]{4,32}$")
+
+
+def _norm_phone(phone: str) -> str:
+    digits = re.sub(r"\D", "", phone)
+    if len(digits) == 11 and digits[0] in "78":
+        return "+7" + digits[1:]
+    if len(digits) == 10:
+        return "+7" + digits
+    return "+" + digits
+
 
 router = APIRouter(prefix="/api/lk", tags=["lk"])
 
@@ -348,5 +367,167 @@ async def list_change_requests(
                 }
                 for r in rows
             ]
+        },
+    }
+
+
+# ── settings (contacts / notifications / password) ────────────────────────────
+
+_DEFAULT_NOTIFICATIONS = {"tg": True, "email": True}
+
+
+@router.get("/settings")
+async def get_settings_view(
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    s: dict[str, Any] = site.settings or {}
+    contacts: dict[str, Any] = s.get("contacts", {})
+    return {
+        "ok": True,
+        "data": {
+            "site": {
+                "name": s.get("display_name") or site.subdomain,
+                "domain": site.custom_domain or f"{site.subdomain}.samosite.online",
+                "status": site.status,
+                "published_at": site.published_at.isoformat() if site.published_at else None,
+            },
+            "contacts": {
+                "person": contacts.get("person", ""),
+                "phone": contacts.get("phone", ""),
+                "email": contacts.get("email", ""),
+                "telegram": contacts.get("telegram", ""),
+                "zone": contacts.get("zone", ""),
+            },
+            "notifications": s.get("notifications", _DEFAULT_NOTIFICATIONS),
+        },
+    }
+
+
+class _ContactsBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    person: Annotated[str, Field(max_length=120)] = ""
+    phone: Annotated[str, Field(max_length=32)] = ""
+    email: Annotated[str, Field(max_length=200)] = ""
+    telegram: Annotated[str, Field(max_length=40)] = ""
+    zone: Annotated[str, Field(max_length=200)] = ""
+
+
+@router.post("/settings/contacts")
+async def post_contacts(
+    body: _ContactsBody,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> JSONResponse:
+    fields: list[str] = []
+    if not body.person.strip():
+        fields.append("person")
+    if not _PHONE_RE.match(body.phone.strip()):
+        fields.append("phone")
+    if not _EMAIL_RE.match(body.email.strip()):
+        fields.append("email")
+    if body.telegram.strip() and not _TG_RE.match(body.telegram.strip()):
+        fields.append("telegram")
+    if not body.zone.strip():
+        fields.append("zone")
+    if fields:
+        # Direct JSONResponse (not HTTPException) so the per-field list survives
+        # the global error handler, which collapses HTTPException → {ok,error}.
+        # Mirrors the elektrik lead endpoint's _err shape for UI consistency.
+        return JSONResponse(
+            status_code=400,
+            content={"ok": False, "error": "validation", "fields": fields},
+        )
+
+    tg = body.telegram.strip()
+    contacts = {
+        "person": body.person.strip(),
+        "phone": _norm_phone(body.phone),
+        "email": body.email.strip(),
+        "telegram": ("@" + tg.lstrip("@")) if tg else "",
+        "zone": body.zone.strip(),
+    }
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    site.settings = {**(site.settings or {}), "contacts": contacts}
+    await session.commit()
+    # NB: the elektrik site re-renders contacts from this on api startup; a live
+    # re-render hook lands when the customer-site SSR pipeline is wired.
+    return JSONResponse(content={"ok": True, "data": {"contacts": contacts}})
+
+
+class _NotificationsBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    tg: bool = True
+    email: bool = True
+
+
+@router.post("/settings/notifications")
+async def post_notifications(
+    body: _NotificationsBody,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    site = (await session.execute(select(Site).where(Site.id == ctx.site_id))).scalar_one()
+    notifications = {"tg": body.tg, "email": body.email}
+    site.settings = {**(site.settings or {}), "notifications": notifications}
+    await session.commit()
+    return {"ok": True, "data": {"notifications": notifications}}
+
+
+class _PasswordBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    current: str = Field(min_length=1, max_length=256)
+    next: Annotated[str, Field(min_length=8, max_length=256)]
+
+
+@router.post("/password")
+async def post_password(
+    body: _PasswordBody,
+    request: Request,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    # light per-user rate-limit (best-effort; auth already required)
+    redis = getattr(request.app.state, "redis", None)
+    if redis is not None:
+        key = f"lk_pwd_change:{ctx.user_id}"
+        n = await redis.incr(key)
+        if n == 1:
+            await redis.expire(key, 3600)
+        if n > 5:
+            raise HTTPException(status_code=429, detail="too_many_attempts")
+
+    user = (await session.execute(select(User).where(User.id == ctx.user_id))).scalar_one()
+    if not user.password_hash or not verify_password(body.current, user.password_hash):
+        raise HTTPException(status_code=400, detail="invalid_current_password")
+    user.password_hash = hash_password(body.next)
+    await session.commit()
+    # NB: other sessions stay valid until TTL — CustomerSessionStore is keyed by
+    # session_id, not user_id, so per-user revocation isn't available yet.
+    return {"ok": True}
+
+
+# ── billing — free-period stub ────────────────────────────────────────────────
+
+
+@router.get("/billing")
+async def get_billing(
+    _ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+) -> dict[str, Any]:
+    """Launch state: free period. Paid mode (method/nextDate/history) turns on
+    when ЮKassa billing is wired — the UI already renders both from this shape."""
+    return {
+        "ok": True,
+        "data": {
+            "free": True,
+            "planName": "Личный",
+            "price": "690 ₽",
+            "period": "мес",
+            "status": "free",
+            "nextDate": None,
+            "nextAmount": None,
+            "method": None,
+            "history": [],
         },
     }
