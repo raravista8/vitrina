@@ -5,39 +5,14 @@
 {% set active = 'railmap' %}
 
 {% block main %}
+{% set ns = namespace(total=0) %}
+{% for g in directory %}{% set ns.total = ns.total + (g['items'] | length) %}{% endfor %}
 <section class="page-head">
   <div class="wrap">
     <div class="breadcrumb"><a href="index.html">Главная</a> / Схема</div>
     <div class="eyebrow">Раздел 01</div>
     <h1>Карта линий и схемы станций</h1>
-    <p class="ph-sub">{{ "Интерактивная карта железнодорожных линий бывшего СССР. По щелчку на станции или разъезде открывается схема путевого развития, фотографии и историческая справка." | nbsp }}</p>
-  </div>
-</section>
-
-<section class="content" style="padding-bottom:0">
-  <div class="wrap">
-    <div class="map-frame">
-      <div class="map-canvas" id="map">
-        <div style="position:absolute;inset:0">
-          <svg viewBox="0 0 1000 560" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
-            <path d="M60 460 L300 360 L470 380 L640 240 L820 200 L960 120" fill="none" stroke="#1f3d2b" stroke-width="2.5" opacity="0.5"/>
-            <path d="M120 120 L320 180 L470 380" fill="none" stroke="#b5552f" stroke-width="2.5" opacity="0.55"/>
-            <path d="M640 240 L700 420 L880 470" fill="none" stroke="#1f3d2b" stroke-width="2.5" stroke-dasharray="6 6" opacity="0.4"/>
-            <g fill="#1f3d2b">
-              <circle cx="300" cy="360" r="5"/><circle cx="470" cy="380" r="6"/><circle cx="640" cy="240" r="6"/><circle cx="820" cy="200" r="5"/><circle cx="320" cy="180" r="4"/><circle cx="700" cy="420" r="4"/>
-            </g>
-          </svg>
-        </div>
-        <div style="position:relative;background:rgba(246,243,236,0.86);padding:14px 18px;border:1px solid var(--line)">интерактивная карта линий · подключается из источника</div>
-      </div>
-      <div class="map-legend">
-        <span class="lg"><span class="sw" style="background:#1f3d2b"></span> действующая линия</span>
-        <span class="lg"><span class="sw" style="background:#1f3d2b;opacity:.4;background-image:repeating-linear-gradient(90deg,#1f3d2b 0 4px,transparent 4px 8px)"></span> закрытая / разобранная</span>
-        <span class="lg"><span class="sw" style="background:#b5552f"></span> в работе на сайте</span>
-        <span class="lg"><span style="width:9px;height:9px;border-radius:50%;background:#1f3d2b;display:inline-block"></span> станция</span>
-        <span class="lg"><span style="width:7px;height:7px;border-radius:50%;background:#847c6d;display:inline-block"></span> разъезд / о.п.</span>
-      </div>
-    </div>
+    <p class="ph-sub">{{ "Справочник станций, разъездов и блок-постов бывшего СССР. Отфильтруйте по дороге и типу или найдите по названию — по щелчку открывается схема путевого развития, фотографии и историческая справка." | nbsp }}</p>
   </div>
 </section>
 
@@ -45,20 +20,87 @@
   <div class="wrap">
     <div class="section-head">
       <div><div class="eyebrow" style="margin-bottom:10px">Справочник</div><h2>Станции и раздельные пункты</h2></div>
-      <div class="sh-meta">схемы путевого развития · по дорогам</div>
+      <div class="sh-meta" id="dir-count">показано: {{ ns.total }} из {{ ns.total }}</div>
     </div>
+
+    <div class="filters" id="dir-filters">
+      <span class="fl-label">Дорога</span>
+      <button class="chip active" data-f="road" data-v="all">Все</button>
+      {% for g in directory %}<button class="chip" data-f="road" data-v="{{ g.road }}">{{ g.road }}</button>{% endfor %}
+
+      <span class="fl-label" style="margin-left:14px">Тип</span>
+      <button class="chip active" data-f="kind" data-v="all">Все</button>
+      <button class="chip" data-f="kind" data-v="ст.">Станции</button>
+      <button class="chip" data-f="kind" data-v="рзд.">Разъезды</button>
+      <button class="chip" data-f="kind" data-v="о.п.">Остановочные</button>
+
+      <input class="fl-search" id="dir-search" type="search" placeholder="Найти станцию…" aria-label="Поиск станции" style="margin-left:14px" />
+    </div>
+
     <div class="road-cols" id="dir">
       {% for g in directory %}
-      <div class="road-col">
+      <div class="road-col" data-road="{{ g.road }}">
         <div class="road-col-head"><h3>{{ g.road }}</h3><span>{{ g.region }}</span></div>
         <ul class="st-list">
           {% for item in g['items'] %}
-          <li><a href="{{ item[2] | station_url }}"><span class="st-kind">{{ item[1] }}</span> <span class="st-name">{{ item[0] }}</span></a></li>
+          <li data-name="{{ item[0] | lower }}" data-kind="{{ item[1] }}"><a href="{{ item[2] | station_url }}"><span class="st-kind">{{ item[1] }}</span> <span class="st-name">{{ item[0] }}</span></a></li>
           {% endfor %}
         </ul>
       </div>
       {% endfor %}
     </div>
+    <div class="dir-empty" id="dir-empty" style="display:none">По выбранным фильтрам станций не найдено</div>
   </div>
 </section>
+{% endblock %}
+
+{% block body_end %}
+<script>
+// Interactive station directory. Rows are server-rendered (crawlable); JS only
+// shows/hides by road + kind + name search and keeps the "показано N из M" count.
+(function () {
+  var state = { road: 'all', kind: 'all', q: '' };
+  var cols = [].slice.call(document.querySelectorAll('#dir .road-col'));
+  var items = [].slice.call(document.querySelectorAll('#dir .st-list li'));
+  var countEl = document.getElementById('dir-count');
+  var emptyEl = document.getElementById('dir-empty');
+  var total = items.length;
+
+  function apply() {
+    var q = state.q.trim().toLowerCase();
+    var shown = 0;
+    items.forEach(function (li) {
+      var road = li.closest('.road-col').dataset.road;
+      var ok = (state.road === 'all' || road === state.road)
+        && (state.kind === 'all' || li.dataset.kind === state.kind)
+        && (q === '' || (li.dataset.name || '').indexOf(q) !== -1);
+      li.style.display = ok ? '' : 'none';
+      if (ok) shown++;
+    });
+    // hide a road column when none of its items are visible
+    cols.forEach(function (col) {
+      var any = [].slice.call(col.querySelectorAll('.st-list li'))
+        .some(function (li) { return li.style.display !== 'none'; });
+      col.style.display = any ? '' : 'none';
+    });
+    if (emptyEl) emptyEl.style.display = shown ? 'none' : '';
+    if (countEl) countEl.textContent = 'показано: ' + shown + ' из ' + total;
+  }
+
+  var filters = document.getElementById('dir-filters');
+  if (filters) filters.addEventListener('click', function (e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    var f = chip.dataset.f, v = chip.dataset.v;
+    state[f] = v;
+    document.querySelectorAll('.chip[data-f="' + f + '"]').forEach(function (c) {
+      c.classList.toggle('active', c === chip);
+    });
+    apply();
+  });
+  var search = document.getElementById('dir-search');
+  if (search) search.addEventListener('input', function (e) { state.q = e.target.value; apply(); });
+  apply();
+})();
+</script>
 {% endblock %}
