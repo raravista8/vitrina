@@ -485,8 +485,6 @@ sup.fn a { font-family: var(--f-mono); font-size: 0.7em; color: var(--terra-2); 
 .footer li { margin-bottom: 9px; }
 .footer a { color: rgba(255,255,255,0.72); font-size: 14px; }
 .footer a:hover { color: #fff; }
-.footer .counter { display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 8px 12px; font-family: var(--f-mono); font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 6px; }
-.footer .counter .ct-num { color: var(--terra); font-weight: 500; }
 .footer-base { border-top: 1px solid rgba(255,255,255,0.1); margin-top: clamp(30px,4vw,44px); padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: var(--f-mono); font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.03em; }
 .footer-base .made-on { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.03em; color: rgba(255,255,255,0.55); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 1px; }
 .footer-base .made-on:hover { color: #fff; border-bottom-color: #fff; }
