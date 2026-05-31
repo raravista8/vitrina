@@ -15,9 +15,15 @@ import pytest_asyncio
 from cryptography.fernet import Fernet, MultiFernet
 from fastapi import FastAPI
 
-from app.api.dependencies import get_lead_fernet, get_session
+from app.api.dependencies import (
+    get_lead_fernet,
+    get_notification_dispatcher,
+    get_session,
+    require_admin,
+)
 from app.core.auth.customer import CustomerSessionStore
 from app.core.leads.encryption import encrypt
+from app.core.notify.dispatcher import NotificationDispatcher
 from app.infrastructure.postgres.models import Lead, LeadPhoto, Site, User
 from app.main import create_app
 
@@ -131,6 +137,11 @@ async def app(db_session, fernet) -> AsyncIterator[FastAPI]:  # type: ignore[no-
     )
     fastapi_app.dependency_overrides[get_session] = _override_session
     fastapi_app.dependency_overrides[get_lead_fernet] = lambda: fernet
+    # change-request create needs a dispatcher; founder endpoints need an admin.
+    fastapi_app.dependency_overrides[get_notification_dispatcher] = lambda: NotificationDispatcher(
+        channels={}, founder_telegram_chat_id=None
+    )
+    fastapi_app.dependency_overrides[require_admin] = lambda: None
     try:
         yield fastapi_app
     finally:
@@ -211,3 +222,59 @@ async def test_no_cookie_401(app: FastAPI) -> None:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
         r = await c.get("/api/lk/site")
     assert r.status_code == 401
+
+
+# ── PR-LK2: status / note / change-requests ───────────────────────────────────
+
+
+async def test_set_status(client: httpx.AsyncClient, seeded) -> None:  # type: ignore[no-untyped-def]
+    _o, _s, lead, _other = seeded
+    r = await client.post(f"/api/lk/leads/{lead.id}/status", json={"status": "in_progress"})
+    assert r.status_code == 200, r.text
+    card = await client.get(f"/api/lk/leads/{lead.id}")
+    assert card.json()["data"]["status"] == "in_progress"
+    bad = await client.post(f"/api/lk/leads/{lead.id}/status", json={"status": "bogus"})
+    assert bad.status_code == 400
+
+
+async def test_set_note(client: httpx.AsyncClient, seeded) -> None:  # type: ignore[no-untyped-def]
+    _o, _s, lead, _other = seeded
+    r = await client.post(f"/api/lk/leads/{lead.id}/note", json={"note": "перезвонить вечером"})
+    assert r.status_code == 200
+    card = await client.get(f"/api/lk/leads/{lead.id}")
+    assert card.json()["data"]["note"] == "перезвонить вечером"
+
+
+async def test_change_request_flow_and_founder_sync(client: httpx.AsyncClient) -> None:
+    created = await client.post(
+        "/api/lk/change-requests", json={"text": "поменяйте телефон в шапке"}
+    )
+    assert created.status_code == 201, created.text
+    cr_id = created.json()["data"]["id"]
+
+    listed = await client.get("/api/lk/change-requests")
+    items = listed.json()["data"]["items"]
+    assert len(items) == 1
+    assert items[0]["id"] == cr_id
+    assert items[0]["status"] == "new"
+
+    # founder inbox sees it (admin dep overridden in the app fixture)
+    inbox = await client.get("/admin/api/change-requests")
+    assert inbox.status_code == 200
+    assert any(
+        it["id"] == cr_id and it["source"] == "lk_change_request"
+        for it in inbox.json()["data"]["items"]
+    )
+
+    # founder moves status → client sees the new status (sync)
+    upd = await client.post(
+        f"/admin/api/change-requests/{cr_id}/status", json={"status": "in_progress"}
+    )
+    assert upd.status_code == 200
+    again = await client.get("/api/lk/change-requests")
+    assert again.json()["data"]["items"][0]["status"] == "in_progress"
+
+
+async def test_change_request_too_short_422(client: httpx.AsyncClient) -> None:
+    r = await client.post("/api/lk/change-requests", json={"text": "hi"})
+    assert r.status_code == 422

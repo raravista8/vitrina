@@ -237,6 +237,35 @@ class LeadPhoto(UUIDPrimaryKey, Base):
     )
 
 
+CHANGE_REQUEST_STATUSES = ("new", "in_progress", "done")
+
+
+class ChangeRequest(UUIDPrimaryKey, Timestamped, Base):
+    """A client's edit request from the ЛК «Изменения» tab (migration 0016).
+    The client creates it (status ``new``); the founder moves status from the
+    admin inbox; the client sees the progress. ``source`` tags it in the inbox."""
+
+    __tablename__ = "change_request"
+
+    site_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("sites.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, server_default="new")
+    source: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default="lk_change_request"
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            f"status IN {CHANGE_REQUEST_STATUSES!r}",
+            name="change_request_status_valid",
+        ),
+    )
+
+
 # =============================================================================
 # events (analytics ingest, FR-? high-volume; BIGSERIAL not UUID)
 # =============================================================================

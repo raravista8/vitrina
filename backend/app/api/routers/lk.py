@@ -21,17 +21,28 @@ from uuid import UUID
 
 from cryptography.fernet import MultiFernet
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import (
     CustomerContext,
     get_lead_fernet,
+    get_notification_dispatcher,
     get_session,
     require_customer_session,
 )
-from app.core.leads.encryption import LeadDecryptionError, decrypt
-from app.infrastructure.postgres.models import LK_LEAD_STATUSES, Lead, LeadPhoto, Site
+from app.core.leads.encryption import LeadDecryptionError, decrypt, encrypt
+from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.notify.ports import NotificationKind, NotificationMessage
+from app.infrastructure.postgres.models import (
+    LK_LEAD_STATUSES,
+    ChangeRequest,
+    Lead,
+    LeadPhoto,
+    Site,
+)
+from app.utils.logging import get_logger
 
 router = APIRouter(prefix="/api/lk", tags=["lk"])
 
@@ -220,3 +231,122 @@ async def get_lead_photo(
         media_type=photo.mime,
         headers={"Cache-Control": "private, max-age=300"},
     )
+
+
+# ── lead writes (status / note) ───────────────────────────────────────────────
+
+
+class _StatusBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: str
+
+
+class _NoteBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    note: Annotated[str, Field(max_length=4000)] = ""
+
+
+async def _owned_lead(session: AsyncSession, lead_id: UUID, site_id: UUID) -> Lead:
+    lead = (
+        await session.execute(select(Lead).where(Lead.id == lead_id, Lead.site_id == site_id))
+    ).scalar_one_or_none()
+    if lead is None:
+        raise HTTPException(status_code=404, detail="lead_not_found")
+    return lead
+
+
+@router.post("/leads/{lead_id}/status")
+async def set_lead_status(
+    lead_id: UUID,
+    body: _StatusBody,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    if body.status not in LK_LEAD_STATUSES:
+        raise HTTPException(status_code=400, detail="invalid_status")
+    lead = await _owned_lead(session, lead_id, ctx.site_id)
+    lead.status = body.status
+    await session.commit()
+    return {"ok": True, "data": {"id": str(lead.id), "status": lead.status}}
+
+
+@router.post("/leads/{lead_id}/note")
+async def set_lead_note(
+    lead_id: UUID,
+    body: _NoteBody,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    fernet: Annotated[MultiFernet, Depends(get_lead_fernet)],
+) -> dict[str, Any]:
+    lead = await _owned_lead(session, lead_id, ctx.site_id)
+    note = body.note.strip()
+    lead.note_enc = encrypt(note, fernet=fernet) if note else None
+    await session.commit()
+    return {"ok": True, "data": {"id": str(lead.id)}}
+
+
+# ── change requests (→ founder inbox) ─────────────────────────────────────────
+
+
+class _ChangeRequestBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    text: Annotated[str, Field(min_length=5, max_length=4000)]
+
+
+@router.post("/change-requests", status_code=201)
+async def create_change_request(
+    body: _ChangeRequestBody,
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    notifier: Annotated[NotificationDispatcher, Depends(get_notification_dispatcher)],
+) -> dict[str, Any]:
+    cr = ChangeRequest(site_id=ctx.site_id, text=body.text.strip(), status="new")
+    session.add(cr)
+    await session.flush()
+    await session.commit()
+
+    # best-effort founder alert (delivery inert on this prod — TG/SMTP gap)
+    try:
+        await notifier.notify_founder(
+            kind=NotificationKind.application_received,
+            message=NotificationMessage(
+                title="✏️ Запрос правок из ЛК",
+                body=f"Сайт: {ctx.login}\n\n{body.text.strip()[:500]}\n\nID: {cr.id}",
+            ),
+        )
+    except Exception as exc:
+        get_logger("api.lk.change_request").warning("cr_notify_failed", error=str(exc))
+
+    return {"ok": True, "data": {"id": str(cr.id), "status": cr.status}}
+
+
+@router.get("/change-requests")
+async def list_change_requests(
+    ctx: Annotated[CustomerContext, Depends(require_customer_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    rows = (
+        (
+            await session.execute(
+                select(ChangeRequest)
+                .where(ChangeRequest.site_id == ctx.site_id)
+                .order_by(ChangeRequest.created_at.desc())
+            )
+        )
+        .scalars()
+        .all()
+    )
+    return {
+        "ok": True,
+        "data": {
+            "items": [
+                {
+                    "id": str(r.id),
+                    "text": r.text,
+                    "status": r.status,
+                    "created_at": r.created_at.isoformat(),
+                }
+                for r in rows
+            ]
+        },
+    }

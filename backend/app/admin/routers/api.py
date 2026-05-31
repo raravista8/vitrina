@@ -77,10 +77,12 @@ from app.core.leads.encryption import LeadDecryptionError
 from app.core.leads.encryption import decrypt as decrypt_lead_field
 from app.core.leads.encryption import decrypt as fernet_decrypt
 from app.infrastructure.postgres.models import (
+    CHANGE_REQUEST_STATUSES,
     AdminCredentials,
     Application,
     ApplicationPhoto,
     ApplicationTextFile,
+    ChangeRequest,
     Consent,
     Feedback,
     FeedbackSubmission,
@@ -1353,3 +1355,67 @@ def _ip_prefix(ip: str | None) -> str | None:
         return f"{parts[0]}.{parts[1]}.0.0/16"
     # IPv6 — keep first hextet pair.
     return ip.split(":")[0] + "::/32"
+
+
+# ---------------------------------------------------------------------------
+# Change requests (client ЛК «Изменения») — founder inbox + status control
+# ---------------------------------------------------------------------------
+
+
+class _ChangeRequestStatusBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: str
+
+
+@router.get("/change-requests", status_code=200)
+async def admin_api_change_requests(
+    _admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+    status: str | None = None,
+) -> dict[str, Any]:
+    """Founder inbox of client edit requests (source=lk_change_request), newest
+    first, with the requesting site's subdomain."""
+    stmt = (
+        select(ChangeRequest, Site.subdomain)
+        .join(Site, Site.id == ChangeRequest.site_id)
+        .order_by(ChangeRequest.created_at.desc())
+    )
+    if status:
+        stmt = stmt.where(ChangeRequest.status == status)
+    rows = (await session.execute(stmt)).all()
+    return _envelope_ok(
+        {
+            "items": [
+                {
+                    "id": str(cr.id),
+                    "site_id": str(cr.site_id),
+                    "subdomain": subdomain,
+                    "text": cr.text,
+                    "status": cr.status,
+                    "source": cr.source,
+                    "created_at": cr.created_at.isoformat(),
+                }
+                for cr, subdomain in rows
+            ]
+        }
+    )
+
+
+@router.post("/change-requests/{cr_id}/status", status_code=200)
+async def admin_api_change_request_status(
+    cr_id: uuid.UUID,
+    body: _ChangeRequestStatusBody,
+    _admin: Annotated[AdminSession, Depends(require_admin)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict[str, Any]:
+    """Founder moves a change-request's status; the client sees it in the ЛК."""
+    if body.status not in CHANGE_REQUEST_STATUSES:
+        raise HTTPException(status_code=400, detail="invalid_status")
+    cr = (
+        await session.execute(select(ChangeRequest).where(ChangeRequest.id == cr_id))
+    ).scalar_one_or_none()
+    if cr is None:
+        raise HTTPException(status_code=404, detail="change_request_not_found")
+    cr.status = body.status
+    await session.commit()
+    return _envelope_ok({"id": str(cr.id), "status": cr.status})
