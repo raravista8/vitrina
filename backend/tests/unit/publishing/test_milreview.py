@@ -135,6 +135,18 @@ def test_station_links_rewritten_everywhere(site):
     assert "station-1706.html" in _html(site, "railmap.html")
 
 
+def test_railmap_interactive_directory(site):
+    page = _html(site, "railmap.html")
+    # the fake placeholder map is replaced by a real interactive directory
+    assert "подключается из источника" not in page
+    assert 'id="dir-filters"' in page  # filter bar
+    assert 'id="dir-search"' in page  # live search
+    assert 'data-f="road"' in page
+    assert 'data-f="kind"' in page
+    assert "<li data-name=" in page  # filterable, server-rendered (crawlable) rows
+    assert "station-1706.html" in page  # rows still link to internal station pages
+
+
 def test_external_milreview_links_not_corrupted(site):
     # relink must NOT rewrite the external `railstation.html?id=` form into
     # `railstation-N.html` (negative-lookbehind regression).

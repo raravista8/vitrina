@@ -289,6 +289,14 @@ sup.fn a { font-family: var(--f-mono); font-size: 0.7em; color: var(--terra-2); 
   background: var(--paper-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23847c6d' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 11px center;
   color: var(--ink); border: 1px solid var(--line-2); appearance: none; -webkit-appearance: none;
 }
+.fl-search {
+  font-family: var(--f-body); font-size: 13px; padding: 7px 13px; border-radius: 2px;
+  background: var(--paper-card); color: var(--ink); border: 1px solid var(--line-2);
+  width: clamp(150px, 22vw, 240px); outline: none;
+}
+.fl-search:focus { border-color: var(--green-2); }
+.fl-search::placeholder { color: var(--ink-4); }
+.dir-empty { padding: 26px 0; font-family: var(--f-mono); font-size: 13px; color: var(--ink-3); }
 
 .chron { border-top: 1px solid var(--line-2); }
 .chron-row {
@@ -395,9 +403,6 @@ sup.fn a { font-family: var(--f-mono); font-size: 0.7em; color: var(--terra-2); 
   position: relative; display: grid; place-items: center;
   color: var(--ink-3); font-family: var(--f-mono); font-size: 13px; text-align: center;
 }
-.map-legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 13px; color: var(--ink-2); }
-.map-legend .lg { display: inline-flex; align-items: center; gap: 8px; }
-.map-legend .sw { width: 22px; height: 4px; border-radius: 2px; }
 
 /* events / research list */
 .entry-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--line-2); }
