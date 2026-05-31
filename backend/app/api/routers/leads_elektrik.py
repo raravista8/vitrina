@@ -111,13 +111,17 @@ async def post_elektrik_lead(
             status_code=202, content={"ok": True, "data": {"lead_id": str(site_id)}}
         )
 
-    # 2. Captcha — best-effort (skip only when not configured on this prod).
-    result = await captcha.verify(captcha_token, ip=ip)
-    if not result.is_valid and result.reason != "captcha_not_configured":
-        log.info("elektrik_lead_captcha_rejected", reason=result.reason)
-        return _err(
-            [], "Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова."
-        )
+    # 2. Captcha — best-effort. The elektrik landing ships NO SmartCaptcha widget,
+    # so the form sends an empty token → rely on honeypot + rate-limit. Only when
+    # a token is actually present (widget added later) do we verify it: a real
+    # rejection → 400; a not-configured server key still proceeds.
+    if captcha_token.strip():
+        result = await captcha.verify(captcha_token, ip=ip)
+        if not result.is_valid and result.reason != "captcha_not_configured":
+            log.info("elektrik_lead_captcha_rejected", reason=result.reason)
+            return _err(
+                [], "Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова."
+            )
 
     # 4. Validate
     fields: list[str] = []

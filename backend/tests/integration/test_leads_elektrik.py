@@ -257,6 +257,20 @@ async def test_owner_notified_masked(
     assert "Электрика под ключ" in body  # service surfaced
 
 
+async def test_empty_captcha_token_proceeds(
+    client: httpx.AsyncClient,
+    published_site,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """The live elektrik page has no SmartCaptcha widget → empty token; the lead
+    must still go through (honeypot + rate-limit guard), never 400 on captcha."""
+    resp = await client.post(
+        "/api/leads/elektrik", data=_fields(published_site.id, captcha_token="")
+    )
+    assert resp.status_code == 201, resp.text
+    assert len((await db_session.execute(select(Lead))).scalars().all()) == 1
+
+
 async def test_unknown_site_404(client: httpx.AsyncClient) -> None:
     resp = await client.post("/api/leads/elektrik", data=_fields(uuid.uuid4()))
     assert resp.status_code == 404
