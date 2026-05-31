@@ -132,10 +132,23 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
   feedback** (`POST /api/feedback` votes — per submission, plus a louder
   `🔥 10 голосов` threshold ping).
 - **Prod config today:** `FOUNDER_EMAIL=raravista@gmail.com` set; `TG_*` and
-  `SMTP_*` NOT set → alerts are emitted but skipped (nothing delivers). To turn
-  on email: set the `SMTP_HOST` (smtp.yandex.ru), `SMTP_PORT` (465), `SMTP_USER`,
-  `SMTP_PASSWORD` and `SMTP_FROM` env vars in `/opt/vitrina/.env`, recreate api.
+  `SMTP_*` NOT set → alerts are emitted but skipped (nothing delivers).
   (Telegram needs a proxy — see §4.)
+- **Turn on email via Yandex 360** (`samosite.online` mailbox). The
+  `SmtpClient` auto-selects implicit TLS when `SMTP_PORT=465` (Yandex's
+  canonical SMTPS endpoint — plain `SMTP`+STARTTLS does NOT work there; 587
+  stays STARTTLS). Set in `/opt/vitrina/.env`, then recreate api:
+  ```
+  SMTP_HOST=smtp.yandex.ru
+  SMTP_PORT=465
+  SMTP_USER=info@samosite.online
+  SMTP_PASSWORD=<Yandex app-password>     # Yandex ID → Пароли приложений → «Почта» (NOT the login password; 2FA mailboxes require it)
+  SMTP_FROM=Самосайт <info@samosite.online>   # From MUST equal SMTP_USER — Yandex rejects a mismatched sender
+  FOUNDER_EMAIL=info@samosite.online          # optional: where founder alerts land (currently raravista@gmail.com)
+  ```
+  Verify: `$C exec -T api python -c "from app.config import get_settings as g; print(g().smtp_host, g().smtp_port)"`
+  + send a real test (new application/feedback) and confirm receipt. DKIM/SPF
+  are configured on the Yandex side, so deliverability is good.
 - Email subject per-event via `NotificationMessage.metadata["email_subject"]`.
 
 ---

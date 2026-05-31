@@ -34,6 +34,11 @@ class SmtpClient:
         # mail clients that don't natively render UTF-8 headers.
         sender: str = "Самосайт <noreply@samosite.online>",
         use_starttls: bool = True,
+        # Implicit TLS (SMTPS) instead of STARTTLS. None → auto: port 465 is
+        # the IANA SMTPS port and the canonical Yandex 360 SMTP endpoint
+        # (smtp.yandex.ru:465), which speaks TLS from the first byte — plain
+        # `SMTP` + STARTTLS does NOT work there. Set explicitly to override.
+        use_ssl: bool | None = None,
         timeout_seconds: float = 10.0,
     ) -> None:
         self._host = host
@@ -42,6 +47,7 @@ class SmtpClient:
         self._password = password
         self._sender = sender
         self._use_starttls = use_starttls
+        self._use_ssl = use_ssl if use_ssl is not None else (port == 465)
         self._timeout = timeout_seconds
         self._log = get_logger("infrastructure.email.smtp")
 
@@ -62,13 +68,23 @@ class SmtpClient:
         msg["Subject"] = subject
         msg.set_content(body)
 
-        # `smtplib.SMTP` raises on connection / auth failures; the channel
+        # `smtplib.SMTP*` raises on connection / auth failures; the channel
         # catches BaseException so the dispatcher can fall back cleanly.
-        with smtplib.SMTP(host, self._port, timeout=self._timeout) as smtp:
-            smtp.ehlo()
-            if self._use_starttls:
-                smtp.starttls()
+        # SSL (465): wrapped from the first byte → no STARTTLS. Otherwise plain
+        # connect + optional STARTTLS upgrade (587 / 25).
+        smtp: smtplib.SMTP
+        if self._use_ssl:
+            with smtplib.SMTP_SSL(host, self._port, timeout=self._timeout) as smtp:
                 smtp.ehlo()
-            if self._user and self._password:
-                smtp.login(self._user, self._password)
-            smtp.send_message(msg)
+                if self._user and self._password:
+                    smtp.login(self._user, self._password)
+                smtp.send_message(msg)
+        else:
+            with smtplib.SMTP(host, self._port, timeout=self._timeout) as smtp:
+                smtp.ehlo()
+                if self._use_starttls:
+                    smtp.starttls()
+                    smtp.ehlo()
+                if self._user and self._password:
+                    smtp.login(self._user, self._password)
+                smtp.send_message(msg)
