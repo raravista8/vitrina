@@ -9,7 +9,7 @@ construct them without touching the DB.
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,6 +24,27 @@ class LeadDraft:
     message: str | None
     ip: str | None
     user_agent: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class ElektrikLeadDraft:
+    """Cleartext payload for the extended (elektrik-spb) customer-site form.
+
+    ``photos`` are already validated + re-encoded (EXIF stripped) at the API
+    boundary; each entry is ``(mime, processed_bytes)``. The service Fernet-
+    encrypts name / phone / address / comment + every photo before insert."""
+
+    site_id: uuid.UUID
+    name: str
+    phone: str
+    object_type: str | None
+    service: str | None
+    address: str | None
+    call_time: str | None
+    comment: str | None
+    ip: str | None
+    user_agent: str | None
+    photos: list[tuple[str, bytes]] = field(default_factory=list)
 
 
 @dataclass(frozen=True, slots=True)
