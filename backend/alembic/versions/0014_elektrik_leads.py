@@ -15,8 +15,9 @@ data, plaintext) + address (PII → Fernet ``address_enc``) + up to 5 photos.
   photos per lead at one small site is fine in Postgres; bytes are encrypted at
   rest like every other lead PII (the image may show the customer's interior).
 - Seeds the owner ``User`` + published ``Site`` so leads have a valid FK and
-  pass the ``status='published'`` gate. The phone/contact are placeholders
-  (founder email) until the client provides real details — see site.json.
+  pass the ``status='published'`` gate. The owner contact is a site-scoped
+  placeholder (``owner@elektrik-spb.samosite.online``) until the client provides
+  a real notify channel — see site.json.
 """
 
 from __future__ import annotations
@@ -81,7 +82,8 @@ def upgrade() -> None:
         sa.text(
             """
             INSERT INTO users (id, contact_type, contact_value, plan, login)
-            VALUES (CAST(:uid AS uuid), 'email', 'founder@samosite.online', 'pro', 'elektrik-spb')
+            VALUES (CAST(:uid AS uuid), 'email', 'owner@elektrik-spb.samosite.online',
+                    'pro', 'elektrik-spb')
             ON CONFLICT (id) DO NOTHING
             """
         ).bindparams(uid=_USER_ID)
