@@ -32,6 +32,7 @@ from app.api.routers.billing import router as billing_router
 from app.api.routers.feedback import router as feedback_router
 from app.api.routers.leads import router as leads_router
 from app.api.routers.leads_elektrik import router as leads_elektrik_router
+from app.api.routers.lk import router as lk_router
 from app.api.routers.me import router as me_router
 from app.api.routers.preview import router as preview_router
 from app.api.routers.static_sites import router as static_site_router
@@ -328,6 +329,7 @@ def create_app() -> FastAPI:
     app.include_router(billing_router)
     app.include_router(leads_router)
     app.include_router(leads_elektrik_router)
+    app.include_router(lk_router)
     app.include_router(me_router)
     app.include_router(preview_router)
     app.include_router(track_router)

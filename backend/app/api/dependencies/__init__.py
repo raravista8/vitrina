@@ -9,10 +9,14 @@ Centralises ``Depends()`` providers so routers stay thin:
 
 from __future__ import annotations
 
+import uuid
 from collections.abc import AsyncIterator
+from dataclasses import dataclass
+from typing import Annotated
 
 from cryptography.fernet import MultiFernet
 from fastapi import Depends, HTTPException, Request
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware import RateLimiter
@@ -285,3 +289,53 @@ def get_content_llm(request: Request) -> LlmClient:
         msg = "content_llm not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
     return client
+
+
+# ── client ЛК session gate ────────────────────────────────────────────────────
+
+_CUSTOMER_SESSION_COOKIE = "samosite_session"
+
+
+@dataclass(frozen=True, slots=True)
+class CustomerContext:
+    """Resolved owner identity for ``/api/lk/*``. ``site_id`` is the authority
+    every ЛК query scopes by — never trust a site_id from the request body."""
+
+    user_id: uuid.UUID
+    site_id: uuid.UUID
+    login: str
+
+
+async def require_customer_session(
+    request: Request,
+    store: Annotated[CustomerSessionStore, Depends(get_customer_session_store)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> CustomerContext:
+    """Resolve the ``samosite_session`` cookie → owner + their site.
+
+    401 when there's no/invalid/expired session; 403 when the user has no site.
+    Used as a dependency on every ``/api/lk/*`` route so scoping is enforced
+    server-side, not just in the UI."""
+    from app.infrastructure.postgres.models import Site, User
+
+    raw = request.cookies.get(_CUSTOMER_SESSION_COOKIE)
+    session_id = store.unsign_cookie(raw) if raw else None
+    if not session_id:
+        raise HTTPException(status_code=401, detail="not_authenticated")
+    record = await store.load(session_id)
+    if record is None:
+        raise HTTPException(status_code=401, detail="session_expired")
+
+    # One master = one site in MVP; pick their earliest site.
+    row = (
+        await session.execute(
+            select(User.login, Site.id)
+            .join(Site, Site.user_id == User.id)
+            .where(User.id == record.user_id)
+            .order_by(Site.created_at.asc())
+            .limit(1)
+        )
+    ).one_or_none()
+    if row is None:
+        raise HTTPException(status_code=403, detail="no_site")
+    return CustomerContext(user_id=record.user_id, site_id=row.id, login=row.login or "")
