@@ -270,6 +270,22 @@
   </div>
 </section>
 
+{% if site.seo_text %}
+<!-- ============ SEO TEXT ============ -->
+<section class="block" id="seo-text">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">{{ site.seo_text.eyebrow }}</span>
+      <h2>{{ site.seo_text.h2 }}</h2>
+    </div>
+    <div class="seo-prose" style="max-width:900px;color:var(--ink-soft);font-size:16px;line-height:1.7;display:grid;gap:14px">
+      {% for p in site.seo_text.paragraphs %}<p>{{ p }}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <!-- ============ FOOTER ============ -->
 <footer class="footer" id="contacts">
   <div class="wrap">

@@ -92,6 +92,37 @@ def test_seo_keywords_geo_meta(site, config):
     assert '<meta property="og:image:alt"' in page
 
 
+def test_seo_keyword_copy_woven(site, config):
+    """Founder's SEO keyword sets are present in visible copy (Title/H1/H2/body
+    + the dedicated SEO prose block), not just the keywords meta tag."""
+    page = _html(site, "index.html")
+    # Title + H1 zone
+    assert "Электромонтаж под ключ в СПб" in page
+    assert "электрик в Санкт-Петербурге".lower() in page.lower()
+    # service-block H2 + reworded service cards
+    assert "Электромонтажные работы в СПб" in page
+    for phrase in (
+        "Установка розеток и выключателей",
+        "замена электрощита в квартире",
+        "установка автоматов в щиток",
+        "замена УЗО",
+        "перенос розеток",
+        "монтаж LED-подсветки",
+        "Диагностика и ремонт проводки",
+    ):
+        assert phrase in page, phrase
+    # dedicated SEO prose block + its long-tail
+    assert 'id="seo-text"' in page
+    for phrase in (
+        "частный электрик",
+        "штробление стен под проводку",
+        "электромонтаж в частном доме",
+        "поиск неисправности проводки",
+        "электрик по договору с гарантией",
+    ):
+        assert phrase in page, phrase
+
+
 def test_jsonld_rich(site):
     # parse the JSON-LD block (tojson escapes non-ASCII to \uXXXX — valid JSON,
     # so assert on the decoded object, not raw substrings)
