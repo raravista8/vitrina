@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.api.routers.milreview_site import router
+from app.api.routers.static_sites import router
 
 HOST = "milreview.samosite.online"
 FILES: dict[str, tuple[str, str]] = {
@@ -60,3 +60,47 @@ def test_wrong_host_is_404() -> None:
 def test_no_files_loaded_is_404() -> None:
     r = _client(files={}).get("/", headers={"host": HOST})
     assert r.status_code == 404
+
+
+# ── multi-host dispatch (elektrik + cross-host isolation) ──────────────────────
+
+ELEKTRIK_HOST = "elektrik-spb.samosite.online"
+ELEKTRIK_FILES: dict[str, tuple[str | bytes, str]] = {
+    "index.html": ("<html>Электромонтаж</html>", "text/html; charset=utf-8"),
+    "hero.webp": (b"RIFF\x00\x00\x00\x00WEBP", "image/webp"),
+}
+
+
+def _multi_client() -> TestClient:
+    app = FastAPI()
+    app.state.milreview_host = HOST
+    app.state.milreview_files = FILES
+    app.state.elektrik_host = ELEKTRIK_HOST
+    app.state.elektrik_files = ELEKTRIK_FILES
+    app.include_router(router)
+    return TestClient(app)
+
+
+def test_elektrik_host_served_with_its_csp() -> None:
+    r = _multi_client().get("/", headers={"host": ELEKTRIK_HOST})
+    assert r.status_code == 200
+    assert "Электромонтаж" in r.text
+    csp = r.headers["content-security-policy"]
+    assert "form-action 'self'" in csp  # customer-site CSP, not milreview's
+    assert "smartcaptcha.yandexcloud.net" in csp
+
+
+def test_elektrik_binary_asset() -> None:
+    r = _multi_client().get("/hero.webp", headers={"host": ELEKTRIK_HOST})
+    assert r.status_code == 200
+    assert r.headers["content-type"] == "image/webp"
+    assert r.content == b"RIFF\x00\x00\x00\x00WEBP"
+
+
+def test_cross_host_isolation() -> None:
+    c = _multi_client()
+    # milreview-only file must not be reachable on the elektrik host, and v.v.
+    assert c.get("/station-1706.html", headers={"host": ELEKTRIK_HOST}).status_code == 404
+    assert c.get("/hero.webp", headers={"host": HOST}).status_code == 404
+    # milreview still served on its own host (no regression)
+    assert c.get("/", headers={"host": HOST}).status_code == 200
