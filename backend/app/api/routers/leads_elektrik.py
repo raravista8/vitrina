@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import io
 import re
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
 from cryptography.fernet import MultiFernet
@@ -46,7 +46,7 @@ from app.core.leads.ports import ElektrikLeadDraft
 from app.core.notify.dispatcher import NotificationDispatcher, UserContact
 from app.core.notify.ports import ChannelType, NotificationKind, NotificationMessage
 from app.infrastructure.leads.service import submit_elektrik_lead
-from app.infrastructure.postgres.models import Site, User
+from app.infrastructure.postgres.models import Site
 from app.utils.logging import get_logger
 
 router = APIRouter(prefix="/api", tags=["leads"])
@@ -198,26 +198,40 @@ async def _notify_owner(
     service: str | None,
     object_type: str,
 ) -> None:
-    """Masked-PII owner alert. Best-effort: the lead is already persisted, so a
-    dead channel never fails the request (TG is blocked + SMTP unset on this
-    prod today — the lead is still visible in admin/ЛК)."""
+    """Masked-PII owner alert to the channel the owner set in their ЛК
+    («Настройки → Контакты» + notification toggles). Sent from info@samosite.online
+    (the SMTP sender). Masked preview only + a cabinet deep-link to the full lead
+    (FR-050b / FZ-152 — no clear PII over email). Best-effort: the lead is already
+    persisted, so a missing/dead channel never fails the request — it stays
+    visible in the ЛК + admin. The owner gets nothing until they fill an email
+    (or Telegram) in their cabinet."""
     log = get_logger("api.leads.elektrik.notify")
-    row = (
-        await session.execute(
-            select(User.contact_type, User.contact_value)
-            .join(Site, Site.user_id == User.id)
-            .where(Site.id == site_id)
-        )
-    ).one_or_none()
+    row = (await session.execute(select(Site.settings).where(Site.id == site_id))).one_or_none()
     if row is None:
         log.warning("elektrik_lead_notify_owner_missing", site_id=str(site_id))
         return
-    try:
-        channel = ChannelType(row.contact_type)
-    except ValueError:
-        log.warning("elektrik_lead_notify_bad_channel", contact_type=row.contact_type)
+    settings = row.settings or {}
+    raw_contacts = settings.get("contacts")
+    raw_notif = settings.get("notifications")
+    contacts: dict[str, Any] = raw_contacts if isinstance(raw_contacts, dict) else {}
+    notif: dict[str, Any] = raw_notif if isinstance(raw_notif, dict) else {}
+    cab_email = str(contacts.get("email") or "").strip()
+    cab_tg = str(contacts.get("telegram") or "").strip()
+    email_on = bool(notif.get("email", True))
+    tg_on = bool(notif.get("tg", True))
+
+    # Route to the channel the owner configured in their cabinet. Email is the
+    # live channel today (Telegram needs a proxy — OPERATIONS §4). No fallback to
+    # the placeholder users.contact_value — don't email a dead address.
+    if email_on and cab_email:
+        channel, target = ChannelType.email, cab_email
+    elif tg_on and cab_tg:
+        channel, target = ChannelType.telegram, cab_tg
+    else:
+        log.info("elektrik_lead_notify_skipped_no_channel", site_id=str(site_id))
         return
 
+    site_name = str(settings.get("display_name") or "сайт")
     body = "\n".join(
         [
             f"Услуга: {service or '—'}",
@@ -225,13 +239,13 @@ async def _notify_owner(
             f"Имя: {mask_name(name)}",
             f"Телефон: {mask_phone(phone)}",
             f"\nLead ID: {lead_id}",
-            f"Открыть в кабинете: /lk/leads/{lead_id}",
+            "Открыть в кабинете: https://samosite.online/lk",
         ]
     )
     delivery = await notifier.notify_user(
-        contact=UserContact(primary_type=channel, primary_value=row.contact_value),
+        contact=UserContact(primary_type=channel, primary_value=target),
         kind=NotificationKind.lead_received,
-        message=NotificationMessage(title="📨 Новая заявка — электрика", body=body),
+        message=NotificationMessage(title=f"📨 Новая заявка — {site_name}", body=body),
     )
     log.info(
         "elektrik_lead_owner_notified", delivered=delivery.delivered, channel=delivery.channel.value

@@ -93,6 +93,12 @@ async def published_site(db_session):  # type: ignore[no-untyped-def]
         subdomain=f"elektrik-{uuid.uuid4().hex[:10]}",
         source_type="website",
         status="published",
+        # owner notification routes to the cabinet contact email + toggle
+        settings={
+            "display_name": "Электрик",
+            "contacts": {"email": "elektrik@example.com"},
+            "notifications": {"email": True, "tg": True},
+        },
     )
     db_session.add(site)
     await db_session.commit()
@@ -274,3 +280,37 @@ async def test_empty_captcha_token_proceeds(
 async def test_unknown_site_404(client: httpx.AsyncClient) -> None:
     resp = await client.post("/api/leads/elektrik", data=_fields(uuid.uuid4()))
     assert resp.status_code == 404
+
+
+async def test_owner_not_notified_without_cabinet_email(
+    client: httpx.AsyncClient,
+    app: FastAPI,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """A site whose owner hasn't filled an email in the ЛК gets NO notification
+    (we don't fall back to the dead users.contact_value placeholder) — but the
+    lead is still persisted."""
+    import uuid as _uuid
+
+    from app.infrastructure.postgres.models import Lead, Site, User
+
+    owner = User(contact_type="email", contact_value="placeholder@elektrik-x.test")
+    db_session.add(owner)
+    await db_session.flush()
+    site = Site(
+        user_id=owner.id,
+        subdomain=f"elektrik-{_uuid.uuid4().hex[:10]}",
+        source_type="website",
+        status="published",
+        settings={"display_name": "Электрик", "contacts": {}, "notifications": {"email": True}},
+    )
+    db_session.add(site)
+    await db_session.commit()
+
+    before = len(app.state.test_dispatcher.user_sends)
+    resp = await client.post("/api/leads/elektrik", data=_fields(site.id))
+    assert resp.status_code == 201
+    assert len(app.state.test_dispatcher.user_sends) == before  # no notification fired
+    # lead still saved
+    saved = (await db_session.execute(select(Lead).where(Lead.site_id == site.id))).scalars().all()
+    assert len(saved) == 1
