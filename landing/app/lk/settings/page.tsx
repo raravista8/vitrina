@@ -66,12 +66,24 @@ export default function SettingsPage() {
   );
 }
 
-function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+function Toggle({
+  on,
+  onToggle,
+  disabled = false,
+}: {
+  on: boolean;
+  onToggle: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onToggle}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-accent" : "bg-line"}`}
+      disabled={disabled}
+      aria-disabled={disabled}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        on ? "bg-accent" : "bg-line"
+      } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
     >
       <span
         className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`}
@@ -87,10 +99,13 @@ function NotificationsBlock({
   initial: { tg: boolean; email: boolean };
   onSaved: (msg: string) => void;
 }) {
-  const [n, setN] = useState(initial);
-  const save = async (next: { tg: boolean; email: boolean }) => {
-    setN(next);
-    const r = await lkApi.saveNotifications(next);
+  // Telegram delivery isn't wired yet (TG is blocked from the VPS — needs a
+  // proxy, OPERATIONS §4), so the TG channel is shown off + disabled. Only Email
+  // is live; saves always persist tg:false so the backend never routes to TG.
+  const [emailOn, setEmailOn] = useState(initial.email);
+  const saveEmail = async (next: boolean) => {
+    setEmailOn(next);
+    const r = await lkApi.saveNotifications({ tg: false, email: next });
     onSaved(r.ok ? "Уведомления сохранены" : "Не удалось сохранить");
   };
   return (
@@ -99,12 +114,17 @@ function NotificationsBlock({
       <p className="mt-0.5 text-[13px] text-ink-soft">Куда присылать новые заявки с сайта.</p>
       <div className="mt-4 flex flex-col divide-y divide-line">
         <div className="flex items-center justify-between py-3">
-          <span className="text-[14px] text-ink">Telegram</span>
-          <Toggle on={n.tg} onToggle={() => save({ ...n, tg: !n.tg })} />
+          <span className="flex items-center gap-2 text-[14px] text-ink-faint">
+            Telegram
+            <span className="rounded-full bg-paper-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-faint">
+              Скоро
+            </span>
+          </span>
+          <Toggle on={false} disabled onToggle={() => {}} />
         </div>
         <div className="flex items-center justify-between py-3">
           <span className="text-[14px] text-ink">Email</span>
-          <Toggle on={n.email} onToggle={() => save({ ...n, email: !n.email })} />
+          <Toggle on={emailOn} onToggle={() => saveEmail(!emailOn)} />
         </div>
       </div>
     </section>
