@@ -9,12 +9,12 @@
  *   1. Founder publishes a site for a master
  *   2. Founder generates {login, password} (login = subdomain, password =
  *      openssl rand -base64 12), sends to master via TG/email/SMS
- *   3. Master visits /login, types login + password, lands on /admin-demo
- *      (placeholder until canon 0.5.x ships real <ClientAdmin>)
+ *   3. Master visits /login, types login + password, lands on /lk
+ *      (the live client cabinet — PR-LK6)
  *
  * Backend contract per docs/handoff/CANON_CODE_TZ_customer_login_v0.4.0.md §2.2:
  *   POST /api/auth/login {login, password}
- *     → 200 + Set-Cookie session → push('/admin-demo')
+ *     → 200 + Set-Cookie session → push('/lk')
  *     → 401 → error='invalid_credentials'
  *     → 429 + Retry-After header → error='rate_limited' + countdown
  *     → 5xx → error='unknown_error'
@@ -56,11 +56,11 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ login, password }),
         // Send cookies (Set-Cookie response is what we want preserved
-        // for the subsequent /admin-demo nav).
+        // for the subsequent /lk nav).
         credentials: "include",
       });
       if (res.ok) {
-        router.push("/admin-demo");
+        router.push("/lk");
         return;
       }
       if (res.status === 401) {
