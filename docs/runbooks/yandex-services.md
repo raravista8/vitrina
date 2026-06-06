@@ -160,13 +160,73 @@ curl -s https://samosite.online | grep -E 'mc.yandex.ru|ym\(.*init'
 
 ---
 
-## 3. Google Search Console — same idea, English-side mirror
+## 3. Google Search Console — verify + request re-index
 
-**Status: P1**. The backend adapter
-(`backend/app/core/seo/adapters/google_search_console.py`) already
-exists; needs `GOOGLE_SEARCH_CONSOLE_*` env wired up. Defer until
-Я.Вебмастер is live and we want to measure the EN-fluent diaspora
-segment.
+**Status: ready to verify.** The landing emits a
+`<meta name="google-site-verification">` tag the moment
+`NEXT_PUBLIC_GOOGLE_VERIFICATION` is set (same env contract + build-arg
+plumbing as `NEXT_PUBLIC_YANDEX_VERIFICATION` — Dockerfile ARG/ENV +
+compose `args:` + `landing/app/layout.tsx`). The token is empty by
+default → no tag rendered.
+
+### Why this matters (favicon + snippet)
+
+Search Console is the **only lever** the operator has to nudge Google to
+re-crawl the homepage and refresh how it appears (favicon, title,
+description). Note up front:
+
+- Google (and Yandex) **choose the snippet/description themselves** —
+  `<meta name="description">` is a hint, not a command. They frequently
+  synthesize the snippet from on-page body text, especially for a brand
+  query. You **cannot force** a specific description; you can only ship a
+  good meta + request a re-crawl and let it settle.
+- The **favicon** comes from `/favicon.ico` at the site root
+  (`landing/app/favicon.ico`, served by Next). Yandex's favicon robot is
+  old-school and wants the `.ico` specifically — an SVG-only icon isn't
+  enough, which is why the SERP showed a generic globe until the `.ico`
+  shipped. Favicon refresh in the index lags the main crawl (days→weeks).
+
+### Steps
+
+1. Go to <https://search.google.com/search-console>, add a property.
+   Prefer the **URL-prefix** property `https://samosite.online` (the
+   HTML-tag method verifies it); the **Domain** property needs a DNS TXT
+   record instead.
+2. Choose **HTML tag** verification. Google shows
+   `<meta name="google-site-verification" content="XXXXXX" />` — copy
+   **only** the `content` value (no quotes, no `<meta>` wrapper).
+3. On the VPS:
+   ```
+   sudoedit /opt/vitrina/.env   # set NEXT_PUBLIC_GOOGLE_VERIFICATION=XXXXXX
+   ```
+4. Rebuild **landing** with the build-arg (it's a `NEXT_PUBLIC_*` baked
+   at build time — a plain restart won't pick it up). Same flow as any
+   landing deploy (OPERATIONS §2).
+5. Back in Search Console, click **Verify**.
+6. Submit the sitemap: GSC → **Sitemaps** → add `sitemap.xml`.
+7. **URL Inspection** → paste `https://samosite.online` → **Request
+   Indexing**. This is what triggers the re-crawl. Re-crawl of the page
+   is usually hours→days; favicon/snippet refresh in the SERP can take
+   longer.
+
+### Smoke test (after deploy)
+
+```
+# Verification tag is in the HTML:
+curl -s https://samosite.online | grep -i 'google-site-verification'
+
+# Favicon is served at the root (what the favicon robots fetch):
+curl -s -o /dev/null -w '%{http_code} %{content_type}\n' https://samosite.online/favicon.ico
+# expect: 200 image/x-icon
+```
+
+### Backend SEO adapter (separate, P1)
+
+The submit-on-publish adapter
+(`backend/app/core/seo/adapters/google_search_console.py`) is a
+different concern (auto-pinging GSC when a *customer* site publishes);
+needs `GOOGLE_SEARCH_CONSOLE_*` service-account env. Independent of the
+ownership-verification meta above.
 
 ---
 
