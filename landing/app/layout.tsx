@@ -25,6 +25,20 @@ const YM_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";
 // Metrika: empty → no tag emitted.
 const YANDEX_VERIFICATION = process.env["NEXT_PUBLIC_YANDEX_VERIFICATION"]?.trim() ?? "";
 
+// Google Search Console ownership-verification token — the value inside the
+// `<meta name="google-site-verification" content="…">` GSC shows on its
+// HTML-tag verification screen. Same env contract (empty → no tag). Needed so
+// the founder can verify the property in Search Console and then URL Inspection
+// → Request Indexing — the only lever that actually nudges Google to re-crawl
+// and refresh how the homepage appears (favicon + snippet).
+const GOOGLE_VERIFICATION = process.env["NEXT_PUBLIC_GOOGLE_VERIFICATION"]?.trim() ?? "";
+
+// Only providers with a configured token are emitted (empty object → no tag).
+const VERIFICATION = {
+  ...(YANDEX_VERIFICATION ? { yandex: YANDEX_VERIFICATION } : {}),
+  ...(GOOGLE_VERIFICATION ? { google: GOOGLE_VERIFICATION } : {}),
+};
+
 // SEO keyword corpus — covers the 12 ICP categories from PRD §2 plus
 // the JTBD long-tail real masters search for. Kept as a flat list
 // because Next.js's Metadata.keywords flattens into a single
@@ -133,10 +147,10 @@ export const metadata: Metadata = {
       "ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт или фото. Тариф «Старт» бесплатно, платные от 690 ₽/мес.",
   },
   robots: { index: true, follow: true },
-  // Y.Webmaster ownership verification. Conditionally included — when
-  // NEXT_PUBLIC_YANDEX_VERIFICATION is empty the property is dropped
-  // entirely (Next.js doesn't emit an empty meta tag).
-  ...(YANDEX_VERIFICATION ? { verification: { yandex: YANDEX_VERIFICATION } } : {}),
+  // Ownership verification (Yandex.Webmaster + Google Search Console).
+  // Conditionally included — empty token-set drops the `verification` key
+  // entirely (Next.js doesn't emit empty meta tags).
+  ...(Object.keys(VERIFICATION).length ? { verification: VERIFICATION } : {}),
 };
 
 const JSON_LD = {
@@ -146,7 +160,12 @@ const JSON_LD = {
       "@type": "Organization",
       "@id": `${SITE_URL}/#org`,
       name: "Самосайт",
+      alternateName: "Samosite",
       url: SITE_URL,
+      // Raster brand mark (the «С» terracotta tile) — lets Google/Yandex
+      // associate our logo with the brand. SVG isn't accepted for the
+      // schema.org `logo` property, so point at the 180×180 apple-icon.png.
+      logo: `${SITE_URL}/apple-icon.png`,
       description:
         "Самосайт — AI-сборщик сайтов-каналов заявок для частных мастеров и малых услуг в РФ.",
     },
