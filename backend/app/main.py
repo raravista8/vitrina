@@ -124,6 +124,34 @@ async def _lifespan(app: FastAPI) -> Any:
         ymaps=geosearch_client.is_available(),
     )
 
+    # Instant-preview (CANON_INSTANT_PREVIEW_TZ + REV2 §7) — search by
+    # name + async draft builder. State lives in Redis; when Redis was
+    # unavailable at startup the services stay None and the dependency
+    # getters answer 503 instead of crashing.
+    from app.core.preview.draft import CandidateStore, DraftStore
+    from app.core.preview.draft_builder import DraftFetchers, PreviewDraftService
+    from app.core.preview.search import PreviewSearchService
+    from app.infrastructure.http_fetch import HttpxTextFetcher
+
+    if redis_client is not None:
+        candidate_store = CandidateStore(redis_client)
+        app.state.preview_search_service = PreviewSearchService(
+            gateway=geosearch_client, candidates=candidate_store
+        )
+        app.state.preview_draft_service = PreviewDraftService(
+            store=DraftStore(redis_client),
+            candidates=candidate_store,
+            fetchers=DraftFetchers(geosearch=geosearch_client, html_fetcher=HttpxTextFetcher()),
+        )
+    else:
+        app.state.preview_search_service = None
+        app.state.preview_draft_service = None
+    log.info(
+        "instant_preview_ready",
+        redis=redis_client is not None,
+        geosearch=geosearch_client.is_available(),
+    )
+
     # YandexGPT client (T4.1). When credentials are absent the client's
     # `is_available()` returns False and the content service short-
     # circuits to a "failed" outcome — `make dev` keeps working

@@ -149,6 +149,14 @@ class Settings(BaseSettings):
     rate_limit_leads_per_ip_per_hour: int = 3
     rate_limit_leads_per_ip_per_day: int = 10
     rate_limit_preview_per_ip_per_min: int = 10
+    # Instant-preview (CANON_INSTANT_PREVIEW_REV2_TZ §7). Search: 10/min/IP
+    # per the frozen contract (separate Redis scope from POST /api/preview).
+    # Draft creation spawns a ≤30 s background build with outbound fetches —
+    # 10/h/IP covers the legit «Изменить источник» retry loop while staying
+    # useless as a fetch amplifier. Poll is generous: ~40 polls per build.
+    rate_limit_preview_search_per_ip_per_min: int = 10
+    rate_limit_preview_draft_per_ip_per_hour: int = 10
+    rate_limit_preview_draft_poll_per_ip_per_min: int = 120
     rate_limit_admin_login_per_ip_per_15min: int = 5
     rate_limit_track_per_ip_per_min: int = 100  # FR-? customer-site events (T5.1)
 
