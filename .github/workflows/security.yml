@@ -35,17 +35,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-backend
+      # PYSEC-2026-196: pip-audit also scans the venv's own pip (a build
+      # tool, not a project dependency or shipped code) — upgrade it to the
+      # fixed release instead of ignoring the advisory.
+      - name: upgrade venv pip (PYSEC-2026-196)
+        working-directory: backend
+        run: poetry run pip install --upgrade "pip>=26.1.2"
       - name: pip-audit --strict
         working-directory: backend
-        # Ignored advisories — all three landed in the OSV / PYSEC feeds
-        # on 2026-05-20 and have empty "Fix Versions" (no upstream patch
-        # released). Re-evaluate when fixes ship:
+        # Ignored advisories — re-evaluate when fixes become reachable:
         #
-        #   PYSEC-2024-277  joblib    — transitive via safety (dev-only)
-        #   PYSEC-2026-97   nltk      — transitive via safety (dev-only)
-        #   PYSEC-2025-183  pyjwt     — transitive via redis-py (runtime);
-        #                               affected JWT path not exercised by
-        #                               our redis client usage
+        #   PYSEC-2024-277  joblib    — transitive via safety (dev-only);
+        #                               no upstream patch released
+        #   PYSEC-2026-97   nltk      — transitive via safety (dev-only);
+        #                               no upstream patch released
+        #   CVE-2026-34993  aiohttp   — transitive via aiogram/aiobotocore;
+        #   CVE-2026-47265                fixed in 3.14.0, but every aiogram
+        #                               3.x release caps aiohttp <3.14 (no
+        #                               4.x exists) so the fix is unreachable.
+        #                               Vulnerable paths (CookieJar.load() on
+        #                               untrusted files; per-request cookies=
+        #                               across cross-origin redirects) are not
+        #                               used — we never import aiohttp directly.
+        #                               Drop these when aiogram lifts the cap.
+        #
+        # (PYSEC-2025-183 pyjwt was ignored here; resolved by the pyjwt
+        # 2.13.0 bump, flag removed.)
         #
         # Bandit + import-linter + npm audit + gitleaks continue to gate
         # against other regressions; this only relaxes the "every advisory
@@ -55,7 +70,8 @@ jobs:
           poetry run pip-audit --strict \
             --ignore-vuln PYSEC-2024-277 \
             --ignore-vuln PYSEC-2026-97 \
-            --ignore-vuln PYSEC-2025-183
+            --ignore-vuln CVE-2026-34993 \
+            --ignore-vuln CVE-2026-47265
 
   # ---- Landing SCA ---------------------------------------------------------
 
