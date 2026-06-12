@@ -97,7 +97,7 @@ function Card({ children, style }) {
   return /* @__PURE__ */ jsx("div", { style: { background: VT.white, border: `1px solid ${VT.line}`, borderRadius: VT.r.lg, ...style }, children });
 }
 function Btn(props) {
-  const { children, variant = "primary", size = "md", style, icon, iconRight, onClick, type, disabled } = props;
+  const { children, variant = "primary", size = "md", style, icon, iconRight, onClick, type, disabled, ...rest } = props;
   const isSm = size === "sm";
   const base = {
     fontFamily: VT.font.sans,
@@ -121,7 +121,7 @@ function Btn(props) {
     ghost: { background: "transparent", color: VT.ink },
     soft: { background: VT.accentSoft, color: VT.accentInk }
   };
-  return /* @__PURE__ */ jsxs("button", { type: type ?? "button", onClick, disabled, "data-ss-cta": true, style: { ...base, ...variants[variant], ...style }, children: [
+  return /* @__PURE__ */ jsxs("button", { ...rest, type: type ?? "button", onClick, disabled, "data-ss-cta": true, style: { ...base, ...variants[variant], ...style }, children: [
     icon,
     children,
     iconRight

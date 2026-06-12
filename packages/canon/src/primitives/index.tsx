@@ -39,8 +39,8 @@ export function Btn(props: {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
-}) {
-  const { children, variant = 'primary', size = 'md', style, icon, iconRight, onClick, type, disabled } = props;
+} & Record<`data-${string}`, string | undefined>) {
+  const { children, variant = 'primary', size = 'md', style, icon, iconRight, onClick, type, disabled, ...rest } = props;
   const isSm = size === 'sm';
   const base: React.CSSProperties = {
     fontFamily: VT.font.sans, fontWeight: 600,
@@ -58,7 +58,7 @@ export function Btn(props: {
     soft: { background: VT.accentSoft, color: VT.accentInk },
   };
   return (
-    <button type={type ?? 'button'} onClick={onClick} disabled={disabled} data-ss-cta style={{ ...base, ...variants[variant], ...style }}>
+    <button {...rest} type={type ?? 'button'} onClick={onClick} disabled={disabled} data-ss-cta style={{ ...base, ...variants[variant], ...style }}>
       {icon}{children}{iconRight}
     </button>
   );

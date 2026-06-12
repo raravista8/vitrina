@@ -17,6 +17,225 @@
 
 ---
 
+## 0.11.0 — rev.2 «ниша-демо»: вход ДО ссылки, поиск по названию, морф «пример → черновик» · 2026-06-12
+
+> **MINOR, additive** (CANON_INSTANT_PREVIEW_REV2_TZ). Wow 0.10.0 был заперт за ссылкой, а 20 из 24 открывших модалку приходят с пустыми руками. Rev.2 переворачивает вход: тап по нише → мгновенный пример сайта (0 секунд, без сети) → «Заменить на ваши данные» → источник ищется по названию (ссылка не нужна) → пример морфится в его черновик. Принцип: **показывать раньше, чем просить.** Пропсы 0.10.0 не ломаются; photo-ветка byte-identical; hero-вход с ok-ссылкой пропускает шаги 0/0b/1 как раньше.
+
+### Новый флоу (вход с пустым hero-инпутом)
+
+```
+Шаг 0 «Ниша» (S3_StepNiche, без дотов)
+  → Шаг 0b «Пример» (S3_StepPreview variant='demo' · штамп ПРИМЕР · 0 c, без сети)
+  → Шаг 1 «Источник» (S3_StepSource · A поиск по названию / B ссылка / C фото)
+  → Шаг 2 «Сборка-морф» (S3_StepBuilding baseDraft · заголовок «Заменяем пример на ваши данные»)
+  → Превью / Контакт / Готово — rev.1 без изменений
+```
+
+Доты: по-прежнему 4 (Источник · Превью · Контакт · Готово). Шаги 0/0b дотов НЕ имеют — это витрина, не воронка; доты появляются с шага 1.
+
+### Новые экспорты `@samosite/canon/intake` (новый файл `src/intake/rev2.tsx`)
+
+```tsx
+import {
+  S3_StepNiche,            // шаг 0 «Чем занимаетесь?» · controlled · zero-prop = canvas-mock
+  S3_StepSource,           // шаг 1 · mode='search'|'link' · все состояния поиска
+  NICHE_LIB,               // 10 ниш: id, label, synonyms, theme_id, theme_options
+  NICHE_DEMO_DRAFTS,       // PreviewDraft-фикстура на нишу — пример за 0 c
+  matchNiche,              // свободное поле → NicheItem | null (словарь синонимов)
+  demoDraftFor,            // (nicheId | freeText) → { draft, niche, nicheLabel }; без матча → generic-editorial
+  GENERIC_THEME_OPTIONS,   // свотчи для generic-темы
+  mockSourceCandidates,    // 3 кандидата для canvas-мока
+  morphSlotContent,        // чистая функция морфа §5 (src/intake/preview.tsx)
+} from '@samosite/canon/intake';
+
+import type { NicheItem, SourceCandidate, SourceSearchError,
+  S3_StepNicheProps, S3_StepSourceProps } from '@samosite/canon/intake';
+```
+
+### Правки существующих компонентов (additive)
+
+- **`S3_StepPreview`** — `variant` расширен до `'demo' | 'rich' | 'sparse'` + новый `nicheLabel?`. `variant='demo'` = шаг 0b: штамп ПРИМЕР (слева сверху), панель «Что мы нашли» скрыта, доты не показываются, CTA «Заменить на ваши данные» + микрокопи «Меньше минуты. Контакты пока не нужны», secondary «Другая ниша» (`onBack`).
+- **`S3_StepBuilding`** — новый `baseDraft?: PreviewDraft`. Есть → морф-режим ТЗ §5: chassis примера НЕ размонтируется, слоты (имя → фото слева направо → отзывы → услуги) подменяются через `morphSlotContent(baseDraft, draftSkeleton, stage, counts)`; штамп СОБИРАЕМ…; заголовок «Заменяем пример на ваши данные». Нет → standalone-экран rev.1 (путь hero-URL). Тема меняется отдельным переходом ДО подмены контента (правило `userThemeTouched` §2 — на консьюмере). Reduced-motion: подмены мгновенные, кросс-фейды вешать только под `prefers-reduced-motion: no-preference`.
+
+### МИГРАЦИЯ · SubmitModal props (additive, ничего не ломается)
+
+```ts
+// НОВОЕ — вход «ниша-демо» ДО ссылки. Без entry поведение = 0.10.0.
+entry?: {
+  step: 'niche' | 'demo' | 'source';
+  // niche:  niches?, freeText?, onFreeTextChange?, onPick?, onShowExample?
+  // demo:   demoDraft (из demoDraftFor), nicheLabel?, themeOptions?,
+  //         activeTheme?, onThemeChange?, onClaimDemo?, onOtherNiche?
+  // source: sourceMode?, query?, city?, onQueryChange?, onCityChange?, searching?,
+  //         candidates?, searchError?, retryAfterSeconds?, onSearch?,
+  //         onPickCandidate?, onNotMine?, onSwitchMode?, onPhotoBranch?
+  mobile?: boolean;
+};
+
+// НОВОЕ поле в preview (0.10.0-проп):
+preview.baseDraft?: PreviewDraft;   // есть → сборка рендерится как морф §5
+```
+
+Состояние темы: `activeTheme` живёт с шага 0b и протаскивается через сборку в превью и payload заявки. Если бэкенд в `draft.theme_id` предлагает другую тему: при `userThemeTouched=true` остаётся выбор человека, иначе тема бэкенда (ТЗ §2) — правило реализует консьюмер, канон даёт пропсы.
+
+### Бэкенд-контракт — дельты (заморожены в ТЗ rev.2 §7)
+
+```
+GET  /api/preview/search?q=<название>&city=<город>
+     → { ok, data: { candidates: SourceCandidate[] } }   // ≤3, только Я.Карты Geosearch
+     // 429 + Retry-After при >10 req/мин/IP; таймаут апстрима 3 c → 502 → source-error
+POST /api/preview/draft   body: { url } ИЛИ { candidate_id }   // rev.1 + второй вариант
+```
+
+### Селекторы и аналитика (ТЗ §8 — не менять без согласования)
+
+- Каждый шаг несёт `data-intake-step="niche | demo | source | building | preview | contact | confirm"` (в т.ч. rev.1-экраны получили атрибут).
+- Плашки ниш — `data-niche-id`; карточки кандидатов — `data-candidate-idx`.
+- CTA шага 0b — `data-cta="claim-demo"`; превью — `data-cta="claim-draft"` (Btn теперь пробрасывает `data-*`-пропсы на <button>).
+
+### Копи-синк (правка реестра строк rev.2 поверх rev.1)
+
+| Было (0.10.0) | Стало (0.11.0) |
+|---|---|
+| «Забрать сайт — бесплатно» | «Забрать сайт бесплатно» |
+| timeout: «…Оставьте контакт — пришлём готовый черновик, сборка продолжается.» | «Источник отвечает медленно. Оставьте контакт, и мы пришлём готовый черновик, обычно в течение 2 часов» |
+| failed-notice: «Не дотянулись до источника — соберём вручную за 2 часа» | «Не дотянулись до источника. Соберём сайт вручную за 2 часа» |
+| контакт-sub: «…пришлём ссылку — обычно в течение 2 часов.» | «…пришлём ссылку, обычно в течение 2 часов.» |
+
+Все остальные строки шагов 0/0b/1 — побайтово из реестра §3 ТЗ rev.2 (реестр — единственный источник; менять только согласованно).
+
+### Out of scope (ТЗ §11)
+
+Превью/демо в photo-ветке · поиск по 2ГИС/другим каталогам · сохранение ниши/темы в аккаунт · изменения Hero на лендинге · LLM-тексты в превью.
+
+### Vitrina-side (this vendoring PR)
+
+**Dual vendor 0.9.5 → 0.11.0** — 0.10.0 отдельно не вендорился, оба релиза
+едут одним PR. `cp` 4 файлов src (`intake/index.tsx` + новые
+`intake/preview.tsx`, `intake/rev2.tsx` + `primitives/index.tsx`),
+package.json 0.9.5→0.11.0, dist rebuild (tsup сохраняет локальный
+`dts: false`). **Прод-поведение НЕ меняется:** оба релиза additive и
+opt-in (пропсы `preview` / `entry` у SubmitModal) — наш консьюмер их пока
+не передаёт; новые шаги включатся отдельным PR вместе с бэкендом
+(`GET /api/preview/search` + `POST /api/preview/draft` — ещё не построен,
+контракт заморожен в `docs/handoff/CANON_INSTANT_PREVIEW_REV2_TZ.md §7`).
+Консьюмер-хаки сверены: модули landing / customer / admin-* byte-identical
+0.9.5 → `SiteHeader` / `FeedbackModal` / `DashboardPendingPanel` без
+изменений. `Btn` (primitives) — additive `data-*` passthrough,
+существующие вызовы не затронуты. Drift = 0.
+
+---
+
+## 0.10.0 — «Сайт до контакта»: мгновенный превью черновика в link-ветке SubmitModal · 2026-06-12
+
+> **MINOR, additive.** Самое важное продуктовое изменение intake с запуска — не рестайл. Между «вставил ссылку» и «оставь контакт» появляется живой черновик сайта пользователя, собранный из его собственных данных за 15–40 секунд. Контакт перестаёт быть входным билетом и становится способом **забрать уже увиденный сайт**. Пропсы 0.3.0 не ломаются; photo-ветка byte-identical 0.9.5.
+
+### Зачем (данные, не вкус)
+
+Тестовая кампания в Я.Директе: из 24 открывших SubmitModal ссылку вставили 4 — главный слом: просим доверие ДО того, как показали ценность. Из 2 отправивших контакт после ответили 0 — импульс умирает за минуты ожидания. Превью чинит оба слома: появляется причина вставить ссылку и появляется владение («это МОЙ сайт с МОИМИ фото») до контактного шага.
+
+### Новый флоу (link-ветка, opt-in через проп `preview`)
+
+```
+Без preview:  Шаг 1 (ссылка) → Шаг 2 (контакт) → Шаг 3 (подтверждение)   ← ровно как в 0.3.0
+С preview:    Шаг 1 (ссылка)
+              → Шаг 2 «Сборка»  (S3_StepBuilding · живой прогресс парсинга, 15–40 c)
+              → Шаг 2 «Превью»  (S3_StepPreview · черновик сайта + «что мы нашли»)
+              → Шаг 3 (контакт · заголовок «Куда прислать готовый сайт?»)
+              → Шаг 4 (подтверждение)
+```
+
+**Прогресс-доты: 4 видимых шага.** Сборка и превью — ОДИН дот «Превью»; сборка — его loading-состояние (пульсирующий дот). Это решение в рамках лимита «не больше 4 дотов» из ТЗ §4.
+
+### Новые экспорты `@samosite/canon/intake` (новый файл `src/intake/preview.tsx`)
+
+```tsx
+import {
+  S3_StepBuilding,           // controlled · zero-prop = canvas-mock
+  S3_StepPreview,            // controlled · zero-prop = canvas-mock
+  draftToSlotContent,        // чистый маппер PreviewDraft → SlotContent (presets)
+  draftPreset,               // (draft, activeTheme?) → Preset для PresetRenderer
+  nicheCopyFor, draftHostSlug,
+  mockPreviewDraftRich, mockPreviewDraftSparse, mockThemeOptions,
+} from '@samosite/canon/intake';
+
+import type {
+  PreviewDraft, PreviewSource, BuildStage, BuildStatus,
+  BuildCounts, BuildPollResponse,
+  S3_StepBuildingProps, S3_StepPreviewProps,
+} from '@samosite/canon/intake';
+```
+
+```ts
+S3_StepBuilding({ stage, counts, draftSkeleton?, source?, timedOut?, onSkipToContact?, onBack?, mobile? })
+S3_StepPreview({
+  draft: PreviewDraft,
+  themeOptions: string[],        // 2–3 theme_id на переключатель — НЕ все 16
+  activeTheme: string,
+  onThemeChange: (id: string) => void,
+  onClaim: () => void,           // CTA «Забрать сайт — бесплатно»
+  onBack: () => void,            // «Изменить источник»
+  variant?: 'rich' | 'sparse',   // авто: rich при photos ≥ 3 или reviews > 0
+  mobile?: boolean,              // фуллскрин-лэйаут (модалка на мобиле фуллскрин)
+})
+```
+
+Сетевых вызовов внутри канона нет — данные и колбэки только через props (паттерн 0.3.0/0.9.1). Поллинг — на консьюмере по контракту `BuildPollResponse`:
+
+```ts
+{ status: 'building' | 'ready' | 'failed', stage: 'fetching' | 'photos' | 'reviews' | 'styling',
+  counts: { photos: number, reviews: number }, draft?: PreviewDraft }
+```
+
+### SubmitModal — новые пропсы (additive)
+
+- `preview` — объект состояния превью-флоу; `null`/не передан → link-ветка ведёт себя ровно как 0.3.0 (3 шага). Форма: `{ status: 'building' | 'ready' | 'failed' | 'timeout', stage?, counts?, draftSkeleton?, draft?, source?, themeOptions?, activeTheme?, onThemeChange?, variant?, mobile? }`. UI-статус — superset poll-статуса: `'timeout'` выставляет консьюмер по своему таймеру (> 40 c), бэкенд его не шлёт.
+- `contactNotice` — `null | 'preview_failed' | 'preview_timeout'`, мягкая плашка на контактном шаге.
+- `S3_StepContact` получил копи-оверрайды `title` / `sub` / `notice` — дефолты равны строкам 0.3.0, поэтому photo-ветка и классическая link-ветка не меняются ни на байт.
+- `S3_FinalConfirm`: опциональная строка `СТИЛЬ` в summary (`summary.themeLabel`).
+
+### Контракт `PreviewDraft` — заморожен (ТЗ §6)
+
+Тип экспортирован 1:1 по ТЗ; бэкенд строится по нему параллельно. **Вопросов на изменение контракта по итогам макетов нет** — всё, что нужно превью, собирается из существующих полей: `district` → строка заголовка, `rating` → плашка и stats, `services` → прайс-строки (без цены — «цену уточним при полной сборке»), `reviews[0]` → pull-quote с атрибуцией источника, `photos[0..2]` → hero + галерея, `theme_id`/`family_id` → PresetRenderer.
+
+### Шаг «Сборка» (S3_StepBuilding)
+
+- **Реальный прогресс, не AI-театр.** 4 этапа = события poll-ответа: «Читаем источник» → «Забрали N фото» → «Нашли M отзывов» → «Подбираем стиль под нишу». Числа настоящие, появляются по мере того как парсер их находит, — подпись прямо говорит об этом.
+- **Скелет превью уже на экране.** Справа карточка MiniChrome с шиммер-блоками; имя бизнеса, счётчики фото/отзывов и палитра темы проявляются по мере прихода данных (`draftSkeleton`). Момент «о, это уже моё» наступает до готовности превью.
+- **Таймаут > 40 c** (`timedOut`): плашка «Собираем дольше обычного» + CTA «Оставить контакт» → контактный шаг с `notice='preview_timeout'`. Сборка продолжается асинхронно — если успеет до отправки формы, консьюмер может показать превью.
+
+### Шаг «Превью» (S3_StepPreview)
+
+- **Герой экрана — сам сайт**: MiniChrome с реальным хостом-слагом (`draftHostSlug`, транслит: «Студия Анны» → `studiya-anny`), внутри — полноценный лендинг через существующий `PresetRenderer`. Никакого нового рендерера сайтов: превью = тот же движок, что в «Примерах» на лендинге (0.7.1). Бейдж «ЧЕРНОВИК» — повёрнутый dashed-стикер.
+- **Панель «Что мы нашли»**: моноширинные строки ФОТО / ОТЗЫВЫ / УСЛУГИ / РАЙОН / РЕЙТИНГ — приём «N фото · M отзывов · нашли сами» из ленд-копи, применённый к данным пользователя.
+- **Переключатель стиля**: 2–3 свотча тем (из `themeOptions`), не вся библиотека — выбор без паралича. Выбранная тема попадает в summary подтверждения (`СТИЛЬ`).
+- **Sparse-вариант** (фото < 3 и нет отзывов): полосатые SVG-плейсхолдеры с подписью «фото из источника», услуги из нишевого словаря, строки «— при полной сборке» в панели. Честно про то, чего нет, и понятно, что появится.
+- **CTA «Забрать сайт — бесплатно»** + копи «Это эскиз. Полную версию — с текстами и всеми фото — соберём за 2 часа» — рамка ожиданий против «почему мало текста?».
+
+### Нишевые тексты без LLM в синхронном пути
+
+`nicheCopyFor(category)` — словарь по 6 нишам (бьюти, кафе, автосервис, барбер, мастера/ремонт, юристы) + generic-фоллбек: третья строка заголовка, заголовок прайса, подпись CTA, фоллбек-услуги. LLM-тексты приходят позже, в полной сборке, — превью никогда их не ждёт.
+
+### Что НЕ изменилось
+
+- Photo-ветка SubmitModal — byte-identical 0.9.5 (вынос превью в отдельный `preview.tsx`, роутер только добавляет ветвление при `preview`).
+- `PresetRenderer`, темы, семейства — без изменений; превью лишь потребитель.
+- Лендинг, customer, admin, auth — не тронуты.
+
+### Файлы
+
+- `src/intake/preview.tsx` — НОВЫЙ: контракт, маппер, нишевый словарь, S3_StepBuilding, S3_StepPreview, моки.
+- `src/intake/index.tsx` — роутер SubmitModal (ветвление при `preview`), копи-пропсы S3_StepContact, `СТИЛЬ` в S3_FinalConfirm, реэкспорты.
+- `package.json` — 0.10.0.
+
+### Vitrina-side
+
+Вендорился вместе с 0.11.0 одним PR (footer выше) — отдельного
+0.10.0-вендоринга не было; src этого релиза приехал в составе зипа
+`canon-0.11.0-pkg`.
+
+---
+
 ## 0.9.5 — Feedback-модалка: фикс ремаунта (прыжок скролла + потеря фокуса) · 2026-05-29
 
 > **PATCH.** Только `src/customer/index.tsx` → `S9_FeedbackModal`. Публичные экспорты, типы, пропсы, разметка и стили без изменений — чисто фикс рендера. Включает все landing-фиксы 0.9.3/0.9.4. Drop-in на прод.
