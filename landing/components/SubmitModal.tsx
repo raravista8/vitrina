@@ -1,9 +1,10 @@
 "use client";
 
 /**
- * SubmitModal — canon 0.3.0 intake flow (link OR photo).
+ * SubmitModal — canon intake flow (link OR photo) + instant-preview
+ * (canon 0.11.0 rev.2 «ниша-демо» — `docs/handoff/CANON_INSTANT_PREVIEW_REV2_TZ.md`).
  *
- * Two branches:
+ * Classic branches (unchanged, canon 0.3.0):
  *
  *   link  : Step 1 (URL + mode-switcher)
  *           → Step 2 (contact + consent + captcha)
@@ -13,6 +14,29 @@
  *           → Step 2 (description + city + customer_contact + opt. text_files)
  *           → Step 3 (contact + consent + captcha)
  *           → Step 4 (final confirm inline)
+ *
+ * Instant-preview entry (rev.2) — ONLY when opened empty-handed
+ * (`initialMode='link'` + blank `initialUrl`; a Hero URL keeps the
+ * classic link flow above bit-for-bit):
+ *
+ *   Шаг 0 «Ниша» (entry.step='niche', client-side, no network)
+ *   → Шаг 0b «Пример» (entry.step='demo' — demoDraftFor fixture, 0 s)
+ *   → Шаг 1 «Источник» (entry.step='source' — search via
+ *     GET /api/preview/search, link paste, or photo branch)
+ *   → Сборка-морф / Превью (canon `preview` prop fed from
+ *     POST /api/preview/draft + ~1.5 s poll; baseDraft = the demo
+ *     draft so canon renders the морф «пример → черновик»)
+ *   → Контакт → Готово (rev.1 steps 3/4)
+ *
+ * Graceful degradation: the preview backend may not be deployed —
+ * search 404/невалидный envelope → canon's «Карты не отвечают» state
+ * with the «Вставить ссылку» escape; draft POST failure → canon's
+ * failed state → contact step (rev.1 fallback). Шаги 0/0b are pure
+ * client-side and work regardless.
+ *
+ * Theme rule (ТЗ rev.2 §2): `activeTheme` lives here from шага 0b;
+ * a swatch tap sets `userThemeTouched` — on draft ready the user's
+ * choice wins, otherwise the modal adopts `draft.theme_id`.
  *
  * Renders canon's `<SubmitModal>` from `@samosite/canon/intake` as the
  * step view; this file owns state, branching, and the backend wiring
@@ -25,11 +49,28 @@
  */
 
 import { Dialog, DialogContent, DialogOverlay, DialogPortal } from "@radix-ui/react-dialog";
-import { SubmitModal as CanonSubmitModal } from "@samosite/canon/intake";
+import {
+  SubmitModal as CanonSubmitModal,
+  GENERIC_THEME_OPTIONS,
+  demoDraftFor,
+} from "@samosite/canon/intake";
+import type {
+  BuildCounts,
+  BuildPollResponse,
+  BuildStage,
+  PreviewDraft,
+  PreviewSource,
+  SourceCandidate,
+  SourceSearchError,
+} from "@samosite/canon/intake";
+import { getTheme } from "@samosite/canon/presets";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { cn } from "@/lib/cn";
 import { reachGoal } from "@/lib/metrika";
+import { type DraftRequestBody, createDraft, pollDraft, searchSource } from "@/lib/preview-api";
 import { type SourceDetection, detectSource } from "@/lib/source-detect";
+import { useIsMobile } from "@/lib/use-is-mobile";
 
 /**
  * Map our `detectSource()` output to canon's `SOURCE_LIB` key (see
@@ -79,6 +120,60 @@ export interface SubmitModalProps {
 }
 
 type Step = 1 | 2 | 3 | 4;
+
+// ---------------------------------------------------------------------------
+// Instant-preview flow types (rev.2)
+// ---------------------------------------------------------------------------
+
+/** rev.2 entry steps shown BEFORE the classic link/photo steps. `null` = classic flow. */
+type EntryPhase = "niche" | "demo" | "source" | null;
+
+/** What the user picked on шаге 0 — feeds `demoDraftFor()`. */
+interface DemoSelection {
+  nicheId: string | null;
+  freeText: string;
+}
+
+/**
+ * UI-side build status — superset of the backend poll status: `timeout`
+ * is set by OUR >40 s timer (the backend never sends it, per canon
+ * 0.10.0 CHANGELOG).
+ */
+interface PreviewUiState {
+  status: "building" | "ready" | "failed" | "timeout";
+  stage: BuildStage;
+  counts: BuildCounts;
+  draftSkeleton?: Partial<PreviewDraft>;
+  draft?: PreviewDraft;
+  source: PreviewSource;
+}
+
+interface DraftRun {
+  body: DraftRequestBody;
+  startedAt: number;
+}
+
+const DRAFT_POLL_INTERVAL_MS = 1500;
+/** > 40 s building → canon's timeout state (ТЗ rev.1; the build keeps going async). */
+const DRAFT_TIMEOUT_MS = 40_000;
+/** Hard stop for the poll loop — past this we stay in `timeout` without new requests. */
+const DRAFT_POLL_MAX_MS = 90_000;
+
+/** Map our Hero classifier onto canon's `PreviewSource` for the build-step copy. */
+function urlPreviewSource(url: string): PreviewSource {
+  const d = detectSource(url);
+  if (d.kind === "mvp") return d.type === "ymaps" ? "yandex_maps" : "telegram";
+  return "website";
+}
+
+/** Human label for the «СТИЛЬ» summary row; falls back to the raw id. */
+function themeLabelFor(themeId: string): string {
+  try {
+    return getTheme(themeId).label;
+  } catch {
+    return themeId;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Backend wiring helpers
@@ -200,6 +295,59 @@ export function SubmitModal({
   // the relevant state changes — see effect below.
   const [validationError, setValidationError] = useState<string | null>(null);
 
+  // ── Instant-preview flow state (rev.2) ──────────────────────────────
+  // Canon renders the entry steps fullscreen-flat on mobile (single
+  // column, pinned panel) — the breakpoint matches canon's own 720-ish
+  // modal threshold via the shared lib hook.
+  const isMobile = useIsMobile();
+  const [entryPhase, setEntryPhase] = useState<EntryPhase>(null);
+  const [nicheFreeText, setNicheFreeText] = useState("");
+  const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
+  // Theme state lives from шага 0b and is carried through the morph into
+  // the preview + the «СТИЛЬ» summary row (ТЗ rev.2 §2). The touched flag
+  // is a ref — only the draft-ready rule reads it, never the render.
+  const [activeTheme, setActiveTheme] = useState<string | undefined>(undefined);
+  const userThemeTouchedRef = useRef(false);
+  // Шаг 1 «Источник» — search state (вход A) + mode switch to link (B).
+  const [sourceMode, setSourceMode] = useState<"search" | "link">("search");
+  const [sourceQuery, setSourceQuery] = useState("");
+  const [sourceCity, setSourceCity] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [candidates, setCandidates] = useState<SourceCandidate[] | null>(null);
+  const [searchError, setSearchError] = useState<SourceSearchError>("none");
+  const [retryAfter, setRetryAfter] = useState(59);
+  // Draft build lifecycle — `draftRun` arms the poll effect below;
+  // `previewState` is what the canon `preview` prop renders from.
+  const [previewState, setPreviewState] = useState<PreviewUiState | null>(null);
+  const [draftRun, setDraftRun] = useState<DraftRun | null>(null);
+  const [contactNotice, setContactNotice] = useState<"preview_failed" | "preview_timeout" | null>(
+    null,
+  );
+  const draftIdRef = useRef<string | null>(null);
+  const previewViewedRef = useRef(false);
+
+  // Demo draft derived from the niche pick / free text — pure client-side
+  // fixture lookup (NICHE_DEMO_DRAFTS), zero network.
+  const demo = useMemo(
+    () => (demoSelection ? demoDraftFor(demoSelection.nicheId, demoSelection.freeText) : null),
+    [demoSelection],
+  );
+  const demoThemeOptions = demo?.niche ? demo.niche.theme_options : GENERIC_THEME_OPTIONS;
+
+  /** `true` once the link branch carries a live preview — canon switches
+   * to the 4-step previewFlow routing (building/preview at step 2). */
+  const previewActive = mode === "link" && previewState !== null;
+
+  // Preview-step swatches: the niche options, plus the backend-picked
+  // theme if it isn't among them (the active swatch must always render).
+  const previewThemeOptions = useMemo(() => {
+    const draftTheme = previewState?.draft?.theme_id;
+    if (draftTheme && !demoThemeOptions.includes(draftTheme)) {
+      return [draftTheme, ...demoThemeOptions].slice(0, 3);
+    }
+    return demoThemeOptions;
+  }, [demoThemeOptions, previewState?.draft?.theme_id]);
+
   // ── Я.Метрика funnel goals ──────────────────────────────────────────
   // `submit_photo_mode` — user is in the photo branch (initial open in
   // photo OR switched via the Step-1 mode-switcher). Guarded so the
@@ -208,11 +356,34 @@ export function SubmitModal({
     if (mode === "photo") reachGoal("submit_photo_mode");
   }, [mode]);
   // `submit_contact_step` — reached the «куда писать» step (link → step 2,
-  // photo → step 3). Fires on each arrival («how many got this far»).
+  // photo → step 3, preview flow → step 3). Fires on each arrival («how
+  // many got this far»). The preview-failed branch renders the contact
+  // form WITHOUT advancing the step (canon keeps step=2) — counted too.
   useEffect(() => {
-    const contactStep = mode === "photo" ? 3 : 2;
-    if (step === contactStep) reachGoal("submit_contact_step");
-  }, [step, mode]);
+    const contactStep = mode === "photo" || previewActive ? 3 : 2;
+    const onFailedContact = previewActive && step === 2 && previewState?.status === "failed";
+    if (step === contactStep || onFailedContact) reachGoal("submit_contact_step");
+  }, [step, mode, previewActive, previewState?.status]);
+
+  // ── Instant-preview funnel goals (rev.2, ТЗ §8) ─────────────────────
+  // `intake_demo_view` — пример показан (each arrival at шаг 0b).
+  useEffect(() => {
+    if (entryPhase === "demo") reachGoal("intake_demo_view");
+  }, [entryPhase]);
+  // `intake_preview_view` — готовый черновик показан (once per draft run;
+  // the ref resets in beginDraft). Guarded on step 2 so a draft that
+  // turns ready AFTER the user skipped to contact doesn't count a view.
+  useEffect(() => {
+    if (
+      previewActive &&
+      step === 2 &&
+      previewState?.status === "ready" &&
+      !previewViewedRef.current
+    ) {
+      previewViewedRef.current = true;
+      reachGoal("intake_preview_view");
+    }
+  }, [previewActive, step, previewState?.status]);
 
   // Debounced URL — drives canon's source badge. While the user is
   // actively typing, debouncedUrl lags the live `url` state by
@@ -236,6 +407,211 @@ export function SubmitModal({
     if (debouncedUrl.trim().length === 0) return null;
     return detectionToCanonSource(detectSource(debouncedUrl));
   }, [debouncedUrl]);
+
+  // ── Instant-preview: rate-limit countdown (source step) ─────────────
+  // Canon renders «Поиск снова доступен через 0:NN» from
+  // `retryAfterSeconds` — the live tick is the consumer's job (ТЗ §6).
+  // At 0 the search unlocks (back to state 3 `source-idle`).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (searchError !== "ratelimited") return;
+    if (retryAfter <= 0) {
+      setSearchError("none");
+      return;
+    }
+    const t = setTimeout(() => setRetryAfter((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [searchError, retryAfter]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // ── Instant-preview: draft build + poll lifecycle ────────────────────
+  // Armed by `draftRun` (set in beginDraft). POST /api/preview/draft,
+  // then GET /api/preview/draft/{id} every ~1.5 s. UI timeline:
+  //   building → (40 s) timeout → … keeps polling until DRAFT_POLL_MAX_MS
+  //   (the backend build continues async — if `ready` lands while the
+  //   user is still on step 2, the preview swaps in; ТЗ rev.1).
+  // Any transport / envelope failure → `failed` → canon renders the
+  // contact step with notice='preview_failed' (graceful degradation for
+  // a not-yet-deployed backend).
+  useEffect(() => {
+    if (!open || !draftRun) return;
+    const run = draftRun;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function fail() {
+      if (cancelled) return;
+      setPreviewState((prev) => (prev ? { ...prev, status: "failed" } : prev));
+    }
+
+    function applyTick(data: BuildPollResponse) {
+      if (cancelled) return;
+      if (data.status === "ready" && data.draft) {
+        const draft = data.draft;
+        // Theme rule (ТЗ rev.2 §2): user's swatch choice wins; otherwise
+        // adopt the backend-picked theme (the source knows the niche best).
+        if (!userThemeTouchedRef.current) setActiveTheme(draft.theme_id);
+        setPreviewState((prev) =>
+          prev ? { ...prev, status: "ready", stage: data.stage, counts: data.counts, draft } : prev,
+        );
+        return;
+      }
+      if (data.status === "failed") {
+        fail();
+        return;
+      }
+      const elapsed = Date.now() - run.startedAt;
+      setPreviewState((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: elapsed > DRAFT_TIMEOUT_MS ? "timeout" : "building",
+              stage: data.stage,
+              counts: data.counts,
+              draftSkeleton: data.draft ?? prev.draftSkeleton,
+            }
+          : prev,
+      );
+      if (elapsed < DRAFT_POLL_MAX_MS) {
+        timer = setTimeout(() => void poll(), DRAFT_POLL_INTERVAL_MS);
+      }
+    }
+
+    async function poll() {
+      const draftId = draftIdRef.current;
+      if (cancelled || !draftId) return;
+      const res = await pollDraft(draftId);
+      if (cancelled) return;
+      if (!res.ok) {
+        fail();
+        return;
+      }
+      applyTick(res.data);
+    }
+
+    void (async () => {
+      const created = await createDraft(run.body);
+      if (cancelled) return;
+      if (!created.ok || !created.data.draft_id) {
+        fail();
+        return;
+      }
+      draftIdRef.current = created.data.draft_id;
+      await poll();
+    })();
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [open, draftRun]);
+
+  // Closing the modal cancels any in-flight build — a fresh open starts
+  // clean (the reset effect below) without a stale draftRun re-arming
+  // the poll effect for one render.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (open) return;
+    setDraftRun(null);
+    setPreviewState(null);
+    draftIdRef.current = null;
+  }, [open]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // ── Instant-preview: entry handlers (шаги 0 / 0b / 1) ───────────────
+
+  function enterDemo(selection: DemoSelection, goalNiche: string) {
+    reachGoal("intake_niche_pick", { niche: goalNiche });
+    const { draft } = demoDraftFor(selection.nicheId, selection.freeText);
+    setDemoSelection(selection);
+    userThemeTouchedRef.current = false;
+    setActiveTheme(draft.theme_id);
+    setEntryPhase("demo");
+  }
+
+  function handleNichePick(nicheId: string) {
+    enterDemo({ nicheId, freeText: "" }, nicheId);
+  }
+
+  function handleShowExample(text: string) {
+    // Free text matches the synonym dictionary when possible; otherwise
+    // canon falls back to the generic editorial demo with the entered
+    // word as the category label.
+    const { niche } = demoDraftFor(null, text);
+    enterDemo({ nicheId: niche?.id ?? null, freeText: text }, niche?.id ?? "free_text");
+  }
+
+  function handleThemeChange(themeId: string) {
+    userThemeTouchedRef.current = true;
+    setActiveTheme(themeId);
+  }
+
+  function handleClaimDemo() {
+    reachGoal("intake_demo_claim");
+    setEntryPhase("source");
+  }
+
+  async function handleSearch() {
+    if (!sourceQuery.trim() || searching) return;
+    reachGoal("intake_source_search");
+    setSearching(true);
+    setCandidates(null);
+    setSearchError("none");
+    const res = await searchSource(sourceQuery.trim(), sourceCity.trim());
+    setSearching(false);
+    if (res.ok) {
+      if (res.data.candidates.length === 0) {
+        setSearchError("empty");
+        return;
+      }
+      setCandidates(res.data.candidates.slice(0, 3));
+      return;
+    }
+    if (res.error === "ratelimited") {
+      setSearchError("ratelimited");
+      // Canon renders the countdown as «0:NN» — clamp to its one-minute
+      // display window (the search re-enables when our tick reaches 0).
+      setRetryAfter(Math.min(res.retryAfterSeconds ?? 60, 59));
+      return;
+    }
+    setSearchError("network");
+  }
+
+  function handleNotMine() {
+    // «Здесь нет моего дела» / «Искать ещё раз» — back to idle, query kept.
+    setCandidates(null);
+    setSearchError("none");
+  }
+
+  function handlePickCandidate(candidateId: string) {
+    reachGoal("intake_candidate_pick");
+    // Candidates come exclusively from Я.Карты Geosearch (ТЗ rev.2 §7).
+    beginDraft({ candidate_id: candidateId }, "yandex_maps");
+  }
+
+  function handlePhotoBranch() {
+    // Вход C «Соберём из фото» — exits the entry flow into the classic
+    // photo branch (unchanged by rev.2).
+    setEntryPhase(null);
+    setMode("photo");
+    setStep(1);
+    setValidationError(null);
+  }
+
+  function beginDraft(body: DraftRequestBody, source: PreviewSource) {
+    previewViewedRef.current = false;
+    draftIdRef.current = null;
+    setEntryPhase(null);
+    setStep(2);
+    setContactNotice(null);
+    setPreviewState({
+      status: "building",
+      stage: "fetching",
+      counts: { photos: 0, reviews: 0 },
+      source,
+    });
+    setDraftRun({ body, startedAt: Date.now() });
+  }
 
   // Hidden file-input refs. Canon's PhotoDropZone / TextFilesDropZone
   // render «Выбрать файлы» as a presentational <button onClick={onPick}>
@@ -321,15 +697,72 @@ export function SubmitModal({
     setSubmitting(false);
     setError(null);
     setValidationError(null);
+    // Instant-preview entry (rev.2): EMPTY-HANDED open (link mode, blank
+    // URL) starts at шаге 0 «Ниша». A Hero URL — even an unrecognised
+    // one — keeps the classic link flow exactly as before.
+    setEntryPhase(initialMode === "link" && initialUrl.trim().length === 0 ? "niche" : null);
+    setNicheFreeText("");
+    setDemoSelection(null);
+    setActiveTheme(undefined);
+    userThemeTouchedRef.current = false;
+    previewViewedRef.current = false;
+    draftIdRef.current = null;
+    setSourceMode("search");
+    setSourceQuery("");
+    setSourceCity("");
+    setSearching(false);
+    setCandidates(null);
+    setSearchError("none");
+    setRetryAfter(59);
+    setPreviewState(null);
+    setDraftRun(null);
+    setContactNotice(null);
   }, [open, initialMode, initialUrl]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   function handleBack() {
+    // rev.2 entry navigation: источник → пример (0b). Шаг 0b's own back
+    // («Другая ниша») goes through entry.onOtherNiche, not here.
+    if (entryPhase === "source") {
+      setEntryPhase("demo");
+      return;
+    }
+    if (previewActive && step === 2) {
+      // «Изменить источник» (preview/building) / «Другая ссылка» (failed):
+      // cancel the build and return to шагу 1 «Источник».
+      setDraftRun(null);
+      setPreviewState(null);
+      setContactNotice(null);
+      draftIdRef.current = null;
+      setEntryPhase("source");
+      return;
+    }
+    if (previewActive && step === 3) {
+      // Контакт → назад к превью.
+      setStep(2);
+      return;
+    }
     if (step === 1) return;
     setStep((step - 1) as Step);
   }
 
   function handleContinue() {
+    // rev.2: вход B «ссылка» on шаге 1 — canon wires «Собрать черновик»
+    // to onBuild={onContinue}; start the draft build from the pasted URL.
+    if (entryPhase === "source") {
+      const trimmed = url.trim();
+      if (trimmed.length === 0) return;
+      beginDraft({ url: trimmed }, urlPreviewSource(trimmed));
+      return;
+    }
+    if (previewActive && step === 2) {
+      // From the preview surface: ready → «Забрать сайт бесплатно»;
+      // timeout → «Оставить контакт» (canon onSkipToContact).
+      if (previewState?.status === "ready") reachGoal("intake_draft_claim");
+      if (previewState?.status === "timeout") setContactNotice("preview_timeout");
+      setStep(3);
+      return;
+    }
     setStep((step + 1) as Step);
   }
 
@@ -358,8 +791,22 @@ export function SubmitModal({
       // a recognised MVP source (Telegram / Я.Карты) is a pasted link to
       // some other site → `website` (captured for manual review). Was
       // `photo`, which mislabeled pure link-pastes as photo uploads.
+      //
+      // Candidate path (rev.2): the draft was built from a Я.Карты
+      // Geosearch candidate — there is no URL at all, so classify as
+      // `ymaps` (the only catalog the search covers, ТЗ rev.2 §7).
       const liveDetection = detectSource(url);
-      const sourceType = liveDetection.kind === "mvp" ? liveDetection.type : "website";
+      let sourceType: string = liveDetection.kind === "mvp" ? liveDetection.type : "website";
+      if (url.trim().length === 0 && draftRun && "candidate_id" in draftRun.body) {
+        sourceType = "ymaps";
+      }
+      // TODO(preview-backend): draft_id + theme_id are NOT sent — the
+      // backend `SubmitApplicationLinkRequest` schema is frozen with
+      // `extra='forbid'` (backend/app/api/schemas/applications.py) and has
+      // no such fields yet. When the preview backend lands, extend the
+      // schema (draft_id: UUID | None, theme_id: str | None) and attach
+      // `draftIdRef.current` + `activeTheme` here so the full build reuses
+      // the draft and keeps the user-chosen style.
       result = await submitLink({
         url,
         source_type: sourceType,
@@ -390,8 +837,9 @@ export function SubmitModal({
     }
 
     reachGoal("hero_submit_success", { mode });
-    // Advance to final step
-    setStep((mode === "photo" ? 4 : 3) as Step);
+    // Advance to final step — in the previewFlow the confirm is step 4
+    // (Источник · Превью · Контакт · Готово).
+    setStep((mode === "photo" || previewActive ? 4 : 3) as Step);
   }
 
   const summary = {
@@ -403,7 +851,91 @@ export function SubmitModal({
     textFileCount: textFiles.length,
     channel,
     contact,
+    // «СТИЛЬ» row on the final confirm — preview flow only (canon hides
+    // the row when themeLabel is undefined).
+    themeLabel: previewActive && activeTheme ? themeLabelFor(activeTheme) : undefined,
   };
+
+  // ── canon `entry` prop (rev.2 шаги 0 / 0b / 1) ──────────────────────
+  const entryProp =
+    entryPhase === null
+      ? null
+      : entryPhase === "niche"
+        ? {
+            step: "niche" as const,
+            freeText: nicheFreeText,
+            onFreeTextChange: setNicheFreeText,
+            onPick: handleNichePick,
+            onShowExample: handleShowExample,
+            mobile: isMobile,
+          }
+        : entryPhase === "demo"
+          ? {
+              step: "demo" as const,
+              demoDraft: demo?.draft,
+              nicheLabel: demo?.nicheLabel,
+              themeOptions: demoThemeOptions,
+              activeTheme,
+              onThemeChange: handleThemeChange,
+              onClaimDemo: handleClaimDemo,
+              onOtherNiche: () => setEntryPhase("niche"),
+              mobile: isMobile,
+            }
+          : {
+              step: "source" as const,
+              sourceMode,
+              query: sourceQuery,
+              city: sourceCity,
+              onQueryChange: setSourceQuery,
+              onCityChange: setSourceCity,
+              searching,
+              candidates,
+              searchError,
+              retryAfterSeconds: retryAfter,
+              onSearch: () => void handleSearch(),
+              onPickCandidate: handlePickCandidate,
+              onNotMine: handleNotMine,
+              onSwitchMode: setSourceMode,
+              onPhotoBranch: handlePhotoBranch,
+              mobile: isMobile,
+            };
+
+  // ── canon `preview` prop (0.10.0 + rev.2 морф) ──────────────────────
+  // baseDraft = the demo example the user just saw, re-themed to their
+  // active swatch so the morph chassis doesn't jump back to the niche
+  // default (canon renders the morph with baseDraft.theme_id).
+  const baseDraftForMorph = demo
+    ? { ...demo.draft, theme_id: activeTheme ?? demo.draft.theme_id }
+    : undefined;
+  const previewProp =
+    previewActive && previewState
+      ? {
+          status: previewState.status,
+          stage: previewState.stage,
+          counts: previewState.counts,
+          draftSkeleton: previewState.draftSkeleton,
+          draft: previewState.draft,
+          baseDraft: baseDraftForMorph,
+          source: previewState.source,
+          themeOptions: previewThemeOptions,
+          activeTheme,
+          onThemeChange: handleThemeChange,
+          mobile: isMobile,
+        }
+      : null;
+
+  // The rev.2 surfaces (entry steps, building morph, preview) are wide
+  // canon cards (640–1040 px) — widen the Radix host for them; canon's
+  // inner card self-sizes and centres. The classic steps keep the
+  // original 540 px clamp so the old flow stays pixel-identical.
+  const showsEntry = entryPhase !== null;
+  const showsPreviewSurface = previewActive && step === 2 && previewState?.status !== "failed";
+  const wideHost = showsEntry || showsPreviewSurface;
+  // On mobile canon renders these steps as a fullscreen-flat sheet whose
+  // own background is neutralised by the `.ss-submit-modal-host >
+  // div:first-of-type` override in globals.css — give the host the same
+  // paper surface (`bg-paper` === canon VT.bg) so content stays readable.
+  const mobileCanonShell = isMobile && wideHost;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -438,7 +970,11 @@ export function SubmitModal({
              card gets its own `maxWidth: '100%'` to shrink to 540,
              eliminating the left/right gap that previously rendered
              as a translucent gray ring. See globals.css. */
-          className="ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full max-w-[540px] -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]"
+          className={cn(
+            "ss-submit-modal-host fixed left-1/2 top-1/2 z-[70] w-full -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none focus:outline-none sm:max-h-[90vh]",
+            wideHost ? "max-h-[92vh] max-w-[1080px]" : "max-w-[540px]",
+            mobileCanonShell && "rounded-2xl bg-paper",
+          )}
           /* Event delegation for canon-shipped buttons that need to
              be wired up on the consumer side:
              1. × close: canon's <ModalShell> renders <button
@@ -461,6 +997,7 @@ export function SubmitModal({
             }
             const btn = target.closest("button");
             if (!btn || !btn.textContent?.trim().startsWith("Продолжить")) return;
+            if (entryPhase !== null) return; // rev.2 entry steps ship no «Продолжить»
             if (step === 1 && mode === "link" && url.trim().length === 0) {
               setValidationError("Заполните ссылку");
               return;
@@ -548,6 +1085,11 @@ export function SubmitModal({
             onSubmit={handleSubmit}
             onClose={handleClose}
             summary={summary}
+            // rev.2 instant-preview surfaces — both are opt-in additive
+            // props; null keeps canon's 0.3.0 routing byte-for-byte.
+            entry={entryProp}
+            preview={previewProp}
+            contactNotice={contactNotice}
           />
           {validationError && (
             <div

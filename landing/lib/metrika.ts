@@ -28,6 +28,18 @@
  *   submit_contact_step   — дошёл до шага «куда писать»
  *   hero_submit_success   — backend ответил 200 на submit
  *
+ * ── Instant-preview intake (canon 0.11.0 rev.2 «ниша-демо», P0) ──
+ * Новая воронка ниша → демо → источник → превью → заявка
+ * (`docs/handoff/CANON_INSTANT_PREVIEW_REV2_TZ.md §8`):
+ *   intake_niche_pick     — выбрана ниша на шаге 0; param `niche`:
+ *                           id из NICHE_LIB | free_text
+ *   intake_demo_view      — показан пример сайта (шаг 0b)
+ *   intake_demo_claim     — клик «Заменить на ваши данные» (шаг 0b)
+ *   intake_source_search  — запущен поиск по названию (шаг 1)
+ *   intake_candidate_pick — выбран кандидат из выдачи Я.Карт
+ *   intake_preview_view   — показан готовый черновик (превью)
+ *   intake_draft_claim    — клик «Забрать сайт бесплатно» на превью
+ *
  * ── Вовлечённость по секциям (P1, scroll-into-view) ──
  *   examples_view · cycle_view · monday_view · pricing_view ·
  *   final_cta_view        — секция попала во viewport (по разу)
@@ -60,6 +72,14 @@ export type MetrikaGoal =
   | "submit_photo_mode"
   | "submit_contact_step"
   | "hero_submit_success"
+  // ── Instant-preview intake (rev.2, P0) ──
+  | "intake_niche_pick"
+  | "intake_demo_view"
+  | "intake_demo_claim"
+  | "intake_source_search"
+  | "intake_candidate_pick"
+  | "intake_preview_view"
+  | "intake_draft_claim"
   // ── Секции (P1) ──
   | "examples_view"
   | "cycle_view"
