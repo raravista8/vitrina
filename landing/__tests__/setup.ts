@@ -23,3 +23,20 @@ if (typeof globalThis.ResizeObserver === "undefined") {
     }
   };
 }
+
+// jsdom не имеет `window.matchMedia` — нужен для `lib/use-is-mobile.ts`
+// (SubmitModal instant-preview steps передают canon'у `mobile` prop).
+// Stub всегда matches=false → тесты рендерят desktop-вариант шагов.
+if (typeof window !== "undefined" && typeof window.matchMedia === "undefined") {
+  window.matchMedia = (query: string): MediaQueryList =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      dispatchEvent: () => false,
+    }) as MediaQueryList;
+}

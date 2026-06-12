@@ -1,7 +1,8 @@
 # Runbook: Я.Метрика goals (operator action)
 
-> **TL;DR.** Frontend шлёт 17 goal-событий через `window.ym(counter, 'reachGoal', '<name>')`
-> (обновлено под canon 0.7.x landing — 11 блоков).
+> **TL;DR.** Frontend шлёт 24 goal-события через `window.ym(counter, 'reachGoal', '<name>')`
+> (обновлено под canon 0.7.x landing — 11 блоков; +7 intake-goals в
+> canon 0.11.0 instant-preview consumer).
 > Чтобы Я.Метрика начала отображать конверсии в отчётах — каждый goal надо
 > один раз создать в UI metrika.yandex.ru. Это **operator action** — Claude
 > Code не имеет доступа к UI Я.Метрики, оператор должен сделать это сам.
@@ -45,9 +46,22 @@
 | 16 | `feedback_open` | вход в фидбек; параметр `source`: fab \| sources \| footer \| final |
 | 17 | `analytics_demo_click` | «Посмотреть демо ЛК» под аналитикой (→ /admin-demo) |
 
-Все 17 — **JavaScript event goals** (тип `Событие JavaScript`).
+**Instant-preview intake (P0, canon 0.11.0 rev.2 «ниша-демо»):**
+воронка ниша → демо → источник → превью → заявка, все fires в
+`SubmitModal.tsx` (`docs/handoff/CANON_INSTANT_PREVIEW_REV2_TZ.md §8`):
+| # | Goal ID | Триггер |
+|---|---|---|
+| 18 | `intake_niche_pick` | выбрана ниша на шаге 0; параметр `niche`: id из NICHE_LIB \| free_text |
+| 19 | `intake_demo_view` | показан пример сайта (шаг 0b) |
+| 20 | `intake_demo_claim` | клик «Заменить на ваши данные» |
+| 21 | `intake_source_search` | запущен поиск по названию (шаг «Источник») |
+| 22 | `intake_candidate_pick` | выбран кандидат из выдачи Я.Карт |
+| 23 | `intake_preview_view` | показан готовый черновик (превью) |
+| 24 | `intake_draft_claim` | клик «Забрать сайт бесплатно» на превью |
+
+Все 24 — **JavaScript event goals** (тип `Событие JavaScript`).
 Передаём только goal ID (+ безопасные enum-параметры `source`/`detection`/
-`mode`/`question`); **никаких PII** в payload не уходит.
+`mode`/`question`/`niche`); **никаких PII** в payload не уходит.
 
 > **Удалены из кода** (canon 0.7.x — секций больше нет): `socialproof_view`
 > (SocialProof убран в 0.6.0), `free_month_cta_click` (FreeMonth → FinalCta).

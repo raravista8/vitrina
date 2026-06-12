@@ -205,6 +205,15 @@ describe("Hero — UX batch 1 (first user testing)", () => {
     expect(screen.queryByRole("button", { name: /Очистить/i })).not.toBeInTheDocument();
   });
 
+  it("empty-handed CTA opens the instant-preview niche entry (canon 0.11.0)", () => {
+    // rev.2 «ниша-демо»: a CTA click with a blank Hero input routes the
+    // modal to шаг 0 «Ниша» instead of the bare link input — see
+    // docs/handoff/CANON_INSTANT_PREVIEW_REV2_TZ.md §1.
+    render(<Hero />);
+    fireEvent.click(screen.getByRole("button", { name: /Собрать сайт/ }));
+    expect(screen.getByRole("heading", { name: /Чем занимаетесь/i })).toBeInTheDocument();
+  });
+
   it("main CTA always opens SubmitModal in link mode (canon 0.3.0)", () => {
     // canon 0.3.0: «link OR photo, never both». Main CTA = link path
     // regardless of what's pasted (waitlist URLs surface the inline
