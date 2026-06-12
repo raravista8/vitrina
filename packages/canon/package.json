@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.9.5",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.9.5: фикс S9_FeedbackModal — вложенные Dialog/FauxPage/FloatingBtn вызываются как функции, а не монтируются как <Dialog/>, иначе React пересоздавал поддерево на каждый клик/ввод (скролл прыгал, инпут терял фокус). Включает landing-фиксы 0.9.3/0.9.4 (StickyHeader hover + HeroBlock text-wrap). Drop-in на прод.",
+  "version": "0.11.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.11.0: rev.2 «ниша-демо» — вход ДО ссылки: тап по нише → мгновенный пример сайта (0 c, без сети) → поиск источника по названию на Я.Картах → морф примера в черновик. Новые S3_StepNiche / S3_StepSource, NICHE_LIB, SourceCandidate; S3_StepPreview variant='demo'; S3_StepBuilding baseDraft (морф). Additive — пропсы 0.10.0 не ломаются, photo-ветка byte-identical.",
   "type": "module",
   "sideEffects": [
     "*.css"

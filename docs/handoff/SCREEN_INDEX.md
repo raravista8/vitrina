@@ -23,6 +23,7 @@
 - **API:** `GET /api/preview?url=` → `{source, counts, status}`
 
 ### #3 · Submit modal — 3 шага (новый флоу)
+- **canon 0.10.0/0.11.0 (vendored, не включено):** instant-preview шаги — `S3_StepNiche` (ниша-демо), `S3_StepSource` (поиск по названию), `S3_StepBuilding`/`S3_StepPreview` (сборка-морф + черновик). Opt-in пропсы `preview`/`entry`; прод-флоу пока 0.3.0-вид. ТЗ: `CANON_INSTANT_PREVIEW_TZ.md` + `_REV2_TZ.md`
 - **Канон:** `canon/screens-intake.jsx` → `S3_SubmitModal` (step=1/2/3)
 - **Прод:** `code/SubmitModal.tsx`
 - **Спека:** `specs/00_CLAUDE_CODE_TZ_base.md §2`

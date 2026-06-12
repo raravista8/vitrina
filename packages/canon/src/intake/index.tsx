@@ -1,13 +1,36 @@
 'use client';
 
-// @samosite/canon · intake · 0.3.0
+// @samosite/canon · intake · 0.11.0
 //
-// SubmitModal rewrite — TWO BRANCHES with mode-switcher and inline confirmation.
+// SubmitModal — TWO BRANCHES with mode-switcher and inline confirmation.
 //
 //   mode = 'link'  →  Step 1 (link)        → Step 2 (contact) → Step 3 (confirm)
 //   mode = 'photo' →  Step 1 (photo files) → Step 2 (описание + city +
 //                     customer_contact, опц. text_files) → Step 3 (contact)
 //                                                       → Step 4 (confirm)
+//
+// 0.10.0 · «сайт до контакта» (additive, link-ветка only):
+//   передайте проп `preview` — и link-ветка становится 4-шаговой:
+//
+//   mode = 'link' + preview → Step 1 (ссылка)
+//                           → Step 2 «Сборка/Превью» (S3_StepBuilding пока
+//                             preview.status='building'/'timeout',
+//                             S3_StepPreview когда 'ready',
+//                             контакт с notice когда 'failed')
+//                           → Step 3 (контакт, новый заголовок-копи)
+//                           → Step 4 (подтверждение)
+//
+//   Без `preview` link-ветка ведёт себя ровно как в 0.3.0 (3 шага).
+//   Photo-ветка не меняется вообще. См. ./preview.tsx и CHANGELOG §0.10.0.
+//
+// 0.11.0 · rev.2 «ниша-демо» (additive, проп `entry`) — вход ДО ссылки:
+//
+//   entry.step='niche'  → Шаг 0 «Чем занимаетесь?» (S3_StepNiche, без дотов)
+//   entry.step='demo'   → Шаг 0b «Пример» (S3_StepPreview variant='demo', 0 c, без сети)
+//   entry.step='source' → Шаг 1 «Источник» (S3_StepSource: поиск по названию / ссылка / фото)
+//   дальше — обычный preview-флоу; сборка с preview.baseDraft = морф «пример → черновик» (ТЗ §5).
+//
+//   Hero-вход с ok-ссылкой пропускает шаги 0/0b/1 — как в 0.10.0. См. ./rev2.tsx.
 //
 // Mode-switcher (pill tabs «🔗 ссылка / 📎 фото») rendered on Step 1 in both
 // branches so user can switch without closing the modal. Branch state survives
@@ -26,19 +49,37 @@
 import React from 'react';
 import { VT, BRAND } from '../tokens';
 import { Mono, Btn, Checkbox, IconLink, IconArrow, Spinner } from '../primitives';
+import {
+  S3_StepBuilding, S3_StepPreview,
+  draftToSlotContent, draftPreset, nicheCopyFor, draftHostSlug, morphSlotContent,
+  mockPreviewDraftRich, mockPreviewDraftSparse, mockThemeOptions,
+} from './preview';
+import type {
+  PreviewDraft, PreviewSource, BuildStage, BuildStatus, BuildCounts,
+  BuildPollResponse, S3_StepBuildingProps, S3_StepPreviewProps,
+} from './preview';
+import {
+  S3_StepNiche, S3_StepSource,
+  NICHE_LIB, NICHE_DEMO_DRAFTS, matchNiche, demoDraftFor,
+  GENERIC_THEME_OPTIONS, mockSourceCandidates,
+} from './rev2';
+import type {
+  NicheItem, SourceCandidate, SourceSearchError,
+  S3_StepNicheProps, S3_StepSourceProps,
+} from './rev2';
 
 
 // ─────────────────────────────────────────────────────────────
 // Shell
 
-function ModalShell({ children, width = 540 }) {
+function ModalShell({ children, width = 540, intakeStep }) {
   return (
     <div style={{
       background: 'rgba(0,0,0,0.32)', minHeight: '100%', width: '100%',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 24, fontFamily: VT.font.sans,
     }}>
-      <div style={{
+      <div data-intake-step={intakeStep} style={{
         width, maxWidth: '100%', background: VT.bg,
         borderRadius: VT.r.xl, boxShadow: VT.shadow.pop,
         padding: 28, position: 'relative',
@@ -524,7 +565,7 @@ function S3_Step1_Link({
 }) {
   const canContinue = !!url && source && SOURCE_LIB[source]?.tier === 'ok';
   return (
-    <ModalShell width={540}>
+    <ModalShell width={540} intakeStep="source">
       <StepHeader step={1} total={total} showBack={false}
         title="Покажите ваше дело — соберём из этого сайт"
         sub={`Вставьте ссылку — ${BRAND.name} распознает источник и заберёт всё нужное`} />
@@ -714,6 +755,11 @@ function ChannelOption({ value, label, hint, icon, selected, onSelect }) {
 function S3_StepContact({
   step, total,
   channel = 'telegram', contact = '', consent = true,
+  // 0.10.0 additive: копи-оверрайды для превью-флоу + мягкие notice-плашки.
+  // Дефолты = строки 0.3.0 → photo-ветка и классическая link-ветка byte-identical.
+  title = 'Куда вам писать?',
+  sub = 'Один контакт для вас — туда придёт ссылка на готовый сайт и заявки от клиентов.',
+  notice = null, // null | 'preview_failed' | 'preview_timeout'
   onChannelChange, onContactChange, onConsentChange,
   onBack, onSubmit,
 }) {
@@ -724,10 +770,29 @@ function S3_StepContact({
     max:      '@your_handle',
   }[channel];
   return (
-    <ModalShell width={540}>
+    <ModalShell width={540} intakeStep="contact">
       <StepHeader step={step} total={total}
-        title="Куда вам писать?"
-        sub="Один контакт для вас — туда придёт ссылка на готовый сайт и заявки от клиентов." />
+        title={title}
+        sub={sub} />
+
+      {notice === 'preview_failed' && (
+        <div style={{
+          marginTop: 14, padding: '12px 14px',
+          background: VT.warnSoft, borderRadius: VT.r.md,
+          fontSize: 13.5, lineHeight: 1.5, color: 'oklch(0.42 0.13 70)',
+        }}>
+          Не дотянулись до источника. Соберём сайт вручную за 2 часа
+        </div>
+      )}
+      {notice === 'preview_timeout' && (
+        <div style={{
+          marginTop: 14, padding: '12px 14px',
+          background: VT.infoSoft, borderRadius: VT.r.md,
+          fontSize: 13.5, lineHeight: 1.5, color: 'oklch(0.36 0.10 240)',
+        }}>
+          Собираем дольше обычного. Оставьте контакт, и мы пришлём готовый черновик
+        </div>
+      )}
 
       <div style={{ marginTop: 20 }}>
         <FieldLabel>Основной канал</FieldLabel>
@@ -806,7 +871,7 @@ function pluralFiles(n) {
 
 function S3_FinalConfirm({ mode = 'link', total = 3, summary = {}, onClose }) {
   return (
-    <ModalShell width={540}>
+    <ModalShell width={540} intakeStep="confirm">
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <Mono style={{ fontSize: 11, letterSpacing: '0.1em' }}>ШАГ {total}/{total}</Mono>
         <div style={{ display: 'flex', gap: 4 }}>
@@ -836,6 +901,9 @@ function S3_FinalConfirm({ mode = 'link', total = 3, summary = {}, onClose }) {
       <div style={{ marginTop: 20 }}>
         {mode === 'link' && summary.url && (
           <SummaryRow label="ССЫЛКА" value={<span style={{ fontFamily: VT.font.mono, fontSize: 13 }}>{summary.url}</span>} />
+        )}
+        {summary.themeLabel && (
+          <SummaryRow label="СТИЛЬ" value={summary.themeLabel} />
         )}
         {mode === 'photo' && (
           <>
@@ -904,9 +972,122 @@ function SubmitModal(props) {
     onBack, onContinue, onSubmit, onClose,
     // final
     summary,
+    // 0.10.0 · «сайт до контакта» (additive). UI-статус — superset poll-статуса:
+    // 'timeout' — решение консьюмера по своему таймеру (> 40 c), бэкенд его не шлёт.
+    // preview = {
+    //   status: 'building' | 'ready' | 'failed' | 'timeout',
+    //   stage?, counts?, draftSkeleton?, draft?,            // из poll-ответа
+    //   baseDraft?,                                         // 0.11.0 · есть → сборка = морф §5
+    //   themeOptions?, activeTheme?, onThemeChange?,        // переключатель 2-3 тем
+    //   variant?: 'rich' | 'sparse', mobile?,
+    // }
+    preview = null,
+    contactNotice = null, // прокидывается в S3_StepContact на шаге 3 превью-флоу
+    // 0.11.0 · rev.2 «ниша-демо» (additive). Вход ДО ссылки:
+    // entry = {
+    //   step: 'niche' | 'demo' | 'source',
+    //   // niche:  niches?, freeText?, onFreeTextChange?, onPick?, onShowExample?
+    //   // demo:   demoDraft (из demoDraftFor), nicheLabel?, themeOptions?,
+    //   //         activeTheme?, onThemeChange?, onClaimDemo?, onOtherNiche?
+    //   // source: sourceMode?, query?, city?, onQueryChange?, onCityChange?,
+    //   //         searching?, candidates?, searchError?, retryAfterSeconds?,
+    //   //         onSearch?, onPickCandidate?, onNotMine?, onSwitchMode?, onPhotoBranch?
+    //   mobile?,
+    // }
+    // Состояние темы: activeTheme живёт с шага 0b и протаскивается через сборку
+    // в превью и payload заявки. userThemeTouched=true → выбор человека сильнее
+    // draft.theme_id бэкенда (ТЗ rev.2 §2) — правило реализует консьюмер.
+    entry = null,
   } = props;
 
-  const total = mode === 'photo' ? 4 : 3;
+  const previewFlow = mode === 'link' && !!preview;
+  const total = mode === 'photo' ? 4 : previewFlow ? 4 : 3;
+
+  // ── rev.2 · вход «ниша-демо» ДО ссылки (шаги 0 / 0b / 1) ──────────────
+  if (entry && entry.step === 'niche') {
+    return <S3_StepNiche
+      niches={entry.niches} freeText={entry.freeText}
+      onFreeTextChange={entry.onFreeTextChange}
+      onPick={entry.onPick} onShowExample={entry.onShowExample}
+      mobile={entry.mobile} />;
+  }
+  if (entry && entry.step === 'demo') {
+    return <S3_StepPreview variant="demo"
+      draft={entry.demoDraft} nicheLabel={entry.nicheLabel}
+      themeOptions={entry.themeOptions || []}
+      activeTheme={entry.activeTheme} onThemeChange={entry.onThemeChange}
+      onClaim={entry.onClaimDemo || onContinue}
+      onBack={entry.onOtherNiche}
+      mobile={entry.mobile} />;
+  }
+  if (entry && entry.step === 'source') {
+    return <S3_StepSource
+      mode={entry.sourceMode || 'search'}
+      query={entry.query} city={entry.city}
+      onQueryChange={entry.onQueryChange} onCityChange={entry.onCityChange}
+      searching={entry.searching} candidates={entry.candidates}
+      searchError={entry.searchError} retryAfterSeconds={entry.retryAfterSeconds}
+      onSearch={entry.onSearch} onPickCandidate={entry.onPickCandidate}
+      onNotMine={entry.onNotMine}
+      url={url} source={source} counts={counts} onUrlChange={onUrlChange}
+      onBuild={onContinue}
+      onSwitchMode={entry.onSwitchMode} onPhotoBranch={entry.onPhotoBranch}
+      onBack={onBack}
+      mobile={entry.mobile} />;
+  }
+
+  // ── превью-флоу (link + preview): 1 → сборка/превью → контакт → подтверждение
+  if (previewFlow && step === 2) {
+    if (preview.status === 'ready' && preview.draft) {
+      return <S3_StepPreview
+        draft={preview.draft}
+        themeOptions={preview.themeOptions || []}
+        activeTheme={preview.activeTheme}
+        onThemeChange={preview.onThemeChange}
+        onClaim={onContinue}
+        onBack={onBack}
+        variant={preview.variant}
+        mobile={preview.mobile} />;
+    }
+    if (preview.status === 'failed') {
+      // Мягкий fallback: сразу контактный шаг, текущий флоу не ломается.
+      return <S3_StepContact step={3} total={total}
+        title="Куда прислать готовый сайт?"
+        sub="Соберём полную версию и пришлём ссылку, обычно в течение 2 часов."
+        notice="preview_failed"
+        channel={channel} contact={contact} consent={consent}
+        onChannelChange={onChannelChange} onContactChange={onContactChange}
+        onConsentChange={onConsentChange}
+        onBack={onBack} onSubmit={onSubmit} />;
+    }
+    return <S3_StepBuilding
+      stage={preview.stage}
+      counts={preview.counts}
+      draftSkeleton={preview.draftSkeleton}
+      baseDraft={preview.baseDraft}
+      source={preview.source}
+      timedOut={preview.status === 'timeout'}
+      onSkipToContact={onContinue}
+      onBack={onBack}
+      mobile={preview.mobile} />;
+  }
+  if (previewFlow && step === 3) {
+    return <S3_StepContact step={3} total={total}
+      title="Куда прислать готовый сайт?"
+      sub="Соберём полную версию и пришлём ссылку, обычно в течение 2 часов."
+      notice={contactNotice}
+      channel={channel} contact={contact} consent={consent}
+      onChannelChange={onChannelChange} onContactChange={onContactChange}
+      onConsentChange={onConsentChange}
+      onBack={onBack} onSubmit={onSubmit} />;
+  }
+  if (previewFlow && step === 4) {
+    const s = summary || {
+      url, channel, contact,
+      themeLabel: preview.activeTheme || undefined,
+    };
+    return <S3_FinalConfirm mode="link" total={total} summary={s} onClose={onClose} />;
+  }
 
   if (step === 1 && mode === 'link') {
     return <S3_Step1_Link
@@ -973,7 +1154,35 @@ export {
   S3_Step2_PhotoDesc,
   S3_StepContact,
   S3_FinalConfirm,
+  // 0.10.0 · «сайт до контакта»
+  S3_StepBuilding,
+  S3_StepPreview,
+  draftToSlotContent,
+  draftPreset,
+  nicheCopyFor,
+  draftHostSlug,
+  mockPreviewDraftRich,
+  mockPreviewDraftSparse,
+  mockThemeOptions,
+  // 0.11.0 · rev.2 «ниша-демо»
+  S3_StepNiche,
+  S3_StepSource,
+  NICHE_LIB,
+  NICHE_DEMO_DRAFTS,
+  matchNiche,
+  demoDraftFor,
+  GENERIC_THEME_OPTIONS,
+  mockSourceCandidates,
+  morphSlotContent,
   // Constants for consumers who validate client-side
   SOURCE_LIB,
   PHOTO_LIMITS,
+};
+
+export type {
+  PreviewDraft, PreviewSource, BuildStage, BuildStatus, BuildCounts,
+  BuildPollResponse, S3_StepBuildingProps, S3_StepPreviewProps,
+  // 0.11.0 · rev.2
+  NicheItem, SourceCandidate, SourceSearchError,
+  S3_StepNicheProps, S3_StepSourceProps,
 };
