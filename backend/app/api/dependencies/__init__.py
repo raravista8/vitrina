@@ -28,6 +28,8 @@ from app.core.billing.ports import PaymentGateway
 from app.core.captcha.verifier import CaptchaVerifier, build_captcha_verifier
 from app.core.content.ports import LlmClient
 from app.core.notify.dispatcher import NotificationDispatcher
+from app.core.preview.draft_builder import PreviewDraftService
+from app.core.preview.search import PreviewSearchService
 from app.core.preview.service import PreviewService
 from app.infrastructure.postgres.engine import get_sessionmaker
 
@@ -103,6 +105,49 @@ def _build_preview_rate_limiter() -> RateLimiter:
 
 
 preview_rate_limiter = _build_preview_rate_limiter()
+
+
+def _build_preview_search_rate_limiter() -> RateLimiter:
+    """Instant-preview rev.2 §7: 10 req/min/IP on the Geosearch text
+    search — 429 + Retry-After past the budget."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_preview_search_per_ip_per_min,
+        window_seconds=60,
+        scope="preview_search",
+    )
+
+
+preview_search_rate_limiter = _build_preview_search_rate_limiter()
+
+
+def _build_preview_draft_rate_limiter() -> RateLimiter:
+    """Draft creation spawns a ≤30 s background build that fetches
+    user-supplied URLs — 10/h/IP keeps the legit «Изменить источник»
+    retry loop working while killing fetch-amplification abuse."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_preview_draft_per_ip_per_hour,
+        window_seconds=3600,
+        scope="preview_draft",
+    )
+
+
+preview_draft_rate_limiter = _build_preview_draft_rate_limiter()
+
+
+def _build_preview_draft_poll_rate_limiter() -> RateLimiter:
+    """Poll endpoint: the consumer polls every ~1 s for ≤40 s per build;
+    120/min/IP is generous for the flow and still recon-hostile."""
+    settings = get_settings()
+    return RateLimiter(
+        limit=settings.rate_limit_preview_draft_poll_per_ip_per_min,
+        window_seconds=60,
+        scope="preview_draft_poll",
+    )
+
+
+preview_draft_poll_rate_limiter = _build_preview_draft_poll_rate_limiter()
 
 
 def _build_admin_login_rate_limiter() -> RateLimiter:
@@ -212,6 +257,24 @@ def get_preview_service(request: Request) -> PreviewService:
     if svc is None:
         msg = "preview_service not initialised — lifespan didn't run?"
         raise RuntimeError(msg)
+    return svc
+
+
+def get_preview_search_service(request: Request) -> PreviewSearchService:
+    """Per-app PreviewSearchService (instant-preview rev.2). ``None`` when
+    Redis was down at startup — fail with 503, not a crash."""
+    svc: PreviewSearchService | None = getattr(request.app.state, "preview_search_service", None)
+    if svc is None:
+        raise HTTPException(status_code=503, detail="preview_search_unavailable")
+    return svc
+
+
+def get_preview_draft_service(request: Request) -> PreviewDraftService:
+    """Per-app PreviewDraftService (instant-preview rev.1+rev.2). ``None``
+    when Redis was down at startup — fail with 503, not a crash."""
+    svc: PreviewDraftService | None = getattr(request.app.state, "preview_draft_service", None)
+    if svc is None:
+        raise HTTPException(status_code=503, detail="preview_draft_unavailable")
     return svc
 
 

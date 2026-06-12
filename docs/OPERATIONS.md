@@ -120,6 +120,12 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
   hostname → real LE cert via tls-alpn-01. See `docs/runbooks/publish-milreview.md`.
 - **Pricing** is frontend-only (canon 5-tier matrix); ЮKassa is still single-plan
   990 ₽. See `docs/handoff/CANON_SWAP_PLAN.md` §Pricing.
+- **Instant-preview backend** (`GET /api/preview/search` + `POST /api/preview/draft`,
+  CANON_INSTANT_PREVIEW_REV2_TZ §7) needs `YANDEX_GEOSEARCH_API_KEY` in
+  `/opt/vitrina/.env` (same key as the T1.4b hero badge). Key unset → search
+  answers `502 search_not_configured` (graceful, no crash) and ymaps-URL drafts
+  fail; telegram/website drafts work without it. Draft/candidate state lives in
+  Redis (`preview_draft:*` 15 min TTL, `preview_candidate:*` 30 min TTL).
 
 ---
 

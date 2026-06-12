@@ -62,15 +62,27 @@ class YandexGeosearchClient:
         first = features[0]
         return first if isinstance(first, dict) else None
 
-    async def _raw_search(self, source_url: str) -> Any:
+    async def search_businesses(self, query: str, *, results: int = 3) -> list[dict[str, Any]]:
+        """Free-text TEXT search (instant-preview rev.2 «поиск по
+        названию»). Returns the raw ``features[]`` dicts — the core
+        layer parses them into candidates."""
+        payload = await self._raw_search(query, results=results)
+        if not isinstance(payload, dict):
+            return []
+        features = payload.get("features")
+        if not isinstance(features, list):
+            return []
+        return [f for f in features if isinstance(f, dict)]
+
+    async def _raw_search(self, text: str, *, results: int = 1) -> Any:
         if not self._api_key:
             raise RuntimeError("YandexGeosearchClient called without API key")
         params = {
             "apikey": self._api_key,
-            "text": source_url,
+            "text": text,
             "type": "biz",
             "lang": "ru_RU",
-            "results": "1",
+            "results": str(results),
         }
         async with httpx.AsyncClient(timeout=self._timeout) as client:
             response = await client.get(GEOSEARCH_URL, params=params)
