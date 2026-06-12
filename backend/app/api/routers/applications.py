@@ -46,8 +46,8 @@ from app.api.schemas.applications import (
 from app.config import get_settings
 from app.core.applications.service import submit_application
 from app.core.captcha.verifier import CaptchaVerifier
-from app.core.notify.dispatcher import NotificationDispatcher
-from app.core.notify.ports import NotificationKind, NotificationMessage
+from app.core.notify.dispatcher import NotificationDispatcher, UserContact
+from app.core.notify.ports import ChannelType, NotificationKind, NotificationMessage
 from app.core.parsing.adapters.photos import (
     ALLOWED_MIME_TYPES,
     MAX_BYTES_PER_FILE,
@@ -144,6 +144,12 @@ async def post_submit_application(
             # Email subject for the founder alert (TG keeps the #id title).
             metadata={"email_subject": "новая заявка на сайт"},
         ),
+    )
+
+    await _ack_applicant(
+        notifier,
+        contact_type=application.contact_type,
+        contact_value=application.contact_value,
     )
 
     return SubmitApplicationResponse(
@@ -450,12 +456,70 @@ async def post_submit_application_photo(
         ),
     )
 
+    await _ack_applicant(
+        notifier,
+        contact_type=application.contact_type,
+        contact_value=application.contact_value,
+    )
+
     return SubmitApplicationResponse(
         data=SubmitApplicationData(
             application_id=application.id,
             contact_type=application.contact_type,  # type: ignore[arg-type]
         )
     )
+
+
+# users.contact_type → dispatcher channel. "phone" maps to SMS, which the
+# ALLOWED_CHANNELS_FOR_KIND policy excludes for application_received
+# (FR-002c — no SMS on submit), so phone applicants get no ack by design.
+_CONTACT_TO_CHANNEL: dict[str, ChannelType] = {
+    "telegram": ChannelType.telegram,
+    "email": ChannelType.email,
+    "max": ChannelType.max,
+    "phone": ChannelType.sms,
+}
+
+
+async def _ack_applicant(
+    notifier: NotificationDispatcher, *, contact_type: str, contact_value: str
+) -> None:
+    """Speed-to-lead: instant «заявка принята» ack to the applicant on their
+    chosen channel, fired right after the founder alert. The submit impulse
+    dies in minutes — an immediate confirmation with a concrete promise keeps
+    the loop warm until the site is ready. Best-effort: today only the email
+    channel delivers (TG is blocked from the VPS — OPERATIONS §4; SMS is
+    excluded on submit per FR-002c; MAX has no adapter), the rest skip
+    silently and start working as their adapters come online. Never fails
+    the 202."""
+    log = get_logger("api.applications.ack")
+    channel = _CONTACT_TO_CHANNEL.get(contact_type)
+    if channel is None:
+        return
+    try:
+        delivery = await notifier.notify_user(
+            contact=UserContact(primary_type=channel, primary_value=contact_value),
+            kind=NotificationKind.application_received,
+            message=NotificationMessage(
+                # title doubles as the email Subject (SmtpClient contract).
+                title="Заявка принята — собираем ваш сайт",
+                body=(
+                    "Самосайт принял вашу заявку и уже собирает сайт.\n\n"
+                    "Напишем сюда, как только всё будет готово — обычно "
+                    "в течение 2 часов.\n\n"
+                    "Есть вопросы или хотите что-то добавить? Просто ответьте "
+                    "на это сообщение."
+                ),
+            ),
+        )
+        log.info(
+            "applicant_ack",
+            channel=delivery.channel.value,
+            delivered=delivery.delivered,
+            reason=delivery.reason,
+        )
+    except Exception as exc:
+        log.warning("applicant_ack_failed", error=str(exc))
 
 
 def _mask_contact(value: str, contact_type: str) -> str:
