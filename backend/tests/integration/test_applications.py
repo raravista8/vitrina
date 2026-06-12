@@ -90,15 +90,28 @@ class _FakePipeline:
 
 
 class _RecordingDispatcher(NotificationDispatcher):
-    """No-op dispatcher that records founder-notify calls for assertion."""
+    """No-op dispatcher that records founder- and user-notify calls."""
 
     def __init__(self) -> None:
         super().__init__(channels={}, founder_telegram_chat_id=None)
         self.founder_calls: list[tuple[str, str]] = []
+        # (kind, channel, recipient, title) per applicant-ack attempt
+        self.user_calls: list[tuple[str, str, str, str]] = []
+        self.raise_on_user_notify = False
 
     async def notify_founder(self, kind, message):  # type: ignore[override,no-untyped-def]
         self.founder_calls.append((kind.value, message.title))
         return DeliveryResult(delivered=True, channel=ChannelType.telegram, recipient="test-chat")
+
+    async def notify_user(self, contact, kind, message):  # type: ignore[override,no-untyped-def]
+        if self.raise_on_user_notify:
+            raise RuntimeError("smtp exploded")
+        self.user_calls.append(
+            (kind.value, contact.primary_type.value, contact.primary_value, message.title)
+        )
+        return DeliveryResult(
+            delivered=True, channel=contact.primary_type, recipient=contact.primary_value
+        )
 
 
 @pytest_asyncio.fixture
@@ -202,6 +215,70 @@ async def test_submit_application_website_source_accepted(client: httpx.AsyncCli
     body = resp.json()
     assert body["ok"] is True
     assert "application_id" in body["data"]
+
+
+# --------------------------------------------------------------------------- #
+# Speed-to-lead: instant applicant ack (best-effort, after founder alert)
+# --------------------------------------------------------------------------- #
+
+
+async def test_submit_fires_applicant_ack(client: httpx.AsyncClient, app: FastAPI) -> None:
+    """Link-mode submit immediately acks the applicant on their channel with
+    the «заявка принята» message (speed-to-lead — the impulse dies in
+    minutes, the confirmation keeps the loop warm)."""
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "source_url": "https://t.me/some_channel",
+            "contact": "anna@example.com",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert resp.status_code == 202, resp.text
+
+    acks = app.state.test_dispatcher.user_calls
+    assert len(acks) == 1
+    kind, channel, recipient, title = acks[0]
+    assert kind == "application_received"
+    assert channel == "email"
+    assert recipient == "anna@example.com"
+    assert "Заявка принята" in title
+
+
+async def test_photo_submit_fires_applicant_ack(client: httpx.AsyncClient, app: FastAPI) -> None:
+    """Photo-mode submit acks the applicant too (same helper, both branches)."""
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=_photo_form_fields(contact="bob@example.com"),
+        files=_photo_files_payload(count=5),
+    )
+    assert resp.status_code == 202, resp.text
+    acks = app.state.test_dispatcher.user_calls
+    assert len(acks) == 1
+    assert acks[0][1] == "email"
+    assert acks[0][2] == "bob@example.com"
+
+
+async def test_applicant_ack_failure_never_breaks_submit(
+    client: httpx.AsyncClient, app: FastAPI
+) -> None:
+    """A dead notify channel must not fail the 202 — the application is
+    already persisted and the founder alert already sent."""
+    app.state.test_dispatcher.raise_on_user_notify = True
+    resp = await client.post(
+        "/api/submit-application",
+        json={
+            "source_type": "telegram",
+            "source_url": "https://t.me/some_channel",
+            "contact": "crash@example.com",
+            "consent_given": True,
+            "captcha_token": DEV_TOKEN,
+        },
+    )
+    assert resp.status_code == 202, resp.text
+    assert resp.json()["ok"] is True
 
 
 # --------------------------------------------------------------------------- #
