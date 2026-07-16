@@ -9,12 +9,14 @@
  * позволяет собирать композицию страницы и модалку независимо (паттерн
  * FeedbackModal / samosite:open-feedback).
  *
- * ЗАГЛУШКА: полная реализация модалки (стейт-машина шагов, черновик в
- * localStorage, отправка в POST /api/submit-application/v2) заменяет
- * тело Intake2Host, НЕ меняя контракт openIntake2/события.
+ * Реализация модалки — `Intake2Flow` (стейт-машина шагов, черновик в
+ * localStorage `ss_intake2_draft`, отправка в POST /api/submit-application/v2).
+ * Контракт openIntake2 / INTAKE2_EVENT / Intake2Host — стабильный, не менять.
  */
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import { Intake2Flow } from "@/components/intake2/Intake2Flow";
 
 export const INTAKE2_EVENT = "samosite:open-intake";
 
@@ -32,10 +34,19 @@ export function openIntake2(entry: string, opts: Omit<Intake2OpenDetail, "entry"
 }
 
 export function Intake2Host() {
+  const [detail, setDetail] = useState<Intake2OpenDetail | null>(null);
+
   useEffect(() => {
-    const on = () => {};
+    const on = (e: Event) => {
+      const ce = e as CustomEvent<Intake2OpenDetail>;
+      setDetail(ce.detail ?? { entry: "unknown" });
+    };
     window.addEventListener(INTAKE2_EVENT, on);
     return () => window.removeEventListener(INTAKE2_EVENT, on);
   }, []);
-  return null;
+
+  const close = useCallback(() => setDetail(null), []);
+
+  if (!detail) return null;
+  return <Intake2Flow detail={detail} onClose={close} />;
 }
