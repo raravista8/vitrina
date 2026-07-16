@@ -49,18 +49,10 @@ jobs:
         #                               no upstream patch released
         #   PYSEC-2026-97   nltk      — transitive via safety (dev-only);
         #                               no upstream patch released
-        #   CVE-2026-34993  aiohttp   — transitive via aiogram/aiobotocore;
-        #   CVE-2026-47265                fixed in 3.14.0, but every aiogram
-        #                               3.x release caps aiohttp <3.14 (no
-        #                               4.x exists) so the fix is unreachable.
-        #                               Vulnerable paths (CookieJar.load() on
-        #                               untrusted files; per-request cookies=
-        #                               across cross-origin redirects) are not
-        #                               used — we never import aiohttp directly.
-        #                               Drop these when aiogram lifts the cap.
-        #
-        # (PYSEC-2025-183 pyjwt was ignored here; resolved by the pyjwt
-        # 2.13.0 bump, flag removed.)
+        # (CVE-2026-34993 / CVE-2026-47265 aiohttp were ignored here while
+        # aiogram capped aiohttp <3.14; aiogram 3.29 lifted the cap →
+        # aiohttp bumped to 3.14.1, flags removed. PYSEC-2025-183 pyjwt —
+        # resolved by the pyjwt 2.13.0 bump earlier.)
         #
         # Bandit + import-linter + npm audit + gitleaks continue to gate
         # against other regressions; this only relaxes the "every advisory
@@ -69,9 +61,7 @@ jobs:
         run: |
           poetry run pip-audit --strict \
             --ignore-vuln PYSEC-2024-277 \
-            --ignore-vuln PYSEC-2026-97 \
-            --ignore-vuln CVE-2026-34993 \
-            --ignore-vuln CVE-2026-47265
+            --ignore-vuln PYSEC-2026-97
 
   # ---- Landing SCA ---------------------------------------------------------
 
