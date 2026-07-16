@@ -27,7 +27,7 @@ from app.core.consent.ledger import (
     CURRENT_POLICY_VERSION,
     record_consent,
 )
-from app.core.contact.auto_detect import detect_contact
+from app.core.contact.auto_detect import detect_contact, validate_channel_value
 from app.core.leads.encryption import encrypt as fernet_encrypt
 from app.infrastructure.postgres.models import Application, User
 from app.utils.errors import DomainError, DomainResult, Err, Ok
@@ -37,7 +37,11 @@ from app.utils.errors import DomainError, DomainResult, Err, Ok
 POLICY_VERSION: Final[int] = CURRENT_POLICY_VERSION
 CONSENT_TEXT_V1: Final[str] = CURRENT_POLICY_TEXT
 
-SUPPORTED_SOURCE_TYPES: Final[frozenset[str]] = frozenset({"ymaps", "telegram", "photo", "website"})
+SUPPORTED_SOURCE_TYPES: Final[frozenset[str]] = frozenset(
+    # twogis/avito/vk — intake v2, путь «ссылка»: исполнение заявок ручное,
+    # founder разбирает карточку сам (парсеров под них нет и не требуется).
+    {"ymaps", "telegram", "photo", "website", "twogis", "avito", "vk"}
+)
 
 
 async def submit_application(
@@ -55,6 +59,14 @@ async def submit_application(
     customer_contact_type: str | None = None,
     customer_contact_value: str | None = None,
     fernet: MultiFernet | None = None,
+    # ── intake v2 (все опциональны; используются только при mode='v2') ──
+    contact_channel: str | None = None,
+    source_path: str | None = None,
+    niche: str | None = None,
+    business_name: str | None = None,
+    booking_platform: str | None = None,
+    booking_url: str | None = None,
+    booking_phone: str | None = None,
 ) -> DomainResult[Application]:
     """Persist application + consent + user inside one transaction.
 
@@ -85,7 +97,7 @@ async def submit_application(
             )
         )
 
-    if mode not in ("link", "photo"):
+    if mode not in ("link", "photo", "v2"):
         return Err(DomainError(code="invalid_mode"))
 
     # Photo-mode invariants: all four fields must be present.
@@ -99,11 +111,20 @@ async def submit_application(
         if not customer_contact_value:
             return Err(DomainError(code="customer_contact_required"))
 
-    detected = detect_contact(contact)
-    if detected is None:
-        return Err(DomainError(code="invalid_contact"))
+    # intake v2 задаёт канал ЯВНО (чипы формы, включая whatsapp — авто-детект
+    # его не различает от phone); legacy-режимы детектят по значению.
+    if contact_channel is not None:
+        validated = validate_channel_value(contact_channel, contact)
+        if validated is None:
+            return Err(DomainError(code="invalid_contact_for_channel"))
+        resolved_type, resolved_value = contact_channel, validated
+    else:
+        detected = detect_contact(contact)
+        if detected is None:
+            return Err(DomainError(code="invalid_contact"))
+        resolved_type, resolved_value = detected.contact_type.value, detected.value
 
-    user = await _get_or_create_user(session, detected.contact_type.value, detected.value)
+    user = await _get_or_create_user(session, resolved_type, resolved_value)
 
     consent = await record_consent(
         session=session,
@@ -121,6 +142,14 @@ async def submit_application(
             return Err(DomainError(code="fernet_not_initialised"))
         customer_contact_enc = fernet_encrypt(customer_contact_value, fernet=fernet)
 
+    # intake v2: телефон записи публикуется на сайте, но это телефон → PII
+    # at rest, Fernet (та же политика, что customer_contact_value_enc).
+    booking_phone_enc: bytes | None = None
+    if booking_phone:
+        if fernet is None:
+            return Err(DomainError(code="fernet_not_initialised"))
+        booking_phone_enc = fernet_encrypt(booking_phone, fernet=fernet)
+
     application = Application(
         mode=mode,
         source_url=source_url,
@@ -129,8 +158,14 @@ async def submit_application(
         city=city,
         customer_contact_type=customer_contact_type,
         customer_contact_value_enc=customer_contact_enc,
-        contact_type=detected.contact_type.value,
-        contact_value=detected.value,
+        source_path=source_path,
+        niche=niche,
+        business_name=business_name,
+        booking_platform=booking_platform,
+        booking_url=booking_url,
+        booking_phone_enc=booking_phone_enc,
+        contact_type=resolved_type,
+        contact_value=resolved_value,
         consent_id=consent.id,
         user_id=user.id,
         ip=ip,

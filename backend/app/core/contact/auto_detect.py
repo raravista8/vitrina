@@ -34,6 +34,10 @@ class ContactType(StrEnum):
     phone = "phone"
     telegram = "telegram"
     max = "max"
+    # intake v2: WhatsApp — явный канал формы (значение — телефон). Авто-детект
+    # его НЕ возвращает (телефонная строка неотличима от phone) — только
+    # validate_channel_value с явным каналом.
+    whatsapp = "whatsapp"
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,3 +138,52 @@ def _try_normalise_phone(raw: str, region: str) -> str | None:
     if not phonenumbers.is_valid_number(parsed):
         return None
     return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+
+
+def validate_channel_value(channel: str, raw: str | None) -> str | None:
+    """Intake v2: канал задан формой ЯВНО (чипы Telegram · MAX · WhatsApp ·
+    Email · Телефон/SMS) — авто-детект не нужен, нужна проверка «значение
+    соответствует каналу» + нормализация. Возвращает канонизированное
+    значение или ``None`` (→ 400 ``invalid_contact_for_channel``).
+
+    - telegram: ``@name`` / ``name`` / ``t.me/name``  → ``@name``
+    - max:      ``max.ru/<name>`` / deep-link         → ``max://<name>``
+    - email:    RFC-light                             → нижний регистр домена
+    - phone / whatsapp: телефон                       → E.164 (+7…)
+    """
+    if not raw:
+        return None
+    cleaned = raw.strip()
+    if not cleaned:
+        return None
+
+    if channel == "email":
+        if _EMAIL_RE.match(cleaned):
+            local, _, domain = cleaned.partition("@")
+            return f"{local}@{domain.lower()}"
+        return None
+
+    if channel in ("phone", "whatsapp"):
+        if _PHONE_SHAPE_RE.match(cleaned):
+            digit_count = sum(1 for ch in cleaned if ch.isdigit())
+            if _PHONE_MIN_DIGITS <= digit_count <= _PHONE_MAX_DIGITS:
+                return _try_normalise_phone(cleaned, "RU")
+        return None
+
+    if channel == "telegram":
+        if m := _TG_URL_RE.match(cleaned):
+            return "@" + m.group("name").lower()
+        if m := _TG_NAME_RE.match(cleaned):
+            return "@" + m.group("name").lower()
+        return None
+
+    if channel == "max":
+        if m := _MAX_URL_RE.match(cleaned):
+            name = (m.group("u") or m.group("i") or "").lower()
+            return f"max://{name}"
+        # Разрешаем и голый ник (форма подсказывает «логин или номер»).
+        if m := _TG_NAME_RE.match(cleaned):
+            return f"max://{m.group('name').lower()}"
+        return None
+
+    return None

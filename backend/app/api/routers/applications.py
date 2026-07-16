@@ -21,6 +21,7 @@ canon 0.3.0 changes:
 
 from __future__ import annotations
 
+import re
 import tempfile
 from pathlib import Path
 from typing import Annotated
@@ -46,6 +47,7 @@ from app.api.schemas.applications import (
 from app.config import get_settings
 from app.core.applications.service import submit_application
 from app.core.captcha.verifier import CaptchaVerifier
+from app.core.contact.auto_detect import validate_channel_value
 from app.core.notify.dispatcher import NotificationDispatcher, UserContact
 from app.core.notify.ports import ChannelType, NotificationKind, NotificationMessage
 from app.core.parsing.adapters.photos import (
@@ -470,9 +472,254 @@ async def post_submit_application_photo(
     )
 
 
+# =============================================================================
+# POST /api/submit-application/v2 — intake v2 «ниша → источник → запись →
+# контакты» (июль 2026). Исполнение заявки РУЧНОЕ (founder собирает сайт
+# сам) — эндпоинт только собирает данные и шлёт founder'у полный тикет.
+# =============================================================================
+
+_V2_SOURCE_PATHS = ("name", "screenshot", "link", "photo")
+_V2_BOOKING_PLATFORMS = ("dikidi", "yclients", "phone", "none")
+_V2_CHANNELS = ("telegram", "max", "whatsapp", "email", "phone")
+_V2_MAX_PHOTOS = 5  # спека: «до 5 фото»; скриншот — ровно 1
+_V2_MAX_SCREENSHOT_BYTES = 8 * 1024 * 1024  # спека: изображения до 8 МБ
+_V2_URL_RE = re.compile(r"^https?://\S+\.\S+", re.IGNORECASE)
+_V2_LINK_SOURCES = {  # путь «ссылка»: узнаваемые платформы → source_type
+    "yandex.ru/maps": "ymaps",
+    "maps.yandex": "ymaps",
+    "yandex.com/maps": "ymaps",
+    "t.me/": "telegram",
+    "telegram.me/": "telegram",
+    "2gis.ru": "twogis",
+    "2gis.com": "twogis",
+    "avito.ru": "avito",
+    "vk.com": "vk",
+    "vk.ru": "vk",
+}
+
+
+def _v2_detect_link_source(url: str) -> str:
+    lowered = url.lower()
+    for marker, source in _V2_LINK_SOURCES.items():
+        if marker in lowered:
+            return source
+    return "website"
+
+
+@router.post("/submit-application/v2", status_code=202)
+async def submit_application_v2(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    captcha: Annotated[CaptchaVerifier, Depends(get_captcha_verifier)],
+    fernet: Annotated[MultiFernet, Depends(get_lead_fernet)],
+    notifier: Annotated[NotificationDispatcher, Depends(get_notification_dispatcher)],
+    _rate: Annotated[None, Depends(application_rate_limiter)],
+    source_path: Annotated[str, Form(max_length=16)],
+    contact_channel: Annotated[str, Form(max_length=16)],
+    contact: Annotated[str, Form(min_length=2, max_length=128)],
+    consent_given: Annotated[bool, Form()] = False,
+    captcha_token: Annotated[str, Form(max_length=2048)] = "",
+    niche: Annotated[str, Form(max_length=32)] = "",
+    business_name: Annotated[str, Form(max_length=160)] = "",
+    city: Annotated[str, Form(max_length=128)] = "",
+    source_url: Annotated[str, Form(max_length=1024)] = "",
+    booking_platform: Annotated[str, Form(max_length=16)] = "none",
+    booking_url: Annotated[str, Form(max_length=1024)] = "",
+    booking_phone: Annotated[str, Form(max_length=32)] = "",
+    files: Annotated[list[UploadFile], File()] = [],  # noqa: B006 — FastAPI sentinel
+) -> SubmitApplicationResponse:
+    """Единый вход нового флоу. Валидация по путям (спека v2):
+
+      name       — business_name обязателен (город опционален)
+      screenshot — ровно 1 изображение ≤ 8 МБ (photo_type='profile_screenshot')
+      link       — валидный http(s)-URL; платформа детектится best-effort
+      photo      — 1..5 изображений (photo_type='work')
+
+    Запись: dikidi|yclients → booking_url опционален, но если дан — URL;
+    phone → booking_phone валидный телефон (Fernet at rest); none — ничего.
+    Контакт: канал задаётся ЯВНО (включая whatsapp), значение валидируется
+    против канала. Файлы проверяются по magic-bytes, как в photo-режиме.
+    """
+    log = get_logger("api.applications.v2")
+    ip = get_client_ip(request)
+    user_agent = request.headers.get("User-Agent")
+
+    # 1. CAPTCHA (та же семантика, что у существующих эндпоинтов)
+    captcha_result = await captcha.verify(captcha_token, ip=ip)
+    if not captcha_result.is_valid:
+        log.info("captcha_rejected", reason=captcha_result.reason)
+        raise HTTPException(status_code=400, detail="invalid_captcha")
+
+    # 2. Общие enum-поля
+    if source_path not in _V2_SOURCE_PATHS:
+        raise HTTPException(status_code=400, detail="invalid_source_path")
+    if booking_platform not in _V2_BOOKING_PLATFORMS:
+        raise HTTPException(status_code=400, detail="invalid_booking_platform")
+    if contact_channel not in _V2_CHANNELS:
+        raise HTTPException(status_code=400, detail="invalid_contact_channel")
+
+    # 3. Path-специфичные инварианты
+    business_name = business_name.strip()
+    source_url = source_url.strip()
+    resolved_source_type = "photo"
+    if source_path == "name":
+        if len(business_name) < 2:
+            raise HTTPException(status_code=400, detail="business_name_required")
+        # Карточку ищет founder руками (Я.Карты) — source_type фиксируем ymaps.
+        resolved_source_type = "ymaps"
+    elif source_path == "link":
+        if not _V2_URL_RE.match(source_url):
+            raise HTTPException(status_code=400, detail="invalid_source_url")
+        resolved_source_type = _v2_detect_link_source(source_url)
+    elif source_path == "screenshot":
+        if len(files) != 1:
+            raise HTTPException(status_code=400, detail="screenshot_requires_one_file")
+    else:  # photo
+        if not 1 <= len(files) <= _V2_MAX_PHOTOS:
+            raise HTTPException(status_code=400, detail="photo_count_out_of_range")
+
+    # 4. Запись («куда ведёт кнопка Записаться»)
+    booking_url = booking_url.strip()
+    booking_phone_norm: str | None = None
+    if booking_platform in ("dikidi", "yclients"):
+        if booking_url and not _V2_URL_RE.match(booking_url):
+            raise HTTPException(status_code=400, detail="invalid_booking_url")
+    elif booking_platform == "phone":
+        raw_phone = booking_phone.strip()
+        if raw_phone:
+            booking_phone_norm = validate_channel_value("phone", raw_phone)
+            if booking_phone_norm is None:
+                raise HTTPException(status_code=400, detail="invalid_booking_phone")
+        booking_url = ""
+    else:  # none
+        booking_url = ""
+
+    # 5. Файлы: размер + magic-bytes (переиспользуем photo-пайплайн)
+    contents: list[tuple[UploadFile, bytes]] = []
+    total_bytes = 0
+    max_per_file = _V2_MAX_SCREENSHOT_BYTES if source_path == "screenshot" else MAX_BYTES_PER_FILE
+    for upload in files[: _V2_MAX_PHOTOS + 1]:
+        body = await upload.read()
+        if not body:
+            continue
+        if len(body) > max_per_file:
+            raise HTTPException(status_code=413, detail="file_too_large")
+        total_bytes += len(body)
+        if total_bytes > MAX_TOTAL_BYTES:
+            raise HTTPException(status_code=413, detail="batch_too_large")
+        contents.append((upload, body))
+
+    detected_mimes: list[str] = []
+    for _upload, body in contents:
+        mime = detect_mime(body)
+        if mime not in ALLOWED_MIME_TYPES:
+            raise HTTPException(status_code=400, detail="unsupported_file_type")
+        detected_mimes.append(mime)
+
+    # 6. Персист (user + consent + application атомарно)
+    result = await submit_application(
+        session=session,
+        source_url=source_url or None,
+        source_type=resolved_source_type,
+        contact=contact,
+        consent_given=consent_given,
+        ip=ip,
+        user_agent=user_agent,
+        mode="v2",
+        city=city.strip() or None,
+        fernet=fernet,
+        contact_channel=contact_channel,
+        source_path=source_path,
+        niche=niche.strip() or None,
+        business_name=business_name or None,
+        booking_platform=booking_platform,
+        booking_url=booking_url or None,
+        booking_phone=booking_phone_norm,
+    )
+    if result.is_err():
+        error = result.unwrap_err()
+        status = 400 if error.code != "contact_conflict" else 409
+        raise HTTPException(status_code=status, detail=error.code)
+    application = result.unwrap()
+
+    # 7. Файлы на диск + манифест (photo_type по пути)
+    ptype = "profile_screenshot" if source_path == "screenshot" else "work"
+    if contents:
+        uploads_root = _resolve_uploads_dir()
+        target_dir = uploads_root / str(application.id)
+        target_dir.mkdir(parents=True, exist_ok=True)
+        for index, ((upload, body), mime) in enumerate(zip(contents, detected_mimes, strict=True)):
+            ext = _extension_for_mime(mime)
+            disk_path = target_dir / f"{index:02d}.{ext}"
+            disk_path.write_bytes(body)
+            session.add(
+                ApplicationPhoto(
+                    application_id=application.id,
+                    index=index,
+                    filename=upload.filename or f"upload-{index}.{ext}",
+                    photo_type=ptype,
+                    mime=mime,
+                    size_bytes=len(body),
+                    disk_path=str(disk_path),
+                )
+            )
+        await session.commit()
+
+    log.info(
+        "v2_application_accepted",
+        application_id=str(application.id),
+        source_path=source_path,
+        source_type=resolved_source_type,
+        niche=niche or None,
+        booking_platform=booking_platform,
+        contact_type=application.contact_type,
+        files=len(contents),
+    )
+
+    # 8. Founder-тикет: всё, что нужно для РУЧНОЙ сборки, в одном письме
+    booking_line = booking_platform
+    if booking_url:
+        booking_line += f" · {booking_url}"
+    if booking_phone_norm:
+        booking_line += f" · {_mask_contact(booking_phone_norm, 'phone')}"
+    await notifier.notify_founder(
+        kind=NotificationKind.application_received,
+        message=NotificationMessage(
+            title=f"🆕 Заявка v2 #{str(application.id)[:8]}",
+            body=(
+                f"Путь: {source_path}"
+                f"\nНиша: {niche or '—'}"
+                f"\nНазвание: {business_name or '—'}"
+                f"\nГород: {city.strip() or '—'}"
+                f"\nСсылка: {source_url or '—'} ({resolved_source_type})"
+                f"\nЗапись: {booking_line}"
+                f"\nФайлы: {len(contents)} ({ptype if contents else '—'})"
+                f"\nКонтакт: {_mask_contact(application.contact_value, application.contact_type)} "
+                f"({application.contact_type})"
+            ),
+            metadata={"email_subject": "новая заявка на сайт (v2)"},
+        ),
+    )
+
+    await _ack_applicant(
+        notifier,
+        contact_type=application.contact_type,
+        contact_value=application.contact_value,
+    )
+
+    return SubmitApplicationResponse(
+        data=SubmitApplicationData(
+            application_id=application.id,
+            contact_type=application.contact_type,  # type: ignore[arg-type]
+        )
+    )
+
+
 # users.contact_type → dispatcher channel. "phone" maps to SMS, which the
 # ALLOWED_CHANNELS_FOR_KIND policy excludes for application_received
 # (FR-002c — no SMS on submit), so phone applicants get no ack by design.
+# intake v2: "whatsapp" не мапится (адаптера нет) — .get() вернёт None и
+# _ack_applicant молча пропустит; заработает при появлении канала.
 _CONTACT_TO_CHANNEL: dict[str, ChannelType] = {
     "telegram": ChannelType.telegram,
     "email": ChannelType.email,
