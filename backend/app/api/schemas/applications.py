@@ -33,7 +33,7 @@ class _SharedSubmitFields(BaseModel):
     # v1 callers (sans `channel`) still work — when omitted, server falls
     # back to auto-detect on `contact` (compat layer).
     channel: Annotated[
-        Literal["email", "phone", "telegram", "max"] | None,
+        Literal["email", "phone", "telegram", "max", "whatsapp"] | None,
         Field(
             default=None,
             description=(
@@ -143,7 +143,7 @@ SubmitApplicationRequest = Annotated[
 
 class SubmitApplicationData(BaseModel):
     application_id: uuid.UUID
-    contact_type: Literal["email", "phone", "telegram", "max"]
+    contact_type: Literal["email", "phone", "telegram", "max", "whatsapp"]
 
 
 class SubmitApplicationResponse(BaseModel):

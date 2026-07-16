@@ -48,7 +48,7 @@ from app.infrastructure.postgres.base import Base, Timestamped, UUIDPrimaryKey
 # users
 # =============================================================================
 
-CONTACT_TYPES = ("email", "phone", "telegram", "max")
+CONTACT_TYPES = ("email", "phone", "telegram", "max", "whatsapp")
 USER_PLANS = ("trial", "pro", "expired", "cancelled")
 
 
@@ -97,6 +97,11 @@ SOURCE_TYPES = (
     "telegram",
     "photo",
     "website",
+    # intake v2 (июль 2026): путь «ссылка» принимает и эти платформы —
+    # исполнение заявок ручное, founder разбирает карточку сам.
+    "twogis",
+    "avito",
+    "vk",
 )  # "website" = pasted link to an unrecognised site (manual review); extend per ADR-0009 waitlist
 SITE_STATUSES = (
     "pending",  # application submitted, not yet processed
@@ -492,8 +497,11 @@ class AdminAction(Base):
 # =============================================================================
 
 APPLICATION_STATUSES = ("pending", "approved", "rejected", "fulfilled")
-APPLICATION_MODES = ("link", "photo")
+APPLICATION_MODES = ("link", "photo", "v2")
 CUSTOMER_CONTACT_TYPES = ("phone", "telegram")
+# intake v2 («ниша → источник → запись → контакты», июль 2026)
+APPLICATION_SOURCE_PATHS = ("name", "screenshot", "link", "photo")
+BOOKING_PLATFORMS = ("dikidi", "yclients", "phone", "none")
 
 
 class Application(UUIDPrimaryKey, Timestamped, Base):
@@ -519,6 +527,19 @@ class Application(UUIDPrimaryKey, Timestamped, Base):
         LargeBinary,
         nullable=True,
     )
+
+    # ── Intake v2 (июль 2026): «ниша → источник → запись → контакты» ──
+    # Все поля nullable — живут только на mode='v2'. Исполнение заявки ручное
+    # (founder собирает сайт сам), поэтому DB-инварианты минимальные;
+    # path-специфичные требования проверяет api-слой.
+    source_path: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    niche: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    business_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    booking_platform: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    booking_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Телефон для кнопки «Записаться» публикуется на сайте, но это телефон →
+    # PII at rest, Fernet (та же политика, что customer_contact_value_enc).
+    booking_phone_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
 
     # Shared: notify channel (private — how WE reach the master).
     contact_type: Mapped[str] = mapped_column(String(16), nullable=False)
@@ -564,13 +585,21 @@ class Application(UUIDPrimaryKey, Timestamped, Base):
             name="applications_customer_contact_type_valid",
         ),
         CheckConstraint(
-            "(mode = 'link') OR ("
+            "(mode IN ('link', 'v2')) OR ("
             "  description IS NOT NULL"
             "  AND city IS NOT NULL"
             "  AND customer_contact_type IS NOT NULL"
             "  AND customer_contact_value_enc IS NOT NULL"
             ")",
             name="applications_photo_mode_required_fields",
+        ),
+        CheckConstraint(
+            f"source_path IS NULL OR source_path IN {APPLICATION_SOURCE_PATHS!r}",
+            name="applications_source_path_valid",
+        ),
+        CheckConstraint(
+            f"booking_platform IS NULL OR booking_platform IN {BOOKING_PLATFORMS!r}",
+            name="applications_booking_platform_valid",
         ),
         Index("applications_created_at_idx", "created_at"),
     )
