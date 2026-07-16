@@ -28,6 +28,13 @@ declare global {
       action: "init" | "reachGoal" | "hit" | "extLink" | "params" | "userParams",
       ...args: unknown[]
     ) => void;
+
+    /**
+     * Общий data layer (Я.Метрика подписана через `ecommerce:"dataLayer"`
+     * в init-снippet'е). Создаётся лениво первым `ssTrack` (`lib/metrika.ts`)
+     * или самим снippet'ом.
+     */
+    dataLayer?: Record<string, unknown>[];
   }
 }
 

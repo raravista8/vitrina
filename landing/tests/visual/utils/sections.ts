@@ -8,9 +8,9 @@
  * is what makes a one-script baseline regeneration possible — no per-side
  * coordinates to keep in sync.
  *
- * Order matches `docs/handoff/specs/03_session_v2.1.3.md §1.5` (final
- * landing structure), and matches `landing/app/page.tsx` JSX order. Keep
- * them in sync — both files drift together when a section is added/removed.
+ * Order matches the v5 composition in `landing/components/V5Landing.tsx`
+ * (canon 0.12.0 `V5_Page` order). Keep them in sync — both files drift
+ * together when a section is added/removed.
  */
 
 export interface VisualSection {
@@ -49,128 +49,73 @@ export const VIEWPORTS = [
 
 export type ViewportName = (typeof VIEWPORTS)[number]["name"];
 
+/* «Витрина v5 · Фарфор и лак» (canon 0.12.0) — section ids match the
+   `data-section` wrappers in `landing/components/V5Landing.tsx`.
+
+   TODO(v5-baselines): ALL entries are SMOKE-ONLY (`auditedViewports:
+   []`) — the committed baseline PNGs in `tests/visual/baselines/` are
+   stale v3 captures and MUST NOT be compared against the v5 page.
+   Baseline regeneration for v5 is a follow-up:
+     1. Rebuild the canon-source mirror for v5 (canon 0.12.0 `V5_*`).
+     2. Regenerate baselines in the Linux Playwright container via
+        `infra/scripts/generate-canon-baselines-linux.sh`.
+     3. Re-enable `auditedViewports` per section in that PR.
+   Until then this suite is a structural smoke check: every
+   `[data-section]` selector must resolve to a visible (non-empty)
+   element on the prod build — no pixel comparison. */
 export const LANDING_SECTIONS: VisualSection[] = [
-  /* Hero — anchor on the constrained inner block (the `max-w-[1100px]`
-     div tagged with `data-section-body="hero"`) so we measure the same
-     DOM subtree canon's `HeroBlock` exports. Section + nav are siblings
-     in canon, not nested under HeroBlock — comparing them with prod's
-     full <section> wrapper would always fail on dimension mismatch.
-
-     Smoke-only as of this PR (auditedViewports: []). Pixel-diff
-     iteration brought 1440 from 8.47 % down to 2.30 %, just over the
-     2 % budget. Remaining gap is mostly anti-aliasing on bold text
-     edges (canon `<b>` fontWeight 700 vs Tailwind's font-bold which
-     renders subtly differently across Chromium versions) + the form
-     placeholder text content («ссылка на ваш профиль или сайт» in
-     canon vs «ссылка на соцсеть или Я.Карты» in prod — the latter is
-     a deliberate UX choice for 320 px iPhone viewports where the
-     longer canon string truncates mid-word).
-
-     What this PR achieved (kept):
-       • Three UX-essential extras (SourceDetectionBadge / microcopy /
-         photo fallback) moved OUTSIDE data-section-body so the
-         screenshot captures only canon-equivalent content.
-       • H1 typography 72 → 88 px desktop / 36 → 38 px mobile.
-       • H1 line-break structure rewritten with explicit
-         `<br className="hidden sm:block" />` to match canon's
-         «Сайт, который» / «сам себя соберёт,» / «сам обновит» /
-         «и сам приведёт клиентов» split.
-       • Compact platforms chip styling reset to canon (white bg +
-         1 px line border, dropped paper-soft).
-       • Free-month плашка restructured to canon's two-column layout
-         (circular accent gift bubble + stacked title/sub text column).
-       • Vertical spacing values aligned: H1→sub 32 px, list→плашка
-         22 px, sub margin 32 px.
-       • `compareToBaseline` extended with `heightTolerance` so prod
-         can be up to 32 px taller than canon without a hard error.
-
-     Unlocking ['1440'] audit requires either:
-       a) accepting ~3 % pixel budget (loosen `expect(...).toBeLessThanOrEqual`
-          per section), or
-       b) changing form placeholder to canon copy (degrades mobile UX),
-          or
-       c) one more typography pass to neutralise bold-weight rendering. */
   {
     id: "hero",
-    selector: "[data-section-body='hero']",
+    selector: "[data-section='hero']",
     label: "Hero (#1)",
-    /* canon 0.6.0 v3 H1 + structure differ from 0.5.x — old baseline
-       PNG is stale. Smoke-only until PR-B regenerates baselines from
-       the new canvas mirror. */
     auditedViewports: [],
   },
-  /* Sections 2-11 — canon 0.6.0 v3 narrative composition. Section ids
-     match `landing/app/page.tsx::HomePage` (the `<ResponsiveCanonSection
-     id="...">` wrapper id). All entries are smoke-only — baselines in
-     `tests/visual/baselines/*-*.png` were generated from canon 0.5.x
-     canvas-mirror sections. canon 0.6.0 removed 5 sections and added 5
-     — the old PNGs are now meaningless (different selectors AND
-     different rendered content). PR-B follow-up:
-       1. Rewrite `landing/tests/visual/canon-source/landing-samosite.jsx`
-          for v3 (canon 0.6.0 — 5 new sections, 5 removed).
-       2. Regenerate baselines in Linux Playwright container via
-          `infra/scripts/generate-canon-baselines-linux.sh`.
-       3. Re-enable audited viewports per the new section list.
-     Until PR-B lands, visual regression runs as a structural smoke
-     check — selector existence on prod, no pixel comparison. */
+  {
+    id: "story",
+    selector: "[data-section='story']",
+    label: "Story (#2)",
+    auditedViewports: [],
+  },
   {
     id: "examples",
     selector: "[data-section='examples']",
-    label: "Examples (#2)",
+    label: "Examples (#3)",
     auditedViewports: [],
   },
   {
-    id: "cycle",
-    selector: "[data-section='cycle']",
-    label: "Cycle (#3)",
+    id: "how",
+    selector: "[data-section='how']",
+    label: "HowItWorks (#4)",
     auditedViewports: [],
   },
   {
-    id: "monday",
-    selector: "[data-section='monday']",
-    label: "Monday (#4)",
-    auditedViewports: [],
-  },
-  {
-    id: "base-work",
-    selector: "[data-section='base-work']",
-    label: "BaseWork (#5)",
-    auditedViewports: [],
-  },
-  {
-    id: "sources",
-    selector: "[data-section='sources']",
-    label: "Sources (#6)",
-    auditedViewports: [],
-  },
-  {
-    id: "ownership",
-    selector: "[data-section='ownership']",
-    label: "Ownership (#7)",
-    auditedViewports: [],
-  },
-  {
-    id: "analytics",
-    selector: "[data-section='analytics']",
-    label: "Analytics (#8)",
+    id: "reviews",
+    selector: "[data-section='reviews']",
+    label: "Reviews (#5)",
     auditedViewports: [],
   },
   {
     id: "pricing",
     selector: "[data-section='pricing']",
-    label: "Pricing (#9)",
+    label: "Pricing (#6)",
+    auditedViewports: [],
+  },
+  {
+    id: "honest",
+    selector: "[data-section='honest']",
+    label: "Honest (#7)",
     auditedViewports: [],
   },
   {
     id: "faq",
     selector: "[data-section='faq']",
-    label: "FAQ (#10)",
+    label: "FAQ (#8)",
     auditedViewports: [],
   },
   {
-    id: "final-cta",
-    selector: "[data-section='final-cta']",
-    label: "Final CTA (#11)",
+    id: "final",
+    selector: "[data-section='final']",
+    label: "Final CTA (#9)",
     auditedViewports: [],
   },
 ];

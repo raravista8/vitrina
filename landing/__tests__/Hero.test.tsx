@@ -1,3 +1,11 @@
+/**
+ * TODO(v5-cleanup): suites are SKIPPED — `components/Hero.tsx` is
+ * @deprecated (retired by the «Витрина v5» recomposition, canon 0.12.0;
+ * the landing hero is canon `V5_Hero` now). Page-level v5 assertions
+ * (H1 «Сайт для бьюти-мастера за 2 часа» + hero CTA → intake2 event)
+ * live in `__tests__/smoke.test.tsx`. Delete this file together with
+ * the deprecated component in the v3-cleanup major.
+ */
 import "@testing-library/jest-dom/vitest";
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -30,7 +38,7 @@ function mockPreviewFetch(payload: unknown, opts: { ok?: boolean; status?: numbe
 
 // ---- tests ---------------------------------------------------------------
 
-describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
+describe.skip("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
   it("anchors COPY.md §2.2 strings verbatim", () => {
     render(<Hero />);
 
@@ -98,7 +106,7 @@ describe("Hero — copy lock (v2 canonical, COPY.md §2.2)", () => {
   });
 });
 
-describe("Hero — interaction", () => {
+describe.skip("Hero — interaction", () => {
   beforeEach(() => {
     mockPreviewFetch(PREVIEW_OK);
   });
@@ -170,7 +178,7 @@ describe("Hero — interaction", () => {
   });
 });
 
-describe("Hero — UX batch 1 (first user testing)", () => {
+describe.skip("Hero — UX batch 1 (first user testing)", () => {
   beforeEach(() => {
     mockPreviewFetch(PREVIEW_OK);
   });

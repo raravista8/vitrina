@@ -1,4 +1,11 @@
 /**
+ * @deprecated (on the landing) Retired from the home page by the
+ * «Витрина v5» recomposition (canon 0.12.0) — the landing footer is now
+ * canon `V5_Footer` (links prop → /privacy, /offer), composed in
+ * `components/V5Landing.tsx`. Still mounted on the standalone legal
+ * pages (`app/privacy`, `app/offer`) until they migrate; do not add new
+ * imports elsewhere.
+ *
  * Footer (v2) — minimal lockup per docs/COPY.md §2.8.
  *
  * Слева: brand-mark + строка «© Самосайт · samosite.online · все данные

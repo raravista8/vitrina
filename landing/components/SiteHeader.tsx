@@ -1,6 +1,12 @@
 "use client";
 
 /**
+ * @deprecated Retired by the «Витрина v5» recomposition (canon 0.12.0):
+ * the landing header is now canon `V5_Header` (anchors + onIntake props —
+ * no DOM-mutation workarounds needed), composed in
+ * `components/V5Landing.tsx`. Not mounted anywhere on prod. Kept until
+ * the v3-cleanup major; do not add new imports.
+ *
  * SiteHeader — wrapper around canon's `<StickyHeader>` (0.6.0).
  *
  * Canon 0.6.0 REGRESSED the prop interface — `loginHref`, `homeHref`,

@@ -1,6 +1,12 @@
 "use client";
 
 /**
+ * @deprecated Retired by the «Витрина v5» recomposition (canon 0.12.0):
+ * the landing hero is now canon `V5_Hero` (no input — CTA opens intake2),
+ * composed in `components/V5Landing.tsx`. Not mounted anywhere on prod.
+ * Kept until the v3-cleanup major (see `packages/canon/CHANGELOG.md`
+ * §0.12.0 «Депрекейт»); do not add new imports.
+ *
  * Hero — canonical messaging per docs/COPY.md §2.
  *
  * **Design source.** Markup mirrors Claude Design's Concept A "Тёплая

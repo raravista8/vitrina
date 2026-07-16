@@ -64,7 +64,18 @@
  */
 
 export type MetrikaGoal =
-  // ── Воронка (P0) ──
+  // ── Витрина v5 (canon 0.12.0, P0) ──
+  // Section-view цели по `data-metric` атрибутам canon (`story_view` /
+  // `reviews_view` / `pricing_view`) + `form_open` (клик любого CTA,
+  // param `entry`: hero | header | story | final | pricing-* |
+  // example-<id>) + `faq_open` (param `question` = FaqItem.id).
+  // Проводка: `components/V5Landing.tsx` (IntersectionObserver 0.4,
+  // once) через `ssTrack` ниже (reachGoal + dataLayer.push).
+  | "story_view"
+  | "reviews_view"
+  | "pricing_view"
+  | "form_open"
+  // ── Воронка (P0, v3 — legacy; fires только из @deprecated компонентов) ──
   | "hero_paste"
   | "cta_click"
   | "hero_submit_attempt"
@@ -112,4 +123,24 @@ export function reachGoal(goal: MetrikaGoal, params?: Record<string, unknown>): 
   // interaction can fire. Defensive optional chaining covers the rare
   // case where the snippet was blocked (adblocker, network failure).
   window.ym?.(Number(METRIKA_ID), "reachGoal", goal, params);
+}
+
+/**
+ * `ssTrack` — v5-проводка событий (прототип «Витрина v5» звал одноимённый
+ * глобал; в canon-пакете глобалей нет, трекер вешает консьюмер — мы).
+ *
+ * Делает ДВЕ вещи за один вызов:
+ *   1. `reachGoal` в Я.Метрику (no-op без counter ID — см. выше);
+ *   2. push в `window.dataLayer` — тот самый layer, на который Метрика
+ *      подписана через `ecommerce:"dataLayer"` в init-снippet'е; также
+ *      пригоден любому будущему tag-менеджеру. Пушим ВСЕГДА (даже без
+ *      counter ID) — дешёвый массив, удобен для отладки в dev.
+ *
+ * Fire-and-forget, безопасен в SSR.
+ */
+export function ssTrack(goal: MetrikaGoal, params?: Record<string, unknown>): void {
+  reachGoal(goal, params);
+  if (typeof window === "undefined") return;
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push({ event: goal, ...(params ?? {}) });
 }

@@ -1,6 +1,14 @@
 "use client";
 
 /**
+ * @deprecated Retired by the «Витрина v5» recomposition (canon 0.12.0):
+ * v3-section telemetry (examples/cycle/monday view goals + click
+ * delegation) has no targets on the v5 page. v5 section-view goals
+ * (`story_view` / `reviews_view` / `pricing_view` via canon
+ * `data-metric`) + `form_open` / `faq_open` are wired inside
+ * `components/V5Landing.tsx` through `lib/metrika.ts::ssTrack`. Not
+ * mounted anywhere on prod. Kept until the v3-cleanup major.
+ *
  * MetrikaGoals — analytics telemetry for the canon-rendered landing
  * sections, without touching canon source.
  *

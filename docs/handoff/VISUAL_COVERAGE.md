@@ -12,6 +12,16 @@
 
 ## P0 Landing — canon 0.6.0 v3 narrative (11 blocks)
 
+> **⚠ superseded на ветке `feat/vitrina-v5`:** главная пересобрана на canon
+> 0.12.0 «Витрина v5 · Фарфор и лак» — 11 секций `V5_*` (включая Hero и
+> Header, впервые canon-import: 🔵 drift=0 by construction на все секции ×
+> все viewports), композиция `landing/components/V5Landing.tsx`. Hand-rolled
+> `Hero`/`SiteHeader`/`Footer`/`CanonCtaBindings`/`MetrikaGoals` — @deprecated,
+> с главной сняты. Visual-suite переведён в v5-smoke (9 `data-section` × 4
+> viewports, пиксель-бейзлайны v3 stale — регенерация follow-up, см.
+> `landing/tests/visual/utils/sections.ts`). Таблица ниже описывает v3 (main);
+> полный рефреш трекера — при интеграции v5 в main.
+
 `landing/app/page.tsx::HomePage` renders 11 blocks in fixed order — block #1 (Hero) hand-rolled, blocks #2-#11 dropped in from `@samosite/canon/landing`.
 
 | # | Section | Source | 1440 | 768 | 390 | 375 | Spec |
