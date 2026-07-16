@@ -1,6 +1,11 @@
 "use client";
 
 /**
+ * @deprecated Retired by the «Витрина v5» recomposition (canon 0.12.0):
+ * v5 sections take `onIntake` callbacks as props — the DOM-mutation CTA
+ * rewiring this component existed for is obsolete. Not mounted anywhere
+ * on prod. Kept until the v3-cleanup major; do not add new imports.
+ *
  * CanonCtaBindings — wires canon body-section CTAs to the prod
  * SubmitModal + the prod /admin-demo route, without forking canon.
  *
