@@ -37,7 +37,7 @@ rq = "^2.1"
 rq-scheduler = "^0.14"
 
 # Security / crypto / auth
-cryptography = "^46.0"  # pip-audit: CVE-2026-26007, CVE-2026-34073
+cryptography = "^48.0"  # pip-audit: GHSA-537c-gmf6-5ccf (48.0.1); ранее CVE-2026-26007/34073
 passlib = { extras = ["bcrypt"], version = "^1.7" }
 pyotp = "^2.9"
 authlib = "^1.3"
