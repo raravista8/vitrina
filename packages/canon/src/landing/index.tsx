@@ -2764,3 +2764,7 @@ export {
   FaqSection,
   FinalCtaSection,
 };
+
+// ── 0.12.0 · Витрина v5 «Фарфор и лак» (additive; v3-секции выше — byte-identical) ──
+// Новый namespace V5_* + реестры EXAMPLES/FAQ_ITEMS + V5_CSS/V5_Styles + V5_SiteViewer.
+export * from './v5';

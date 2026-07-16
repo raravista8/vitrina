@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.11.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.11.0: rev.2 «ниша-демо» — вход ДО ссылки: тап по нише → мгновенный пример сайта (0 c, без сети) → поиск источника по названию на Я.Картах → морф примера в черновик. Новые S3_StepNiche / S3_StepSource, NICHE_LIB, SourceCandidate; S3_StepPreview variant='demo'; S3_StepBuilding baseDraft (морф). Additive — пропсы 0.10.0 не ломаются, photo-ветка byte-identical.",
+  "version": "0.12.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.12.0 «Витрина v5»: глобальный ребренд токенов «Фарфор и лак» (бордо/винный accent #7A2B34, тёплый фарфор, radius 0 + без теней на уровне токенов, дисплей Sofia Sans Condensed) — перекрашивает все модули; новый лендинг V5_* (@samosite/canon/landing: Header/Hero/Story/Examples+SiteViewer/HowItWorks/Reviews/Pricing/Honest/Faq/FinalCta/Footer, реестры EXAMPLES/FAQ_ITEMS) — Hero без инпута, controlled onIntake(entry); интейк v2 In2_* (@samosite/canon/intake, NICHE_LIB_V2). Старые v3-лендинг и S3_*/SubmitModal — byte-identical. Изменение значений токенов — заявленное исключение из additive (ребренд).",
   "type": "module",
   "sideEffects": [
     "*.css"

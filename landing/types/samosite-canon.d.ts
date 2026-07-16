@@ -103,6 +103,24 @@ declare module "@samosite/canon/intake" {
  * wrapper only needs `getTheme(id).label` for the «СТИЛЬ» summary row.
  * Throws on unknown id (canon behaviour) — call inside try/catch.
  */
+// ── 0.12.0 · intake v2 (In2_*) — loose shims (dts:false; см. CHANGELOG 0.12.0
+// за точными сигнатурами; уточнить при первой типизированной проводке) ──
+declare module "@samosite/canon/intake" {
+  export const In2_Modal: any;
+  export const In2_StepExample: any;
+  export const In2_StepExampleFooter: any;
+  export const In2_StepSource: any;
+  export const In2_StepNotFound: any;
+  export const In2_StepRecognize: any;
+  export const In2_StepConfirmCard: any;
+  export const In2_StepBooking: any;
+  export const In2_StepContacts: any;
+  export const In2_StepDone: any;
+  export const NICHE_LIB_V2: any;
+  export const In2_CSS: string;
+  export const In2_Styles: any;
+}
+
 declare module "@samosite/canon/presets" {
   export function getTheme(themeId: string): {
     id: string;

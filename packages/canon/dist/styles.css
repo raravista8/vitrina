@@ -1,12 +1,12 @@
 /* @samosite/canon · interactive styles (CANON_PACKAGE_TZ §2.4) */
 
 :root {
-  --accent:      oklch(0.605 0.155 35);
-  --accent-soft: oklch(0.92  0.045 40);
-  --accent-ink:  oklch(0.42  0.14  35);
-  --ink:         oklch(0.215 0.018 60);
-  --bg:          oklch(0.972 0.012 80);
-  --bg-soft:     oklch(0.945 0.014 75);
+  --accent:      #7A2B34;
+  --accent-soft: #F1E4E5;
+  --accent-ink:  #631F27;
+  --ink:         #1B1712;
+  --bg:          #F2EEE6;
+  --bg-soft:     #ECE5D9;
 }
 
 @keyframes vt-spin { to { transform: rotate(360deg); } }
@@ -37,7 +37,7 @@ a[href="/admin-demo"]:hover, a[href="/login"]:hover {
   box-shadow: 0 16px 32px -14px rgba(120,60,30,0.45);
 }
 
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 0; }
 
 details summary { transition: background-color .15s ease; cursor: pointer; }
 details summary:hover { background-color: var(--bg-soft); }
