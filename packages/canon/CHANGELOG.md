@@ -17,6 +17,138 @@
 
 ---
 
+## 0.12.0 — «Витрина v5 · Фарфор и лак»: ребренд токенов + лендинг V5_* + интейк v2 In2_* · 2026-07-17
+
+> **MINOR, additive — С ОДНИМ ЗАЯВЛЕННЫМ ИСКЛЮЧЕНИЕМ (значения токенов).** Один релиз объединяет главную v5, интейк v2 и новую дизайн-систему «Фарфор и лак» (все на одних токенах). Прототип-источник: `Лендинг Самосайт — Витрина v5.html` + `КАК-ПОСТРОЕНА-ГЛАВНАЯ.md`. Публичные экспорты и пропсы 0.11.0 не удалены и не переименованы; старый лендинг v3 и весь intake `SubmitModal`/`S3_*` — byte-identical по коду. Изменение **значений** `tokens.ts` — заявленное исключение из additive (глобальный ребренд): визуально перекрашивает всех потребителей `VT`.
+
+### 1. Токены «Фарфор и лак» (`src/tokens.ts`) — supersedes terracotta
+
+Значения 1:1 из `:root` прототипа. Тёплый фарфор + бордо/винный акцент. **Железное правило закреплено на уровне токенов:** `r.* = 0`, `shadow.* = 'none'` (скругления/тени нельзя вернуть локально из компонентов).
+
+```
+bg #F2EEE6 · bgSoft #ECE5D9 · white/paper #FBF9F4
+ink #1B1712 · inkSoft #4C463C · inkFaint #6E675A · inkMuted #8A8173
+line #E5DFD3 · lineSoft #EFEAE0 · lineStrong #D6CEBE   (НОВЫЙ: lineStrong = line-2)
+accent #7A2B34 · accentHover #631F27 · accentSoft #F1E4E5 · accentInk #631F27
+onAccent #FBF9F4 (НОВЫЙ) · dark #1B1712 (НОВЫЙ) · darkSoft #B4AA9A (НОВЫЙ) · accentOnDark #E0A9A0 (НОВЫЙ)
+font.display = 'Sofia Sans Condensed' (НОВЫЙ) · font.sans = Onest · font.mono = JetBrains Mono
+r = {sm,md,lg,xl,pill} → все 0 · shadow = {card:'none', pop:'none'}
+```
+
+**Перекрашиваемые модули (потребляют `VT`; функционал НЕ трогали):** `landing` (v3), `intake` (`SubmitModal`/`S3_*`), `customer`, `admin-core`, `admin-demo`, `admin-ops`, `auth`, `source`, `presets`, `primitives`. Также обновлён общий CSS-зеркало `styles.css` + `CanonStyles.tsx` (`:root` accent/bg/ink → «Фарфор и лак», `:focus-visible` radius → 0; `data-samosite-canon="v0.3"`). Hover-lift box-shadow классов v3 (`.ss-card-lift`/`.ss-pricing-card`) оставлены как v3-only affordance — уйдут вместе с депрекейтом v3-лендинга.
+
+### 2. Новые экспорты `@samosite/canon/landing` (новый файл `src/landing/v5.tsx`, namespace `V5_*`)
+
+Все секции — controlled, zero-prop = canvas-mock, internally-responsive (брейкпоинты 1000/900/720, отход от `<ResponsiveCanonSection>` — монтировать один раз). CTA → `onIntake(entry)`; аналитика — атрибуты (трекер вешает консьюмер).
+
+```ts
+type IntakeCb = (entry: string, niche?: string) => void;
+interface V5_Anchor { href: string; label: string }
+interface ExampleEntry { id: string; niche: string; anatomy: string; domain: string; Comp: React.ComponentType; note: string; palette: string[] }
+interface FaqItem { id: string; q: string; a: string }
+
+V5_Header(props: { anchors?: V5_Anchor[]; onIntake?: IntakeCb }): JSX.Element
+V5_Hero(props: { onIntake?: IntakeCb }): JSX.Element        // БЕЗ инпута — CTA открывает интейк
+V5_HeroSite(): JSX.Element                                   // декоративный мини-сайт (aria-hidden)
+V5_Story(props: { onIntake?: IntakeCb }): JSX.Element
+V5_Examples(props: { layout?: 'carousel' | 'zigzag'; onIntake?: IntakeCb }): JSX.Element
+V5_SiteViewer(props: { data: ExampleEntry; onClose: () => void; onClaim?: IntakeCb }): JSX.Element
+V5_HowItWorks(): JSX.Element
+V5_Reviews(): JSX.Element
+V5_Pricing(props: { onIntake?: IntakeCb }): JSX.Element
+V5_Honest(): JSX.Element
+V5_Faq(props: { items?: FaqItem[]; onFaqOpen?: (id: string) => void }): JSX.Element
+V5_FinalCta(props: { onIntake?: IntakeCb }): JSX.Element
+V5_Footer(props: { links?: { politika: string; oferta: string; support: string } }): JSX.Element
+V5_Page(props: { onIntake?: IntakeCb; onFaqOpen?: (id: string) => void; anchors?: V5_Anchor[]; withStyles?: boolean }): JSX.Element
+V5_Styles(): JSX.Element        // инжектит V5_CSS (scoped .v5, значения из токенов)
+
+EXAMPLES: ExampleEntry[]        // 5 анатомий (nails/barber/skin/brows/colorist)
+FAQ_ITEMS: FaqItem[]            // 9 Q&A — JSON-LD FAQPage консьюмер рендерит из этого же массива
+DEFAULT_ANCHORS: V5_Anchor[]
+V5_CSS: string
+```
+
+`landing/index.tsx` — добавлена ОДНА строка `export * from './v5'`; тела v3-секций не тронуты.
+
+### 3. Новые экспорты `@samosite/canon/intake` (новый файл `src/intake/in2.tsx`, namespace `In2_*`)
+
+Параллельный набор шагов интейка v2. Внутри НЕТ `fetch`/`Date.now`/`Math.random`/`localStorage`/`window.SSIntake` — данные пропсами, действия колбэками; персист черновика/сеть/капчу/отправку делает консьюмер. Шаг-билдеры возвращают `{ body, footer }` для передачи в `In2_Modal`.
+
+```ts
+In2_Modal(props: {
+  step: string; title?: string; canBack?: boolean; onBack?: () => void; onClose?: () => void;
+  progress?: number | null; restored?: boolean; onDraftReset?: () => void;
+  submitError?: boolean; onRetry?: () => void;
+  closeConfirm?: boolean; onConfirmClose?: () => void; onCancelClose?: () => void;
+  body?: React.ReactNode; footer?: React.ReactNode; mobile?: boolean; embedded?: boolean;
+}): JSX.Element
+In2_StepExample(props: { niche?: string; onNicheChange?: (n: string) => void; loading?: boolean; mobile?: boolean }): JSX.Element
+In2_StepExampleFooter(props: { onClaim?: () => void }): JSX.Element
+In2_StepSource(props: { path?: 'name'|'screenshot'|'link'|'photo'; onPathChange?; name?; city?; onName?; onCity?; openCity?; link?; onLink?; screenshotName?; onScreenshot?; photos?; onPhotos?; refineHint?; niche?; onSubmit?; mobile? }): { body; footer }
+In2_StepNotFound(props: { path?; name?; city?; onPick?: (p) => void; onRetry?: () => void; mobile? }): { body; footer }
+In2_StepRecognize(props: { onCancel?: () => void }): { body; footer }
+In2_StepConfirmCard(props: { candidates?: {brand;address;rating;reviewsN;source}[]; selectedId?: number; onSelect?; onConfirm?; onReject?; path?; mobile? }): { body; footer }
+In2_StepBooking(props: { platform?: 'dikidi'|'yclients'|'phone'|'none'; onPlatformChange?; url?; onUrl?; phone?; onPhone?; mobile? }): { body; footer; bok }
+In2_StepContacts(props: { channel?: string; onChannel?; contact?; onContact?; consent?: boolean; onConsent?; submitError?; hrefs?; touched?; mobile? }): { body; footer; ok }
+In2_StepDone(props: { channel?: string; contact?: string; onEditContact?; onClose?; foundCard?; mobile? }): { body; footer }
+In2_Styles(): JSX.Element   // инжектит In2_CSS (scoped .in2)
+
+NICHE_LIB_V2: { id: string; label: string; fixture: object; palette: object; other: boolean }[]
+In2_CSS: string
+```
+
+`intake/index.tsx` — добавлена ОДНА строка `export * from './in2'`; `SubmitModal`/`S3_*`/`rev2`/`preview` не тронуты.
+
+### 4. Реестры контента
+
+- **`EXAMPLES`** (landing) — 5 уникальных анатомий секции «Примеры» (это НЕ пресеты — bespoke-вёрстки в модуле). `V5_SiteViewer` открывает полноэкранный просмотр; `onClaim('example-<id>', niche)`.
+- **`FAQ_ITEMS`** (landing) — единый источник для аккордеона и JSON-LD (консьюмер).
+- **`NICHE_LIB_V2`** (intake) — 5 бьюти-подниш (Маникюр, Брови и ресницы, Барбершоп, Косметолог, Колорист) первыми + «Другое» заглушкой. Пример ниши в шаге 01 рендерит собственный `DemoSite` (полный лендинг со скроллом), как в прототипе.
+
+### 5. data-* хуки (цели Метрики — менять только согласованно)
+
+- **Лендинг:** `data-metric="story_view|reviews_view|pricing_view"` на секциях; `data-entry` на каждом CTA (`hero`, `header`, `story`, `final`, `pricing-start|pricing-lichny|pricing-biznes`, `example-<id>`); `data-pricing-tier`, `data-example-idx`, `data-faq-item`.
+- **Интейк:** `data-intake-step="example|source|recognize|confirm|booking|contacts|done"`; `data-niche-id`; `data-source-path`; `data-candidate-idx`; `data-booking-platform`; `data-contact-channel`; `data-cta` на primary-CTA (`claim-example`, `source-next`, `card-confirm`, `booking-next`, `submit`).
+
+### 6. Byte-identical (НЕ трогали код)
+
+`src/presets/index.tsx` (движок пресетов — v5 примеры/интейк-пример bespoke, второй движок НЕ заведён), `src/customer`, `src/admin-core`, `src/admin-demo`, `src/admin-ops`, `src/auth`, `src/source`, `src/primitives`, весь `src/intake` кроме нового `in2.tsx` + однострочного ре-экспорта, все v3-секции `src/landing/index.tsx`. Меняются только: `tokens.ts` (значения), `styles.css`/`CanonStyles.tsx` (`:root`), `landing/index.tsx` и `intake/index.tsx` (по одной строке ре-экспорта), + новые `landing/v5.tsx`, `intake/in2.tsx`. `package.json` version → 0.12.0, exports-карта не тронута.
+
+### 7. Migration консьюмеру
+
+- Токены применятся автоматически (ре-сборка `tokens.ts`). Обе темы — значения одни (тёмные экраны через `dark`/`darkSoft`/`accentOnDark`).
+- Смонтировать `<V5_Styles/>` (или `import '@samosite/canon/styles.css'`) и собрать страницу из `V5_*` в нужном порядке (или `<V5_Page onIntake onFaqOpen/>`). Hero больше не содержит инпут — `onIntake('hero')` открывает интейк.
+- Интейк v2: смонтировать `<In2_Styles/>` + держать стейт шагов у себя (стейт-машина, персист черновика, поиск/распознавание, капча, отправка). Компоненты полностью controlled; отдельные шаги вне `In2_Modal` оборачивать в элемент `.in2`. Старый `SubmitModal` продолжает работать — переключение на `In2_*` атомарное на стороне консьюмера.
+- Депрекейт: старый intake-флоу (`SubmitModal`/`S3_*`) и v3-лендинг помечены к удалению отдельным мажором; пока остаются рабочими.
+
+### 8. Ассеты и шрифты (хостинг — консьюмер)
+
+- **Локальные фото:** `img/nails.png` (герой + пример «Маникюр»), `img/manicure.jpg`.
+- **Шрифты интерфейса:** Sofia Sans Condensed (500–800), Onest (400–700), JetBrains Mono (400/500). **Шрифты сгенерированных мини-сайтов:** Cormorant, Golos Text, Oswald, IBM Plex Sans, Manrope, Playfair Display, Prata, Spectral.
+- **Unsplash id** (фикстуры примеров/интейка; прод заменит на CDN): photo-1503951914875-452162b0f3f1, photo-1570172619644-dfd03ed5d881, photo-1616394584738-fc6e612e71b9, photo-1616683693504-3ea7e9ad6fec, photo-1580618672591-eb180b1a973f, photo-1544005313-94ddf0286df2, photo-1472099645785-5658abf4ff4e, photo-1508214751196-bcfd4ca60f91, photo-1519014816548-bf5fe059798b, photo-1604654894610-df63bc536371, photo-1610992015732-2449b76344bc, photo-1594736797933-d0501ba2fe65, photo-1583001931096-959e9a1a6223, photo-1588514912908-8f5891714f8d, photo-1585747860715-2ba37e788b70, photo-1622287162716-f311baa1a2b8, photo-1521490878406-4b7f8f5f9cd4, photo-1512290923902-8a9f81dc236c, photo-1519824145371-296894a0daa9, photo-1560066984-138dadb4c035, photo-1522337660859-02fbefca4702, photo-1595476108010-b4d1f102b1b1.
+
+### 9. Расхождения текст↔скриншот (истина — прототип/скриншоты)
+
+- Каналы контакта (05): 5 чипов — Telegram · MAX · WhatsApp · Email · Телефон/SMS.
+- Путь «ссылка» (02·C): узнаваемые источники — **Карты, 2ГИС, Telegram, Avito, ВКонтакте** (2ГИС добавлен, подтверждено).
+- CTA: подтверждение карточки «Да, собирать →» / «Ничего из этого — искать ещё»; контакты «Отправить заявку →»; прогресс — тонкая линия (не доты).
+
+### Vitrina-side (this vendoring PR)
+
+Вендоринг «Витрина v5»: cp 7 файлов src (tokens/CanonStyles/styles.css +
+intake/{index,in2} + landing/{index,v5}), package.json 0.11.0→0.12.0,
+dist rebuild (tsup, локальный dts:false). **Converter-repair (1 правка):** в `src/intake/in2.tsx`
+нижний `export {}`-блок дублировал `In2_CSS`/`In2_Styles` (экспортированы
+инлайном) — ESM-сборка падала «Multiple exports»; дубли убраны, флаг
+отправлен Claude Design. Дифф сверен подиффно: admin-*/
+customer/auth/source/presets/primitives byte-identical (перекрашиваются
+токенами, код не тронут). Прод переключается на V5_*/In2_* в этом же
+интеграционном PR (композиция + intake2-проводка); старые v3/SubmitModal
+остаются в пакете задепрекейченными.
+
+---
+
 ## 0.11.0 — rev.2 «ниша-демо»: вход ДО ссылки, поиск по названию, морф «пример → черновик» · 2026-06-12
 
 > **MINOR, additive** (CANON_INSTANT_PREVIEW_REV2_TZ). Wow 0.10.0 был заперт за ссылкой, а 20 из 24 открывших модалку приходят с пустыми руками. Rev.2 переворачивает вход: тап по нише → мгновенный пример сайта (0 секунд, без сети) → «Заменить на ваши данные» → источник ищется по названию (ссылка не нужна) → пример морфится в его черновик. Принцип: **показывать раньше, чем просить.** Пропсы 0.10.0 не ломаются; photo-ветка byte-identical; hero-вход с ok-ссылкой пропускает шаги 0/0b/1 как раньше.

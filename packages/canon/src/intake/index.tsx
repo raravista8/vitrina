@@ -1186,3 +1186,6 @@ export type {
   NicheItem, SourceCandidate, SourceSearchError,
   S3_StepNicheProps, S3_StepSourceProps,
 };
+
+// ── 0.12.0 · интейк v2 «In2_» (additive; старый SubmitModal/S3_* — byte-identical) ──
+export * from './in2';

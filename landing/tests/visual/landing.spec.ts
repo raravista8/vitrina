@@ -1,6 +1,15 @@
 /**
  * Visual regression spec for the landing page.
  *
+ * ⚠ v5 STATUS (canon 0.12.0 «Витрина v5 · Фарфор и лак»): the whole
+ * suite currently runs SMOKE-ONLY — every section in
+ * `utils/sections.ts::LANDING_SECTIONS` has `auditedViewports: []`, so
+ * the spec only asserts that each `[data-section]` wrapper from
+ * `components/V5Landing.tsx` resolves to a visible, non-empty element on
+ * the prod build. TODO(v5-baselines): regenerate baselines from the v5
+ * canon source and re-enable pixel audits — see the note atop
+ * `utils/sections.ts`.
+ *
  * For every section in `LANDING_SECTIONS` × every viewport in `VIEWPORTS`,
  * we screenshot the production-built landing and compare against the
  * committed baseline PNG from `tests/visual/baselines/`. Diff ≤2% passes.
