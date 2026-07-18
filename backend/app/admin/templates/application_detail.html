@@ -6,10 +6,32 @@
 <table style="margin-bottom: 2rem;">
     <tbody>
         <tr><th>Статус</th><td><span class="pill pill-{{ application.status }}">{{ application.status }}</span></td></tr>
+        <tr><th>Режим</th><td><span class="pill">{{ application.mode }}</span></td></tr>
         <tr><th>Создана</th><td>{{ application.created_at.strftime("%Y-%m-%d %H:%M:%S UTC") }}</td></tr>
+
+        {% if application.mode == "v2" %}
+        <tr><th>Путь источника</th><td>{{ path_labels.get(application.source_path, application.source_path or "—") }}</td></tr>
+        <tr><th>Ниша</th><td>{{ application.niche or "—" }}</td></tr>
+        <tr><th>Название дела</th><td>{{ application.business_name or "—" }}</td></tr>
+        <tr><th>Город</th><td>{{ application.city or "—" }}</td></tr>
+        <tr><th>Запись</th><td>
+            {{ booking_labels.get(application.booking_platform, application.booking_platform or "—") }}
+            {% if application.booking_url %}<br><a href="{{ application.booking_url }}" rel="noreferrer noopener" target="_blank">{{ application.booking_url }}</a>{% endif %}
+            {% if booking_phone %}<br>Телефон записи: <code>{{ booking_phone }}</code>{% endif %}
+        </td></tr>
+        {% endif %}
+
+        {% if application.mode == "photo" %}
+        <tr><th>Описание</th><td style="white-space: pre-wrap;">{{ application.description or "—" }}</td></tr>
+        <tr><th>Город</th><td>{{ application.city or "—" }}</td></tr>
+        {% if customer_contact %}
+        <tr><th>Контакт клиента (на сайт)</th><td>{{ application.customer_contact_type }}: <code>{{ customer_contact }}</code></td></tr>
+        {% endif %}
+        {% endif %}
+
         <tr><th>Источник</th><td>{{ application.source_type }}</td></tr>
-        <tr><th>URL</th><td>{% if application.source_url %}{{ application.source_url }}{% else %}—{% endif %}</td></tr>
-        <tr><th>Контакт</th><td>{{ application.contact_type }}: {{ application.contact_value }}</td></tr>
+        <tr><th>URL</th><td>{% if application.source_url %}<a href="{{ application.source_url }}" rel="noreferrer noopener" target="_blank">{{ application.source_url }}</a>{% else %}—{% endif %}</td></tr>
+        <tr><th>Контакт (уведомления)</th><td>{{ application.contact_type }}: {{ application.contact_value }}</td></tr>
         <tr><th>IP</th><td>{{ application.ip or "—" }}</td></tr>
         <tr><th>User-Agent</th><td><code>{{ application.user_agent or "—" }}</code></td></tr>
         {% if application.rejection_reason %}
@@ -18,10 +40,44 @@
     </tbody>
 </table>
 
+{% if has_encrypted and not reveal %}
+<p style="margin-bottom: 2rem;">
+    <a class="action" href="/admin/applications/{{ application.id }}?reveal=1">Показать зашифрованные контакты полностью</a>
+    <span style="color: #6b7280; font-size: 0.8125rem;">— запишется в аудит-лог <code>admin_actions</code></span>
+</p>
+{% endif %}
+
+{% if photos %}
+<h3 style="font-size: 1rem;">Фото ({{ photos | length }})</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem;">
+    {% for p in photos %}
+    <figure style="margin: 0; max-width: 220px;">
+        <a href="/admin/applications/{{ application.id }}/photos/{{ p.id }}" target="_blank">
+            <img src="/admin/applications/{{ application.id }}/photos/{{ p.id }}"
+                 alt="{{ p.photo_type }}"
+                 style="max-width: 220px; max-height: 220px; object-fit: cover; border: 1px solid #e5e7eb;">
+        </a>
+        <figcaption style="font-size: 0.75rem; color: #6b7280;">
+            {{ p.photo_type }} · {{ (p.size_bytes / 1024) | round | int }} КБ
+        </figcaption>
+    </figure>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if text_files %}
+<h3 style="font-size: 1rem;">Файлы ({{ text_files | length }})</h3>
+<ul style="margin-bottom: 2rem;">
+    {% for f in text_files %}
+    <li><a href="/admin/applications/{{ application.id }}/files/{{ f.id }}">{{ f.filename }}</a>
+        <small style="color: #6b7280;">{{ f.mime }} · {{ (f.size_bytes / 1024) | round | int }} КБ</small></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <h3 style="font-size: 1rem;">Действия</h3>
 <p style="color: #6b7280; font-size: 0.875rem;">
-    Действия publish/reject лендят в T2.3 — пока заявка остаётся в статусе
-    {{ application.status }}, основатель связывается с пользователем
-    вручную (источник + контакт выше).
+    Сборка сайта — вручную: все материалы для неё выше (источник, ниша,
+    запись, фото). Связь с заявителем — контакт «уведомления».
 </p>
 {% endblock %}

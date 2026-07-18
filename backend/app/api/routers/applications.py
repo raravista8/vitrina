@@ -195,6 +195,11 @@ def _resolve_uploads_dir() -> Path:
     return path
 
 
+# Единая точка правды о корне загрузок: admin-роуты отдают файлы заявок и
+# обязаны резолвить корень так же, как писатель выше (path-containment check).
+resolve_uploads_dir = _resolve_uploads_dir
+
+
 def _extension_for_mime(mime: str) -> str:
     return {
         "image/jpeg": "jpg",
