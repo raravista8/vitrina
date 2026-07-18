@@ -195,6 +195,11 @@ def _resolve_uploads_dir() -> Path:
     return path
 
 
+# Единая точка правды о корне загрузок: admin-роуты отдают файлы заявок и
+# обязаны резолвить корень так же, как писатель выше (path-containment check).
+resolve_uploads_dir = _resolve_uploads_dir
+
+
 def _extension_for_mime(mime: str) -> str:
     return {
         "image/jpeg": "jpg",
@@ -420,6 +425,11 @@ async def post_submit_application_photo(
                 disk_path=str(disk_path),
             )
         )
+
+    # Без commit манифест-строки молча откатывались при закрытии сессии
+    # (submit_application коммитит только Application) — файлы оставались
+    # сиротами на диске, а admin-карточка видела пустые «Фото»/«Файлы».
+    await session.commit()
 
     log.info(
         "photo_application_accepted",

@@ -699,7 +699,8 @@ class ApplicationTextFile(UUIDPrimaryKey, Base):
     )
     index: Mapped[int] = mapped_column(Integer, nullable=False)
     filename: Mapped[str] = mapped_column(Text, nullable=False)
-    mime: Mapped[str] = mapped_column(String(64), nullable=False)
+    # 128, не 64: DOCX-mime — 71 символ, в varchar(64) не влезал (миграция 0019)
+    mime: Mapped[str] = mapped_column(String(128), nullable=False)
     size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
     disk_path: Mapped[str] = mapped_column(Text, nullable=False)
 
