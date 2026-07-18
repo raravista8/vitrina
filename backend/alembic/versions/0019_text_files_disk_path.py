@@ -6,6 +6,10 @@ uq app+index). Любой INSERT из photo-режима с текстовыми
 UndefinedColumnError — латентно с 0.3.0, всплыло при добавлении admin-вьюхи
 файлов заявки (июль 2026). Таблица на проде пуста, добавление NOT NULL
 безопасно.
+
+Вдобавок ``mime`` расширен varchar(64) → varchar(128): DOCX-mime
+(application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+— 71 символ, вставка DOCX-вложения падала StringDataRightTruncationError.
 """
 
 from __future__ import annotations
@@ -23,6 +27,13 @@ def upgrade() -> None:
     op.add_column(
         "application_text_files",
         sa.Column("disk_path", sa.Text(), nullable=False),
+    )
+    op.alter_column(
+        "application_text_files",
+        "mime",
+        type_=sa.String(length=128),
+        existing_type=sa.String(length=64),
+        existing_nullable=False,
     )
     op.create_check_constraint(
         "application_text_files_index_nonneg",
@@ -42,6 +53,13 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    op.alter_column(
+        "application_text_files",
+        "mime",
+        type_=sa.String(length=64),
+        existing_type=sa.String(length=128),
+        existing_nullable=False,
+    )
     op.drop_constraint(
         "uq_application_text_files_app_index",
         "application_text_files",

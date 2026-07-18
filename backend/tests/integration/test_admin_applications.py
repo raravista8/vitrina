@@ -28,6 +28,7 @@ from app.infrastructure.postgres.models import (
     AdminAction,
     Application,
     ApplicationPhoto,
+    ApplicationTextFile,
 )
 from app.main import create_app
 
@@ -79,8 +80,22 @@ async def seeded_v2(db_session, fernet: MultiFernet):  # type: ignore[no-untyped
         disk_path=str(disk_path),
     )
     db_session.add(photo)
+
+    text_dir = target_dir / "text"
+    text_dir.mkdir(parents=True, exist_ok=True)
+    text_path = text_dir / "00.txt"
+    text_path.write_bytes("Прайс: маникюр 2200 ₽".encode())
+    text_file = ApplicationTextFile(
+        application_id=application.id,
+        index=0,
+        filename="прайс.txt",
+        mime="text/plain",
+        size_bytes=text_path.stat().st_size,
+        disk_path=str(text_path),
+    )
+    db_session.add(text_file)
     await db_session.commit()
-    return application, photo
+    return application, photo, text_file
 
 
 @pytest_asyncio.fixture
@@ -133,7 +148,7 @@ async def test_detail_masks_booking_phone_without_audit(
     seeded_v2,  # type: ignore[no-untyped-def]
     db_session,  # type: ignore[no-untyped-def]
 ) -> None:
-    application, _ = seeded_v2
+    application, _, _ = seeded_v2
     resp = await client.get(f"/admin/applications/{application.id}")
     assert resp.status_code == 200
     html = resp.text
@@ -156,7 +171,7 @@ async def test_detail_reveal_shows_cleartext_and_writes_audit(
     seeded_v2,  # type: ignore[no-untyped-def]
     db_session,  # type: ignore[no-untyped-def]
 ) -> None:
-    application, _ = seeded_v2
+    application, _, _ = seeded_v2
     resp = await client.get(f"/admin/applications/{application.id}?reveal=1")
     assert resp.status_code == 200
     assert "+79217947888" in resp.text
@@ -168,7 +183,7 @@ async def test_detail_reveal_shows_cleartext_and_writes_audit(
 
 
 async def test_detail_renders_photo_preview(client: httpx.AsyncClient, seeded_v2) -> None:  # type: ignore[no-untyped-def]
-    application, photo = seeded_v2
+    application, photo, _ = seeded_v2
     resp = await client.get(f"/admin/applications/{application.id}")
     assert f"/admin/applications/{application.id}/photos/{photo.id}" in resp.text
     assert "profile_screenshot" in resp.text
@@ -178,7 +193,7 @@ async def test_detail_renders_photo_preview(client: httpx.AsyncClient, seeded_v2
 
 
 async def test_photo_route_serves_bytes(client: httpx.AsyncClient, seeded_v2) -> None:  # type: ignore[no-untyped-def]
-    application, photo = seeded_v2
+    application, photo, _ = seeded_v2
     resp = await client.get(f"/admin/applications/{application.id}/photos/{photo.id}")
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "image/png"
@@ -189,8 +204,39 @@ async def test_photo_route_wrong_application_404(
     client: httpx.AsyncClient,
     seeded_v2,  # type: ignore[no-untyped-def]
 ) -> None:
-    _, photo = seeded_v2
+    _, photo, _ = seeded_v2
     resp = await client.get(f"/admin/applications/{uuid.uuid4()}/photos/{photo.id}")
+    assert resp.status_code == 404
+
+
+async def test_files_route_serves_text_file(client: httpx.AsyncClient, seeded_v2) -> None:  # type: ignore[no-untyped-def]
+    application, _, text_file = seeded_v2
+    detail = await client.get(f"/admin/applications/{application.id}")
+    assert f"/admin/applications/{application.id}/files/{text_file.id}" in detail.text
+    resp = await client.get(f"/admin/applications/{application.id}/files/{text_file.id}")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/plain")
+    assert "Прайс: маникюр 2200 ₽".encode() == resp.content
+
+
+async def test_files_route_wrong_application_404(
+    client: httpx.AsyncClient,
+    seeded_v2,  # type: ignore[no-untyped-def]
+) -> None:
+    _, _, text_file = seeded_v2
+    resp = await client.get(f"/admin/applications/{uuid.uuid4()}/files/{text_file.id}")
+    assert resp.status_code == 404
+
+
+async def test_files_route_path_outside_uploads_root_404(
+    client: httpx.AsyncClient,
+    seeded_v2,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    application, _, text_file = seeded_v2
+    text_file.disk_path = "/etc/passwd"
+    await db_session.commit()
+    resp = await client.get(f"/admin/applications/{application.id}/files/{text_file.id}")
     assert resp.status_code == 404
 
 
@@ -199,7 +245,7 @@ async def test_photo_route_path_outside_uploads_root_404(
     seeded_v2,  # type: ignore[no-untyped-def]
     db_session,  # type: ignore[no-untyped-def]
 ) -> None:
-    application, photo = seeded_v2
+    application, photo, _ = seeded_v2
     photo.disk_path = "/etc/passwd"
     await db_session.commit()
     resp = await client.get(f"/admin/applications/{application.id}/photos/{photo.id}")
@@ -217,7 +263,7 @@ class _NullRedis:
 
 
 async def test_detail_and_photo_require_admin(db_session, seeded_v2, fernet) -> None:  # type: ignore[no-untyped-def]
-    application, photo = seeded_v2
+    application, photo, text_file = seeded_v2
     fastapi_app = create_app()
 
     async def _override_session():
@@ -239,6 +285,7 @@ async def test_detail_and_photo_require_admin(db_session, seeded_v2, fernet) -> 
             for url in (
                 f"/admin/applications/{application.id}",
                 f"/admin/applications/{application.id}/photos/{photo.id}",
+                f"/admin/applications/{application.id}/files/{text_file.id}",
             ):
                 resp = await ac.get(url)
                 assert resp.status_code in (302, 303, 401, 403), url

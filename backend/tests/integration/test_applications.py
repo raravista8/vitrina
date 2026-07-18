@@ -591,6 +591,74 @@ async def test_photo_application_happy_path(
         assert row.mime == "image/jpeg"
 
 
+async def test_photo_application_manifest_committed_not_pending(
+    client: httpx.AsyncClient,
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """Манифест фото/файлов должен быть ЗАКОММИЧЕН эндпоинтом, а не висеть
+    pending в сессии: до фикса session.add без commit молча откатывался при
+    закрытии prod-сессии (файлы-сироты на диске, пустая admin-карточка).
+    rollback() сбрасывает pending — коммит переживает. Вложение — DOCX:
+    его mime (71 символ) заодно проверяет varchar(128) из миграции 0019."""
+    import io
+    import zipfile
+
+    from sqlalchemy import select
+
+    from app.infrastructure.postgres.models import ApplicationPhoto, ApplicationTextFile
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("word/document.xml", "<w:document/>")
+    docx = buf.getvalue()
+
+    resp = await client.post(
+        "/api/submit-application/photo",
+        data=_photo_form_fields(contact="commit-check@example.com"),
+        files=[
+            *_photo_files_payload(count=1, photo_types=["work"]),
+            (
+                "text_files",
+                (
+                    "прайс.docx",
+                    docx,
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ),
+            ),
+        ],
+    )
+    assert resp.status_code == 202, resp.text
+    app_id = resp.json()["data"]["application_id"]
+
+    # Сбрасываем всё незакоммиченное — выжить обязаны только committed-строки.
+    await db_session.rollback()
+
+    photos = (
+        (
+            await db_session.execute(
+                select(ApplicationPhoto).where(ApplicationPhoto.application_id == app_id)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(photos) == 1
+    text_files = (
+        (
+            await db_session.execute(
+                select(ApplicationTextFile).where(ApplicationTextFile.application_id == app_id)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(text_files) == 1
+    assert text_files[0].mime == (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+    assert text_files[0].disk_path
+
+
 async def test_photo_single_file_accepted(client: httpx.AsyncClient) -> None:
     """Single photo is now enough to start an application (canon's
     canvas asks for 5, the actual minimum on prod is 1 — relaxed

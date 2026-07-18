@@ -16,7 +16,7 @@
         <tr><th>Город</th><td>{{ application.city or "—" }}</td></tr>
         <tr><th>Запись</th><td>
             {{ booking_labels.get(application.booking_platform, application.booking_platform or "—") }}
-            {% if application.booking_url %}<br><a href="{{ application.booking_url }}" rel="noreferrer noopener" target="_blank">{{ application.booking_url }}</a>{% endif %}
+            {% if application.booking_url and (application.booking_url.startswith("http://") or application.booking_url.startswith("https://")) %}<br><a href="{{ application.booking_url }}" rel="noreferrer noopener" target="_blank">{{ application.booking_url }}</a>{% elif application.booking_url %}<br>{{ application.booking_url }}{% endif %}
             {% if booking_phone %}<br>Телефон записи: <code>{{ booking_phone }}</code>{% endif %}
         </td></tr>
         {% endif %}
@@ -30,7 +30,8 @@
         {% endif %}
 
         <tr><th>Источник</th><td>{{ application.source_type }}</td></tr>
-        <tr><th>URL</th><td>{% if application.source_url %}<a href="{{ application.source_url }}" rel="noreferrer noopener" target="_blank">{{ application.source_url }}</a>{% else %}—{% endif %}</td></tr>
+        {# href только для http(s) — на не-link путях v2 схема source_url не валидируется на входе #}
+        <tr><th>URL</th><td>{% if application.source_url and (application.source_url.startswith("http://") or application.source_url.startswith("https://")) %}<a href="{{ application.source_url }}" rel="noreferrer noopener" target="_blank">{{ application.source_url }}</a>{% elif application.source_url %}{{ application.source_url }}{% else %}—{% endif %}</td></tr>
         <tr><th>Контакт (уведомления)</th><td>{{ application.contact_type }}: {{ application.contact_value }}</td></tr>
         <tr><th>IP</th><td>{{ application.ip or "—" }}</td></tr>
         <tr><th>User-Agent</th><td><code>{{ application.user_agent or "—" }}</code></td></tr>

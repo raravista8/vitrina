@@ -426,6 +426,11 @@ async def post_submit_application_photo(
             )
         )
 
+    # Без commit манифест-строки молча откатывались при закрытии сессии
+    # (submit_application коммитит только Application) — файлы оставались
+    # сиротами на диске, а admin-карточка видела пустые «Фото»/«Файлы».
+    await session.commit()
+
     log.info(
         "photo_application_accepted",
         application_id=str(application.id),
