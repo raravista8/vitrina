@@ -218,6 +218,12 @@ describe("Intake2 — отправка", () => {
     expect(fd.get("booking_url")).toBeNull(); // пустое поле не едет
     expect(fd.getAll("files")).toHaveLength(0); // путь name — без файлов
 
+    // главная конверсия — submit_success ушёл в dataLayer (и в ym при counter)
+    const dl = (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? [];
+    expect(dl.some((e) => e["event"] === "submit_success" && e["channel"] === "telegram")).toBe(
+      true,
+    );
+
     // done показывает контакт + «Изменить» возвращает на контакты
     expect(screen.getByText(/@anna_nails/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Изменить" }));
