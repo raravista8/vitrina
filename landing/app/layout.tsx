@@ -77,6 +77,17 @@ const SEO_KEYWORDS = [
   // JTBD / functional
   "форма записи на сайте",
   "приём заявок с сайта",
+  // v5 «Фарфор и лак» (июль 2026) — бьюти-позиционирование, primary intent.
+  "сайт для бьюти-мастера",
+  "сайт для мастера маникюра",
+  "сайт для салона красоты",
+  "сайт для барбершопа",
+  "сайт для бровиста",
+  "сайт для косметолога",
+  "сайт с онлайн-записью для мастера",
+  "сайт из 2ГИС",
+  "сайт из Яндекс Карт",
+  // Pre-v5 sources — всё ещё поддерживаются интейком, оставлены для хвоста.
   "сайт из Telegram-канала",
   "сайт из Яндекс.Карт",
   "сайт из фото",
@@ -114,19 +125,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   // Two registers on purpose:
   //   • SEO `title` / `description` (this block) — SERP-facing, front-loaded
-  //     with high-volume queries (конструктор сайтов / создать сайт / на
-  //     нейросети). Kept truthful to the product, so no SERP↔landing
+  //     with high-volume queries (сайт для бьюти-мастера / маникюра / с
+  //     записью). Kept truthful to the product, so no SERP↔landing
   //     mismatch bounce vs the Hero H1.
   //   • OG / Twitter `title/description` + `opengraph-image.tsx` — social-
-  //     share-facing, kept promise-focused («за 2 часа, ловит заявки»);
+  //     share-facing, kept promise-focused («за 2 часа, запись и заявки»);
   //     keyword-stuffing там бьёт по CTR. Держи их синхронными с visible
-  //     H1 в `Hero.tsx` (canon 0.5.0 / packages/canon/docs/COPY.md).
+  //     H1 в `V5Landing.tsx` (canon 0.12.0 «Витрина v5 · Фарфор и лак»).
   title: {
-    default: "Самосайт — конструктор сайтов на нейросети: сайт за 2 часа",
+    default: "Самосайт — сайт для бьюти-мастера за 2 часа с записью и заявками",
     template: "%s · Самосайт",
   },
   description:
-    "ИИ соберёт сайт за 2 часа из того, что у вас уже есть — Telegram, Яндекс.Карты, фото. Сам обновляется, отбирает отзывы и ловит заявки. Тариф «Старт» — бесплатно.",
+    "Назовите дело и город — Самосайт найдёт вашу карточку в 2ГИС или на Яндекс Картах, заберёт услуги, цены, отзывы и фото и соберёт сайт с кнопкой записи. Тариф «Старт» — бесплатно.",
   applicationName: "Самосайт",
   authors: [{ name: "Самосайт" }],
   keywords: SEO_KEYWORDS,
@@ -136,15 +147,15 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: SITE_URL,
     siteName: "Самосайт",
-    title: "Соберём за 2 часа сайт, который ловит заявки",
+    title: "Сайт для бьюти-мастера за 2 часа",
     description:
-      "Самосайт собирает сайт из вашего Telegram-канала, Яндекс.Карт, 2ГИС, Avito или фото меню. Дальше он сам становится лучше каждую неделю.",
+      "Маникюр, брови, барбершоп, косметолог, колорист. Самосайт соберёт сайт из вашей карточки на Картах или фото работ — с кнопкой записи. Первый месяц бесплатно без карты.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Самосайт — соберём за 2 часа сайт, который ловит заявки",
+    title: "Самосайт — сайт для бьюти-мастера за 2 часа",
     description:
-      "ИИ соберёт сайт за 2 часа из вашего Telegram-канала, Яндекс.Карт или фото. Тариф «Старт» бесплатно, платные от 690 ₽/мес.",
+      "Соберём из вашей карточки в 2ГИС или на Яндекс Картах, либо из фото работ. Тариф «Старт» бесплатно, платные от 690 ₽/мес.",
   },
   robots: { index: true, follow: true },
   // Ownership verification (Yandex.Webmaster + Google Search Console).
@@ -167,7 +178,7 @@ const JSON_LD = {
       // schema.org `logo` property, so point at the 180×180 apple-icon.png.
       logo: `${SITE_URL}/apple-icon.png`,
       description:
-        "Самосайт — AI-сборщик сайтов-каналов заявок для частных мастеров и малых услуг в РФ.",
+        "Самосайт — AI-сборщик сайтов для бьюти-мастеров и малых услуг в РФ: сайт из карточки на Картах или фото работ, с записью и заявками.",
     },
     {
       "@type": "SoftwareApplication",

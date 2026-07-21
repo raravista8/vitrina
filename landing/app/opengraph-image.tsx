@@ -18,10 +18,16 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt =
-  "Самосайт — соберём за 2 часа сайт, который ловит заявки, и дальше он сам становится лучше";
+export const alt = "Самосайт — сайт для бьюти-мастера за 2 часа: с записью и заявками";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+// v5 «Фарфор и лак» (canon 0.12.0): bone / ink / bordeaux, радиус 0 —
+// железное правило дизайн-системы держим и в OG-картинке.
+const BONE = "#F2EEE6";
+const INK = "#1B1712";
+const INK_70 = "#4C463C";
+const BORDEAUX = "#7A2B34";
 
 export default async function Image() {
   return new ImageResponse(
@@ -33,9 +39,7 @@ export default async function Image() {
         flexDirection: "column",
         justifyContent: "space-between",
         padding: 80,
-        // oklch isn't yet supported by satori (the renderer Next uses
-        // under `next/og`); the closest sRGB hex is #c66333 (terracotta).
-        background: "#fff8f0",
+        background: BONE,
         fontFamily: "Inter, system-ui, sans-serif",
       }}
     >
@@ -45,8 +49,7 @@ export default async function Image() {
           style={{
             width: 72,
             height: 72,
-            borderRadius: 20,
-            background: "#c66333",
+            background: BORDEAUX,
             color: "#ffffff",
             display: "flex",
             alignItems: "center",
@@ -59,31 +62,29 @@ export default async function Image() {
         >
           С
         </div>
-        <span style={{ fontSize: 40, fontWeight: 700, color: "#2d1b14" }}>Самосайт</span>
+        <span style={{ fontSize: 40, fontWeight: 700, color: INK }}>Самосайт</span>
       </div>
 
-      {/* H1 — canon 0.6.0, synced with Hero.tsx visible H1. Two
-          terracotta accent phrases («2 часа», «сам становится лучше»),
-          period at the end matches visible H1. */}
+      {/* H1 — synced with V5Landing visible H1 (canon 0.12.0 V5_Hero):
+          «Сайт для бьюти-мастера за 2 часа», бордо-акцент на «за 2 часа». */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          fontSize: 64,
+          fontSize: 72,
           fontWeight: 700,
           lineHeight: 1.06,
           letterSpacing: -2.5,
-          color: "#2d1b14",
+          color: INK,
         }}
       >
+        <span>Сайт для бьюти-мастера</span>
         <span>
-          Соберём за <span style={{ color: "#c66333" }}>2 часа</span>
+          {/*  : satori схлопывает обычный пробел между span и текстом */}
+          <span style={{ color: BORDEAUX }}>за 2 часа</span>
+          {" — с записью"}
         </span>
-        <span>сайт, который ловит заявки.</span>
-        <span>
-          Дальше он <span style={{ color: "#c66333" }}>сам становится лучше</span>
-        </span>
-        <span>каждую неделю.</span>
+        <span>и заявками.</span>
       </div>
 
       {/* Bottom microcopy */}
@@ -93,11 +94,11 @@ export default async function Image() {
           justifyContent: "space-between",
           alignItems: "center",
           fontSize: 24,
-          color: "#5c4a3a",
+          color: INK_70,
         }}
       >
         <span>samosite.online</span>
-        <span>Первый месяц бесплатно</span>
+        <span>Первый месяц бесплатно без карты</span>
       </div>
     </div>,
     {
