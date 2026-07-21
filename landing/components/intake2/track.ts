@@ -13,6 +13,8 @@
  *   booking_platform_selected  {platform} — выбрана платформа записи (шаг 04)
  *   contacts_shown                        — показан шаг контактов (шаг 05)
  *   submit                     {channel, retry} — попытка отправки заявки
+ *   submit_success             {channel}  — backend принял заявку (202) —
+ *                                           главная конверсия воронки
  */
 
 export type Intake2Goal =
@@ -21,7 +23,8 @@ export type Intake2Goal =
   | "source_path"
   | "booking_platform_selected"
   | "contacts_shown"
-  | "submit";
+  | "submit"
+  | "submit_success";
 
 const METRIKA_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";
 

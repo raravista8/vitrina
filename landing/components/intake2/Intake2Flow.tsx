@@ -376,6 +376,7 @@ export function Intake2Flow({
     setSubmitting(false);
 
     if (result.ok) {
+      track("submit_success", { channel: CHANNEL_TO_API[form.channel] });
       clearDraft();
       go("done");
       return;
