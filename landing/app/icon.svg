@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <!--
-    Самосайт — favicon. Per docs/COPY.md §«Бренд» (v2) — canonical brand-mark:
-    terracotta square (border-radius 27%) with bold cyrillic «С» (Onest 800).
+    Самосайт — favicon. Canonical brand-mark:
+    v5 «Фарфор и лак» (canon 0.12.0): бордо #7A2B34, радиус 0 (железное правило), «С» (Onest 800). Растровые копии apple-icon.png + favicon.ico перегенерированы из этого SVG — держи в синхроне.
 
     Picked up automatically by Next.js 14 App Router from `app/icon.svg`.
     No `layout.tsx` change needed — Next emits `<link rel="icon" href="/icon">`
     in <head>.
   -->
-  <rect x="0" y="0" width="64" height="64" rx="17.28" fill="#CD583C"/>
+  <rect x="0" y="0" width="64" height="64" fill="#7A2B34"/>
   <text
     x="32"
     y="48"
