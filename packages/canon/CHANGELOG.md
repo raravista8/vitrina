@@ -14,6 +14,14 @@
 >   prop (or `data.pending_preview: [{ id, source_type, label, ago }]`)
 >   — same controlled pattern as the other admin screens (0.2.x).
 >   Remove the consumer workaround once shipped.
+>
+> - **`[vitrina] copy patch — V5_Hero lead (июль 2026)`** — лид-абзац
+>   героя переписан на consumer-стороне прямо в `src/landing/v5.tsx`
+>   («Назовите город: … сайт бьюти-мастера») под SEO-сниппет
+>   бьюти-кластера: Яндекс берёт этот абзац как description выдачи.
+>   **Fix wanted:** синкнуть исходник Claude Design ИЛИ дать
+>   `V5_Hero` проп `lead?: ReactNode` — тогда патч снимается и копи
+>   возвращается под контроль консьюмера.
 
 ---
 

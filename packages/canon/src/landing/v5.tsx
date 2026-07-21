@@ -637,7 +637,10 @@ export function V5_Hero({ onIntake = noop }: V5_HeroProps) {
       <div className="hero__grid wrap">
         <div ref={copyRef} className={'hero__copy ' + copyCls}>
           <h1 className="hero-h">Сайт для бьюти-мастера <span className="accent">за&nbsp;2&nbsp;часа</span></h1>
-          <p className="lead hero__lead">Назовите своё дело и&nbsp;город — Самосайт найдёт вашу карточку в&nbsp;2ГИС или на&nbsp;Яндекс&nbsp;Картах, заберёт оттуда услуги, цены, отзывы, фото и&nbsp;соберёт из&nbsp;них сайт.</p>
+          {/* [vitrina] copy patch (founder, июль 2026): лид-абзац переписан под
+              SEO-сниппет бьюти-кластера — Яндекс берёт его как description.
+              Отправлено Claude Design для синка исходника. */}
+          <p className="lead hero__lead">Назовите город: Самосайт найдёт вашу карточку в&nbsp;2ГИС или на&nbsp;Яндекс&nbsp;Картах, заберёт оттуда услуги, цены, отзывы и&nbsp;фото работ и&nbsp;соберёт из&nbsp;них сайт бьюти-мастера.</p>
           <div className="hero__cta">
             <button className="btn btn--56" type="button" data-entry="hero" onClick={() => onIntake('hero')}>Собрать сайт за 2 часа <span className="arw">→</span></button>
             <a className="hero__examples" href="#examples"><span>Посмотреть примеры</span> <span className="arw" aria-hidden="true">→</span></a>
