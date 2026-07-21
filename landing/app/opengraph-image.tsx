@@ -18,7 +18,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Самосайт — сайт для бьюти-мастера за 2 часа: с записью и заявками";
+export const alt = "Самосайт — сайт бьюти-мастера за 2 часа, который ловит заявки";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
