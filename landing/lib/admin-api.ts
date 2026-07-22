@@ -44,12 +44,16 @@ export interface DashboardData {
 export interface AppRow {
   id: string;
   // canon 0.3.0: mode discriminator + photo-branch summary fields.
-  mode: "link" | "photo";
-  source_type: "ymaps" | "telegram" | "photo" | "website";
+  // intake v2 (июль 2026): mode='v2' + summary-поля source_path/niche/business_name.
+  mode: "link" | "photo" | "v2";
+  source_type: "ymaps" | "telegram" | "photo" | "website" | "twogis" | "avito" | "vk";
   source_url: string | null;
   city: string | null;
   description_preview: string | null;
-  contact_type: "email" | "phone" | "telegram" | "max";
+  source_path: "name" | "screenshot" | "link" | "photo" | null;
+  niche: string | null;
+  business_name: string | null;
+  contact_type: "email" | "phone" | "telegram" | "max" | "whatsapp";
   contact_value_masked: string;
   status: "pending" | "approved" | "rejected" | "fulfilled";
   rejection_reason: string | null;
@@ -71,6 +75,18 @@ export interface ApplicationFileRef {
 
 export interface AppDetail {
   application: AppRow;
+  /** Intake-v2 extras (июль 2026) — null на link/photo. booking_phone
+   *  расшифрован бэкендом inline (политика customer_contact_value). */
+  v2_details: {
+    source_path: "name" | "screenshot" | "link" | "photo" | null;
+    niche: string | null;
+    business_name: string | null;
+    city: string | null;
+    booking_platform: "dikidi" | "yclients" | "phone" | "none" | null;
+    booking_url: string | null;
+    booking_phone: string | null;
+    photos: ApplicationFileRef[];
+  } | null;
   /** Photo-mode extras — null on link mode. */
   photo_details: {
     description: string | null;

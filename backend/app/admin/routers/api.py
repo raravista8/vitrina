@@ -468,7 +468,7 @@ async def admin_api_app_detail(
     photos: list[dict[str, Any]] = []
     text_files: list[dict[str, Any]] = []
     customer_contact_value: str | None = None
-    if row.mode == "photo":
+    if row.mode in ("photo", "v2"):
         photo_rows = (
             (
                 await session.execute(
@@ -526,9 +526,33 @@ async def admin_api_app_detail(
             except LeadDecryptionError:
                 customer_contact_value = "[decryption_failed]"
 
+    booking_phone: str | None = None
+    if row.mode == "v2" and row.booking_phone_enc:
+        try:
+            booking_phone = fernet_decrypt(bytes(row.booking_phone_enc), fernet=fernet)
+        except LeadDecryptionError:
+            booking_phone = "[decryption_failed]"
+
     return _envelope_ok(
         {
             "application": _app_row(row),
+            # Intake v2 (июль 2026): всё для ручной сборки сайта. booking_phone
+            # расшифрован inline — та же политика, что customer_contact_value
+            # (публикуется на кнопке «Записаться» клиентского сайта).
+            "v2_details": (
+                {
+                    "source_path": row.source_path,
+                    "niche": row.niche,
+                    "business_name": row.business_name,
+                    "city": row.city,
+                    "booking_platform": row.booking_platform,
+                    "booking_url": row.booking_url,
+                    "booking_phone": booking_phone,
+                    "photos": photos,
+                }
+                if row.mode == "v2"
+                else None
+            ),
             "photo_details": (
                 {
                     "description": row.description,
@@ -1220,6 +1244,10 @@ def _app_row(row: Application) -> dict[str, Any]:
         # is a different layer — stays Fernet-encrypted + masked + decrypt-on-
         # click (admin/routers/leads.py), untouched.
         "contact_value_masked": row.contact_value,
+        # Intake v2 summary (NULL на link/photo)
+        "source_path": row.source_path,
+        "niche": row.niche,
+        "business_name": row.business_name,
         "status": row.status,
         "rejection_reason": row.rejection_reason,
         "is_manual_review": row.is_manual_review,
@@ -1274,6 +1302,17 @@ _VOTE_LABELS: Final[dict[str, str]] = {
 
 
 def _feedback_row(row: Feedback) -> dict[str, Any]:
+    # Feedback v2 (blocker/question): причина+триггер кладём в `checkboxes`
+    # (canon S18 рендерит его collapsible-блоком как есть), контакт — в
+    # `email_or_contact_masked` с префиксом канала. Ноль изменений canon.
+    contact = row.email
+    if row.contact:
+        contact = f"{row.contact_channel}: {row.contact}"
+    extras: dict[str, Any] = dict(row.checkboxes or {})
+    if row.reason:
+        extras["reason"] = row.reason
+    if row.trigger:
+        extras["trigger"] = row.trigger
     return {
         "id": str(row.id),
         "type": row.type,
@@ -1282,9 +1321,9 @@ def _feedback_row(row: Feedback) -> dict[str, Any]:
         # the visitor gave so the founder can REPLY. Founder-only inbox behind
         # admin auth. Distinct from end-customer leads (Fernet-encrypted +
         # TOTP-gated decrypt) — those stay masked.
-        "email_or_contact_masked": row.email,
+        "email_or_contact_masked": contact,
         "message": row.message,
-        "checkboxes": row.checkboxes,
+        "checkboxes": extras,
         "created_at": row.created_at.isoformat() if row.created_at else None,
     }
 

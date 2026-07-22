@@ -118,6 +118,15 @@ Infra — `docker compose config`. Plus `gitleaks` (secret scan) and the `claude
   (app-server origin, no S3): a dedicated `Caddyfile.staging` host block proxies
   it to api:8000, which renders + serves the static pages by Host. Single
   hostname → real LE cert via tls-alpn-01. See `docs/runbooks/publish-milreview.md`.
+- **Боевая админка = Next.js, Jinja-админка недостижима с прод-edge.**
+  `Caddyfile.staging`: `/admin/api/*` → FastAPI (JSON, `backend/app/admin/
+  routers/api.py`), `/admin*` (UI) → **landing:3000** (`landing/app/admin/*`,
+  canon-дропины S10–S19 + hand-rolled панели). FastAPI-Jinja-админка
+  (`backend/app/admin/templates` + роутеры dashboard/leads/feedback) с edge
+  НЕ маршрутизируется — это исторический слой T2.x. Новые админ-фичи делать
+  в паре «JSON-эндпоинт в api.py + Next-страница/панель»; в Jinja — не
+  вкладываться (июль 2026: карточка заявки v2 и фидбек-инбокс сперва ушли
+  туда по ошибке, переделаны в api.py + Next).
 - **Pricing** is frontend-only (canon 5-tier matrix); ЮKassa is still single-plan
   990 ₽. See `docs/handoff/CANON_SWAP_PLAN.md` §Pricing.
 - **Instant-preview backend** (`GET /api/preview/search` + `POST /api/preview/draft`,

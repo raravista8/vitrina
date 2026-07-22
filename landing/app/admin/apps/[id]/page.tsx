@@ -118,8 +118,120 @@ function AppDetailScreen() {
         actionLoading={actionLoading}
         actionError={actionError}
       />
+      {data?.v2_details && <V2Panel details={data.v2_details} />}
       {data?.photo_details && <PhotoModePanel details={data.photo_details} />}
     </>
+  );
+}
+
+const V2_PATH_LABELS: Record<string, string> = {
+  name: "по названию — найти на Картах",
+  screenshot: "скриншот профиля",
+  link: "по ссылке",
+  photo: "фото работ",
+};
+
+const V2_BOOKING_LABELS: Record<string, string> = {
+  dikidi: "Dikidi",
+  yclients: "YClients",
+  phone: "по телефону и в мессенджерах",
+  none: "пока никак",
+};
+
+/** Intake-v2 заявка: всё для ручной сборки сайта (зеркалит PhotoModePanel). */
+function V2Panel({ details }: { details: NonNullable<AppDetailEnvelope["v2_details"]> }) {
+  return (
+    <section
+      data-section="app-detail-v2"
+      className="mx-auto mt-6 max-w-[1100px] rounded-2xl border border-line bg-paper-soft p-6 sm:p-8"
+    >
+      <h2 className="mb-5 text-[18px] font-bold tracking-tight text-ink">Заявка intake v2</h2>
+
+      <div className="mb-5 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-xl bg-white p-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            Путь источника
+          </div>
+          <div className="mt-1 text-[15px] text-ink">
+            {details.source_path
+              ? (V2_PATH_LABELS[details.source_path] ?? details.source_path)
+              : "—"}
+          </div>
+        </div>
+        <div className="rounded-xl bg-white p-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            Ниша
+          </div>
+          <div className="mt-1 text-[15px] text-ink">{details.niche ?? "—"}</div>
+        </div>
+        <div className="rounded-xl bg-white p-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            Название дела
+          </div>
+          <div className="mt-1 text-[15px] text-ink">{details.business_name ?? "—"}</div>
+        </div>
+        <div className="rounded-xl bg-white p-4">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            Город
+          </div>
+          <div className="mt-1 text-[15px] text-ink">{details.city ?? "—"}</div>
+        </div>
+      </div>
+
+      {/* Запись */}
+      <div className="mb-5 rounded-xl bg-white p-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+          Запись клиентов
+        </div>
+        <div className="mt-1 text-[15px] text-ink">
+          {details.booking_platform
+            ? (V2_BOOKING_LABELS[details.booking_platform] ?? details.booking_platform)
+            : "—"}
+        </div>
+        {details.booking_url && (
+          <a
+            href={details.booking_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-1 block truncate font-mono text-[13px] text-accent underline"
+          >
+            {details.booking_url}
+          </a>
+        )}
+        {details.booking_phone && (
+          <div className="mt-1 font-mono text-[14px] text-ink">{details.booking_phone}</div>
+        )}
+      </div>
+
+      {/* Фото (скриншот профиля / фото работ) */}
+      {details.photos.length > 0 && (
+        <div>
+          <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            Фото ({details.photos.length})
+          </div>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+            {details.photos.map((p) => (
+              <a
+                key={p.id}
+                href={p.download_url}
+                target="_blank"
+                rel="noreferrer"
+                className="group block overflow-hidden rounded-lg border border-line bg-white"
+                title={`${p.filename} · ${formatSize(p.size_bytes)}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.download_url}
+                  alt={p.filename}
+                  className="aspect-square w-full object-cover transition-transform group-hover:scale-105"
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
