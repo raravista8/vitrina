@@ -405,6 +405,66 @@ async def test_dashboard_aggregates_counters(
     assert isinstance(data["applications_series_14d"], list)
 
 
+async def test_app_detail_v2_details(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+    fernet,  # type: ignore[no-untyped-def]
+) -> None:
+    """Intake v2: detail отдаёт v2_details (booking_phone расшифрован inline,
+    политика customer_contact_value) + фото-манифест для mode='v2'."""
+    from app.infrastructure.postgres.models import ApplicationPhoto
+
+    _, password, totp_secret = admin_creds
+    app_row = Application(
+        mode="v2",
+        source_path="screenshot",
+        source_type="ymaps",
+        niche="Маникюр",
+        business_name="Студия Анны",
+        city="Екатеринбург",
+        booking_platform="phone",
+        booking_phone_enc=encrypt("+79217947888", fernet=fernet),
+        contact_type="telegram",
+        contact_value="@anna_nails",
+        status="pending",
+    )
+    db_session.add(app_row)
+    await db_session.flush()
+    db_session.add(
+        ApplicationPhoto(
+            application_id=app_row.id,
+            index=0,
+            filename="screenshot.png",
+            photo_type="profile_screenshot",
+            mime="image/png",
+            size_bytes=100,
+            disk_path="/tmp/none.png",
+        )
+    )
+    await db_session.commit()
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.get(f"/admin/api/apps/{app_row.id}", cookies={"admin_session": cookie})
+    assert r.status_code == 200, r.text
+    data = r.json()["data"]
+    v2 = data["v2_details"]
+    assert v2 is not None
+    assert v2["source_path"] == "screenshot"
+    assert v2["niche"] == "Маникюр"
+    assert v2["business_name"] == "Студия Анны"
+    assert v2["city"] == "Екатеринбург"
+    assert v2["booking_platform"] == "phone"
+    assert v2["booking_phone"] == "+79217947888"
+    assert len(v2["photos"]) == 1
+    assert v2["photos"][0]["photo_type"] == "profile_screenshot"
+    # summary-поля и в списочной форме
+    assert data["application"]["business_name"] == "Студия Анны"
+    assert data["application"]["source_path"] == "screenshot"
+    # photo_details остаётся None (не photo-режим)
+    assert data["photo_details"] is None
+
+
 async def test_apps_list_and_approve(
     client: httpx.AsyncClient,
     admin_creds,
@@ -604,6 +664,43 @@ async def test_feedback_list_filters(
     assert r.status_code == 200
     items = r.json()["data"]["items"]
     assert all(it["type"] == "feature_request" for it in items)
+
+
+async def test_feedback_list_v2_rows_mapped(
+    client: httpx.AsyncClient,
+    admin_creds,  # type: ignore[no-untyped-def]
+    db_session,  # type: ignore[no-untyped-def]
+) -> None:
+    """Feedback v2 (blocker/question): причина+триггер едут в checkboxes,
+    контакт — в email_or_contact_masked с префиксом канала (canon S18
+    рендерит обе без изменений)."""
+    _, password, totp_secret = admin_creds
+    db_session.add(
+        Feedback(
+            type="blocker",
+            trigger="exit",
+            reason="too_expensive",
+            message="дороговато",
+            contact_channel="telegram",
+            contact="@anna_nails",
+            checkboxes={},
+        )
+    )
+    await db_session.commit()
+
+    cookie = await _login_and_get_cookie(client, password, totp_secret)
+    r = await client.get(
+        "/admin/api/feedback?type_filter=blocker", cookies={"admin_session": cookie}
+    )
+    assert r.status_code == 200
+    items = r.json()["data"]["items"]
+    assert len(items) == 1
+    row = items[0]
+    assert row["type"] == "blocker"
+    assert row["message"] == "дороговато"
+    assert row["email_or_contact_masked"] == "telegram: @anna_nails"
+    assert row["checkboxes"]["reason"] == "too_expensive"
+    assert row["checkboxes"]["trigger"] == "exit"
 
 
 async def test_feedback_inbox_includes_modal_submissions(
