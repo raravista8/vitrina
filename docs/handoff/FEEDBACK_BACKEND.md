@@ -1,5 +1,39 @@
 # Feedback #9 — backend work (ADR-0009 rev.2)
 
+> **⚠ SUPERSEDED (июль 2026): Feedback v2.** Vote-first уходит —
+> `docs/handoff/CANON_FEEDBACK_V2_TZ.md` описывает новую форму («Что
+> останавливает?» + «Задать вопрос»). Бэкенд v2 УЖЕ live (PR #256):
+>
+> ```http
+> POST /api/feedback/v2   (rate-limit, SmartCaptcha, extra='forbid')
+> {
+>   "mode": "blocker" | "question",
+>   "trigger": "exit" | "scroll" | "button",
+>   "reason": "<код консьерж-таблицы>",   // blocker: обязателен (слаг)
+>   "note": "...",                         // blocker: опционально, ≤500
+>   "question": "...",                     // question: обязателен, ≤2000
+>   "contact_channel": "telegram"|"whatsapp"|"email",  // при контакте
+>   "contact": "...",                      // blocker: опц., question: обяз.
+>   "consent_given": true,                 // обязателен при контакте
+>   "captcha_token": "..."
+> }
+> 202 {"ok": true, "data": {"feedback_id": "<uuid>"}}
+> 400 {"error": "reason_required|invalid_reason|question_not_allowed|
+>       question_required|reason_not_allowed|contact_required|
+>       channel_required|invalid_contact_for_channel|consent_required|
+>       invalid_captcha"}
+> ```
+>
+> Хранение: те же строки `feedback` (миграция 0020: `trigger`/`reason`/
+> `contact_channel`/`contact`; `type` += `blocker|question`). Founder-алерт —
+> тот же dispatcher, тема «фидбек: {reason}» / «вопрос с сайта», контакт
+> маской, blocker-с-контактом помечен как мини-лид. Админ-инбокс —
+> `GET /admin/feedback` (v2 + legacy, фильтр по type).
+> Enum причин: `FEEDBACK_V2_REASON_CODES` в `core/feedback/service.py` —
+> сузить до кодов консьерж-таблицы, когда founder её пришлёт.
+> `GET /api/feedback/tally` и votes-ветка ниже — ретайр после PR-C
+> (переключения фронта); до него живут для текущей прод-модалки.
+
 The feedback UI moved from a standalone `/feedback` page to a **vote-first modal**
 (`code/FeedbackForm.tsx` → `FeedbackModal`). One submit now carries **N votes** plus
 an optional contact. The backend needs the changes below.

@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+{% block title %}Фидбек{% endblock %}
+{% block content %}
+<h2>Фидбек</h2>
+
+<div class="filters">
+    <a href="/admin/feedback" class="{% if not type_filter %}active{% endif %}">Все</a>
+    {% for t in types %}
+    <a href="/admin/feedback?type={{ t }}"
+       class="{% if type_filter == t %}active{% endif %}">{{ type_labels.get(t, t) }}</a>
+    {% endfor %}
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Когда</th>
+            <th>Тип</th>
+            <th>Причина / триггер</th>
+            <th>Текст</th>
+            <th>Контакт</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in rows %}
+        <tr>
+            <td>{{ f.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            <td><span class="pill">{{ type_labels.get(f.type, f.type) }}</span></td>
+            <td>
+                {% if f.reason %}<code>{{ f.reason }}</code>{% endif %}
+                {% if f.trigger %}<br><small>{{ trigger_labels.get(f.trigger, f.trigger) }}</small>{% endif %}
+                {% if f.source_name %}<code>{{ f.source_name }}</code>{% endif %}
+            </td>
+            <td style="max-width: 420px; white-space: pre-wrap;">{{ (f.message or "—") | truncate(300) }}</td>
+            <td>
+                {% if f.contact %}{{ f.contact_channel }}: {{ f.contact }}
+                {% elif f.email %}email: {{ f.email }}
+                {% else %}—{% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align: center; color: #6b7280;">Пока пусто.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
