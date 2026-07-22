@@ -331,7 +331,18 @@ class Consent(UUIDPrimaryKey, Timestamped, Base):
 # feedback (waitlist + general; ADR-0009)
 # =============================================================================
 
-FEEDBACK_TYPES = ("source_request", "feature_request", "bug", "general")
+FEEDBACK_TYPES = (
+    "source_request",
+    "feature_request",
+    "bug",
+    "general",
+    # Feedback v2 (июль 2026, CANON_FEEDBACK_V2_TZ): «Что останавливает?» +
+    # «Задать вопрос». Причина отказа — reason, слаг из консьерж-таблицы.
+    "blocker",
+    "question",
+)
+FEEDBACK_V2_TRIGGERS = ("exit", "scroll", "button")
+FEEDBACK_V2_CHANNELS = ("telegram", "whatsapp", "email")
 
 
 class Feedback(UUIDPrimaryKey, Timestamped, Base):
@@ -358,10 +369,28 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
         DateTime(timezone=True), nullable=True
     )
 
+    # ── Feedback v2 (июль 2026): живут только на type='blocker'|'question'.
+    # Инварианты режимов проверяет api-слой (паттерн intake v2); enum причин —
+    # консьерж-таблица founder'а, в БД без CHECK (заморозится на api-слое).
+    trigger: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    contact_channel: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    # Notify-канал ответа (PII) — политика хранения как applications.contact_value
+    # (плейнтекст в БД, маска в логах и письмах).
+    contact: Mapped[str | None] = mapped_column(Text, nullable=True)
+
     __table_args__ = (
         CheckConstraint(
             f"type IN {FEEDBACK_TYPES!r}",
             name="feedback_type_valid",
+        ),
+        CheckConstraint(
+            f"trigger IS NULL OR trigger IN {FEEDBACK_V2_TRIGGERS!r}",
+            name="feedback_trigger_valid",
+        ),
+        CheckConstraint(
+            f"contact_channel IS NULL OR contact_channel IN {FEEDBACK_V2_CHANNELS!r}",
+            name="feedback_contact_channel_valid",
         ),
     )
 

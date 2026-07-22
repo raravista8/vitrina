@@ -24,6 +24,7 @@ service boundary).
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -34,6 +35,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.core.consent.ledger import record_consent
+from app.core.contact.auto_detect import validate_channel_value
 from app.infrastructure.postgres.models import (
     Feedback,
     FeedbackSubmission,
@@ -91,6 +93,101 @@ async def submit_feedback(
         source_name=source_name,
         message=message,
         checkboxes=payload,
+    )
+    session.add(feedback)
+    await session.flush()
+    await session.commit()
+    return Ok(feedback)
+
+
+# ===========================================================================
+# Feedback v2 (CANON_FEEDBACK_V2_TZ, июль 2026)
+# ===========================================================================
+
+# Причина отказа — слаг из консьерж-таблицы founder'а. Пока таблица не
+# заморожена, принимаем любой слаг корректной формы; после заморозки —
+# сузить до кортежа кодов (одно место правки).
+# TODO(founder): заменить None на кортеж кодов консьерж-таблицы (ТЗ §4).
+FEEDBACK_V2_REASON_CODES: tuple[str, ...] | None = None
+_REASON_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,31}$")
+
+_FEEDBACK_V2_CONSENT_TEXT = (
+    "Согласие на обработку контакта для ответа на обращение (Самосайт, "
+    "форма обратной связи). Контакт не передаётся третьим лицам и не "
+    "используется для рассылок."
+)
+
+
+async def submit_feedback_v2(
+    *,
+    session: AsyncSession,
+    mode: str,
+    trigger: str,
+    reason: str | None,
+    note: str | None,
+    question: str | None,
+    contact_channel: str | None,
+    contact: str | None,
+    consent_given: bool,
+    ip: str | None = None,
+    user_agent: str | None = None,
+) -> DomainResult[Feedback]:
+    """«Что останавливает?» (blocker) / «Задать вопрос» (question).
+
+    Инварианты режимов (ТЗ §2/§3):
+      - blocker: reason обязателен (слаг консьерж-таблицы), question запрещён,
+        контакт опционален («Просто отправить ответ» — ценен и без лида);
+      - question: question обязателен, reason запрещён, контакт обязателен
+        (иначе отвечать некуда).
+    Контакт = PII → при контакте обязательны канал, валидность значения
+    (нормализация ``validate_channel_value``) и согласие; согласие пишется
+    в consent-ledger (FR-070).
+    """
+    contact = contact.strip() if contact else None
+    note = note.strip() if note else None
+    question = question.strip() if question else None
+
+    if mode == "blocker":
+        if not reason:
+            return Err(DomainError(code="reason_required"))
+        if not _REASON_SLUG_RE.match(reason) or (
+            FEEDBACK_V2_REASON_CODES is not None and reason not in FEEDBACK_V2_REASON_CODES
+        ):
+            return Err(DomainError(code="invalid_reason"))
+        if question:
+            return Err(DomainError(code="question_not_allowed"))
+    else:  # question
+        if not question:
+            return Err(DomainError(code="question_required"))
+        if reason:
+            return Err(DomainError(code="reason_not_allowed"))
+        if not contact:
+            return Err(DomainError(code="contact_required"))
+
+    normalized_contact: str | None = None
+    if contact:
+        if not contact_channel:
+            return Err(DomainError(code="channel_required"))
+        normalized_contact = validate_channel_value(contact_channel, contact)
+        if normalized_contact is None:
+            return Err(DomainError(code="invalid_contact_for_channel"))
+        if not consent_given:
+            return Err(DomainError(code="consent_required"))
+        await record_consent(
+            session=session,
+            user_id=None,
+            ip=ip,
+            user_agent=user_agent,
+            consent_text=_FEEDBACK_V2_CONSENT_TEXT,
+        )
+
+    feedback = Feedback(
+        type=mode,
+        trigger=trigger,
+        reason=reason,
+        message=note if mode == "blocker" else question,
+        contact_channel=contact_channel if normalized_contact else None,
+        contact=normalized_contact,
     )
     session.add(feedback)
     await session.flush()
