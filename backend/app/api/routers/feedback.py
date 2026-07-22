@@ -38,6 +38,9 @@ from app.api.schemas.feedback import (
     SubmitFeedbackData,
     SubmitFeedbackRequest,
     SubmitFeedbackResponse,
+    SubmitFeedbackV2Data,
+    SubmitFeedbackV2Request,
+    SubmitFeedbackV2Response,
     SubmitVotesData,
     SubmitVotesRequest,
     SubmitVotesResponse,
@@ -47,6 +50,7 @@ from app.core.feedback.service import (
     TallyResult,
     get_tally,
     submit_feedback,
+    submit_feedback_v2,
     submit_votes,
 )
 from app.core.notify.dispatcher import NotificationDispatcher
@@ -218,6 +222,108 @@ async def _handle_votes(
 def _votes_response(*, accepted: int, tally: TallyResult) -> JSONResponse:
     payload = SubmitVotesResponse(data=SubmitVotesData(accepted=accepted, tally=_tally_data(tally)))
     return JSONResponse(status_code=200, content=payload.model_dump(mode="json"))
+
+
+# ---------------------------------------------------------------------------
+# POST /api/feedback/v2 — «Что останавливает?» + «Задать вопрос»
+# (CANON_FEEDBACK_V2_TZ, июль 2026)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/feedback/v2", response_model=SubmitFeedbackV2Response, status_code=202)
+async def post_feedback_v2(
+    body: SubmitFeedbackV2Request,
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    captcha: Annotated[CaptchaVerifier, Depends(get_captcha_verifier)],
+    notifier: Annotated[NotificationDispatcher, Depends(get_notification_dispatcher)],
+    _ratelimit: Annotated[None, Depends(feedback_rate_limiter)],
+) -> JSONResponse:
+    log = get_logger("api.feedback")
+    ip = get_client_ip(request)
+
+    captcha_result = await captcha.verify(body.captcha_token, ip=ip)
+    if not captcha_result.is_valid:
+        log.info("captcha_rejected", reason=captcha_result.reason)
+        raise HTTPException(status_code=400, detail="invalid_captcha")
+
+    result = await submit_feedback_v2(
+        session=session,
+        mode=body.mode,
+        trigger=body.trigger,
+        reason=body.reason,
+        note=body.note,
+        question=body.question,
+        contact_channel=body.contact_channel,
+        contact=body.contact,
+        consent_given=body.consent_given,
+        ip=ip,
+        user_agent=request.headers.get("user-agent"),
+    )
+    if result.is_err():
+        err = result.unwrap_err()
+        log.info("feedback_v2_rejected", code=err.code)
+        raise HTTPException(status_code=400, detail=err.code)
+
+    feedback = result.unwrap()
+    log.info(
+        "feedback_v2_accepted",
+        feedback_id=str(feedback.id),
+        mode=feedback.type,
+        trigger=feedback.trigger,
+        reason=feedback.reason,
+        has_contact=bool(feedback.contact),
+    )
+
+    # Founder-тикет: источник «feedback», причина/вопрос, контакт — маской.
+    if feedback.type == "blocker":
+        title = f"🧱 Фидбек: {feedback.reason}"
+        lines = [f"Причина: {feedback.reason}"]
+        if feedback.message:
+            lines.append(f"Почему: {feedback.message[:300]}")
+        if feedback.contact:
+            lines.append(
+                "Оставил контакт на бесплатный черновик — отвечать как заявке: "
+                f"{_mask_v2_contact(feedback.contact, feedback.contact_channel)} "
+                f"({feedback.contact_channel})"
+            )
+        subject = f"фидбек: {feedback.reason}"
+    else:
+        title = "❓ Вопрос с сайта"
+        lines = [f"Вопрос: {(feedback.message or '')[:500]}"]
+        lines.append(
+            f"Контакт: {_mask_v2_contact(feedback.contact or '', feedback.contact_channel)} "
+            f"({feedback.contact_channel})"
+        )
+        subject = "вопрос с сайта"
+    lines.append(f"Источник: feedback · триггер {feedback.trigger}")
+
+    await notifier.notify_founder(
+        kind=NotificationKind.application_received,  # same admin alert kind as legacy
+        message=NotificationMessage(
+            title=title,
+            body="\n".join(lines),
+            metadata={"email_subject": subject},
+        ),
+    )
+
+    payload = SubmitFeedbackV2Response(data=SubmitFeedbackV2Data(feedback_id=feedback.id))
+    return JSONResponse(status_code=202, content=payload.model_dump(mode="json"))
+
+
+def _mask_v2_contact(value: str, channel: str | None) -> str:
+    """Маска PII для founder-алерта (политика _mask_contact из applications)."""
+    if channel == "email":
+        local, _, domain = value.partition("@")
+        return f"{local[:1]}***@{domain}" if local else "***"
+    if channel == "whatsapp":
+        return f"+7***{value[-4:]}" if len(value) >= 4 else "***"
+    if channel == "telegram":
+        prefix, tg_body = (value[:1], value[1:]) if value.startswith("@") else ("", value)
+        if len(tg_body) <= 4:
+            return f"{prefix}***"
+        return f"{prefix}{tg_body[:2]}***{tg_body[-2:]}"
+    return "***"
 
 
 async def _handle_legacy(
