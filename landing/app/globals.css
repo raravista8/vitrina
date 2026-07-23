@@ -132,3 +132,17 @@ body {
 .ss-submit-modal-host button[data-ss-cta] {
   opacity: 1 !important;
 }
+
+/* Feedback-FAB vs canon 0.14.0 example-site viewer (z-index collision).
+ * The viewer is `position:fixed; z-index:120` (canon `V5_SiteViewer`);
+ * our global «Задать вопрос» FAB sits at z-190, so on mobile — where the
+ * viewer's primary CTA «Собрать такой же за 2 часа» is a bottom bar — the
+ * FAB overlapped it and swallowed taps on the conversion button
+ * (`elementFromPoint` at the CTA centre returned the FAB).
+ * `body.is-locked` is set by the viewer and ONLY by the viewer
+ * (packages/canon/src/landing/v5-sites.tsx), so it is an exact signal:
+ * hide the FAB while an example site is open. Feedback stays reachable
+ * everywhere else, incl. right after the viewer closes. */
+body.is-locked [data-fb-fab] {
+  display: none;
+}

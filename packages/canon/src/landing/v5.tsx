@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { VT } from '../tokens';
+import { NailSite, BarberSite, SkinSite, BrowSite, ColoristSite, V5_SiteViewer } from './v5-sites';
 
 type IntakeCb = (entry: string, niche?: string) => void;
 const noop: IntakeCb = () => {};
@@ -188,6 +189,8 @@ export const V5_CSS = `
 @media (max-width:900px){.v5 .hero__grid{grid-template-columns:1fr;}.v5 .hero__preview{align-self:auto;min-height:0;height:auto;margin-bottom:26px;}.v5 .hero{padding-top:14px;min-height:0;}.v5 .hero__copy{gap:16px;}}
 @media (max-width:720px){.v5 .hdr__links,.v5 .hdr__cta{display:none;}.v5 .hdr__cta-m{display:inline-flex;}.v5 .hdr__anchors{display:flex;gap:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 var(--pad) 11px;scrollbar-width:none;}.v5 .hdr__anchors::-webkit-scrollbar{display:none;}.v5 .hdr__anchors a{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);white-space:nowrap;}.v5 .revs{grid-template-columns:1fr;}.v5 .shead__l .h2,.v5 .shead__note{max-width:none;}.v5 .steprow{grid-template-columns:clamp(64px,17vw,96px) 1fr;gap:14px 18px;}.v5 .steprow__t{font-size:clamp(24px,7vw,30px);}.v5 .hrow{grid-template-columns:1fr;gap:8px;}.v5 .faq-short,.v5 .faq{grid-column:1 / -1;}.v5 .tcards{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){.v5 *,.v5 *::before,.v5 *::after{transition-duration:0ms !important;animation-duration:0ms !important;}}
+body.is-locked{overflow:hidden;}
+@keyframes v5-viewer-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 `;
 
 export function V5_Styles() {
@@ -398,20 +401,20 @@ function ColoristMenu() {
   );
 }
 
-export interface ExampleEntry { id: string; niche: string; anatomy: string; domain: string; Comp: React.ComponentType; note: string; palette: string[]; }
+export interface ExampleEntry { id: string; niche: string; anatomy: string; domain: string; Comp: React.ComponentType; FullComp?: React.ComponentType; note: string; palette: string[]; }
 export const EXAMPLES: ExampleEntry[] = [
-  { id: 'nails',    niche: 'Маникюр',         anatomy: 'фото-герой',       domain: 'anna-nails',   Comp: NailHero,        note: 'Мягкий нюд с фото стал цветом сайта — тёплый и спокойный.', palette: ['#F7EFEC', '#B0656F', '#2A2320'] },
-  { id: 'barber',   niche: 'Барбершоп',       anatomy: 'заголовок-плакат', domain: 'fedor-barber', Comp: BarberPoster,    note: 'У Фёдора одно фото, поэтому сайт держится на крупных буквах.', palette: ['#E7E2D6', '#8C4A22', '#231C15'] },
-  { id: 'skin',     niche: 'Косметолог',      anatomy: 'до-после',         domain: 'yulia-skin',   Comp: SkinBeforeAfter, note: 'Два кадра работ Юлии в первом экране — без стоковых картинок.', palette: ['#FFFFFF', '#2F7A68', '#1A1D1C'] },
-  { id: 'brows',    niche: 'Брови и ресницы', anatomy: 'минимал',          domain: 'sol-brows',    Comp: BrowMinimal,     note: 'В прайсе две услуги. Сайт вышел коротким: один кадр и много пустого места.', palette: ['#EFE7DA', '#7A5A3C', '#241E17'] },
-  { id: 'colorist', niche: 'Колорист',        anatomy: 'прайс-меню',       domain: 'kira-color',   Comp: ColoristMenu,    note: 'Пять услуг с ценами. Прайс стал главным блоком, сайт читается как меню.', palette: ['#F6F0F3', '#9C2A8E', '#221A24'] },
+  { id: 'nails',    niche: 'Маникюр',         anatomy: 'фото-герой',       domain: 'anna-nails',   Comp: NailHero, FullComp: NailSite,        note: 'Мягкий нюд с фото стал цветом сайта — тёплый и спокойный.', palette: ['#F7EFEC', '#B0656F', '#2A2320'] },
+  { id: 'barber',   niche: 'Барбершоп',       anatomy: 'заголовок-плакат', domain: 'fedor-barber', Comp: BarberPoster, FullComp: BarberSite,    note: 'У Фёдора одно фото, поэтому сайт держится на крупных буквах.', palette: ['#E7E2D6', '#8C4A22', '#231C15'] },
+  { id: 'skin',     niche: 'Косметолог',      anatomy: 'до-после',         domain: 'yulia-skin',   Comp: SkinBeforeAfter, FullComp: SkinSite, note: 'Два кадра работ Юлии в первом экране — без стоковых картинок.', palette: ['#FFFFFF', '#2F7A68', '#1A1D1C'] },
+  { id: 'brows',    niche: 'Брови и ресницы', anatomy: 'минимал',          domain: 'sol-brows',    Comp: BrowMinimal, FullComp: BrowSite,     note: 'В прайсе две услуги. Сайт вышел коротким: один кадр и много пустого места.', palette: ['#EFE7DA', '#7A5A3C', '#241E17'] },
+  { id: 'colorist', niche: 'Колорист',        anatomy: 'прайс-меню',       domain: 'kira-color',   Comp: ColoristMenu, FullComp: ColoristSite,    note: 'Пять услуг с ценами. Прайс стал главным блоком, сайт читается как меню.', palette: ['#F6F0F3', '#9C2A8E', '#221A24'] },
 ];
 const ROWS = [{ ratio: [7, 5], side: 'left' }, { ratio: [6, 6], side: 'right' }, { ratio: [7, 5], side: 'left' }, { ratio: [6, 6], side: 'right' }, { ratio: [7, 5], side: 'left' }];
 
 function SitePreview({ children, stretch, decorative }: any) {
   return <div aria-hidden={decorative ? 'true' : undefined} style={{ border: `1px solid ${INK}`, overflow: 'hidden', background: '#fff', height: stretch ? '100%' : 'auto' }}>{children}</div>;
 }
-function PreviewWithCTA({ children, stretch, onView, label }: any) {
+function PreviewWithCTA({ children, stretch, onView, label, siteId }: any) {
   const narrow = useNarrow();
   const [hover, setHover] = useState(false);
   const show = narrow || hover;
@@ -422,7 +425,7 @@ function PreviewWithCTA({ children, stretch, onView, label }: any) {
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ position: 'relative', height: stretch ? '100%' : 'auto' }}>
       <SitePreview stretch={stretch} decorative>{children}</SitePreview>
       {!narrow && <div style={{ position: 'absolute', inset: 0, background: 'rgba(27,23,18,.28)', opacity: hover ? 1 : 0, transition: 'opacity .18s ease', pointerEvents: 'none' }} />}
-      <button type="button" onClick={onView} aria-label={label ? `Посмотреть сайт — ${label}` : 'Посмотреть сайт'}
+      <button type="button" onClick={onView} data-example-open={siteId} aria-label={label ? `Посмотреть сайт — ${label}` : 'Посмотреть сайт'}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 8, font: 'inherit', fontWeight: 700, fontSize: 14, cursor: 'pointer', border: 'none', whiteSpace: 'nowrap', opacity: show ? 1 : 0, transition: 'opacity .18s ease, transform .18s ease', pointerEvents: show ? 'auto' : 'none', ...btn }}>
         Посмотреть сайт <span aria-hidden="true">→</span>
       </button>
@@ -430,47 +433,7 @@ function PreviewWithCTA({ children, stretch, onView, label }: any) {
   );
 }
 
-export interface V5_SiteViewerProps { data: ExampleEntry; onClose: () => void; onClaim?: IntakeCb; }
-export function V5_SiteViewer({ data, onClose, onClaim }: V5_SiteViewerProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
-    document.body.classList.add('is-locked');
-    if (closeRef.current) closeRef.current.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    return () => { document.body.classList.remove('is-locked'); document.removeEventListener('keydown', onKey); if (opener && opener.focus) opener.focus(); };
-  }, []);
-  const trapTab = (e: React.KeyboardEvent) => {
-    if (e.key !== 'Tab' || !panelRef.current) return;
-    const f = panelRef.current.querySelectorAll('button');
-    if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); (last as HTMLElement).focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); (first as HTMLElement).focus(); }
-  };
-  const build = () => { onClose(); if (onClaim) onClaim('example-' + data.id, data.niche); };
-  const Comp = data.Comp;
-  return (
-    <div role="dialog" aria-modal="true" aria-label={`Пример сайта — ${data.niche}`} onKeyDown={trapTab} style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', justifyContent: 'center' }}>
-      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(27,23,18,.7)', cursor: 'pointer' }} />
-      <div ref={panelRef} style={{ position: 'relative', width: 'min(480px,100%)', height: '100%', display: 'flex', flexDirection: 'column', background: '#fff', borderInline: `1px solid ${INK}` }}>
-        <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 18px', background: BONE, borderBottom: `1px solid ${INK}` }}>
-          <span style={{ flex: 1, minWidth: 0, fontFamily: MONO, fontSize: 11.5, letterSpacing: '.04em', color: INK70, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><span style={{ color: ACCENT }}>▸</span> {data.domain}.samosite.online</span>
-          <button ref={closeRef} type="button" onClick={onClose} aria-label="Закрыть просмотр" style={{ width: 44, height: 44, flex: '0 0 auto', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: `1px solid ${LINE2}`, color: INK, fontSize: 20, lineHeight: 1, cursor: 'pointer' }}>×</button>
-        </div>
-        <div style={{ flex: '1 1 auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}><Comp /></div>
-        <div style={{ flex: '0 0 auto', padding: '14px 18px', background: BONE, borderTop: `1px solid ${INK}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <button type="button" onClick={build} data-entry={'example-' + data.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, width: '100%', minHeight: 52, padding: '13px 20px', background: ACCENT, color: VT.onAccent, border: 'none', font: 'inherit', fontFamily: SANS, fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>
-            Собрать такой же за 2 часа <span aria-hidden="true">→</span>
-          </button>
-          <span style={{ fontFamily: MONO, fontSize: 10.5, letterSpacing: '.04em', color: INK70, textAlign: 'center' }}>{data.niche} · собран из профиля мастера</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+// V5_SiteViewer + V5_SiteViewerProps перенесены в ./v5-sites (canon 0.14.0, takeover); реэкспорт ниже.
 
 function Swatches({ palette }: { palette: string[] }) {
   return (
@@ -494,7 +457,7 @@ function Meta({ data }: { data: ExampleEntry }) {
 function ExampleRowC({ data, row, onView, idx }: any) {
   const narrow = useNarrow();
   const Comp = data.Comp;
-  const preview = <PreviewWithCTA onView={() => onView(data)} label={data.niche}><Comp /></PreviewWithCTA>;
+  const preview = <PreviewWithCTA onView={() => onView(data)} label={data.niche} siteId={data.id}><Comp /></PreviewWithCTA>;
   const meta = <Meta data={data} />;
   if (narrow) return <div data-example-idx={idx} style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>{meta}{preview}</div>;
   const [a, b] = row.ratio;
@@ -516,7 +479,7 @@ function CarouselCard({ data, onView }: any) {
         <p style={{ margin: 0, fontFamily: SANS, fontSize: 15, lineHeight: 1.5, color: INK70, textWrap: 'pretty', minHeight: '3em' }}>{data.note}</p>
         <Swatches palette={data.palette} />
       </div>
-      <PreviewWithCTA onView={() => onView(data)} label={data.niche}><Comp /></PreviewWithCTA>
+      <PreviewWithCTA onView={() => onView(data)} label={data.niche} siteId={data.id}><Comp /></PreviewWithCTA>
     </div>
   );
 }
@@ -547,10 +510,14 @@ function CarouselExamples({ items, onView }: any) {
   );
 }
 
-export interface V5_ExamplesProps { layout?: 'carousel' | 'zigzag'; onIntake?: IntakeCb; }
-export function V5_Examples({ layout = 'carousel', onIntake = noop }: V5_ExamplesProps) {
-  const [viewer, setViewer] = useState<ExampleEntry | null>(null);
-  const onView = (data: ExampleEntry) => setViewer(data);
+export interface V5_ExamplesProps { layout?: 'carousel' | 'zigzag'; onIntake?: IntakeCb; viewerId?: string | null; onViewerChange?: (id: string | null) => void; }
+export function V5_Examples({ layout = 'carousel', onIntake = noop, viewerId, onViewerChange }: V5_ExamplesProps) {
+  const isControlled = viewerId !== undefined;
+  const [internalId, setInternalId] = useState<string | null>(null);
+  const activeId = isControlled ? (viewerId ?? null) : internalId;
+  const setActive = (id: string | null) => { if (!isControlled) setInternalId(id); if (onViewerChange) onViewerChange(id); };
+  const onView = (data: ExampleEntry) => setActive(data.id);
+  const viewerData = activeId != null ? (EXAMPLES.find(e => e.id === activeId) ?? null) : null;
   return (
     <section className="section" id="examples" aria-labelledby="ex-h">
       <div className="wrap">
@@ -561,7 +528,7 @@ export function V5_Examples({ layout = 'carousel', onIntake = noop }: V5_Example
             : <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(56px,7vw,104px)' }}>{EXAMPLES.map((e, i) => <div key={e.id} id={'ex-' + e.id}><ExampleRowC data={e} row={ROWS[i]} onView={onView} idx={i} /></div>)}</div>}
         </div>
         <p className="lead" style={{ marginTop: 'clamp(40px,4vw,64px)', maxWidth: '74ch' }}>Палитру и&nbsp;шрифт Самосайт берёт из&nbsp;ваших фото. Если стиль не&nbsp;понравится, поменяете в&nbsp;один клик.</p>
-        {viewer && <V5_SiteViewer data={viewer} onClose={() => setViewer(null)} onClaim={onIntake} />}
+        {viewerData && <V5_SiteViewer data={viewerData} onClose={() => setActive(null)} onClaim={onIntake} />}
       </div>
     </section>
   );
@@ -888,3 +855,6 @@ export function V5_Page({ onIntake = noop, onFaqOpen = () => {}, anchors, withSt
     </div>
   );
 }
+
+// ── 0.14.0 · полноразмерные сайты-примеры + takeover-просмотрщик (additive) ──
+export * from './v5-sites';
