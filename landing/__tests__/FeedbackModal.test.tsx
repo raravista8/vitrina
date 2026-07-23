@@ -1,165 +1,202 @@
 /**
- * FeedbackModal adapter (canon 0.9.1 consumer) — wiring tests.
+ * FeedbackModal adapter (canon 0.13.0 «Фидбек v2» consumer) — wiring tests.
  *
- * The canon `S9_FeedbackModal` is stubbed so we can assert the adapter's
- * behaviour in isolation: open via event, tally fetch + `feedback_open`,
- * POST votes[] + captcha on submit, inline error on reject, and the
- * `/admin*` + `/login` self-hide.
+ * Canon `FeedbackV2Modal`/`FeedbackV2Fab` стабятся: проверяем поведение
+ * адаптера — авто-триггер блокера (exit-intent, подавление по CTA,
+ * 1-раз-на-посетителя), режим «Вопрос» с FAB, POST /api/feedback/v2
+ * (+captcha, consent только при контакте), события Метрики в dataLayer,
+ * self-hide на /admin*+/login.
  */
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ pathname: "/" }));
 
 vi.mock("next/navigation", () => ({ usePathname: () => h.pathname }));
-vi.mock("@/lib/metrika", () => ({ reachGoal: vi.fn() }));
 vi.mock("@/lib/captcha", () => ({ requestCaptchaToken: vi.fn(async () => "DEV_TOKEN") }));
 
-// Stub the canon modal: expose props as data-attrs + buttons that fire the
-// controlled callbacks (mirrors canon: onSubmit is awaited + try/caught).
-vi.mock("@samosite/canon/customer", () => ({
-  S9_FeedbackModal: (props: {
+// Стаб канона: пропсы в data-атрибуты + кнопки, дёргающие колбэки.
+vi.mock("@samosite/canon/feedback", () => ({
+  Fb2_Styles: () => null,
+  FeedbackV2Fab: (props: { onClick?: () => void }) => (
+    <button data-testid="fab" onClick={props.onClick}>
+      Задать вопрос
+    </button>
+  ),
+  FeedbackV2Modal: (props: {
     open?: boolean;
-    submitting?: boolean;
-    error?: string | null;
-    tally?: { items: Record<string, number>; total_week: number };
+    mode?: string;
+    submitted?: boolean;
+    error?: boolean;
+    onReasonChange?: (c: string) => void;
+    onSubmit?: (p: unknown) => void;
     onOpenChange?: (o: boolean) => void;
-    onSubmit?: (p: unknown) => void | Promise<void>;
-    embedded?: boolean;
   }) => (
     <div
       data-testid="modal"
       data-open={String(!!props.open)}
-      data-submitting={String(!!props.submitting)}
-      data-error={props.error ?? ""}
-      data-embedded={String(props.embedded)}
-      data-tally={JSON.stringify(props.tally ?? null)}
+      data-mode={props.mode}
+      data-submitted={String(!!props.submitted)}
+      data-error={String(!!props.error)}
     >
-      <button data-testid="open" onClick={() => props.onOpenChange?.(true)} />
+      <button data-testid="pick-price" onClick={() => props.onReasonChange?.("price")} />
       <button
-        data-testid="submit"
-        onClick={async () => {
-          try {
-            await props.onSubmit?.({
-              votes: [{ kind: "source", key: "vk" }],
-              own_source: null,
-              own_feature: null,
-              message: null,
-              name: null,
-              contact: "@a",
-            });
-          } catch {
-            /* canon swallows; consumer surfaces via `error` */
-          }
-        }}
+        data-testid="send-plain"
+        onClick={() => props.onSubmit?.({ mode: "blocker", reason: "price", note: "дорого" })}
       />
+      <button
+        data-testid="send-question"
+        onClick={() =>
+          props.onSubmit?.({
+            mode: "question",
+            question: "Можно свой домен?",
+            channel: "email",
+            contact: "anna@example.com",
+          })
+        }
+      />
+      <button data-testid="close" onClick={() => props.onOpenChange?.(false)} />
     </div>
   ),
 }));
 
-import { requestCaptchaToken } from "@/lib/captcha";
-import { reachGoal } from "@/lib/metrika";
+import { FeedbackModal } from "@/components/FeedbackModal";
 
-import { FeedbackModal, SAMOSITE_OPEN_FEEDBACK } from "@/components/FeedbackModal";
+function dl(): Record<string, unknown>[] {
+  return (window as unknown as { dataLayer?: Record<string, unknown>[] }).dataLayer ?? [];
+}
 
-const reachGoalMock = vi.mocked(reachGoal);
+function exitIntent() {
+  act(() => {
+    fireEvent.mouseOut(document, { relatedTarget: null, clientY: 0 });
+  });
+}
 
-beforeEach(() => {
-  h.pathname = "/";
-  reachGoalMock.mockClear();
-  vi.mocked(requestCaptchaToken).mockClear();
-  window.matchMedia = vi.fn().mockReturnValue({
-    matches: false,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  }) as unknown as typeof window.matchMedia;
-  global.fetch = vi.fn(
-    async () =>
-      new Response(JSON.stringify({ ok: true, data: { items: { vk: 3 }, total_week: 3 } }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-  ) as unknown as typeof fetch;
-});
+describe("FeedbackModal (Feedback v2)", () => {
+  beforeEach(() => {
+    h.pathname = "/";
+    window.localStorage.clear();
+    (window as unknown as { dataLayer: unknown[] }).dataLayer = [];
+    global.fetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ ok: true, data: { feedback_id: "f-1" } }), {
+          status: 202,
+          headers: { "Content-Type": "application/json" },
+        }),
+    ) as unknown as typeof fetch;
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }) as unknown as typeof window.matchMedia;
+  });
 
-afterEach(() => vi.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
-describe("FeedbackModal adapter", () => {
-  it("renders the canon modal in embedded=false (real global) mode", () => {
+  it("exit-intent открывает блокер один раз на посетителя", () => {
     render(<FeedbackModal />);
-    expect(screen.getByTestId("modal").getAttribute("data-embedded")).toBe("false");
     expect(screen.getByTestId("modal").getAttribute("data-open")).toBe("false");
+
+    exitIntent();
+    const modal = screen.getByTestId("modal");
+    expect(modal.getAttribute("data-open")).toBe("true");
+    expect(modal.getAttribute("data-mode")).toBe("blocker");
+    expect(window.localStorage.getItem("ss_fb2_blocker_shown")).toBe("1");
+    expect(dl().some((e) => e["event"] === "feedback_open" && e["trigger"] === "exit")).toBe(true);
+
+    // повторный маунт: флаг стоит — не открываемся
+    fireEvent.click(screen.getByTestId("close"));
+    const second = render(<FeedbackModal />);
+    exitIntent();
+    expect(second.getAllByTestId("modal").at(-1)?.getAttribute("data-open")).toBe("false");
   });
 
-  it("opens on the samosite:open-feedback event, fetches tally + fires feedback_open", async () => {
-    render(<FeedbackModal />);
-    fireEvent(window, new CustomEvent(SAMOSITE_OPEN_FEEDBACK, { detail: { source: "footer" } }));
-    await waitFor(() => expect(screen.getByTestId("modal").getAttribute("data-open")).toBe("true"));
-    expect(global.fetch).toHaveBeenCalledWith(
-      "/api/feedback/tally",
-      expect.objectContaining({ signal: expect.anything() }),
-    );
-    expect(reachGoalMock).toHaveBeenCalledWith("feedback_open", { source: "footer" });
-    await waitFor(() =>
-      expect(screen.getByTestId("modal").getAttribute("data-tally")).toContain('"vk":3'),
-    );
-  });
-
-  it("opens from a [data-ss-feedback] anchor (document-delegated)", async () => {
+  it("клик по CTA (data-entry) подавляет авто-триггер", () => {
     render(
       <>
-        <a data-ss-feedback="sources" href="/feedback">
-          Не нашли свою?
-        </a>
+        <button data-entry="hero">CTA</button>
         <FeedbackModal />
       </>,
     );
-    fireEvent.click(screen.getByText("Не нашли свою?"));
-    await waitFor(() => expect(screen.getByTestId("modal").getAttribute("data-open")).toBe("true"));
-    expect(reachGoalMock).toHaveBeenCalledWith("feedback_open", { source: "sources" });
+    fireEvent.click(screen.getByText("CTA"));
+    exitIntent();
+    expect(screen.getByTestId("modal").getAttribute("data-open")).toBe("false");
+    expect(window.localStorage.getItem("ss_fb2_blocker_shown")).toBeNull();
   });
 
-  it("POSTs votes[] + captcha to /api/feedback and fires feedback_submit", async () => {
+  it("FAB открывает «Вопрос»; отправка шлёт /api/feedback/v2 с консентом", async () => {
     render(<FeedbackModal />);
-    fireEvent.click(screen.getByTestId("submit"));
-    await waitFor(() => expect(requestCaptchaToken).toHaveBeenCalled());
-    const postCall = vi.mocked(global.fetch).mock.calls.find(([url]) => url === "/api/feedback");
-    expect(postCall).toBeTruthy();
-    const body = JSON.parse((postCall![1] as RequestInit).body as string);
-    expect(body.votes).toEqual([{ kind: "source", key: "vk" }]);
-    expect(body.captcha_token).toBe("DEV_TOKEN");
-    await waitFor(() =>
-      expect(reachGoalMock).toHaveBeenCalledWith("feedback_submit", { votes: 1 }),
+    fireEvent.click(screen.getByTestId("fab"));
+    const modal = screen.getByTestId("modal");
+    expect(modal.getAttribute("data-open")).toBe("true");
+    expect(modal.getAttribute("data-mode")).toBe("question");
+    expect(dl().some((e) => e["event"] === "feedback_open" && e["trigger"] === "button")).toBe(
+      true,
     );
+
+    fireEvent.click(screen.getByTestId("send-question"));
+    await waitFor(() =>
+      expect(screen.getByTestId("modal").getAttribute("data-submitted")).toBe("true"),
+    );
+
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("/api/feedback/v2");
+    const body = JSON.parse(String(init.body)) as Record<string, unknown>;
+    expect(body["mode"]).toBe("question");
+    expect(body["trigger"]).toBe("button");
+    expect(body["contact_channel"]).toBe("email");
+    expect(body["contact"]).toBe("anna@example.com");
+    expect(body["consent_given"]).toBe(true);
+    expect(body["captcha_token"]).toBe("DEV_TOKEN");
+    expect(dl().some((e) => e["event"] === "feedback_question_sent")).toBe(true);
   });
 
-  it("surfaces an inline error when the POST fails (modal stays open)", async () => {
-    global.fetch = vi.fn(async (url: RequestInfo | URL) => {
-      if (String(url).endsWith("/api/feedback")) return new Response("nope", { status: 500 });
-      return new Response(JSON.stringify({ ok: true, data: { items: {}, total_week: 0 } }), {
-        status: 200,
-      });
-    }) as unknown as typeof fetch;
+  it("блокер «Просто отправить ответ» — без контакта и без consent-поля", async () => {
     render(<FeedbackModal />);
-    fireEvent.click(screen.getByTestId("submit"));
-    await waitFor(() =>
-      expect(screen.getByTestId("modal").getAttribute("data-error")).toContain("Не получилось"),
+    exitIntent();
+    fireEvent.click(screen.getByTestId("pick-price"));
+    expect(dl().some((e) => e["event"] === "feedback_reason" && e["reason"] === "price")).toBe(
+      true,
     );
-    expect(reachGoalMock).not.toHaveBeenCalledWith("feedback_submit", expect.anything());
+
+    fireEvent.click(screen.getByTestId("send-plain"));
+    await waitFor(() =>
+      expect(screen.getByTestId("modal").getAttribute("data-submitted")).toBe("true"),
+    );
+
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    const body = JSON.parse(
+      String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
+    ) as Record<string, unknown>;
+    expect(body["mode"]).toBe("blocker");
+    expect(body["reason"]).toBe("price");
+    expect(body["note"]).toBe("дорого");
+    expect(body["trigger"]).toBe("exit");
+    expect("consent_given" in body).toBe(false);
+    expect("contact" in body).toBe(false);
+    expect(dl().some((e) => e["event"] === "feedback_contact_left")).toBe(false);
   });
 
-  it("self-hides on /admin and /login", () => {
-    h.pathname = "/admin";
-    const { container, rerender } = render(<FeedbackModal />);
-    expect(container.querySelector('[data-testid="modal"]')).toBeNull();
+  it("ошибка бэкенда — error=true, модалка открыта", async () => {
+    global.fetch = vi.fn(
+      async () => new Response(JSON.stringify({ ok: false }), { status: 400 }),
+    ) as unknown as typeof fetch;
+    render(<FeedbackModal />);
+    fireEvent.click(screen.getByTestId("fab"));
+    fireEvent.click(screen.getByTestId("send-question"));
+    await waitFor(() =>
+      expect(screen.getByTestId("modal").getAttribute("data-error")).toBe("true"),
+    );
+    expect(screen.getByTestId("modal").getAttribute("data-open")).toBe("true");
+  });
+
+  it("self-hide на /admin* и /login", () => {
+    h.pathname = "/admin/apps";
+    const r1 = render(<FeedbackModal />);
+    expect(r1.queryByTestId("fab")).toBeNull();
     h.pathname = "/login";
-    rerender(<FeedbackModal />);
-    expect(container.querySelector('[data-testid="modal"]')).toBeNull();
-  });
-
-  it("stays mounted on /admin-demo (not under /admin/)", () => {
-    h.pathname = "/admin-demo";
-    render(<FeedbackModal />);
-    expect(screen.getByTestId("modal")).toBeTruthy();
+    const r2 = render(<FeedbackModal />);
+    expect(r2.queryByTestId("fab")).toBeNull();
   });
 });

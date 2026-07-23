@@ -1,116 +1,102 @@
 "use client";
 
 /**
- * FeedbackModal — thin consumer adapter around canon `S9_FeedbackModal`
- * (canon 0.9.1 controlled API). NO JSX transcription: we import the canon
- * component and wire behaviour through its props.
+ * FeedbackModal — consumer adapter around canon `FeedbackV2Modal`
+ * (canon 0.13.0 «Фидбек v2», `docs/handoff/CANON_FEEDBACK_V2_TZ.md`).
+ * NO JSX transcription: canon renders, we own state + side-effects.
  *
- *   tally    ← GET /api/feedback/tally        (X/10 counters + «за неделю»)
- *   onSubmit → POST /api/feedback (votes[])    (+ SmartCaptcha around it)
- *   embedded = false                            (real global modal, position:fixed)
+ * Два режима одной модалки:
+ *   blocker  — «Что останавливает прямо сейчас?»: авто-триггер exit-intent
+ *              ИЛИ скролл ≥60% без клика ни одного CTA (`data-entry`) и без
+ *              открытия интейка; не чаще 1 раза на посетителя (localStorage);
+ *              не срабатывает на /admin*, /login, /privacy, /offer (ТЗ §5).
+ *   question — FAB «Задать вопрос» (всегда, кроме founder-зон) + легаси-входы
+ *              `samosite:open-feedback` / `[data-ss-feedback]` (футер).
  *
- * Mounted ONCE in `app/layout.tsx`; self-hides on `/admin*` and `/login`
- * (founder area + auth — the paid-service-polish convention keeps the FAB
- * off those). The canon component renders its own floating «Чего не
- * хватает?» button (position:fixed, zero layout footprint). Extra entry
- * points open it via either:
- *   - the `samosite:open-feedback` CustomEvent (`detail.source`), or
- *   - any `<a data-ss-feedback="<source>">` (document-delegated click) —
- *     used by Footer + the Sources «Не нашли свою?» link.
+ * Сабмит: SmartCaptcha → POST /api/feedback/v2 (202 → экран «Спасибо»).
+ * consent_given=true уходит только при наличии контакта — в каноне строки
+ * согласия нет (canon-gap, залогирован в CHANGELOG 0.13.0), юр-приписку
+ * решает founder.
  *
- * Backend contract (live, PR #170): `docs/handoff/FEEDBACK_BACKEND.md`.
- * Canon контракт: `docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md`.
- *
- * Replaces the hand-rolled `/feedback` page + `FeedbackForm` (retired in
- * this PR — `/feedback` now 301-redirects to `/`).
+ * Метрика (runbook yandex-metrika-goals.md): feedback_open {trigger},
+ * feedback_reason {reason}, feedback_contact_left {channel},
+ * feedback_question_sent. Vote-first цель feedback_submit затихла.
  */
 
-import { S9_FeedbackModal as CanonFeedbackModal } from "@samosite/canon/customer";
+import { Fb2_Styles, FeedbackV2Fab, FeedbackV2Modal } from "@samosite/canon/feedback";
 import { usePathname } from "next/navigation";
-import type { ComponentType } from "react";
+import type { ComponentType, ReactElement } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { INTAKE2_EVENT } from "@/components/intake2/host";
 import { requestCaptchaToken } from "@/lib/captcha";
-import { reachGoal } from "@/lib/metrika";
+import { ssTrack } from "@/lib/metrika";
 
-// canon ships `dts: false`; the ambient shim types `@samosite/canon/customer`
-// as `any`. Mirror the 0.9.1 controlled contract locally so the adapter is
-// fully typed (FbTally / FbSubmitPayload / S9_FeedbackModalProps).
-type FbVote = { kind: "source" | "feature"; key: string };
-type FbTally = { items: Record<string, number>; total_week: number };
-type FbSubmitPayload = {
-  votes: FbVote[];
-  own_source: string | null;
-  own_feature: string | null;
-  message: string | null;
-  name: string | null;
-  contact: string | null;
+// canon ships `dts: false` — ambient shim types the entry as `any`;
+// mirror the 0.13.0 controlled contract locally (CHANGELOG §2).
+type FbV2Mode = "blocker" | "question";
+type FbV2Channel = "telegram" | "whatsapp" | "email";
+type FbV2Payload = {
+  mode: FbV2Mode;
+  reason?: string;
+  note?: string;
+  question?: string;
+  channel?: FbV2Channel;
+  contact?: string;
 };
-type S9Props = {
-  mobile?: boolean;
+type ModalProps = {
   open?: boolean;
+  mode?: FbV2Mode;
   onOpenChange?: (open: boolean) => void;
-  tally?: FbTally;
-  onSubmit?: (payload: FbSubmitPayload) => void | Promise<void>;
+  reason?: string | null;
+  onReasonChange?: (code: string) => void;
+  note?: string;
+  onNoteChange?: (v: string) => void;
+  question?: string;
+  onQuestionChange?: (v: string) => void;
+  channel?: FbV2Channel;
+  onChannelChange?: (c: FbV2Channel) => void;
+  contact?: string;
+  onContactChange?: (v: string) => void;
+  onSubmit?: (payload: FbV2Payload) => void;
   submitting?: boolean;
-  error?: string | null;
+  error?: boolean;
+  submitted?: boolean;
+  mobile?: boolean;
   embedded?: boolean;
 };
-const Modal = CanonFeedbackModal as unknown as ComponentType<S9Props>;
+const Modal = FeedbackV2Modal as unknown as ComponentType<ModalProps>;
+const Fab = FeedbackV2Fab as unknown as ComponentType<{ onClick?: () => void; embedded?: boolean }>;
+const Styles = Fb2_Styles as unknown as ComponentType<Record<string, never>>;
 
-// Canon seeds each vote row with a baked "base" count (FB_SOURCES / FB_FEATURES
-// inside @samosite/canon/customer — e.g. vk 9, custom_domain 9, yclients 8)
-// that it renders whenever the API tally has NO entry for that key. That's
-// demo social-proof for the design canvas; in prod we want honest counts —
-// 0 until someone actually votes. Canon's `baseOf(key, base)` uses
-// `items[key]` whenever it's non-null, so an explicit 0 beats the seed.
-//
-// We therefore zero-fill every known key and overlay the real API tally on
-// top. Keys mirror canon FB_SOURCES + FB_FEATURES, which canon does NOT export
-// (@todo canon-gap: export the key list, or default `base` to 0 so consumers
-// don't have to mirror it). If canon adds a key, it shows its seed number
-// until this list is updated — self-healing, low-risk.
-const FEEDBACK_KEYS = [
-  // sources (FB_SOURCES)
-  "vk",
-  "ozon",
-  "youtube",
-  "dzen",
-  "max",
-  // features (FB_FEATURES)
-  "yclients",
-  "amocrm",
-  "custom_domain",
-  "no_watermark",
-  "multilang",
-  "payments",
-  "blog",
-  "stats",
-] as const;
-
-/** Honest tally for canon: every known key at 0, real API counts overlaid.
- *  Always returns a defined tally so canon never falls back to its baked seeds. */
-function honestTally(t: FbTally | undefined): FbTally {
-  const items: Record<string, number> = {};
-  for (const k of FEEDBACK_KEYS) items[k] = 0;
-  if (t) for (const [k, v] of Object.entries(t.items)) items[k] = v;
-  return { items, total_week: t?.total_week ?? 0 };
-}
-
-/** Window event other components dispatch to open the modal (with a source). */
+/** Легаси-событие (футер «Поддержка» и пр.) — открывает режим «Вопрос». */
 export const SAMOSITE_OPEN_FEEDBACK = "samosite:open-feedback";
 
-export function FeedbackModal() {
+/** 1-раз-на-посетителя для авто-триггера блокера (ТЗ §5). */
+const BLOCKER_SHOWN_KEY = "ss_fb2_blocker_shown";
+
+/** Роуты, где авто-триггер блокера запрещён (ТЗ §5). */
+const BLOCKER_EXCLUDED = ["/login", "/privacy", "/offer"];
+
+type Trigger = "exit" | "scroll" | "button";
+
+export function FeedbackModal(): ReactElement | null {
   const pathname = usePathname() ?? "";
   const [open, setOpen] = useState(false);
-  const [mobile, setMobile] = useState(false);
-  const [tally, setTally] = useState<FbTally | undefined>(undefined);
+  const [mode, setMode] = useState<FbV2Mode>("question");
+  const [reason, setReason] = useState<string | null>(null);
+  const [note, setNote] = useState("");
+  const [question, setQuestion] = useState("");
+  const [channel, setChannel] = useState<FbV2Channel>("telegram");
+  const [contact, setContact] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const sourceRef = useRef<string>("fab");
+  const [error, setError] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const triggerRef = useRef<Trigger>("button");
+  const ctaClickedRef = useRef(false);
+  const intakeOpenedRef = useRef(false);
 
-  // `mobile` via matchMedia post-mount — SSR-safe: first client render matches
-  // the server (false), the effect corrects before any interaction.
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 639px)");
     const apply = () => setMobile(mq.matches);
@@ -119,20 +105,22 @@ export function FeedbackModal() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Open via CustomEvent + any `[data-ss-feedback]` anchor (document-delegated,
-  // so Footer / Sources links work without their own handlers).
+  const openAs = useCallback((nextMode: FbV2Mode, trigger: Trigger) => {
+    triggerRef.current = trigger;
+    setMode(nextMode);
+    setError(false);
+    setOpen(true);
+    ssTrack("feedback_open", { trigger });
+  }, []);
+
+  // ── Режим B: легаси-входы (футер «Поддержка», событие) ──────────────────
   useEffect(() => {
-    const openFrom = (source: string) => {
-      sourceRef.current = source;
-      setOpen(true);
-    };
-    const onEvent = (e: Event) =>
-      openFrom((e as CustomEvent<{ source?: string }>).detail?.source ?? "event");
+    const onEvent = () => openAs("question", "button");
     const onClick = (e: MouseEvent) => {
       const el = (e.target as HTMLElement | null)?.closest<HTMLElement>("[data-ss-feedback]");
       if (!el) return;
       e.preventDefault();
-      openFrom(el.getAttribute("data-ss-feedback") || "link");
+      openAs("question", "button");
     };
     window.addEventListener(SAMOSITE_OPEN_FEEDBACK, onEvent);
     document.addEventListener("click", onClick);
@@ -140,70 +128,155 @@ export function FeedbackModal() {
       window.removeEventListener(SAMOSITE_OPEN_FEEDBACK, onEvent);
       document.removeEventListener("click", onClick);
     };
-  }, []);
+  }, [openAs]);
 
-  // On open: pull the live tally + fire the funnel goal once (source-attributed).
+  // ── Режим A: авто-триггер блокера (exit-intent / скролл ≥60%) ────────────
   useEffect(() => {
-    if (!open) return;
-    reachGoal("feedback_open", { source: sourceRef.current });
-    const controller = new AbortController();
-    fetch("/api/feedback/tally", { signal: controller.signal })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (j?.ok && j.data) setTally(j.data as FbTally);
-      })
-      .catch(() => {
-        /* leave `tally` undefined → honestTally() still yields all-zero counts */
-      });
-    return () => controller.abort();
-  }, [open]);
+    if (BLOCKER_EXCLUDED.includes(pathname) || pathname.startsWith("/admin")) return;
+    let shown = false;
+    try {
+      shown = window.localStorage.getItem(BLOCKER_SHOWN_KEY) === "1";
+    } catch {
+      shown = true; // приватный режим без localStorage — не рискуем спамить
+    }
+    if (shown) return;
+
+    const onCta = (e: MouseEvent) => {
+      if ((e.target as HTMLElement | null)?.closest("[data-entry]")) ctaClickedRef.current = true;
+    };
+    const onIntake = () => {
+      intakeOpenedRef.current = true;
+    };
+
+    let fired = false;
+    const fire = (trigger: Trigger) => {
+      if (fired || ctaClickedRef.current || intakeOpenedRef.current) return;
+      fired = true;
+      try {
+        window.localStorage.setItem(BLOCKER_SHOWN_KEY, "1");
+      } catch {
+        /* показ всё равно один на сессию — fired=true */
+      }
+      openAs("blocker", trigger);
+    };
+
+    // exit-intent — только desktop (на тач-устройствах mouseout не сигнал)
+    const onMouseOut = (e: MouseEvent) => {
+      if (
+        e.relatedTarget === null &&
+        e.clientY <= 0 &&
+        !window.matchMedia("(pointer: coarse)").matches
+      ) {
+        fire("exit");
+      }
+    };
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= 0.6) fire("scroll");
+    };
+
+    document.addEventListener("click", onCta, true);
+    window.addEventListener(INTAKE2_EVENT, onIntake);
+    document.addEventListener("mouseout", onMouseOut);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      document.removeEventListener("click", onCta, true);
+      window.removeEventListener(INTAKE2_EVENT, onIntake);
+      document.removeEventListener("mouseout", onMouseOut);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname, openAs]);
 
   const onOpenChange = useCallback((v: boolean) => {
-    if (!v) {
-      setError(null);
-      sourceRef.current = "fab";
-    }
     setOpen(v);
+    if (!v) {
+      // Свежий лист при следующем открытии
+      setReason(null);
+      setNote("");
+      setQuestion("");
+      setContact("");
+      setError(false);
+      setSubmitted(false);
+    }
   }, []);
 
-  const onSubmit = useCallback(async (payload: FbSubmitPayload) => {
+  const onReasonChange = useCallback((code: string) => {
+    setReason(code);
+    ssTrack("feedback_reason", { reason: code });
+  }, []);
+
+  const onSubmit = useCallback(async (payload: FbV2Payload) => {
     setSubmitting(true);
-    setError(null);
+    setError(false);
     try {
       const captchaToken = await requestCaptchaToken();
-      const res = await fetch("/api/feedback", {
+      const res = await fetch("/api/feedback/v2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, captcha_token: captchaToken }),
+        body: JSON.stringify({
+          mode: payload.mode,
+          trigger: triggerRef.current,
+          ...(payload.reason ? { reason: payload.reason } : {}),
+          ...(payload.note ? { note: payload.note } : {}),
+          ...(payload.question ? { question: payload.question } : {}),
+          ...(payload.contact
+            ? {
+                contact_channel: payload.channel,
+                contact: payload.contact,
+                // Канон 0.13.0 не несёт строки согласия (canon-gap в CHANGELOG);
+                // контакт вводится добровольно ради ответа — фиксируем согласие
+                // фактом отправки, юр-приписка — открытый вопрос founder'у.
+                consent_given: true,
+              }
+            : {}),
+          captcha_token: captchaToken,
+        }),
       });
-      if (!res.ok) throw new Error(`feedback_failed_${res.status}`);
-      const body = (await res.json().catch(() => null)) as { data?: { tally?: FbTally } } | null;
-      if (body?.data?.tally) setTally(body.data.tally); // server-echoed counts
-      reachGoal("feedback_submit", { votes: payload.votes.length });
-    } catch (err) {
-      // Canon keeps the modal open on reject and renders `error` inline.
-      setError("Не получилось отправить. Попробуйте ещё раз");
-      throw err;
+      if (!res.ok) throw new Error(`feedback_v2_${res.status}`);
+      setSubmitted(true);
+      if (payload.mode === "question") {
+        ssTrack("feedback_question_sent");
+      } else if (payload.contact) {
+        ssTrack("feedback_contact_left", { channel: payload.channel });
+      }
+    } catch {
+      setError(true); // канон рендерит инлайн-ошибку, модалка остаётся открытой
     } finally {
       setSubmitting(false);
     }
   }, []);
 
-  // Founder admin (/admin*) + auth (/login) stay clean — no feedback FAB there.
+  // Founder-зоны без FAB (конвенция с vote-first версии).
   if (pathname === "/login" || pathname === "/admin" || pathname.startsWith("/admin/")) {
     return null;
   }
 
   return (
-    <Modal
-      mobile={mobile}
-      embedded={false}
-      open={open}
-      onOpenChange={onOpenChange}
-      tally={honestTally(tally)}
-      submitting={submitting}
-      error={error}
-      onSubmit={onSubmit}
-    />
+    <>
+      <Styles />
+      <Fab embedded={false} onClick={() => openAs("question", "button")} />
+      <Modal
+        open={open}
+        mode={mode}
+        onOpenChange={onOpenChange}
+        reason={reason}
+        onReasonChange={onReasonChange}
+        note={note}
+        onNoteChange={setNote}
+        question={question}
+        onQuestionChange={setQuestion}
+        channel={channel}
+        onChannelChange={setChannel}
+        contact={contact}
+        onContactChange={setContact}
+        onSubmit={onSubmit}
+        submitting={submitting}
+        error={error}
+        submitted={submitted}
+        mobile={mobile}
+        embedded={false}
+      />
+    </>
   );
 }

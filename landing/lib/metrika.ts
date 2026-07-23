@@ -102,7 +102,11 @@ export type MetrikaGoal =
   | "examples_anchor_click"
   | "login_click"
   | "feedback_open"
-  | "feedback_submit"
+  | "feedback_submit" // legacy (vote-first, затих с canon 0.13.0)
+  // ── Feedback v2 (canon 0.13.0, ТЗ §6) ──
+  | "feedback_reason"
+  | "feedback_contact_left"
+  | "feedback_question_sent"
   | "analytics_demo_click";
 
 const METRIKA_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";

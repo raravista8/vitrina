@@ -10,6 +10,7 @@ export default defineConfig({
     'src/landing/index.tsx',
     'src/intake/index.tsx',
     'src/customer/index.tsx',
+    'src/feedback/index.tsx',
     'src/admin-demo/index.tsx',
     'src/admin-core/index.tsx',
     'src/admin-core/types.ts',

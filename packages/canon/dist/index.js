@@ -5603,7 +5603,7 @@ function PvShell({ children, width = 680, mobile = false, intakeStep }) {
     ] })
   ] });
 }
-function PvHeader({ activeDot, loading = false, title, sub, onBack }) {
+function PvHeader({ activeDot, loading = false, title, sub: sub2, onBack }) {
   return /* @__PURE__ */ jsxs5(Fragment4, { children: [
     /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
       onBack && /* @__PURE__ */ jsxs5("button", { onClick: onBack, style: {
@@ -5637,7 +5637,7 @@ function PvHeader({ activeDot, loading = false, title, sub, onBack }) {
       } }, i)) })
     ] }),
     /* @__PURE__ */ jsx6("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
-    sub && /* @__PURE__ */ jsx6("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
+    sub2 && /* @__PURE__ */ jsx6("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub2 })
   ] });
 }
 var BUILD_STAGES = [
@@ -6377,7 +6377,7 @@ function R2Shell({ children, width = 560, mobile = false }) {
     ] })
   ] });
 }
-function R2Header({ activeDot, title, sub, onBack }) {
+function R2Header({ activeDot, title, sub: sub2, onBack }) {
   return /* @__PURE__ */ jsxs6(Fragment5, { children: [
     (onBack || activeDot) && /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
       onBack && /* @__PURE__ */ jsxs6("button", { onClick: onBack, style: {
@@ -6407,7 +6407,7 @@ function R2Header({ activeDot, title, sub, onBack }) {
       ] })
     ] }),
     /* @__PURE__ */ jsx7("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
-    sub && /* @__PURE__ */ jsx7("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
+    sub2 && /* @__PURE__ */ jsx7("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub2 })
   ] });
 }
 function R2Label({ children }) {
@@ -6847,7 +6847,7 @@ var ALT_PATHS = {
   link: { icon: ["M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 1 0-7-7l-1 1", "M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 1 0 7 7l1-1"], label: "\u0415\u0441\u0442\u044C \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u043F\u0440\u043E\u0444\u0438\u043B\u044C", sub: "\u041A\u0430\u0440\u0442\u044B, 2\u0413\u0418\u0421, Telegram, Avito, \u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435" },
   photo: { icon: ["M3 4.5h18v15H3z", "M8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3", "m21 16-5-5-8 8"], label: "\u041D\u0435\u0442 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B \u0432 \u0438\u043D\u0442\u0435\u0440\u043D\u0435\u0442\u0435", sub: "\u0421\u043E\u0431\u0435\u0440\u0451\u043C \u0438\u0437 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442 \u0438\u043B\u0438 \u043F\u0440\u0430\u0439\u0441\u0430" }
 };
-function AltPath({ icon, label, sub, onClick, active, ...rest }) {
+function AltPath({ icon, label, sub: sub2, onClick, active, ...rest }) {
   const [h, setH] = useState2(false);
   return /* @__PURE__ */ jsxs7(
     "button",
@@ -6863,7 +6863,7 @@ function AltPath({ icon, label, sub, onClick, active, ...rest }) {
         /* @__PURE__ */ jsx8("span", { style: { flex: "0 0 auto", width: 36, height: 36, display: "inline-flex", alignItems: "center", justifyContent: "center", background: active ? "var(--accent)" : "var(--bone)", border: "1px solid " + (active ? "var(--accent)" : "var(--line)"), color: active ? "var(--paper)" : "var(--accent)" }, children: /* @__PURE__ */ jsx8(Icon, { d: icon, size: 17 }) }),
         /* @__PURE__ */ jsxs7("span", { style: { flex: 1, minWidth: 0 }, children: [
           /* @__PURE__ */ jsx8("span", { style: { display: "block", fontWeight: 600, fontSize: 14.5, color: "var(--ink)" }, children: label }),
-          sub ? /* @__PURE__ */ jsx8("span", { style: { display: "block", fontSize: 12.5, color: "var(--ink-45)", marginTop: 1 }, children: sub }) : null
+          sub2 ? /* @__PURE__ */ jsx8("span", { style: { display: "block", fontSize: 12.5, color: "var(--ink-45)", marginTop: 1 }, children: sub2 }) : null
         ] }),
         active ? /* @__PURE__ */ jsx8("span", { style: { fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--accent)", flex: "none" }, children: "\u0432\u044B\u0431\u0440\u0430\u043D" }) : /* @__PURE__ */ jsx8("span", { style: { color: "var(--ink-45)", flex: "none" }, children: /* @__PURE__ */ jsx8(Icon, { d: ["m9 18 6-6-6-6"], size: 16, sw: 2 }) })
       ]
@@ -6999,7 +6999,7 @@ function BookingPhone({ value, onChange }) {
     /* @__PURE__ */ jsx8("span", { style: { fontSize: 13.5, color: bad ? "#B23B3B" : "var(--ink-45)" }, children: bad ? "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u043E\u043C\u0435\u0440 \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E: +7 \u0438 10 \u0446\u0438\u0444\u0440" : "\u041A\u043D\u043E\u043F\u043A\u0430 \xAB\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F\xBB \u043E\u0442\u043A\u0440\u043E\u0435\u0442 \u0437\u0432\u043E\u043D\u043E\u043A \u0438\u043B\u0438 WhatsApp \u043D\u0430 \u044D\u0442\u043E\u0442 \u043D\u043E\u043C\u0435\u0440. \u041F\u0443\u0441\u0442\u043E \u2014 \u0432\u043E\u0437\u044C\u043C\u0451\u043C \u0438\u0437 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0438." })
   ] });
 }
-function Uploader({ label, sub, multiple, accept, icon, onFiles, initial, max }) {
+function Uploader({ label, sub: sub2, multiple, accept, icon, onFiles, initial, max }) {
   max = max || 5;
   const fmtMB = (b) => (b / 1048576).toFixed(1).replace(".", ",") + " \u041C\u0411";
   const ref = useRef2(null);
@@ -7057,7 +7057,7 @@ function Uploader({ label, sub, multiple, accept, icon, onFiles, initial, max })
           /* @__PURE__ */ jsx8("span", { style: { flex: "0 0 auto", width: 42, height: 42, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", border: "1px solid var(--line)", color: "var(--accent)" }, children: icon }),
           /* @__PURE__ */ jsxs7("span", { style: { minWidth: 0 }, children: [
             /* @__PURE__ */ jsx8("span", { style: { display: "block", fontWeight: 600, fontSize: 15.5 }, children: label }),
-            /* @__PURE__ */ jsx8("span", { style: { display: "block", fontSize: 13, color: "var(--ink-70)", marginTop: 2 }, children: sub })
+            /* @__PURE__ */ jsx8("span", { style: { display: "block", fontSize: 13, color: "var(--ink-70)", marginTop: 2 }, children: sub2 })
           ] })
         ]
       }
@@ -7531,7 +7531,7 @@ function ModalShell({ children, width = 540, intakeStep }) {
     children
   ] }) });
 }
-function StepHeader({ step, total, title, sub, showBack = true }) {
+function StepHeader({ step, total, title, sub: sub2, showBack = true }) {
   return /* @__PURE__ */ jsxs8(Fragment6, { children: [
     /* @__PURE__ */ jsxs8("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }, children: [
       step > 1 && showBack && /* @__PURE__ */ jsxs8("button", { style: {
@@ -7565,7 +7565,7 @@ function StepHeader({ step, total, title, sub, showBack = true }) {
       } }, i)) })
     ] }),
     /* @__PURE__ */ jsx9("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.2, textWrap: "balance" }, children: title }),
-    sub && /* @__PURE__ */ jsx9("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub })
+    sub2 && /* @__PURE__ */ jsx9("p", { style: { fontSize: 14.5, color: VT.inkSoft, lineHeight: 1.5, margin: 0 }, children: sub2 })
   ] });
 }
 function SvgLink() {
@@ -8256,7 +8256,7 @@ function S3_StepContact({
   // 0.10.0 additive: копи-оверрайды для превью-флоу + мягкие notice-плашки.
   // Дефолты = строки 0.3.0 → photo-ветка и классическая link-ветка byte-identical.
   title = "\u041A\u0443\u0434\u0430 \u0432\u0430\u043C \u043F\u0438\u0441\u0430\u0442\u044C?",
-  sub = "\u041E\u0434\u0438\u043D \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u0432\u0430\u0441 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043E\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432.",
+  sub: sub2 = "\u041E\u0434\u0438\u043D \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u0434\u043B\u044F \u0432\u0430\u0441 \u2014 \u0442\u0443\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u0441\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442 \u0438 \u0437\u0430\u044F\u0432\u043A\u0438 \u043E\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432.",
   notice = null,
   // null | 'preview_failed' | 'preview_timeout'
   onChannelChange,
@@ -8278,7 +8278,7 @@ function S3_StepContact({
         step,
         total,
         title,
-        sub
+        sub: sub2
       }
     ),
     notice === "preview_failed" && /* @__PURE__ */ jsx9("div", { style: {
@@ -8763,8 +8763,7 @@ function PhotoDrawer(props) {
 var Confirmation = S3_FinalConfirm;
 
 // src/customer/index.tsx
-import React5 from "react";
-import { Fragment as Fragment8, jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
+import { Fragment as Fragment7, jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
 var SCHEMES = {
   cream: { bg: VT.bg, bgAlt: VT.bgSoft, ink: VT.ink, sub: VT.inkSoft, line: VT.line, accent: VT.accent, accentSoft: VT.accentSoft, white: VT.white, photoTone: "peach" },
   slate: { bg: "oklch(0.96 0.005 250)", bgAlt: "oklch(0.93 0.008 250)", ink: "oklch(0.20 0.012 250)", sub: "oklch(0.42 0.014 250)", line: "oklch(0.88 0.006 250)", accent: "oklch(0.55 0.13 250)", accentSoft: "oklch(0.93 0.04 250)", white: "#ffffff", photoTone: "slate" },
@@ -9635,7 +9634,7 @@ function CustomerBooking({ s, confirmed = false }) {
           /* @__PURE__ */ jsx10("div", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430" }),
           /* @__PURE__ */ jsx10("div", { style: { fontSize: 13.5, color: s.sub }, children: "\u041F\u0435\u0440\u0435\u0437\u0432\u043E\u043D\u044E \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 \u0447\u0430\u0441\u0430. \u041C\u043E\u0436\u043D\u043E \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443." })
         ] })
-      ] }) : /* @__PURE__ */ jsxs9(Fragment8, { children: [
+      ] }) : /* @__PURE__ */ jsxs9(Fragment7, { children: [
         /* @__PURE__ */ jsxs9("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: [
           /* @__PURE__ */ jsx10(CustomerInput, { label: "\u041A\u0430\u043A \u0432\u0430\u0441 \u0437\u043E\u0432\u0443\u0442", placeholder: "\u0418\u043C\u044F", s }),
           /* @__PURE__ */ jsx10(CustomerInput, { label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", placeholder: "+7 ___ ___-__-__", s })
@@ -9645,7 +9644,7 @@ function CustomerBooking({ s, confirmed = false }) {
           /* @__PURE__ */ jsx10(CustomerSelect, { label: "\u0423\u0434\u043E\u0431\u043D\u043E\u0435 \u0432\u0440\u0435\u043C\u044F", value: "\u0437\u0430\u0432\u0442\u0440\u0430, \u043F\u043E\u0441\u043B\u0435 14:00", s })
         ] }),
         /* @__PURE__ */ jsx10(Mono, { style: { fontSize: 10, color: s.sub, marginTop: 10 }, children: `<input type="text" name="company" tabIndex={-1} style="display:none"> // honeypot` }),
-        /* @__PURE__ */ jsx10("div", { style: { marginTop: 14 }, children: /* @__PURE__ */ jsx10(Checkbox, { checked: false, label: /* @__PURE__ */ jsx10(Fragment8, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0430" }) }),
+        /* @__PURE__ */ jsx10("div", { style: { marginTop: 14 }, children: /* @__PURE__ */ jsx10(Checkbox, { checked: false, label: /* @__PURE__ */ jsx10(Fragment7, { children: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D \u043D\u0430\xA0\u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0434\u0430\u043D\u043D\u044B\u0445" }), link: "\u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0430" }) }),
         /* @__PURE__ */ jsx10("div", { style: { marginTop: 16 }, children: /* @__PURE__ */ jsxs9("a", { href: "#book", style: {
           display: "flex",
           alignItems: "center",
@@ -9899,457 +9898,391 @@ function S7_SchemeSwatches() {
     ] }, key);
   }) });
 }
-var FB_SOURCES = [
-  ["vk", "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435", 9],
-  ["ozon", "Ozon-\u0432\u0438\u0442\u0440\u0438\u043D\u0430", 7],
-  ["youtube", "YouTube / Shorts", 6],
-  ["dzen", "\u0414\u0437\u0435\u043D", 4],
-  ["max", "MAX-\u043A\u0430\u043D\u0430\u043B", 2]
+var CustomerSite = S7_CustomerSite;
+var LeadForm = S8_LeadFormConfirm;
+
+// src/feedback/index.tsx
+import React5, { useState as useState3, useEffect as useEffect3, useRef as useRef3 } from "react";
+import { Fragment as Fragment8, jsx as jsx11, jsxs as jsxs10 } from "react/jsx-runtime";
+var COPY = {
+  "blocker.title": "\u0427\u0442\u043E \u043E\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441?",
+  "blocker.note.label": "\u041F\u043E\u0447\u0435\u043C\u0443 \u2014 \u043E\u0434\u043D\u0438\u043C \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0435\u043C",
+  "blocker.offer.title": "\u0421\u043E\u0431\u0435\u0440\u0443 \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A \u0432\u0430\u0448\u0435\u0433\u043E \u0441\u0430\u0439\u0442\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u2014 \u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u043B\u0430\u0442\u044C?",
+  "blocker.cta": "\u041F\u0440\u0438\u0441\u043B\u0430\u0442\u044C \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A",
+  "blocker.skip": "\u041F\u0440\u043E\u0441\u0442\u043E \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u043E\u0442\u0432\u0435\u0442",
+  "question.fab": "\u0417\u0430\u0434\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441",
+  "question.cta": "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C",
+  "question.sign": "\u0427\u0438\u0442\u0430\u044E \u043A\u0430\u0436\u0434\u044B\u0439 \u043E\u0442\u0432\u0435\u0442 \u0441\u0430\u043C \u0438\xA0\u043E\u0442\u0432\u0435\u0447\u0430\u044E \u043B\u0438\u0447\u043D\u043E",
+  "thanks.blocker.contact": "\u041F\u0440\u0438\u0448\u043B\u044E \u0447\u0435\u0440\u043D\u043E\u0432\u0438\u043A \u0432\xA0{channel}",
+  "thanks.blocker.plain": "\u0421\u043F\u0430\u0441\u0438\u0431\u043E, \u044D\u0442\u043E \u043F\u0440\u0430\u0432\u0434\u0430 \u043F\u043E\u043C\u043E\u0433\u0430\u0435\u0442",
+  "thanks.question": "\u041E\u0442\u0432\u0435\u0447\u0443 \u043B\u0438\u0447\u043D\u043E \u0432\xA0{channel}"
+};
+var REASONS = [
+  { code: "enough_maps", label: "\u041C\u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442 \u0438 2\u0413\u0418\u0421" },
+  { code: "booking_covers", label: "\u0417\u0430\u043F\u0438\u0441\u044C \u0443\u0436\u0435 \u0432 Dikidi/YClients \u2014 \u0437\u0430\u0447\u0435\u043C \u0435\u0449\u0451 \u0441\u0430\u0439\u0442?" },
+  { code: "unclear_value", label: "\u041D\u0435 \u043F\u043E\u043D\u044F\u043B, \u0447\u0442\u043E \u0438\u043C\u0435\u043D\u043D\u043E \u043F\u043E\u043B\u0443\u0447\u0443" },
+  { code: "price", label: "\u0414\u043E\u0440\u043E\u0433\u043E" },
+  { code: "no_trust", label: "\u041D\u0435 \u0434\u043E\u0432\u0435\u0440\u044F\u044E: \u043D\u0435\u043F\u043E\u043D\u044F\u0442\u043D\u043E, \u043A\u0442\u043E \u0432\u044B" },
+  { code: "not_now", label: "\u041F\u043E\u043A\u0430 \u043F\u0440\u043E\u0441\u0442\u043E \u0441\u043C\u043E\u0442\u0440\u044E \u2014 \u0432\u0435\u0440\u043D\u0443\u0441\u044C \u043F\u043E\u0437\u0436\u0435" },
+  { code: "other", label: "\u0414\u0440\u0443\u0433\u043E\u0435 \u2014 \u043D\u0430\u043F\u0438\u0448\u0443 \u0441\u043B\u043E\u0432\u0430\u043C\u0438" }
 ];
-var FB_FEATURES = [
-  ["yclients", "YCLIENTS \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044F", 8],
-  ["amocrm", "amoCRM \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u044F", 5],
-  ["custom_domain", "\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", 9],
-  ["no_watermark", "\u0423\u0431\u0440\u0430\u0442\u044C \xAB\u0421\u0434\u0435\u043B\u0430\u043D\u043E \u043D\u0430 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435\xBB", 7],
-  ["multilang", "\u041D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u044F\u0437\u044B\u043A\u043E\u0432", 3],
-  ["payments", "\u041E\u043D\u043B\u0430\u0439\u043D-\u043E\u043F\u043B\u0430\u0442\u0430", 6],
-  ["blog", "\u0411\u043B\u043E\u0433-CMS", 4],
-  ["stats", "\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439", 5]
+var CHANNELS2 = [
+  { id: "telegram", label: "Telegram", ph: "@username", icon: ["M22 3 L1.5 11 L8 13.5 L17 7 L11 14 L11.5 20 L15 16 L20 19 Z"] },
+  { id: "whatsapp", label: "WhatsApp", ph: "+7 (___) ___-__-__", icon: ["M12 2a10 10 0 0 0-9 15L2 22l5-1a10 10 0 1 0 5-19z", "M9 7c.5 0 1 .5 1.5 2 .5 1 .5 1.5-.5 2-.5.5-1 1 0 2s2 1.5 2.5 1c.5-1 1-1 2-.5s1.5 1 1.5 1.5c0 2-3 2-5 1-2-1-4-3-4-5 0-2 1-4 2-4z"] },
+  { id: "email", label: "Email", ph: "you@mail.ru", icon: ["M3 5.5h18v13H3z", "m3 6 9 7 9-7"] }
 ];
-var WAITLIST_SOURCES = FB_SOURCES.map(([k, l]) => [k, l]);
-var FEATURE_LIST = FB_FEATURES.map(([k, l]) => [k, l]);
-function fbPlural(n) {
-  const d = n % 10, h = n % 100;
-  if (h >= 11 && h <= 14) return "\u0433\u043E\u043B\u043E\u0441\u043E\u0432";
-  if (d === 1) return "\u0433\u043E\u043B\u043E\u0441";
-  if (d >= 2 && d <= 4) return "\u0433\u043E\u043B\u043E\u0441\u0430";
-  return "\u0433\u043E\u043B\u043E\u0441\u043E\u0432";
+var channelLabel = (id) => (CHANNELS2.find((c) => c.id === id) || CHANNELS2[0]).label;
+var sub = (key, ch) => COPY[key].replace("{channel}", channelLabel(ch));
+function formatPhone2(v) {
+  let d = (v || "").replace(/\D/g, "");
+  if (d[0] === "8") d = "7" + d.slice(1);
+  if (d && d[0] !== "7") d = "7" + d;
+  d = d.slice(0, 11);
+  const p = d.slice(1);
+  let out = "+7";
+  if (p.length) out += " (" + p.slice(0, 3);
+  if (p.length >= 3) out += ") " + p.slice(3, 6);
+  if (p.length >= 6) out += "-" + p.slice(6, 8);
+  if (p.length >= 8) out += "-" + p.slice(8, 10);
+  return out;
 }
-function FBVoteRow({ label, base, checked, onToggle, first, mobile }) {
-  const v = base + (checked ? 1 : 0);
-  const done = v >= 10;
-  const pct = Math.min(v, 10) / 10 * 100;
-  return /* @__PURE__ */ jsxs9(
-    "label",
+function contactValid2(channel, value) {
+  const v = (value || "").trim();
+  if (!v) return false;
+  if (channel === "whatsapp") return v.replace(/\D/g, "").length === 11;
+  if (channel === "email") return /^\S+@\S+\.\S+$/.test(v);
+  return /^@?[A-Za-z0-9_.]{2,}$/.test(v);
+}
+function contactError2(channel) {
+  if (channel === "whatsapp") return "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u043E\u043C\u0435\u0440 \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E: +7 \u0438 10 \u0446\u0438\u0444\u0440";
+  if (channel === "email") return "\u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u2014 \u043D\u0443\u0436\u0435\u043D \u0432\u0438\u0434 you@mail.ru";
+  return "\u041C\u0438\u043D\u0438\u043C\u0443\u043C 2 \u0441\u0438\u043C\u0432\u043E\u043B\u0430, \u043B\u0430\u0442\u0438\u043D\u0438\u0446\u0430/\u0446\u0438\u0444\u0440\u044B";
+}
+function Icon2({ d, size = 22, sw = 1.9, fill }) {
+  return /* @__PURE__ */ jsx11("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: fill || "none", stroke: "currentColor", strokeWidth: sw, strokeLinecap: "round", strokeLinejoin: "round", children: d.map((p, i) => /* @__PURE__ */ jsx11("path", { d: p }, i)) });
+}
+var S2 = {
+  label: { fontFamily: "var(--mono)", fontSize: 11, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ink-45)" },
+  input: { width: "100%", padding: "13px 14px", border: "1px solid var(--line-2)", background: "#fff", font: "inherit", fontSize: 16, color: "var(--ink)", outline: "none" },
+  hint: { fontSize: 15, lineHeight: 1.5, color: "var(--ink-70)" }
+};
+function ReasonCard({ reason, active, first, onSelect, mobile }) {
+  return /* @__PURE__ */ jsxs10(
+    "button",
     {
-      onClick: onToggle,
-      style: {
-        display: "flex",
-        flexDirection: mobile ? "column" : "row",
-        alignItems: mobile ? "stretch" : "center",
-        gap: mobile ? 7 : 13,
-        padding: "11px 0",
-        borderTop: first ? "none" : `1px solid ${VT.lineSoft}`,
-        cursor: "pointer",
-        userSelect: "none"
-      },
+      type: "button",
+      role: "radio",
+      "aria-checked": active,
+      tabIndex: active || first ? 0 : -1,
+      "data-fb-reason": reason.code,
+      onClick: () => onSelect(reason.code),
+      className: "rcard" + (active ? " is-active" : ""),
+      style: { fontSize: mobile ? 15.5 : 15 },
       children: [
-        /* @__PURE__ */ jsxs9("span", { style: { display: "flex", alignItems: "center", gap: 13, flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx10("span", { style: {
-            flex: "0 0 auto",
-            width: 21,
-            height: 21,
-            borderRadius: 6,
-            border: `2px solid ${checked ? VT.accent : VT.line}`,
-            background: checked ? VT.accent : VT.white,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all .16s"
-          }, children: checked && /* @__PURE__ */ jsx10("svg", { width: "11", height: "11", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3.4", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-          /* @__PURE__ */ jsx10("span", { style: { flex: 1, minWidth: 0, fontSize: 15, fontWeight: 500, lineHeight: 1.25, color: VT.ink }, children: label })
-        ] }),
-        /* @__PURE__ */ jsxs9("span", { style: {
-          flex: "0 0 auto",
-          width: mobile ? "auto" : 116,
-          paddingLeft: mobile ? 34 : 0,
-          display: "flex",
-          alignItems: "center",
-          gap: 9
-        }, children: [
-          /* @__PURE__ */ jsx10("span", { style: { flex: 1, height: 5, borderRadius: 99, background: VT.bgSoft, overflow: "hidden" }, children: /* @__PURE__ */ jsx10("span", { style: { display: "block", height: "100%", width: pct + "%", background: VT.accent, borderRadius: 99, transition: "width .35s cubic-bezier(.2,.7,.2,1)" } }) }),
-          /* @__PURE__ */ jsxs9("span", { style: {
-            fontFamily: VT.font.mono,
-            fontSize: 12,
-            fontWeight: 500,
-            fontVariantNumeric: "tabular-nums",
-            whiteSpace: "nowrap",
-            color: done ? VT.accent : VT.inkFaint
-          }, children: [
-            Math.min(v, 10),
-            "/10"
-          ] })
-        ] })
+        /* @__PURE__ */ jsx11("span", { className: "rdot", "aria-hidden": "true", children: active ? /* @__PURE__ */ jsx11(Icon2, { d: ["M20 6 9 17l-5-5"], size: 13, sw: 3 }) : null }),
+        /* @__PURE__ */ jsx11("span", { style: { flex: 1, minWidth: 0, textWrap: "pretty" }, children: reason.label })
       ]
     }
   );
 }
-function FBReveal({ label, shown, onShow, children }) {
-  if (shown) return /* @__PURE__ */ jsx10("div", { style: { marginTop: 10 }, children });
-  return /* @__PURE__ */ jsx10(
+function ChannelChips({ channel, onChannel }) {
+  return /* @__PURE__ */ jsx11("div", { role: "radiogroup", "aria-label": "\u041A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u043B\u0430\u0442\u044C", style: { display: "flex", flexWrap: "wrap", gap: 9 }, children: CHANNELS2.map((c) => /* @__PURE__ */ jsxs10(
     "button",
     {
       type: "button",
-      onClick: onShow,
-      style: {
-        marginTop: 12,
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: VT.accent,
-        fontFamily: VT.font.sans,
-        fontSize: 13.5,
-        fontWeight: 600,
-        padding: "2px 0"
-      },
-      children: label
-    }
-  );
+      role: "radio",
+      "aria-checked": channel === c.id,
+      "data-fb-channel": c.id,
+      onClick: () => onChannel(c.id),
+      className: "chip" + (channel === c.id ? " is-active" : ""),
+      children: [
+        /* @__PURE__ */ jsx11("span", { style: { marginRight: 8, display: "inline-flex" }, children: /* @__PURE__ */ jsx11(Icon2, { d: c.icon, size: 15, sw: 1.9, fill: c.id === "telegram" ? "currentColor" : void 0 }) }),
+        c.label
+      ]
+    },
+    c.id
+  )) });
 }
-function FBField({ placeholder, value, onChange, textarea }) {
-  const common = {
-    width: "100%",
-    boxSizing: "border-box",
-    fontFamily: VT.font.sans,
-    fontSize: 16,
-    color: VT.ink,
-    background: VT.white,
-    border: `1.5px solid ${VT.line}`,
-    borderRadius: VT.r.md,
-    padding: "11px 13px",
-    outline: "none"
+function ContactField({ channel, value, onChange }) {
+  const [touched, setTouched] = useState3(false);
+  const meta = CHANNELS2.find((c) => c.id === channel) || CHANNELS2[0];
+  const valid = contactValid2(channel, value);
+  const showErr = touched && !!(value || "").trim() && !valid;
+  const border = showErr ? "#D98A8A" : touched && valid ? "#8FC3B4" : "var(--line-2)";
+  const handle = (e) => {
+    const raw = e.target.value;
+    onChange(channel === "whatsapp" ? formatPhone2(raw) : raw);
   };
-  return textarea ? /* @__PURE__ */ jsx10("textarea", { value, onChange: (e) => onChange(e.target.value), placeholder, style: { ...common, resize: "vertical", minHeight: 84 } }) : /* @__PURE__ */ jsx10("input", { value, onChange: (e) => onChange(e.target.value), placeholder, style: common });
-}
-function FBVoteSection({ title, items, votes, onToggle, baseOf, ownVal, ownShown, onOwnShow, onOwnChange, ownPlaceholder, mobile }) {
-  return /* @__PURE__ */ jsxs9("div", { style: { marginTop: 18 }, children: [
-    /* @__PURE__ */ jsx10("h3", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", margin: "0 0 2px" }, children: title }),
-    /* @__PURE__ */ jsx10("p", { style: { fontSize: 12.5, color: VT.inkFaint, margin: "0 0 8px" }, children: "\u041E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u043D\u0443\u0436\u043D\u043E\u0435 \u2014 \u0433\u043E\u043B\u043E\u0441 \u0437\u0430\u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u0441\u0440\u0430\u0437\u0443" }),
-    /* @__PURE__ */ jsx10("div", { children: items.map(([key, label, base], i) => /* @__PURE__ */ jsx10(
-      FBVoteRow,
-      {
-        label,
-        base: baseOf(key, base),
-        first: i === 0,
-        mobile,
-        checked: !!votes[key],
-        onToggle: () => onToggle(key)
-      },
-      key
-    )) }),
-    /* @__PURE__ */ jsx10(FBReveal, { label: "+ \u0441\u0432\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442", shown: ownShown, onShow: onOwnShow, children: /* @__PURE__ */ jsx10(FBField, { placeholder: ownPlaceholder, value: ownVal, onChange: onOwnChange }) })
+  return /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 7 }, children: [
+    /* @__PURE__ */ jsxs10("div", { style: { position: "relative" }, children: [
+      /* @__PURE__ */ jsx11("span", { style: { position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--ink-45)", pointerEvents: "none", display: "inline-flex" }, children: /* @__PURE__ */ jsx11(Icon2, { d: meta.icon, size: 16, sw: 1.9, fill: channel === "telegram" ? "currentColor" : void 0 }) }),
+      /* @__PURE__ */ jsx11(
+        "input",
+        {
+          style: { ...S2.input, paddingLeft: 38, borderColor: border },
+          value,
+          placeholder: meta.ph,
+          inputMode: channel === "whatsapp" ? "tel" : channel === "email" ? "email" : "text",
+          autoComplete: "off",
+          onChange: handle,
+          onBlur: () => setTouched(true),
+          "aria-label": "\u041A\u043E\u043D\u0442\u0430\u043A\u0442"
+        }
+      )
+    ] }),
+    showErr && /* @__PURE__ */ jsxs10("span", { style: { display: "flex", alignItems: "center", gap: 7, fontSize: 13.5, color: "#B23B3B" }, children: [
+      /* @__PURE__ */ jsx11(Icon2, { d: ["M12 8v5", "M12 16h.01", "M12 3 2 20h20L12 3z"], size: 15, sw: 2 }),
+      " ",
+      contactError2(channel)
+    ] })
   ] });
 }
-function S9_FeedbackModal(props = {}) {
-  const p = props;
+function Spinner2({ size = 16 }) {
+  return /* @__PURE__ */ jsx11("span", { className: "fb2-spin", style: { display: "inline-block", width: size, height: size, borderRadius: "50%", border: "2px solid rgba(251,249,244,.4)", borderTopColor: "var(--on-accent)" } });
+}
+function ErrorBanner() {
+  return /* @__PURE__ */ jsxs10("div", { role: "alert", style: { display: "flex", alignItems: "flex-start", gap: 9, border: "1px solid #D98A8A", background: "#FAEFEE", padding: "11px 13px", fontSize: 13.5, lineHeight: 1.45, color: "#B23B3B", marginTop: 4 }, children: [
+    /* @__PURE__ */ jsx11("span", { style: { flex: "none", marginTop: 1 }, children: /* @__PURE__ */ jsx11(Icon2, { d: ["M12 8v5", "M12 16h.01", "M12 3 2 20h20L12 3z"], size: 16, sw: 2 }) }),
+    /* @__PURE__ */ jsx11("span", { children: "\u041D\u0435 \u043F\u043E\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0438\u043D\u0442\u0435\u0440\u043D\u0435\u0442 \u0438 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437 \u2014 \u0432\u0441\u0451 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u043E\u0435 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u043B\u043E\u0441\u044C." })
+  ] });
+}
+function Thanks({ mode, channel, contactSent, onClose }) {
+  const text = mode === "question" ? sub("thanks.question", channel) : contactSent ? sub("thanks.blocker.contact", channel) : COPY["thanks.blocker.plain"];
+  return /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 15, textAlign: "center", padding: "20px 4px 6px", maxWidth: 420, margin: "0 auto" }, children: [
+    /* @__PURE__ */ jsx11("span", { style: { width: 58, height: 58, borderRadius: "50%", background: "var(--accent)", color: "var(--on-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx11(Icon2, { d: ["M20 6 9 17l-5-5"], size: 28, sw: 2.4 }) }),
+    /* @__PURE__ */ jsx11("h3", { style: { fontFamily: "var(--display)", fontWeight: 700, fontSize: 27, lineHeight: 1.04, color: "var(--ink)", margin: 0 }, children: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E" }),
+    /* @__PURE__ */ jsx11("p", { style: { ...S2.hint, margin: 0 }, children: text }),
+    /* @__PURE__ */ jsx11("button", { className: "btn btn--block", type: "button", "data-fb-cta": "thanks-close", onClick: onClose, style: { marginTop: 6 }, children: "\u041F\u043E\u043D\u044F\u0442\u043D\u043E" })
+  ] });
+}
+function FeedbackV2Modal(props = {}) {
   const {
-    mobile,
+    mode = "blocker",
     open: openProp,
     onOpenChange,
-    tally,
+    reasons = REASONS,
+    reason: reasonProp,
+    onReasonChange,
+    note: noteProp,
+    onNoteChange,
+    question: questionProp,
+    onQuestionChange,
+    channel: channelProp,
+    onChannelChange,
+    contact: contactProp,
+    onContactChange,
     onSubmit,
     submitting = false,
-    error = null,
+    error = false,
+    submitted: submittedProp,
+    mobile = false,
     embedded: embeddedProp
-  } = p;
-  const { useState: useState8 } = React5;
+  } = props;
   const isControlled = openProp !== void 0;
   const isCanvas = !isControlled && typeof onSubmit !== "function";
   const embedded = embeddedProp !== void 0 ? embeddedProp : isCanvas;
-  const [internalOpen, setInternalOpen] = useState8(isCanvas);
-  const isOpen = isControlled ? openProp : internalOpen;
+  const [openI, setOpenI] = useState3(isCanvas);
+  const isOpen = isControlled ? openProp : openI;
   const setOpen = (v) => {
     if (onOpenChange) onOpenChange(v);
-    if (!isControlled) setInternalOpen(v);
+    if (!isControlled) setOpenI(v);
   };
-  const [votes, setVotes] = useState8({});
-  const [ownSrc, setOwnSrc] = useState8("");
-  const [ownFeat, setOwnFeat] = useState8("");
-  const [showOwnSrc, setShowOwnSrc] = useState8(false);
-  const [showOwnFeat, setShowOwnFeat] = useState8(false);
-  const [showMsg, setShowMsg] = useState8(false);
-  const [msg, setMsg] = useState8("");
-  const [name, setName] = useState8("");
-  const [contact, setContact] = useState8("");
-  const [submitted, setSubmitted] = useState8(false);
-  const tallyItems = tally && tally.items || null;
-  const baseOf = (key, fallback) => tallyItems && tallyItems[key] != null ? tallyItems[key] : fallback;
-  const baseTotal = tally && tally.total_week != null ? tally.total_week : 340;
-  const checkedCount = Object.values(votes).filter(Boolean).length;
-  const ownCount = (ownSrc.trim() ? 1 : 0) + (ownFeat.trim() ? 1 : 0);
-  const n = checkedCount + ownCount;
-  const awake = n > 0;
-  const toggle = (key) => setVotes((v) => ({ ...v, [key]: !v[key] }));
-  const reset = () => {
-    setVotes({});
-    setOwnSrc("");
-    setOwnFeat("");
-    setShowOwnSrc(false);
-    setShowOwnFeat(false);
-    setShowMsg(false);
-    setMsg("");
-    setName("");
-    setContact("");
-    setSubmitted(false);
-  };
-  const buildPayload = () => ({
-    votes: [
-      ...FB_SOURCES.filter(([k]) => votes[k]).map(([k]) => ({ kind: "source", key: k })),
-      ...FB_FEATURES.filter(([k]) => votes[k]).map(([k]) => ({ kind: "feature", key: k }))
-    ],
-    own_source: ownSrc.trim() || null,
-    own_feature: ownFeat.trim() || null,
-    message: msg.trim() || null,
-    name: name.trim() || null,
-    contact: contact.trim() || null
-  });
-  const handleSubmit = async () => {
-    if (n === 0 || submitting) return;
-    if (typeof onSubmit === "function") {
-      try {
-        await onSubmit(buildPayload());
-        setSubmitted(true);
-      } catch (e) {
+  const [reasonI, setReasonI] = useState3(reasonProp ?? null);
+  const [noteI, setNoteI] = useState3(noteProp ?? "");
+  const [questionI, setQuestionI] = useState3(questionProp ?? "");
+  const [channelI, setChannelI] = useState3(channelProp ?? "telegram");
+  const [contactI, setContactI] = useState3(contactProp ?? "");
+  const [submittedI, setSubmittedI] = useState3(false);
+  const reason = onReasonChange ? reasonProp ?? null : reasonI;
+  const note = onNoteChange ? noteProp ?? "" : noteI;
+  const question = onQuestionChange ? questionProp ?? "" : questionI;
+  const channel = onChannelChange ? channelProp ?? "telegram" : channelI;
+  const contact = onContactChange ? contactProp ?? "" : contactI;
+  const submitted = submittedProp !== void 0 ? submittedProp : submittedI;
+  const setReason = onReasonChange || setReasonI;
+  const setNote = onNoteChange || setNoteI;
+  const setQuestion = onQuestionChange || setQuestionI;
+  const setChannel = onChannelChange || setChannelI;
+  const setContact = onContactChange || setContactI;
+  const dialogRef = useRef3(null);
+  const groupRef = useRef3(null);
+  useEffect3(() => {
+    if (!isOpen || embedded) return;
+    const node = dialogRef.current;
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setOpen(false);
+        return;
       }
+      if (e.key !== "Tab" || !node) return;
+      const f = node.querySelectorAll('button,[href],input,textarea,select,[tabindex]:not([tabindex="-1"])');
+      const list = Array.prototype.filter.call(f, (el) => !el.disabled && el.offsetParent !== null);
+      if (!list.length) return;
+      const first = list[0], last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey, true);
+    const t = setTimeout(() => {
+      if (node) {
+        const el = node.querySelector("input,textarea,button");
+        el && el.focus();
+      }
+    }, 30);
+    return () => {
+      document.removeEventListener("keydown", onKey, true);
+      clearTimeout(t);
+    };
+  }, [isOpen, embedded, mode]);
+  if (!isOpen) return null;
+  const contactOk = contactValid2(channel, contact);
+  const doSubmit = (payload, withContact) => {
+    if (submitting) return;
+    if (typeof onSubmit === "function") {
+      onSubmit(payload);
     } else {
-      setSubmitted(true);
+      setSubmittedI(true);
     }
   };
-  const FauxPage = () => /* @__PURE__ */ jsxs9("div", { style: { position: "absolute", inset: 0, overflow: "hidden", padding: mobile ? "20px" : "32px 48px", filter: isOpen ? "blur(2px)" : "none" }, children: [
-    /* @__PURE__ */ jsx10("div", { style: { height: 18, width: mobile ? 120 : 180, background: VT.line, borderRadius: 6, opacity: 0.6 } }),
-    /* @__PURE__ */ jsx10("div", { style: { height: mobile ? 32 : 46, width: "70%", background: VT.line, borderRadius: 10, opacity: 0.5, marginTop: 22 } }),
-    /* @__PURE__ */ jsx10("div", { style: { height: 14, width: "52%", background: VT.line, borderRadius: 6, opacity: 0.4, marginTop: 16 } }),
-    /* @__PURE__ */ jsx10("div", { style: { display: "flex", flexDirection: mobile ? "column" : "row", gap: 16, marginTop: 30 }, children: [0, 1, 2].map((i) => /* @__PURE__ */ jsx10("div", { style: { flex: 1, height: mobile ? 90 : 150, background: VT.line, borderRadius: 14, opacity: 0.35 } }, i)) })
-  ] });
-  const FloatingBtn = ({ fixed }) => /* @__PURE__ */ jsxs9(
-    "button",
-    {
-      type: "button",
-      "data-floating-feedback-btn": true,
-      onClick: () => setOpen(true),
-      style: {
-        position: fixed ? "fixed" : "absolute",
-        right: mobile ? 16 : 28,
-        bottom: mobile ? 16 : 28,
-        zIndex: fixed ? 2147483e3 : 3,
-        background: VT.accent,
-        color: VT.white,
-        border: "none",
-        cursor: "pointer",
-        padding: "14px 20px",
-        borderRadius: VT.r.pill,
-        fontFamily: VT.font.sans,
-        fontSize: 14.5,
-        fontWeight: 600,
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 9,
-        boxShadow: VT.shadow.pop
-      },
-      children: [
-        /* @__PURE__ */ jsx10("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx10("path", { d: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" }) }),
-        "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
-      ]
+  const submitBlocker = () => {
+    if (!reason || !contactOk) return;
+    const p = { mode: "blocker", reason };
+    const n = (note || "").trim();
+    if (n) p.note = n;
+    p.channel = channel;
+    p.contact = (contact || "").trim();
+    doSubmit(p, true);
+  };
+  const submitPlain = () => {
+    if (!reason) return;
+    const p = { mode: "blocker", reason };
+    const n = (note || "").trim();
+    if (n) p.note = n;
+    doSubmit(p, false);
+  };
+  const submitQuestion = () => {
+    if (!(question || "").trim() || !contactOk) return;
+    doSubmit({ mode: "question", question: (question || "").trim(), channel, contact: (contact || "").trim() }, true);
+  };
+  const onGroupKey = (e) => {
+    const codes = reasons.map((r) => r.code);
+    const i = codes.indexOf(reason);
+    if (["ArrowDown", "ArrowRight"].includes(e.key)) {
+      e.preventDefault();
+      setReason(codes[Math.min((i < 0 ? -1 : i) + 1, codes.length - 1)]);
+    } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+      e.preventDefault();
+      setReason(codes[Math.max((i < 0 ? codes.length : i) - 1, 0)]);
     }
-  );
-  const Dialog = () => /* @__PURE__ */ jsx10(
+  };
+  let inner;
+  if (submitted) {
+    inner = /* @__PURE__ */ jsx11(Thanks, { mode, channel, contactSent: mode === "question" ? true : !!(contact || "").trim(), onClose: () => setOpen(false) });
+  } else if (mode === "question") {
+    const qOk = !!(question || "").trim() && contactOk;
+    inner = /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+      /* @__PURE__ */ jsxs10("div", { children: [
+        /* @__PURE__ */ jsx11("h2", { className: "fb2-h", children: "\u0417\u0430\u0434\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441" }),
+        /* @__PURE__ */ jsx11("p", { style: { ...S2.hint, marginTop: 6 }, children: "\u0421\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u0439\u0442\u0435 \u0447\u0442\u043E \u0443\u0433\u043E\u0434\u043D\u043E \u043F\u0440\u043E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u2014 \u043A\u0430\u043A \u044D\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u043E\u0438\u0442, \u043F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u043B\u0438 \u0432\u0430\u043C." })
+      ] }),
+      /* @__PURE__ */ jsx11("textarea", { className: "fb2-ta", value: question, onChange: (e) => setQuestion(e.target.value), placeholder: "\u0412\u0430\u0448 \u0432\u043E\u043F\u0440\u043E\u0441\u2026", rows: mobile ? 4 : 3, "aria-label": "\u0412\u043E\u043F\u0440\u043E\u0441" }),
+      /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 11 }, children: [
+        /* @__PURE__ */ jsx11("span", { style: S2.label, children: "\u041A\u0443\u0434\u0430 \u043E\u0442\u0432\u0435\u0442\u0438\u0442\u044C" }),
+        /* @__PURE__ */ jsx11(ChannelChips, { channel, onChannel: setChannel }),
+        /* @__PURE__ */ jsx11(ContactField, { channel, value: contact, onChange: setContact })
+      ] }),
+      error && /* @__PURE__ */ jsx11(ErrorBanner, {}),
+      /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 12 }, children: [
+        /* @__PURE__ */ jsx11("button", { className: "btn btn--block", type: "button", "data-fb-cta": "send-question", disabled: !qOk || submitting, onClick: submitQuestion, style: { opacity: !qOk || submitting ? 0.5 : 1, cursor: !qOk || submitting ? "not-allowed" : "pointer" }, children: submitting ? /* @__PURE__ */ jsxs10(Fragment8, { children: [
+          /* @__PURE__ */ jsx11(Spinner2, {}),
+          " \u041E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u043C\u2026"
+        ] }) : /* @__PURE__ */ jsxs10(Fragment8, { children: [
+          COPY["question.cta"],
+          " ",
+          /* @__PURE__ */ jsx11("span", { className: "arw", children: "\u2192" })
+        ] }) }),
+        /* @__PURE__ */ jsx11("p", { className: "fb2-sign", children: COPY["question.sign"] })
+      ] })
+    ] });
+  } else {
+    const blockerCtaOk = !!reason && contactOk;
+    inner = /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+      /* @__PURE__ */ jsx11("h2", { className: "fb2-h", children: COPY["blocker.title"] }),
+      /* @__PURE__ */ jsx11("div", { ref: groupRef, role: "radiogroup", "aria-label": COPY["blocker.title"], onKeyDown: onGroupKey, style: { display: "flex", flexDirection: "column", gap: 8 }, children: reasons.map((r, i) => /* @__PURE__ */ jsx11(ReasonCard, { reason: r, active: reason === r.code, first: i === 0 && !reason, onSelect: setReason, mobile }, r.code)) }),
+      reason && /* @__PURE__ */ jsxs10("div", { className: "fb2-a2", style: { display: "flex", flexDirection: "column", gap: 18, borderTop: "1px solid var(--line)", paddingTop: 18 }, children: [
+        /* @__PURE__ */ jsxs10("label", { style: { display: "flex", flexDirection: "column", gap: 7 }, children: [
+          /* @__PURE__ */ jsx11("span", { style: S2.label, children: COPY["blocker.note.label"] }),
+          /* @__PURE__ */ jsx11("input", { style: S2.input, value: note, onChange: (e) => setNote(e.target.value), maxLength: 200, placeholder: "\u041D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E" })
+        ] }),
+        /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 12, borderLeft: "3px solid var(--accent)", paddingLeft: 15 }, children: [
+          /* @__PURE__ */ jsx11("strong", { style: { fontFamily: "var(--display)", fontWeight: 700, fontSize: 20, lineHeight: 1.1, letterSpacing: "-.01em", color: "var(--ink)" }, children: COPY["blocker.offer.title"] }),
+          /* @__PURE__ */ jsx11(ChannelChips, { channel, onChannel: setChannel }),
+          /* @__PURE__ */ jsx11(ContactField, { channel, value: contact, onChange: setContact })
+        ] }),
+        error && /* @__PURE__ */ jsx11(ErrorBanner, {}),
+        /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 12 }, children: [
+          /* @__PURE__ */ jsx11("button", { className: "btn btn--block", type: "button", "data-fb-cta": "send-blocker", disabled: !blockerCtaOk || submitting, onClick: submitBlocker, style: { opacity: !blockerCtaOk || submitting ? 0.5 : 1, cursor: !blockerCtaOk || submitting ? "not-allowed" : "pointer" }, children: submitting ? /* @__PURE__ */ jsxs10(Fragment8, { children: [
+            /* @__PURE__ */ jsx11(Spinner2, {}),
+            " \u041E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u043C\u2026"
+          ] }) : /* @__PURE__ */ jsxs10(Fragment8, { children: [
+            COPY["blocker.cta"],
+            " ",
+            /* @__PURE__ */ jsx11("span", { className: "arw", children: "\u2192" })
+          ] }) }),
+          /* @__PURE__ */ jsx11("button", { className: "tlink", type: "button", "data-fb-cta": "send-plain", disabled: submitting, onClick: submitPlain, style: { alignSelf: "center", fontWeight: 500, color: "var(--ink-45)" }, children: COPY["blocker.skip"] })
+        ] })
+      ] })
+    ] });
+  }
+  const outer = embedded ? { position: "relative", height: "100%", display: "flex", alignItems: "stretch", justifyContent: "center", background: "transparent" } : { position: "fixed", inset: 0, zIndex: 200, background: "rgba(27,23,18,.55)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", display: "flex", alignItems: mobile ? "flex-end" : "center", justifyContent: "center", padding: mobile ? 0 : "32px 20px" };
+  const sheet = embedded ? { width: "100%", height: "100%", background: "var(--paper)", border: "1px solid var(--line)", display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" } : { width: mobile ? "100%" : "min(520px, calc(100vw - 40px))", maxHeight: mobile ? "94vh" : "90vh", background: "var(--paper)", border: "1px solid var(--line)", display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" };
+  return /* @__PURE__ */ jsx11(
     "div",
     {
-      "data-feedback-modal": true,
-      style: {
-        position: embedded ? "absolute" : "fixed",
-        inset: 0,
-        zIndex: embedded ? 4 : 2147483600,
-        background: "oklch(0.30 0.02 60 / 0.46)",
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "center",
-        padding: mobile ? "14px 10px" : "40px 24px",
-        overflowY: "auto"
-      },
-      onClick: (e) => {
+      className: "fb2" + (embedded ? "" : " fb2-enter"),
+      style: outer,
+      "data-feedback-v2": "",
+      "data-fb-mode": mode,
+      onClick: embedded ? void 0 : (e) => {
         if (e.target === e.currentTarget) setOpen(false);
       },
-      children: /* @__PURE__ */ jsxs9("div", { style: {
-        position: "relative",
-        width: "100%",
-        maxWidth: mobile ? 9999 : 560,
-        background: VT.bg,
-        border: `1px solid ${VT.line}`,
-        borderRadius: VT.r.xl,
-        boxShadow: VT.shadow.pop,
-        overflow: "hidden"
-      }, children: [
-        /* @__PURE__ */ jsx10(
-          "button",
-          {
-            type: "button",
-            onClick: () => setOpen(false),
-            "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
-            style: {
-              position: "absolute",
-              top: 14,
-              right: 14,
-              zIndex: 2,
-              width: 34,
-              height: 34,
-              borderRadius: VT.r.pill,
-              border: "none",
-              background: VT.bgSoft,
-              color: VT.inkSoft,
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center"
-            },
-            children: /* @__PURE__ */ jsx10("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", children: /* @__PURE__ */ jsx10("path", { d: "M6 6l12 12M18 6L6 18" }) })
-          }
-        ),
-        submitted ? /* @__PURE__ */ jsxs9("div", { style: { textAlign: "center", padding: mobile ? "48px 24px" : "56px 36px" }, children: [
-          /* @__PURE__ */ jsx10("div", { style: {
-            width: 60,
-            height: 60,
-            borderRadius: "50%",
-            background: VT.success,
-            color: "#fff",
-            display: "grid",
-            placeItems: "center",
-            margin: "0 auto 20px",
-            boxShadow: `0 0 0 8px ${VT.successSoft}`
-          }, children: /* @__PURE__ */ jsx10("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-          /* @__PURE__ */ jsx10("h2", { style: { fontSize: 23, fontWeight: 700, letterSpacing: "-0.02em", margin: 0 }, children: "\u0421\u043F\u0430\u0441\u0438\u0431\u043E, \u0433\u043E\u043B\u043E\u0441 \u0443\u0447\u043B\u0438" }),
-          /* @__PURE__ */ jsxs9("p", { style: { fontSize: 15, color: VT.inkSoft, maxWidth: 380, margin: "10px auto 0", lineHeight: 1.5 }, children: [
-            "\u0417\u0430\u0441\u0447\u0438\u0442\u0430\u043B\u0438 ",
-            n,
-            " ",
-            fbPlural(n),
-            ". \u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u043D\u0430\u0431\u0435\u0440\u0451\u0442\u0441\u044F 10 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443",
-            contact.trim() ? " \u0438 \u043D\u0430\u043F\u0438\u0448\u0435\u043C \u0432\u0430\u043C." : ". \u0425\u043E\u0442\u0438\u0442\u0435 \u0443\u0437\u043D\u0430\u0442\u044C \u043E \u0437\u0430\u043F\u0443\u0441\u043A\u0435 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442."
-          ] }),
-          /* @__PURE__ */ jsx10("div", { style: { marginTop: 24 }, onClick: () => setOpen(false), children: /* @__PURE__ */ jsx10(Btn, { variant: "secondary", size: "sm", style: { cursor: "pointer" }, children: "\u0413\u043E\u0442\u043E\u0432\u043E" }) })
-        ] }) : /* @__PURE__ */ jsxs9("div", { style: { padding: mobile ? "26px 20px 22px" : "30px 32px 26px" }, children: [
-          /* @__PURE__ */ jsx10("h2", { style: { fontSize: mobile ? 21 : 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 40px 8px 0", lineHeight: 1.12 }, children: "\u0421\u043A\u0430\u0436\u0438\u0442\u0435, \u0447\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442" }),
-          /* @__PURE__ */ jsx10("p", { style: { fontSize: 14, color: VT.inkSoft, margin: 0, maxWidth: 440, lineHeight: 1.45 }, children: "\u041D\u0430\u0431\u0438\u0440\u0430\u0435\u043C 10 \u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u043F\u043E \u043F\u0443\u043D\u043A\u0442\u0443 \u2014 \u0431\u0435\u0440\u0451\u043C \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u0427\u0435\u043C \u0431\u043E\u043B\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439 \u043F\u0440\u043E\u0441\u044F\u0442 \u043E\u0434\u043D\u043E \u0438 \u0442\u043E \u0436\u0435, \u0442\u0435\u043C \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u043C." }),
-          /* @__PURE__ */ jsxs9("span", { style: {
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            marginTop: 14,
-            fontSize: 12.5,
-            color: VT.inkSoft,
-            fontWeight: 500,
-            background: VT.white,
-            border: `1px solid ${VT.line}`,
-            padding: "6px 12px",
-            borderRadius: VT.r.pill,
-            whiteSpace: "nowrap"
-          }, children: [
-            /* @__PURE__ */ jsx10("span", { style: { width: 7, height: 7, borderRadius: "50%", background: VT.success, boxShadow: `0 0 0 4px ${VT.successSoft}` } }),
-            /* @__PURE__ */ jsx10("b", { style: { color: VT.ink, fontVariantNumeric: "tabular-nums" }, children: baseTotal + n }),
-            "\xA0\u0433\u043E\u043B\u043E\u0441\u043E\u0432 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E"
-          ] }),
-          /* @__PURE__ */ jsx10(
-            FBVoteSection,
-            {
-              title: "\u0425\u043E\u0447\u0443 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
-              items: FB_SOURCES,
-              votes,
-              onToggle: toggle,
-              mobile,
-              baseOf,
-              ownVal: ownSrc,
-              ownShown: showOwnSrc,
-              onOwnShow: () => setShowOwnSrc(true),
-              onOwnChange: setOwnSrc,
-              ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430"
-            }
-          ),
-          /* @__PURE__ */ jsx10(
-            FBVoteSection,
-            {
-              title: "\u0425\u043E\u0447\u0443 \u0444\u0438\u0447\u0443",
-              items: FB_FEATURES,
-              votes,
-              onToggle: toggle,
-              mobile,
-              baseOf,
-              ownVal: ownFeat,
-              ownShown: showOwnFeat,
-              onOwnShow: () => setShowOwnFeat(true),
-              onOwnChange: setOwnFeat,
-              ownPlaceholder: "\u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0438\u0447\u0438"
-            }
-          ),
-          /* @__PURE__ */ jsxs9("div", { style: {
-            marginTop: 20,
-            paddingLeft: 15,
-            borderLeft: `3px solid ${awake ? VT.accent : VT.line}`,
-            opacity: awake ? 1 : 0.5,
-            pointerEvents: awake ? "auto" : "none",
-            transition: "opacity .3s, border-color .3s"
-          }, children: [
-            /* @__PURE__ */ jsxs9("div", { style: { display: "flex", gap: 12, alignItems: "flex-start" }, children: [
-              /* @__PURE__ */ jsx10("span", { style: {
-                flex: "0 0 auto",
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                marginTop: 1,
-                border: `2px solid ${awake ? VT.success : VT.line}`,
-                background: awake ? VT.success : VT.white,
-                color: "#fff",
-                display: "grid",
-                placeItems: "center",
-                transition: "all .3s"
-              }, children: awake && /* @__PURE__ */ jsx10("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "3", children: /* @__PURE__ */ jsx10("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }) }),
-              /* @__PURE__ */ jsxs9("div", { children: [
-                /* @__PURE__ */ jsx10("strong", { style: { display: "block", fontSize: 15.5, fontWeight: 700 }, children: "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C" }),
-                /* @__PURE__ */ jsx10("span", { style: { display: "block", fontSize: 13, color: VT.inkSoft, marginTop: 3, lineHeight: 1.4 }, children: "\u041E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u043D\u0442\u0430\u043A\u0442 \u2014 \u0441\u043E\u043E\u0431\u0449\u0438\u043C, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u0430\u0448 \u0433\u043E\u043B\u043E\u0441 \u043D\u0430\u0431\u0435\u0440\u0451\u0442 10 \u0438 \u043F\u0443\u043D\u043A\u0442 \u043F\u043E\u043F\u0430\u0434\u0451\u0442 \u0432 \u0440\u0430\u0431\u043E\u0442\u0443. \u041D\u0438\u043A\u043E\u043C\u0443 \u043D\u0435 \u043F\u043E\u043A\u0430\u0436\u0435\u043C \u0438 \u0441\u043F\u0430\u043C\u0438\u0442\u044C \u043D\u0435 \u0431\u0443\u0434\u0435\u043C." })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxs9("div", { style: { display: "grid", gridTemplateColumns: mobile ? "1fr" : "1fr 1fr", gap: 11, marginTop: 14 }, children: [
-              /* @__PURE__ */ jsx10(FBField, { placeholder: "\u0418\u043C\u044F", value: name, onChange: setName }),
-              /* @__PURE__ */ jsx10(FBField, { placeholder: "Email, \u0442\u0435\u043B\u0435\u0444\u043E\u043D \u0438\u043B\u0438 @telegram", value: contact, onChange: setContact })
-            ] }),
-            /* @__PURE__ */ jsx10(FBReveal, { label: "+ \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439", shown: showMsg, onShow: () => setShowMsg(true), children: /* @__PURE__ */ jsx10(FBField, { textarea: true, placeholder: "\u0447\u0442\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0440\u0430\u0441\u0441\u043A\u0430\u0437\u0430\u0442\u044C", value: msg, onChange: setMsg }) })
-          ] }),
-          error && /* @__PURE__ */ jsx10("p", { style: { marginTop: 14, marginBottom: 0, fontSize: 13.5, fontWeight: 500, color: VT.danger }, children: error }),
-          /* @__PURE__ */ jsxs9("div", { style: { display: "flex", alignItems: "center", gap: 16, marginTop: error ? 12 : 24, flexWrap: "wrap" }, children: [
-            /* @__PURE__ */ jsx10("div", { onClick: handleSubmit, style: { width: mobile ? "100%" : "auto" }, children: /* @__PURE__ */ jsx10(
-              Btn,
-              {
-                size: "md",
-                icon: submitting ? /* @__PURE__ */ jsx10(Spinner, { size: 15 }) : void 0,
-                style: { width: mobile ? "100%" : "auto", opacity: n === 0 || submitting ? 0.55 : 1, cursor: n === 0 || submitting ? "not-allowed" : "pointer" },
-                children: submitting ? "\u041E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u043C\u2026" : n > 0 ? `\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C ${n} ${fbPlural(n)}` : "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0433\u043E\u043B\u043E\u0441"
-              }
-            ) }),
-            n === 0 && !mobile && !submitting && /* @__PURE__ */ jsx10("span", { style: { fontSize: 13.5, color: VT.inkFaint }, children: "\u041E\u0442\u043C\u0435\u0442\u044C\u0442\u0435 \u0445\u043E\u0442\u044F \u0431\u044B \u043E\u0434\u0438\u043D \u043F\u0443\u043D\u043A\u0442" })
-          ] })
-        ] })
+      children: /* @__PURE__ */ jsxs10("div", { ref: dialogRef, style: sheet, role: "dialog", "aria-modal": embedded ? void 0 : "true", "aria-label": mode === "question" ? "\u0417\u0430\u0434\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441" : COPY["blocker.title"], children: [
+        /* @__PURE__ */ jsx11("div", { style: { display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "12px 12px 0", flex: "0 0 auto" }, children: /* @__PURE__ */ jsx11("button", { className: "ss-iconbtn", type: "button", onClick: () => setOpen(false), "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", children: /* @__PURE__ */ jsx11(Icon2, { d: ["M18 6 6 18", "m6 6 12 12"], size: 20, sw: 2 }) }) }),
+        /* @__PURE__ */ jsx11("div", { style: { padding: mobile ? "4px 18px 22px" : "2px 32px 28px", overflowY: "auto", flex: 1 }, children: inner })
       ] })
     }
   );
-  if (embedded) {
-    return /* @__PURE__ */ jsxs9("div", { style: { position: "relative", width: "100%", minHeight: "100%", background: VT.bg, fontFamily: VT.font.sans, color: VT.ink, letterSpacing: "-0.01em" }, children: [
-      FauxPage(),
-      !isOpen && FloatingBtn({ fixed: false }),
-      isOpen && Dialog()
-    ] });
-  }
-  return /* @__PURE__ */ jsxs9(React5.Fragment, { children: [
-    !isOpen && FloatingBtn({ fixed: true }),
-    isOpen && Dialog()
-  ] });
 }
-var S9_FeedbackPage = S9_FeedbackModal;
-var CustomerSite = S7_CustomerSite;
-var LeadForm = S8_LeadFormConfirm;
-var FeedbackPage = S9_FeedbackModal;
+function FeedbackV2Fab({ onClick, embedded }) {
+  return /* @__PURE__ */ jsxs10(
+    "button",
+    {
+      type: "button",
+      "data-fb-fab": "",
+      onClick,
+      className: "fb2 fb2-fab",
+      style: { position: embedded ? "absolute" : "fixed", right: 24, bottom: 24, zIndex: 190 },
+      children: [
+        /* @__PURE__ */ jsx11("span", { style: { display: "inline-flex" }, children: /* @__PURE__ */ jsx11(Icon2, { d: ["M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5z"], size: 18, sw: 2 }) }),
+        COPY["question.fab"]
+      ]
+    }
+  );
+}
+var Fb2_CSS = ".fb2{--bone:#F2EEE6;--paper:#FBF9F4;--ink:#1B1712;--ink-70:#4C463C;--ink-45:#6E675A;--line:#E5DFD3;--line-2:#D6CEBE;--accent:#7A2B34;--accent-dk:#631F27;--on-accent:#FBF9F4;--display:'Sofia Sans Condensed',system-ui,sans-serif;--text:'Onest',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;font-family:var(--text);color:var(--ink);line-height:1.55;}.fb2 *{box-sizing:border-box;border-radius:0;box-shadow:none;}.fb2 h2,.fb2 h3,.fb2 p{margin:0;}.fb2 button{font-family:inherit;}.fb2 .fb2-h{font-family:var(--display);font-weight:700;font-size:27px;line-height:1.04;letter-spacing:-.01em;color:var(--ink);padding-right:8px;text-wrap:balance;}.fb2 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 24px;background:var(--accent);color:var(--on-accent);font-family:var(--text);font-weight:600;font-size:16px;line-height:1;white-space:nowrap;border:none;cursor:pointer;transition:background .16s;}.fb2 .btn:hover:not(:disabled){background:var(--accent-dk);}.fb2 .btn--block{display:flex;width:100%;}.fb2 .btn .arw{display:inline-block;transition:transform .16s;}.fb2 .btn:hover:not(:disabled) .arw{transform:translateX(4px);}.fb2 .chip{display:inline-flex;align-items:center;height:40px;padding:0 15px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-weight:600;font-size:14.5px;line-height:1;cursor:pointer;transition:background .14s,border-color .14s;}.fb2 .chip:hover{border-color:var(--ink-45);}.fb2 .chip.is-active{background:var(--accent);border-color:var(--accent);color:var(--paper);font-weight:700;}.fb2 .rcard{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:14px 15px;border:1px solid var(--line-2);background:#fff;color:var(--ink);font-weight:500;line-height:1.3;cursor:pointer;transition:background .14s,border-color .14s;}.fb2 .rcard:hover{border-color:var(--ink-45);}.fb2 .rcard.is-active{border:1.5px solid var(--accent);background:var(--bone);font-weight:600;}.fb2 .rdot{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);background:#fff;display:inline-flex;align-items:center;justify-content:center;color:var(--on-accent);transition:background .14s,border-color .14s;}.fb2 .rcard.is-active .rdot{background:var(--accent);border-color:var(--accent);}.fb2 .tlink{background:none;border:none;cursor:pointer;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px;font:inherit;padding:4px 2px;}.fb2 .tlink:hover:not(:disabled){color:var(--accent);text-decoration-color:var(--accent);}.fb2 .tlink:disabled{opacity:.5;cursor:default;}.fb2 .fb2-ta{width:100%;padding:13px 14px;border:1px solid var(--line-2);background:#fff;font:inherit;font-size:16px;color:var(--ink);outline:none;resize:vertical;min-height:84px;}.fb2 .fb2-ta:focus{border-color:var(--ink-45);}.fb2 .fb2-sign{font-size:13.5px;font-style:italic;color:var(--ink-45);text-align:center;text-wrap:pretty;}.fb2 .ss-iconbtn{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink);background:none;border:none;cursor:pointer;transition:background .14s;}.fb2 .ss-iconbtn:hover{background:var(--bone);}.fb2.fb2-fab{display:inline-flex;align-items:center;gap:9px;height:auto;padding:14px 20px;background:var(--accent);color:var(--on-accent);font-family:var(--text);font-weight:600;font-size:14.5px;line-height:1;border:none;cursor:pointer;transition:background .16s;}.fb2.fb2-fab:hover{background:var(--accent-dk);}@keyframes fb2Reveal{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}@keyframes fb2Enter{from{opacity:0}to{opacity:1}}@keyframes fb2Spin{to{transform:rotate(360deg)}}.fb2 .fb2-a2{animation:fb2Reveal .26s cubic-bezier(.2,.7,.2,1);}.fb2.fb2-enter{animation:fb2Enter .18s ease;}.fb2 .fb2-spin{animation:fb2Spin .8s linear infinite;}@media (prefers-reduced-motion: reduce){.fb2 .fb2-a2,.fb2.fb2-enter{animation:none;}.fb2 .btn .arw{transition:none;}}";
+function Fb2_Styles() {
+  return React5.createElement("style", { "data-samosite-canon-fb2": "0.13", dangerouslySetInnerHTML: { __html: Fb2_CSS } });
+}
 
 // src/admin-demo/index.tsx
 import { useState as useState4 } from "react";
-import { Fragment as Fragment10, jsx as jsx11, jsxs as jsxs10 } from "react/jsx-runtime";
+import { Fragment as Fragment10, jsx as jsx12, jsxs as jsxs11 } from "react/jsx-runtime";
 var DEMO_SITE = {
   name: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B",
   handle: "studia-anna",
@@ -10374,38 +10307,38 @@ function NavIcon({ kind, size = 18 }) {
   const props = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
   switch (kind) {
     case "bar":
-      return /* @__PURE__ */ jsxs10("svg", { ...props, children: [
-        /* @__PURE__ */ jsx11("path", { d: "M4 20V12" }),
-        /* @__PURE__ */ jsx11("path", { d: "M10 20V6" }),
-        /* @__PURE__ */ jsx11("path", { d: "M16 20V14" }),
-        /* @__PURE__ */ jsx11("path", { d: "M22 20V9" })
+      return /* @__PURE__ */ jsxs11("svg", { ...props, children: [
+        /* @__PURE__ */ jsx12("path", { d: "M4 20V12" }),
+        /* @__PURE__ */ jsx12("path", { d: "M10 20V6" }),
+        /* @__PURE__ */ jsx12("path", { d: "M16 20V14" }),
+        /* @__PURE__ */ jsx12("path", { d: "M22 20V9" })
       ] });
     case "site":
-      return /* @__PURE__ */ jsxs10("svg", { ...props, children: [
-        /* @__PURE__ */ jsx11("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-        /* @__PURE__ */ jsx11("path", { d: "M3 8h18" }),
-        /* @__PURE__ */ jsx11("circle", { cx: "7", cy: "6", r: "0.5", fill: "currentColor" })
+      return /* @__PURE__ */ jsxs11("svg", { ...props, children: [
+        /* @__PURE__ */ jsx12("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+        /* @__PURE__ */ jsx12("path", { d: "M3 8h18" }),
+        /* @__PURE__ */ jsx12("circle", { cx: "7", cy: "6", r: "0.5", fill: "currentColor" })
       ] });
     case "inbox":
-      return /* @__PURE__ */ jsxs10("svg", { ...props, children: [
-        /* @__PURE__ */ jsx11("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }),
-        /* @__PURE__ */ jsx11("path", { d: "M3 14h5l1.5 2h5L16 14h5" })
+      return /* @__PURE__ */ jsxs11("svg", { ...props, children: [
+        /* @__PURE__ */ jsx12("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }),
+        /* @__PURE__ */ jsx12("path", { d: "M3 14h5l1.5 2h5L16 14h5" })
       ] });
     case "star":
-      return /* @__PURE__ */ jsx11("svg", { ...props, fill: "currentColor", stroke: "none", children: /* @__PURE__ */ jsx11("path", { d: "M12 2 L14.5 8.5 L21.5 9.3 L16.4 14 L17.9 21 L12 17.4 L6.1 21 L7.6 14 L2.5 9.3 L9.5 8.5 Z" }) });
+      return /* @__PURE__ */ jsx12("svg", { ...props, fill: "currentColor", stroke: "none", children: /* @__PURE__ */ jsx12("path", { d: "M12 2 L14.5 8.5 L21.5 9.3 L16.4 14 L17.9 21 L12 17.4 L6.1 21 L7.6 14 L2.5 9.3 L9.5 8.5 Z" }) });
     case "list":
-      return /* @__PURE__ */ jsxs10("svg", { ...props, children: [
-        /* @__PURE__ */ jsx11("path", { d: "M8 6h13" }),
-        /* @__PURE__ */ jsx11("path", { d: "M8 12h13" }),
-        /* @__PURE__ */ jsx11("path", { d: "M8 18h13" }),
-        /* @__PURE__ */ jsx11("circle", { cx: "4", cy: "6", r: "1.2" }),
-        /* @__PURE__ */ jsx11("circle", { cx: "4", cy: "12", r: "1.2" }),
-        /* @__PURE__ */ jsx11("circle", { cx: "4", cy: "18", r: "1.2" })
+      return /* @__PURE__ */ jsxs11("svg", { ...props, children: [
+        /* @__PURE__ */ jsx12("path", { d: "M8 6h13" }),
+        /* @__PURE__ */ jsx12("path", { d: "M8 12h13" }),
+        /* @__PURE__ */ jsx12("path", { d: "M8 18h13" }),
+        /* @__PURE__ */ jsx12("circle", { cx: "4", cy: "6", r: "1.2" }),
+        /* @__PURE__ */ jsx12("circle", { cx: "4", cy: "12", r: "1.2" }),
+        /* @__PURE__ */ jsx12("circle", { cx: "4", cy: "18", r: "1.2" })
       ] });
     case "gear":
-      return /* @__PURE__ */ jsxs10("svg", { ...props, children: [
-        /* @__PURE__ */ jsx11("circle", { cx: "12", cy: "12", r: "3" }),
-        /* @__PURE__ */ jsx11("path", { d: "M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" })
+      return /* @__PURE__ */ jsxs11("svg", { ...props, children: [
+        /* @__PURE__ */ jsx12("circle", { cx: "12", cy: "12", r: "3" }),
+        /* @__PURE__ */ jsx12("path", { d: "M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" })
       ] });
   }
   return null;
@@ -10418,7 +10351,7 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
   const ys = points.map((p) => h - (p - min) / range * (h - 4) - 2);
   const path = xs.map((x, i) => `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(" ");
   const area = `${path} L ${w} ${h} L 0 ${h} Z`;
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 14,
@@ -10427,10 +10360,10 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
     flexDirection: "column",
     gap: 6
   }, children: [
-    /* @__PURE__ */ jsx11("div", { style: { fontSize: 12.5, color: VT.inkFaint, fontWeight: 500, letterSpacing: "-0.005em" }, children: label }),
-    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
-      /* @__PURE__ */ jsx11("span", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink, lineHeight: 1 }, children: value }),
-      /* @__PURE__ */ jsxs10("span", { style: {
+    /* @__PURE__ */ jsx12("div", { style: { fontSize: 12.5, color: VT.inkFaint, fontWeight: 500, letterSpacing: "-0.005em" }, children: label }),
+    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
+      /* @__PURE__ */ jsx12("span", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink, lineHeight: 1 }, children: value }),
+      /* @__PURE__ */ jsxs11("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 12,
         fontWeight: 600,
@@ -10441,9 +10374,9 @@ function StatCard({ label, value, delta, deltaTone, points, color }) {
         delta
       ] })
     ] }),
-    /* @__PURE__ */ jsxs10("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%", height: h, style: { marginTop: 4 }, children: [
-      /* @__PURE__ */ jsx11("path", { d: area, fill: color, fillOpacity: "0.12" }),
-      /* @__PURE__ */ jsx11("path", { d: path, fill: "none", stroke: color, strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" })
+    /* @__PURE__ */ jsxs11("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%", height: h, style: { marginTop: 4 }, children: [
+      /* @__PURE__ */ jsx12("path", { d: area, fill: color, fillOpacity: "0.12" }),
+      /* @__PURE__ */ jsx12("path", { d: path, fill: "none", stroke: color, strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" })
     ] })
   ] });
 }
@@ -10463,31 +10396,31 @@ function TrafficChart() {
   const visitsArea = `${visitsPath} L ${xFor(days - 1)} ${yFor(0)} L ${xFor(0)} ${yFor(0)} Z`;
   const xLabels = [0, 7, 14, 21, 29];
   const xLabelText = ["1 \u043C\u0430\u044F", "8 \u043C\u0430\u044F", "15 \u043C\u0430\u044F", "22 \u043C\u0430\u044F", "30 \u043C\u0430\u044F"];
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     padding: 22
   }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }, children: [
-      /* @__PURE__ */ jsxs10("div", { children: [
-        /* @__PURE__ */ jsx11("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "\u0422\u0440\u0430\u0444\u0438\u043A \u0437\u0430 30 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx11("div", { style: { fontSize: 13, color: VT.inkFaint, marginTop: 2 }, children: "\u041A\u0430\u0436\u0434\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u2014 \u0434\u0435\u043D\u044C. \u0417\u0430\u044F\u0432\u043A\u0438 \u0438\u0434\u0443\u0442 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u044F\u043C." })
+    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs11("div", { children: [
+        /* @__PURE__ */ jsx12("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "\u0422\u0440\u0430\u0444\u0438\u043A \u0437\u0430 30 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx12("div", { style: { fontSize: 13, color: VT.inkFaint, marginTop: 2 }, children: "\u041A\u0430\u0436\u0434\u0430\u044F \u0442\u043E\u0447\u043A\u0430 \u2014 \u0434\u0435\u043D\u044C. \u0417\u0430\u044F\u0432\u043A\u0438 \u0438\u0434\u0443\u0442 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u044F\u043C." })
       ] }),
-      /* @__PURE__ */ jsxs10("div", { style: { display: "inline-flex", gap: 14, fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs10("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
-          /* @__PURE__ */ jsx11("span", { style: { width: 10, height: 10, borderRadius: "50%", background: VT.accent } }),
+      /* @__PURE__ */ jsxs11("div", { style: { display: "inline-flex", gap: 14, fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs11("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
+          /* @__PURE__ */ jsx12("span", { style: { width: 10, height: 10, borderRadius: "50%", background: VT.accent } }),
           "\u041F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F"
         ] }),
-        /* @__PURE__ */ jsxs10("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
-          /* @__PURE__ */ jsx11("span", { style: { width: 10, height: 2, background: "oklch(0.5 0.13 240)" } }),
+        /* @__PURE__ */ jsxs11("span", { style: { display: "inline-flex", alignItems: "center", gap: 6 }, children: [
+          /* @__PURE__ */ jsx12("span", { style: { width: 10, height: 2, background: "oklch(0.5 0.13 240)" } }),
           "\u0417\u0430\u044F\u0432\u043A\u0438"
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs10("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, style: { display: "block" }, children: [
-      [0, 0.25, 0.5, 0.75, 1].map((t, i) => /* @__PURE__ */ jsxs10("g", { children: [
-        /* @__PURE__ */ jsx11(
+    /* @__PURE__ */ jsxs11("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", height: H, style: { display: "block" }, children: [
+      [0, 0.25, 0.5, 0.75, 1].map((t, i) => /* @__PURE__ */ jsxs11("g", { children: [
+        /* @__PURE__ */ jsx12(
           "line",
           {
             x1: PAD.left,
@@ -10498,11 +10431,11 @@ function TrafficChart() {
             strokeWidth: "1"
           }
         ),
-        /* @__PURE__ */ jsx11("text", { x: PAD.left - 8, y: PAD.top + inner.h * t + 4, fontSize: "10", fill: VT.inkFaint, textAnchor: "end", fontFamily: VT.font.mono, children: Math.round(maxV * (1 - t)) })
+        /* @__PURE__ */ jsx12("text", { x: PAD.left - 8, y: PAD.top + inner.h * t + 4, fontSize: "10", fill: VT.inkFaint, textAnchor: "end", fontFamily: VT.font.mono, children: Math.round(maxV * (1 - t)) })
       ] }, i)),
-      /* @__PURE__ */ jsx11("path", { d: visitsArea, fill: VT.accent, fillOpacity: "0.10" }),
-      /* @__PURE__ */ jsx11("path", { d: visitsPath, fill: "none", stroke: VT.accent, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
-      leads.map((l, i) => /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12("path", { d: visitsArea, fill: VT.accent, fillOpacity: "0.10" }),
+      /* @__PURE__ */ jsx12("path", { d: visitsPath, fill: "none", stroke: VT.accent, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }),
+      leads.map((l, i) => /* @__PURE__ */ jsx12(
         "rect",
         {
           x: xFor(i) - 2,
@@ -10515,7 +10448,7 @@ function TrafficChart() {
         },
         i
       )),
-      xLabels.map((i, k) => /* @__PURE__ */ jsx11("text", { x: xFor(i), y: H - 8, fontSize: "11", fill: VT.inkFaint, textAnchor: "middle", children: xLabelText[k] }, k))
+      xLabels.map((i, k) => /* @__PURE__ */ jsx12("text", { x: xFor(i), y: H - 8, fontSize: "11", fill: VT.inkFaint, textAnchor: "middle", children: xLabelText[k] }, k))
     ] })
   ] });
 }
@@ -10527,29 +10460,29 @@ function SourceBreakdown() {
     { name: "2\u0413\u0418\u0421", share: 8, color: "#19BB4F" },
     { name: "Google", share: 4, color: "oklch(0.55 0.18 25)" }
   ];
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     padding: 22
   }, children: [
-    /* @__PURE__ */ jsx11("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442" }),
-    /* @__PURE__ */ jsxs10("div", { style: { fontSize: 13, color: VT.inkFaint, marginBottom: 16 }, children: [
+    /* @__PURE__ */ jsx12("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 4 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442" }),
+    /* @__PURE__ */ jsxs11("div", { style: { fontSize: 13, color: VT.inkFaint, marginBottom: 16 }, children: [
       "\u042F.\u041A\u0430\u0440\u0442\u044B \u2014 \u0441\u0430\u043C\u044B\u0439 \u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u044B\u0439 \u043A\u0430\u043D\u0430\u043B. ",
       BRAND.name,
       " \u0434\u0435\u0440\u0436\u0438\u0442 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0441\u0432\u0435\u0436\u0435\u0439."
     ] }),
-    /* @__PURE__ */ jsx11("div", { style: { display: "flex", height: 14, borderRadius: 7, overflow: "hidden" }, children: sources.map((s) => /* @__PURE__ */ jsx11("span", { style: { width: `${s.share}%`, background: s.color } }, s.name)) }),
-    /* @__PURE__ */ jsx11("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }, children: sources.map((s) => /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsx12("div", { style: { display: "flex", height: 14, borderRadius: 7, overflow: "hidden" }, children: sources.map((s) => /* @__PURE__ */ jsx12("span", { style: { width: `${s.share}%`, background: s.color } }, s.name)) }),
+    /* @__PURE__ */ jsx12("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }, children: sources.map((s) => /* @__PURE__ */ jsxs11("div", { style: {
       display: "flex",
       alignItems: "center",
       gap: 10,
       fontSize: 13.5,
       color: VT.ink
     }, children: [
-      /* @__PURE__ */ jsx11("span", { style: { width: 12, height: 12, borderRadius: 3, background: s.color, flex: "0 0 auto" } }),
-      /* @__PURE__ */ jsx11("span", { style: { flex: 1 }, children: s.name }),
-      /* @__PURE__ */ jsxs10("b", { style: { fontFamily: VT.font.mono, color: VT.ink }, children: [
+      /* @__PURE__ */ jsx12("span", { style: { width: 12, height: 12, borderRadius: 3, background: s.color, flex: "0 0 auto" } }),
+      /* @__PURE__ */ jsx12("span", { style: { flex: 1 }, children: s.name }),
+      /* @__PURE__ */ jsxs11("b", { style: { fontFamily: VT.font.mono, color: VT.ink }, children: [
         s.share,
         "%"
       ] })
@@ -10557,13 +10490,13 @@ function SourceBreakdown() {
   ] });
 }
 function AnalyticsTab() {
-  return /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+    /* @__PURE__ */ jsxs11("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(4, 1fr)",
       gap: 12
     }, children: [
-      /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12(
         StatCard,
         {
           label: "\u041F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F / 30 \u0434\u043D\u0435\u0439",
@@ -10574,7 +10507,7 @@ function AnalyticsTab() {
           points: [210, 198, 215, 240, 232, 260, 275, 290, 280, 295, 310, 325, 345, 360]
         }
       ),
-      /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12(
         StatCard,
         {
           label: "\u0423\u043D\u0438\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0438",
@@ -10585,7 +10518,7 @@ function AnalyticsTab() {
           points: [140, 145, 160, 170, 175, 180, 195, 210, 215, 225, 240, 250, 265, 275]
         }
       ),
-      /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12(
         StatCard,
         {
           label: "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u0440\u0438\u043D\u044F\u0442\u043E",
@@ -10596,7 +10529,7 @@ function AnalyticsTab() {
           points: [2, 3, 4, 3, 5, 4, 5, 6, 5, 7, 6, 8, 7, 9]
         }
       ),
-      /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12(
         StatCard,
         {
           label: "\u041A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F \u0432\xA0\u0437\u0430\u044F\u0432\u043A\u0443",
@@ -10608,24 +10541,24 @@ function AnalyticsTab() {
         }
       )
     ] }),
-    /* @__PURE__ */ jsx11(TrafficChart, {}),
-    /* @__PURE__ */ jsxs10("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }, children: [
-      /* @__PURE__ */ jsx11(SourceBreakdown, {}),
-      /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsx12(TrafficChart, {}),
+    /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }, children: [
+      /* @__PURE__ */ jsx12(SourceBreakdown, {}),
+      /* @__PURE__ */ jsxs11("div", { style: {
         background: VT.white,
         border: `1px solid ${VT.line}`,
         borderRadius: 16,
         padding: 22
       }, children: [
-        /* @__PURE__ */ jsx11("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 16 }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E" }),
-        /* @__PURE__ */ jsx11("ul", { style: { listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }, children: [
+        /* @__PURE__ */ jsx12("div", { style: { fontSize: 17, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em", marginBottom: 16 }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E" }),
+        /* @__PURE__ */ jsx12("ul", { style: { listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }, children: [
           ["\u041B\u0443\u0447\u0448\u0438\u0439 \u0434\u0435\u043D\u044C", "\u0427\u0435\u0442\u0432\u0435\u0440\u0433 \u2014 142 \u043F\u043E\u0441\u0435\u0449\u0435\u043D\u0438\u044F, 8 \u0437\u0430\u044F\u0432\u043E\u043A"],
           ["\u041B\u0443\u0447\u0448\u0438\u0439 \u043A\u0430\u043D\u0430\u043B", "\u042F.\u041A\u0430\u0440\u0442\u044B \u2014 \u0432\u044B\u0440\u043E\u0441\u043B\u0438 \u043D\u0430 +24% \u0437\u0430\xA0\u043D\u0435\u0434\u0435\u043B\u044E"],
           ["\u041B\u0443\u0447\u0448\u0430\u044F \u0443\u0441\u043B\u0443\u0433\u0430", "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435 \u2014 12 \u0437\u0430\u043F\u0438\u0441\u0435\u0439"],
           ["\u0427\u0442\u043E \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u043E\u0441\u044C", "\u0421\u0432\u0435\u0436\u0438\u0435 3 \u0444\u043E\u0442\u043E \u0438\u0437 Telegram + 1 \u043D\u043E\u0432\u044B\u0439 \u043E\u0442\u0437\u044B\u0432 \u0441\xA0\u042F.\u041A\u0430\u0440\u0442"]
-        ].map(([k, v]) => /* @__PURE__ */ jsxs10("li", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
-          /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.08em", color: VT.inkFaint }, children: k.toUpperCase() }),
-          /* @__PURE__ */ jsx11("span", { style: { fontSize: 14, color: VT.ink }, children: v })
+        ].map(([k, v]) => /* @__PURE__ */ jsxs11("li", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
+          /* @__PURE__ */ jsx12("span", { style: { fontFamily: VT.font.mono, fontSize: 11, letterSpacing: "0.08em", color: VT.inkFaint }, children: k.toUpperCase() }),
+          /* @__PURE__ */ jsx12("span", { style: { fontSize: 14, color: VT.ink }, children: v })
         ] }, k)) })
       ] })
     ] })
@@ -10633,7 +10566,7 @@ function AnalyticsTab() {
 }
 function SiteEditTab() {
   const [title, setTitle] = useState4("\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u0432\xA0\u041F\u0435\u0442\u0440\u043E\u0437\u0430\u0432\u043E\u0434\u0441\u043A\u0435 \u2014 \u0431\u0435\u0437\xA0\u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438");
-  const [sub, setSub] = useState4("\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \u0438\xA0\u0441\u0442\u043E\u0439\u043A\u043E\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435. \u041E\u0434\u0438\u043D \u043A\u043B\u0438\u0435\u043D\u0442 \u0432\xA0\u0447\u0430\u0441 \u2014 \u0431\u0435\u0437\xA0\u0441\u043F\u0435\u0448\u043A\u0438, \u0432\xA0\u0442\u0438\u0448\u0438\u043D\u0435, \u0441\xA0\u043A\u043E\u0444\u0435.");
+  const [sub2, setSub] = useState4("\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \u0438\xA0\u0441\u0442\u043E\u0439\u043A\u043E\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435. \u041E\u0434\u0438\u043D \u043A\u043B\u0438\u0435\u043D\u0442 \u0432\xA0\u0447\u0430\u0441 \u2014 \u0431\u0435\u0437\xA0\u0441\u043F\u0435\u0448\u043A\u0438, \u0432\xA0\u0442\u0438\u0448\u0438\u043D\u0435, \u0441\xA0\u043A\u043E\u0444\u0435.");
   const [accent, setAccent] = useState4(VT.accent);
   const [sections, setSections] = useState4({ reviews: true, gallery: true, services: true, faq: true, map: true });
   const accentSwatches = [
@@ -10644,8 +10577,8 @@ function SiteEditTab() {
     "oklch(0.45 0.12 285)"
   ];
   const togSection = (k) => setSections((s) => ({ ...s, [k]: !s[k] }));
-  return /* @__PURE__ */ jsxs10("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 16, alignItems: "flex-start" }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 16, alignItems: "flex-start" }, children: [
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 16,
@@ -10653,19 +10586,19 @@ function SiteEditTab() {
       position: "sticky",
       top: 88
     }, children: [
-      /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }, children: [
-        /* @__PURE__ */ jsx11("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: "\u041F\u0440\u0435\u0432\u044C\u044E" }),
-        /* @__PURE__ */ jsx11(Mono, { style: { fontSize: 11.5 }, children: DEMO_SITE.domain })
+      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }, children: [
+        /* @__PURE__ */ jsx12("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: "\u041F\u0440\u0435\u0432\u044C\u044E" }),
+        /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 11.5 }, children: DEMO_SITE.domain })
       ] }),
-      /* @__PURE__ */ jsxs10("div", { style: {
+      /* @__PURE__ */ jsxs11("div", { style: {
         background: VT.bgSoft,
         borderRadius: 10,
         overflow: "hidden",
         border: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsxs10("div", { style: { padding: "24px 22px" }, children: [
-          /* @__PURE__ */ jsx11("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", color: accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-          /* @__PURE__ */ jsx11("h2", { style: {
+        /* @__PURE__ */ jsxs11("div", { style: { padding: "24px 22px" }, children: [
+          /* @__PURE__ */ jsx12("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.12em", color: accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+          /* @__PURE__ */ jsx12("h2", { style: {
             fontSize: 26,
             fontWeight: 700,
             letterSpacing: "-0.025em",
@@ -10674,8 +10607,8 @@ function SiteEditTab() {
             color: VT.ink,
             textWrap: "balance"
           }, children: title }),
-          /* @__PURE__ */ jsx11("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: 0, lineHeight: 1.5 }, children: sub }),
-          /* @__PURE__ */ jsx11("div", { style: {
+          /* @__PURE__ */ jsx12("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: 0, lineHeight: 1.5 }, children: sub2 }),
+          /* @__PURE__ */ jsx12("div", { style: {
             marginTop: 14,
             display: "inline-flex",
             alignItems: "center",
@@ -10688,13 +10621,13 @@ function SiteEditTab() {
             fontWeight: 600
           }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u2192" })
         ] }),
-        /* @__PURE__ */ jsx11("div", { style: { borderTop: `1px solid ${VT.line}`, padding: 14, background: VT.white }, children: Object.entries({
+        /* @__PURE__ */ jsx12("div", { style: { borderTop: `1px solid ${VT.line}`, padding: 14, background: VT.white }, children: Object.entries({
           services: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B",
           reviews: "\u041E\u0442\u0437\u044B\u0432\u044B \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432",
           gallery: "\u0413\u0430\u043B\u0435\u0440\u0435\u044F \u0440\u0430\u0431\u043E\u0442",
           faq: "\u0427\u0430\u0441\u0442\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B",
           map: "\u041A\u0430\u0440\u0442\u0430 \u0438\xA0\u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"
-        }).map(([k, label]) => /* @__PURE__ */ jsxs10("div", { style: {
+        }).map(([k, label]) => /* @__PURE__ */ jsxs11("div", { style: {
           display: "flex",
           alignItems: "center",
           gap: 8,
@@ -10704,13 +10637,13 @@ function SiteEditTab() {
           color: sections[k] ? VT.ink : VT.inkFaint,
           textDecoration: sections[k] ? "none" : "line-through"
         }, children: [
-          /* @__PURE__ */ jsx11("span", { style: { color: sections[k] ? VT.success : VT.inkMuted, fontSize: 14 }, children: sections[k] ? "\u25CF" : "\u25CB" }),
+          /* @__PURE__ */ jsx12("span", { style: { color: sections[k] ? VT.success : VT.inkMuted, fontSize: 14 }, children: sections[k] ? "\u25CF" : "\u25CB" }),
           label
         ] }, k)) })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-      /* @__PURE__ */ jsx11(EditorBlock, { title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A (H1)", children: /* @__PURE__ */ jsx11(
+    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+      /* @__PURE__ */ jsx12(EditorBlock, { title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A (H1)", children: /* @__PURE__ */ jsx12(
         "textarea",
         {
           value: title,
@@ -10719,17 +10652,17 @@ function SiteEditTab() {
           style: editorTextarea
         }
       ) }),
-      /* @__PURE__ */ jsx11(EditorBlock, { title: "\u041F\u043E\u0434\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A", children: /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12(EditorBlock, { title: "\u041F\u043E\u0434\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A", children: /* @__PURE__ */ jsx12(
         "textarea",
         {
-          value: sub,
+          value: sub2,
           onChange: (e) => setSub(e.target.value),
           rows: 3,
           style: editorTextarea
         }
       ) }),
-      /* @__PURE__ */ jsxs10(EditorBlock, { title: "\u0426\u0432\u0435\u0442 \u0430\u043A\u0446\u0435\u043D\u0442\u0430", children: [
-        /* @__PURE__ */ jsx11("div", { style: { display: "flex", gap: 8 }, children: accentSwatches.map((c) => /* @__PURE__ */ jsx11("button", { onClick: () => setAccent(c), style: {
+      /* @__PURE__ */ jsxs11(EditorBlock, { title: "\u0426\u0432\u0435\u0442 \u0430\u043A\u0446\u0435\u043D\u0442\u0430", children: [
+        /* @__PURE__ */ jsx12("div", { style: { display: "flex", gap: 8 }, children: accentSwatches.map((c) => /* @__PURE__ */ jsx12("button", { onClick: () => setAccent(c), style: {
           width: 36,
           height: 36,
           borderRadius: 10,
@@ -10740,9 +10673,9 @@ function SiteEditTab() {
           transition: "all .15s",
           outlineOffset: -1
         }, "aria-label": `\u0426\u0432\u0435\u0442 ${c}` }, c)) }),
-        /* @__PURE__ */ jsx11("div", { style: { marginTop: 8, fontSize: 12, color: VT.inkFaint, fontFamily: VT.font.mono }, children: accent })
+        /* @__PURE__ */ jsx12("div", { style: { marginTop: 8, fontSize: 12, color: VT.inkFaint, fontFamily: VT.font.mono }, children: accent })
       ] }),
-      /* @__PURE__ */ jsx11(EditorBlock, { title: "Hero-\u0444\u043E\u0442\u043E", children: /* @__PURE__ */ jsxs10("div", { style: {
+      /* @__PURE__ */ jsx12(EditorBlock, { title: "Hero-\u0444\u043E\u0442\u043E", children: /* @__PURE__ */ jsxs11("div", { style: {
         display: "flex",
         alignItems: "center",
         gap: 12,
@@ -10750,23 +10683,23 @@ function SiteEditTab() {
         background: VT.bgSoft,
         borderRadius: 10
       }, children: [
-        /* @__PURE__ */ jsx11("div", { style: {
+        /* @__PURE__ */ jsx12("div", { style: {
           width: 48,
           height: 48,
           borderRadius: 8,
           background: `repeating-linear-gradient(135deg, ${VT.accentSoft} 0 6px, ${VT.bgSoft} 6px 12px)`,
           border: `1px solid ${VT.line}`
         } }),
-        /* @__PURE__ */ jsx11("div", { style: { flex: 1, fontSize: 13, color: VT.inkSoft }, children: "hero-anna-1.jpg \xB7 1.2 MB" }),
-        /* @__PURE__ */ jsx11("button", { style: editorSecondaryBtn, children: "\u0417\u0430\u043C\u0435\u043D\u0438\u0442\u044C" })
+        /* @__PURE__ */ jsx12("div", { style: { flex: 1, fontSize: 13, color: VT.inkSoft }, children: "hero-anna-1.jpg \xB7 1.2 MB" }),
+        /* @__PURE__ */ jsx12("button", { style: editorSecondaryBtn, children: "\u0417\u0430\u043C\u0435\u043D\u0438\u0442\u044C" })
       ] }) }),
-      /* @__PURE__ */ jsx11(EditorBlock, { title: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0435\u043A\u0446\u0438\u0438", children: /* @__PURE__ */ jsx11("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: Object.entries({
+      /* @__PURE__ */ jsx12(EditorBlock, { title: "\u0412\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0435\u043A\u0446\u0438\u0438", children: /* @__PURE__ */ jsx12("div", { style: { display: "flex", flexDirection: "column", gap: 8 }, children: Object.entries({
         services: "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B",
         reviews: "\u041E\u0442\u0437\u044B\u0432\u044B (\u2605 \u041B\u0423\u0427\u0428\u0418\u0415 \u2014 \u0432\u044B\u0431\u0440\u0430\u043D\u044B \u0418\u0418)",
         gallery: "\u0413\u0430\u043B\u0435\u0440\u0435\u044F \u0440\u0430\u0431\u043E\u0442",
         faq: "\u0427\u0430\u0441\u0442\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B",
         map: "\u041A\u0430\u0440\u0442\u0430 \u0438\xA0\u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"
-      }).map(([k, label]) => /* @__PURE__ */ jsxs10("label", { style: {
+      }).map(([k, label]) => /* @__PURE__ */ jsxs11("label", { style: {
         display: "flex",
         alignItems: "center",
         gap: 10,
@@ -10775,7 +10708,7 @@ function SiteEditTab() {
         fontSize: 14,
         color: VT.ink
       }, children: [
-        /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: {
           width: 36,
           height: 22,
           borderRadius: 11,
@@ -10783,7 +10716,7 @@ function SiteEditTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx11("span", { style: {
+        }, children: /* @__PURE__ */ jsx12("span", { style: {
           position: "absolute",
           top: 2,
           left: sections[k] ? 16 : 2,
@@ -10794,10 +10727,10 @@ function SiteEditTab() {
           transition: "left .15s",
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
         } }) }),
-        /* @__PURE__ */ jsx11("input", { type: "checkbox", checked: sections[k], onChange: () => togSection(k), style: { display: "none" } }),
+        /* @__PURE__ */ jsx12("input", { type: "checkbox", checked: sections[k], onChange: () => togSection(k), style: { display: "none" } }),
         label
       ] }, k)) }) }),
-      /* @__PURE__ */ jsx11("button", { style: {
+      /* @__PURE__ */ jsx12("button", { style: {
         background: VT.accent,
         color: "#fff",
         fontWeight: 700,
@@ -10838,13 +10771,13 @@ var editorSecondaryBtn = {
   cursor: "pointer"
 };
 function EditorBlock({ title, children }) {
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 14,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsx11("div", { style: { fontSize: 12, fontWeight: 600, color: VT.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }, children: title }),
+    /* @__PURE__ */ jsx12("div", { style: { fontSize: 12, fontWeight: 600, color: VT.inkFaint, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }, children: title }),
     children
   ] });
 }
@@ -10876,8 +10809,8 @@ function LeadsTab() {
   const setStatus = (id, status) => {
     setLeads((ls) => ls.map((l) => l.id === id ? { ...l, status } : l));
   };
-  return /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-    /* @__PURE__ */ jsx11("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: filters.map(([id, label, count]) => /* @__PURE__ */ jsxs10("button", { onClick: () => setFilter(id), style: {
+  return /* @__PURE__ */ jsxs11("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+    /* @__PURE__ */ jsx12("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" }, children: filters.map(([id, label, count]) => /* @__PURE__ */ jsxs11("button", { onClick: () => setFilter(id), style: {
       padding: "8px 14px",
       borderRadius: 999,
       background: filter === id ? VT.ink : VT.white,
@@ -10891,7 +10824,7 @@ function LeadsTab() {
       gap: 6
     }, children: [
       label,
-      /* @__PURE__ */ jsx11("span", { style: {
+      /* @__PURE__ */ jsx12("span", { style: {
         padding: "1px 7px",
         borderRadius: 999,
         background: filter === id ? "rgba(255,255,255,0.18)" : VT.bgSoft,
@@ -10899,13 +10832,13 @@ function LeadsTab() {
         fontFamily: VT.font.mono
       }, children: count })
     ] }, id)) }),
-    /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 16,
       overflow: "hidden"
     }, children: [
-      /* @__PURE__ */ jsxs10("div", { style: {
+      /* @__PURE__ */ jsxs11("div", { style: {
         display: "grid",
         gridTemplateColumns: "1.2fr 1.4fr 1.5fr 1.1fr 0.6fr 1fr 1.1fr",
         padding: "14px 18px",
@@ -10917,15 +10850,15 @@ function LeadsTab() {
         color: VT.inkFaint,
         fontWeight: 600
       }, children: [
-        /* @__PURE__ */ jsx11("span", { children: "\u0418\u041C\u042F" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u041A\u041E\u041D\u0422\u0410\u041A\u0422" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u0423\u0421\u041B\u0423\u0413\u0410" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u041A\u041E\u0413\u0414\u0410" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u041A\u0410\u041D\u0410\u041B" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u0421\u0422\u0410\u0422\u0423\u0421" }),
-        /* @__PURE__ */ jsx11("span", { children: "\u0414\u0415\u0419\u0421\u0422\u0412\u0418\u042F" })
+        /* @__PURE__ */ jsx12("span", { children: "\u0418\u041C\u042F" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u041A\u041E\u041D\u0422\u0410\u041A\u0422" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u0423\u0421\u041B\u0423\u0413\u0410" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u041A\u041E\u0413\u0414\u0410" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u041A\u0410\u041D\u0410\u041B" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u0421\u0422\u0410\u0422\u0423\u0421" }),
+        /* @__PURE__ */ jsx12("span", { children: "\u0414\u0415\u0419\u0421\u0422\u0412\u0418\u042F" })
       ] }),
-      filtered.map((l) => /* @__PURE__ */ jsxs10("div", { style: {
+      filtered.map((l) => /* @__PURE__ */ jsxs11("div", { style: {
         display: "grid",
         gridTemplateColumns: "1.2fr 1.4fr 1.5fr 1.1fr 0.6fr 1fr 1.1fr",
         padding: "14px 18px",
@@ -10934,12 +10867,12 @@ function LeadsTab() {
         fontSize: 13.5,
         color: VT.ink
       }, children: [
-        /* @__PURE__ */ jsx11("span", { style: { fontWeight: 600 }, children: l.name }),
-        /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, color: VT.inkSoft }, children: l.contact }),
-        /* @__PURE__ */ jsx11("span", { children: l.service }),
-        /* @__PURE__ */ jsx11("span", { style: { color: VT.inkSoft }, children: l.when }),
-        /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: l.source }),
-        /* @__PURE__ */ jsx11("span", { children: /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: { fontWeight: 600 }, children: l.name }),
+        /* @__PURE__ */ jsx12("span", { style: { fontFamily: VT.font.mono, color: VT.inkSoft }, children: l.contact }),
+        /* @__PURE__ */ jsx12("span", { children: l.service }),
+        /* @__PURE__ */ jsx12("span", { style: { color: VT.inkSoft }, children: l.when }),
+        /* @__PURE__ */ jsx12("span", { style: { fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: l.source }),
+        /* @__PURE__ */ jsx12("span", { children: /* @__PURE__ */ jsx12("span", { style: {
           padding: "4px 10px",
           borderRadius: 999,
           background: statusInfo[l.status].bg,
@@ -10947,9 +10880,9 @@ function LeadsTab() {
           fontSize: 11.5,
           fontWeight: 600
         }, children: statusInfo[l.status].label }) }),
-        /* @__PURE__ */ jsxs10("span", { style: { display: "flex", gap: 6 }, children: [
-          l.status === "new" && /* @__PURE__ */ jsxs10(Fragment10, { children: [
-            /* @__PURE__ */ jsx11("button", { onClick: () => setStatus(l.id, "booked"), style: {
+        /* @__PURE__ */ jsxs11("span", { style: { display: "flex", gap: 6 }, children: [
+          l.status === "new" && /* @__PURE__ */ jsxs11(Fragment10, { children: [
+            /* @__PURE__ */ jsx12("button", { onClick: () => setStatus(l.id, "booked"), style: {
               padding: "5px 10px",
               borderRadius: 6,
               background: VT.accent,
@@ -10959,7 +10892,7 @@ function LeadsTab() {
               fontWeight: 600,
               cursor: "pointer"
             }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C" }),
-            /* @__PURE__ */ jsx11("button", { onClick: () => setStatus(l.id, "declined"), style: {
+            /* @__PURE__ */ jsx12("button", { onClick: () => setStatus(l.id, "declined"), style: {
               padding: "5px 10px",
               borderRadius: 6,
               background: VT.white,
@@ -10969,7 +10902,7 @@ function LeadsTab() {
               cursor: "pointer"
             }, children: "\xD7" })
           ] }),
-          l.status === "answered" && /* @__PURE__ */ jsx11("button", { onClick: () => setStatus(l.id, "booked"), style: {
+          l.status === "answered" && /* @__PURE__ */ jsx12("button", { onClick: () => setStatus(l.id, "booked"), style: {
             padding: "5px 10px",
             borderRadius: 6,
             background: VT.accent,
@@ -10979,10 +10912,10 @@ function LeadsTab() {
             fontWeight: 600,
             cursor: "pointer"
           }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u043D" }),
-          (l.status === "booked" || l.status === "declined") && /* @__PURE__ */ jsx11("span", { style: { color: VT.inkFaint, fontSize: 11.5 }, children: "\u2014" })
+          (l.status === "booked" || l.status === "declined") && /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint, fontSize: 11.5 }, children: "\u2014" })
         ] })
       ] }, l.id)),
-      filtered.length === 0 && /* @__PURE__ */ jsx11("div", { style: { padding: 40, textAlign: "center", color: VT.inkFaint }, children: "\u0417\u0430\u044F\u0432\u043E\u043A \u0432\xA0\u044D\u0442\u043E\u043C \u0441\u0442\u0430\u0442\u0443\u0441\u0435 \u043D\u0435\u0442" })
+      filtered.length === 0 && /* @__PURE__ */ jsx12("div", { style: { padding: 40, textAlign: "center", color: VT.inkFaint }, children: "\u0417\u0430\u044F\u0432\u043E\u043A \u0432\xA0\u044D\u0442\u043E\u043C \u0441\u0442\u0430\u0442\u0443\u0441\u0435 \u043D\u0435\u0442" })
     ] })
   ] });
 }
@@ -10999,8 +10932,8 @@ function ReviewsTab() {
   ]);
   const toggleShown = (id) => setReviews((rs) => rs.map((r) => r.id === id ? { ...r, shown: !r.shown } : r));
   const shownCount = reviews.filter((r) => r.shown).length;
-  return /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
@@ -11011,11 +10944,11 @@ function ReviewsTab() {
       gap: 14,
       flexWrap: "wrap"
     }, children: [
-      /* @__PURE__ */ jsxs10("div", { children: [
-        /* @__PURE__ */ jsx11("div", { style: { fontSize: 16, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "AI-\u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0441\u0442\u0432\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432" }),
-        /* @__PURE__ */ jsxs10("div", { style: { fontSize: 13.5, color: VT.inkSoft, marginTop: 2 }, children: [
+      /* @__PURE__ */ jsxs11("div", { children: [
+        /* @__PURE__ */ jsx12("div", { style: { fontSize: 16, fontWeight: 700, color: VT.ink, letterSpacing: "-0.02em" }, children: "AI-\u043A\u0443\u0440\u0430\u0442\u043E\u0440\u0441\u0442\u0432\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432" }),
+        /* @__PURE__ */ jsxs11("div", { style: { fontSize: 13.5, color: VT.inkSoft, marginTop: 2 }, children: [
           "\u041D\u0430 \u0441\u0430\u0439\u0442\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043E ",
-          /* @__PURE__ */ jsx11("b", { children: shownCount }),
+          /* @__PURE__ */ jsx12("b", { children: shownCount }),
           " \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438\u0437 ",
           reviews.length,
           ". ",
@@ -11023,7 +10956,7 @@ function ReviewsTab() {
           " \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 \u043F\u043E\u0434\u0431\u043E\u0440\u043A\u0443 \u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u0432\u044B\u0431\u0438\u0440\u0430\u0435\u0442 4\u20136 \u0441\u0430\u043C\u044B\u0445 \u0442\u0451\u043F\u043B\u044B\u0445."
         ] })
       ] }),
-      /* @__PURE__ */ jsx11("button", { style: {
+      /* @__PURE__ */ jsx12("button", { style: {
         padding: "10px 18px",
         borderRadius: 999,
         background: VT.accent,
@@ -11034,7 +10967,7 @@ function ReviewsTab() {
         cursor: "pointer"
       }, children: "\u041F\u0435\u0440\u0435\u0447\u0438\u0442\u0430\u0442\u044C \u0432\u0441\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u2192" })
     ] }),
-    /* @__PURE__ */ jsx11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: reviews.map((r) => /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsx12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }, children: reviews.map((r) => /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: r.shown ? `1px solid ${VT.line}` : `1px dashed ${VT.line}`,
       borderRadius: 14,
@@ -11042,8 +10975,8 @@ function ReviewsTab() {
       opacity: r.shown ? 1 : 0.55,
       position: "relative"
     }, children: [
-      /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 }, children: [
-        /* @__PURE__ */ jsx11("span", { style: {
+      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 }, children: [
+        /* @__PURE__ */ jsx12("span", { style: {
           width: 32,
           height: 32,
           borderRadius: "50%",
@@ -11056,10 +10989,10 @@ function ReviewsTab() {
           fontWeight: 700,
           fontSize: 14
         }, children: r.author[0] }),
-        /* @__PURE__ */ jsxs10("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsxs10("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-            /* @__PURE__ */ jsx11("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: r.author }),
-            r.topPick && /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsxs11("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: r.author }),
+            r.topPick && /* @__PURE__ */ jsx12("span", { style: {
               marginLeft: "auto",
               fontFamily: VT.font.mono,
               fontSize: 9.5,
@@ -11071,7 +11004,7 @@ function ReviewsTab() {
               fontWeight: 700
             }, children: "\u2605 \u0422\u041E\u041F" })
           ] }),
-          /* @__PURE__ */ jsxs10("div", { style: {
+          /* @__PURE__ */ jsxs11("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 11,
             color: VT.inkFaint,
@@ -11086,7 +11019,7 @@ function ReviewsTab() {
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs10("p", { style: {
+      /* @__PURE__ */ jsxs11("p", { style: {
         margin: "10px 0 0",
         fontSize: 13.5,
         lineHeight: 1.5,
@@ -11097,7 +11030,7 @@ function ReviewsTab() {
         r.text,
         "\xBB"
       ] }),
-      /* @__PURE__ */ jsxs10("label", { style: {
+      /* @__PURE__ */ jsxs11("label", { style: {
         marginTop: 12,
         display: "flex",
         alignItems: "center",
@@ -11106,7 +11039,7 @@ function ReviewsTab() {
         fontSize: 12.5,
         color: VT.inkSoft
       }, children: [
-        /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: {
           width: 30,
           height: 18,
           borderRadius: 9,
@@ -11114,7 +11047,7 @@ function ReviewsTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx11("span", { style: {
+        }, children: /* @__PURE__ */ jsx12("span", { style: {
           position: "absolute",
           top: 2,
           left: r.shown ? 14 : 2,
@@ -11124,7 +11057,7 @@ function ReviewsTab() {
           background: "#fff",
           transition: "left .15s"
         } }) }),
-        /* @__PURE__ */ jsx11("input", { type: "checkbox", checked: r.shown, onChange: () => toggleShown(r.id), style: { display: "none" } }),
+        /* @__PURE__ */ jsx12("input", { type: "checkbox", checked: r.shown, onChange: () => toggleShown(r.id), style: { display: "none" } }),
         r.shown ? "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442\u0441\u044F \u043D\u0430\xA0\u0441\u0430\u0439\u0442\u0435" : "\u0421\u043A\u0440\u044B\u0442"
       ] })
     ] }, r.id)) })
@@ -11139,13 +11072,13 @@ function ServicesTab() {
     { id: 5, name: "\u0421\u043D\u044F\u0442\u0438\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", duration: "20 \u043C\u0438\u043D", price: "500 \u20BD" }
   ]);
   const [edit, setEdit] = useState4(null);
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 16,
     overflow: "hidden"
   }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: {
       padding: "14px 22px",
       background: VT.bgSoft,
       borderBottom: `1px solid ${VT.line}`,
@@ -11153,11 +11086,11 @@ function ServicesTab() {
       alignItems: "center",
       justifyContent: "space-between"
     }, children: [
-      /* @__PURE__ */ jsxs10("div", { style: { fontSize: 15, fontWeight: 600, color: VT.ink }, children: [
+      /* @__PURE__ */ jsxs11("div", { style: { fontSize: 15, fontWeight: 600, color: VT.ink }, children: [
         "\u0423\u0441\u043B\u0443\u0433\u0438 \u0438\xA0\u0446\u0435\u043D\u044B \u2014 ",
         services.length
       ] }),
-      /* @__PURE__ */ jsx11("button", { style: {
+      /* @__PURE__ */ jsx12("button", { style: {
         padding: "8px 16px",
         borderRadius: 999,
         background: VT.accent,
@@ -11168,15 +11101,15 @@ function ServicesTab() {
         cursor: "pointer"
       }, children: "+ \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0443\u0441\u043B\u0443\u0433\u0443" })
     ] }),
-    services.map((sv) => /* @__PURE__ */ jsx11("div", { style: {
+    services.map((sv) => /* @__PURE__ */ jsx12("div", { style: {
       display: "grid",
       gridTemplateColumns: "1.5fr 0.8fr 0.8fr 0.6fr",
       padding: "14px 22px",
       borderBottom: `1px solid ${VT.lineSoft}`,
       alignItems: "center",
       gap: 10
-    }, children: edit === sv.id ? /* @__PURE__ */ jsxs10(Fragment10, { children: [
-      /* @__PURE__ */ jsx11(
+    }, children: edit === sv.id ? /* @__PURE__ */ jsxs11(Fragment10, { children: [
+      /* @__PURE__ */ jsx12(
         "input",
         {
           defaultValue: sv.name,
@@ -11188,16 +11121,16 @@ function ServicesTab() {
           autoFocus: true
         }
       ),
-      /* @__PURE__ */ jsx11("input", { defaultValue: sv.duration, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
-      /* @__PURE__ */ jsx11("input", { defaultValue: sv.price, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
-      /* @__PURE__ */ jsx11("button", { onClick: () => setEdit(null), style: { ...editorSecondaryBtn, fontSize: 12 }, children: "OK" })
-    ] }) : /* @__PURE__ */ jsxs10(Fragment10, { children: [
-      /* @__PURE__ */ jsx11("span", { style: { fontSize: 14, color: VT.ink, fontWeight: 500 }, children: sv.name }),
-      /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, fontSize: 12.5, color: VT.inkSoft }, children: sv.duration || "\u2014" }),
-      /* @__PURE__ */ jsx11("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: sv.price }),
-      /* @__PURE__ */ jsxs10("span", { style: { display: "flex", gap: 6 }, children: [
-        /* @__PURE__ */ jsx11("button", { onClick: () => setEdit(sv.id), style: { ...editorSecondaryBtn, fontSize: 11 }, children: "\u270E" }),
-        /* @__PURE__ */ jsx11(
+      /* @__PURE__ */ jsx12("input", { defaultValue: sv.duration, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
+      /* @__PURE__ */ jsx12("input", { defaultValue: sv.price, style: { ...editorTextarea, padding: "6px 10px", fontFamily: VT.font.mono } }),
+      /* @__PURE__ */ jsx12("button", { onClick: () => setEdit(null), style: { ...editorSecondaryBtn, fontSize: 12 }, children: "OK" })
+    ] }) : /* @__PURE__ */ jsxs11(Fragment10, { children: [
+      /* @__PURE__ */ jsx12("span", { style: { fontSize: 14, color: VT.ink, fontWeight: 500 }, children: sv.name }),
+      /* @__PURE__ */ jsx12("span", { style: { fontFamily: VT.font.mono, fontSize: 12.5, color: VT.inkSoft }, children: sv.duration || "\u2014" }),
+      /* @__PURE__ */ jsx12("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: sv.price }),
+      /* @__PURE__ */ jsxs11("span", { style: { display: "flex", gap: 6 }, children: [
+        /* @__PURE__ */ jsx12("button", { onClick: () => setEdit(sv.id), style: { ...editorSecondaryBtn, fontSize: 11 }, children: "\u270E" }),
+        /* @__PURE__ */ jsx12(
           "button",
           {
             onClick: () => setServices((s) => s.filter((x) => x.id !== sv.id)),
@@ -11212,15 +11145,15 @@ function ServicesTab() {
 function SettingsTab() {
   const [notify, setNotify] = useState4({ tg: true, max: false, email: true });
   const [paused, setPaused] = useState4(false);
-  return /* @__PURE__ */ jsxs10("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-    /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22
     }, children: [
-      /* @__PURE__ */ jsx11("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0430" }),
-      /* @__PURE__ */ jsxs10("div", { style: {
+      /* @__PURE__ */ jsx12("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0430" }),
+      /* @__PURE__ */ jsxs11("div", { style: {
         padding: "14px 16px",
         background: VT.bgSoft,
         borderRadius: 10,
@@ -11228,14 +11161,14 @@ function SettingsTab() {
         alignItems: "baseline",
         justifyContent: "space-between"
       }, children: [
-        /* @__PURE__ */ jsxs10("div", { children: [
-          /* @__PURE__ */ jsx11("div", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink }, children: DEMO_SITE.plan }),
-          /* @__PURE__ */ jsxs10("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 2 }, children: [
+        /* @__PURE__ */ jsxs11("div", { children: [
+          /* @__PURE__ */ jsx12("div", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.025em", color: VT.ink }, children: DEMO_SITE.plan }),
+          /* @__PURE__ */ jsxs11("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 2 }, children: [
             "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0435 \u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \xB7 ",
             DEMO_SITE.nextBilling
           ] })
         ] }),
-        /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: {
           padding: "4px 10px",
           borderRadius: 999,
           background: "oklch(0.93 0.06 145)",
@@ -11244,34 +11177,34 @@ function SettingsTab() {
           fontWeight: 600
         }, children: "\u0410\u041A\u0422\u0418\u0412\u041D\u0410" })
       ] }),
-      /* @__PURE__ */ jsxs10("div", { style: { marginTop: 12, display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx11("button", { style: editorSecondaryBtn, children: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u0430\u0440\u0442\u0443" }),
-        /* @__PURE__ */ jsx11("button", { style: { ...editorSecondaryBtn, color: VT.danger }, children: "\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u043E\u0434\u043F\u0438\u0441\u043A\u0443" })
+      /* @__PURE__ */ jsxs11("div", { style: { marginTop: 12, display: "flex", gap: 8 }, children: [
+        /* @__PURE__ */ jsx12("button", { style: editorSecondaryBtn, children: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043A\u0430\u0440\u0442\u0443" }),
+        /* @__PURE__ */ jsx12("button", { style: { ...editorSecondaryBtn, color: VT.danger }, children: "\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u043E\u0434\u043F\u0438\u0441\u043A\u0443" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22
     }, children: [
-      /* @__PURE__ */ jsx11("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0410\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430" }),
-      /* @__PURE__ */ jsx11("div", { style: { fontFamily: VT.font.mono, fontSize: 14, color: VT.ink, marginBottom: 10 }, children: DEMO_SITE.domain }),
-      /* @__PURE__ */ jsx11("button", { style: editorSecondaryBtn, children: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D" })
+      /* @__PURE__ */ jsx12("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0410\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430" }),
+      /* @__PURE__ */ jsx12("div", { style: { fontFamily: VT.font.mono, fontSize: 14, color: VT.ink, marginBottom: 10 }, children: DEMO_SITE.domain }),
+      /* @__PURE__ */ jsx12("button", { style: editorSecondaryBtn, children: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0441\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D" })
     ] }),
-    /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22,
       gridColumn: "1 / -1"
     }, children: [
-      /* @__PURE__ */ jsx11("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0438" }),
-      /* @__PURE__ */ jsx11("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
+      /* @__PURE__ */ jsx12("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u041A\u0443\u0434\u0430 \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0438" }),
+      /* @__PURE__ */ jsx12("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
         ["tg", "Telegram", "@anna_studio", "#229ED9"],
         ["max", "MAX", "\u043D\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E", "oklch(0.55 0.13 285)"],
         ["email", "Email", "anna@studio.ru", VT.accent]
-      ].map(([k, label, value, color]) => /* @__PURE__ */ jsxs10("label", { style: {
+      ].map(([k, label, value, color]) => /* @__PURE__ */ jsxs11("label", { style: {
         display: "flex",
         alignItems: "center",
         gap: 12,
@@ -11281,7 +11214,7 @@ function SettingsTab() {
         borderRadius: 10,
         cursor: "pointer"
       }, children: [
-        /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: {
           width: 36,
           height: 36,
           borderRadius: 8,
@@ -11295,11 +11228,11 @@ function SettingsTab() {
           opacity: notify[k] ? 1 : 0.4,
           flex: "0 0 auto"
         }, children: label[0] }),
-        /* @__PURE__ */ jsxs10("div", { style: { flex: 1, minWidth: 0 }, children: [
-          /* @__PURE__ */ jsx11("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
-          /* @__PURE__ */ jsx11("div", { style: { fontSize: 12, color: VT.inkSoft, fontFamily: VT.font.mono }, children: value })
+        /* @__PURE__ */ jsxs11("div", { style: { flex: 1, minWidth: 0 }, children: [
+          /* @__PURE__ */ jsx12("div", { style: { fontSize: 14, fontWeight: 600, color: VT.ink }, children: label }),
+          /* @__PURE__ */ jsx12("div", { style: { fontSize: 12, color: VT.inkSoft, fontFamily: VT.font.mono }, children: value })
         ] }),
-        /* @__PURE__ */ jsx11("span", { style: {
+        /* @__PURE__ */ jsx12("span", { style: {
           width: 36,
           height: 22,
           borderRadius: 11,
@@ -11307,7 +11240,7 @@ function SettingsTab() {
           position: "relative",
           transition: "background .15s",
           flex: "0 0 auto"
-        }, children: /* @__PURE__ */ jsx11("span", { style: {
+        }, children: /* @__PURE__ */ jsx12("span", { style: {
           position: "absolute",
           top: 2,
           left: notify[k] ? 16 : 2,
@@ -11318,19 +11251,19 @@ function SettingsTab() {
           transition: "left .15s",
           boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
         } }) }),
-        /* @__PURE__ */ jsx11("input", { type: "checkbox", checked: notify[k], onChange: () => setNotify((n) => ({ ...n, [k]: !n[k] })), style: { display: "none" } })
+        /* @__PURE__ */ jsx12("input", { type: "checkbox", checked: notify[k], onChange: () => setNotify((n) => ({ ...n, [k]: !n[k] })), style: { display: "none" } })
       ] }, k)) })
     ] }),
-    /* @__PURE__ */ jsxs10("div", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: {
       background: VT.white,
       border: `1px solid ${VT.line}`,
       borderRadius: 14,
       padding: 22,
       gridColumn: "1 / -1"
     }, children: [
-      /* @__PURE__ */ jsx11("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0430\u0439\u0442\u043E\u043C" }),
-      /* @__PURE__ */ jsxs10("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
-        /* @__PURE__ */ jsx11("button", { onClick: () => setPaused((p) => !p), style: {
+      /* @__PURE__ */ jsx12("div", { style: { fontSize: 15, fontWeight: 700, color: VT.ink, letterSpacing: "-0.015em", marginBottom: 12 }, children: "\u0423\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0441\u0430\u0439\u0442\u043E\u043C" }),
+      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" }, children: [
+        /* @__PURE__ */ jsx12("button", { onClick: () => setPaused((p) => !p), style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: paused ? VT.success : VT.white,
@@ -11340,7 +11273,7 @@ function SettingsTab() {
           border: `1px solid ${paused ? VT.success : VT.line}`,
           cursor: "pointer"
         }, children: paused ? "\u25B6 \u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" : "\u23F8 \u041F\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u043D\u0430\xA0\u043F\u0430\u0443\u0437\u0443" }),
-        /* @__PURE__ */ jsx11("button", { style: {
+        /* @__PURE__ */ jsx12("button", { style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: VT.white,
@@ -11350,7 +11283,7 @@ function SettingsTab() {
           border: `1px solid ${VT.line}`,
           cursor: "pointer"
         }, children: "\u2193 \u0421\u043A\u0430\u0447\u0430\u0442\u044C \u0430\u0440\u0445\u0438\u0432 (HTML + \u0444\u043E\u0442\u043E)" }),
-        /* @__PURE__ */ jsx11("button", { style: {
+        /* @__PURE__ */ jsx12("button", { style: {
           padding: "10px 16px",
           borderRadius: 10,
           background: VT.white,
@@ -11367,7 +11300,7 @@ function SettingsTab() {
 function ClientAdminDemo() {
   const [tab, setTab] = useState4("analytics");
   const currentTab = TABS.find((t) => t.id === tab);
-  return /* @__PURE__ */ jsxs10("div", { style: {
+  return /* @__PURE__ */ jsxs11("div", { style: {
     width: "100%",
     minHeight: "100vh",
     background: VT.bg,
@@ -11377,7 +11310,7 @@ function ClientAdminDemo() {
     display: "flex",
     flexDirection: "column"
   }, children: [
-    /* @__PURE__ */ jsxs10("header", { style: {
+    /* @__PURE__ */ jsxs11("header", { style: {
       position: "sticky",
       top: 0,
       zIndex: 10,
@@ -11389,8 +11322,8 @@ function ClientAdminDemo() {
       alignItems: "center",
       gap: 18
     }, children: [
-      /* @__PURE__ */ jsx11(BrandMark, { size: 26, fontSize: 18 }),
-      /* @__PURE__ */ jsx11("span", { style: {
+      /* @__PURE__ */ jsx12(BrandMark, { size: 26, fontSize: 18 }),
+      /* @__PURE__ */ jsx12("span", { style: {
         padding: "4px 10px",
         borderRadius: 6,
         background: VT.bgSoft,
@@ -11400,19 +11333,19 @@ function ClientAdminDemo() {
         color: VT.inkFaint,
         fontWeight: 600
       }, children: "\u0414\u0415\u041C\u041E \xB7 \u041B\u0418\u0427\u041D\u042B\u0419 \u041A\u0410\u0411\u0418\u041D\u0415\u0422" }),
-      /* @__PURE__ */ jsx11("div", { style: { flex: 1 } }),
-      /* @__PURE__ */ jsxs10("span", { style: {
+      /* @__PURE__ */ jsx12("div", { style: { flex: 1 } }),
+      /* @__PURE__ */ jsxs11("span", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
         fontSize: 13,
         color: VT.inkSoft
       }, children: [
-        /* @__PURE__ */ jsx11("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.success } }),
-        /* @__PURE__ */ jsx11(Mono, { style: { fontSize: 13, color: VT.ink }, children: DEMO_SITE.domain }),
+        /* @__PURE__ */ jsx12("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.success } }),
+        /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 13, color: VT.ink }, children: DEMO_SITE.domain }),
         "\xB7 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D"
       ] }),
-      /* @__PURE__ */ jsx11("a", { href: "index.html", style: {
+      /* @__PURE__ */ jsx12("a", { href: "index.html", style: {
         padding: "8px 14px",
         borderRadius: 999,
         background: VT.bgSoft,
@@ -11425,7 +11358,7 @@ function ClientAdminDemo() {
         alignItems: "center",
         gap: 6
       }, children: "\u2190 \u041D\u0430\u0437\u0430\u0434 \u043A\xA0\u043B\u0435\u043D\u0434\u0438\u043D\u0433\u0443" }),
-      /* @__PURE__ */ jsx11("a", { href: "#", style: {
+      /* @__PURE__ */ jsx12("a", { href: "#", style: {
         padding: "8px 16px",
         borderRadius: 999,
         background: VT.accent,
@@ -11435,8 +11368,8 @@ function ClientAdminDemo() {
         textDecoration: "none"
       }, children: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u0430\u0439\u0442 \u2197" })
     ] }),
-    /* @__PURE__ */ jsxs10("div", { style: { display: "flex", flex: 1, minHeight: 0 }, children: [
-      /* @__PURE__ */ jsxs10("aside", { style: {
+    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", flex: 1, minHeight: 0 }, children: [
+      /* @__PURE__ */ jsxs11("aside", { style: {
         width: 240,
         flex: "0 0 auto",
         background: VT.white,
@@ -11446,7 +11379,7 @@ function ClientAdminDemo() {
         flexDirection: "column",
         gap: 4
       }, children: [
-        /* @__PURE__ */ jsx11("div", { style: {
+        /* @__PURE__ */ jsx12("div", { style: {
           padding: "6px 14px",
           fontFamily: VT.font.mono,
           fontSize: 11,
@@ -11455,7 +11388,7 @@ function ClientAdminDemo() {
           fontWeight: 600,
           marginBottom: 4
         }, children: "\u0421\u0422\u0423\u0414\u0418\u042F \u0410\u041D\u041D\u042B" }),
-        TABS.map((t) => /* @__PURE__ */ jsxs10("button", { onClick: () => setTab(t.id), style: {
+        TABS.map((t) => /* @__PURE__ */ jsxs11("button", { onClick: () => setTab(t.id), style: {
           padding: "10px 14px",
           borderRadius: 10,
           background: tab === t.id ? VT.accentSoft : "transparent",
@@ -11470,9 +11403,9 @@ function ClientAdminDemo() {
           fontWeight: tab === t.id ? 600 : 500,
           fontFamily: VT.font.sans
         }, children: [
-          /* @__PURE__ */ jsx11("span", { style: { color: tab === t.id ? VT.accent : VT.inkSoft, display: "inline-flex" }, children: /* @__PURE__ */ jsx11(NavIcon, { kind: t.icon, size: 17 }) }),
-          /* @__PURE__ */ jsx11("span", { style: { flex: 1 }, children: t.label }),
-          t.badge && /* @__PURE__ */ jsx11("span", { style: {
+          /* @__PURE__ */ jsx12("span", { style: { color: tab === t.id ? VT.accent : VT.inkSoft, display: "inline-flex" }, children: /* @__PURE__ */ jsx12(NavIcon, { kind: t.icon, size: 17 }) }),
+          /* @__PURE__ */ jsx12("span", { style: { flex: 1 }, children: t.label }),
+          t.badge && /* @__PURE__ */ jsx12("span", { style: {
             padding: "1px 7px",
             borderRadius: 999,
             background: VT.accent,
@@ -11482,8 +11415,8 @@ function ClientAdminDemo() {
             fontWeight: 700
           }, children: t.badge })
         ] }, t.id)),
-        /* @__PURE__ */ jsx11("div", { style: { flex: 1 } }),
-        /* @__PURE__ */ jsxs10("div", { style: {
+        /* @__PURE__ */ jsx12("div", { style: { flex: 1 } }),
+        /* @__PURE__ */ jsxs11("div", { style: {
           margin: "20px 6px 0",
           padding: 14,
           background: VT.bgSoft,
@@ -11492,12 +11425,12 @@ function ClientAdminDemo() {
           color: VT.inkSoft,
           lineHeight: 1.5
         }, children: [
-          /* @__PURE__ */ jsx11("div", { style: { fontWeight: 600, color: VT.ink, marginBottom: 4 }, children: "\u042D\u0442\u043E \u0434\u0435\u043C\u043E" }),
+          /* @__PURE__ */ jsx12("div", { style: { fontWeight: 600, color: VT.ink, marginBottom: 4 }, children: "\u042D\u0442\u043E \u0434\u0435\u043C\u043E" }),
           "\u0412\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u043D\u0438\u0436\u0435 \u2014 \u043F\u0440\u0438\u043C\u0435\u0440. \u0420\u0435\u0430\u043B\u044C\u043D\u044B\u0439 \u041B\u041A \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u0442\u0430\u043A \u0436\u0435."
         ] })
       ] }),
-      /* @__PURE__ */ jsxs10("main", { style: { flex: 1, minWidth: 0, padding: "24px 28px 60px", overflowX: "hidden" }, children: [
-        /* @__PURE__ */ jsx11("div", { style: { marginBottom: 20 }, children: /* @__PURE__ */ jsx11("h1", { style: {
+      /* @__PURE__ */ jsxs11("main", { style: { flex: 1, minWidth: 0, padding: "24px 28px 60px", overflowX: "hidden" }, children: [
+        /* @__PURE__ */ jsx12("div", { style: { marginBottom: 20 }, children: /* @__PURE__ */ jsx12("h1", { style: {
           fontSize: 30,
           fontWeight: 700,
           letterSpacing: "-0.025em",
@@ -11505,22 +11438,22 @@ function ClientAdminDemo() {
           lineHeight: 1.1,
           color: VT.ink
         }, children: currentTab.label }) }),
-        tab === "analytics" && /* @__PURE__ */ jsx11(AnalyticsTab, {}),
-        tab === "site" && /* @__PURE__ */ jsx11(SiteEditTab, {}),
-        tab === "leads" && /* @__PURE__ */ jsx11(LeadsTab, {}),
-        tab === "reviews" && /* @__PURE__ */ jsx11(ReviewsTab, {}),
-        tab === "services" && /* @__PURE__ */ jsx11(ServicesTab, {}),
-        tab === "settings" && /* @__PURE__ */ jsx11(SettingsTab, {})
+        tab === "analytics" && /* @__PURE__ */ jsx12(AnalyticsTab, {}),
+        tab === "site" && /* @__PURE__ */ jsx12(SiteEditTab, {}),
+        tab === "leads" && /* @__PURE__ */ jsx12(LeadsTab, {}),
+        tab === "reviews" && /* @__PURE__ */ jsx12(ReviewsTab, {}),
+        tab === "services" && /* @__PURE__ */ jsx12(ServicesTab, {}),
+        tab === "settings" && /* @__PURE__ */ jsx12(SettingsTab, {})
       ] })
     ] })
   ] });
 }
 
 // src/admin-core/index.tsx
-import React7, { useState as useState5, useEffect as useEffect5, useCallback as useCallback3 } from "react";
-import { Fragment as Fragment12, jsx as jsx12, jsxs as jsxs11 } from "react/jsx-runtime";
+import React7, { useState as useState5, useEffect as useEffect5, useCallback as useCallback2 } from "react";
+import { Fragment as Fragment12, jsx as jsx13, jsxs as jsxs12 } from "react/jsx-runtime";
 function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
-  return /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: {
+  return /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: {
     display: "inline-block",
     width,
     height,
@@ -11533,29 +11466,29 @@ function SkeletonBlock({ width = "100%", height = 14, radius = 4, style }) {
   } });
 }
 function EmptyState({ title, hint }) {
-  return /* @__PURE__ */ jsxs11("div", { role: "status", style: {
+  return /* @__PURE__ */ jsxs12("div", { role: "status", style: {
     padding: "48px 24px",
     textAlign: "center",
     color: VT.inkFaint,
     fontFamily: VT.font.sans
   }, children: [
-    /* @__PURE__ */ jsx12("div", { "aria-hidden": "true", style: { fontSize: 28, opacity: 0.6, marginBottom: 8 }, children: "\u2205" }),
-    /* @__PURE__ */ jsx12("div", { style: { fontSize: 14.5, fontWeight: 500, color: VT.inkSoft, marginBottom: 4 }, children: title }),
-    hint && /* @__PURE__ */ jsx12("div", { style: { fontSize: 13 }, children: hint })
+    /* @__PURE__ */ jsx13("div", { "aria-hidden": "true", style: { fontSize: 28, opacity: 0.6, marginBottom: 8 }, children: "\u2205" }),
+    /* @__PURE__ */ jsx13("div", { style: { fontSize: 14.5, fontWeight: 500, color: VT.inkSoft, marginBottom: 4 }, children: title }),
+    hint && /* @__PURE__ */ jsx13("div", { style: { fontSize: 13 }, children: hint })
   ] });
 }
 function ErrorBlock({ title, message, onRetry }) {
-  return /* @__PURE__ */ jsx12(Card, { role: "alert", style: {
+  return /* @__PURE__ */ jsx13(Card, { role: "alert", style: {
     padding: 18,
     background: VT.dangerSoft,
     borderColor: "oklch(0.86 0.06 28)"
-  }, children: /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-    /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { fontSize: 18 }, children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsxs11("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ jsx12("div", { style: { fontWeight: 600, fontSize: 14, color: "oklch(0.4 0.15 28)" }, children: title || "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A" }),
-      message && /* @__PURE__ */ jsx12("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 2 }, children: message })
+  }, children: /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+    /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { fontSize: 18 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsxs12("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ jsx13("div", { style: { fontWeight: 600, fontSize: 14, color: "oklch(0.4 0.15 28)" }, children: title || "\u0427\u0442\u043E-\u0442\u043E \u043F\u043E\u0448\u043B\u043E \u043D\u0435 \u0442\u0430\u043A" }),
+      message && /* @__PURE__ */ jsx13("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 2 }, children: message })
     ] }),
-    onRetry && /* @__PURE__ */ jsx12("button", { type: "button", onClick: onRetry, style: {
+    onRetry && /* @__PURE__ */ jsx13("button", { type: "button", onClick: onRetry, style: {
       border: "none",
       background: VT.white,
       color: VT.ink,
@@ -11578,7 +11511,7 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
   }, [retryAfterSeconds]);
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
-  return /* @__PURE__ */ jsxs11("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs12("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -11590,10 +11523,10 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
     alignItems: "center",
     gap: 8
   }, children: [
-    /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", children: "\u26A0\uFE0F" }),
-    /* @__PURE__ */ jsxs11("span", { children: [
+    /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsxs12("span", { children: [
       "5 \u043D\u0435\u0443\u0434\u0430\u0447 \u0437\u0430 15 \u043C\u0438\u043D \u2014 IP \u0437\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D. \u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C ",
-      /* @__PURE__ */ jsxs11(Mono, { style: { color: "inherit", fontSize: 13 }, children: [
+      /* @__PURE__ */ jsxs12(Mono, { style: { color: "inherit", fontSize: 13 }, children: [
         mm,
         ":",
         ss
@@ -11603,7 +11536,7 @@ function RateLimitCountdown({ retryAfterSeconds = 2843 }) {
   ] });
 }
 function TextField({ type = "text", value, onChange, placeholder, ariaLabel, inputMode, maxLength, autoFocus, disabled, style, mono }) {
-  return /* @__PURE__ */ jsx12(
+  return /* @__PURE__ */ jsx13(
     "input",
     {
       type,
@@ -11652,7 +11585,7 @@ function AdminChrome({
   const activeKey = SECTION_ALIAS[active] || active;
   const u = user || { username: "founder@samosite.online", initials: "F" };
   const badges = badgeCounts ?? { apps: 12 };
-  return /* @__PURE__ */ jsxs11("div", { style: {
+  return /* @__PURE__ */ jsxs12("div", { style: {
     display: "grid",
     gridTemplateColumns: "220px 1fr",
     minHeight: "100%",
@@ -11661,7 +11594,7 @@ function AdminChrome({
     color: VT.ink,
     letterSpacing: "-0.005em"
   }, children: [
-    /* @__PURE__ */ jsxs11("aside", { style: {
+    /* @__PURE__ */ jsxs12("aside", { style: {
       background: VT.bg,
       borderRight: `1px solid ${VT.line}`,
       padding: 16,
@@ -11669,15 +11602,15 @@ function AdminChrome({
       flexDirection: "column",
       gap: 4
     }, children: [
-      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
-        /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
-        /* @__PURE__ */ jsx12("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-        /* @__PURE__ */ jsx12(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
+      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", marginBottom: 18 }, children: [
+        /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.bg } }),
+        /* @__PURE__ */ jsx13("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+        /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 6px", fontSize: 10, borderRadius: 4 }, children: "ADMIN" })
       ] }),
-      /* @__PURE__ */ jsx12("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
+      /* @__PURE__ */ jsx13("nav", { "aria-label": "Admin sections", style: { display: "flex", flexDirection: "column", gap: 4 }, children: NAV.map(([key, name, icon]) => {
         const isActive = activeKey === key;
         const count = badges?.[key];
-        return /* @__PURE__ */ jsxs11(
+        return /* @__PURE__ */ jsxs12(
           "button",
           {
             type: "button",
@@ -11700,18 +11633,18 @@ function AdminChrome({
               width: "100%"
             },
             children: [
-              /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
+              /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { fontSize: 15, width: 18, display: "inline-flex" }, children: icon }),
               name,
-              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx12(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
+              typeof count === "number" && count > 0 && /* @__PURE__ */ jsx13(Badge, { kind: "warn", style: { marginLeft: "auto", padding: "1px 7px", fontSize: 10, borderRadius: 999 }, children: count })
             ]
           },
           key
         );
       }) }),
-      /* @__PURE__ */ jsxs11("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
-        /* @__PURE__ */ jsx12("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
-        /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsxs12("div", { style: { marginTop: "auto", paddingTop: 12, borderTop: `1px solid ${VT.line}`, fontSize: 12, color: VT.inkFaint, display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 24, height: 24, borderRadius: "50%", background: VT.accentSoft, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: VT.accentInk, fontWeight: 600 }, children: u.initials }),
+        /* @__PURE__ */ jsx13("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: u.username }),
+        /* @__PURE__ */ jsx13(
           "button",
           {
             type: "button",
@@ -11730,7 +11663,7 @@ function AdminChrome({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsx12("main", { style: { minWidth: 0 }, children })
+    /* @__PURE__ */ jsx13("main", { style: { minWidth: 0 }, children })
   ] });
 }
 var LOGIN_ERROR_MSG = {
@@ -11768,7 +11701,7 @@ function S10_AdminLogin(props) {
     onSubmitCredentials,
     onSubmitCode
   } = props;
-  const onSubmit1 = useCallback3((e) => {
+  const onSubmit1 = useCallback2((e) => {
     e.preventDefault();
     if (loading) return;
     if (onSubmitCredentials) {
@@ -11777,13 +11710,13 @@ function S10_AdminLogin(props) {
       setStep(2);
     }
   }, [loading, onSubmitCredentials, username, password, setStep]);
-  const onSubmit2 = useCallback3((e) => {
+  const onSubmit2 = useCallback2((e) => {
     e.preventDefault();
     if (loading) return;
     const code = mode === "totp" ? totp : backupCode;
     if (onSubmitCode) onSubmitCode(mode, code);
   }, [loading, mode, totp, backupCode, onSubmitCode]);
-  return /* @__PURE__ */ jsx12("div", { style: {
+  return /* @__PURE__ */ jsx13("div", { style: {
     background: VT.bgSoft,
     minHeight: "100%",
     width: "100%",
@@ -11792,16 +11725,16 @@ function S10_AdminLogin(props) {
     justifyContent: "center",
     fontFamily: VT.font.sans,
     padding: 24
-  }, children: /* @__PURE__ */ jsxs11(Card, { style: { width: 400, padding: 28 }, children: [
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }, children: [
-      /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.white } }),
-      /* @__PURE__ */ jsx12("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-      /* @__PURE__ */ jsx12(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 7px", fontSize: 10 }, children: "ADMIN" })
+  }, children: /* @__PURE__ */ jsxs12(Card, { style: { width: 400, padding: 28 }, children: [
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }, children: [
+      /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: VT.accent, boxShadow: "inset 0 0 0 4px " + VT.white } }),
+      /* @__PURE__ */ jsx13("span", { style: { fontWeight: 700, fontSize: 16 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+      /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { marginLeft: "auto", padding: "2px 7px", fontSize: 10 }, children: "ADMIN" })
     ] }),
-    /* @__PURE__ */ jsx12("h1", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 4px" }, children: step === 1 ? "\u0412\u0445\u043E\u0434 \u0432 \u0430\u0434\u043C\u0438\u043D\u043A\u0443" : "\u0414\u0432\u0443\u0445\u0444\u0430\u043A\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F" }),
-    /* @__PURE__ */ jsx12("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: "0 0 18px" }, children: step === 1 ? "\u0422\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F founder. \u0412\u0441\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F." : "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F-\u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430." }),
-    rateLimited && /* @__PURE__ */ jsx12(RateLimitCountdown, { retryAfterSeconds: rateLimitedRetryAfterSeconds }),
-    error && !rateLimited && /* @__PURE__ */ jsx12("div", { role: "alert", style: {
+    /* @__PURE__ */ jsx13("h1", { style: { fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 4px" }, children: step === 1 ? "\u0412\u0445\u043E\u0434 \u0432 \u0430\u0434\u043C\u0438\u043D\u043A\u0443" : "\u0414\u0432\u0443\u0445\u0444\u0430\u043A\u0442\u043E\u0440\u043D\u0430\u044F \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F" }),
+    /* @__PURE__ */ jsx13("p", { style: { fontSize: 13.5, color: VT.inkSoft, margin: "0 0 18px" }, children: step === 1 ? "\u0422\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F founder. \u0412\u0441\u0435 \u043F\u043E\u043F\u044B\u0442\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F." : "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F-\u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430." }),
+    rateLimited && /* @__PURE__ */ jsx13(RateLimitCountdown, { retryAfterSeconds: rateLimitedRetryAfterSeconds }),
+    error && !rateLimited && /* @__PURE__ */ jsx13("div", { role: "alert", style: {
       padding: "8px 12px",
       background: VT.dangerSoft,
       border: `1px solid oklch(0.85 0.06 28)`,
@@ -11810,9 +11743,9 @@ function S10_AdminLogin(props) {
       color: "oklch(0.4 0.15 28)",
       marginBottom: 14
     }, children: LOGIN_ERROR_MSG[error] || LOGIN_ERROR_MSG.unknown_error }),
-    step === 1 ? /* @__PURE__ */ jsxs11("form", { onSubmit: onSubmit1, children: [
-      /* @__PURE__ */ jsx12("label", { htmlFor: "ss-admin-email", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "Email" }),
-      /* @__PURE__ */ jsx12(
+    step === 1 ? /* @__PURE__ */ jsxs12("form", { onSubmit: onSubmit1, children: [
+      /* @__PURE__ */ jsx13("label", { htmlFor: "ss-admin-email", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "Email" }),
+      /* @__PURE__ */ jsx13(
         TextField,
         {
           type: "text",
@@ -11825,8 +11758,8 @@ function S10_AdminLogin(props) {
           style: { marginBottom: 10 }
         }
       ),
-      /* @__PURE__ */ jsx12("label", { htmlFor: "ss-admin-password", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
-      /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13("label", { htmlFor: "ss-admin-password", style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 4 }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
+      /* @__PURE__ */ jsx13(
         TextField,
         {
           type: "password",
@@ -11838,23 +11771,23 @@ function S10_AdminLogin(props) {
           mono: true
         }
       ),
-      /* @__PURE__ */ jsx12("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13("div", { style: { marginTop: 18 }, children: /* @__PURE__ */ jsx13(
         Btn,
         {
           type: "submit",
           style: { width: "100%" },
           disabled: loading || rateLimited || !username || !password,
-          iconRight: loading ? /* @__PURE__ */ jsx12(Spinner, { size: 14 }) : /* @__PURE__ */ jsx12(IconArrow, {}),
+          iconRight: loading ? /* @__PURE__ */ jsx13(Spinner, { size: 14 }) : /* @__PURE__ */ jsx13(IconArrow, {}),
           children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0414\u0430\u043B\u044C\u0448\u0435"
         }
       ) })
-    ] }) : /* @__PURE__ */ jsxs11("form", { onSubmit: onSubmit2, children: [
-      /* @__PURE__ */ jsx12("div", { role: "tablist", "aria-label": "\u0421\u043F\u043E\u0441\u043E\u0431 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F", style: { display: "flex", gap: 6, marginBottom: 12, padding: 3, background: VT.bgSoft, borderRadius: VT.r.md, border: `1px solid ${VT.line}` }, children: [
+    ] }) : /* @__PURE__ */ jsxs12("form", { onSubmit: onSubmit2, children: [
+      /* @__PURE__ */ jsx13("div", { role: "tablist", "aria-label": "\u0421\u043F\u043E\u0441\u043E\u0431 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F", style: { display: "flex", gap: 6, marginBottom: 12, padding: 3, background: VT.bgSoft, borderRadius: VT.r.md, border: `1px solid ${VT.line}` }, children: [
         ["totp", "\u0410\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440"],
         ["backup", "Backup-\u043A\u043E\u0434"]
       ].map(([key, label]) => {
         const isActive = mode === key;
-        return /* @__PURE__ */ jsx12(
+        return /* @__PURE__ */ jsx13(
           "button",
           {
             type: "button",
@@ -11880,8 +11813,8 @@ function S10_AdminLogin(props) {
           key
         );
       }) }),
-      /* @__PURE__ */ jsx12("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 6 }, children: mode === "totp" ? "\u041A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430" : "Backup-\u043A\u043E\u0434" }),
-      /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13("label", { style: { display: "block", fontSize: 12, color: VT.inkSoft, marginBottom: 6 }, children: mode === "totp" ? "\u041A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430" : "Backup-\u043A\u043E\u0434" }),
+      /* @__PURE__ */ jsx13(
         TextField,
         {
           type: "text",
@@ -11897,8 +11830,8 @@ function S10_AdminLogin(props) {
           style: { fontSize: 20, letterSpacing: mode === "totp" ? "0.4em" : "0.1em", textAlign: "center" }
         }
       ),
-      /* @__PURE__ */ jsxs11("div", { style: { marginTop: 18, display: "flex", gap: 8 }, children: [
-        /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsxs12("div", { style: { marginTop: 18, display: "flex", gap: 8 }, children: [
+        /* @__PURE__ */ jsx13(
           Btn,
           {
             variant: "secondary",
@@ -11909,13 +11842,13 @@ function S10_AdminLogin(props) {
             children: "\u2190 \u041D\u0430\u0437\u0430\u0434"
           }
         ),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(
           Btn,
           {
             type: "submit",
             style: { flex: 1 },
             disabled: loading || rateLimited || !(mode === "totp" ? totp : backupCode),
-            iconRight: loading ? /* @__PURE__ */ jsx12(Spinner, { size: 14 }) : /* @__PURE__ */ jsx12(IconArrow, {}),
+            iconRight: loading ? /* @__PURE__ */ jsx13(Spinner, { size: 14 }) : /* @__PURE__ */ jsx13(IconArrow, {}),
             children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0412\u043E\u0439\u0442\u0438"
           }
         )
@@ -11923,9 +11856,9 @@ function S10_AdminLogin(props) {
     ] })
   ] }) });
 }
-function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
+function StatTile({ label, value, delta, deltaSign, sub: sub2, onClick, loading }) {
   const clickable = !!onClick && !loading;
-  return /* @__PURE__ */ jsx12(
+  return /* @__PURE__ */ jsx13(
     Card,
     {
       style: {
@@ -11933,7 +11866,7 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
         cursor: clickable ? "pointer" : "default",
         transition: "transform .15s ease, box-shadow .15s ease"
       },
-      children: /* @__PURE__ */ jsxs11(
+      children: /* @__PURE__ */ jsxs12(
         "div",
         {
           role: clickable ? "button" : void 0,
@@ -11946,10 +11879,10 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
             }
           } : void 0,
           children: [
-            /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: String(label).toUpperCase() }),
-            loading ? /* @__PURE__ */ jsx12("div", { style: { marginTop: 8 }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: 64, height: 28, radius: 6 }) }) : /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
-              /* @__PURE__ */ jsx12("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
-              delta && /* @__PURE__ */ jsxs11("span", { style: {
+            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: String(label).toUpperCase() }),
+            loading ? /* @__PURE__ */ jsx13("div", { style: { marginTop: 8 }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: 64, height: 28, radius: 6 }) }) : /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "baseline", gap: 10, marginTop: 6 }, children: [
+              /* @__PURE__ */ jsx13("span", { style: { fontSize: 30, fontWeight: 700, letterSpacing: "-0.025em" }, children: value }),
+              delta && /* @__PURE__ */ jsxs12("span", { style: {
                 fontSize: 12.5,
                 fontWeight: 600,
                 color: deltaSign === "+" ? VT.success : deltaSign === "-" ? VT.danger : VT.inkSoft
@@ -11958,8 +11891,8 @@ function StatTile({ label, value, delta, deltaSign, sub, onClick, loading }) {
                 delta
               ] })
             ] }),
-            sub && !loading && /* @__PURE__ */ jsx12("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub }),
-            loading && /* @__PURE__ */ jsx12("div", { style: { marginTop: 6 }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: "50%", height: 10 }) })
+            sub2 && !loading && /* @__PURE__ */ jsx13("div", { style: { fontSize: 12, color: VT.inkFaint, marginTop: 4 }, children: sub2 }),
+            loading && /* @__PURE__ */ jsx13("div", { style: { marginTop: 6 }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: "50%", height: 10 }) })
           ]
         }
       )
@@ -11987,7 +11920,7 @@ var STATUS_MAP = {
 };
 function StatusPill({ status, size = "md" }) {
   const m = STATUS_MAP[status] || [VT.bgSoft, VT.inkSoft, String(status)];
-  return /* @__PURE__ */ jsxs11("span", { style: {
+  return /* @__PURE__ */ jsxs12("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 6,
@@ -11998,12 +11931,12 @@ function StatusPill({ status, size = "md" }) {
     fontSize: size === "sm" ? 11 : 11.5,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
+    /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 5, height: 5, borderRadius: "50%", background: "currentColor" } }),
     m[2]
   ] });
 }
 function FilterChip({ label, active, count, onClick, disabled }) {
-  return /* @__PURE__ */ jsxs11(
+  return /* @__PURE__ */ jsxs12(
     "button",
     {
       type: "button",
@@ -12027,7 +11960,7 @@ function FilterChip({ label, active, count, onClick, disabled }) {
       },
       children: [
         label,
-        count != null && /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
+        count != null && /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: "inherit", opacity: 0.7 }, children: count })
       ]
     }
   );
@@ -12039,11 +11972,11 @@ function TrendChart({ series, height = 200, labels }) {
   const xLabels = labels || ["\u041F\u043D", "\u0412\u0442", "\u0421\u0440", "\u0427\u0442", "\u041F\u0442", "\u0421\u0431", "\u0412\u0441"];
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"} ${i / (points.length - 1) * w} ${height - 30 - p / max * (height - 50)}`).join(" ");
   const area = path + ` L ${w} ${height - 30} L 0 ${height - 30} Z`;
-  return /* @__PURE__ */ jsxs11("svg", { viewBox: `0 0 ${w} ${height}`, width: "100%", height, preserveAspectRatio: "none", role: "img", "aria-label": "\u0413\u0440\u0430\u0444\u0438\u043A \u0437\u0430\u044F\u0432\u043E\u043A", children: [
-    /* @__PURE__ */ jsx12("path", { d: area, fill: VT.accentSoft, opacity: "0.7" }),
-    /* @__PURE__ */ jsx12("path", { d: path, fill: "none", stroke: VT.accent, strokeWidth: "2" }),
-    points.map((p, i) => /* @__PURE__ */ jsx12("circle", { cx: i / (points.length - 1) * w, cy: height - 30 - p / max * (height - 50), r: "3", fill: VT.bg, stroke: VT.accent, strokeWidth: "1.5" }, i)),
-    xLabels.map((l, i) => /* @__PURE__ */ jsx12("text", { x: i / (xLabels.length - 1) * w, y: height - 8, fontSize: "11", fill: VT.inkFaint, fontFamily: "JetBrains Mono, monospace", textAnchor: i === 0 ? "start" : i === xLabels.length - 1 ? "end" : "middle", children: l }, l + i))
+  return /* @__PURE__ */ jsxs12("svg", { viewBox: `0 0 ${w} ${height}`, width: "100%", height, preserveAspectRatio: "none", role: "img", "aria-label": "\u0413\u0440\u0430\u0444\u0438\u043A \u0437\u0430\u044F\u0432\u043E\u043A", children: [
+    /* @__PURE__ */ jsx13("path", { d: area, fill: VT.accentSoft, opacity: "0.7" }),
+    /* @__PURE__ */ jsx13("path", { d: path, fill: "none", stroke: VT.accent, strokeWidth: "2" }),
+    points.map((p, i) => /* @__PURE__ */ jsx13("circle", { cx: i / (points.length - 1) * w, cy: height - 30 - p / max * (height - 50), r: "3", fill: VT.bg, stroke: VT.accent, strokeWidth: "1.5" }, i)),
+    xLabels.map((l, i) => /* @__PURE__ */ jsx13("text", { x: i / (xLabels.length - 1) * w, y: height - 8, fontSize: "11", fill: VT.inkFaint, fontFamily: "JetBrains Mono, monospace", textAnchor: i === 0 ? "start" : i === xLabels.length - 1 ? "end" : "middle", children: l }, l + i))
   ] });
 }
 var MOCK_DASHBOARD = {
@@ -12082,21 +12015,21 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
   const d = data || MOCK_DASHBOARD;
   const Wrap = _embed === false ? React7.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "dashboard", onNavigate };
-  return /* @__PURE__ */ jsx12(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs11("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22 }, children: [
-      /* @__PURE__ */ jsxs11("div", { children: [
-        /* @__PURE__ */ jsx12(Eyebrow, { children: "DASHBOARD" }),
-        /* @__PURE__ */ jsx12("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "10px 0 0" }, children: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F" })
+  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22 }, children: [
+      /* @__PURE__ */ jsxs12("div", { children: [
+        /* @__PURE__ */ jsx13(Eyebrow, { children: "DASHBOARD" }),
+        /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: "10px 0 0" }, children: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F" })
       ] }),
-      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", gap: 8 }, children: [
-        onRefresh && /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" }),
-        /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", children: "7 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: "30 \u0434\u043D\u0435\u0439" }),
-        /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", children: "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F" })
+      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 8 }, children: [
+        onRefresh && /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" }),
+        /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", children: "7 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: "30 \u0434\u043D\u0435\u0439" }),
+        /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", children: "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F" })
       ] })
     ] }),
-    error && /* @__PURE__ */ jsx12(ErrorBlock, { message: error, onRetry: onRefresh }),
-    /* @__PURE__ */ jsx12("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginTop: error ? 14 : 0 }, children: COUNTER_TILES.map((t) => /* @__PURE__ */ jsx12(
+    error && /* @__PURE__ */ jsx13(ErrorBlock, { message: error, onRetry: onRefresh }),
+    /* @__PURE__ */ jsx13("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginTop: error ? 14 : 0 }, children: COUNTER_TILES.map((t) => /* @__PURE__ */ jsx13(
       StatTile,
       {
         label: t.label,
@@ -12106,21 +12039,21 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
       },
       t.key
     )) }),
-    /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 14, marginTop: 14 }, children: [
-      /* @__PURE__ */ jsxs11(Card, { style: { padding: 20 }, children: [
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }, children: [
-          /* @__PURE__ */ jsxs11("div", { children: [
-            /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0417\u0410\u042F\u0412\u041A\u0418 \xB7 14 \u0414\u041D\u0415\u0419" }),
-            /* @__PURE__ */ jsx12("div", { style: { fontSize: 20, fontWeight: 700, marginTop: 4 }, children: loading ? /* @__PURE__ */ jsx12(SkeletonBlock, { width: 80, height: 20 }) : d.applications_series_14d.reduce((s, x) => s + x.count, 0) })
+    /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 14, marginTop: 14 }, children: [
+      /* @__PURE__ */ jsxs12(Card, { style: { padding: 20 }, children: [
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }, children: [
+          /* @__PURE__ */ jsxs12("div", { children: [
+            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0417\u0410\u042F\u0412\u041A\u0418 \xB7 14 \u0414\u041D\u0415\u0419" }),
+            /* @__PURE__ */ jsx13("div", { style: { fontSize: 20, fontWeight: 700, marginTop: 4 }, children: loading ? /* @__PURE__ */ jsx13(SkeletonBlock, { width: 80, height: 20 }) : d.applications_series_14d.reduce((s, x) => s + x.count, 0) })
           ] }),
-          /* @__PURE__ */ jsx12(Btn, { variant: "ghost", size: "sm", children: "CSV" })
+          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", children: "CSV" })
         ] }),
-        loading ? /* @__PURE__ */ jsx12(SkeletonBlock, { width: "100%", height: 200, radius: 8 }) : /* @__PURE__ */ jsx12(TrendChart, { series: d.applications_series_14d, labels: d.applications_series_14d.map((s) => s.day.slice(8)) })
+        loading ? /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 200, radius: 8 }) : /* @__PURE__ */ jsx13(TrendChart, { series: d.applications_series_14d, labels: d.applications_series_14d.map((s) => s.day.slice(8)) })
       ] }),
-      /* @__PURE__ */ jsxs11(Card, { style: { padding: 20 }, children: [
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "QUICK \xB7 \u0422\u041E\u041F-5 PENDING" }),
-          /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsxs12(Card, { style: { padding: 20 }, children: [
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "QUICK \xB7 \u0422\u041E\u041F-5 PENDING" }),
+          /* @__PURE__ */ jsx13(
             "button",
             {
               type: "button",
@@ -12138,13 +12071,13 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
             }
           )
         ] }),
-        loading ? /* @__PURE__ */ jsx12("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx12("div", { style: { padding: "8px 10px", borderBottom: `1px solid ${VT.lineSoft}` }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: "80%", height: 14 }) }, i)) }) : /* @__PURE__ */ jsx12("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
+        loading ? /* @__PURE__ */ jsx13("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsx13("div", { style: { padding: "8px 10px", borderBottom: `1px solid ${VT.lineSoft}` }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: "80%", height: 14 }) }, i)) }) : /* @__PURE__ */ jsx13("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: [
           ["#A-1842", "TG", "studia-anna \xB7 47 \u043F\u043E\u0441\u0442\u043E\u0432", "12 \u043C\u0438\u043D \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1841", "YM", "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \u0421\u0430\u043C\u0430\u0440\u0430 \xB7 24 \u043E\u0442\u0437.", "34 \u043C\u0438\u043D \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1840", "Photo", "\u041F\u0441\u0438\u0445\u043E\u043B\u043E\u0433 \u041C\u0430\u0440\u0438\u043D\u0430 \xB7 12 \u0444\u043E\u0442\u043E", "1 \u0447 \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1839", "TG", "\u0414\u043E\u043C \u0440\u0435\u0441\u043D\u0438\u0446 \xB7 89 \u043F\u043E\u0441\u0442\u043E\u0432", "2 \u0447 \u043D\u0430\u0437\u0430\u0434"],
           ["#A-1838", "YM", "\u0421\u0442\u0443\u0434\u0438\u044F \u0439\u043E\u0433\u0438 \xB7 56 \u043E\u0442\u0437.", "3 \u0447 \u043D\u0430\u0437\u0430\u0434"]
-        ].map(([id, src, name, ago]) => /* @__PURE__ */ jsxs11(
+        ].map(([id, src, name, ago]) => /* @__PURE__ */ jsxs12(
           "button",
           {
             type: "button",
@@ -12165,10 +12098,10 @@ function S11_Dashboard({ data, loading, error, onNavigate, onRefresh, _embed }) 
               width: "100%"
             },
             children: [
-              /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 11, width: 56 }, children: id }),
-              /* @__PURE__ */ jsx12(Badge, { kind: "neutral", style: { padding: "2px 7px", fontSize: 10.5, borderRadius: 4 }, children: src }),
-              /* @__PURE__ */ jsx12("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
-              /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 11 }, children: ago })
+              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, width: 56 }, children: id }),
+              /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { padding: "2px 7px", fontSize: 10.5, borderRadius: 4 }, children: src }),
+              /* @__PURE__ */ jsx13("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: name }),
+              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11 }, children: ago })
             ]
           },
           id
@@ -12221,15 +12154,15 @@ function S12_AppsList({
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const totalPages = Math.max(1, Math.ceil(d.total / Math.max(1, d.limit)));
   const currentPage = Math.floor(d.offset / Math.max(1, d.limit)) + 1;
-  return /* @__PURE__ */ jsx12(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs11("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx12(Eyebrow, { children: "\u0417\u0410\u042F\u0412\u041A\u0418" }),
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx12("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438" }),
-      /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", children: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 CSV" })
+  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx13(Eyebrow, { children: "\u0417\u0410\u042F\u0412\u041A\u0418" }),
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u043C\u043E\u0434\u0435\u0440\u0430\u0446\u0438\u0438" }),
+      /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", children: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 CSV" })
     ] }),
-    error && /* @__PURE__ */ jsx12("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx12(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx12("div", { style: { display: "flex", gap: 6 }, children: STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx12(
+    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 14, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx13("div", { style: { display: "flex", gap: 6 }, children: STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx13(
         FilterChip,
         {
           label,
@@ -12238,7 +12171,7 @@ function S12_AppsList({
         },
         key
       )) }),
-      /* @__PURE__ */ jsx12("div", { style: { marginLeft: "auto", display: "flex", gap: 8 }, children: /* @__PURE__ */ jsxs11("div", { style: {
+      /* @__PURE__ */ jsx13("div", { style: { marginLeft: "auto", display: "flex", gap: 8 }, children: /* @__PURE__ */ jsxs12("div", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -12250,16 +12183,16 @@ function S12_AppsList({
         color: VT.inkFaint,
         minWidth: 240
       }, children: [
-        /* @__PURE__ */ jsxs11("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", "aria-hidden": "true", children: [
-          /* @__PURE__ */ jsx12("circle", { cx: "11", cy: "11", r: "7" }),
-          /* @__PURE__ */ jsx12("path", { d: "M21 21l-4.3-4.3", strokeLinecap: "round" })
+        /* @__PURE__ */ jsxs12("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", "aria-hidden": "true", children: [
+          /* @__PURE__ */ jsx13("circle", { cx: "11", cy: "11", r: "7" }),
+          /* @__PURE__ */ jsx13("path", { d: "M21 21l-4.3-4.3", strokeLinecap: "round" })
         ] }),
         "\u043F\u043E\u0438\u0441\u043A \u043F\u043E \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0443, ID, \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0443"
       ] }) })
     ] }),
-    /* @__PURE__ */ jsxs11(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs11("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx12("thead", { children: /* @__PURE__ */ jsx12("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["ID", "\u0421\u043E\u0437\u0434\u0430\u043D\u0430", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0421\u0442\u0430\u0442\u0443\u0441", ""].map((h) => /* @__PURE__ */ jsx12("th", { scope: "col", style: {
+    /* @__PURE__ */ jsxs12(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs12("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx13("thead", { children: /* @__PURE__ */ jsx13("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["ID", "\u0421\u043E\u0437\u0434\u0430\u043D\u0430", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442", "\u0421\u0442\u0430\u0442\u0443\u0441", ""].map((h) => /* @__PURE__ */ jsx13("th", { scope: "col", style: {
           textAlign: "left",
           padding: "12px 16px",
           fontFamily: VT.font.mono,
@@ -12268,9 +12201,9 @@ function S12_AppsList({
           color: VT.inkFaint,
           fontWeight: 500
         }, children: h.toUpperCase() }, h || "go")) }) }),
-        /* @__PURE__ */ jsxs11("tbody", { children: [
-          loading && [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => /* @__PURE__ */ jsx12("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [60, 90, 80, 180, 90, 80, 18].map((w, j) => /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
-          showItems && d.items.map((row) => /* @__PURE__ */ jsxs11(
+        /* @__PURE__ */ jsxs12("tbody", { children: [
+          loading && [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => /* @__PURE__ */ jsx13("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [60, 90, 80, 180, 90, 80, 18].map((w, j) => /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
+          showItems && d.items.map((row) => /* @__PURE__ */ jsxs12(
             "tr",
             {
               onClick: () => onRowClick && onRowClick(row.id),
@@ -12280,30 +12213,30 @@ function S12_AppsList({
               } : void 0,
               style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: onRowClick ? "pointer" : "default" },
               children: [
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx12(Mono, { children: row.id }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px", color: VT.inkSoft }, children: /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 12 }, children: formatTs(row.created_at) }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx12(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: row.source_type }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 12 }, children: row.source_url || "\u2014" }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 12 }, children: row.contact_value_masked }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx12(StatusPill, { status: row.status }) }),
-                /* @__PURE__ */ jsx12("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx12("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { children: row.id }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", color: VT.inkSoft }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: formatTs(row.created_at) }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: row.source_type }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: row.source_url || "\u2014" }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: row.contact_value_masked }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(StatusPill, { status: row.status }) }),
+                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
               ]
             },
             row.id
           ))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx12(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u044F\u0432\u043E\u043A", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u043F\u0435\u0440\u0432\u0430\u044F \u2014 \u043E\u043D\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
-      !showEmpty && /* @__PURE__ */ jsxs11("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs11("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx13(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u044F\u0432\u043E\u043A", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0451\u0442 \u043F\u0435\u0440\u0432\u0430\u044F \u2014 \u043E\u043D\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+      !showEmpty && /* @__PURE__ */ jsxs12("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs12("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx13(
             Btn,
             {
               variant: "ghost",
@@ -12313,12 +12246,12 @@ function S12_AppsList({
               children: "\u2190"
             }
           ),
-          /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
-          /* @__PURE__ */ jsxs11(Mono, { style: { alignSelf: "center" }, children: [
+          /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
+          /* @__PURE__ */ jsxs12(Mono, { style: { alignSelf: "center" }, children: [
             "/ ",
             totalPages
           ] }),
-          /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsx13(
             Btn,
             {
               variant: "ghost",
@@ -12374,9 +12307,9 @@ function JsonTree() {
     ['  "fetched_at": ', VT.inkSoft, '"2026-05-19T14:22:18Z"', VT.accent],
     ["}", VT.inkSoft]
   ];
-  return /* @__PURE__ */ jsx12("pre", { style: { margin: 0, fontFamily: VT.font.mono, fontSize: 12.5, lineHeight: 1.55, color: VT.inkSoft }, children: lines.map((row, i) => /* @__PURE__ */ jsxs11("div", { children: [
-    /* @__PURE__ */ jsx12("span", { style: { color: row[1] }, children: row[0] }),
-    row[2] && /* @__PURE__ */ jsx12("span", { style: { color: row[3] }, children: row[2] })
+  return /* @__PURE__ */ jsx13("pre", { style: { margin: 0, fontFamily: VT.font.mono, fontSize: 12.5, lineHeight: 1.55, color: VT.inkSoft }, children: lines.map((row, i) => /* @__PURE__ */ jsxs12("div", { children: [
+    /* @__PURE__ */ jsx13("span", { style: { color: row[1] }, children: row[0] }),
+    row[2] && /* @__PURE__ */ jsx13("span", { style: { color: row[3] }, children: row[2] })
   ] }, i)) });
 }
 function S13_AppDetail({
@@ -12403,18 +12336,18 @@ function S13_AppDetail({
     setRejectReason("");
   };
   if (loading) {
-    return /* @__PURE__ */ jsx12(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs11("div", { style: { padding: "20px 32px 40px" }, children: [
-      /* @__PURE__ */ jsx12(SkeletonBlock, { width: 140, height: 14, style: { marginBottom: 14 } }),
-      /* @__PURE__ */ jsx12(SkeletonBlock, { width: 320, height: 28, radius: 6, style: { marginBottom: 20 } }),
-      /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-        /* @__PURE__ */ jsx12(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) }),
-        /* @__PURE__ */ jsx12(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx12(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) })
+    return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "20px 32px 40px" }, children: [
+      /* @__PURE__ */ jsx13(SkeletonBlock, { width: 140, height: 14, style: { marginBottom: 14 } }),
+      /* @__PURE__ */ jsx13(SkeletonBlock, { width: 320, height: 28, radius: 6, style: { marginBottom: 20 } }),
+      /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+        /* @__PURE__ */ jsx13(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) }),
+        /* @__PURE__ */ jsx13(Card, { style: { padding: 18 }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 200, radius: 6 }) })
       ] })
     ] }) });
   }
-  return /* @__PURE__ */ jsx12(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs11("div", { style: { padding: "20px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsx12(
+  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "20px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsx13(
         "button",
         {
           type: "button",
@@ -12423,26 +12356,26 @@ function S13_AppDetail({
           children: "\u2190 \u0417\u0430\u044F\u0432\u043A\u0438"
         }
       ),
-      /* @__PURE__ */ jsx12("span", { children: "/" }),
-      /* @__PURE__ */ jsx12(Mono, { style: { color: VT.ink }, children: app.id })
+      /* @__PURE__ */ jsx13("span", { children: "/" }),
+      /* @__PURE__ */ jsx13(Mono, { style: { color: VT.ink }, children: app.id })
     ] }),
-    error && /* @__PURE__ */ jsx12("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx12(ErrorBlock, { message: error }) }),
-    actionError && /* @__PURE__ */ jsx12("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx12(ErrorBlock, { title: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435", message: actionError }) }),
-    /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 22 }, children: [
-      /* @__PURE__ */ jsxs11("div", { children: [
-        /* @__PURE__ */ jsx12("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" }),
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: VT.inkSoft, flexWrap: "wrap" }, children: [
-          app.source_url && /* @__PURE__ */ jsx12("a", { href: `https://${app.source_url.replace(/^https?:\/\//, "")}`, target: "_blank", rel: "noreferrer", style: { color: VT.accent, textDecoration: "underline", textUnderlineOffset: 2 }, children: /* @__PURE__ */ jsx12(Mono, { style: { color: "inherit" }, children: app.source_url }) }),
-          /* @__PURE__ */ jsx12("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx12("span", { children: app.contact_value_masked }),
-          /* @__PURE__ */ jsx12("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx12(Mono, { children: formatTs(app.created_at) }),
-          /* @__PURE__ */ jsx12(StatusPill, { status: app.status }),
-          app.is_manual_review && /* @__PURE__ */ jsx12(Badge, { kind: "warn", style: { fontSize: 11, padding: "2px 8px" }, children: "manual review" })
+    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
+    actionError && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { title: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435", message: actionError }) }),
+    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 22 }, children: [
+      /* @__PURE__ */ jsxs12("div", { children: [
+        /* @__PURE__ */ jsx13("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" }),
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: VT.inkSoft, flexWrap: "wrap" }, children: [
+          app.source_url && /* @__PURE__ */ jsx13("a", { href: `https://${app.source_url.replace(/^https?:\/\//, "")}`, target: "_blank", rel: "noreferrer", style: { color: VT.accent, textDecoration: "underline", textUnderlineOffset: 2 }, children: /* @__PURE__ */ jsx13(Mono, { style: { color: "inherit" }, children: app.source_url }) }),
+          /* @__PURE__ */ jsx13("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx13("span", { children: app.contact_value_masked }),
+          /* @__PURE__ */ jsx13("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx13(Mono, { children: formatTs(app.created_at) }),
+          /* @__PURE__ */ jsx13(StatusPill, { status: app.status }),
+          app.is_manual_review && /* @__PURE__ */ jsx13(Badge, { kind: "warn", style: { fontSize: 11, padding: "2px 8px" }, children: "manual review" })
         ] })
       ] }),
-      /* @__PURE__ */ jsx12("div", { style: { display: "flex", gap: 8 }, children: isPending ? /* @__PURE__ */ jsxs11(Fragment12, { children: [
-        /* @__PURE__ */ jsx12(
+      /* @__PURE__ */ jsx13("div", { style: { display: "flex", gap: 8 }, children: isPending ? /* @__PURE__ */ jsxs12(Fragment12, { children: [
+        /* @__PURE__ */ jsx13(
           Btn,
           {
             variant: "secondary",
@@ -12453,24 +12386,24 @@ function S13_AppDetail({
             children: "\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C"
           }
         ),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(
           Btn,
           {
             size: "sm",
             onClick: () => onApprove && onApprove(app.id),
             disabled: !!actionLoading,
-            iconRight: actionLoading ? /* @__PURE__ */ jsx12(Spinner, { size: 14 }) : /* @__PURE__ */ jsx12(IconArrow, { size: 14 }),
+            iconRight: actionLoading ? /* @__PURE__ */ jsx13(Spinner, { size: 14 }) : /* @__PURE__ */ jsx13(IconArrow, { size: 14 }),
             children: actionLoading ? "\u041E\u0434\u043E\u0431\u0440\u044F\u0435\u043C\u2026" : "\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C"
           }
         )
-      ] }) : /* @__PURE__ */ jsxs11(Badge, { kind: app.status === "approved" || app.status === "published" ? "success" : "neutral", style: { padding: "6px 12px" }, children: [
+      ] }) : /* @__PURE__ */ jsxs12(Badge, { kind: app.status === "approved" || app.status === "published" ? "success" : "neutral", style: { padding: "6px 12px" }, children: [
         "\u0423\u0436\u0435 ",
         STATUS_MAP[app.status]?.[2] || app.status
       ] }) })
     ] }),
-    rejectOpen && /* @__PURE__ */ jsxs11(Card, { style: { padding: 16, marginBottom: 14, borderColor: "oklch(0.85 0.06 28)" }, children: [
-      /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em", color: VT.danger }, children: "\u041F\u0420\u0418\u0427\u0418\u041D\u0410 \u041E\u0422\u041A\u0410\u0417\u0410" }),
-      /* @__PURE__ */ jsx12(
+    rejectOpen && /* @__PURE__ */ jsxs12(Card, { style: { padding: 16, marginBottom: 14, borderColor: "oklch(0.85 0.06 28)" }, children: [
+      /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em", color: VT.danger }, children: "\u041F\u0420\u0418\u0427\u0418\u041D\u0410 \u041E\u0422\u041A\u0410\u0417\u0410" }),
+      /* @__PURE__ */ jsx13(
         "textarea",
         {
           value: rejectReason,
@@ -12493,12 +12426,12 @@ function S13_AppDetail({
           }
         }
       ),
-      /* @__PURE__ */ jsxs11("div", { style: { display: "flex", gap: 8, marginTop: 10, justifyContent: "flex-end" }, children: [
-        /* @__PURE__ */ jsx12(Btn, { variant: "secondary", size: "sm", onClick: () => {
+      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 8, marginTop: 10, justifyContent: "flex-end" }, children: [
+        /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", onClick: () => {
           setRejectOpen(false);
           setRejectReason("");
         }, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx12(
+        /* @__PURE__ */ jsx13(
           Btn,
           {
             size: "sm",
@@ -12510,47 +12443,47 @@ function S13_AppDetail({
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs11(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE SNAPSHOT \xB7 JSON" }),
-          /* @__PURE__ */ jsx12(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "raw" })
+    /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE SNAPSHOT \xB7 JSON" }),
+          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "raw" })
         ] }),
-        /* @__PURE__ */ jsx12("div", { style: {
+        /* @__PURE__ */ jsx13("div", { style: {
           background: VT.bgSoft,
           borderRadius: VT.r.sm,
           padding: 14,
           border: `1px solid ${VT.line}`,
           maxHeight: 280,
           overflow: "auto"
-        }, children: /* @__PURE__ */ jsx12(JsonTree, {}) })
+        }, children: /* @__PURE__ */ jsx13(JsonTree, {}) })
       ] }),
-      /* @__PURE__ */ jsxs11(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "GENERATED CONTENT" }),
-          /* @__PURE__ */ jsx12(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: "\u2713 sanitized" }),
-          /* @__PURE__ */ jsx12(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "\u2197 preview" })
+      /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "GENERATED CONTENT" }),
+          /* @__PURE__ */ jsx13(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: "\u2713 sanitized" }),
+          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", style: { marginLeft: "auto" }, children: "\u2197 preview" })
         ] }),
-        /* @__PURE__ */ jsxs11("div", { style: { background: VT.bgSoft, borderRadius: VT.r.sm, padding: 14, border: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsx12("div", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent, letterSpacing: "0.1em", marginBottom: 6 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-          /* @__PURE__ */ jsx12("div", { style: { fontWeight: 700, fontSize: 20, lineHeight: 1.15, marginBottom: 8 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-          /* @__PURE__ */ jsx12("div", { style: { fontSize: 13, lineHeight: 1.5, color: VT.inkSoft }, children: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u0441 2017 \u0433\u043E\u0434\u0430, \u043F\u0440\u043E\u0448\u043B\u0430 \u043A\u0443\u0440\u0441\u044B \u0432 [SCHOOL]. \u041F\u0440\u0438\u043D\u0438\u043C\u0430\u044E \u043E\u0434\u043D\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430 \u0432 \u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u0441\u043F\u0435\u0448\u043A\u0438, \u0441 \u0447\u0430\u0448\u043A\u043E\u0439 \u043A\u043E\u0444\u0435." }),
-          /* @__PURE__ */ jsx12("div", { style: { display: "flex", gap: 6, marginTop: 12 }, children: Array.from({ length: 6 }).map((_, i) => /* @__PURE__ */ jsx12("div", { "aria-hidden": "true", style: { flex: 1, aspectRatio: "1/1", borderRadius: 6, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bg} 5px 10px)` } }, i)) }),
-          /* @__PURE__ */ jsx12("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, marginTop: 8 }, children: "\u2248 320 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \xB7 \u2248 12 \u20BD \xB7 \u043C\u043E\u0434\u0435\u043B\u044C: YandexGPT 5 Pro" })
+        /* @__PURE__ */ jsxs12("div", { style: { background: VT.bgSoft, borderRadius: VT.r.sm, padding: 14, border: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsx13("div", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent, letterSpacing: "0.1em", marginBottom: 6 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+          /* @__PURE__ */ jsx13("div", { style: { fontWeight: 700, fontSize: 20, lineHeight: 1.15, marginBottom: 8 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+          /* @__PURE__ */ jsx13("div", { style: { fontSize: 13, lineHeight: 1.5, color: VT.inkSoft }, children: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u0441 2017 \u0433\u043E\u0434\u0430, \u043F\u0440\u043E\u0448\u043B\u0430 \u043A\u0443\u0440\u0441\u044B \u0432 [SCHOOL]. \u041F\u0440\u0438\u043D\u0438\u043C\u0430\u044E \u043E\u0434\u043D\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430 \u0432 \u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u0441\u043F\u0435\u0448\u043A\u0438, \u0441 \u0447\u0430\u0448\u043A\u043E\u0439 \u043A\u043E\u0444\u0435." }),
+          /* @__PURE__ */ jsx13("div", { style: { display: "flex", gap: 6, marginTop: 12 }, children: Array.from({ length: 6 }).map((_, i) => /* @__PURE__ */ jsx13("div", { "aria-hidden": "true", style: { flex: 1, aspectRatio: "1/1", borderRadius: 6, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bg} 5px 10px)` } }, i)) }),
+          /* @__PURE__ */ jsx13("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, marginTop: 8 }, children: "\u2248 320 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \xB7 \u2248 12 \u20BD \xB7 \u043C\u043E\u0434\u0435\u043B\u044C: YandexGPT 5 Pro" })
         ] })
       ] })
     ] }),
-    (d.user || d.consent) && /* @__PURE__ */ jsxs11("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }, children: [
-      d.user && /* @__PURE__ */ jsxs11(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "USER" }),
-        /* @__PURE__ */ jsxs11("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-          /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442" }),
-            /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 13, color: VT.ink }, children: d.user.contact_value_masked })
+    (d.user || d.consent) && /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }, children: [
+      d.user && /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "USER" }),
+        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442" }),
+            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 13, color: VT.ink }, children: d.user.contact_value_masked })
           ] }),
-          /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0430\u0440\u0438\u0444" }),
-            /* @__PURE__ */ jsx12(
+          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0430\u0440\u0438\u0444" }),
+            /* @__PURE__ */ jsx13(
               Badge,
               {
                 kind: d.user.plan === "pro" ? "success" : d.user.plan === "trial" ? "info" : "neutral",
@@ -12559,58 +12492,58 @@ function S13_AppDetail({
               }
             )
           ] }),
-          d.user.plan_until && /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0410\u043A\u0442\u0438\u0432\u0435\u043D \u0434\u043E" }),
-            /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 13 }, children: d.user.plan_until })
+          d.user.plan_until && /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0410\u043A\u0442\u0438\u0432\u0435\u043D \u0434\u043E" }),
+            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 13 }, children: d.user.plan_until })
           ] })
         ] })
       ] }),
-      d.consent && /* @__PURE__ */ jsxs11(Card, { style: { padding: 18 }, children: [
-        /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "CONSENT" }),
-        /* @__PURE__ */ jsxs11("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-          /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0412\u0435\u0440\u0441\u0438\u044F \u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0438" }),
-            /* @__PURE__ */ jsxs11(Mono, { style: { fontSize: 13 }, children: [
+      d.consent && /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
+        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "CONSENT" }),
+        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0412\u0435\u0440\u0441\u0438\u044F \u043F\u043E\u043B\u0438\u0442\u0438\u043A\u0438" }),
+            /* @__PURE__ */ jsxs12(Mono, { style: { fontSize: 13 }, children: [
               "v",
               d.consent.policy_version
             ] })
           ] }),
-          /* @__PURE__ */ jsxs11("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-            /* @__PURE__ */ jsx12("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E" }),
-            /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 13 }, children: formatTs(d.consent.created_at) })
+          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+            /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E" }),
+            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 13 }, children: formatTs(d.consent.created_at) })
           ] })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs11(Card, { style: { marginTop: 14, padding: 18 }, children: [
-      /* @__PURE__ */ jsx12(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "AUDIT LOG" }),
-      /* @__PURE__ */ jsxs11("div", { style: { marginTop: 10, fontSize: 13, fontFamily: VT.font.mono, color: VT.inkSoft, lineHeight: 1.7 }, children: [
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:22:18" }),
+    /* @__PURE__ */ jsxs12(Card, { style: { marginTop: 14, padding: 18 }, children: [
+      /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "AUDIT LOG" }),
+      /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10, fontSize: 13, fontFamily: VT.font.mono, color: VT.inkSoft, lineHeight: 1.7 }, children: [
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:22:18" }),
           " \xB7 application.submitted \xB7 ip 195.***.***.42"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:22:19" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:22:19" }),
           " \xB7 parser.tg.start \xB7 @studia_anna"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:22:34" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:22:34" }),
           " \xB7 parser.tg.ok \xB7 posts=47 photos=12"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:22:35" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:22:35" }),
           " \xB7 llm.generate.start \xB7 model=yandexgpt-5-pro"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:23:02" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:23:02" }),
           " \xB7 llm.generate.ok \xB7 tokens=320 cost_rub=12.40"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
           " \xB7 sanitize.ok \xB7 bleach.clean allowlist=v1"
         ] }),
-        /* @__PURE__ */ jsxs11("div", { children: [
-          /* @__PURE__ */ jsx12("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
+        /* @__PURE__ */ jsxs12("div", { children: [
+          /* @__PURE__ */ jsx13("span", { style: { color: VT.inkFaint }, children: "14:23:03" }),
           " \xB7 status.new \u2192 status.awaiting_review"
         ] })
       ] })
@@ -12623,8 +12556,8 @@ var AppsList = S12_AppsList;
 var AppDetail = S13_AppDetail;
 
 // src/admin-ops/index.tsx
-import React8, { useState as useState6, useMemo as useMemo3 } from "react";
-import { Fragment as Fragment14, jsx as jsx13, jsxs as jsxs12 } from "react/jsx-runtime";
+import React8, { useState as useState6, useMemo as useMemo2 } from "react";
+import { Fragment as Fragment14, jsx as jsx14, jsxs as jsxs13 } from "react/jsx-runtime";
 function formatTs2(iso) {
   if (!iso) return "\u2014";
   return iso.replace("T", " ").slice(0, 16);
@@ -12634,7 +12567,7 @@ function formatRel(iso) {
   return iso.slice(0, 10);
 }
 function TextField2({ value, onChange, placeholder, ariaLabel, inputMode, maxLength, autoFocus, disabled, style, mono, type = "text" }) {
-  return /* @__PURE__ */ jsx13(
+  return /* @__PURE__ */ jsx14(
     "input",
     {
       type,
@@ -12700,14 +12633,14 @@ function S14_SitesList({
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const totalPages = Math.max(1, Math.ceil(d.total / Math.max(1, d.limit)));
   const currentPage = Math.floor(d.offset / Math.max(1, d.limit)) + 1;
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx13(Eyebrow, { children: "\u0421\u0410\u0419\u0422\u042B" }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", children: "CSV" })
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx14(Eyebrow, { children: "\u0421\u0410\u0419\u0422\u042B" }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx14("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u0439\u0442\u044B" }),
+      /* @__PURE__ */ jsx14(Btn, { variant: "secondary", size: "sm", children: "CSV" })
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsx13("div", { style: { display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }, children: SITE_STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx13(
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsx14("div", { style: { display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap" }, children: SITE_STATUS_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx14(
       FilterChip,
       {
         label,
@@ -12716,12 +12649,12 @@ function S14_SitesList({
       },
       key
     )) }),
-    /* @__PURE__ */ jsxs12(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs12("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx13("thead", { children: /* @__PURE__ */ jsx13("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "Status", "Last sync", ""].map((h) => /* @__PURE__ */ jsx13("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
-        /* @__PURE__ */ jsxs12("tbody", { children: [
-          loading && [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx13("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [160, 80, 220, 110, 110, 18].map((w, j) => /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
-          showItems && d.items.map((s) => /* @__PURE__ */ jsxs12(
+    /* @__PURE__ */ jsxs13(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs13("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx14("thead", { children: /* @__PURE__ */ jsx14("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["Subdomain", "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "URL", "Status", "Last sync", ""].map((h) => /* @__PURE__ */ jsx14("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+        /* @__PURE__ */ jsxs13("tbody", { children: [
+          loading && [0, 1, 2, 3, 4, 5, 6].map((i) => /* @__PURE__ */ jsx14("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [160, 80, 220, 110, 110, 18].map((w, j) => /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(SkeletonBlock, { width: w, height: 12 }) }, j)) }, i)),
+          showItems && d.items.map((s) => /* @__PURE__ */ jsxs13(
             "tr",
             {
               onClick: () => onRowClick && onRowClick(s.id),
@@ -12731,39 +12664,39 @@ function S14_SitesList({
               } : void 0,
               style: { borderBottom: `1px solid ${VT.lineSoft}`, cursor: onRowClick ? "pointer" : "default" },
               children: [
-                /* @__PURE__ */ jsxs12("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: [
+                /* @__PURE__ */ jsxs13("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12.5 }, children: [
                   s.subdomain,
                   ".samosite.online",
-                  s.custom_domain && /* @__PURE__ */ jsx13(Badge, { kind: "success", style: { marginLeft: 8, padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: s.custom_domain })
+                  s.custom_domain && /* @__PURE__ */ jsx14(Badge, { kind: "success", style: { marginLeft: 8, padding: "1px 7px", fontSize: 10, borderRadius: 4 }, children: s.custom_domain })
                 ] }),
-                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: s.source_type }) }),
-                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: s.source_url }) }),
-                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(StatusPill, { status: s.status }) }),
-                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: formatTs2(s.last_synced_at) }) }),
-                /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
+                /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(Badge, { kind: "neutral", style: { padding: "2px 8px", fontSize: 11, borderRadius: 4 }, children: s.source_type }) }),
+                /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px", color: VT.inkSoft, maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: s.source_url }) }),
+                /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(StatusPill, { status: s.status }) }),
+                /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: formatTs2(s.last_synced_at) }) }),
+                /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px", textAlign: "right" }, children: /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2192" }) })
               ]
             },
             s.id
           ))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx13(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", hint: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B \xAB\u0417\u0430\u044F\u0432\u043A\u0438\xBB \u2014 \u0442\u0430\u043C \u043E\u0434\u043E\u0431\u0440\u044F\u0439\u0442\u0435 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435." }),
-      !showEmpty && /* @__PURE__ */ jsxs12("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs12("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx14(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", hint: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B \xAB\u0417\u0430\u044F\u0432\u043A\u0438\xBB \u2014 \u0442\u0430\u043C \u043E\u0434\u043E\u0431\u0440\u044F\u0439\u0442\u0435 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435." }),
+      !showEmpty && /* @__PURE__ */ jsxs13("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs13("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
-          /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
-          /* @__PURE__ */ jsxs12(Mono, { style: { alignSelf: "center" }, children: [
+        /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx14(Btn, { variant: "secondary", size: "sm", style: { background: VT.accentSoft, color: VT.accentInk, border: "none" }, children: currentPage }),
+          /* @__PURE__ */ jsxs13(Mono, { style: { alignSelf: "center" }, children: [
             "/ ",
             totalPages
           ] }),
-          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+          /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
         ] })
       ] })
     ] })
@@ -12814,12 +12747,12 @@ function S15_SiteDetail({
   const Wrap = _embed === false ? React8.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "sites" };
   if (loading) {
-    return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "20px 32px 40px" }, children: [
-      /* @__PURE__ */ jsx13(SkeletonBlock, { width: 200, height: 14, style: { marginBottom: 14 } }),
-      /* @__PURE__ */ jsx13(SkeletonBlock, { width: 280, height: 28, radius: 6, style: { marginBottom: 24 } }),
-      /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
-        /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 420, radius: 10 }),
-        /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 420, radius: 10 })
+    return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "20px 32px 40px" }, children: [
+      /* @__PURE__ */ jsx14(SkeletonBlock, { width: 200, height: 14, style: { marginBottom: 14 } }),
+      /* @__PURE__ */ jsx14(SkeletonBlock, { width: 280, height: 28, radius: 6, style: { marginBottom: 24 } }),
+      /* @__PURE__ */ jsxs13("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
+        /* @__PURE__ */ jsx14(SkeletonBlock, { width: "100%", height: 420, radius: 10 }),
+        /* @__PURE__ */ jsx14(SkeletonBlock, { width: "100%", height: 420, radius: 10 })
       ] })
     ] }) });
   }
@@ -12827,14 +12760,14 @@ function S15_SiteDetail({
     const enabled = actionEnabled(action, site.status);
     const isLoading = actionLoading === action;
     const anyLoading = !!actionLoading;
-    return /* @__PURE__ */ jsx13(
+    return /* @__PURE__ */ jsx14(
       Btn,
       {
         size: "sm",
         variant,
         disabled: !enabled || anyLoading,
         onClick: () => enabled && onAction && onAction(site.id, action),
-        iconRight: isLoading ? /* @__PURE__ */ jsx13(Spinner, { size: 14 }) : variant === "primary" ? /* @__PURE__ */ jsx13(IconArrow, { size: 14 }) : void 0,
+        iconRight: isLoading ? /* @__PURE__ */ jsx14(Spinner, { size: 14 }) : variant === "primary" ? /* @__PURE__ */ jsx14(IconArrow, { size: 14 }) : void 0,
         children: isLoading ? "..." : ACTION_LABELS[action]
       },
       action
@@ -12843,9 +12776,9 @@ function S15_SiteDetail({
   const primaryAction = site.status === "pending_review" ? "publish" : site.status === "published" ? "republish" : site.status === "paused" ? "resume_sync" : site.status === "archived" ? "unarchive" : null;
   const secondaryActions = ["publish", "republish", "pause_sync", "resume_sync", "archive", "unarchive"].filter((a) => a !== primaryAction && actionEnabled(a, site.status));
   const safePreviewUrl = previewUrl || (site.subdomain ? `https://${site.subdomain}.samosite.online` : null);
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "20px 32px 40px" }, children: [
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
-      /* @__PURE__ */ jsx13(
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "20px 32px 40px" }, children: [
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: VT.inkFaint, marginBottom: 8 }, children: [
+      /* @__PURE__ */ jsx14(
         "button",
         {
           type: "button",
@@ -12854,50 +12787,50 @@ function S15_SiteDetail({
           children: "\u2190 \u0421\u0430\u0439\u0442\u044B"
         }
       ),
-      /* @__PURE__ */ jsx13("span", { children: "/" }),
-      /* @__PURE__ */ jsxs12(Mono, { style: { color: VT.ink }, children: [
+      /* @__PURE__ */ jsx14("span", { children: "/" }),
+      /* @__PURE__ */ jsxs13(Mono, { style: { color: VT.ink }, children: [
         site.subdomain,
         ".samosite.online"
       ] })
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 18 }, children: [
-      /* @__PURE__ */ jsxs12("div", { children: [
-        /* @__PURE__ */ jsx13("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: site.subdomain.replace(/-/g, " ") }),
-        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft, flexWrap: "wrap" }, children: [
-          safePreviewUrl && /* @__PURE__ */ jsxs12("a", { href: safePreviewUrl, target: "_blank", rel: "noreferrer", style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
-            /* @__PURE__ */ jsxs12(Mono, { style: { color: "inherit" }, children: [
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 18 }, children: [
+      /* @__PURE__ */ jsxs13("div", { children: [
+        /* @__PURE__ */ jsx14("h1", { style: { fontSize: 26, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 6px" }, children: site.subdomain.replace(/-/g, " ") }),
+        /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: VT.inkSoft, flexWrap: "wrap" }, children: [
+          safePreviewUrl && /* @__PURE__ */ jsxs13("a", { href: safePreviewUrl, target: "_blank", rel: "noreferrer", style: { display: "inline-flex", alignItems: "center", gap: 4, color: VT.accent, textDecoration: "underline" }, children: [
+            /* @__PURE__ */ jsxs13(Mono, { style: { color: "inherit" }, children: [
               site.subdomain,
               ".samosite.online"
             ] }),
             " \u2197"
           ] }),
-          /* @__PURE__ */ jsx13("span", { children: "\xB7" }),
-          /* @__PURE__ */ jsx13(StatusPill, { status: site.status }),
-          site.published_at && /* @__PURE__ */ jsxs12(Fragment14, { children: [
-            /* @__PURE__ */ jsx13("span", { children: "\xB7" }),
-            /* @__PURE__ */ jsxs12("span", { children: [
+          /* @__PURE__ */ jsx14("span", { children: "\xB7" }),
+          /* @__PURE__ */ jsx14(StatusPill, { status: site.status }),
+          site.published_at && /* @__PURE__ */ jsxs13(Fragment14, { children: [
+            /* @__PURE__ */ jsx14("span", { children: "\xB7" }),
+            /* @__PURE__ */ jsxs13("span", { children: [
               "\u043E\u043F\u0443\u0431\u043B\u0438\u043A\u043E\u0432\u0430\u043D ",
               formatRel(site.published_at)
             ] })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }, children: [
+      /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }, children: [
         secondaryActions.map((a) => renderAction(a, "secondary")),
         primaryAction && renderAction(primaryAction, "primary")
       ] })
     ] }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-        /* @__PURE__ */ jsxs12("div", { style: { padding: "10px 14px", borderBottom: `1px solid ${VT.line}`, display: "flex", alignItems: "center", gap: 6, background: VT.bgSoft, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: [
-          /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
-          /* @__PURE__ */ jsx13("span", { style: { marginLeft: 10 }, children: safePreviewUrl }),
-          /* @__PURE__ */ jsx13("span", { style: { marginLeft: "auto" }, children: "preview" })
+    /* @__PURE__ */ jsxs13("div", { style: { display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+        /* @__PURE__ */ jsxs13("div", { style: { padding: "10px 14px", borderBottom: `1px solid ${VT.line}`, display: "flex", alignItems: "center", gap: 6, background: VT.bgSoft, fontFamily: VT.font.mono, fontSize: 11.5, color: VT.inkFaint }, children: [
+          /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { width: 8, height: 8, borderRadius: "50%", background: VT.line } }),
+          /* @__PURE__ */ jsx14("span", { style: { marginLeft: 10 }, children: safePreviewUrl }),
+          /* @__PURE__ */ jsx14("span", { style: { marginLeft: "auto" }, children: "preview" })
         ] }),
-        safePreviewUrl ? /* @__PURE__ */ jsx13(
+        safePreviewUrl ? /* @__PURE__ */ jsx14(
           "iframe",
           {
             src: safePreviewUrl,
@@ -12905,24 +12838,24 @@ function S15_SiteDetail({
             sandbox: "allow-same-origin allow-scripts allow-popups-to-escape-sandbox",
             style: { width: "100%", aspectRatio: "4 / 3", border: "none", background: VT.bg, display: "block" }
           }
-        ) : /* @__PURE__ */ jsxs12("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
-          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: `1px solid ${VT.line}` }, children: [
-            /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
-            /* @__PURE__ */ jsx13("span", { style: { fontSize: 12, fontWeight: 700, color: VT.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-            /* @__PURE__ */ jsx13("span", { style: { marginLeft: "auto", padding: "3px 9px", borderRadius: 999, background: VT.accent, color: "#fff", fontSize: 10, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
+        ) : /* @__PURE__ */ jsxs13("div", { style: { aspectRatio: "4 / 3", background: VT.bg, padding: 14, position: "relative" }, children: [
+          /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 8, paddingBottom: 10, borderBottom: `1px solid ${VT.line}` }, children: [
+            /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { width: 22, height: 22, borderRadius: 6, background: "oklch(0.55 0.13 30)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, letterSpacing: "-0.04em" }, children: "\u0410" }),
+            /* @__PURE__ */ jsx14("span", { style: { fontSize: 12, fontWeight: 700, color: VT.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+            /* @__PURE__ */ jsx14("span", { style: { marginLeft: "auto", padding: "3px 9px", borderRadius: 999, background: VT.accent, color: "#fff", fontSize: 10, fontWeight: 600 }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" })
           ] }),
-          /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10 }, children: [
-            /* @__PURE__ */ jsx13("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.12em", color: VT.accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
-            /* @__PURE__ */ jsx13("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
+          /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10 }, children: [
+            /* @__PURE__ */ jsx14("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.12em", color: VT.accent, fontWeight: 600 }, children: "\u041C\u0410\u041D\u0418\u041A\u042E\u0420 \xB7 \u041F\u0415\u0422\u0420\u041E\u0417\u0410\u0412\u041E\u0414\u0421\u041A" }),
+            /* @__PURE__ */ jsx14("div", { style: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.025em", marginTop: 4, lineHeight: 1.15 }, children: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u2014 \u0431\u0435\u0437 \u0431\u043E\u043B\u0438, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
           ] }),
-          /* @__PURE__ */ jsx13("div", { style: { marginTop: 10, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx13("div", { "aria-hidden": "true", style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
+          /* @__PURE__ */ jsx14("div", { style: { marginTop: 10, display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 3 }, children: Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ jsx14("div", { "aria-hidden": "true", style: { aspectRatio: "1/1", borderRadius: 4, background: `repeating-linear-gradient(${30 + i * 22}deg, ${VT.accentSoft} 0 5px, ${VT.bgSoft} 5px 10px)` } }, i)) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
-        /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B" }),
-          /* @__PURE__ */ jsx13("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: d.leads_count }),
-          /* @__PURE__ */ jsx13(
+      /* @__PURE__ */ jsxs13("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: [
+        /* @__PURE__ */ jsxs13(Card, { style: { padding: 18 }, children: [
+          /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u041B\u0418\u0414\u042B" }),
+          /* @__PURE__ */ jsx14("div", { style: { fontSize: 28, fontWeight: 700, marginTop: 6 }, children: d.leads_count }),
+          /* @__PURE__ */ jsx14(
             Btn,
             {
               variant: "ghost",
@@ -12933,20 +12866,20 @@ function S15_SiteDetail({
             }
           )
         ] }),
-        /* @__PURE__ */ jsxs12(Card, { style: { padding: 18 }, children: [
-          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0418\u0421\u0422\u041E\u0427\u041D\u0418\u041A" }),
-          /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
-            /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0438\u043F" }),
-              /* @__PURE__ */ jsx13(Badge, { kind: "neutral", style: { padding: "2px 9px", fontSize: 11.5, borderRadius: 4 }, children: site.source_type })
+        /* @__PURE__ */ jsxs13(Card, { style: { padding: 18 }, children: [
+          /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0418\u0421\u0422\u041E\u0427\u041D\u0418\u041A" }),
+          /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }, children: [
+            /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx14("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "\u0422\u0438\u043F" }),
+              /* @__PURE__ */ jsx14(Badge, { kind: "neutral", style: { padding: "2px 9px", fontSize: 11.5, borderRadius: 4 }, children: site.source_type })
             ] }),
-            /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "URL" }),
-              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: site.source_url })
+            /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx14("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "URL" }),
+              /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: site.source_url })
             ] }),
-            /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
-              /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "Last sync" }),
-              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: formatTs2(site.last_synced_at) })
+            /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: [
+              /* @__PURE__ */ jsx14("span", { style: { fontSize: 13, color: VT.inkSoft }, children: "Last sync" }),
+              /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: formatTs2(site.last_synced_at) })
             ] })
           ] })
         ] })
@@ -13013,12 +12946,12 @@ function S16_Leads(props) {
   const showEmpty = !loading && (!d.items || d.items.length === 0) && !error;
   const isSelected = (id) => selected.includes(id);
   const allSelected = showItems && selected.length === d.items.length;
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
-    /* @__PURE__ */ jsx13(Eyebrow, { children: "\u041B\u0418\u0414\u042B" }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0412\u0441\u0435 \u0441\u0430\u0439\u0442\u044B" }),
-      /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 8, alignItems: "center" }, children: [
-        selected.length > 0 && /* @__PURE__ */ jsxs12(
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "24px 32px 40px", position: "relative" }, children: [
+    /* @__PURE__ */ jsx14(Eyebrow, { children: "\u041B\u0418\u0414\u042B" }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx14("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0412\u0441\u0435 \u0441\u0430\u0439\u0442\u044B" }),
+      /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 8, alignItems: "center" }, children: [
+        selected.length > 0 && /* @__PURE__ */ jsxs13(
           "button",
           {
             type: "button",
@@ -13031,13 +12964,13 @@ function S16_Leads(props) {
             ]
           }
         ),
-        /* @__PURE__ */ jsxs12(
+        /* @__PURE__ */ jsxs13(
           Btn,
           {
             size: "sm",
             onClick: openModal,
             disabled: selected.length === 0 || loading,
-            iconRight: /* @__PURE__ */ jsx13(IconArrow, { size: 14 }),
+            iconRight: /* @__PURE__ */ jsx14(IconArrow, { size: 14 }),
             children: [
               "\u{1F513} \u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C (",
               selected.length,
@@ -13047,20 +12980,20 @@ function S16_Leads(props) {
         )
       ] })
     ] }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }, children: [
-      /* @__PURE__ */ jsxs12(Mono, { style: { fontSize: 12 }, children: [
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 12, marginBottom: 14, alignItems: "center" }, children: [
+      /* @__PURE__ */ jsxs13(Mono, { style: { fontSize: 12 }, children: [
         "\u0412\u0441\u0435\u0433\u043E: ",
         d.total,
         " \xB7 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u043E: ",
         d.items?.length ?? 0
       ] }),
-      /* @__PURE__ */ jsx13(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES \u2014 plaintext \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 TOTP-\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F" })
+      /* @__PURE__ */ jsx14(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 11.5 }, children: "\u{1F512} Fernet AES \u2014 plaintext \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 TOTP-\u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F" })
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs12(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsxs12("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
-        /* @__PURE__ */ jsx13("thead", { children: /* @__PURE__ */ jsxs12("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsx13("th", { scope: "col", style: { width: 48, padding: "12px 16px", textAlign: "left" }, children: /* @__PURE__ */ jsx13(
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs13(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsxs13("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13 }, children: [
+        /* @__PURE__ */ jsx14("thead", { children: /* @__PURE__ */ jsxs13("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsx14("th", { scope: "col", style: { width: 48, padding: "12px 16px", textAlign: "left" }, children: /* @__PURE__ */ jsx14(
             "input",
             {
               type: "checkbox",
@@ -13075,18 +13008,18 @@ function S16_Leads(props) {
               }
             }
           ) }),
-          ["ID", "\u0421\u0430\u0439\u0442", "IP prefix", "Status", "\u041A\u043E\u0433\u0434\u0430"].map((h) => /* @__PURE__ */ jsx13("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h))
+          ["ID", "\u0421\u0430\u0439\u0442", "IP prefix", "Status", "\u041A\u043E\u0433\u0434\u0430"].map((h) => /* @__PURE__ */ jsx14("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h))
         ] }) }),
-        /* @__PURE__ */ jsxs12("tbody", { children: [
-          loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs12("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: 14, height: 14, radius: 3 }) }),
-            [90, 160, 120, 90, 110].map((w, j) => /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: w, height: 12 }) }, j))
+        /* @__PURE__ */ jsxs13("tbody", { children: [
+          loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs13("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(SkeletonBlock, { width: 14, height: 14, radius: 3 }) }),
+            [90, 160, 120, 90, 110].map((w, j) => /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(SkeletonBlock, { width: w, height: 12 }) }, j))
           ] }, i)),
-          showItems && d.items.map((row) => /* @__PURE__ */ jsxs12("tr", { style: {
+          showItems && d.items.map((row) => /* @__PURE__ */ jsxs13("tr", { style: {
             borderBottom: `1px solid ${VT.lineSoft}`,
             background: isSelected(row.id) ? VT.accentSoft : "transparent"
           }, children: [
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(
               "input",
               {
                 type: "checkbox",
@@ -13095,31 +13028,31 @@ function S16_Leads(props) {
                 onChange: (e) => setSelected(row.id, e.target.checked)
               }
             ) }),
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { children: row.id }) }),
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft }, children: row.site_id }),
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: row.ip_prefix || "\u2014" }) }),
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(StatusPill, { status: row.status, size: "sm" }) }),
-            /* @__PURE__ */ jsx13("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: formatTs2(row.created_at) }) })
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(Mono, { children: row.id }) }),
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 12, color: VT.inkSoft }, children: row.site_id }),
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: row.ip_prefix || "\u2014" }) }),
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(StatusPill, { status: row.status, size: "sm" }) }),
+            /* @__PURE__ */ jsx14("td", { style: { padding: "12px 16px" }, children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11.5, color: VT.inkFaint }, children: formatTs2(row.created_at) }) })
           ] }, row.id))
         ] })
       ] }),
-      showEmpty && /* @__PURE__ */ jsx13(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043B\u0438\u0434\u043E\u0432", hint: "\u041A\u043E\u0433\u0434\u0430 \u043A\u0442\u043E-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442 \u0444\u043E\u0440\u043C\u0443 \u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0441\u0430\u0439\u0442\u043E\u0432 \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
-      !showEmpty && !loading && /* @__PURE__ */ jsxs12("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
-        /* @__PURE__ */ jsxs12("span", { children: [
+      showEmpty && /* @__PURE__ */ jsx14(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u043B\u0438\u0434\u043E\u0432", hint: "\u041A\u043E\u0433\u0434\u0430 \u043A\u0442\u043E-\u043D\u0438\u0431\u0443\u0434\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u0442 \u0444\u043E\u0440\u043C\u0443 \u043D\u0430 \u043E\u0434\u043D\u043E\u043C \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0441\u0430\u0439\u0442\u043E\u0432 \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+      !showEmpty && !loading && /* @__PURE__ */ jsxs13("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft }, children: [
+        /* @__PURE__ */ jsxs13("span", { children: [
           d.offset + 1,
           "\u2013",
           Math.min(d.offset + d.limit, d.total),
           " \u0438\u0437 ",
           d.total
         ] }),
-        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
-          /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
+        /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0 || loading, children: "\u2190" }),
+          /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange && onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total || loading, children: "\u2192" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u0412\u0441\u0435 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F \u0432 audit-log (admin_actions) \u2014 admin_id, ip, lead_ids, ts." }),
-    modalOpen && /* @__PURE__ */ jsx13(
+    /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 10, display: "block" }, children: "\u0412\u0441\u0435 \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u043A\u0438 \u043B\u043E\u0433\u0438\u0440\u0443\u044E\u0442\u0441\u044F \u0432 audit-log (admin_actions) \u2014 admin_id, ip, lead_ids, ts." }),
+    modalOpen && /* @__PURE__ */ jsx14(
       "div",
       {
         role: "dialog",
@@ -13135,16 +13068,16 @@ function S16_Leads(props) {
           padding: 24,
           zIndex: 10
         },
-        children: /* @__PURE__ */ jsx13(Card, { style: { width: decryptedRows ? 560 : 380, padding: 24, background: VT.bg }, children: !decryptedRows ? /* @__PURE__ */ jsxs12(Fragment14, { children: [
-          /* @__PURE__ */ jsx13("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
-          /* @__PURE__ */ jsxs12("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: [
+        children: /* @__PURE__ */ jsx14(Card, { style: { width: decryptedRows ? 560 : 380, padding: 24, background: VT.bg }, children: !decryptedRows ? /* @__PURE__ */ jsxs13(Fragment14, { children: [
+          /* @__PURE__ */ jsx14("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 TOTP" }),
+          /* @__PURE__ */ jsxs13("p", { style: { fontSize: 13, color: VT.inkSoft, margin: "0 0 14px" }, children: [
             "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C ",
-            /* @__PURE__ */ jsx13("b", { children: selected.length }),
+            /* @__PURE__ */ jsx14("b", { children: selected.length }),
             " ",
             selected.length === 1 ? "\u043B\u0438\u0434" : "\u043B\u0438\u0434\u043E\u0432",
             ". \u0412\u0432\u0435\u0434\u0438\u0442\u0435 6-\u0437\u043D\u0430\u0447\u043D\u044B\u0439 \u043A\u043E\u0434 \u0438\u0437 \u0430\u0443\u0442\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440\u0430."
           ] }),
-          decryptError && /* @__PURE__ */ jsx13("div", { role: "alert", style: {
+          decryptError && /* @__PURE__ */ jsx14("div", { role: "alert", style: {
             padding: "8px 12px",
             background: VT.dangerSoft,
             border: `1px solid oklch(0.85 0.06 28)`,
@@ -13153,7 +13086,7 @@ function S16_Leads(props) {
             color: "oklch(0.4 0.15 28)",
             marginBottom: 14
           }, children: decryptError }),
-          /* @__PURE__ */ jsx13(
+          /* @__PURE__ */ jsx14(
             TextField2,
             {
               value: totp,
@@ -13168,41 +13101,41 @@ function S16_Leads(props) {
               style: { fontSize: 20, letterSpacing: "0.4em", textAlign: "center" }
             }
           ),
-          /* @__PURE__ */ jsxs12("div", { style: { marginTop: 14, display: "flex", gap: 8 }, children: [
-            /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, onClick: cancel, disabled: !!decryptLoading, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
-            /* @__PURE__ */ jsx13(
+          /* @__PURE__ */ jsxs13("div", { style: { marginTop: 14, display: "flex", gap: 8 }, children: [
+            /* @__PURE__ */ jsx14(Btn, { variant: "secondary", size: "sm", style: { flex: 1 }, onClick: cancel, disabled: !!decryptLoading, children: "\u041E\u0442\u043C\u0435\u043D\u0430" }),
+            /* @__PURE__ */ jsx14(
               Btn,
               {
                 size: "sm",
                 style: { flex: 1 },
                 onClick: submitDecrypt,
                 disabled: !totp || totp.length < 6 || !!decryptLoading,
-                iconRight: decryptLoading ? /* @__PURE__ */ jsx13(Spinner, { size: 14 }) : void 0,
+                iconRight: decryptLoading ? /* @__PURE__ */ jsx14(Spinner, { size: 14 }) : void 0,
                 children: decryptLoading ? "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u044B\u0432\u0430\u0435\u043C\u2026" : "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u0442\u044C"
               }
             )
           ] })
-        ] }) : /* @__PURE__ */ jsxs12(Fragment14, { children: [
-          /* @__PURE__ */ jsxs12("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: [
+        ] }) : /* @__PURE__ */ jsxs13(Fragment14, { children: [
+          /* @__PURE__ */ jsxs13("h3", { id: "decrypt-title", style: { fontSize: 18, fontWeight: 700, margin: "0 0 8px" }, children: [
             "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u043E \xB7 ",
             decryptedRows.length
           ] }),
-          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: VT.inkFaint, display: "block", marginBottom: 12 }, children: "\u0417\u0430\u043B\u043E\u0433\u0438\u0440\u043E\u0432\u0430\u043D\u043E \u0432 audit-log. \u0417\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u043E\u043A\u043D\u043E \u2014 plaintext \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442 \u0438\u0437 DOM." }),
-          /* @__PURE__ */ jsx13("div", { style: { maxHeight: 360, overflow: "auto", display: "flex", flexDirection: "column", gap: 10 }, children: decryptedRows.map((r) => /* @__PURE__ */ jsxs12(Card, { style: { padding: 12, border: `1px solid ${VT.line}` }, children: [
-            /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }, children: [
-              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11.5 }, children: r.id }),
-              /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: r.site_id }),
-              /* @__PURE__ */ jsx13(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(r.created_at) })
+          /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, color: VT.inkFaint, display: "block", marginBottom: 12 }, children: "\u0417\u0430\u043B\u043E\u0433\u0438\u0440\u043E\u0432\u0430\u043D\u043E \u0432 audit-log. \u0417\u0430\u043A\u0440\u043E\u0439\u0442\u0435 \u043E\u043A\u043D\u043E \u2014 plaintext \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442 \u0438\u0437 DOM." }),
+          /* @__PURE__ */ jsx14("div", { style: { maxHeight: 360, overflow: "auto", display: "flex", flexDirection: "column", gap: 10 }, children: decryptedRows.map((r) => /* @__PURE__ */ jsxs13(Card, { style: { padding: 12, border: `1px solid ${VT.line}` }, children: [
+            /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }, children: [
+              /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11.5 }, children: r.id }),
+              /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: r.site_id }),
+              /* @__PURE__ */ jsx14(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(r.created_at) })
             ] }),
-            /* @__PURE__ */ jsx13("div", { style: { fontSize: 13, fontWeight: 500 }, children: r.name || "\u2014" }),
-            /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: r.phone || "\u2014" }),
-            r.message && /* @__PURE__ */ jsxs12("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 4, lineHeight: 1.5 }, children: [
+            /* @__PURE__ */ jsx14("div", { style: { fontSize: 13, fontWeight: 500 }, children: r.name || "\u2014" }),
+            /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: r.phone || "\u2014" }),
+            r.message && /* @__PURE__ */ jsxs13("div", { style: { fontSize: 13, color: VT.inkSoft, marginTop: 4, lineHeight: 1.5 }, children: [
               "\xAB",
               r.message,
               "\xBB"
             ] })
           ] }, r.id)) }),
-          /* @__PURE__ */ jsx13("div", { style: { marginTop: 14, display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ jsx13(Btn, { size: "sm", onClick: cancel, children: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C" }) })
+          /* @__PURE__ */ jsx14("div", { style: { marginTop: 14, display: "flex", justifyContent: "flex-end" }, children: /* @__PURE__ */ jsx14(Btn, { size: "sm", onClick: cancel, children: "\u0417\u0430\u043A\u0440\u044B\u0442\u044C" }) })
         ] }) })
       }
     )
@@ -13241,52 +13174,52 @@ function S17_Waitlist({ data, loading, error, onMarkInDevelopment, _embed }) {
   const items = d.items || [];
   const readyItems = items.filter((it) => it.ready);
   const restItems = items.filter((it) => !it.ready);
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx13(Eyebrow, { children: "WAITLIST \xB7 ADR-0009" }),
-    /* @__PURE__ */ jsx13("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 6px" }, children: /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0413\u043E\u043B\u043E\u0441\u0430 \u043F\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\u043C" }) }),
-    /* @__PURE__ */ jsxs12("p", { style: { fontSize: 14, color: VT.inkSoft, margin: "0 0 22px", maxWidth: 680 }, children: [
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx14(Eyebrow, { children: "WAITLIST \xB7 ADR-0009" }),
+    /* @__PURE__ */ jsx14("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 6px" }, children: /* @__PURE__ */ jsx14("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0413\u043E\u043B\u043E\u0441\u0430 \u043F\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\u043C" }) }),
+    /* @__PURE__ */ jsxs13("p", { style: { fontSize: 14, color: VT.inkSoft, margin: "0 0 22px", maxWidth: 680 }, children: [
       "\u0413\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0430 \u043F\u043E ",
-      /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: "source_name" }),
+      /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: "source_name" }),
       ". \u0417\u0435\u043B\u0451\u043D\u044B\u043C \u2014 \u2265",
       d.threshold,
       " \u0433\u043E\u043B\u043E\u0441\u043E\u0432, \u043C\u043E\u0436\u043D\u043E \u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C ADR."
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
-    !loading && items.length === 0 && /* @__PURE__ */ jsx13(Card, { style: { padding: 0 }, children: /* @__PURE__ */ jsx13(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0430 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438", hint: "\u0413\u043E\u043B\u043E\u0441\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0438\u0437 feedback-\u0444\u043E\u0440\u043C\u044B \u0438 source-detection \xABunknown\xBB." }) }),
-    (loading || items.length > 0) && /* @__PURE__ */ jsx13(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs12("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
-      /* @__PURE__ */ jsx13("thead", { children: /* @__PURE__ */ jsx13("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx13("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
-      /* @__PURE__ */ jsxs12("tbody", { children: [
-        loading && [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsx13("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [200, 100, 140, 120].map((w, j) => /* @__PURE__ */ jsx13("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx13(SkeletonBlock, { width: w, height: 14 }) }, j)) }, i)),
-        !loading && readyItems.map((it) => /* @__PURE__ */ jsx13(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name)),
-        !loading && readyItems.length > 0 && restItems.length > 0 && /* @__PURE__ */ jsx13("tr", { "aria-hidden": "true", children: /* @__PURE__ */ jsx13("td", { colSpan: 4, style: { padding: "6px 16px", background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: /* @__PURE__ */ jsxs12(Mono, { style: { fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.08em" }, children: [
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error }) }),
+    !loading && items.length === 0 && /* @__PURE__ */ jsx14(Card, { style: { padding: 0 }, children: /* @__PURE__ */ jsx14(EmptyState, { title: "\u041F\u043E\u043A\u0430 \u043D\u0435\u0442 \u0437\u0430\u043F\u0440\u043E\u0441\u043E\u0432 \u043D\u0430 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438", hint: "\u0413\u043E\u043B\u043E\u0441\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u0438\u0437 feedback-\u0444\u043E\u0440\u043C\u044B \u0438 source-detection \xABunknown\xBB." }) }),
+    (loading || items.length > 0) && /* @__PURE__ */ jsx14(Card, { style: { padding: 0, overflow: "hidden" }, children: /* @__PURE__ */ jsxs13("table", { style: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 }, children: [
+      /* @__PURE__ */ jsx14("thead", { children: /* @__PURE__ */ jsx14("tr", { style: { background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: ["\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A", "\u0413\u043E\u043B\u043E\u0441\u043E\u0432", "\u041F\u0435\u0440\u0432\u043E\u0435 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435", ""].map((h) => /* @__PURE__ */ jsx14("th", { scope: "col", style: { textAlign: "left", padding: "12px 16px", fontFamily: VT.font.mono, fontSize: 10.5, letterSpacing: "0.08em", color: VT.inkFaint, fontWeight: 500 }, children: h.toUpperCase() }, h || "go")) }) }),
+      /* @__PURE__ */ jsxs13("tbody", { children: [
+        loading && [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsx14("tr", { style: { borderBottom: `1px solid ${VT.lineSoft}` }, children: [200, 100, 140, 120].map((w, j) => /* @__PURE__ */ jsx14("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx14(SkeletonBlock, { width: w, height: 14 }) }, j)) }, i)),
+        !loading && readyItems.map((it) => /* @__PURE__ */ jsx14(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name)),
+        !loading && readyItems.length > 0 && restItems.length > 0 && /* @__PURE__ */ jsx14("tr", { "aria-hidden": "true", children: /* @__PURE__ */ jsx14("td", { colSpan: 4, style: { padding: "6px 16px", background: VT.bgSoft, borderBottom: `1px solid ${VT.line}` }, children: /* @__PURE__ */ jsxs13(Mono, { style: { fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.08em" }, children: [
           "\u2500\u2500\u2500 \u041D\u0418\u0416\u0415 \u041F\u041E\u0420\u041E\u0413\u0410 (",
           d.threshold,
           " \u0413\u041E\u041B\u041E\u0421\u041E\u0412) \u2500\u2500\u2500"
         ] }) }) }),
-        !loading && restItems.map((it) => /* @__PURE__ */ jsx13(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name))
+        !loading && restItems.map((it) => /* @__PURE__ */ jsx14(WaitlistRow, { item: it, threshold: d.threshold, onMarkInDevelopment }, it.source_name))
       ] })
     ] }) })
   ] }) });
 }
 function WaitlistRow({ item, threshold, onMarkInDevelopment }) {
-  return /* @__PURE__ */ jsxs12("tr", { style: {
+  return /* @__PURE__ */ jsxs13("tr", { style: {
     borderBottom: `1px solid ${VT.lineSoft}`,
     background: item.ready ? "oklch(0.97 0.03 145 / 0.5)" : "transparent"
   }, children: [
-    /* @__PURE__ */ jsx13("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: item.source_name }),
-      /* @__PURE__ */ jsx13("span", { style: { fontWeight: 500 }, children: SOURCE_LABELS[item.source_name] || item.source_name })
+    /* @__PURE__ */ jsx14("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, padding: "2px 7px", background: VT.bgSoft, borderRadius: 4 }, children: item.source_name }),
+      /* @__PURE__ */ jsx14("span", { style: { fontWeight: 500 }, children: SOURCE_LABELS[item.source_name] || item.source_name })
     ] }) }),
-    /* @__PURE__ */ jsx13("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-      /* @__PURE__ */ jsx13("span", { style: { fontSize: 22, fontWeight: 700, color: item.ready ? VT.success : VT.ink }, children: item.votes }),
-      item.ready && /* @__PURE__ */ jsxs12(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: [
+    /* @__PURE__ */ jsx14("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+      /* @__PURE__ */ jsx14("span", { style: { fontSize: 22, fontWeight: 700, color: item.ready ? VT.success : VT.ink }, children: item.votes }),
+      item.ready && /* @__PURE__ */ jsxs13(Badge, { kind: "success", style: { padding: "2px 8px", fontSize: 10.5, borderRadius: 4 }, children: [
         "\u2265 ",
         threshold,
         " \xB7 \u041F\u041E\u0420\u0410"
       ] })
     ] }) }),
-    /* @__PURE__ */ jsx13("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: item.first_seen }) }),
-    /* @__PURE__ */ jsx13("td", { style: { padding: "14px 16px", textAlign: "right" }, children: item.ready ? /* @__PURE__ */ jsx13(Btn, { size: "sm", onClick: () => onMarkInDevelopment && onMarkInDevelopment(item.source_name), children: "\u0412 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0443" }) : /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2014" }) })
+    /* @__PURE__ */ jsx14("td", { style: { padding: "14px 16px" }, children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: item.first_seen }) }),
+    /* @__PURE__ */ jsx14("td", { style: { padding: "14px 16px", textAlign: "right" }, children: item.ready ? /* @__PURE__ */ jsx14(Btn, { size: "sm", onClick: () => onMarkInDevelopment && onMarkInDevelopment(item.source_name), children: "\u0412 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0443" }) : /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { color: VT.inkFaint }, children: "\u2014" }) })
   ] });
 }
 var MOCK_FEEDBACK = {
@@ -13315,7 +13248,7 @@ function FbTypePill({ type }) {
     bug: ["\u0431\u0430\u0433", VT.dangerSoft, "oklch(0.42 0.15 28)"],
     general: ["\u0434\u0440\u0443\u0433\u043E\u0435", VT.bgSoft, VT.inkSoft]
   }[type] || ["\u2014", VT.bgSoft, VT.inkSoft];
-  return /* @__PURE__ */ jsx13("span", { style: { display: "inline-flex", padding: "2px 8px", borderRadius: 4, background: m[1], color: m[2], fontSize: 10.5, fontWeight: 600, fontFamily: VT.font.mono, letterSpacing: "0.06em" }, children: m[0].toUpperCase() });
+  return /* @__PURE__ */ jsx14("span", { style: { display: "inline-flex", padding: "2px 8px", borderRadius: 4, background: m[1], color: m[2], fontSize: 10.5, fontWeight: 600, fontFamily: VT.font.mono, letterSpacing: "0.06em" }, children: m[0].toUpperCase() });
 }
 function S18_FeedbackInbox({
   data,
@@ -13333,7 +13266,7 @@ function S18_FeedbackInbox({
   const Wrap = _embed === false ? React8.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "feedback" };
   const [selectedId, setSelectedId] = useState6(null);
-  const selected = useMemo3(() => {
+  const selected = useMemo2(() => {
     const items = d.items || [];
     if (selectedId) return items.find((it) => it.id === selectedId) || items[0] || null;
     return items[0] || null;
@@ -13342,11 +13275,11 @@ function S18_FeedbackInbox({
     setSelectedId(id);
     if (onRowClick) onRowClick(id);
   };
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx13(Eyebrow, { children: "FEEDBACK INBOX" }),
-    /* @__PURE__ */ jsx13("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" }) }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx13("div", { style: { display: "flex", gap: 6 }, children: FB_TYPE_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx13(
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx14(Eyebrow, { children: "FEEDBACK INBOX" }),
+    /* @__PURE__ */ jsx14("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: /* @__PURE__ */ jsx14("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" }) }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 10, marginBottom: 14, alignItems: "center", flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx14("div", { style: { display: "flex", gap: 6 }, children: FB_TYPE_FILTERS.map(([key, label]) => /* @__PURE__ */ jsx14(
         FilterChip,
         {
           label,
@@ -13355,7 +13288,7 @@ function S18_FeedbackInbox({
         },
         key
       )) }),
-      /* @__PURE__ */ jsx13("div", { style: { marginLeft: "auto" }, children: /* @__PURE__ */ jsx13(
+      /* @__PURE__ */ jsx14("div", { style: { marginLeft: "auto" }, children: /* @__PURE__ */ jsx14(
         "input",
         {
           type: "search",
@@ -13377,17 +13310,17 @@ function S18_FeedbackInbox({
         }
       ) })
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error }) }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 0, overflow: "hidden" }, children: [
-        loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs12("div", { style: { padding: "14px 16px", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
-          /* @__PURE__ */ jsx13(SkeletonBlock, { width: "60%", height: 12, style: { marginBottom: 6 } }),
-          /* @__PURE__ */ jsx13(SkeletonBlock, { width: "90%", height: 14 })
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error }) }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 0, overflow: "hidden" }, children: [
+        loading && [0, 1, 2, 3, 4].map((i) => /* @__PURE__ */ jsxs13("div", { style: { padding: "14px 16px", borderBottom: `1px solid ${VT.lineSoft}` }, children: [
+          /* @__PURE__ */ jsx14(SkeletonBlock, { width: "60%", height: 12, style: { marginBottom: 6 } }),
+          /* @__PURE__ */ jsx14(SkeletonBlock, { width: "90%", height: 14 })
         ] }, i)),
-        !loading && (d.items || []).length === 0 && /* @__PURE__ */ jsx13(EmptyState, { title: "Inbox \u043F\u0443\u0441\u0442", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043E\u0441\u0442\u0430\u0432\u0438\u0442 feedback \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
+        !loading && (d.items || []).length === 0 && /* @__PURE__ */ jsx14(EmptyState, { title: "Inbox \u043F\u0443\u0441\u0442", hint: "\u041A\u043E\u0433\u0434\u0430 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043E\u0441\u0442\u0430\u0432\u0438\u0442 feedback \u2014 \u043E\u043D \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C." }),
         !loading && (d.items || []).map((row, i, arr) => {
           const isSelected = selected && selected.id === row.id;
-          return /* @__PURE__ */ jsxs12(
+          return /* @__PURE__ */ jsxs13(
             "button",
             {
               type: "button",
@@ -13404,47 +13337,47 @@ function S18_FeedbackInbox({
                 fontFamily: "inherit"
               },
               children: [
-                /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
-                  /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11.5 }, children: row.id }),
-                  /* @__PURE__ */ jsx13(FbTypePill, { type: row.type }),
-                  /* @__PURE__ */ jsx13(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(row.created_at) })
+                /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }, children: [
+                  /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11.5 }, children: row.id }),
+                  /* @__PURE__ */ jsx14(FbTypePill, { type: row.type }),
+                  /* @__PURE__ */ jsx14(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(row.created_at) })
                 ] }),
-                /* @__PURE__ */ jsx13("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: row.message }),
-                /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: row.email_or_contact_masked || "\u2014" })
+                /* @__PURE__ */ jsx14("div", { style: { fontSize: 13, color: VT.inkSoft, lineHeight: 1.45, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: row.message }),
+                /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, color: VT.inkFaint }, children: row.email_or_contact_masked || "\u2014" })
               ]
             },
             row.id
           );
         }),
-        !loading && (d.items || []).length > 0 && onPageChange && /* @__PURE__ */ jsxs12("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft, borderTop: `1px solid ${VT.line}` }, children: [
-          /* @__PURE__ */ jsxs12("span", { children: [
+        !loading && (d.items || []).length > 0 && onPageChange && /* @__PURE__ */ jsxs13("div", { style: { padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12.5, color: VT.inkSoft, borderTop: `1px solid ${VT.line}` }, children: [
+          /* @__PURE__ */ jsxs13("span", { children: [
             d.offset + 1,
             "\u2013",
             Math.min(d.offset + d.limit, d.total),
             " \u0438\u0437 ",
             d.total
           ] }),
-          /* @__PURE__ */ jsxs12("div", { style: { display: "flex", gap: 6 }, children: [
-            /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0, children: "\u2190" }),
-            /* @__PURE__ */ jsx13(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total, children: "\u2192" })
+          /* @__PURE__ */ jsxs13("div", { style: { display: "flex", gap: 6 }, children: [
+            /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(Math.max(0, d.offset - d.limit), d.limit), disabled: d.offset === 0, children: "\u2190" }),
+            /* @__PURE__ */ jsx14(Btn, { variant: "ghost", size: "sm", onClick: () => onPageChange(d.offset + d.limit, d.limit), disabled: d.offset + d.limit >= d.total, children: "\u2192" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsx13(Card, { style: { padding: 22 }, children: !selected ? /* @__PURE__ */ jsx13(EmptyState, { title: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043B\u0435\u0432\u0430" }) : /* @__PURE__ */ jsxs12(Fragment14, { children: [
-        /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
-          /* @__PURE__ */ jsx13(Mono, { children: selected.id }),
-          /* @__PURE__ */ jsx13(FbTypePill, { type: selected.type }),
-          /* @__PURE__ */ jsx13(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(selected.created_at) })
+      /* @__PURE__ */ jsx14(Card, { style: { padding: 22 }, children: !selected ? /* @__PURE__ */ jsx14(EmptyState, { title: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043B\u0435\u0432\u0430" }) : /* @__PURE__ */ jsxs13(Fragment14, { children: [
+        /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }, children: [
+          /* @__PURE__ */ jsx14(Mono, { children: selected.id }),
+          /* @__PURE__ */ jsx14(FbTypePill, { type: selected.type }),
+          /* @__PURE__ */ jsx14(Mono, { style: { marginLeft: "auto", fontSize: 11, color: VT.inkFaint }, children: formatTs2(selected.created_at) })
         ] }),
-        /* @__PURE__ */ jsx13("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: selected.type === "source_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" : selected.type === "feature_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" : selected.type === "bug" ? "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435" : "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435" }),
-        selected.email_or_contact_masked && /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: selected.email_or_contact_masked }),
-        /* @__PURE__ */ jsx13("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: selected.message }),
-        selected.source_name && /* @__PURE__ */ jsxs12("div", { style: { marginBottom: 14 }, children: [
-          /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE NAME" }),
-          /* @__PURE__ */ jsx13("div", { style: { marginTop: 4 }, children: /* @__PURE__ */ jsx13(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 12 }, children: selected.source_name }) })
+        /* @__PURE__ */ jsx14("h3", { style: { fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 6px" }, children: selected.type === "source_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" : selected.type === "feature_request" ? "\u0417\u0430\u043F\u0440\u043E\u0441 \u0444\u0438\u0447\u0438" : selected.type === "bug" ? "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043E\u0431 \u043E\u0448\u0438\u0431\u043A\u0435" : "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435" }),
+        selected.email_or_contact_masked && /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12, color: VT.inkSoft }, children: selected.email_or_contact_masked }),
+        /* @__PURE__ */ jsx14("p", { style: { fontSize: 14, lineHeight: 1.6, color: VT.ink, margin: "14px 0 18px" }, children: selected.message }),
+        selected.source_name && /* @__PURE__ */ jsxs13("div", { style: { marginBottom: 14 }, children: [
+          /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "SOURCE NAME" }),
+          /* @__PURE__ */ jsx14("div", { style: { marginTop: 4 }, children: /* @__PURE__ */ jsx14(Badge, { kind: "info", style: { padding: "3px 10px", fontSize: 12 }, children: selected.source_name }) })
         ] }),
-        selected.checkboxes && Object.keys(selected.checkboxes).length > 0 && /* @__PURE__ */ jsxs12("details", { open: false, children: [
-          /* @__PURE__ */ jsx13("summary", { style: {
+        selected.checkboxes && Object.keys(selected.checkboxes).length > 0 && /* @__PURE__ */ jsxs13("details", { open: false, children: [
+          /* @__PURE__ */ jsx14("summary", { style: {
             fontFamily: VT.font.mono,
             fontSize: 10.5,
             letterSpacing: "0.1em",
@@ -13453,7 +13386,7 @@ function S18_FeedbackInbox({
             padding: "6px 0",
             listStyle: "none"
           }, children: "CHECKBOXES \xB7 JSONB \u25BE" }),
-          /* @__PURE__ */ jsx13("pre", { style: {
+          /* @__PURE__ */ jsx14("pre", { style: {
             margin: "6px 0 0",
             padding: 14,
             background: VT.bgSoft,
@@ -13487,7 +13420,7 @@ var MOCK_SETTINGS = {
   fernet_keys_configured: true
 };
 function ConfiguredBadge({ on, label }) {
-  return /* @__PURE__ */ jsxs12("span", { style: {
+  return /* @__PURE__ */ jsxs13("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 6,
@@ -13498,14 +13431,14 @@ function ConfiguredBadge({ on, label }) {
     fontSize: 11.5,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx13("span", { "aria-hidden": "true", children: on ? "\u2713" : "\u26A0" }),
+    /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", children: on ? "\u2713" : "\u26A0" }),
     label || (on ? "\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D" : "\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D")
   ] });
 }
 function KeyValueRow({ label, children }) {
-  return /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px dashed ${VT.line}`, gap: 16 }, children: [
-    /* @__PURE__ */ jsx13("span", { style: { fontSize: 13, color: VT.inkSoft }, children: label }),
-    /* @__PURE__ */ jsx13("div", { children })
+  return /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px dashed ${VT.line}`, gap: 16 }, children: [
+    /* @__PURE__ */ jsx14("span", { style: { fontSize: 13, color: VT.inkSoft }, children: label }),
+    /* @__PURE__ */ jsx14("div", { children })
   ] });
 }
 function S19_Settings({ data, loading, error, onRefresh, _embed }) {
@@ -13513,56 +13446,56 @@ function S19_Settings({ data, loading, error, onRefresh, _embed }) {
   const Wrap = _embed === false ? React8.Fragment : AdminChrome;
   const wrapProps = _embed === false ? {} : { active: "settings" };
   const envBadge = d.environment === "prod" ? { kind: "danger", label: "PROD" } : d.environment === "staging" ? { kind: "warn", label: "STAGING" } : { kind: "info", label: "DEV" };
-  return /* @__PURE__ */ jsx13(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs12("div", { style: { padding: "24px 32px 40px" }, children: [
-    /* @__PURE__ */ jsx13(Eyebrow, { children: "SETTINGS \xB7 SYSTEM" }),
-    /* @__PURE__ */ jsxs12("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
-      /* @__PURE__ */ jsx13("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }),
-      onRefresh && /* @__PURE__ */ jsx13(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" })
+  return /* @__PURE__ */ jsx14(Wrap, { ...wrapProps, children: /* @__PURE__ */ jsxs13("div", { style: { padding: "24px 32px 40px" }, children: [
+    /* @__PURE__ */ jsx14(Eyebrow, { children: "SETTINGS \xB7 SYSTEM" }),
+    /* @__PURE__ */ jsxs13("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", margin: "10px 0 18px" }, children: [
+      /* @__PURE__ */ jsx14("h1", { style: { fontSize: 28, fontWeight: 700, letterSpacing: "-0.025em", margin: 0 }, children: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }),
+      onRefresh && /* @__PURE__ */ jsx14(Btn, { variant: "secondary", size: "sm", onClick: onRefresh, children: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C" })
     ] }),
-    error && /* @__PURE__ */ jsx13("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx13(ErrorBlock, { message: error, onRetry: onRefresh }) }),
-    loading && /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 200, radius: 10 }),
-      /* @__PURE__ */ jsx13(SkeletonBlock, { width: "100%", height: 200, radius: 10 })
+    error && /* @__PURE__ */ jsx14("div", { style: { marginBottom: 14 }, children: /* @__PURE__ */ jsx14(ErrorBlock, { message: error, onRetry: onRefresh }) }),
+    loading && /* @__PURE__ */ jsxs13("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsx14(SkeletonBlock, { width: "100%", height: 200, radius: 10 }),
+      /* @__PURE__ */ jsx14(SkeletonBlock, { width: "100%", height: 200, radius: 10 })
     ] }),
-    !loading && /* @__PURE__ */ jsxs12("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0421\u0420\u0415\u0414\u0410" }),
-        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Environment", children: /* @__PURE__ */ jsx13(Badge, { kind: envBadge.kind, style: { padding: "2px 10px", fontSize: 11.5 }, children: envBadge.label }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Log level", children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 13 }, children: d.log_level }) })
+    !loading && /* @__PURE__ */ jsxs13("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }, children: [
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0421\u0420\u0415\u0414\u0410" }),
+        /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Environment", children: /* @__PURE__ */ jsx14(Badge, { kind: envBadge.kind, style: { padding: "2px 10px", fontSize: 11.5 }, children: envBadge.label }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Log level", children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 13 }, children: d.log_level }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0411\u0410\u0417\u041E\u0412\u042B\u0415 URL" }),
-        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "App", children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: d.app_base_url }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Landing", children: /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 12 }, children: d.landing_base_url }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Sites", children: /* @__PURE__ */ jsxs12(Mono, { style: { fontSize: 12 }, children: [
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0411\u0410\u0417\u041E\u0412\u042B\u0415 URL" }),
+        /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "App", children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: d.app_base_url }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Landing", children: /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 12 }, children: d.landing_base_url }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Sites", children: /* @__PURE__ */ jsxs13(Mono, { style: { fontSize: 12 }, children: [
             "*.",
             d.sites_base_domain
           ] }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "FEATURE FLAGS" }),
-        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "MAX-bot integration", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.feature_max_bot, label: d.feature_max_bot ? "on" : "off" }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Auto-sync sites", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.feature_auto_sync, label: d.feature_auto_sync ? "on" : "off" }) })
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "FEATURE FLAGS" }),
+        /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "MAX-bot integration", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.feature_max_bot, label: d.feature_max_bot ? "on" : "off" }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Auto-sync sites", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.feature_auto_sync, label: d.feature_auto_sync ? "on" : "off" }) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs12(Card, { style: { padding: 22 }, children: [
-        /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0412\u041D\u0415\u0428\u041D\u0418\u0415 \u0421\u0415\u0420\u0412\u0418\u0421\u042B" }),
-        /* @__PURE__ */ jsxs12("div", { style: { marginTop: 10 }, children: [
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Captcha", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.captcha_configured }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Telegram-\u0431\u043E\u0442", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.tg_bot_configured }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "YandexGPT", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.yandexgpt_configured }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "\u042EKassa", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.yookassa_configured }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "S3 storage", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.s3_configured }) }),
-          /* @__PURE__ */ jsx13(KeyValueRow, { label: "Fernet keys", children: /* @__PURE__ */ jsx13(ConfiguredBadge, { on: d.fernet_keys_configured }) })
+      /* @__PURE__ */ jsxs13(Card, { style: { padding: 22 }, children: [
+        /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 10.5, letterSpacing: "0.1em" }, children: "\u0412\u041D\u0415\u0428\u041D\u0418\u0415 \u0421\u0415\u0420\u0412\u0418\u0421\u042B" }),
+        /* @__PURE__ */ jsxs13("div", { style: { marginTop: 10 }, children: [
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Captcha", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.captcha_configured }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Telegram-\u0431\u043E\u0442", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.tg_bot_configured }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "YandexGPT", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.yandexgpt_configured }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "\u042EKassa", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.yookassa_configured }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "S3 storage", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.s3_configured }) }),
+          /* @__PURE__ */ jsx14(KeyValueRow, { label: "Fernet keys", children: /* @__PURE__ */ jsx14(ConfiguredBadge, { on: d.fernet_keys_configured }) })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx13(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 14, display: "block" }, children: "Read-only snapshot. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u0435\u043A\u0440\u0435\u0442\u043E\u0432 \u043D\u0435 \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u0441\u044F \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u0430\u0442\u0443\u0441 \xAB\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D/\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\xBB." })
+    /* @__PURE__ */ jsx14(Mono, { style: { fontSize: 11, color: VT.inkFaint, marginTop: 14, display: "block" }, children: "Read-only snapshot. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u0435\u043A\u0440\u0435\u0442\u043E\u0432 \u043D\u0435 \u043E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u044E\u0442\u0441\u044F \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0441\u0442\u0430\u0442\u0443\u0441 \xAB\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D/\u043D\u0435 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\xBB." })
   ] }) });
 }
 var SitesList = S14_SitesList;
@@ -13573,8 +13506,8 @@ var FeedbackInbox = S18_FeedbackInbox;
 var Settings = S19_Settings;
 
 // src/auth/index.tsx
-import { useState as useState7, useEffect as useEffect6, useCallback as useCallback4 } from "react";
-import { jsx as jsx14, jsxs as jsxs13 } from "react/jsx-runtime";
+import { useState as useState7, useEffect as useEffect6, useCallback as useCallback3 } from "react";
+import { jsx as jsx15, jsxs as jsxs14 } from "react/jsx-runtime";
 var CUSTOMER_ERROR_MSG = {
   invalid_credentials: "\u041D\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442 \u043B\u043E\u0433\u0438\u043D \u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435, \u043A\u043E\u0442\u043E\u0440\u043E\u0435 \u043C\u044B \u0432\u0430\u043C \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u043B\u0438.",
   rate_limited: null,
@@ -13593,7 +13526,7 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
   const totalMin = Math.ceil(remaining / 60);
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
-  return /* @__PURE__ */ jsxs13("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs14("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -13603,12 +13536,12 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
     marginBottom: 14,
     lineHeight: 1.5
   }, children: [
-    /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsx15("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
     "\u0421\u043B\u0438\u0448\u043A\u043E\u043C \u043C\u043D\u043E\u0433\u043E \u043F\u043E\u043F\u044B\u0442\u043E\u043A. \u041F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0447\u0435\u0440\u0435\u0437 ",
     totalMin,
     "\xA0\u043C\u0438\u043D \u2014 \u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C",
     " ",
-    /* @__PURE__ */ jsxs13("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
+    /* @__PURE__ */ jsxs14("span", { style: { fontFamily: VT.font.mono, fontSize: 13 }, children: [
       mm,
       ":",
       ss
@@ -13619,7 +13552,7 @@ function CustomerRateLimitNotice({ retryAfterSeconds = 263 }) {
 function CustomerErrorNotice({ code }) {
   const msg = CUSTOMER_ERROR_MSG[code] || CUSTOMER_ERROR_MSG.unknown_error;
   if (!msg) return null;
-  return /* @__PURE__ */ jsxs13("div", { role: "alert", style: {
+  return /* @__PURE__ */ jsxs14("div", { role: "alert", style: {
     padding: "10px 12px",
     background: VT.dangerSoft,
     border: `1px solid oklch(0.85 0.06 28)`,
@@ -13629,7 +13562,7 @@ function CustomerErrorNotice({ code }) {
     marginBottom: 14,
     lineHeight: 1.5
   }, children: [
-    /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
+    /* @__PURE__ */ jsx15("span", { "aria-hidden": "true", style: { marginRight: 6 }, children: "\u26A0\uFE0F" }),
     msg
   ] });
 }
@@ -13646,7 +13579,7 @@ function CLTextField({
   mono,
   style
 }) {
-  return /* @__PURE__ */ jsx14(
+  return /* @__PURE__ */ jsx15(
     "input",
     {
       id,
@@ -13683,12 +13616,12 @@ function S20_CustomerLogin(props) {
   const setPassword = props.onPasswordChange ?? setUPass;
   const { loading, error, retryAfterSeconds, onSubmit, onCreateSiteClick } = props;
   const isRateLimited = error === "rate_limited";
-  const handleSubmit = useCallback4((e) => {
+  const handleSubmit = useCallback3((e) => {
     e.preventDefault();
     if (loading || isRateLimited) return;
     if (onSubmit) onSubmit();
   }, [loading, isRateLimited, onSubmit]);
-  return /* @__PURE__ */ jsx14("div", { style: {
+  return /* @__PURE__ */ jsx15("div", { style: {
     background: VT.bgSoft,
     minHeight: "100%",
     width: "100%",
@@ -13699,41 +13632,41 @@ function S20_CustomerLogin(props) {
     color: VT.ink,
     padding: "40px 24px",
     boxSizing: "border-box"
-  }, children: /* @__PURE__ */ jsxs13("div", { style: { width: "100%", maxWidth: 420 }, children: [
-    /* @__PURE__ */ jsx14("div", { style: {
+  }, children: /* @__PURE__ */ jsxs14("div", { style: { width: "100%", maxWidth: 420 }, children: [
+    /* @__PURE__ */ jsx15("div", { style: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 18
-    }, children: /* @__PURE__ */ jsx14("a", { href: "/", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx14(BrandMark, { size: 26, fontSize: 20 }) }) }),
-    /* @__PURE__ */ jsxs13(Card, { style: {
+    }, children: /* @__PURE__ */ jsx15("a", { href: "/", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx15(BrandMark, { size: 26, fontSize: 20 }) }) }),
+    /* @__PURE__ */ jsxs14(Card, { style: {
       padding: 28,
       boxShadow: VT.shadow.card,
       borderTop: `2px solid ${VT.success}`
     }, children: [
-      /* @__PURE__ */ jsx14("h1", { style: {
+      /* @__PURE__ */ jsx15("h1", { style: {
         fontSize: 22,
         fontWeight: 700,
         letterSpacing: "-0.02em",
         margin: "0 0 6px",
         lineHeight: 1.2
       }, children: "\u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0432 \u0441\u0432\u043E\u0439 \u043A\u0430\u0431\u0438\u043D\u0435\u0442" }),
-      /* @__PURE__ */ jsx14("p", { style: {
+      /* @__PURE__ */ jsx15("p", { style: {
         fontSize: 13.5,
         color: VT.inkSoft,
         margin: "0 0 18px",
         lineHeight: 1.5
       }, children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043B\u043E\u0433\u0438\u043D \u0438 \u043F\u0430\u0440\u043E\u043B\u044C, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043C\u044B \u043F\u0440\u0438\u0441\u043B\u0430\u043B\u0438 \u0432\u0430\u043C \u043F\u043E\u0441\u043B\u0435 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430." }),
-      isRateLimited ? /* @__PURE__ */ jsx14(CustomerRateLimitNotice, { retryAfterSeconds: retryAfterSeconds ?? 263 }) : error && /* @__PURE__ */ jsx14(CustomerErrorNotice, { code: error }),
-      /* @__PURE__ */ jsxs13("form", { onSubmit: handleSubmit, noValidate: true, children: [
-        /* @__PURE__ */ jsx14("label", { htmlFor: "ss-customer-login", style: {
+      isRateLimited ? /* @__PURE__ */ jsx15(CustomerRateLimitNotice, { retryAfterSeconds: retryAfterSeconds ?? 263 }) : error && /* @__PURE__ */ jsx15(CustomerErrorNotice, { code: error }),
+      /* @__PURE__ */ jsxs14("form", { onSubmit: handleSubmit, noValidate: true, children: [
+        /* @__PURE__ */ jsx15("label", { htmlFor: "ss-customer-login", style: {
           display: "block",
           fontSize: 12,
           color: VT.inkSoft,
           marginBottom: 4,
           fontWeight: 500
         }, children: "\u041B\u043E\u0433\u0438\u043D" }),
-        /* @__PURE__ */ jsx14(
+        /* @__PURE__ */ jsx15(
           CLTextField,
           {
             id: "ss-customer-login",
@@ -13749,14 +13682,14 @@ function S20_CustomerLogin(props) {
             style: { marginBottom: 12 }
           }
         ),
-        /* @__PURE__ */ jsx14("label", { htmlFor: "ss-customer-password", style: {
+        /* @__PURE__ */ jsx15("label", { htmlFor: "ss-customer-password", style: {
           display: "block",
           fontSize: 12,
           color: VT.inkSoft,
           marginBottom: 4,
           fontWeight: 500
         }, children: "\u041F\u0430\u0440\u043E\u043B\u044C" }),
-        /* @__PURE__ */ jsx14(
+        /* @__PURE__ */ jsx15(
           CLTextField,
           {
             id: "ss-customer-password",
@@ -13770,19 +13703,19 @@ function S20_CustomerLogin(props) {
             mono: true
           }
         ),
-        /* @__PURE__ */ jsx14("div", { style: { marginTop: 20 }, children: /* @__PURE__ */ jsx14(
+        /* @__PURE__ */ jsx15("div", { style: { marginTop: 20 }, children: /* @__PURE__ */ jsx15(
           Btn,
           {
             type: "submit",
             style: { width: "100%" },
             disabled: loading || isRateLimited || !login || !password,
-            iconRight: loading ? /* @__PURE__ */ jsx14(Spinner, { size: 14 }) : /* @__PURE__ */ jsx14(IconArrow, {}),
+            iconRight: loading ? /* @__PURE__ */ jsx15(Spinner, { size: 14 }) : /* @__PURE__ */ jsx15(IconArrow, {}),
             children: loading ? "\u041F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" : "\u0412\u043E\u0439\u0442\u0438"
           }
         ) })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs13("div", { style: {
+    /* @__PURE__ */ jsxs14("div", { style: {
       marginTop: 22,
       textAlign: "center",
       fontSize: 13.5,
@@ -13790,7 +13723,7 @@ function S20_CustomerLogin(props) {
     }, children: [
       "\u0415\u0449\u0451 \u043D\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0430?",
       " ",
-      onCreateSiteClick ? /* @__PURE__ */ jsxs13(
+      onCreateSiteClick ? /* @__PURE__ */ jsxs14(
         "button",
         {
           type: "button",
@@ -13807,19 +13740,19 @@ function S20_CustomerLogin(props) {
           },
           children: [
             "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
-            /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", children: "\u2192" })
+            /* @__PURE__ */ jsx15("span", { "aria-hidden": "true", children: "\u2192" })
           ]
         }
-      ) : /* @__PURE__ */ jsxs13("a", { href: "/", style: {
+      ) : /* @__PURE__ */ jsxs14("a", { href: "/", style: {
         color: VT.accent,
         fontWeight: 600,
         textDecoration: "none"
       }, children: [
         "\u0421\u0434\u0435\u043B\u0430\u0442\u044C\xA0",
-        /* @__PURE__ */ jsx14("span", { "aria-hidden": "true", children: "\u2192" })
+        /* @__PURE__ */ jsx15("span", { "aria-hidden": "true", children: "\u2192" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx14("div", { style: {
+    /* @__PURE__ */ jsx15("div", { style: {
       marginTop: 14,
       textAlign: "center",
       fontSize: 11.5,
@@ -13831,9 +13764,9 @@ function S20_CustomerLogin(props) {
 var CustomerLogin = S20_CustomerLogin;
 
 // src/source/index.tsx
-import { jsx as jsx15, jsxs as jsxs14 } from "react/jsx-runtime";
+import { jsx as jsx16, jsxs as jsxs15 } from "react/jsx-runtime";
 function MiniHero({ url }) {
-  return /* @__PURE__ */ jsxs14("div", { style: {
+  return /* @__PURE__ */ jsxs15("div", { style: {
     display: "flex",
     gap: 8,
     alignItems: "center",
@@ -13843,9 +13776,9 @@ function MiniHero({ url }) {
     padding: 8,
     boxShadow: VT.shadow.card
   }, children: [
-    /* @__PURE__ */ jsxs14("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
-      /* @__PURE__ */ jsx15(IconLink, {}),
-      /* @__PURE__ */ jsx15("span", { style: {
+    /* @__PURE__ */ jsxs15("div", { style: { flex: 1, display: "flex", alignItems: "center", gap: 10, padding: "0 16px" }, children: [
+      /* @__PURE__ */ jsx16(IconLink, {}),
+      /* @__PURE__ */ jsx16("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 14,
         color: VT.ink,
@@ -13854,11 +13787,11 @@ function MiniHero({ url }) {
         textOverflow: "ellipsis"
       }, children: url })
     ] }),
-    /* @__PURE__ */ jsx15(Btn, { iconRight: /* @__PURE__ */ jsx15(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+    /* @__PURE__ */ jsx16(Btn, { iconRight: /* @__PURE__ */ jsx16(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
   ] });
 }
 function StateBadge({ kind, icon, children }) {
-  return /* @__PURE__ */ jsxs14("span", { style: {
+  return /* @__PURE__ */ jsxs15("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 8,
@@ -13869,7 +13802,7 @@ function StateBadge({ kind, icon, children }) {
     fontSize: 14,
     fontWeight: 500
   }, children: [
-    /* @__PURE__ */ jsx15("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
+    /* @__PURE__ */ jsx16("span", { style: { width: 18, height: 18, display: "inline-flex", alignItems: "center", justifyContent: "center" }, children: icon }),
     children
   ] });
 }
@@ -13879,7 +13812,7 @@ var STATES = [
     label: "1 \xB7 Loading",
     kind: "neutral",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx15(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "neutral", icon: /* @__PURE__ */ jsx16(Spinner, {}), children: "\u043F\u0440\u043E\u0432\u0435\u0440\u044F\u0435\u043C\u2026" }),
     note: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u043B \u0442\u0438\u043F (<100ms). \u0417\u0430\u043F\u0440\u043E\u0441 preview API \u0432 \u0444\u043E\u043D\u0435, 3s timeout.",
     api: "GET /api/preview?url=\u2026 (debounced 300ms)"
   },
@@ -13888,7 +13821,7 @@ var STATES = [
     label: "2 \xB7 \u2713 Telegram",
     kind: "success",
     url: "t.me/barbershop_samara",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx15("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx15("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx16("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx16("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B \u2014 \u043D\u0430\u0448\u043B\u0438 47 \u043F\u043E\u0441\u0442\u043E\u0432 \u0438 12 \u0444\u043E\u0442\u043E" }),
     note: "Bot API getChat + getChatHistory(1). CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB \u0430\u043A\u0442\u0438\u0432\u043D\u0430 \u2014 open Submit modal.",
     api: 'GET /api/preview \u2192 {source:"telegram", posts:47, photos:12}'
   },
@@ -13897,7 +13830,7 @@ var STATES = [
     label: "3 \xB7 \u2713 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
     kind: "success",
     url: "yandex.ru/maps/-/CDvI7QJM",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx15("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx15("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx16("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx16("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u2014 \u043D\u0430\u0448\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443, 24 \u043E\u0442\u0437\u044B\u0432\u0430 \u0438 18 \u0444\u043E\u0442\u043E" }),
     note: "Geosearch API find. \u0415\u0441\u043B\u0438 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0430 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u2192 fallback \u043A \u0441\u0442\u0430\u0442\u0438\u0447\u043D\u043E\u043C\u0443 \u2713 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B.",
     api: 'GET /api/preview \u2192 {source:"yandex_maps", reviews:24, photos:18}'
   },
@@ -13906,7 +13839,7 @@ var STATES = [
     label: "4 \xB7 \u2713 \u0411\u0435\u0437 \u0447\u0438\u0441\u0435\u043B (preview timeout >3s)",
     kind: "success",
     url: "t.me/privatechannel",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx15("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx15("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx16("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx16("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Telegram-\u043A\u0430\u043D\u0430\u043B" }),
     note: "FR-005a: regex \u043E\u0442\u0434\u0430\u043B \u0442\u0438\u043F, preview API \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u0437\u0430 3s \u2192 \u0431\u0435\u0439\u0434\u0436 \u0431\u0435\u0437 \u0447\u0438\u0441\u0435\u043B, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0435\u043C \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E.",
     api: "Timeout fallback \u2014 UI \u043D\u0435 \u0431\u043B\u043E\u043A\u0438\u0440\u0443\u0435\u0442 submit"
   },
@@ -13915,7 +13848,7 @@ var STATES = [
     label: "5 \xB7 \u2713 Instagram",
     kind: "success",
     url: "instagram.com/master.nails.spb",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx15("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx15("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "success", icon: /* @__PURE__ */ jsx16("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", children: /* @__PURE__ */ jsx16("path", { d: "M5 12l4 4 10-10", strokeLinecap: "round", strokeLinejoin: "round" }) }), children: "Instagram" }),
     note: "0.3.0: Instagram \u0442\u0435\u043F\u0435\u0440\u044C \u043E\u0431\u044B\u0447\u043D\u044B\u0439 ok-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u0417\u0430\u044F\u0432\u043A\u0430 \u0438\u0434\u0451\u0442 \u0432 \u043E\u0431\u0449\u0443\u044E \u043E\u0447\u0435\u0440\u0435\u0434\u044C, \u0440\u0443\u0447\u043D\u0430\u044F \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u0440\u0435\u0448\u0438\u0442 \u0447\u0442\u043E \u0432\u044B\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0442\u044C.",
     api: 'GET /api/preview \u2192 {source:"instagram", status:"ok"}'
   },
@@ -13924,7 +13857,7 @@ var STATES = [
     label: "6 \xB7 \u2139\uFE0F \u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u2014 waitlist + photo CTA",
     kind: "info",
     url: "vk.com/master_nails",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx15("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx16("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435 \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: true,
     note: "Identical pattern to IG. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA: \xAB\u0418\u043B\u0438 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442\xBB.",
@@ -13935,7 +13868,7 @@ var STATES = [
     label: "7 \xB7 \u2139\uFE0F \u0414\u0440\u0443\u0433\u043E\u0439 known \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A (2GIS / Avito / WA / YT / \u0414\u0437\u0435\u043D)",
     kind: "info",
     url: "2gis.ru/samara/firm/70000001045896531",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx15("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "info", icon: /* @__PURE__ */ jsx16("span", { style: { fontSize: 14 }, children: "\u2139\uFE0F" }), children: "2GIS \u0441\u043A\u043E\u0440\u043E \u0431\u0443\u0434\u0435\u0442 \u2014 \u043E\u0441\u0442\u0430\u0432\u044C\u0442\u0435 email" }),
     waitlist: true,
     photoCta: false,
     note: "\u0411\u0435\u0437 photo CTA \u2014 2GIS/Avito/WA \u043D\u0435 \u0437\u0430\u043A\u0440\u044B\u0432\u0430\u044E\u0442\u0441\u044F \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u043E\u043C \u043F\u0440\u043E\u0444\u0438\u043B\u044F.",
@@ -13946,7 +13879,7 @@ var STATES = [
     label: "8 \xB7 \u26A0\uFE0F \u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
     kind: "warn",
     url: "https://my-portfolio.example.com",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx15("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx16("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u041D\u0435 \u0443\u0437\u043D\u0430\u043B\u0438 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E?" }),
     unknownInput: true,
     note: "Open input. \u0421\u043E\u0445\u0440\u0430\u043D\u044F\u0435\u043C \u043A\u0430\u043A source_request c source_name=user-typed \u0434\u043B\u044F \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0438.",
     api: 'POST /api/feedback { type:"source_request", source_name:<user>, source_url_raw:<url> }'
@@ -13956,29 +13889,29 @@ var STATES = [
     label: "9 \xB7 \u26A0\uFE0F \u041D\u0435 \u0441\u0441\u044B\u043B\u043A\u0430 \u0438 \u043D\u0435 \u0444\u0430\u0439\u043B",
     kind: "warn",
     url: "\u043C\u0430\u0441\u0442\u0435\u0440 \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430",
-    badge: /* @__PURE__ */ jsx15(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx15("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
+    badge: /* @__PURE__ */ jsx16(StateBadge, { kind: "warn", icon: /* @__PURE__ */ jsx16("span", { style: { fontSize: 14 }, children: "\u26A0\uFE0F" }), children: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" }),
     note: "CTA \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443\xBB disabled, fallback-\u0441\u0441\u044B\u043B\u043A\u0430 \xAB\u{1F4F7} \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0444\u043E\u0442\u043E\xBB \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u043D\u0443\u0442\u0430.",
     api: "\u2014 (client-side only)"
   }
 ];
 function WaitlistCapture({ source, withPhotoCta }) {
   const label = source === "instagram" ? "Instagram" : source === "vk" ? "\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435" : source === "2gis" ? "2GIS" : source;
-  return /* @__PURE__ */ jsxs14("div", { style: {
+  return /* @__PURE__ */ jsxs15("div", { style: {
     marginTop: 12,
     background: VT.infoSoft,
     border: `1px solid oklch(0.85 0.05 240)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsxs14("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
+    /* @__PURE__ */ jsxs15("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.32 0.10 240)" }, children: [
       "\u041D\u0430\u043F\u0438\u0448\u0435\u043C, \u043A\u043E\u0433\u0434\u0430 \u0434\u043E\u0431\u0430\u0432\u0438\u043C ",
       label
     ] }),
-    /* @__PURE__ */ jsxs14("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
-      /* @__PURE__ */ jsx15(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx15(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsxs15("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10, alignItems: "stretch" }, children: [
+      /* @__PURE__ */ jsx16(Input, { placeholder: "email \u0438\u043B\u0438 @telegram", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx16(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C" })
     ] }),
-    withPhotoCta && /* @__PURE__ */ jsxs14("div", { style: {
+    withPhotoCta && /* @__PURE__ */ jsxs15("div", { style: {
       marginTop: 12,
       paddingTop: 12,
       borderTop: `1px dashed oklch(0.85 0.05 240)`,
@@ -13986,7 +13919,7 @@ function WaitlistCapture({ source, withPhotoCta }) {
       color: VT.inkSoft
     }, children: [
       "\u0418\u043B\u0438 \u0441\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0441\u0435\u0439\u0447\u0430\u0441 \u2014 \u0431\u0435\u0437 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F:",
-      /* @__PURE__ */ jsxs14("a", { style: {
+      /* @__PURE__ */ jsxs15("a", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
@@ -13997,40 +13930,40 @@ function WaitlistCapture({ source, withPhotoCta }) {
         textUnderlineOffset: 3
       }, children: [
         "\u{1F4F7} \u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F + \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442",
-        /* @__PURE__ */ jsx15(IconArrow, { size: 14 })
+        /* @__PURE__ */ jsx16(IconArrow, { size: 14 })
       ] })
     ] })
   ] });
 }
 function UnknownSourceInput() {
-  return /* @__PURE__ */ jsxs14("div", { style: {
+  return /* @__PURE__ */ jsxs15("div", { style: {
     marginTop: 12,
     background: VT.warnSoft,
     border: `1px solid oklch(0.85 0.06 70)`,
     borderRadius: VT.r.lg,
     padding: 16
   }, children: [
-    /* @__PURE__ */ jsx15("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
-    /* @__PURE__ */ jsxs14("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
-      /* @__PURE__ */ jsx15(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
-      /* @__PURE__ */ jsx15(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
+    /* @__PURE__ */ jsx16("div", { style: { fontSize: 14, fontWeight: 600, color: "oklch(0.36 0.13 70)" }, children: "\u041A\u0430\u043A\u043E\u0439 \u044D\u0442\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A?" }),
+    /* @__PURE__ */ jsxs15("div", { style: { display: "flex", flexDirection: "row", gap: 8, marginTop: 10 }, children: [
+      /* @__PURE__ */ jsx16(Input, { placeholder: "\u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430 (\u043D\u0430\u043F\u0440\u0438\u043C\u0435\u0440, \xAB\u0414\u0437\u0435\u043D\xBB \u0438\u043B\u0438 \xAB\u0441\u0432\u043E\u0439 \u0431\u043B\u043E\u0433\xBB)", style: { flex: 1, padding: "10px 14px", borderRadius: VT.r.md, fontSize: 14 } }),
+      /* @__PURE__ */ jsx16(Btn, { variant: "primary", size: "sm", style: { borderRadius: VT.r.md }, children: "\u0421\u043E\u043E\u0431\u0449\u0438\u0442\u044C" })
     ] })
   ] });
 }
 function StateRow({ s }) {
-  return /* @__PURE__ */ jsx15(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs14("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
-    /* @__PURE__ */ jsxs14("div", { children: [
-      /* @__PURE__ */ jsx15("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsx15(MiniHero, { url: s.url }),
-      /* @__PURE__ */ jsx15("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx15(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx15(UnknownSourceInput, {})
+  return /* @__PURE__ */ jsx16(Card, { style: { padding: 24 }, children: /* @__PURE__ */ jsxs15("div", { style: { display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 32 }, children: [
+    /* @__PURE__ */ jsxs15("div", { children: [
+      /* @__PURE__ */ jsx16("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsx16(MiniHero, { url: s.url }),
+      /* @__PURE__ */ jsx16("div", { style: { marginTop: 12, paddingLeft: 16 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx16(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx16(UnknownSourceInput, {})
     ] }),
-    /* @__PURE__ */ jsxs14("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
-      /* @__PURE__ */ jsx15("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
-      /* @__PURE__ */ jsx15("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
-      /* @__PURE__ */ jsx15("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
-      /* @__PURE__ */ jsx15("div", { style: {
+    /* @__PURE__ */ jsxs15("div", { style: { borderLeft: `1px dashed ${VT.line}`, paddingLeft: 24 }, children: [
+      /* @__PURE__ */ jsx16("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 8 }, children: "\u041B\u041E\u0413\u0418\u041A\u0410" }),
+      /* @__PURE__ */ jsx16("div", { style: { fontSize: 14, lineHeight: 1.5, color: VT.ink }, children: s.note }),
+      /* @__PURE__ */ jsx16("div", { style: { fontSize: 11, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, margin: "16px 0 6px" }, children: "API" }),
+      /* @__PURE__ */ jsx16("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 12,
         color: VT.inkSoft,
@@ -14043,7 +13976,7 @@ function StateRow({ s }) {
   ] }) });
 }
 function S2_Desktop() {
-  return /* @__PURE__ */ jsxs14("div", { style: {
+  return /* @__PURE__ */ jsxs15("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -14052,18 +13985,18 @@ function S2_Desktop() {
     padding: "40px 56px 64px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsxs14("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
-      /* @__PURE__ */ jsx15(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
-      /* @__PURE__ */ jsx15(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
+    /* @__PURE__ */ jsxs15("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }, children: [
+      /* @__PURE__ */ jsx16(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 SOURCE DETECTION" }),
+      /* @__PURE__ */ jsx16(Mono, { style: { fontSize: 12 }, children: "FR-005, FR-005a, ADR-0009" })
     ] }),
-    /* @__PURE__ */ jsx15("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
-    /* @__PURE__ */ jsx15("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
-    /* @__PURE__ */ jsx15("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx15(StateRow, { s }, s.id)) })
+    /* @__PURE__ */ jsx16("h2", { style: { fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", margin: "0 0 8px", lineHeight: 1.1 }, children: "\u0411\u0435\u0439\u0434\u0436\u0438 \u043F\u043E\u0434 input \u2014 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F live preview" }),
+    /* @__PURE__ */ jsx16("p", { style: { fontSize: 16, lineHeight: 1.5, color: VT.inkSoft, maxWidth: 820, margin: "0 0 32px" }, children: "\u041F\u043E\u0441\u043B\u0435 paste \u2014 client-side regex \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u044F\u0435\u0442 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0437\u0430 <100ms \u0438 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0431\u0435\u0439\u0434\u0436. \u041F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E preview API (3s timeout) \u0434\u043E\u043F\u043E\u043B\u043D\u044F\u0435\u0442 \u0447\u0438\u0441\u043B\u0430\u043C\u0438. MVP-\u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438: Telegram, \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B. \u041E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435 \u2014 waitlist + \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u0430\u044F CTA \u043D\u0430 \u0444\u043E\u0442\u043E-\u0444\u043B\u043E\u0443." }),
+    /* @__PURE__ */ jsx16("div", { style: { display: "flex", flexDirection: "column", gap: 18 }, children: STATES.map((s) => /* @__PURE__ */ jsx16(StateRow, { s }, s.id)) })
   ] });
 }
 function S2_Mobile() {
   const mobile = STATES.filter((s) => ["loading", "tg-success", "ig-success", "unknown-url"].includes(s.id));
-  return /* @__PURE__ */ jsxs14("div", { style: {
+  return /* @__PURE__ */ jsxs15("div", { style: {
     width: "100%",
     minHeight: "100%",
     background: VT.bg,
@@ -14072,11 +14005,11 @@ function S2_Mobile() {
     padding: "20px 16px 40px",
     letterSpacing: "-0.01em"
   }, children: [
-    /* @__PURE__ */ jsx15(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
-    /* @__PURE__ */ jsx15("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
-    /* @__PURE__ */ jsx15("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs14(Card, { style: { padding: 14 }, children: [
-      /* @__PURE__ */ jsx15("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
-      /* @__PURE__ */ jsxs14("div", { style: {
+    /* @__PURE__ */ jsx16(Eyebrow, { children: "\u042D\u041A\u0420\u0410\u041D #2 \xB7 MOBILE" }),
+    /* @__PURE__ */ jsx16("h2", { style: { fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em", margin: "12px 0 18px", lineHeight: 1.15 }, children: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0431\u0435\u0439\u0434\u0436\u0430 \u2014 4 \u043A\u043B\u044E\u0447\u0435\u0432\u044B\u0445" }),
+    /* @__PURE__ */ jsx16("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: mobile.map((s) => /* @__PURE__ */ jsxs15(Card, { style: { padding: 14 }, children: [
+      /* @__PURE__ */ jsx16("div", { style: { fontSize: 10.5, fontFamily: VT.font.mono, letterSpacing: "0.08em", color: VT.inkFaint, marginBottom: 6 }, children: s.label.toUpperCase() }),
+      /* @__PURE__ */ jsxs15("div", { style: {
         display: "flex",
         flexDirection: "column",
         gap: 8,
@@ -14085,15 +14018,15 @@ function S2_Mobile() {
         borderRadius: VT.r.lg,
         padding: 10
       }, children: [
-        /* @__PURE__ */ jsxs14("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
-          /* @__PURE__ */ jsx15(IconLink, {}),
-          /* @__PURE__ */ jsx15("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
+        /* @__PURE__ */ jsxs15("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 8px" }, children: [
+          /* @__PURE__ */ jsx16(IconLink, {}),
+          /* @__PURE__ */ jsx16("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.url })
         ] }),
-        /* @__PURE__ */ jsx15(Btn, { iconRight: /* @__PURE__ */ jsx15(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
+        /* @__PURE__ */ jsx16(Btn, { iconRight: /* @__PURE__ */ jsx16(IconArrow, {}), style: { borderRadius: VT.r.md, width: "100%" }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043C\u043E\u044E \u0432\u0438\u0442\u0440\u0438\u043D\u0443" })
       ] }),
-      /* @__PURE__ */ jsx15("div", { style: { marginTop: 10 }, children: s.badge }),
-      s.waitlist && /* @__PURE__ */ jsx15(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
-      s.unknownInput && /* @__PURE__ */ jsx15(UnknownSourceInput, {})
+      /* @__PURE__ */ jsx16("div", { style: { marginTop: 10 }, children: s.badge }),
+      s.waitlist && /* @__PURE__ */ jsx16(WaitlistCapture, { source: s.id.split("-")[0], withPhotoCta: s.photoCta }),
+      s.unknownInput && /* @__PURE__ */ jsx16(UnknownSourceInput, {})
     ] }, s.id)) })
   ] });
 }
@@ -14111,6 +14044,8 @@ export {
   BentoFamily,
   BrandMark,
   Btn,
+  CHANNELS2 as CHANNELS,
+  COPY,
   CanonStyles,
   Card,
   Checkbox,
@@ -14132,8 +14067,11 @@ export {
   Eyebrow,
   FAQ_ITEMS,
   FaqSection,
+  Fb2_CSS,
+  Fb2_Styles,
   FeedbackInbox,
-  FeedbackPage,
+  FeedbackV2Fab,
+  FeedbackV2Modal,
   FilterChip,
   FinalCtaSection,
   GENERIC_THEME_OPTIONS,
@@ -14169,6 +14107,7 @@ export {
   PhotoDrawer,
   PresetRenderer,
   PricingSection,
+  REASONS,
   RateLimitCountdown,
   S10_AdminLogin,
   S11_Dashboard,
@@ -14195,8 +14134,6 @@ export {
   S7_CustomerSite,
   S7_SchemeSwatches,
   S8_LeadFormConfirm,
-  S9_FeedbackModal,
-  S9_FeedbackPage,
   SOURCE_LIB,
   SamosaytLanding,
   SamosaytLandingV3,
@@ -14239,6 +14176,7 @@ export {
   bentoClay,
   bentoLight,
   bentoNoir,
+  contactValid2 as contactValid,
   demoDraftFor,
   displayBold,
   displayInk,
@@ -14260,6 +14198,7 @@ export {
   fixtureNailsAnna,
   fixturePhotoMarta,
   fixtureTattooLine,
+  formatPhone2 as formatPhone,
   getTheme,
   matchNiche,
   mockPreviewDraftRich,
