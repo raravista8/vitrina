@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
-// Feedback («Чего не хватает?») is now the canon 0.9.1 controlled modal,
-// mounted globally below via `<FeedbackModal />` (its own fixed FAB). The
-// adapter self-hides on `/admin*` + `/login`, so the FAB stays off the
-// founder area + auth. The standalone `/feedback` page was retired this PR
-// (301 → `/`); entry points (FAB, Footer, Sources link) open the modal.
+// Feedback v2 («Что останавливает?» + «Задать вопрос») is the canon 0.13.0
+// controlled modal, mounted globally below via `<FeedbackModal />` (its own
+// fixed FAB). The adapter self-hides on `/admin*` + `/login`, so the FAB
+// stays off the founder area + auth. The standalone `/feedback` page (301 →
+// `/`) and the vote-first tally/votes backend are retired.
 import "./globals.css";
 
 import { CanonStyles } from "@samosite/canon";
@@ -198,10 +198,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CanonStyles />
         {children}
         {/* Global feedback modal (canon 0.13.0 FeedbackV2Modal via a thin
-            adapter — tally←GET / onSubmit→POST, embedded). Renders its own
-            fixed «Чего не хватает?» FAB; self-hides on /admin* and /login.
-            Zero layout footprint (position:fixed only). Replaces the retired
-            /feedback page. */}
+            adapter — blocker auto-trigger + «Задать вопрос» FAB, submits to
+            POST /api/feedback/v2). Self-hides on /admin* and /login. Zero
+            layout footprint (position:fixed only). Replaces the retired
+            /feedback page and the vote-first tally/votes backend. */}
         <FeedbackModal />
         <script
           type="application/ld+json"

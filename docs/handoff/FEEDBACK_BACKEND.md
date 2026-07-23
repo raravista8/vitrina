@@ -30,9 +30,18 @@
 > маской, blocker-с-контактом помечен как мини-лид. Админ-инбокс —
 > `GET /admin/feedback` (v2 + legacy, фильтр по type).
 > Enum причин: `FEEDBACK_V2_REASON_CODES` в `core/feedback/service.py` —
-> сузить до кодов консьерж-таблицы, когда founder её пришлёт.
-> `GET /api/feedback/tally` и votes-ветка ниже — ретайр после PR-C
-> (переключения фронта); до него живут для текущей прод-модалки.
+> заморожен по консьерж-таблице founder'а (7 кодов + резерв `no_reply`,
+> миграция 0021 CHECK).
+>
+> **РЕТАЙРНУТО (июль 2026, после переключения фронта):** весь vote-first
+> контракт ниже — история. `GET /api/feedback/tally` удалён (404);
+> votes-ветка `POST /api/feedback` удалена — эндпоинт принимает только
+> легаси single-row (`SubmitFeedbackRequest`, живые вызовы:
+> SourceDetectionBadge + WaitlistCapture). Таблицы `feedback_submission` /
+> `feedback_vote` / `feedback_threshold_alert` (миграция 0012) сохранены
+> READ-ONLY: историю показывают админ-инбокс «Отзывы» и
+> `/admin/api/feedback/votes` (роллап через `get_tally`). Не дропать без
+> явного решения founder'а.
 
 The feedback UI moved from a standalone `/feedback` page to a **vote-first modal**
 (`code/FeedbackForm.tsx` → `FeedbackModal`). One submit now carries **N votes** plus
