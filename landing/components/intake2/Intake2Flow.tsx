@@ -62,6 +62,7 @@ import {
   type SourcePath,
 } from "@/components/intake2/state";
 import { track } from "@/components/intake2/track";
+import { nicheFromSlug } from "@/lib/niche";
 
 // Заголовки шагов — canon STEP_TITLE не экспортирован; строки побайтово из in2.tsx.
 const TITLES: Record<Intake2Step, string> = {
@@ -105,7 +106,10 @@ function resolveNiche(raw?: string): string | null {
   const lib = NICHE_LIB_V2 as { id: string; label: string }[];
   const norm = raw.trim().toLowerCase();
   const hit = lib.find((n) => n.id.toLowerCase() === norm || n.label.toLowerCase() === norm);
-  return hit ? hit.id : null;
+  if (hit) return hit.id;
+  // Латинский слаг из рекламной ссылки (`?niche=manicure`) — см. lib/niche.ts.
+  const bySlug = nicheFromSlug(raw);
+  return bySlug && lib.some((n) => n.id === bySlug) ? bySlug : null;
 }
 
 function resolvePath(raw?: string): SourcePath | null {

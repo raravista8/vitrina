@@ -56,6 +56,7 @@ import {
 
 import { Intake2Host, openIntake2 } from "@/components/intake2/host";
 import { ssTrack, type MetrikaGoal } from "@/lib/metrika";
+import { nicheFromLocation } from "@/lib/niche";
 
 /** Локальная форма canon `FaqItem` (модуль заshim'лен как any — см.
  *  `types/samosite-canon.d.ts`). */
@@ -160,8 +161,12 @@ export function V5Landing() {
      один обработчик: цель form_open {entry[, niche]} + открытие интейка
      через событийный контракт. */
   const onIntake = useCallback((entry: string, niche?: string) => {
-    ssTrack("form_open", { entry, ...(niche ? { niche } : {}) });
-    openIntake2(entry, niche ? { niche } : {});
+    // Ниша из CTA (клик по конкретному примеру) важнее, чем из рекламной
+    // ссылки `?niche=` — это явный выбор посетителя здесь и сейчас.
+    // Параметр читаем на клике (а не в рендере) — никаких hydration-развилок.
+    const effective = niche ?? nicheFromLocation() ?? undefined;
+    ssTrack("form_open", { entry, ...(effective ? { niche: effective } : {}) });
+    openIntake2(entry, effective ? { niche: effective } : {});
   }, []);
 
   const onFaqOpen = useCallback((id: string) => {
