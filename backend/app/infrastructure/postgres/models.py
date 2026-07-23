@@ -423,6 +423,12 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
 # legacy `feedback` table above stays as-is for the old single-row callers
 # (SourceDetectionBadge / WaitlistCapture) and for `own_source`/`own_feature`
 # free-text — see `docs/handoff/FEEDBACK_BACKEND.md`.
+#
+# RETIRED (July 2026): the vote-first write path is gone — Feedback v2
+# (canon 0.13.0) replaced the modal. The three tables below are kept
+# READ-ONLY as history: the admin inbox and /admin/api/feedback/votes
+# still render the accumulated submissions/votes. Don't drop without an
+# explicit founder decision.
 
 FEEDBACK_VOTE_KINDS: Final = ("source", "feature")
 
