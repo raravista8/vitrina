@@ -197,7 +197,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `import '@samosite/canon/styles.css'` in globals.css. */}
         <CanonStyles />
         {children}
-        {/* Global feedback modal (canon 0.9.1 S9_FeedbackModal via a thin
+        {/* Global feedback modal (canon 0.13.0 FeedbackV2Modal via a thin
             adapter — tally←GET / onSubmit→POST, embedded). Renders its own
             fixed «Чего не хватает?» FAB; self-hides on /admin* and /login.
             Zero layout footprint (position:fixed only). Replaces the retired

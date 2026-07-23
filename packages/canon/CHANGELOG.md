@@ -25,6 +25,105 @@
 
 ---
 
+## 0.13.0 — «Фидбек v2 · Что останавливает?»: vote-first S9 удалён, новый модуль feedback (FeedbackV2Modal) · 2026-07-23
+
+> **MINOR (0.x) — С BREAKING-УДАЛЕНИЕМ.** Голосовательная модалка `S9_FeedbackModal` и весь vote-first API удалены без депрекейт-цикла (ТЗ §1). Замена — новый модуль `@samosite/canon/feedback`: одна модалка `FeedbackV2Modal`, два режима — `blocker` (причина отказа уходящего посетителя + оффер бесплатного черновика) и `question` (личный канал вопросов, «отвечаю лично»). Токены «Фарфор и лак» и все прочие модули (лендинг v5/v3, интейк In2_*/S3_*, customer S7/S8, admin-*, auth, source, presets, primitives) — byte-identical. Источник: `uploads/CANON_FEEDBACK_V2_TZ.md` + прототип `Фидбек v2 — состояния.html` / `canon-v5/fb2-feedback.jsx`.
+
+### 1. Удалено (breaking, без депрекейта) — `src/customer/index.tsx`
+
+- Компонент `S9_FeedbackModal` и алиасы `S9_FeedbackPage`, `FeedbackPage`.
+- Типы `S9_FeedbackModalProps`, `FbTally`, `FbVote`, `FbSubmitPayload`, `FbKind`.
+- Вся vote-first механика: голосовалки «Хочу источник»/«Хочу фичу», данные `FB_SOURCES`/`FB_FEATURES`/`WAITLIST_SOURCES`/`FEATURE_LIST`, пороги N/10, прогресс-бары, счётчик «за неделю», optimistic +1, «спящий» контакт-блок, плавающая кнопка «Чего не хватает?» (`[data-floating-feedback-btn]`), селектор `[data-feedback-modal]`.
+- Импорт `Btn`/`Spinner` в customer убран (использовались только в S9). `customer` теперь экспортирует только `S7_CustomerSite`, `S7_SchemeSwatches`, `S8_LeadFormConfirm`, `CustomerSite`, `LeadForm`.
+
+**Миграция консьюмеру:** адаптер `landing/components/FeedbackModal.tsx` переключается на `FeedbackV2Modal` атомарно (один файл). Импорты `S9_FeedbackModal`/`FbTally`/… из `@samosite/canon/customer` перестанут резолвиться — заменить на `@samosite/canon/feedback`. Бэкенд `GET /api/feedback/tally` и votes-ветка `POST /api/feedback` ретайрятся после переключения (`docs/FEEDBACK_BACKEND.md`).
+
+### 2. Новый модуль `@samosite/canon/feedback` (`src/feedback/index.tsx`, namespace `Fb2_*`/`FeedbackV2*`)
+
+Controlled (паттерн 0.9.1/0.12.0): данные — пропсами, действия — колбэками. Внутри НЕТ `fetch`/`Date.now`/`Math.random`/`localStorage`/`window.*` — показ-логику §5, сеть, капчу, Метрику делает консьюмер. Zero-prop = canvas-mock. Тело компонента byte-identical с прототипом `canon-v5/fb2-feedback.jsx`.
+
+```ts
+type FbV2Mode = 'blocker' | 'question';
+type FbV2Channel = 'telegram' | 'whatsapp' | 'email';
+interface FbV2Reason { code: string; label: string }
+interface FbV2Payload {
+  mode: FbV2Mode;
+  reason?: string; note?: string;             // mode=blocker
+  question?: string;                          // mode=question
+  channel?: FbV2Channel; contact?: string;    // опц. в blocker, обязательно в question
+}
+
+FeedbackV2Modal(props: {
+  open?: boolean; mode?: FbV2Mode; onOpenChange?: (open: boolean) => void;
+  reasons?: FbV2Reason[];                      // дефолт = REASONS
+  reason?: string | null; onReasonChange?: (code: string) => void;
+  note?: string; onNoteChange?: (v: string) => void;
+  question?: string; onQuestionChange?: (v: string) => void;
+  channel?: FbV2Channel; onChannelChange?: (c: FbV2Channel) => void;
+  contact?: string; onContactChange?: (v: string) => void;
+  onSubmit?: (payload: FbV2Payload) => void;
+  submitting?: boolean; error?: boolean; submitted?: boolean;
+  mobile?: boolean; embedded?: boolean;
+}): JSX.Element
+FeedbackV2Fab(props: { onClick?: () => void; embedded?: boolean }): JSX.Element   // «Задать вопрос»
+Fb2_Styles(): JSX.Element                      // инжектит Fb2_CSS (scoped .fb2, токены «Фарфор и лак»)
+
+REASONS: FbV2Reason[]                          // 7, enum консьерж-таблицы 1:1
+CHANNELS · COPY · Fb2_CSS · contactValid · formatPhone
+```
+
+- **Режим A (`blocker`).** Шаг A1: «Что останавливает прямо сейчас?» + 7 радио-карточек (навигация стрелками, focus-trap, Esc). Шаг A2 (раскрытие после выбора): поле «Почему — одним предложением» (≤200, необязательно) + оффер «Соберу черновик…» с чипами Telegram/WhatsApp/Email + контакт; CTA «Прислать черновик» (с контактом) и вторичное «Просто отправить ответ» (без контакта).
+- **Режим B (`question`).** textarea вопроса + канал/контакт + «Отправить» + подпись «Читаю каждый ответ сам и отвечаю лично».
+- **Финал.** Короткий «Спасибо» (без конфетти): blocker+контакт → «Пришлю черновик в {канал}»; blocker без контакта → «Спасибо, это правда помогает»; question → «Отвечу лично в {канал}».
+- **Адаптив.** Desktop — центр ~520; mobile — фуллскрин; 375 выживает (длинные кириллические label переносятся). `prefers-reduced-motion: reduce` — без анимаций раскрытия A2/входа. `embedded` — canvas-артборд vs viewport-fixed.
+
+`src/index.ts` — добавлена ОДНА строка `export * from './feedback'`.
+
+### 3. Реестр копи (§4 — единственный источник; `COPY` + `docs/COPY.md`)
+
+Побайтово; nbsp после коротких предлогов. Ключи: `blocker.title/note.label/offer.title/cta/skip`, `question.fab/cta/sign`, `thanks.blocker.contact/plain`, `thanks.question`. Строка режима B «Читаю каждый ответ сам и отвечаю лично» — обязательна.
+
+### 4. Причины (`REASONS`, 7) — enum консьерж-таблицы 1:1 (заморожен в БД + Метрике)
+
+`enough_maps` · `booking_covers` · `unclear_value` · `price` · `no_trust` · `not_now` · `other`. `no_reply` (молчание) — только в консьерж-канале, в форме не рендерится. Переименования = миграция БД/Метрики.
+
+### 5. data-* хуки (цели Метрики — менять только согласованно)
+
+`data-feedback-v2` + `data-fb-mode="blocker|question"` (корень) · `data-fb-reason="<code>"` (радио) · `data-fb-channel="telegram|whatsapp|email"` (чипы) · `data-fb-cta="send-blocker|send-plain|send-question"` · `data-fb-fab` (кнопка B). События (`feedback_open{trigger}`, `feedback_reason`, `feedback_contact_left`, `feedback_question_sent`) шлёт консьюмер.
+
+### 6. Byte-identical (НЕ трогали)
+
+Все модули кроме `customer` (удаление S9) и `index.ts` (одна строка): `tokens.ts` (значения; header-версия → 0.13.0), `styles.css`/`CanonStyles.tsx`, `landing` (v5/v3), весь `intake` (In2_*/S3_*/SubmitModal), `admin-core/-demo/-ops`, `auth`, `source`, `presets`, `primitives`. `package.json` version → 0.13.0, exports +`./feedback`. Обновлены доки: `README.md`, `docs/COPY.md`, `docs/FEEDBACK_BACKEND.md`.
+
+### 7. Вне канона (консьюмер / бэкенд — справочно)
+
+Показ-условия §5 (exit-intent + 60% скролл + localStorage cap 1, route-allowlist), `POST /api/feedback/v2` (+captcha +consent), миграция 0020 таблицы `feedback`, уведомление фаундеру, ретайр tally/votes, Метрика-цели — вне пакета (ТЗ §8 + приложение). Контракт — `docs/FEEDBACK_BACKEND.md`.
+
+### 8. Acceptance (ТЗ §9) → приёмочный канвас `Фидбек v2 — состояния.html`
+
+Голосовалки/пороги отсутствуют ✓ · оба режима из одного экспорта, controlled, zero-prop mock ✓ · `REASONS` экспортом, label = консьерж-таблица 1:1 ✓ · копи побайтово из §4, подпись B на месте ✓ · data-* хуки на местах, без window.*/fetch ✓ · радиус 0 / тени none / токены VT ✓ · 375 выживает, focus-trap, reduced-motion ✓.
+
+---
+
+### Vitrina-side (this vendoring PR)
+
+Вендоринг 0.13.0: cp src/feedback/ (новый) + src/customer/index.tsx
+(S9 удалён) + src/index.ts (+'./feedback') + src/tokens.ts (только
+версия-коммент), package.json 0.12.0→0.13.0 (+exports './feedback'),
+tsup entry, dist rebuild (локальный dts:false). **НЕ копировались**
+src/landing/v5.tsx и src/intake/in2.tsx — зип везёт их 0.12.0-состояние
+БЕЗ наших консьюмер-патчей ([vitrina] copy patch лида героя под
+SEO-сниппет; converter-repair дублей In2_CSS/In2_Styles) — копирование
+откатило бы прод. Повторно отправлено Claude Design для синка исходников.
+Консьюмер переключается в этом же PR: FeedbackModal.tsx → FeedbackV2Modal
+(показ-логика exit-intent/скролл-60%/1-раз-на-посетителя, капча,
+POST /api/feedback/v2, Метрика). Enum причин сверен с бэкендом 1:1
+(FEEDBACK_V2_REASON_CODES). Canon-gap: в модалке нет строки согласия на
+обработку контакта (ФЗ-152) — консьюмер шлёт consent_given с отправкой,
+юр-формулировка приписки — вопрос founder'у.
+
+---
+
 ## 0.12.0 — «Витрина v5 · Фарфор и лак»: ребренд токенов + лендинг V5_* + интейк v2 In2_* · 2026-07-17
 
 > **MINOR, additive — С ОДНИМ ЗАЯВЛЕННЫМ ИСКЛЮЧЕНИЕМ (значения токенов).** Один релиз объединяет главную v5, интейк v2 и новую дизайн-систему «Фарфор и лак» (все на одних токенах). Прототип-источник: `Лендинг Самосайт — Витрина v5.html` + `КАК-ПОСТРОЕНА-ГЛАВНАЯ.md`. Публичные экспорты и пропсы 0.11.0 не удалены и не переименованы; старый лендинг v3 и весь intake `SubmitModal`/`S3_*` — byte-identical по коду. Изменение **значений** `tokens.ts` — заявленное исключение из additive (глобальный ребренд): визуально перекрашивает всех потребителей `VT`.

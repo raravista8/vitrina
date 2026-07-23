@@ -131,6 +131,7 @@ declare module "@samosite/canon/presets" {
 }
 
 declare module "@samosite/canon/customer";
+declare module "@samosite/canon/feedback";
 declare module "@samosite/canon/admin-demo";
 declare module "@samosite/canon/admin-core";
 declare module "@samosite/canon/admin-ops";

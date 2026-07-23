@@ -5,6 +5,7 @@ export * from './primitives';
 export * from './landing';
 export * from './intake';
 export * from './customer';
+export * from './feedback';
 export * from './admin-demo';
 export * from './admin-core';
 export * from './admin-ops';

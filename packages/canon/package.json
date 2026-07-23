@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.12.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.12.0 «Витрина v5»: глобальный ребренд токенов «Фарфор и лак» (бордо/винный accent #7A2B34, тёплый фарфор, radius 0 + без теней на уровне токенов, дисплей Sofia Sans Condensed) — перекрашивает все модули; новый лендинг V5_* (@samosite/canon/landing: Header/Hero/Story/Examples+SiteViewer/HowItWorks/Reviews/Pricing/Honest/Faq/FinalCta/Footer, реестры EXAMPLES/FAQ_ITEMS) — Hero без инпута, controlled onIntake(entry); интейк v2 In2_* (@samosite/canon/intake, NICHE_LIB_V2). Старые v3-лендинг и S3_*/SubmitModal — byte-identical. Изменение значений токенов — заявленное исключение из additive (ребренд).",
+  "version": "0.13.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.13.0 «Фидбек v2»: vote-first S9_FeedbackModal удалён (breaking, без депрекейта); новый модуль @samosite/canon/feedback — одна модалка FeedbackV2Modal, два режима (blocker: причина отказа уходящего посетителя + оффер бесплатного черновика; question: личный канал вопросов, «отвечаю лично»), controlled, REASONS = enum консьерж-таблицы 1:1, data-fb-* хуки. Токены «Фарфор и лак» и прочие модули (лендинг v5/v3, интейк In2_*/S3_*, customer S7/S8, admin-*) — byte-identical.",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -36,6 +36,10 @@
     "./customer": {
       "types": "./dist/customer/index.d.ts",
       "import": "./dist/customer/index.js"
+    },
+    "./feedback": {
+      "types": "./dist/feedback/index.d.ts",
+      "import": "./dist/feedback/index.js"
     },
     "./admin-demo": {
       "types": "./dist/admin-demo/index.d.ts",
