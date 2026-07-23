@@ -1,4 +1,4 @@
-// @samosite/canon · tokens · 0.13.0 «Фарфор и лак»
+// @samosite/canon · tokens · 0.14.0 «Фарфор и лак»
 // Single source of truth. Значения — 1:1 из :root прототипа «Лендинг Самосайт — Витрина v5».
 // РЕБРЕНД (supersedes terracotta 0.11.0): бордо/винный акцент, тёплый фарфор.
 // ЖЕЛЕЗНОЕ ПРАВИЛО СТИЛЯ закреплено на уровне токенов: radius.* = 0, shadow.* = 'none'.

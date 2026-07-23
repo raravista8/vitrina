@@ -1,7 +1,7 @@
 "use client";
 
 // src/landing/index.tsx
-import React3 from "react";
+import React5 from "react";
 
 // src/tokens.ts
 var VT = {
@@ -1211,19 +1211,673 @@ var samplePresets = [
 ];
 
 // src/landing/v5.tsx
-import { useState, useEffect, useRef } from "react";
+import { useState as useState3, useEffect as useEffect3, useRef as useRef2 } from "react";
+
+// src/landing/v5-sites.tsx
+import { useState as useState2, useEffect as useEffect2, useRef } from "react";
+
+// src/landing/v5-sites-kit.tsx
+import { useState, useEffect } from "react";
 import { Fragment as Fragment2, jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
-var noop = () => {
-};
+var INK = "#1B1712";
+var INK70 = "#4C463C";
+var LINE2 = "#D6CEBE";
+var BONE = "#F2EEE6";
+var ACCENT = "#7A2B34";
 var MONO = VT.font.mono;
 var SANS = VT.font.sans;
-var INK = VT.ink;
-var INK70 = VT.inkSoft;
+var Pn = { bg: "#F7EFEC", ink: "#2A2320", soft: "#8A7C74", line: "#EEE1DC", accent: "#B0656F", btn: "#2A2320", onAccent: "#FAF4F1", serif: "'Cormorant', Georgia, serif" };
+var Pb = { bg: "#E7E2D6", ink: "#231C15", soft: "#6B5C48", line: "#D6CCB8", accent: "#8C4A22", btn: "#231C15", onAccent: "#F1EADC", serif: "'Oswald', sans-serif" };
+var Ps = { bg: "#FFFFFF", ink: "#1A1D1C", soft: "#727975", line: "#ECECEA", accent: "#2F7A68", btn: "#1A1D1C", onAccent: "#FFFFFF", serif: "'Spectral', Georgia, serif" };
+var Pr = { bg: "#EFE7DA", ink: "#241E17", soft: "#6E6053", line: "#DBD0BE", accent: "#7A5A3C", btn: "#241E17", onAccent: "#F5EFE4", serif: "'Playfair Display', Georgia, serif" };
+var Pc = { bg: "#F6F0F3", ink: "#221A24", soft: "#6E6472", line: "#E7DBE4", accent: "#9C2A8E", btn: "#221A24", onAccent: "#F9F0F6", serif: "'Cormorant', Georgia, serif" };
+var useMedia = (limit) => {
+  const [n, setN] = useState(typeof window !== "undefined" && window.innerWidth < limit);
+  useEffect(() => {
+    const on = () => setN(window.innerWidth < limit);
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, [limit]);
+  return n;
+};
+var useCompact = () => useMedia(640);
+var useNarrow = () => useMedia(900);
+var uns = (id, w) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w || 900}&q=80`;
+function Img({ id, w, label, ph, style, pos, src }) {
+  const [err, setErr] = useState(false);
+  const base = { display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: pos || "center" };
+  const p = ph || ["#E5DFD3", "#D6CEBE", "#6E675A"];
+  if (err || !id && !src) {
+    return /* @__PURE__ */ jsx3("div", { style: { ...base, ...style, backgroundImage: `repeating-linear-gradient(135deg, ${p[0]} 0 11px, ${p[1]} 11px 22px)`, display: "flex", alignItems: "flex-end", padding: 10 }, children: /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".05em", textTransform: "uppercase", color: p[2], background: p[3] || "rgba(255,255,255,.6)", padding: "3px 7px" }, children: label }) });
+  }
+  return /* @__PURE__ */ jsx3("img", { src: src || uns(id, w), alt: label || "", loading: "lazy", onError: () => setErr(true), style: { ...base, ...style } });
+}
+function FakeCTA({ style, children, block, kind }) {
+  const base = block ? { display: "flex", width: "100%" } : { display: "inline-flex" };
+  return /* @__PURE__ */ jsx3(
+    "a",
+    {
+      href: "#",
+      onClick: (e) => e.preventDefault(),
+      tabIndex: -1,
+      "aria-hidden": "true",
+      style: { alignItems: "center", justifyContent: "center", gap: 8, cursor: "default", textDecoration: "none", ...base, ...style },
+      children
+    }
+  );
+}
+function Stars({ n = 5, size = 13, gap = "1.5px", color = "#C9922E" }) {
+  return /* @__PURE__ */ jsx3("span", { "aria-label": `${n} \u0438\u0437 5`, style: { color, fontSize: size, letterSpacing: gap, whiteSpace: "nowrap" }, children: "\u2605\u2605\u2605\u2605\u2605".slice(0, n) });
+}
+function SiteHead({ P, name, meta, anchors, cta }) {
+  const compact = useCompact();
+  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: compact ? "14px 20px" : "18px 40px", borderBottom: `1px solid ${P.line}`, background: P.bg }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { fontFamily: P.serif, fontWeight: 600, fontSize: compact ? 20 : 23, lineHeight: 1, color: P.ink }, children: name }),
+      meta && /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".12em", textTransform: "uppercase", color: P.soft }, children: meta })
+    ] }),
+    !compact && anchors && /* @__PURE__ */ jsx3("nav", { style: { display: "flex", gap: 26 }, children: anchors.map((a, i) => /* @__PURE__ */ jsx3(FakeCTA, { style: { fontFamily: SANS, fontWeight: 500, fontSize: 14, color: P.ink }, children: a }, i)) }),
+    cta && /* @__PURE__ */ jsx3(FakeCTA, { style: { fontFamily: SANS, fontWeight: 700, fontSize: compact ? 12.5 : 13.5, color: P.onAccent, background: P.btn, padding: compact ? "9px 13px" : "11px 18px", whiteSpace: "nowrap" }, children: cta })
+  ] });
+}
+var Wrap = ({ max = 1080, pad, children, style }) => /* @__PURE__ */ jsx3("div", { style: { maxWidth: max, margin: "0 auto", paddingInline: pad || "clamp(20px,5vw,40px)", ...style }, children });
+function SectionHead({ P, kicker, title, sub, center, accentWord }) {
+  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 12, textAlign: center ? "center" : "left", alignItems: center ? "center" : "flex-start", marginBottom: "clamp(24px,3vw,40px)" }, children: [
+    kicker && /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent }, children: kicker }),
+    /* @__PURE__ */ jsxs3("h2", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: "clamp(28px,3.4vw,42px)", lineHeight: 1.04, letterSpacing: "-.01em", color: P.ink, maxWidth: center ? "18ch" : "22ch" }, children: [
+      title,
+      accentWord && /* @__PURE__ */ jsxs3(Fragment2, { children: [
+        " ",
+        /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic", color: P.accent }, children: accentWord })
+      ] })
+    ] }),
+    sub && /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: SANS, fontSize: 15.5, lineHeight: 1.5, color: P.soft, maxWidth: "46ch", textWrap: "pretty" }, children: sub })
+  ] });
+}
+function PriceList({ P, groups, dense }) {
+  return /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: "clamp(22px,2.6vw,34px)" }, children: groups.map((g, gi) => /* @__PURE__ */ jsxs3("div", { children: [
+    g.label && /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 6, paddingBottom: 10, borderBottom: `1px solid ${P.line}` }, children: g.label }),
+    g.rows.map((r, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", gap: 16, padding: (dense ? "11px" : "15px") + " 0", borderBottom: i < g.rows.length - 1 ? `1px solid ${P.line}` : "none" }, children: [
+      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0, flex: 1 }, children: [
+        /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontWeight: 600, fontSize: 16, color: P.ink }, children: r[0] }),
+        r[2] && /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontSize: 13, color: P.soft, marginTop: 3 }, children: r[2] })
+      ] }),
+      /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 14.5, color: P.ink, whiteSpace: "nowrap" }, children: r[1] })
+    ] }, i))
+  ] }, gi)) });
+}
+function Gallery({ items, cols = 3, gap = 3, ratio = "1 / 1" }) {
+  const compact = useCompact();
+  const c = compact ? Math.min(2, cols) : cols;
+  return /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: `repeat(${c}, 1fr)`, gap }, children: items.map((it, i) => /* @__PURE__ */ jsx3("div", { style: { gridColumn: !compact && it.span ? `span ${it.span}` : "span 1", aspectRatio: it.ratio || ratio, overflow: "hidden", background: "#eee" }, children: /* @__PURE__ */ jsx3(Img, { id: it.id, src: it.src, w: it.w || 640, label: it.label, ph: it.ph, pos: it.pos }) }, i)) });
+}
+function Reviews({ P, items, cols = 3 }) {
+  const compact = useCompact();
+  const narrow = useNarrow();
+  const c = compact ? 1 : narrow ? Math.min(2, cols) : cols;
+  return /* @__PURE__ */ jsx3("div", { style: { display: "grid", gridTemplateColumns: `repeat(${c}, 1fr)`, gap: "clamp(16px,2vw,28px)", alignItems: "start" }, children: items.map((r, i) => /* @__PURE__ */ jsxs3("figure", { style: { margin: 0, display: "flex", flexDirection: "column", gap: 12, gridColumn: !compact && r.long ? "span 2" : "span 1", padding: "20px 22px", background: P.bg, borderTop: `2px solid ${P.accent}` }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 9 }, children: [
+      /* @__PURE__ */ jsx3(Stars, { n: r.n || 5 }),
+      /* @__PURE__ */ jsxs3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".05em", color: P.soft }, children: [
+        (r.n || 5).toString().replace(".", ","),
+        ",0 \xB7 ",
+        r.source
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx3("blockquote", { style: { margin: 0, fontFamily: P.serif, fontStyle: "italic", fontSize: r.long ? 21 : 18, lineHeight: 1.34, color: P.ink }, children: r.text }),
+    /* @__PURE__ */ jsx3("figcaption", { style: { marginTop: "auto", fontFamily: MONO, fontSize: 10.5, letterSpacing: ".03em", color: P.soft }, children: r.who })
+  ] }, i)) });
+}
+function About({ P, kicker, title, text, facts, photo, reverse }) {
+  const narrow = useNarrow();
+  const media = photo && /* @__PURE__ */ jsx3("div", { style: { flex: narrow ? "none" : "0 0 40%", aspectRatio: narrow ? "16 / 10" : "4 / 5", overflow: "hidden", background: "#eee" }, children: /* @__PURE__ */ jsx3(Img, { id: photo.id, src: photo.src, w: photo.w || 700, label: photo.label, ph: photo.ph, pos: photo.pos }) });
+  const body = /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 18 }, children: [
+    kicker && /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent }, children: kicker }),
+    /* @__PURE__ */ jsx3("h2", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: "clamp(26px,3vw,38px)", lineHeight: 1.06, letterSpacing: "-.01em", color: P.ink, maxWidth: "20ch" }, children: title }),
+    (text || []).map((t, i) => /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: SANS, fontSize: 15.5, lineHeight: 1.55, color: P.soft, maxWidth: "48ch", textWrap: "pretty" }, children: t }, i)),
+    facts && /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexWrap: "wrap", gap: "18px 34px", marginTop: 4, paddingTop: 18, borderTop: `1px solid ${P.line}` }, children: facts.map((f, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 3 }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { fontFamily: P.serif, fontWeight: 600, fontSize: 28, lineHeight: 1, color: P.accent }, children: f[0] }),
+      /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".04em", color: P.soft, maxWidth: "18ch" }, children: f[1] })
+    ] }, i)) })
+  ] });
+  return /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: narrow ? "column" : "row", gap: "clamp(24px,3.4vw,52px)", alignItems: narrow ? "stretch" : "center" }, children: reverse && !narrow ? /* @__PURE__ */ jsxs3(Fragment2, { children: [
+    body,
+    media
+  ] }) : /* @__PURE__ */ jsxs3(Fragment2, { children: [
+    media,
+    body
+  ] }) });
+}
+function Contacts({ P, title, addr, hours, phone, cta, note }) {
+  const narrow = useNarrow();
+  const Row = ({ k, v }) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 14, padding: "12px 0", borderBottom: `1px solid ${P.line}` }, children: [
+    /* @__PURE__ */ jsx3("span", { style: { flex: "0 0 96px", fontFamily: MONO, fontSize: 10.5, letterSpacing: ".1em", textTransform: "uppercase", color: P.soft }, children: k }),
+    /* @__PURE__ */ jsx3("span", { style: { fontFamily: SANS, fontSize: 15, color: P.ink, whiteSpace: "pre-line" }, children: v })
+  ] });
+  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: narrow ? "column" : "row", gap: "clamp(24px,3.4vw,52px)", alignItems: "start" }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { flex: 1, minWidth: 0 }, children: [
+      /* @__PURE__ */ jsx3("h2", { style: { margin: "0 0 18px", fontFamily: P.serif, fontWeight: 600, fontSize: "clamp(26px,3vw,38px)", lineHeight: 1.06, letterSpacing: "-.01em", color: P.ink, maxWidth: "18ch" }, children: title }),
+      addr && /* @__PURE__ */ jsx3(Row, { k: "\u0410\u0434\u0440\u0435\u0441", v: addr }),
+      hours && /* @__PURE__ */ jsx3(Row, { k: "\u0427\u0430\u0441\u044B", v: hours }),
+      phone && /* @__PURE__ */ jsx3(Row, { k: "\u0421\u0432\u044F\u0437\u044C", v: phone })
+    ] }),
+    /* @__PURE__ */ jsxs3("div", { style: { flex: narrow ? "none" : "0 0 34%", alignSelf: narrow ? "stretch" : "center", display: "flex", flexDirection: "column", gap: 12 }, children: [
+      /* @__PURE__ */ jsxs3(FakeCTA, { block: true, style: { background: P.accent, color: P.onAccent, fontFamily: SANS, fontWeight: 700, fontSize: 15.5, padding: "16px 20px" }, children: [
+        cta,
+        " ",
+        /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+      ] }),
+      note && /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".03em", color: P.soft, textAlign: "center" }, children: note })
+    ] })
+  ] });
+}
+function Watermark({ P, name, city }) {
+  return /* @__PURE__ */ jsx3("footer", { style: { background: P.btn, color: P.onAccent, paddingBlock: "clamp(30px,4vw,48px)" }, children: /* @__PURE__ */ jsxs3(Wrap, { style: { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }, children: [
+    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 5 }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { fontFamily: P.serif, fontWeight: 600, fontSize: 20, color: P.onAccent }, children: name }),
+      city && /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase", opacity: 0.7 }, children: city })
+    ] }),
+    /* @__PURE__ */ jsxs3("span", { style: { display: "inline-flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 11, letterSpacing: ".06em", opacity: 0.82 }, children: [
+      /* @__PURE__ */ jsx3("span", { style: { width: 7, height: 7, background: P.accent, display: "inline-block" } }),
+      "\u0421\u0434\u0435\u043B\u0430\u043D\u043E \u043D\u0430\xA0\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435"
+    ] })
+  ] }) });
+}
+
+// src/landing/v5-sites.tsx
+import { jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
+function Sec({ P, bg, pad, top, children, wrap = true, max }) {
+  const inner = wrap ? /* @__PURE__ */ jsx4(Wrap, { max, children }) : children;
+  return /* @__PURE__ */ jsx4("section", { style: { background: bg || P.bg, paddingBlock: pad || "clamp(48px,6vw,92px)", paddingTop: top }, children: inner });
+}
+function NailSite() {
+  const P = Pn, compact = useCompact();
+  const gal = [
+    { src: "img/nails.png", label: "\u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \xB7 \u043D\u044E\u0434", pos: "center 40%", span: 2, ratio: "2 / 1" },
+    { id: "photo-1604654894610-df63bc536371", label: "\u0444\u0440\u0435\u043D\u0447", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"] },
+    { src: "img/manicure.jpg", label: "\u0433\u043B\u044F\u043D\u0435\u0446", pos: "center" },
+    { id: "photo-1632345031435-8727f6897d53", label: "\u0434\u0438\u0437\u0430\u0439\u043D \u043D\u0430 \u0434\u0432\u0430", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"] },
+    { id: "photo-1519014816548-bf5fe059798b", label: "\u0441\u043D\u044F\u0442\u0438\u0435 \xB7 \u0447\u0438\u0441\u0442\u043A\u0430", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"] },
+    { id: "photo-1610992015732-2449b76344bc", label: "\u0443\u0445\u043E\u0434 \u0437\u0430 \u043A\u0443\u0442\u0438\u043A\u0443\u043B\u043E\u0439", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"] },
+    { id: "photo-1607779097040-26e80aa78e66", label: "\u0432\u0442\u0438\u0440\u043A\u0430", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"] }
+  ];
+  return /* @__PURE__ */ jsxs4("div", { style: { background: P.bg, color: P.ink }, children: [
+    /* @__PURE__ */ jsx4(SiteHead, { P, name: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B", meta: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440", anchors: ["\u0423\u0441\u043B\u0443\u0433\u0438", "\u0420\u0430\u0431\u043E\u0442\u044B", "\u041E\u0442\u0437\u044B\u0432\u044B", "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B"], cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432\xA0Telegram" }),
+    /* @__PURE__ */ jsxs4("div", { style: { position: "relative", height: compact ? 380 : "clamp(460px,58vw,600px)" }, children: [
+      /* @__PURE__ */ jsx4(Img, { src: "img/nails.png", label: "\u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u043C\u0430\u043A\u0440\u043E", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"], pos: "center 45%" }),
+      /* @__PURE__ */ jsx4("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,15,.64) 0%, rgba(20,16,15,0) 46%)" } }),
+      /* @__PURE__ */ jsxs4(Wrap, { style: { position: "absolute", left: 0, right: 0, bottom: compact ? 22 : 40 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "#fff", opacity: 0.92, marginBottom: 14 }, children: "\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u0431\u0435\u0437 \u0441\u043F\u0435\u0448\u043A\u0438" }),
+        /* @__PURE__ */ jsxs4("h1", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: compact ? 40 : "clamp(52px,6.4vw,84px)", lineHeight: 0.96, letterSpacing: "-.01em", color: "#FBFBFC", maxWidth: "15ch" }, children: [
+          "\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440,",
+          /* @__PURE__ */ jsx4("br", {}),
+          /* @__PURE__ */ jsx4("span", { style: { fontStyle: "italic", color: "#F4C9C4" }, children: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3\xA0\u043D\u0435\u0434\u0435\u043B\u0438" })
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(40px,5vw,72px)", children: /* @__PURE__ */ jsx4(
+      About,
+      {
+        P,
+        kicker: "\u041E \u043C\u0430\u0441\u0442\u0435\u0440\u0435",
+        title: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u043E\u0434\u043D\u0430, \u0431\u0435\u0437\xA0\u0441\u043F\u0435\u0448\u043A\u0438 \u2014 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u0435\u043D\u0442 \u0432\xA0\u0447\u0430\u0441",
+        text: ["\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \u0431\u0435\u0437\xA0\u043F\u0440\u043E\u043F\u0438\u043B\u043E\u0432 \u0438\xA0\u0431\u043E\u043B\u0438: \u0441\u043F\u0438\u043B\u0438\u0432\u0430\u044E \u0442\u043E\u043B\u044C\u043A\u043E \u043E\u0433\u0440\u0443\u0431\u0435\u0432\u0448\u0443\u044E \u043A\u043E\u0436\u0443, \u043D\u043E\u0433\u0442\u0435\u0432\u0443\u044E \u043F\u043B\u0430\u0441\u0442\u0438\u043D\u0443 \u043D\u0435\xA0\u0442\u0440\u043E\u0433\u0430\u044E. \u0418\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 \u043F\u043E\u0441\u043B\u0435 \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430 \u043F\u0440\u043E\u0445\u043E\u0434\u0438\u0442 \u0441\u0443\u0445\u043E\u0436\u0430\u0440\u043E\u0432\u043E\u0439 \u0448\u043A\u0430\u0444.", "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u0441\u0430\u043C\u0430, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0437\u043D\u0430\u044E \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043F\u043E\xA0\u0438\u043C\u0435\u043D\u0438 \u0438\xA0\u043F\u043E\u043C\u043D\u044E, \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u043B\u0438 \u0432\xA0\u043F\u0440\u043E\u0448\u043B\u044B\u0439 \u0440\u0430\u0437."],
+        facts: [["8 \u043B\u0435\u0442", "\u0443\xA0\u043A\u0440\u0435\u0441\u043B\u0430"], ["3 \u043D\u0435\u0434\u0435\u043B\u0438", "\u043D\u043E\u0441\u0438\u0431\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F"], ["1 \u0447\u0430\u0441", "\u043D\u0430\xA0\u043E\u0434\u043D\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430"]],
+        photo: { src: "img/manicure.jpg", label: "\u0410\u043D\u043D\u0430 \xB7 \u0437\u0430 \u0440\u0430\u0431\u043E\u0442\u043E\u0439", pos: "center" }
+      }
+    ) }),
+    /* @__PURE__ */ jsxs4(Sec, { P, bg: "#FBF4F1", pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u0426\u0435\u043D\u044B \u0437\u0430\xA0\u0438\u044E\u043B\u044C", title: "\u041F\u0440\u0430\u0439\u0441", accentWord: "\u0431\u0435\u0437 \u0434\u043E\u0433\u043E\u043D\u044F\u044E\u0449\u0438\u0445 \u0434\u043E\u043F\u043B\u0430\u0442" }),
+      /* @__PURE__ */ jsx4(PriceList, { P, groups: [
+        { label: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", rows: [["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043E\u0434\u043D\u043E\u0442\u043E\u043D\u043D\u043E\u0435 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", "2\xA0400\xA0\u20BD", "\u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439, \u0431\u0435\u0440\u0435\u0436\u043D\u043E \xB7 1,5\xA0\u0447"], ["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 \u0431\u0435\u0437 \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", "1\xA0500\xA0\u20BD", "\u0444\u043E\u0440\u043C\u0430, \u043A\u0443\u0442\u0438\u043A\u0443\u043B\u0430, \u0443\u0445\u043E\u0434"], ["\u0421\u043D\u044F\u0442\u0438\u0435 \u0447\u0443\u0436\u043E\u0433\u043E \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", "400\xA0\u20BD", "\u0430\u043A\u043A\u0443\u0440\u0430\u0442\u043D\u043E, \u0431\u0435\u0437 \u043F\u0440\u043E\u043F\u0438\u043B\u043E\u0432"]] },
+        { label: "\u0414\u0438\u0437\u0430\u0439\u043D \u0438 \u0443\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435", rows: [["\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430\xA02 \u043D\u043E\u0433\u0442\u044F", "300\xA0\u20BD", "\u043E\u0442 \u043F\u0440\u043E\u0441\u0442\u043E\u0433\u043E \u0434\u043E \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E"], ["\u0424\u0440\u0435\u043D\u0447 / \u043B\u0443\u043D\u043A\u0438", "500\xA0\u20BD", "\u0440\u043E\u0432\u043D\u0430\u044F \u043B\u0438\u043D\u0438\u044F \u043E\u0442\xA0\u0440\u0443\u043A\u0438"], ["\u0423\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0430\u043A\u0440\u0438\u0433\u0435\u043B\u0435\u043C", "600\xA0\u20BD", "\u0434\u043B\u044F \u0442\u043E\u043D\u043A\u0438\u0445 \u0438\xA0\u043B\u043E\u043C\u043A\u0438\u0445"], ["\u0412\u0442\u0438\u0440\u043A\u0430 / \u0445\u0440\u043E\u043C", "350\xA0\u20BD", "\u0437\u0435\u0440\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0431\u043B\u0435\u0441\u043A"]] },
+        { label: "\u0423\u0445\u043E\u0434", rows: [["\u041F\u0430\u0440\u0430\u0444\u0438\u043D\u043E\u0442\u0435\u0440\u0430\u043F\u0438\u044F \u0440\u0443\u043A", "700\xA0\u20BD", "\u0442\u0451\u043F\u043B\u044B\u0439 \u0443\u0445\u043E\u0434 \xB7 20\xA0\u043C\u0438\u043D"], ["SPA-\u0443\u0445\u043E\u0434 \u0441\xA0\u043C\u0430\u0441\u0441\u0430\u0436\u0435\u043C", "900\xA0\u20BD", "\u043A\u043E\u0436\u0430 \u0440\u0443\u043A \u043F\u043E\u0441\u043B\u0435 \u0437\u0438\u043C\u044B"]] }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u0420\u0430\u0431\u043E\u0442\u044B", title: "\u0421\u0432\u0435\u0436\u0438\u0435 \u0440\u0430\u0431\u043E\u0442\u044B", accentWord: "\u0438\u0437\xA0Instagram" }),
+      /* @__PURE__ */ jsx4(Gallery, { items: gal, cols: 3 })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, bg: "#FBF4F1", pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u041E\u0442\u0437\u044B\u0432\u044B \xB7 \u042F\u043D\u0434\u0435\u043A\u0441", title: "\u0427\u0442\u043E \u043F\u0438\u0448\u0443\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u044B" }),
+      /* @__PURE__ */ jsx4(Reviews, { P, items: [
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u0410\u043D\u043D\u0430 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F, \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u0435\u0442, \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0435\u0442. \u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435\xA0\u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432\xBB", who: "\u041E\u043B\u0435\u0441\u044F \u041D. \xB7 3\xA0\u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u0414\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u0440\u043E\u0432\u043D\u043E \u0442\u0440\u0438 \u043D\u0435\u0434\u0435\u043B\u0438, \u043A\u0430\u043A \u0438\xA0\u043E\u0431\u0435\u0449\u0430\u043B\u0438. \u0425\u043E\u0436\u0443 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\xA0\u043D\u0435\u0439\xBB", who: "\u041C\u0430\u0440\u0438\u043D\u0430 \u041A. \xB7 2\xA0\u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "2\u0413\u0418\u0421", text: "\xAB\u0421\u0442\u0435\u0440\u0438\u043B\u044C\u043D\u043E, \u043D\u0435\xA0\u0431\u043E\u043B\u044C\u043D\u043E, \u0442\u0438\u0445\u0430\u044F \u043C\u0443\u0437\u044B\u043A\u0430. \u0412\u044B\u0445\u043E\u0436\u0443 \u043A\u0430\u043A \u0438\u0437\xA0\u0441\u043F\u0430, \u0430\xA0\u043D\u0435 \u0441\xA0\u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430\xBB", who: "\u0414\u0430\u0440\u044C\u044F \u041F. \xB7 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0437\u0430\u0434" }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      Contacts,
+      {
+        P,
+        title: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A\xA0\u0410\u043D\u043D\u0435",
+        addr: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433, \u0443\u043B.\xA0\u041C\u0430\u043B\u044B\u0448\u0435\u0432\u0430\xA051,\n\u0411\u0426 \xAB\u0412\u044B\u0441\u043E\u0446\u043A\u0438\u0439\xBB, \u043E\u0444\u0438\u0441\xA0\u043F\u043E\xA0\u0437\u0430\u043F\u0438\u0441\u0438",
+        hours: "\u041F\u043D\u2013\u0421\u0431 10:00\u201320:00\n\u0412\u0441 \u2014 \u043F\u043E\xA0\u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0451\u043D\u043D\u043E\u0441\u0442\u0438",
+        phone: "Telegram \u0438\xA0WhatsApp @anna_nails",
+        cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432\xA0Telegram",
+        note: "\u041E\u0442\u0432\u0435\u0442 \u043E\u0431\u044B\u0447\u043D\u043E \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 \u0447\u0430\u0441\u0430"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(Watermark, { P, name: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B", city: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" })
+  ] });
+}
+function BarberSite() {
+  const P = Pb, narrow = useNarrow(), compact = useCompact();
+  const Poster = ({ children, size }) => /* @__PURE__ */ jsx4("h2", { style: { margin: 0, fontFamily: P.serif, fontWeight: 700, fontSize: size || "clamp(30px,4vw,52px)", lineHeight: 0.92, letterSpacing: ".004em", textTransform: "uppercase", color: P.ink }, children });
+  return /* @__PURE__ */ jsxs4("div", { style: { background: P.bg, color: P.ink }, children: [
+    /* @__PURE__ */ jsx4(SiteHead, { P, name: "\u0411\u0410\u0420\u0411\u0415\u0420\u0428\u041E\u041F \xAB\u0424\u0401\u0414\u041E\u0420\xBB", meta: "\u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u0441\xA02018", anchors: ["\u041F\u0440\u0430\u0439\u0441", "\u041C\u0430\u0441\u0442\u0435\u0440\u0430", "\u0420\u0430\u0431\u043E\u0442\u044B", "\u0410\u0434\u0440\u0435\u0441"], cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" }),
+    /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: narrow ? "1fr" : "1.1fr .9fr", borderBottom: `1px solid ${P.line}` }, children: [
+      /* @__PURE__ */ jsxs4("div", { style: { padding: compact ? "30px 20px" : "clamp(40px,5vw,72px) clamp(28px,4vw,56px)" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: P.soft, marginBottom: 18 }, children: "\u0422\u043E\u043B\u044C\u043A\u043E \u043C\u0443\u0436\u0441\u043A\u0438\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" }),
+        /* @__PURE__ */ jsxs4("h1", { style: { margin: 0, fontFamily: P.serif, fontWeight: 700, fontSize: compact ? 60 : "clamp(76px,9vw,132px)", lineHeight: 0.86, letterSpacing: ".004em", textTransform: "uppercase", color: P.ink }, children: [
+          "\u0421\u0442\u0440\u0438\u0436\u043A\u0430",
+          /* @__PURE__ */ jsx4("br", {}),
+          /* @__PURE__ */ jsx4("span", { style: { color: P.accent }, children: "+ \u0431\u043E\u0440\u043E\u0434\u0430" }),
+          /* @__PURE__ */ jsx4("br", {}),
+          "\u0437\u0430 45 \u043C\u0438\u043D\u0443\u0442"
+        ] }),
+        /* @__PURE__ */ jsx4("p", { style: { margin: "24px 0 0", fontFamily: SANS, fontSize: 15, lineHeight: 1.5, color: P.soft, maxWidth: "34ch" }, children: "\u0412\u0438\u0441\u043A\u0438 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0435\u0441\u043B\u0438 \u0437\u0430\u0439\u0434\u0451\u0442\u0435 \u043F\u043E\u0434\u0440\u0430\u0432\u043D\u044F\u0442\u044C\u0441\u044F \u043C\u0435\u0436\u0434\u0443 \u0441\u0442\u0440\u0438\u0436\u043A\u0430\u043C\u0438. \u041A\u043E\u0444\u0435 \u0437\u0430\xA0\u0441\u0447\u0451\u0442 \u0437\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u044F" })
+      ] }),
+      /* @__PURE__ */ jsx4("div", { style: { minHeight: compact ? 240 : "auto", borderTop: narrow ? `1px solid ${P.line}` : "none" }, children: /* @__PURE__ */ jsx4(Img, { id: "photo-1503951914875-452162b0f3f1", w: 900, label: "\u043A\u0440\u0435\u0441\u043B\u043E, \u0441\u0443\u0431\u0431\u043E\u0442\u0430", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8", "rgba(0,0,0,.4)"], pos: "center 25%" }) })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(Poster, { children: "\u041F\u0440\u0430\u0439\u0441" }),
+      /* @__PURE__ */ jsx4("div", { style: { height: 24 } }),
+      /* @__PURE__ */ jsx4(PriceList, { P, dense: true, groups: [
+        { label: "\u0421\u0442\u0440\u0438\u0436\u043A\u0430", rows: [["\u041C\u0443\u0436\u0441\u043A\u0430\u044F \u0441\u0442\u0440\u0438\u0436\u043A\u0430", "2\xA0200\xA0\u20BD", "\u043C\u0430\u0448\u0438\u043D\u043A\u0430 + \u043D\u043E\u0436\u043D\u0438\u0446\u044B"], ["\u0421\u0442\u0440\u0438\u0436\u043A\u0430 + \u0431\u043E\u0440\u043E\u0434\u0430", "3\xA0000\xA0\u20BD", "\u0441\xA0\u0433\u043E\u0440\u044F\u0447\u0438\u043C \u043F\u043E\u043B\u043E\u0442\u0435\u043D\u0446\u0435\u043C"], ["\u0414\u0435\u0442\u0441\u043A\u0430\u044F (\u0434\u043E\xA012\xA0\u043B\u0435\u0442)", "1\xA0500\xA0\u20BD", "\u0442\u0435\u0440\u043F\u0435\u043B\u0438\u0432\u043E, \u0431\u0435\u0437 \u0441\u043B\u0451\u0437"], ["\u041A\u0430\u043C\u0443\u0444\u043B\u044F\u0436 \u0441\u0435\u0434\u0438\u043D\u044B", "1\xA0200\xA0\u20BD", "\u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u043E, +\u043A\xA0\u0441\u0442\u0440\u0438\u0436\u043A\u0435"]] },
+        { label: "\u0411\u043E\u0440\u043E\u0434\u0430 \u0438 \u0431\u0440\u0438\u0442\u044C\u0451", rows: [["\u041C\u043E\u0434\u0435\u043B\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0431\u043E\u0440\u043E\u0434\u044B", "1\xA0600\xA0\u20BD", "\u0444\u043E\u0440\u043C\u0430 \u043F\u043E\u0434\xA0\u043B\u0438\u0446\u043E"], ["\u041E\u043F\u0430\u0441\u043D\u043E\u0439 \u0431\u0440\u0438\u0442\u0432\u043E\u0439", "1\xA0800\xA0\u20BD", "\u0433\u043E\u043B\u043E\u0432\u0430 \u0438\u043B\u0438\xA0\u0431\u043E\u0440\u043E\u0434\u0430"], ["\u041A\u043E\u0440\u043E\u043B\u0435\u0432\u0441\u043A\u043E\u0435 \u0431\u0440\u0438\u0442\u044C\u0451", "2\xA0200\xA0\u20BD", "\u043F\u043E\u043B\u043E\u0442\u0435\u043D\u0446\u0430, \u043C\u0430\u0441\u0441\u0430\u0436, \u0443\u0445\u043E\u0434"]] }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, bg: "#DED8C9", pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(Poster, { children: "\u041A\u0430\u043A \u044D\u0442\u043E \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442" }),
+      /* @__PURE__ */ jsx4("p", { style: { margin: "14px 0 26px", fontFamily: SANS, fontSize: 14.5, color: P.soft, maxWidth: "38ch" }, children: "\u041E\u0434\u043D\u043E \u0444\u043E\u0442\u043E \u0437\u0430\u043B\u0430 \u0438\xA0\u0440\u0430\u0431\u043E\u0442\u044B \u043C\u0430\u0441\u0442\u0435\u0440\u043E\u0432 \u2014 \u0441\u043D\u0438\u043C\u0430\u0435\u043C \u043D\u0430\xA0\u0442\u0435\u043B\u0435\u0444\u043E\u043D, \u0431\u0435\u0437 \u0440\u0435\u0442\u0443\u0448\u0438" }),
+      /* @__PURE__ */ jsx4(Gallery, { items: [
+        { id: "photo-1503951914875-452162b0f3f1", label: "\u0437\u0430\u043B", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"], span: 2, ratio: "2 / 1", pos: "center 40%" },
+        { id: "photo-1599351431202-1e0f0137899a", label: "\u0444\u0435\u0439\u0434", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"] },
+        { id: "photo-1621605815971-fbc98d665033", label: "\u0431\u043E\u0440\u043E\u0434\u0430", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"] },
+        { id: "photo-1585747860715-2ba37e788b70", label: "\u043A\u043B\u0430\u0441\u0441\u0438\u043A\u0430", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"] },
+        { id: "photo-1622286342621-4bd786c2447c", label: "\u0431\u0440\u0438\u0442\u044C\u0451", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"] }
+      ], cols: 3 })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      About,
+      {
+        P,
+        kicker: "\u041C\u0430\u0441\u0442\u0435\u0440\u0430",
+        reverse: true,
+        title: "\u0422\u0440\u0438 \u043C\u0430\u0441\u0442\u0435\u0440\u0430, \u0441\u0442\u0440\u0438\u0436\u0451\u043C \u0441\xA02018 \u0433\u043E\u0434\u0430",
+        text: ["\u0424\u0451\u0434\u043E\u0440, \u0413\u043B\u0435\u0431 \u0438\xA0\u0410\u0440\u0442\u0451\u043C. \u041A\xA0\u043A\u0430\u0436\u0434\u043E\u043C\u0443 \u043C\u043E\u0436\u043D\u043E \u0437\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043B\u0438\u0447\u043D\u043E \u2014 \u043C\u0430\u0441\u0442\u0435\u0440 \u043F\u043E\u043C\u043D\u0438\u0442, \u043A\u0430\u043A \u0441\u0442\u0440\u0438\u0433 \u0432\u0430\u0441 \u0432\xA0\u043F\u0440\u043E\u0448\u043B\u044B\u0439 \u0440\u0430\u0437, \u0438\xA0\u0432\u0435\u0434\u0451\u0442 \u0441\u0432\u043E\u044E \u0438\u0441\u0442\u043E\u0440\u0438\u044E.", "\u041D\u0435\xA0\u0433\u043E\u043D\u0438\u043C\u0441\u044F \u0437\u0430\xA0\u043F\u043E\u0442\u043E\u043A\u043E\u043C: \u043C\u0435\u0436\u0434\u0443 \u0437\u0430\u043F\u0438\u0441\u044F\u043C\u0438 \u0432\u0441\u0435\u0433\u0434\u0430 \u0435\u0441\u0442\u044C 10\xA0\u043C\u0438\u043D\u0443\u0442, \u0447\u0442\u043E\u0431\u044B \u0443\u0431\u0440\u0430\u0442\u044C \u0437\u0430\xA0\u0441\u043E\u0431\u043E\u0439 \u0438\xA0\u0432\u0441\u0442\u0440\u0435\u0442\u0438\u0442\u044C \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u043E."],
+        facts: [["6 \u043B\u0435\u0442", "\u043D\u0430\xA0\u043E\u0434\u043D\u043E\u043C \u043C\u0435\u0441\u0442\u0435"], ["3", "\u043C\u0430\u0441\u0442\u0435\u0440\u0430 \u0432\xA0\u0441\u043C\u0435\u043D\u0435"], ["45 \u043C\u0438\u043D", "\u0441\u0442\u0440\u0438\u0436\u043A\u0430 + \u0431\u043E\u0440\u043E\u0434\u0430"]],
+        photo: { id: "photo-1622286342621-4bd786c2447c", label: "\u043C\u0430\u0441\u0442\u0435\u0440 \u0437\u0430\xA0\u0440\u0430\u0431\u043E\u0442\u043E\u0439", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8"], pos: "center 30%" }
+      }
+    ) }),
+    /* @__PURE__ */ jsxs4(Sec, { P, bg: "#DED8C9", pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(Poster, { size: "clamp(26px,3vw,40px)", children: "\u041E\u0442\u0437\u044B\u0432\u044B" }),
+      /* @__PURE__ */ jsx4("div", { style: { height: 24 } }),
+      /* @__PURE__ */ jsx4(Reviews, { P, items: [
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", text: "\xAB\u0425\u043E\u0436\u0443 \u043A\xA0\u0413\u043B\u0435\u0431\u0443 \u0442\u0440\u0435\u0442\u0438\u0439 \u0433\u043E\u0434. \u0412\u0441\u0435\u0433\u0434\u0430 \u0432\u0441\u043F\u043E\u043C\u0438\u043D\u0430\u0435\u0442, \u043A\u0430\u043A \u0441\u0442\u0440\u0438\u0433\u043B\u0438 \u0432\xA0\u043F\u0440\u043E\u0448\u043B\u044B\u0439 \u0440\u0430\u0437\xBB", who: "\u0410\u043D\u0442\u043E\u043D \u041A. \xB7 4\xA0\u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B", text: "\xAB\u0417\u0430\u043F\u0438\u0441\u0430\u043B\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D, \u043F\u0440\u0438\u0448\u0451\u043B \u2014 \u0443\u0436\u0435 \u0436\u0434\u0443\u0442. \u0417\u0430\xA045 \u043C\u0438\u043D\u0443\u0442 \u0441\u0442\u0440\u0438\u0436\u043A\u0430, \u0431\u043E\u0440\u043E\u0434\u0430 \u0438\xA0\u043A\u043E\u0444\u0435\xBB", who: "\u0418\u043B\u044C\u044F \u0420. \xB7 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "2\u0413\u0418\u0421", text: "\xAB\u041D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u044B\u0435 \u043C\u0443\u0436\u0438\u043A\u0438, \u0431\u0435\u0437 \u043C\u043E\u0434\u043D\u043E\u0433\u043E \u043F\u0430\u0444\u043E\u0441\u0430. \u0414\u0435\u043B\u0430\u044E\u0442 \u0440\u043E\u0432\u043D\u043E \u0442\u043E, \u0447\u0442\u043E \u043F\u0440\u043E\u0441\u0438\u0448\u044C\xBB", who: "\u0421\u0435\u0440\u0433\u0435\u0439 \u0412. \xB7 3\xA0\u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      Contacts,
+      {
+        P,
+        title: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432\xA0\xAB\u0424\u0451\u0434\u043E\u0440\xBB",
+        addr: "\u041C\u043E\u0441\u043A\u0432\u0430, \u0411\u043E\u043B\u044C\u0448\u0430\u044F \u0414\u043C\u0438\u0442\u0440\u043E\u0432\u043A\u0430\xA017\n\u0432\u0445\u043E\u0434 \u0441\u043E\xA0\u0434\u0432\u043E\u0440\u0430, 2\xA0\u044D\u0442\u0430\u0436",
+        hours: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u043E 10:00\u201322:00\n\u0431\u0435\u0437 \u0432\u044B\u0445\u043E\u0434\u043D\u044B\u0445",
+        phone: "\u041E\u043D\u043B\u0430\u0439\u043D-\u0437\u0430\u043F\u0438\u0441\u044C \u0438\xA0Telegram @fedor_barber",
+        cta: "\u0412\u044B\u0431\u0440\u0430\u0442\u044C \u043C\u0430\u0441\u0442\u0435\u0440\u0430 \u0438\xA0\u0432\u0440\u0435\u043C\u044F",
+        note: "\u041C\u043E\u0436\u043D\u043E \u0431\u0435\u0437 \u0437\u0430\u043F\u0438\u0441\u0438 \u2014 \u0432\xA0\u043E\u0447\u0435\u0440\u0435\u0434\u044C \u043D\u0430\xA0\u043C\u0435\u0441\u0442\u0435"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(Watermark, { P, name: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xAB\u0424\u0451\u0434\u043E\u0440\xBB", city: "\u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u0441\xA02018" })
+  ] });
+}
+function SkinSite() {
+  const P = Ps, narrow = useNarrow(), compact = useCompact();
+  const Pair = ({ a, b, tag }) => /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
+    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 3, aspectRatio: "3 / 2", overflow: "hidden", border: `1px solid ${P.line}` }, children: [
+      /* @__PURE__ */ jsxs4("div", { style: { position: "relative", flex: 1 }, children: [
+        /* @__PURE__ */ jsx4(Img, { id: a.id, label: "\u0434\u043E", ph: a.ph, pos: a.pos }),
+        /* @__PURE__ */ jsx4("span", { style: { position: "absolute", left: 8, top: 8, fontFamily: MONO, fontSize: 9.5, letterSpacing: ".1em", textTransform: "uppercase", color: "#fff", background: "rgba(0,0,0,.5)", padding: "2px 7px" }, children: "\u0434\u043E" })
+      ] }),
+      /* @__PURE__ */ jsxs4("div", { style: { position: "relative", flex: 1 }, children: [
+        /* @__PURE__ */ jsx4(Img, { id: b.id, label: "\u043F\u043E\u0441\u043B\u0435", ph: b.ph, pos: b.pos }),
+        /* @__PURE__ */ jsx4("span", { style: { position: "absolute", left: 8, top: 8, fontFamily: MONO, fontSize: 9.5, letterSpacing: ".1em", textTransform: "uppercase", color: P.accent, background: "#fff", padding: "2px 7px" }, children: "\u043F\u043E\u0441\u043B\u0435" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4("div", { style: { marginTop: 10, fontFamily: SANS, fontSize: 13.5, color: P.soft }, children: tag })
+  ] });
+  return /* @__PURE__ */ jsxs4("div", { style: { background: P.bg, color: P.ink }, children: [
+    /* @__PURE__ */ jsx4(SiteHead, { P, name: "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 \u042E\u043B\u0438\u0438", meta: "\u041A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433-\u044D\u0441\u0442\u0435\u0442\u0438\u0441\u0442 \xB7 \u041A\u0430\u0437\u0430\u043D\u044C", anchors: ["\u0423\u0441\u043B\u0443\u0433\u0438", "\u0420\u0430\u0431\u043E\u0442\u044B", "\u041E\xA0\u0441\u0435\u0431\u0435", "\u0417\u0430\u043F\u0438\u0441\u044C"], cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(36px,4.5vw,64px)", children: [
+      /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 16 }, children: "\u041A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433 \xB7 \u043C\u0435\u0434\u0438\u0446\u0438\u043D\u0441\u043A\u043E\u0435 \u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u043D\u0438\u0435" }),
+      /* @__PURE__ */ jsxs4("h1", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: compact ? 34 : "clamp(40px,4.6vw,62px)", lineHeight: 1.06, letterSpacing: "-.005em", color: P.ink, maxWidth: "18ch" }, children: [
+        "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0441\u043C\u043E\u0442\u0440\u0438\u043C \u043A\u043E\u0436\u0443, ",
+        /* @__PURE__ */ jsx4("span", { style: { fontStyle: "italic", color: P.accent }, children: "\u043F\u043E\u0442\u043E\u043C \u0432\u044B\u0431\u0438\u0440\u0430\u0435\u043C \u0443\u0445\u043E\u0434" })
+      ] }),
+      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 3, height: compact ? 200 : 340, marginTop: "clamp(24px,3vw,40px)" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { flex: 1, overflow: "hidden" }, children: /* @__PURE__ */ jsx4(Img, { id: "photo-1570172619644-dfd03ed5d881", w: 720, label: "\u0447\u0438\u0441\u0442\u043A\u0430", ph: ["#D8C9BE", "#C9B6A8", "#4A3C32"], pos: "center 30%" }) }),
+        /* @__PURE__ */ jsx4("div", { style: { flex: 1, overflow: "hidden" }, children: /* @__PURE__ */ jsx4(Img, { id: "photo-1616394584738-fc6e612e71b9", w: 720, label: "\u0443\u0445\u043E\u0434", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 30%" }) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, bg: "#F7FAF9", pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u0414\u043E \u0438\xA0\u043F\u043E\u0441\u043B\u0435", title: "\u0420\u0435\u0430\u043B\u044C\u043D\u044B\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B", accentWord: "\u0431\u0435\u0437 \u0444\u043E\u0442\u043E\u0448\u043E\u043F\u0430", sub: "\u0424\u043E\u0442\u043E \u0441\xA0\u0441\u043E\u0433\u043B\u0430\u0441\u0438\u044F \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432, \u043E\u0434\u0438\u043D \u0438\xA0\u0442\u043E\u0442\xA0\u0436\u0435 \u0441\u0432\u0435\u0442 \u0438\xA0\u0440\u0430\u043A\u0443\u0440\u0441. \u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u0437\u0430\u0432\u0438\u0441\u0438\u0442 \u043E\u0442\xA0\u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u043A\u043E\u0436\u0438 \u2014 \u043D\u0430\xA0\u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0438 \u0441\u043A\u0430\u0436\u0443 \u0447\u0435\u0441\u0442\u043D\u043E, \u0447\u0435\u0433\u043E \u0436\u0434\u0430\u0442\u044C" }),
+      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: narrow ? "column" : "row", gap: "clamp(20px,2.4vw,32px)" }, children: [
+        /* @__PURE__ */ jsx4(Pair, { a: { id: "photo-1512290923902-8a9f81dc236c", ph: ["#D8C9BE", "#C9B6A8", "#4A3C32"], pos: "center 30%" }, b: { id: "photo-1570172619644-dfd03ed5d881", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 30%" }, tag: "\u041A\u043E\u043C\u0431\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u0430\u044F \u0447\u0438\u0441\u0442\u043A\u0430 \xB7 1\xA0\u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430" }),
+        /* @__PURE__ */ jsx4(Pair, { a: { id: "photo-1598440947619-2c35fc9aa908", ph: ["#D8C9BE", "#C9B6A8", "#4A3C32"], pos: "center 30%" }, b: { id: "photo-1616394584738-fc6e612e71b9", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 30%" }, tag: "\u041A\u0443\u0440\u0441 \u043F\u0438\u043B\u0438\u043D\u0433\u043E\u0432 \xB7 4\xA0\u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u044B" })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u041F\u0440\u0430\u0439\u0441", title: "\u0426\u0435\u043D\u044B", accentWord: "\u0438\xA0\u0447\u0435\u0441\u0442\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430" }),
+      /* @__PURE__ */ jsx4(PriceList, { P, groups: [
+        { label: "\u0427\u0438\u0441\u0442\u043A\u0438 \u0438\xA0\u0443\u0445\u043E\u0434", rows: [["\u041A\u043E\u043C\u0431\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u0430\u044F \u0447\u0438\u0441\u0442\u043A\u0430", "3\xA0200\xA0\u20BD", "\u0441\xA0\u0443\u0445\u043E\u0434\u043E\u043C \u043F\u043E\xA0\u0442\u0438\u043F\u0443 \u043A\u043E\u0436\u0438 \xB7 1,5\xA0\u0447"], ["\u0423\u043B\u044C\u0442\u0440\u0430\u0437\u0432\u0443\u043A\u043E\u0432\u0430\u044F \u0447\u0438\u0441\u0442\u043A\u0430", "2\xA0400\xA0\u20BD", "\u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u043D\u043E, \u0431\u0435\u0437 \u0442\u0440\u0430\u0432\u043C\u044B"], ["\u0423\u0445\u043E\u0434\u043E\u0432\u0430\u044F \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430", "\u043E\u0442\xA02\xA0000\xA0\u20BD", "\u043F\u043E\xA0\u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044E \u043A\u043E\u0436\u0438"]] },
+        { label: "\u041F\u0438\u043B\u0438\u043D\u0433\u0438 \u0438\xA0\u043A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F", rows: [["\u041F\u0438\u043B\u0438\u043D\u0433 \u043F\u043E\xA0\u043F\u043E\u043A\u0430\u0437\u0430\u043D\u0438\u044F\u043C", "\u043E\u0442\xA02\xA0400\xA0\u20BD", "\u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u043C \u043F\u043E\u0441\u043B\u0435 \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0438"], ["\u041A\u0443\u0440\u0441 \u043F\u0438\u043B\u0438\u043D\u0433\u043E\u0432 (4)", "8\xA0400\xA0\u20BD", "\u0432\u044B\u0433\u043E\u0434\u043D\u0435\u0435 \u043D\u0430\xA01\xA0800\xA0\u20BD"], ["\u0423\u0445\u043E\u0434 \u043E\u0442\xA0\u043A\u0443\u043F\u0435\u0440\u043E\u0437\u0430", "\u043E\u0442\xA02\xA0800\xA0\u20BD", "\u043C\u044F\u0433\u043A\u0438\u0435 \u043F\u0440\u043E\u0442\u043E\u043A\u043E\u043B\u044B"]] },
+        { label: "\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", rows: [["\u041F\u0435\u0440\u0432\u0438\u0447\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", "\u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", "\u0440\u0430\u0437\u0431\u043E\u0440 \u043A\u043E\u0436\u0438 \u0438\xA0\u043F\u043B\u0430\u043D"], ["\u0412\u0435\u0434\u0435\u043D\u0438\u0435 \u043F\u043E\xA0\u043F\u043B\u0430\u043D\u0443", "\u043F\u043E\xA0\u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0451\u043D\u043D\u043E\u0441\u0442\u0438", "\u0441\u043E\u043F\u0440\u043E\u0432\u043E\u0436\u0434\u0430\u044E \u043C\u0435\u0436\u0434\u0443 \u0432\u0438\u0437\u0438\u0442\u0430\u043C\u0438"]] }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#F7FAF9", pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      About,
+      {
+        P,
+        kicker: "\u041E\xA0\u0441\u0435\u0431\u0435",
+        title: "\u0420\u0430\u0431\u043E\u0442\u0430\u044E \u043F\u043E\xA0\u043F\u043E\u043A\u0430\u0437\u0430\u043D\u0438\u044F\u043C, \u0430\xA0\u043D\u0435 \u043F\u043E\xA0\u043F\u0440\u0430\u0439\u0441\u0443",
+        text: ["\u041C\u0435\u0434\u0438\u0446\u0438\u043D\u0441\u043A\u043E\u0435 \u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u0438\xA07\xA0\u043B\u0435\u0442 \u0432\xA0\u044D\u0441\u0442\u0435\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0439 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433\u0438\u0438. \u0415\u0441\u043B\u0438 \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430 \u0432\u0430\u043C \u0441\u0435\u0439\u0447\u0430\u0441 \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u0430 \u2014 \u0442\u0430\u043A \u0438\xA0\u0441\u043A\u0430\u0436\u0443, \u043A\u0443\u0440\u0441 \u0438\u0437\xA0\u0434\u0435\u0441\u044F\u0442\u0438 \u0447\u0438\u0441\u0442\u043E\u043A \u043D\u0438\u043A\u043E\u043C\u0443 \u043D\u0435\xA0\u043F\u0440\u043E\u0434\u0430\u044E.", "\u041E\u0434\u043D\u043E\u0440\u0430\u0437\u043E\u0432\u044B\u0435 \u0440\u0430\u0441\u0445\u043E\u0434\u043D\u0438\u043A\u0438 \u043F\u0440\u0438\xA0\u0432\u0430\u0441, \u0430\u043F\u043F\u0430\u0440\u0430\u0442\u044B \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u043D\u044B, \u043A\u0430\u0431\u0438\u043D\u0435\u0442 \u2014 \u043D\u0435\xA0\u043A\u0432\u0430\u0440\u0442\u0438\u0440\u0430, \u0430\xA0\u043B\u0438\u0446\u0435\u043D\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0435 \u043F\u043E\u043C\u0435\u0449\u0435\u043D\u0438\u0435."],
+        facts: [["7 \u043B\u0435\u0442", "\u0432\xA0\u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433\u0438\u0438"], ["\u043C\u0435\u0434.", "\u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u043D\u0438\u0435"], ["4,9 \u2605", "2\u0413\u0418\u0421 \u0438\xA0\u042F\u043D\u0434\u0435\u043A\u0441"]],
+        photo: { id: "photo-1559599101-f09722fb4948", label: "\u042E\u043B\u0438\u044F \xB7 \u043A\u0430\u0431\u0438\u043D\u0435\u0442", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 25%" }
+      }
+    ) }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u041E\u0442\u0437\u044B\u0432\u044B", title: "\u0427\u0442\u043E \u0433\u043E\u0432\u043E\u0440\u044F\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u044B" }),
+      /* @__PURE__ */ jsx4(Reviews, { P, items: [
+        { n: 5, source: "2\u0413\u0418\u0421", long: true, text: "\xAB\u041D\u0435\xA0\u0432\u043F\u0430\u0440\u0438\u0432\u0430\u0435\u0442 \u043B\u0438\u0448\u043D\u0435\u0433\u043E. \u041F\u0440\u0438\u0448\u043B\u0430 \u0441\xA0\u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043C \u043D\u0430\xA0\u043A\u0443\u0440\u0441 \u0438\u0437\xA0\u0434\u0435\u0441\u044F\u0442\u0438 \u0447\u0438\u0441\u0442\u043E\u043A, \u0430\xA0\u042E\u043B\u0438\u044F \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u043B\u0430 \u0438\xA0\u0441\u043A\u0430\u0437\u0430\u043B\u0430: \u0445\u0432\u0430\u0442\u0438\u0442 \u0442\u0440\u0451\u0445 \u0438\xA0\u0434\u043E\u043C\u0430\u0448\u043D\u0438\u0439 \u0443\u0445\u043E\u0434. \u0422\u0430\u043A \u0438\xA0\u0432\u044B\u0448\u043B\u043E \u2014 \u043A\u043E\u0436\u0430 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F \u0432\u043F\u0435\u0440\u0432\u044B\u0435 \u0437\u0430\xA0\u0433\u043E\u0434\u044B\xBB", who: "\u041E\u043B\u044C\u0433\u0430 \u0412. \xB7 1\xA0\u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u0421\u0442\u0435\u0440\u0438\u043B\u044C\u043D\u043E, \u0432\u0441\u0451 \u043F\u0440\u0438\xA0\u0442\u0435\u0431\u0435 \u0440\u0430\u0441\u043F\u0435\u0447\u0430\u0442\u044B\u0432\u0430\u0435\u0442. \u0412\u0438\u0434\u043D\u043E, \u0447\u0442\u043E \u043C\u0435\u0434\u0438\u043A\xBB", who: "\u0420\u0435\u0433\u0438\u043D\u0430 \u0421. \xB7 2\xA0\u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u041A\u0443\u043F\u0435\u0440\u043E\u0437 \u0443\u0431\u0440\u0430\u043B\u0438 \u0437\u0430\xA0\u043A\u0443\u0440\u0441, \u043B\u0438\u0446\u043E \u043F\u0435\u0440\u0435\u0441\u0442\u0430\u043B\u043E \u0433\u043E\u0440\u0435\u0442\u044C \u043D\u0430\xA0\u043C\u043E\u0440\u043E\u0437\u0435\xBB", who: "\u0410\u043B\u0438\u043D\u0430 \u0422. \xB7 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0437\u0430\u0434" }
+      ], cols: 2 })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#F7FAF9", pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      Contacts,
+      {
+        P,
+        title: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430\xA0\u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0443",
+        addr: "\u041A\u0430\u0437\u0430\u043D\u044C, \u0443\u043B.\xA0\u041F\u0440\u043E\u0444\u0441\u043E\u044E\u0437\u043D\u0430\u044F\xA012\n\u043B\u0438\u0446\u0435\u043D\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u043A\u0430\u0431\u0438\u043D\u0435\u0442, 3\xA0\u044D\u0442\u0430\u0436",
+        hours: "\u0412\u0442\u2013\u0421\u0431 09:00\u201319:00\n\u041F\u043D, \u0412\u0441 \u2014 \u0432\u044B\u0445\u043E\u0434\u043D\u043E\u0439",
+        phone: "WhatsApp \u0438\xA0Telegram @yulia_skin",
+        cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430\xA0\u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0443",
+        note: "\u041F\u0435\u0440\u0432\u0438\u0447\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430 \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(Watermark, { P, name: "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 \u042E\u043B\u0438\u0438", city: "\u041A\u0430\u0437\u0430\u043D\u044C \xB7 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433" })
+  ] });
+}
+function BrowSite() {
+  const P = Pr, compact = useCompact();
+  return /* @__PURE__ */ jsxs4("div", { style: { background: P.bg, color: P.ink }, children: [
+    /* @__PURE__ */ jsx4(SiteHead, { P, name: "Brow Bar \u0421\u043E\u043B\u044C", meta: "\u0421\u043E\u0447\u0438 \xB7 \u0431\u0440\u043E\u0432\u0438 \u0438\xA0\u0440\u0435\u0441\u043D\u0438\u0446\u044B", anchors: ["\u0423\u0441\u043B\u0443\u0433\u0438", "\u0420\u0430\u0431\u043E\u0442\u044B", "\u0417\u0430\u043F\u0438\u0441\u044C"], cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(64px,9vw,132px)", children: [
+      /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center", maxWidth: 720, margin: "0 auto" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: P.soft, marginBottom: 26 }, children: "Brow Bar \u0421\u043E\u043B\u044C \xB7 \u0421\u043E\u0447\u0438" }),
+        /* @__PURE__ */ jsxs4("h1", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: compact ? 40 : "clamp(48px,6vw,80px)", lineHeight: 1.04, letterSpacing: "-.01em", color: P.ink }, children: [
+          "\u0411\u0440\u043E\u0432\u0438 \u043F\u043E\xA0\u0432\u0430\u0448\u0435\u0439 ",
+          /* @__PURE__ */ jsx4("span", { style: { fontStyle: "italic" }, children: "\u0444\u043E\u0440\u043C\u0435\xA0\u043B\u0438\u0446\u0430" })
+        ] }),
+        /* @__PURE__ */ jsx4("p", { style: { margin: "26px auto 0", fontFamily: SANS, fontSize: 16.5, lineHeight: 1.6, color: P.soft, maxWidth: "40ch" }, children: "\u0414\u0432\u0435 \u0443\u0441\u043B\u0443\u0433\u0438, \u043D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E. \u041F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u043C \u0444\u043E\u0440\u043C\u0443 \u043F\u043E\u0434\xA0\u0447\u0435\u0440\u0442\u044B \u043B\u0438\u0446\u0430, \u0430\xA0\u043D\u0435 \u043F\u043E\xA0\u0442\u0440\u0430\u0444\u0430\u0440\u0435\u0442\u0443" })
+      ] }),
+      /* @__PURE__ */ jsx4("div", { style: { height: compact ? 240 : 420, marginTop: "clamp(40px,5vw,72px)", maxWidth: 960, marginInline: "auto" }, children: /* @__PURE__ */ jsx4(Img, { id: "photo-1616683693504-3ea7e9ad6fec", w: 1e3, label: "\u0431\u0440\u043E\u0432\u0438 \u043A\u0440\u0443\u043F\u043D\u043E", ph: ["#DED3C0", "#CFC1A8", "#3A3128"], pos: "center 32%" }) })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(56px,7vw,104px)", children: /* @__PURE__ */ jsxs4("div", { style: { maxWidth: 640, margin: "0 auto" }, children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, center: true, kicker: "\u041F\u0440\u0430\u0439\u0441", title: "\u0414\u0432\u0435 \u0443\u0441\u043B\u0443\u0433\u0438", accentWord: "\u0438\xA0\u043F\u0440\u043E\u0437\u0440\u0430\u0447\u043D\u044B\u0435 \u0446\u0435\u043D\u044B" }),
+      /* @__PURE__ */ jsx4(PriceList, { P, groups: [{ rows: [
+        ["\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F + \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", "1\xA0400\xA0\u20BD", "\u0444\u043E\u0440\u043C\u0430, \u043A\u0440\u0430\u0441\u043A\u0430 \u0438\u043B\u0438\xA0\u0445\u043D\u0430 \xB7 40\xA0\u043C\u0438\u043D"],
+        ["\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0431\u0440\u043E\u0432\u0435\u0439", "2\xA0200\xA0\u20BD", "\u0441\xA0\u0443\u0445\u043E\u0434\u043E\u043C \u0438\xA0\u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435\u043C \xB7 1\xA0\u0447"],
+        ["\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F \u0444\u043E\u0440\u043C\u044B", "700\xA0\u20BD", "\u0431\u0435\u0437 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u044F"],
+        ["\u0421\u043D\u044F\u0442\u0438\u0435 / \u043F\u0435\u0440\u0435\u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D\u0438\u0435", "500\xA0\u20BD", "\u043F\u043E\u0441\u043B\u0435 \u0434\u0440\u0443\u0433\u043E\u0433\u043E \u043C\u0430\u0441\u0442\u0435\u0440\u0430"]
+      ] }] })
+    ] }) }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#E7DCCB", pad: "clamp(56px,7vw,104px)", children: /* @__PURE__ */ jsxs4("div", { style: { maxWidth: 900, margin: "0 auto" }, children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, center: true, kicker: "\u0420\u0430\u0431\u043E\u0442\u044B", title: "\u0414\u043E \u0438\xA0\u043F\u043E\u0441\u043B\u0435" }),
+      /* @__PURE__ */ jsx4(Gallery, { items: [
+        { id: "photo-1616683693504-3ea7e9ad6fec", label: "\u0444\u043E\u0440\u043C\u0430", ph: ["#DED3C0", "#CFC1A8", "#3A3128"] },
+        { id: "photo-1583001931096-959e9a1a6223", label: "\u043B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435", ph: ["#DED3C0", "#CFC1A8", "#3A3128"] },
+        { id: "photo-1594744803329-e58b31de8bf5", label: "\u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", ph: ["#DED3C0", "#CFC1A8", "#3A3128"] },
+        { id: "photo-1526045478516-99145907023c", label: "\u0434\u043E/\u043F\u043E\u0441\u043B\u0435", ph: ["#DED3C0", "#CFC1A8", "#3A3128"] }
+      ], cols: 2 })
+    ] }) }),
+    /* @__PURE__ */ jsx4(Sec, { P, pad: "clamp(56px,7vw,104px)", children: /* @__PURE__ */ jsxs4("div", { style: { maxWidth: 620, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }, children: [
+      /* @__PURE__ */ jsx4(Stars, { n: 5, size: 15, gap: "3px" }),
+      /* @__PURE__ */ jsx4("blockquote", { style: { margin: 0, fontFamily: P.serif, fontStyle: "italic", fontSize: compact ? 24 : 30, lineHeight: 1.3, color: P.ink }, children: "\xAB\u0424\u043E\u0440\u043C\u0443 \u043F\u043E\u0434\u043E\u0431\u0440\u0430\u043B\u0438 \u0438\u0434\u0435\u0430\u043B\u044C\u043D\u043E, \u043B\u0438\u0446\u043E \u0431\u0443\u0434\u0442\u043E \u043E\u0442\u043A\u0440\u044B\u043B\u043E\u0441\u044C. \u0425\u043E\u0436\u0443 \u0440\u0430\u0437 \u0432\xA0\u043C\u0435\u0441\u044F\u0446 \u0438\xA0\u043D\u0435\xA0\u0434\u0443\u043C\u0430\u044E\xBB" }),
+      /* @__PURE__ */ jsx4("span", { style: { fontFamily: MONO, fontSize: 11, letterSpacing: ".04em", color: P.soft }, children: "\u041C\u0430\u0440\u0438\u043D\u0430 \u0412. \xB7 5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
+    ] }) }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#E7DCCB", pad: "clamp(56px,7vw,104px)", children: /* @__PURE__ */ jsx4("div", { style: { maxWidth: 900, margin: "0 auto" }, children: /* @__PURE__ */ jsx4(
+      Contacts,
+      {
+        P,
+        title: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D",
+        addr: "\u0421\u043E\u0447\u0438, \u0443\u043B.\xA0\u041D\u0430\u0432\u0430\u0433\u0438\u043D\u0441\u043A\u0430\u044F\xA09\n\u0432\u0442\u043E\u0440\u043E\u0439 \u044D\u0442\u0430\u0436, \u0432\u0445\u043E\u0434 \u0441\xA0\u0443\u043B\u0438\u0446\u044B",
+        hours: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u043E 10:00\u201320:00",
+        phone: "Telegram @sol_brows",
+        cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D",
+        note: "\u041E\u0434\u043D\u0430 \u0443\u0441\u043B\u0443\u0433\u0430 \u2014 \u043E\u0434\u0438\u043D \u0447\u0430\u0441 \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F\xA0\u0432\u0430\u0441"
+      }
+    ) }) }),
+    /* @__PURE__ */ jsx4(Watermark, { P, name: "Brow Bar \u0421\u043E\u043B\u044C", city: "\u0421\u043E\u0447\u0438 \xB7 \u0431\u0440\u043E\u0432\u0438 \u0438\xA0\u0440\u0435\u0441\u043D\u0438\u0446\u044B" })
+  ] });
+}
+function ColoristSite() {
+  const P = Pc, narrow = useNarrow(), compact = useCompact();
+  const Menu = ({ items }) => /* @__PURE__ */ jsx4("div", { children: items.map((r, i) => /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", gap: 16, padding: "15px 0", borderBottom: i < items.length - 1 ? `1px solid ${P.line}` : "none" }, children: [
+    /* @__PURE__ */ jsx4("span", { style: { fontFamily: MONO, fontSize: 11.5, color: P.soft, flex: "0 0 auto", width: 24 }, children: String(i + 1).padStart(2, "0") }),
+    /* @__PURE__ */ jsxs4("div", { style: { minWidth: 0, flex: 1 }, children: [
+      /* @__PURE__ */ jsx4("div", { style: { fontFamily: SANS, fontWeight: 600, fontSize: 16.5, color: P.ink }, children: r[0] }),
+      /* @__PURE__ */ jsx4("div", { style: { fontFamily: SANS, fontSize: 13, color: P.soft, marginTop: 3 }, children: r[1] })
+    ] }),
+    /* @__PURE__ */ jsx4("span", { style: { fontFamily: MONO, fontSize: 14.5, color: P.ink, whiteSpace: "nowrap" }, children: r[2] })
+  ] }, i)) });
+  return /* @__PURE__ */ jsxs4("div", { style: { background: P.bg, color: P.ink }, children: [
+    /* @__PURE__ */ jsx4(SiteHead, { P, name: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442 \u041A\u0438\u0440\u0430", meta: "\u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u0441\u043B\u043E\u0436\u043D\u043E\u0435 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", anchors: ["\u041F\u0440\u0430\u0439\u0441", "\u0420\u0430\u0431\u043E\u0442\u044B", "\u041E\xA0\u0441\u0435\u0431\u0435", "\u0417\u0430\u043F\u0438\u0441\u044C"], cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F" }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(40px,5vw,72px)", children: [
+      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: narrow ? "column" : "row", gap: "clamp(24px,3vw,48px)", alignItems: narrow ? "stretch" : "flex-end", marginBottom: "clamp(28px,3.4vw,44px)" }, children: [
+        /* @__PURE__ */ jsxs4("div", { style: { flex: 1 }, children: [
+          /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 16 }, children: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442 \xB7 airtouch, \u0431\u0430\u043B\u0430\u044F\u0436, \u0442\u043E\u043D \u0432\xA0\u0442\u043E\u043D" }),
+          /* @__PURE__ */ jsxs4("h1", { style: { margin: 0, fontFamily: P.serif, fontWeight: 600, fontSize: compact ? 40 : "clamp(48px,5.6vw,78px)", lineHeight: 1, letterSpacing: "-.01em", color: P.ink }, children: [
+            "\u041F\u0440\u0430\u0439\u0441 ",
+            /* @__PURE__ */ jsx4("span", { style: { fontStyle: "italic", color: P.accent }, children: "\u0431\u0435\u0437 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A" })
+          ] }),
+          /* @__PURE__ */ jsx4("p", { style: { margin: "20px 0 0", fontFamily: SANS, fontSize: 16, lineHeight: 1.55, color: P.soft, maxWidth: "42ch" }, children: "\u0426\u0435\u043D\u0430 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u0430\u044F: \u0442\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u0443\u0445\u043E\u0434 \u0438\xA0\u0434\u043E\u043C\u0430\u0448\u043D\u044F\u044F \u0441\u0445\u0435\u043C\u0430 \u0443\u0436\u0435 \u0432\u043D\u0443\u0442\u0440\u0438. \u041D\u0430\xA0\u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0438 \u0441\u043A\u0430\u0436\u0443 \u0432\u0438\u043B\u043A\u0443 \u0434\u043E\xA0\u0440\u0443\u0431\u043B\u044F" })
+        ] }),
+        /* @__PURE__ */ jsx4("div", { style: { width: narrow ? "100%" : 220, height: narrow ? 200 : 260, flex: "0 0 auto", overflow: "hidden" }, children: /* @__PURE__ */ jsx4(Img, { id: "photo-1580618672591-eb180b1a973f", w: 480, label: "\u0446\u0432\u0435\u0442", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"], pos: "center 30%" }) })
+      ] }),
+      /* @__PURE__ */ jsxs4("div", { style: { background: "#fff", border: `1px solid ${P.ink}`, padding: "clamp(20px,3vw,36px)" }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 8, paddingBottom: 12, borderBottom: `1px solid ${P.line}` }, children: "\u041E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435" }),
+        /* @__PURE__ */ jsx4(Menu, { items: [
+          ["\u0421\u043B\u043E\u0436\u043D\u043E\u0435 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", "airtouch, \u0431\u0430\u043B\u0430\u044F\u0436, \u0448\u0430\u0442\u0443\u0448 \xB7 \u043E\u0442\xA03\xA0\u0447", "\u043E\u0442\xA06\xA0500\xA0\u20BD"],
+          ["\u041E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435 \u0432\xA0\u043E\u0434\u0438\u043D \u0442\u043E\u043D", "\u043A\u043E\u0440\u043D\u0438 \u0438\u043B\u0438\xA0\u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E", "\u043E\u0442\xA03\xA0800\xA0\u20BD"],
+          ["\u0422\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435", "\u043E\u0441\u0432\u0435\u0436\u0438\u0442\u044C \u0446\u0432\u0435\u0442 \xB7 1,5\xA0\u0447", "3\xA0200\xA0\u20BD"],
+          ["\u041E\u0441\u0432\u0435\u0442\u043B\u0435\u043D\u0438\u0435 \u043A\u043E\u0440\u043D\u0435\u0439", "\u043E\u0442\u0440\u043E\u0441\u0448\u0438\u0435 2\u20134\xA0\u0441\u043C", "\u043E\u0442\xA03\xA0500\xA0\u20BD"],
+          ["\u0421\u043C\u044B\u0432\u043A\u0430 / \u043A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F \u0446\u0432\u0435\u0442\u0430", "\u043F\u043E\u0441\u043B\u0435 \u043D\u0435\u0443\u0434\u0430\u0447\u043D\u043E\u0433\u043E \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u044F", "\u043E\u0442\xA02\xA0800\xA0\u20BD"]
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#EFE2EA", pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsxs4("div", { style: { display: narrow ? "block" : "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(28px,3.4vw,52px)" }, children: [
+      /* @__PURE__ */ jsxs4("div", { style: { marginBottom: narrow ? 28 : 0 }, children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 8, paddingBottom: 12, borderBottom: `1px solid ${P.line}` }, children: "\u0423\u0445\u043E\u0434 \u0438\xA0\u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435" }),
+        /* @__PURE__ */ jsx4(Menu, { items: [
+          ["\u0411\u043E\u0442\u043E\u043A\u0441 \u0434\u043B\u044F \u0432\u043E\u043B\u043E\u0441", "\u043F\u043E\u0441\u043B\u0435 \u043E\u0441\u0432\u0435\u0442\u043B\u0435\u043D\u0438\u044F \xB7 1\xA0\u0447", "4\xA0500\xA0\u20BD"],
+          ["\u041A\u0435\u0440\u0430\u0442\u0438\u043D\u043E\u0432\u043E\u0435 \u0432\u044B\u043F\u0440\u044F\u043C\u043B\u0435\u043D\u0438\u0435", "\u043D\u0430\xA03\u20134\xA0\u043C\u0435\u0441\u044F\u0446\u0430", "\u043E\u0442\xA05\xA0500\xA0\u20BD"],
+          ["\u0423\u0445\u043E\u0434 \u0437\u0430\xA0\u0446\u0432\u0435\u0442\u043E\u043C", "\u0434\u043E\u043C\u0430\u0448\u043D\u044F\u044F \u0441\u0445\u0435\u043C\u0430 \u0432\xA0\u043F\u043E\u0434\u0430\u0440\u043E\u043A", "1\xA0500\xA0\u20BD"]
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs4("div", { children: [
+        /* @__PURE__ */ jsx4("div", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.accent, marginBottom: 8, paddingBottom: 12, borderBottom: `1px solid ${P.line}` }, children: "\u0421\u0442\u0440\u0438\u0436\u043A\u0430 \u0438\xA0\u0443\u043A\u043B\u0430\u0434\u043A\u0430" }),
+        /* @__PURE__ */ jsx4(Menu, { items: [
+          ["\u0416\u0435\u043D\u0441\u043A\u0430\u044F \u0441\u0442\u0440\u0438\u0436\u043A\u0430", "\u0441\xA0\u0443\u0447\u0451\u0442\u043E\u043C \u0444\u043E\u0440\u043C\u044B \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u044F", "2\xA0500\xA0\u20BD"],
+          ["\u0423\u043A\u043B\u0430\u0434\u043A\u0430", "\u043B\u043E\u043A\u043E\u043D\u044B \u0438\u043B\u0438\xA0\u0433\u043B\u0430\u0434\u043A\u043E\u0441\u0442\u044C", "1\xA0800\xA0\u20BD"],
+          ["\u0421\u0442\u0440\u0438\u0436\u043A\u0430 + \u0443\u043A\u043B\u0430\u0434\u043A\u0430", "\u043A\xA0\u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u044E \u2014 \u0441\u043E\xA0\u0441\u043A\u0438\u0434\u043A\u043E\u0439", "3\xA0500\xA0\u20BD"]
+        ] })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u0420\u0430\u0431\u043E\u0442\u044B", title: "\u041F\u043E\u0440\u0442\u0444\u043E\u043B\u0438\u043E", accentWord: "\u0446\u0432\u0435\u0442\u0430" }),
+      /* @__PURE__ */ jsx4(Gallery, { items: [
+        { id: "photo-1580618672591-eb180b1a973f", label: "airtouch", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"], span: 2, ratio: "2 / 1", pos: "center 30%" },
+        { id: "photo-1562322140-8baeececf3df", label: "\u0431\u0430\u043B\u0430\u044F\u0436", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"] },
+        { id: "photo-1595475884562-073c30d45670", label: "\u0431\u043B\u043E\u043D\u0434", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"] },
+        { id: "photo-1519699047748-de8e457a634e", label: "\u043C\u0435\u0434\u043D\u044B\u0439", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"] },
+        { id: "photo-1492106087820-71f1a00d2b11", label: "\u0442\u043E\u043D \u0432\xA0\u0442\u043E\u043D", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"] }
+      ], cols: 3 })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#EFE2EA", pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      About,
+      {
+        P,
+        kicker: "\u041E\xA0\u0441\u0435\u0431\u0435",
+        reverse: true,
+        title: "\u041E\u0441\u0432\u0435\u0442\u043B\u044F\u044E \u0431\u0435\u0440\u0435\u0436\u043D\u043E, \u0446\u0432\u0435\u0442 \u0434\u0435\u0440\u0436\u0443 \u0434\u043E\xA0\u0442\u043E\u043D\u0430",
+        text: ["12\xA0\u043B\u0435\u0442 \u0441\xA0\u0446\u0432\u0435\u0442\u043E\u043C \u0438\xA0\u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E\u0435 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435 \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u044E \u043D\u0430\xA0\u0431\u0435\u0437\u0430\u043C\u043C\u0438\u0430\u0447\u043D\u044B\u0445 \u0438\xA0\u043F\u0440\u043E\u0444\u0435\u0441\u0441\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u043B\u0438\u043D\u0438\u044F\u0445, \u0441\u043B\u0435\u0436\u0443 \u0437\u0430\xA0\u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E\u043C \u0432\u043E\u043B\u043E\u0441 \u0432\u0430\u0436\u043D\u0435\u0435 \u044D\u0444\u0444\u0435\u043A\u0442\u043D\u043E\u0439 \u043A\u0430\u0440\u0442\u0438\u043D\u043A\u0438 \u0432\xA0\u043C\u043E\u043C\u0435\u043D\u0442\u0435.", "\u041F\u0435\u0440\u0435\u0434 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435\u043C \u0432\u0441\u0435\u0433\u0434\u0430 \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F: \u0441\u043C\u043E\u0442\u0440\u044E \u0431\u0430\u0437\u0443, \u0438\u0441\u0442\u043E\u0440\u0438\u044E \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0439 \u0438\xA0\u0447\u0435\u0441\u0442\u043D\u043E \u0433\u043E\u0432\u043E\u0440\u044E, \u0437\u0430\xA0\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u0432\u0438\u0437\u0438\u0442\u043E\u0432 \u043F\u0440\u0438\u0434\u0451\u043C \u043A\xA0\u0446\u0435\u043B\u0438."],
+        facts: [["12 \u043B\u0435\u0442", "\u0432\xA0\u0446\u0432\u0435\u0442\u0435"], ["1200+", "\u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0439"], ["4,9 \u2605", "\u042F\u043D\u0434\u0435\u043A\u0441"]],
+        photo: { id: "photo-1595475884562-073c30d45670", label: "\u041A\u0438\u0440\u0430 \xB7 \u0437\u0430\xA0\u0440\u0430\u0431\u043E\u0442\u043E\u0439", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"], pos: "center 25%" }
+      }
+    ) }),
+    /* @__PURE__ */ jsxs4(Sec, { P, pad: "clamp(44px,5.5vw,80px)", children: [
+      /* @__PURE__ */ jsx4(SectionHead, { P, kicker: "\u041E\u0442\u0437\u044B\u0432\u044B", title: "\u0427\u0442\u043E \u0433\u043E\u0432\u043E\u0440\u044F\u0442 \u043A\u043B\u0438\u0435\u043D\u0442\u044B" }),
+      /* @__PURE__ */ jsx4(Reviews, { P, items: [
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u0426\u0435\u043D\u0430 \u0441\u043E\u0432\u043F\u0430\u043B\u0430 \u0434\u043E\xA0\u0440\u0443\u0431\u043B\u044F \u0441\xA0\u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0435\u0439. \u0411\u043B\u043E\u043D\u0434 \u0431\u0435\u0437\xA0\u0436\u0435\u043B\u0442\u0438\u0437\u043D\u044B, \u0432\u043E\u043B\u043E\u0441\u044B \u0436\u0438\u0432\u044B\u0435\xBB", who: "\u041D\u0430\u0441\u0442\u044F \u041B. \xB7 5\xA0\u0434\u043D\u0435\u0439 \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "\u042F\u043D\u0434\u0435\u043A\u0441", text: "\xAB\u041F\u0435\u0440\u0435\u043A\u0440\u0430\u0441\u0438\u043B\u0430 \u043F\u043E\u0441\u043B\u0435\xA0\u043D\u0435\u0443\u0434\u0430\u0447\u043D\u043E\u0433\u043E \u0441\u0430\u043B\u043E\u043D\u0430. \u041A\u0438\u0440\u0430 \u0432\u044B\u0442\u044F\u043D\u0443\u043B\u0430 \u0446\u0432\u0435\u0442 \u0437\u0430\xA0\u0434\u0432\u0430 \u0432\u0438\u0437\u0438\u0442\u0430\xBB", who: "\u0412\u0438\u043A\u0430 \u041C. \xB7 2\xA0\u043D\u0435\u0434\u0435\u043B\u0438 \u043D\u0430\u0437\u0430\u0434" },
+        { n: 5, source: "2\u0413\u0418\u0421", text: "\xABAirtouch \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u0447\u0435\u0442\u0432\u0451\u0440\u0442\u044B\u0439 \u043C\u0435\u0441\u044F\u0446, \u043E\u0442\u0440\u0430\u0441\u0442\u0430\u0435\u0442 \u043A\u0440\u0430\u0441\u0438\u0432\u043E. \u0425\u043E\u0436\u0443 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\xA0\u043D\u0435\u0439\xBB", who: "\u041B\u0435\u043D\u0430 \u0416. \xB7 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430\u0437\u0430\u0434" }
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx4(Sec, { P, bg: "#EFE2EA", pad: "clamp(44px,5.5vw,80px)", children: /* @__PURE__ */ jsx4(
+      Contacts,
+      {
+        P,
+        title: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A\xA0\u043A\u043E\u043B\u043E\u0440\u0438\u0441\u0442\u0443",
+        addr: "\u041C\u043E\u0441\u043A\u0432\u0430, \u0421\u0442\u043E\u043B\u0435\u0448\u043D\u0438\u043A\u043E\u0432 \u043F\u0435\u0440.\xA08\n\u0441\u0430\u043B\u043E\u043D\xA0\xAB\u041B\u0430\u043A\xBB, \u043A\u0440\u0435\u0441\u043B\u043E\xA03",
+        hours: "\u0412\u0442\u2013\u0412\u0441 10:00\u201321:00\n\u041F\u043D \u2014 \u0432\u044B\u0445\u043E\u0434\u043D\u043E\u0439",
+        phone: "Telegram \u0438\xA0Instagram @kira_color",
+        cta: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A\xA0\u043A\u043E\u043B\u043E\u0440\u0438\u0441\u0442\u0443",
+        note: "\u041F\u0435\u0440\u0435\u0434 \u0437\u0430\u043F\u0438\u0441\u044C\u044E \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u0430\u044F \u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u044F \u043F\u043E\xA0\u0444\u043E\u0442\u043E"
+      }
+    ) }),
+    /* @__PURE__ */ jsx4(Watermark, { P, name: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442 \u041A\u0438\u0440\u0430", city: "\u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435" })
+  ] });
+}
+function V5_SiteViewer({ data, onClose, onClaim }) {
+  const backRef = useRef(null);
+  const panelRef = useRef(null);
+  const compact = useCompact();
+  const reduce = typeof window !== "undefined" && !!window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const [hov, setHov] = useState2("");
+  useEffect2(() => {
+    const opener = document.activeElement;
+    document.body.classList.add("is-locked");
+    if (backRef.current) backRef.current.focus();
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.classList.remove("is-locked");
+      document.removeEventListener("keydown", onKey);
+      if (opener && opener.focus) opener.focus();
+    };
+  }, []);
+  const trapTab = (e) => {
+    if (e.key !== "Tab" || !panelRef.current) return;
+    const f = panelRef.current.querySelectorAll("button");
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  const build = () => {
+    onClose();
+    if (onClaim) onClaim("example-" + data.id, data.niche);
+  };
+  const Site = data.FullComp || data.Comp;
+  const ctaStyle = (h) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 9, height: 44, padding: "0 18px", background: h ? VT.accentHover : ACCENT, color: VT.onAccent, border: "none", font: "inherit", fontFamily: SANS, fontWeight: 600, fontSize: 15, whiteSpace: "nowrap", cursor: "pointer", transition: "background .16s ease" });
+  return /* @__PURE__ */ jsxs4(
+    "div",
+    {
+      ref: panelRef,
+      role: "dialog",
+      "aria-modal": "true",
+      "aria-label": `\u041F\u0440\u0438\u043C\u0435\u0440 \u0441\u0430\u0439\u0442\u0430 \u2014 ${data.niche}`,
+      "data-example-site": data.id,
+      onKeyDown: trapTab,
+      style: { position: "fixed", inset: 0, zIndex: 120, display: "flex", flexDirection: "column", background: BONE, animation: reduce ? void 0 : "v5-viewer-in .26s cubic-bezier(.2,0,0,1) both" },
+      children: [
+        /* @__PURE__ */ jsx4("div", { style: { flex: "0 0 auto", background: BONE, borderBottom: `1px solid ${INK}` }, children: /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 14, height: compact ? 58 : 66, paddingInline: "clamp(14px,3vw,28px)" }, children: [
+          /* @__PURE__ */ jsxs4(
+            "button",
+            {
+              ref: backRef,
+              type: "button",
+              onClick: onClose,
+              "data-example-back": true,
+              onMouseEnter: () => setHov("back"),
+              onMouseLeave: () => setHov(""),
+              onFocus: () => setHov("back"),
+              onBlur: () => setHov(""),
+              style: { display: "inline-flex", alignItems: "center", gap: 9, height: 44, padding: "0 6px 0 0", background: "transparent", border: "none", font: "inherit", fontFamily: SANS, fontWeight: 600, fontSize: compact ? 14 : 15, color: hov === "back" ? ACCENT : INK, cursor: "pointer", flex: "0 0 auto" },
+              children: [
+                /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", style: { fontSize: 18, transform: hov === "back" ? "translateX(-3px)" : "none", transition: "transform .16s ease" }, children: "\u2190" }),
+                compact ? "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" : "\u0412\u0441\u0435 \u043F\u0440\u0438\u043C\u0435\u0440\u044B"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs4("span", { style: { flex: 1, minWidth: 0, fontFamily: MONO, fontSize: compact ? 10.5 : 11.5, letterSpacing: ".04em", color: INK70, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: [
+            /* @__PURE__ */ jsx4("span", { style: { color: ACCENT }, children: "\u25B8" }),
+            " ",
+            data.domain,
+            ".samosite.online"
+          ] }),
+          !compact && /* @__PURE__ */ jsxs4("button", { type: "button", onClick: build, "data-entry": "example-" + data.id, onMouseEnter: () => setHov("cta"), onMouseLeave: () => setHov(""), style: ctaStyle(hov === "cta"), children: [
+            "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439 \u0436\u0435 \u0437\u0430 2 \u0447\u0430\u0441\u0430 ",
+            /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
+          ] }),
+          /* @__PURE__ */ jsx4(
+            "button",
+            {
+              type: "button",
+              onClick: onClose,
+              "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440",
+              onMouseEnter: () => setHov("x"),
+              onMouseLeave: () => setHov(""),
+              style: { width: 44, height: 44, flex: "0 0 auto", display: "inline-flex", alignItems: "center", justifyContent: "center", background: hov === "x" ? INK : "transparent", border: `1px solid ${hov === "x" ? INK : LINE2}`, color: hov === "x" ? VT.onAccent : INK, fontSize: 20, lineHeight: 1, cursor: "pointer", transition: "background .16s, color .16s, border-color .16s" },
+              children: "\xD7"
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ jsx4("div", { style: { flex: "1 1 auto", overflowY: "auto", overscrollBehavior: "contain", WebkitOverflowScrolling: "touch", background: "#fff" }, children: Site ? /* @__PURE__ */ jsx4(Site, {}) : null }),
+        compact && /* @__PURE__ */ jsx4("div", { style: { flex: "0 0 auto", padding: "12px 16px calc(12px + env(safe-area-inset-bottom))", background: BONE, borderTop: `1px solid ${INK}` }, children: /* @__PURE__ */ jsxs4("button", { type: "button", onClick: build, "data-entry": "example-" + data.id, style: { ...ctaStyle(false), display: "flex", width: "100%", height: 52, fontSize: 16 }, children: [
+          "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439 \u0436\u0435 \u0437\u0430 2 \u0447\u0430\u0441\u0430 ",
+          /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
+        ] }) })
+      ]
+    }
+  );
+}
+
+// src/landing/v5.tsx
+import { Fragment as Fragment3, jsx as jsx5, jsxs as jsxs5 } from "react/jsx-runtime";
+var noop = () => {
+};
+var MONO2 = VT.font.mono;
+var SANS2 = VT.font.sans;
+var INK2 = VT.ink;
+var INK702 = VT.inkSoft;
 var INK45 = VT.inkFaint;
 var LINE = VT.line;
-var LINE2 = VT.lineStrong;
-var BONE = VT.bg;
-var ACCENT = VT.accent;
+var LINE22 = VT.lineStrong;
+var BONE2 = VT.bg;
+var ACCENT2 = VT.accent;
 var V5_CSS = `
 :root{
   --bone:${VT.bg};--paper:${VT.white};--ink:${VT.ink};--ink-70:${VT.inkSoft};--ink-45:${VT.inkFaint};
@@ -1389,14 +2043,16 @@ var V5_CSS = `
 @media (max-width:900px){.v5 .hero__grid{grid-template-columns:1fr;}.v5 .hero__preview{align-self:auto;min-height:0;height:auto;margin-bottom:26px;}.v5 .hero{padding-top:14px;min-height:0;}.v5 .hero__copy{gap:16px;}}
 @media (max-width:720px){.v5 .hdr__links,.v5 .hdr__cta{display:none;}.v5 .hdr__cta-m{display:inline-flex;}.v5 .hdr__anchors{display:flex;gap:20px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 var(--pad) 11px;scrollbar-width:none;}.v5 .hdr__anchors::-webkit-scrollbar{display:none;}.v5 .hdr__anchors a{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);white-space:nowrap;}.v5 .revs{grid-template-columns:1fr;}.v5 .shead__l .h2,.v5 .shead__note{max-width:none;}.v5 .steprow{grid-template-columns:clamp(64px,17vw,96px) 1fr;gap:14px 18px;}.v5 .steprow__t{font-size:clamp(24px,7vw,30px);}.v5 .hrow{grid-template-columns:1fr;gap:8px;}.v5 .faq-short,.v5 .faq{grid-column:1 / -1;}.v5 .tcards{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){.v5 *,.v5 *::before,.v5 *::after{transition-duration:0ms !important;animation-duration:0ms !important;}}
+body.is-locked{overflow:hidden;}
+@keyframes v5-viewer-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 `;
 function V5_Styles() {
-  return /* @__PURE__ */ jsx3("style", { "data-samosite-canon-v5": "0.12", dangerouslySetInnerHTML: { __html: V5_CSS } });
+  return /* @__PURE__ */ jsx5("style", { "data-samosite-canon-v5": "0.12", dangerouslySetInnerHTML: { __html: V5_CSS } });
 }
 function useReveal() {
-  const ref = useRef(null);
-  const [inv, setInv] = useState(false);
-  useEffect(() => {
+  const ref = useRef2(null);
+  const [inv, setInv] = useState3(false);
+  useEffect3(() => {
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1421,74 +2077,74 @@ function useReveal() {
   }, []);
   return [ref, "reveal" + (inv ? " in" : "")];
 }
-var useMedia = (limit) => {
-  const [n, setN] = useState(typeof window !== "undefined" && window.innerWidth < limit);
-  useEffect(() => {
+var useMedia2 = (limit) => {
+  const [n, setN] = useState3(typeof window !== "undefined" && window.innerWidth < limit);
+  useEffect3(() => {
     const on = () => setN(window.innerWidth < limit);
     window.addEventListener("resize", on);
     return () => window.removeEventListener("resize", on);
   }, [limit]);
   return n;
 };
-var useCompact = () => useMedia(640);
-var useNarrow = () => useMedia(900);
-var uns = (id, w) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w || 900}&q=80`;
-function Img({ id, w, label, ph, style, pos, src }) {
-  const [err, setErr] = useState(false);
+var useCompact2 = () => useMedia2(640);
+var useNarrow2 = () => useMedia2(900);
+var uns2 = (id, w) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w || 900}&q=80`;
+function Img2({ id, w, label, ph, style, pos, src }) {
+  const [err, setErr] = useState3(false);
   const base = { display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: pos || "center" };
   if (err || !id && !src) {
-    return /* @__PURE__ */ jsx3("div", { style: { ...base, ...style, backgroundImage: `repeating-linear-gradient(135deg, ${ph[0]} 0 11px, ${ph[1]} 11px 22px)`, display: "flex", alignItems: "flex-end", padding: 10 }, children: /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".05em", textTransform: "uppercase", color: ph[2], background: ph[3] || "rgba(255,255,255,.6)", padding: "3px 7px" }, children: label }) });
+    return /* @__PURE__ */ jsx5("div", { style: { ...base, ...style, backgroundImage: `repeating-linear-gradient(135deg, ${ph[0]} 0 11px, ${ph[1]} 11px 22px)`, display: "flex", alignItems: "flex-end", padding: 10 }, children: /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".05em", textTransform: "uppercase", color: ph[2], background: ph[3] || "rgba(255,255,255,.6)", padding: "3px 7px" }, children: label }) });
   }
-  return /* @__PURE__ */ jsx3("img", { src: src || uns(id, w), alt: label, loading: "lazy", onError: () => setErr(true), style: { ...base, ...style } });
+  return /* @__PURE__ */ jsx5("img", { src: src || uns2(id, w), alt: label, loading: "lazy", onError: () => setErr(true), style: { ...base, ...style } });
 }
-function FakeCTA({ style, children }) {
-  return /* @__PURE__ */ jsx3("a", { href: "#", onClick: (e) => e.preventDefault(), tabIndex: -1, "aria-hidden": "true", style: { cursor: "default", ...style }, children });
+function FakeCTA2({ style, children }) {
+  return /* @__PURE__ */ jsx5("a", { href: "#", onClick: (e) => e.preventDefault(), tabIndex: -1, "aria-hidden": "true", style: { cursor: "default", ...style }, children });
 }
 function Tail({ P, priceLabel, rows, quote, cta, compact }) {
-  return /* @__PURE__ */ jsxs3("div", { style: { padding: compact ? "16px 20px 20px" : "18px 22px 22px", display: "flex", flexDirection: "column", gap: 15 }, children: [
-    /* @__PURE__ */ jsxs3("div", { children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.soft, marginBottom: 11 }, children: priceLabel }),
-      rows.map((r, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", gap: 12, padding: "9px 0", borderBottom: i < rows.length - 1 ? `1px solid ${P.line}` : "none" }, children: [
-        /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0, flex: 1 }, children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontWeight: 600, fontSize: 14, color: P.ink }, children: r[0] }),
-          r[2] && /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontSize: 11.5, color: P.soft, marginTop: 2 }, children: r[2] })
+  return /* @__PURE__ */ jsxs5("div", { style: { padding: compact ? "16px 20px 20px" : "18px 22px 22px", display: "flex", flexDirection: "column", gap: 15 }, children: [
+    /* @__PURE__ */ jsxs5("div", { children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: P.soft, marginBottom: 11 }, children: priceLabel }),
+      rows.map((r, i) => /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", gap: 12, padding: "9px 0", borderBottom: i < rows.length - 1 ? `1px solid ${P.line}` : "none" }, children: [
+        /* @__PURE__ */ jsxs5("div", { style: { minWidth: 0, flex: 1 }, children: [
+          /* @__PURE__ */ jsx5("div", { style: { fontFamily: SANS2, fontWeight: 600, fontSize: 14, color: P.ink }, children: r[0] }),
+          r[2] && /* @__PURE__ */ jsx5("div", { style: { fontFamily: SANS2, fontSize: 11.5, color: P.soft, marginTop: 2 }, children: r[2] })
         ] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 12.5, color: P.ink, whiteSpace: "nowrap" }, children: r[1] })
+        /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 12.5, color: P.ink, whiteSpace: "nowrap" }, children: r[1] })
       ] }, i))
     ] }),
-    quote && /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 6, padding: "12px 14px", background: P.line, borderLeft: `3px solid ${P.accent}` }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-        /* @__PURE__ */ jsx3("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "1.5px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".06em", color: P.soft }, children: "5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
+    quote && /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 6, padding: "12px 14px", background: P.line, borderLeft: `3px solid ${P.accent}` }, children: [
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
+        /* @__PURE__ */ jsx5("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "1.5px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
+        /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 10, letterSpacing: ".06em", color: P.soft }, children: "5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
       ] }),
-      /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: P.serif, fontStyle: "italic", fontSize: 16.5, lineHeight: 1.34, color: P.ink }, children: quote[0] }),
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".03em", color: P.soft }, children: quote[1] })
+      /* @__PURE__ */ jsx5("p", { style: { margin: 0, fontFamily: P.serif, fontStyle: "italic", fontSize: 16.5, lineHeight: 1.34, color: P.ink }, children: quote[0] }),
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 10, letterSpacing: ".03em", color: P.soft }, children: quote[1] })
     ] }),
-    /* @__PURE__ */ jsxs3(FakeCTA, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: P.btn || P.accent, color: P.onAccent, fontFamily: SANS, fontWeight: 700, fontSize: 14, padding: "13px 18px", textDecoration: "none" }, children: [
+    /* @__PURE__ */ jsxs5(FakeCTA2, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: P.btn || P.accent, color: P.onAccent, fontFamily: SANS2, fontWeight: 700, fontSize: 14, padding: "13px 18px", textDecoration: "none" }, children: [
       cta,
       " ",
-      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+      /* @__PURE__ */ jsx5("span", { "aria-hidden": "true", children: "\u2192" })
     ] })
   ] });
 }
-var Pn = { bg: "#F7EFEC", ink: "#2A2320", soft: "#8A7C74", line: "#EEE1DC", accent: "#B0656F", btn: "#2A2320", onAccent: "#FAF4F1", serif: "'Cormorant', Georgia, serif" };
+var Pn2 = { bg: "#F7EFEC", ink: "#2A2320", soft: "#8A7C74", line: "#EEE1DC", accent: "#B0656F", btn: "#2A2320", onAccent: "#FAF4F1", serif: "'Cormorant', Georgia, serif" };
 function NailHero() {
-  const compact = useCompact();
-  return /* @__PURE__ */ jsxs3("div", { style: { background: Pn.bg, color: Pn.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { position: "relative", height: compact ? 300 : 520 }, children: [
-      /* @__PURE__ */ jsx3(Img, { src: "img/nails.png", label: "\u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u043C\u0430\u043A\u0440\u043E", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"], pos: "center 45%" }),
-      /* @__PURE__ */ jsx3("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,15,.62) 0%, rgba(20,16,15,0) 42%)" } }),
-      /* @__PURE__ */ jsx3("div", { style: { position: "absolute", top: 16, left: 18, fontFamily: MONO, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: "#fff", opacity: 0.92 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433" }),
-      /* @__PURE__ */ jsx3("div", { style: { position: "absolute", left: 18, right: 18, bottom: 18 }, children: /* @__PURE__ */ jsxs3("h3", { style: { margin: 0, fontFamily: Pn.serif, fontWeight: 600, fontSize: 38, lineHeight: 1, letterSpacing: "-.01em", color: "#FBFBFC" }, children: [
+  const compact = useCompact2();
+  return /* @__PURE__ */ jsxs5("div", { style: { background: Pn2.bg, color: Pn2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { position: "relative", height: compact ? 300 : 520 }, children: [
+      /* @__PURE__ */ jsx5(Img2, { src: "img/nails.png", label: "\u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u043C\u0430\u043A\u0440\u043E", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"], pos: "center 45%" }),
+      /* @__PURE__ */ jsx5("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,15,.62) 0%, rgba(20,16,15,0) 42%)" } }),
+      /* @__PURE__ */ jsx5("div", { style: { position: "absolute", top: 16, left: 18, fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: "#fff", opacity: 0.92 }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433" }),
+      /* @__PURE__ */ jsx5("div", { style: { position: "absolute", left: 18, right: 18, bottom: 18 }, children: /* @__PURE__ */ jsxs5("h3", { style: { margin: 0, fontFamily: Pn2.serif, fontWeight: 600, fontSize: 38, lineHeight: 1, letterSpacing: "-.01em", color: "#FBFBFC" }, children: [
         "\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440,",
-        /* @__PURE__ */ jsx3("br", {}),
-        /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic", color: "#F4C9C4" }, children: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
+        /* @__PURE__ */ jsx5("br", {}),
+        /* @__PURE__ */ jsx5("span", { style: { fontStyle: "italic", color: "#F4C9C4" }, children: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
       ] }) })
     ] }),
-    /* @__PURE__ */ jsx3(
+    /* @__PURE__ */ jsx5(
       Tail,
       {
-        P: Pn,
+        P: Pn2,
         priceLabel: "\u0426\u0435\u043D\u044B \u0437\u0430 \u0438\u044E\u043B\u044C",
         rows: [["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", "2 400 \u20BD", "\u0430\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439, \u0431\u0435\u0440\u0435\u0436\u043D\u043E \xB7 1,5 \u0447"], ["\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 2 \u043D\u043E\u0433\u0442\u044F", "300 \u20BD", "\u043E\u0442 \u043F\u0440\u043E\u0441\u0442\u043E\u0433\u043E \u0434\u043E \u0441\u043B\u043E\u0436\u043D\u043E\u0433\u043E"], ["\u0423\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0430\u043A\u0440\u0438\u0433\u0435\u043B\u0435\u043C", "600 \u20BD", "\u0434\u043B\u044F \u0442\u043E\u043D\u043A\u0438\u0445 \u0438 \u043B\u043E\u043C\u043A\u0438\u0445"]],
         quote: ["\xAB\u0410\u043D\u043D\u0430 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u0430\u044F, \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u0435\u0442, \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0435\u0442. \u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432.\xBB", "\u041E\u043B\u0435\u0441\u044F \u041D. \xB7 \u042F\u043D\u0434\u0435\u043A\u0441 \xB7 3 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434"],
@@ -1497,26 +2153,26 @@ function NailHero() {
     )
   ] });
 }
-var Pb = { bg: "#E7E2D6", ink: "#231C15", soft: "#6B5C48", line: "#D6CCB8", accent: "#8C4A22", btn: "#231C15", onAccent: "#F1EADC", serif: "'Oswald', sans-serif" };
+var Pb2 = { bg: "#E7E2D6", ink: "#231C15", soft: "#6B5C48", line: "#D6CCB8", accent: "#8C4A22", btn: "#231C15", onAccent: "#F1EADC", serif: "'Oswald', sans-serif" };
 function BarberPoster() {
-  const compact = useCompact();
-  return /* @__PURE__ */ jsxs3("div", { style: { background: Pb.bg, color: Pb.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { padding: "26px 22px 20px" }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Pb.soft, marginBottom: 14 }, children: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xAB\u0424\u0451\u0434\u043E\u0440\xBB \xB7 \u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u0441 2018" }),
-      /* @__PURE__ */ jsxs3("h3", { style: { margin: 0, fontFamily: Pb.serif, fontWeight: 700, fontSize: 62, lineHeight: 0.9, letterSpacing: ".004em", textTransform: "uppercase", color: Pb.ink }, children: [
+  const compact = useCompact2();
+  return /* @__PURE__ */ jsxs5("div", { style: { background: Pb2.bg, color: Pb2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { padding: "26px 22px 20px" }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Pb2.soft, marginBottom: 14 }, children: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xAB\u0424\u0451\u0434\u043E\u0440\xBB \xB7 \u041C\u043E\u0441\u043A\u0432\u0430 \xB7 \u0441 2018" }),
+      /* @__PURE__ */ jsxs5("h3", { style: { margin: 0, fontFamily: Pb2.serif, fontWeight: 700, fontSize: 62, lineHeight: 0.9, letterSpacing: ".004em", textTransform: "uppercase", color: Pb2.ink }, children: [
         "\u0421\u0442\u0440\u0438\u0436\u043A\u0430",
-        /* @__PURE__ */ jsx3("br", {}),
-        /* @__PURE__ */ jsx3("span", { style: { color: Pb.accent }, children: "+ \u0431\u043E\u0440\u043E\u0434\u0430" }),
-        /* @__PURE__ */ jsx3("br", {}),
+        /* @__PURE__ */ jsx5("br", {}),
+        /* @__PURE__ */ jsx5("span", { style: { color: Pb2.accent }, children: "+ \u0431\u043E\u0440\u043E\u0434\u0430" }),
+        /* @__PURE__ */ jsx5("br", {}),
         "\u0437\u0430 45 \u043C\u0438\u043D\u0443\u0442"
       ] }),
-      /* @__PURE__ */ jsx3("p", { style: { margin: "18px 0 0", fontFamily: SANS, fontSize: 13, lineHeight: 1.5, color: Pb.soft, maxWidth: "34ch" }, children: "\u0422\u043E\u043B\u044C\u043A\u043E \u043C\u0443\u0436\u0441\u043A\u0438\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438. \u0412\u0438\u0441\u043A\u0438 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0435\u0441\u043B\u0438 \u0437\u0430\u0439\u0434\u0451\u0442\u0435 \u043F\u043E\u0441\u043B\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438" })
+      /* @__PURE__ */ jsx5("p", { style: { margin: "18px 0 0", fontFamily: SANS2, fontSize: 13, lineHeight: 1.5, color: Pb2.soft, maxWidth: "34ch" }, children: "\u0422\u043E\u043B\u044C\u043A\u043E \u043C\u0443\u0436\u0441\u043A\u0438\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438. \u0412\u0438\u0441\u043A\u0438 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0435\u0441\u043B\u0438 \u0437\u0430\u0439\u0434\u0451\u0442\u0435 \u043F\u043E\u0441\u043B\u0435 \u0441\u0442\u0440\u0438\u0436\u043A\u0438" })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: { height: compact ? 120 : 150, borderTop: `1px solid ${Pb.line}`, borderBottom: `1px solid ${Pb.line}` }, children: /* @__PURE__ */ jsx3(Img, { id: "photo-1503951914875-452162b0f3f1", w: 900, label: "\u043A\u0440\u0435\u0441\u043B\u043E, \u0441\u0443\u0431\u0431\u043E\u0442\u0430", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8", "rgba(0,0,0,.4)"], pos: "center 20%" }) }),
-    /* @__PURE__ */ jsx3(
+    /* @__PURE__ */ jsx5("div", { style: { height: compact ? 120 : 150, borderTop: `1px solid ${Pb2.line}`, borderBottom: `1px solid ${Pb2.line}` }, children: /* @__PURE__ */ jsx5(Img2, { id: "photo-1503951914875-452162b0f3f1", w: 900, label: "\u043A\u0440\u0435\u0441\u043B\u043E, \u0441\u0443\u0431\u0431\u043E\u0442\u0430", ph: ["#3A2A1E", "#2A1E14", "#D8C4A8", "rgba(0,0,0,.4)"], pos: "center 20%" }) }),
+    /* @__PURE__ */ jsx5(
       Tail,
       {
-        P: Pb,
+        P: Pb2,
         priceLabel: "\u041F\u0440\u0430\u0439\u0441",
         compact: true,
         rows: [["\u041C\u0443\u0436\u0441\u043A\u0430\u044F \u0441\u0442\u0440\u0438\u0436\u043A\u0430", "2 200 \u20BD", "\u043C\u0430\u0448\u0438\u043D\u043A\u0430 + \u043D\u043E\u0436\u043D\u0438\u0446\u044B"], ["\u0421\u0442\u0440\u0438\u0436\u043A\u0430 + \u0431\u043E\u0440\u043E\u0434\u0430", "3 000 \u20BD", "\u0441 \u0433\u043E\u0440\u044F\u0447\u0438\u043C \u043F\u043E\u043B\u043E\u0442\u0435\u043D\u0446\u0435\u043C"], ["\u041E\u043F\u0430\u0441\u043D\u043E\u0439 \u0431\u0440\u0438\u0442\u0432\u043E\u0439", "1 800 \u20BD", "\u0433\u043E\u043B\u043E\u0432\u0430 \u0438\u043B\u0438 \u0431\u043E\u0440\u043E\u0434\u0430"]],
@@ -1526,26 +2182,26 @@ function BarberPoster() {
     )
   ] });
 }
-var Ps = { bg: "#FFFFFF", ink: "#1A1D1C", soft: "#727975", line: "#ECECEA", accent: "#2F7A68", btn: "#1A1D1C", onAccent: "#FFFFFF", serif: "'Spectral', Georgia, serif" };
+var Ps2 = { bg: "#FFFFFF", ink: "#1A1D1C", soft: "#727975", line: "#ECECEA", accent: "#2F7A68", btn: "#1A1D1C", onAccent: "#FFFFFF", serif: "'Spectral', Georgia, serif" };
 function SkinBeforeAfter() {
-  const compact = useCompact();
-  const Half = ({ id, tag, ph, pos }) => /* @__PURE__ */ jsx3("div", { style: { position: "relative", flex: 1, overflow: "hidden" }, children: /* @__PURE__ */ jsx3(Img, { id, w: 520, label: tag, ph, pos }) });
-  return /* @__PURE__ */ jsxs3("div", { style: { background: Ps.bg, color: Ps.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { padding: "22px 22px 16px" }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Ps.accent, marginBottom: 11 }, children: "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 \u042E\u043B\u0438\u0438 \xB7 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433" }),
-      /* @__PURE__ */ jsxs3("h3", { style: { margin: 0, fontFamily: Ps.serif, fontWeight: 600, fontSize: 28, lineHeight: 1.08, color: Ps.ink }, children: [
+  const compact = useCompact2();
+  const Half = ({ id, tag, ph, pos }) => /* @__PURE__ */ jsx5("div", { style: { position: "relative", flex: 1, overflow: "hidden" }, children: /* @__PURE__ */ jsx5(Img2, { id, w: 520, label: tag, ph, pos }) });
+  return /* @__PURE__ */ jsxs5("div", { style: { background: Ps2.bg, color: Ps2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { padding: "22px 22px 16px" }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Ps2.accent, marginBottom: 11 }, children: "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 \u042E\u043B\u0438\u0438 \xB7 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433" }),
+      /* @__PURE__ */ jsxs5("h3", { style: { margin: 0, fontFamily: Ps2.serif, fontWeight: 600, fontSize: 28, lineHeight: 1.08, color: Ps2.ink }, children: [
         "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0441\u043C\u043E\u0442\u0440\u0438\u043C \u043A\u043E\u0436\u0443, ",
-        /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic", color: Ps.accent }, children: "\u043F\u043E\u0442\u043E\u043C \u0432\u044B\u0431\u0438\u0440\u0430\u0435\u043C \u0443\u0445\u043E\u0434" })
+        /* @__PURE__ */ jsx5("span", { style: { fontStyle: "italic", color: Ps2.accent }, children: "\u043F\u043E\u0442\u043E\u043C \u0432\u044B\u0431\u0438\u0440\u0430\u0435\u043C \u0443\u0445\u043E\u0434" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 3, height: compact ? 168 : 240, padding: "0 22px" }, children: [
-      /* @__PURE__ */ jsx3(Half, { id: "photo-1570172619644-dfd03ed5d881", tag: "\u0447\u0438\u0441\u0442\u043A\u0430", ph: ["#D8C9BE", "#C9B6A8", "#4A3C32"], pos: "center 30%" }),
-      /* @__PURE__ */ jsx3(Half, { id: "photo-1616394584738-fc6e612e71b9", tag: "\u0443\u0445\u043E\u0434", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 30%" })
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 3, height: compact ? 168 : 240, padding: "0 22px" }, children: [
+      /* @__PURE__ */ jsx5(Half, { id: "photo-1570172619644-dfd03ed5d881", tag: "\u0447\u0438\u0441\u0442\u043A\u0430", ph: ["#D8C9BE", "#C9B6A8", "#4A3C32"], pos: "center 30%" }),
+      /* @__PURE__ */ jsx5(Half, { id: "photo-1616394584738-fc6e612e71b9", tag: "\u0443\u0445\u043E\u0434", ph: ["#E7E7E5", "#D6D6D3", "#3A3E3C"], pos: "center 30%" })
     ] }),
-    /* @__PURE__ */ jsx3(
+    /* @__PURE__ */ jsx5(
       Tail,
       {
-        P: Ps,
+        P: Ps2,
         priceLabel: "\u041F\u0440\u0430\u0439\u0441",
         rows: [["\u041A\u043E\u043C\u0431\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u0430\u044F \u0447\u0438\u0441\u0442\u043A\u0430", "3 200 \u20BD", "\u0441 \u0443\u0445\u043E\u0434\u043E\u043C \u043F\u043E \u0442\u0438\u043F\u0443 \u043A\u043E\u0436\u0438 \xB7 1,5 \u0447"], ["\u041F\u0438\u043B\u0438\u043D\u0433 \u043F\u043E \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u0438\u044F\u043C", "\u043E\u0442 2 400 \u20BD", "\u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u043C \u043F\u043E\u0441\u043B\u0435 \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0438"], ["\u041F\u0435\u0440\u0432\u0438\u0447\u043D\u0430\u044F \u0434\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", "\u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", "\u0440\u0430\u0437\u0431\u043E\u0440 \u043A\u043E\u0436\u0438 \u0438 \u043F\u043B\u0430\u043D"]],
         quote: ["\xAB\u041D\u0435 \u0432\u043F\u0430\u0440\u0438\u0432\u0430\u0435\u0442 \u043B\u0438\u0448\u043D\u0435\u0433\u043E. \u0421\u043A\u0430\u0437\u0430\u043B\u0430, \u0447\u0442\u043E \u0445\u0432\u0430\u0442\u0438\u0442 \u0442\u0440\u0451\u0445 \u0447\u0438\u0441\u0442\u043E\u043A, \u0430 \u043D\u0435 \u043A\u0443\u0440\u0441\u0430 \u0438\u0437 \u0434\u0435\u0441\u044F\u0442\u0438.\xBB", "\u041E\u043B\u044C\u0433\u0430 \u0412. \xB7 2\u0413\u0418\u0421 \xB7 1 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0437\u0430\u0434"],
@@ -1554,39 +2210,39 @@ function SkinBeforeAfter() {
     )
   ] });
 }
-var Pr = { bg: "#EFE7DA", ink: "#241E17", soft: "#6E6053", line: "#DBD0BE", accent: "#7A5A3C", btn: "#241E17", onAccent: "#F5EFE4", serif: "'Playfair Display', Georgia, serif" };
+var Pr2 = { bg: "#EFE7DA", ink: "#241E17", soft: "#6E6053", line: "#DBD0BE", accent: "#7A5A3C", btn: "#241E17", onAccent: "#F5EFE4", serif: "'Playfair Display', Georgia, serif" };
 function BrowMinimal() {
-  const compact = useCompact();
-  return /* @__PURE__ */ jsxs3("div", { style: { background: Pr.bg, color: Pr.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { padding: "46px 30px 30px", textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".2em", textTransform: "uppercase", color: Pr.soft }, children: "Brow Bar \u0421\u043E\u043B\u044C \xB7 \u0421\u043E\u0447\u0438" }),
-      /* @__PURE__ */ jsxs3("h3", { style: { margin: "22px auto 0", fontFamily: Pr.serif, fontWeight: 600, fontSize: 34, lineHeight: 1.06, color: Pr.ink, maxWidth: "15ch" }, children: [
+  const compact = useCompact2();
+  return /* @__PURE__ */ jsxs5("div", { style: { background: Pr2.bg, color: Pr2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { padding: "46px 30px 30px", textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".2em", textTransform: "uppercase", color: Pr2.soft }, children: "Brow Bar \u0421\u043E\u043B\u044C \xB7 \u0421\u043E\u0447\u0438" }),
+      /* @__PURE__ */ jsxs5("h3", { style: { margin: "22px auto 0", fontFamily: Pr2.serif, fontWeight: 600, fontSize: 34, lineHeight: 1.06, color: Pr2.ink, maxWidth: "15ch" }, children: [
         "\u0411\u0440\u043E\u0432\u0438 \u043F\u043E \u0432\u0430\u0448\u0435\u0439 ",
-        /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic" }, children: "\u0444\u043E\u0440\u043C\u0435 \u043B\u0438\u0446\u0430" })
+        /* @__PURE__ */ jsx5("span", { style: { fontStyle: "italic" }, children: "\u0444\u043E\u0440\u043C\u0435 \u043B\u0438\u0446\u0430" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: { height: compact ? 188 : 250, margin: "0 30px" }, children: /* @__PURE__ */ jsx3(Img, { id: "photo-1616683693504-3ea7e9ad6fec", w: 720, label: "\u0431\u0440\u043E\u0432\u0438 \u043A\u0440\u0443\u043F\u043D\u043E", ph: ["#DED3C0", "#CFC1A8", "#3A3128"], pos: "center 30%" }) }),
-    /* @__PURE__ */ jsxs3("div", { style: { padding: "30px 30px 34px", textAlign: "center", display: "flex", flexDirection: "column", gap: 20 }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", justifyContent: "center", gap: 34, fontFamily: SANS, fontSize: 13.5 }, children: [
-        /* @__PURE__ */ jsxs3("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontWeight: 600 }, children: "\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F + \u0446\u0432\u0435\u0442" }),
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 12.5, color: Pr.soft, marginTop: 3 }, children: "1 400 \u20BD" })
+    /* @__PURE__ */ jsx5("div", { style: { height: compact ? 188 : 250, margin: "0 30px" }, children: /* @__PURE__ */ jsx5(Img2, { id: "photo-1616683693504-3ea7e9ad6fec", w: 720, label: "\u0431\u0440\u043E\u0432\u0438 \u043A\u0440\u0443\u043F\u043D\u043E", ph: ["#DED3C0", "#CFC1A8", "#3A3128"], pos: "center 30%" }) }),
+    /* @__PURE__ */ jsxs5("div", { style: { padding: "30px 30px 34px", textAlign: "center", display: "flex", flexDirection: "column", gap: 20 }, children: [
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", justifyContent: "center", gap: 34, fontFamily: SANS2, fontSize: 13.5 }, children: [
+        /* @__PURE__ */ jsxs5("div", { children: [
+          /* @__PURE__ */ jsx5("div", { style: { fontWeight: 600 }, children: "\u041A\u043E\u0440\u0440\u0435\u043A\u0446\u0438\u044F + \u0446\u0432\u0435\u0442" }),
+          /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 12.5, color: Pr2.soft, marginTop: 3 }, children: "1 400 \u20BD" })
         ] }),
-        /* @__PURE__ */ jsxs3("div", { children: [
-          /* @__PURE__ */ jsx3("div", { style: { fontWeight: 600 }, children: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435" }),
-          /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 12.5, color: Pr.soft, marginTop: 3 }, children: "2 200 \u20BD" })
+        /* @__PURE__ */ jsxs5("div", { children: [
+          /* @__PURE__ */ jsx5("div", { style: { fontWeight: 600 }, children: "\u041B\u0430\u043C\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435" }),
+          /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 12.5, color: Pr2.soft, marginTop: 3 }, children: "2 200 \u20BD" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 7, padding: "16px 18px", background: Pr.line }, children: [
-        /* @__PURE__ */ jsx3("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "2px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
-        /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: Pr.serif, fontStyle: "italic", fontSize: 16.5, lineHeight: 1.34, color: Pr.ink, maxWidth: "24ch" }, children: "\xAB\u0424\u043E\u0440\u043C\u0443 \u043F\u043E\u0434\u043E\u0431\u0440\u0430\u043B\u0438 \u0438\u0434\u0435\u0430\u043B\u044C\u043D\u043E, \u043B\u0438\u0446\u043E \u0431\u0443\u0434\u0442\u043E \u043E\u0442\u043A\u0440\u044B\u043B\u043E\u0441\u044C\xBB" }),
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".03em", color: Pr.soft }, children: "\u041C\u0430\u0440\u0438\u043D\u0430 \u0412. \xB7 5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 7, padding: "16px 18px", background: Pr2.line }, children: [
+        /* @__PURE__ */ jsx5("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "2px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
+        /* @__PURE__ */ jsx5("p", { style: { margin: 0, fontFamily: Pr2.serif, fontStyle: "italic", fontSize: 16.5, lineHeight: 1.34, color: Pr2.ink, maxWidth: "24ch" }, children: "\xAB\u0424\u043E\u0440\u043C\u0443 \u043F\u043E\u0434\u043E\u0431\u0440\u0430\u043B\u0438 \u0438\u0434\u0435\u0430\u043B\u044C\u043D\u043E, \u043B\u0438\u0446\u043E \u0431\u0443\u0434\u0442\u043E \u043E\u0442\u043A\u0440\u044B\u043B\u043E\u0441\u044C\xBB" }),
+        /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 10, letterSpacing: ".03em", color: Pr2.soft }, children: "\u041C\u0430\u0440\u0438\u043D\u0430 \u0412. \xB7 5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
       ] }),
-      /* @__PURE__ */ jsx3(FakeCTA, { style: { alignSelf: "center", fontFamily: SANS, fontWeight: 600, fontSize: 14, color: Pr.ink, textDecoration: "underline", textUnderlineOffset: 4, textDecorationColor: Pr.accent, textDecorationThickness: "1.5px" }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D \u2192" })
+      /* @__PURE__ */ jsx5(FakeCTA2, { style: { alignSelf: "center", fontFamily: SANS2, fontWeight: 600, fontSize: 14, color: Pr2.ink, textDecoration: "underline", textUnderlineOffset: 4, textDecorationColor: Pr2.accent, textDecorationThickness: "1.5px" }, children: "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043E\u043D\u043B\u0430\u0439\u043D \u2192" })
     ] })
   ] });
 }
-var Pc = { bg: "#F6F0F3", ink: "#221A24", soft: "#6E6472", line: "#E7DBE4", accent: "#9C2A8E", btn: "#221A24", onAccent: "#F9F0F6", serif: "'Cormorant', Georgia, serif" };
+var Pc2 = { bg: "#F6F0F3", ink: "#221A24", soft: "#6E6472", line: "#E7DBE4", accent: "#9C2A8E", btn: "#221A24", onAccent: "#F9F0F6", serif: "'Cormorant', Georgia, serif" };
 function ColoristMenu() {
   const items = [
     ["01", "\u0421\u043B\u043E\u0436\u043D\u043E\u0435 \u043E\u043A\u0440\u0430\u0448\u0438\u0432\u0430\u043D\u0438\u0435", "airtouch, \u0431\u0430\u043B\u0430\u044F\u0436 \xB7 \u043E\u0442 3 \u0447", "\u043E\u0442 6 500 \u20BD"],
@@ -1595,174 +2251,114 @@ function ColoristMenu() {
     ["04", "\u0411\u043E\u0442\u043E\u043A\u0441 \u0434\u043B\u044F \u0432\u043E\u043B\u043E\u0441", "\u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u043F\u043E\u0441\u043B\u0435 \u043E\u0441\u0432\u0435\u0442\u043B\u0435\u043D\u0438\u044F", "4 500 \u20BD"],
     ["05", "\u0423\u0445\u043E\u0434 \u0437\u0430 \u0446\u0432\u0435\u0442\u043E\u043C", "\u0434\u043E\u043C\u0430\u0448\u043D\u044F\u044F \u0441\u0445\u0435\u043C\u0430 \u0432 \u043F\u043E\u0434\u0430\u0440\u043E\u043A", "1 500 \u20BD"]
   ];
-  return /* @__PURE__ */ jsxs3("div", { style: { background: Pc.bg, color: Pc.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 14, padding: "22px 22px 16px", borderBottom: `1px solid ${Pc.line}` }, children: [
-      /* @__PURE__ */ jsxs3("div", { children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: MONO, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Pc.accent, marginBottom: 9 }, children: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442 \u041A\u0438\u0440\u0430 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" }),
-        /* @__PURE__ */ jsxs3("h3", { style: { margin: 0, fontFamily: Pc.serif, fontWeight: 600, fontSize: 30, lineHeight: 1.02, color: Pc.ink }, children: [
+  return /* @__PURE__ */ jsxs5("div", { style: { background: Pc2.bg, color: Pc2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 14, padding: "22px 22px 16px", borderBottom: `1px solid ${Pc2.line}` }, children: [
+      /* @__PURE__ */ jsxs5("div", { children: [
+        /* @__PURE__ */ jsx5("div", { style: { fontFamily: MONO2, fontSize: 9.5, letterSpacing: ".16em", textTransform: "uppercase", color: Pc2.accent, marginBottom: 9 }, children: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442 \u041A\u0438\u0440\u0430 \xB7 \u041C\u043E\u0441\u043A\u0432\u0430" }),
+        /* @__PURE__ */ jsxs5("h3", { style: { margin: 0, fontFamily: Pc2.serif, fontWeight: 600, fontSize: 30, lineHeight: 1.02, color: Pc2.ink }, children: [
           "\u041F\u0440\u0430\u0439\u0441 ",
-          /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic", color: Pc.accent }, children: "\u0431\u0435\u0437 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A" })
+          /* @__PURE__ */ jsx5("span", { style: { fontStyle: "italic", color: Pc2.accent }, children: "\u0431\u0435\u0437 \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u0435\u043A" })
         ] })
       ] }),
-      /* @__PURE__ */ jsx3("div", { style: { width: 74, height: 74, flex: "0 0 auto", overflow: "hidden" }, children: /* @__PURE__ */ jsx3(Img, { id: "photo-1580618672591-eb180b1a973f", w: 200, label: "\u0446\u0432\u0435\u0442", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"], pos: "center 30%" }) })
+      /* @__PURE__ */ jsx5("div", { style: { width: 74, height: 74, flex: "0 0 auto", overflow: "hidden" }, children: /* @__PURE__ */ jsx5(Img2, { id: "photo-1580618672591-eb180b1a973f", w: 200, label: "\u0446\u0432\u0435\u0442", ph: ["#E7D9E2", "#D6C0CF", "#5A3A50"], pos: "center 30%" }) })
     ] }),
-    /* @__PURE__ */ jsx3("div", { style: { padding: "6px 22px 4px" }, children: items.map((r, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", gap: 14, padding: "13px 0", borderBottom: i < items.length - 1 ? `1px solid ${Pc.line}` : "none" }, children: [
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 11, color: Pc.soft, flex: "0 0 auto" }, children: r[0] }),
-      /* @__PURE__ */ jsxs3("div", { style: { minWidth: 0, flex: 1 }, children: [
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontWeight: 600, fontSize: 15, color: Pc.ink }, children: r[1] }),
-        /* @__PURE__ */ jsx3("div", { style: { fontFamily: SANS, fontSize: 11.5, color: Pc.soft, marginTop: 2 }, children: r[2] })
+    /* @__PURE__ */ jsx5("div", { style: { padding: "6px 22px 4px" }, children: items.map((r, i) => /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", gap: 14, padding: "13px 0", borderBottom: i < items.length - 1 ? `1px solid ${Pc2.line}` : "none" }, children: [
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 11, color: Pc2.soft, flex: "0 0 auto" }, children: r[0] }),
+      /* @__PURE__ */ jsxs5("div", { style: { minWidth: 0, flex: 1 }, children: [
+        /* @__PURE__ */ jsx5("div", { style: { fontFamily: SANS2, fontWeight: 600, fontSize: 15, color: Pc2.ink }, children: r[1] }),
+        /* @__PURE__ */ jsx5("div", { style: { fontFamily: SANS2, fontSize: 11.5, color: Pc2.soft, marginTop: 2 }, children: r[2] })
       ] }),
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 13, color: Pc.ink, whiteSpace: "nowrap" }, children: r[3] })
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 13, color: Pc2.ink, whiteSpace: "nowrap" }, children: r[3] })
     ] }, i)) }),
-    /* @__PURE__ */ jsx3("div", { style: { padding: "16px 22px 22px" }, children: /* @__PURE__ */ jsxs3(FakeCTA, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: Pc.btn, color: Pc.onAccent, fontFamily: SANS, fontWeight: 700, fontSize: 14, padding: "13px 18px", textDecoration: "none" }, children: [
+    /* @__PURE__ */ jsx5("div", { style: { padding: "16px 22px 22px" }, children: /* @__PURE__ */ jsxs5(FakeCTA2, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: Pc2.btn, color: Pc2.onAccent, fontFamily: SANS2, fontWeight: 700, fontSize: 14, padding: "13px 18px", textDecoration: "none" }, children: [
       "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043A \u043A\u043E\u043B\u043E\u0440\u0438\u0441\u0442\u0443 ",
-      /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+      /* @__PURE__ */ jsx5("span", { "aria-hidden": "true", children: "\u2192" })
     ] }) })
   ] });
 }
 var EXAMPLES = [
-  { id: "nails", niche: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", anatomy: "\u0444\u043E\u0442\u043E-\u0433\u0435\u0440\u043E\u0439", domain: "anna-nails", Comp: NailHero, note: "\u041C\u044F\u0433\u043A\u0438\u0439 \u043D\u044E\u0434 \u0441 \u0444\u043E\u0442\u043E \u0441\u0442\u0430\u043B \u0446\u0432\u0435\u0442\u043E\u043C \u0441\u0430\u0439\u0442\u0430 \u2014 \u0442\u0451\u043F\u043B\u044B\u0439 \u0438 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u044B\u0439.", palette: ["#F7EFEC", "#B0656F", "#2A2320"] },
-  { id: "barber", niche: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F", anatomy: "\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A-\u043F\u043B\u0430\u043A\u0430\u0442", domain: "fedor-barber", Comp: BarberPoster, note: "\u0423 \u0424\u0451\u0434\u043E\u0440\u0430 \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u043D\u0430 \u043A\u0440\u0443\u043F\u043D\u044B\u0445 \u0431\u0443\u043A\u0432\u0430\u0445.", palette: ["#E7E2D6", "#8C4A22", "#231C15"] },
-  { id: "skin", niche: "\u041A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433", anatomy: "\u0434\u043E-\u043F\u043E\u0441\u043B\u0435", domain: "yulia-skin", Comp: SkinBeforeAfter, note: "\u0414\u0432\u0430 \u043A\u0430\u0434\u0440\u0430 \u0440\u0430\u0431\u043E\u0442 \u042E\u043B\u0438\u0438 \u0432 \u043F\u0435\u0440\u0432\u043E\u043C \u044D\u043A\u0440\u0430\u043D\u0435 \u2014 \u0431\u0435\u0437 \u0441\u0442\u043E\u043A\u043E\u0432\u044B\u0445 \u043A\u0430\u0440\u0442\u0438\u043D\u043E\u043A.", palette: ["#FFFFFF", "#2F7A68", "#1A1D1C"] },
-  { id: "brows", niche: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B", anatomy: "\u043C\u0438\u043D\u0438\u043C\u0430\u043B", domain: "sol-brows", Comp: BrowMinimal, note: "\u0412 \u043F\u0440\u0430\u0439\u0441\u0435 \u0434\u0432\u0435 \u0443\u0441\u043B\u0443\u0433\u0438. \u0421\u0430\u0439\u0442 \u0432\u044B\u0448\u0435\u043B \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u043C: \u043E\u0434\u0438\u043D \u043A\u0430\u0434\u0440 \u0438 \u043C\u043D\u043E\u0433\u043E \u043F\u0443\u0441\u0442\u043E\u0433\u043E \u043C\u0435\u0441\u0442\u0430.", palette: ["#EFE7DA", "#7A5A3C", "#241E17"] },
-  { id: "colorist", niche: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442", anatomy: "\u043F\u0440\u0430\u0439\u0441-\u043C\u0435\u043D\u044E", domain: "kira-color", Comp: ColoristMenu, note: "\u041F\u044F\u0442\u044C \u0443\u0441\u043B\u0443\u0433 \u0441 \u0446\u0435\u043D\u0430\u043C\u0438. \u041F\u0440\u0430\u0439\u0441 \u0441\u0442\u0430\u043B \u0433\u043B\u0430\u0432\u043D\u044B\u043C \u0431\u043B\u043E\u043A\u043E\u043C, \u0441\u0430\u0439\u0442 \u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u043C\u0435\u043D\u044E.", palette: ["#F6F0F3", "#9C2A8E", "#221A24"] }
+  { id: "nails", niche: "\u041C\u0430\u043D\u0438\u043A\u044E\u0440", anatomy: "\u0444\u043E\u0442\u043E-\u0433\u0435\u0440\u043E\u0439", domain: "anna-nails", Comp: NailHero, FullComp: NailSite, note: "\u041C\u044F\u0433\u043A\u0438\u0439 \u043D\u044E\u0434 \u0441 \u0444\u043E\u0442\u043E \u0441\u0442\u0430\u043B \u0446\u0432\u0435\u0442\u043E\u043C \u0441\u0430\u0439\u0442\u0430 \u2014 \u0442\u0451\u043F\u043B\u044B\u0439 \u0438 \u0441\u043F\u043E\u043A\u043E\u0439\u043D\u044B\u0439.", palette: ["#F7EFEC", "#B0656F", "#2A2320"] },
+  { id: "barber", niche: "\u0411\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F", anatomy: "\u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A-\u043F\u043B\u0430\u043A\u0430\u0442", domain: "fedor-barber", Comp: BarberPoster, FullComp: BarberSite, note: "\u0423 \u0424\u0451\u0434\u043E\u0440\u0430 \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u043D\u0430 \u043A\u0440\u0443\u043F\u043D\u044B\u0445 \u0431\u0443\u043A\u0432\u0430\u0445.", palette: ["#E7E2D6", "#8C4A22", "#231C15"] },
+  { id: "skin", niche: "\u041A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433", anatomy: "\u0434\u043E-\u043F\u043E\u0441\u043B\u0435", domain: "yulia-skin", Comp: SkinBeforeAfter, FullComp: SkinSite, note: "\u0414\u0432\u0430 \u043A\u0430\u0434\u0440\u0430 \u0440\u0430\u0431\u043E\u0442 \u042E\u043B\u0438\u0438 \u0432 \u043F\u0435\u0440\u0432\u043E\u043C \u044D\u043A\u0440\u0430\u043D\u0435 \u2014 \u0431\u0435\u0437 \u0441\u0442\u043E\u043A\u043E\u0432\u044B\u0445 \u043A\u0430\u0440\u0442\u0438\u043D\u043E\u043A.", palette: ["#FFFFFF", "#2F7A68", "#1A1D1C"] },
+  { id: "brows", niche: "\u0411\u0440\u043E\u0432\u0438 \u0438 \u0440\u0435\u0441\u043D\u0438\u0446\u044B", anatomy: "\u043C\u0438\u043D\u0438\u043C\u0430\u043B", domain: "sol-brows", Comp: BrowMinimal, FullComp: BrowSite, note: "\u0412 \u043F\u0440\u0430\u0439\u0441\u0435 \u0434\u0432\u0435 \u0443\u0441\u043B\u0443\u0433\u0438. \u0421\u0430\u0439\u0442 \u0432\u044B\u0448\u0435\u043B \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u043C: \u043E\u0434\u0438\u043D \u043A\u0430\u0434\u0440 \u0438 \u043C\u043D\u043E\u0433\u043E \u043F\u0443\u0441\u0442\u043E\u0433\u043E \u043C\u0435\u0441\u0442\u0430.", palette: ["#EFE7DA", "#7A5A3C", "#241E17"] },
+  { id: "colorist", niche: "\u041A\u043E\u043B\u043E\u0440\u0438\u0441\u0442", anatomy: "\u043F\u0440\u0430\u0439\u0441-\u043C\u0435\u043D\u044E", domain: "kira-color", Comp: ColoristMenu, FullComp: ColoristSite, note: "\u041F\u044F\u0442\u044C \u0443\u0441\u043B\u0443\u0433 \u0441 \u0446\u0435\u043D\u0430\u043C\u0438. \u041F\u0440\u0430\u0439\u0441 \u0441\u0442\u0430\u043B \u0433\u043B\u0430\u0432\u043D\u044B\u043C \u0431\u043B\u043E\u043A\u043E\u043C, \u0441\u0430\u0439\u0442 \u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u043C\u0435\u043D\u044E.", palette: ["#F6F0F3", "#9C2A8E", "#221A24"] }
 ];
 var ROWS = [{ ratio: [7, 5], side: "left" }, { ratio: [6, 6], side: "right" }, { ratio: [7, 5], side: "left" }, { ratio: [6, 6], side: "right" }, { ratio: [7, 5], side: "left" }];
 function SitePreview({ children, stretch, decorative }) {
-  return /* @__PURE__ */ jsx3("div", { "aria-hidden": decorative ? "true" : void 0, style: { border: `1px solid ${INK}`, overflow: "hidden", background: "#fff", height: stretch ? "100%" : "auto" }, children });
+  return /* @__PURE__ */ jsx5("div", { "aria-hidden": decorative ? "true" : void 0, style: { border: `1px solid ${INK2}`, overflow: "hidden", background: "#fff", height: stretch ? "100%" : "auto" }, children });
 }
-function PreviewWithCTA({ children, stretch, onView, label }) {
-  const narrow = useNarrow();
-  const [hover, setHover] = useState(false);
+function PreviewWithCTA({ children, stretch, onView, label, siteId }) {
+  const narrow = useNarrow2();
+  const [hover, setHover] = useState3(false);
   const show = narrow || hover;
   const btn = narrow ? { position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", padding: "11px 14px", background: "rgba(27,23,18,.9)", color: "#F2EEE6" } : { position: "absolute", top: "50%", left: "50%", transform: `translate(-50%,-50%) scale(${hover ? 1 : 0.96})`, padding: "13px 22px", background: "#1B1712", color: "#F2EEE6" };
-  return /* @__PURE__ */ jsxs3("div", { onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false), style: { position: "relative", height: stretch ? "100%" : "auto" }, children: [
-    /* @__PURE__ */ jsx3(SitePreview, { stretch, decorative: true, children }),
-    !narrow && /* @__PURE__ */ jsx3("div", { style: { position: "absolute", inset: 0, background: "rgba(27,23,18,.28)", opacity: hover ? 1 : 0, transition: "opacity .18s ease", pointerEvents: "none" } }),
-    /* @__PURE__ */ jsxs3(
+  return /* @__PURE__ */ jsxs5("div", { onMouseEnter: () => setHover(true), onMouseLeave: () => setHover(false), style: { position: "relative", height: stretch ? "100%" : "auto" }, children: [
+    /* @__PURE__ */ jsx5(SitePreview, { stretch, decorative: true, children }),
+    !narrow && /* @__PURE__ */ jsx5("div", { style: { position: "absolute", inset: 0, background: "rgba(27,23,18,.28)", opacity: hover ? 1 : 0, transition: "opacity .18s ease", pointerEvents: "none" } }),
+    /* @__PURE__ */ jsxs5(
       "button",
       {
         type: "button",
         onClick: onView,
+        "data-example-open": siteId,
         "aria-label": label ? `\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0441\u0430\u0439\u0442 \u2014 ${label}` : "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0441\u0430\u0439\u0442",
         style: { display: "inline-flex", alignItems: "center", gap: 8, font: "inherit", fontWeight: 700, fontSize: 14, cursor: "pointer", border: "none", whiteSpace: "nowrap", opacity: show ? 1 : 0, transition: "opacity .18s ease, transform .18s ease", pointerEvents: show ? "auto" : "none", ...btn },
         children: [
           "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0441\u0430\u0439\u0442 ",
-          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx5("span", { "aria-hidden": "true", children: "\u2192" })
         ]
       }
     )
   ] });
 }
-function V5_SiteViewer({ data, onClose, onClaim }) {
-  const closeRef = useRef(null);
-  const panelRef = useRef(null);
-  useEffect(() => {
-    const opener = document.activeElement;
-    document.body.classList.add("is-locked");
-    if (closeRef.current) closeRef.current.focus();
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.classList.remove("is-locked");
-      document.removeEventListener("keydown", onKey);
-      if (opener && opener.focus) opener.focus();
-    };
-  }, []);
-  const trapTab = (e) => {
-    if (e.key !== "Tab" || !panelRef.current) return;
-    const f = panelRef.current.querySelectorAll("button");
-    if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
-  const build = () => {
-    onClose();
-    if (onClaim) onClaim("example-" + data.id, data.niche);
-  };
-  const Comp = data.Comp;
-  return /* @__PURE__ */ jsxs3("div", { role: "dialog", "aria-modal": "true", "aria-label": `\u041F\u0440\u0438\u043C\u0435\u0440 \u0441\u0430\u0439\u0442\u0430 \u2014 ${data.niche}`, onKeyDown: trapTab, style: { position: "fixed", inset: 0, zIndex: 120, display: "flex", justifyContent: "center" }, children: [
-    /* @__PURE__ */ jsx3("div", { onClick: onClose, style: { position: "absolute", inset: 0, background: "rgba(27,23,18,.7)", cursor: "pointer" } }),
-    /* @__PURE__ */ jsxs3("div", { ref: panelRef, style: { position: "relative", width: "min(480px,100%)", height: "100%", display: "flex", flexDirection: "column", background: "#fff", borderInline: `1px solid ${INK}` }, children: [
-      /* @__PURE__ */ jsxs3("div", { style: { flex: "0 0 auto", display: "flex", alignItems: "center", gap: 12, padding: "10px 10px 10px 18px", background: BONE, borderBottom: `1px solid ${INK}` }, children: [
-        /* @__PURE__ */ jsxs3("span", { style: { flex: 1, minWidth: 0, fontFamily: MONO, fontSize: 11.5, letterSpacing: ".04em", color: INK70, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, children: [
-          /* @__PURE__ */ jsx3("span", { style: { color: ACCENT }, children: "\u25B8" }),
-          " ",
-          data.domain,
-          ".samosite.online"
-        ] }),
-        /* @__PURE__ */ jsx3("button", { ref: closeRef, type: "button", onClick: onClose, "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440", style: { width: 44, height: 44, flex: "0 0 auto", display: "inline-flex", alignItems: "center", justifyContent: "center", background: "transparent", border: `1px solid ${LINE2}`, color: INK, fontSize: 20, lineHeight: 1, cursor: "pointer" }, children: "\xD7" })
-      ] }),
-      /* @__PURE__ */ jsx3("div", { style: { flex: "1 1 auto", overflowY: "auto", WebkitOverflowScrolling: "touch" }, children: /* @__PURE__ */ jsx3(Comp, {}) }),
-      /* @__PURE__ */ jsxs3("div", { style: { flex: "0 0 auto", padding: "14px 18px", background: BONE, borderTop: `1px solid ${INK}`, display: "flex", flexDirection: "column", gap: 8 }, children: [
-        /* @__PURE__ */ jsxs3("button", { type: "button", onClick: build, "data-entry": "example-" + data.id, style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 10, width: "100%", minHeight: 52, padding: "13px 20px", background: ACCENT, color: VT.onAccent, border: "none", font: "inherit", fontFamily: SANS, fontWeight: 600, fontSize: 16, cursor: "pointer" }, children: [
-          "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439 \u0436\u0435 \u0437\u0430 2 \u0447\u0430\u0441\u0430 ",
-          /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
-        ] }),
-        /* @__PURE__ */ jsxs3("span", { style: { fontFamily: MONO, fontSize: 10.5, letterSpacing: ".04em", color: INK70, textAlign: "center" }, children: [
-          data.niche,
-          " \xB7 \u0441\u043E\u0431\u0440\u0430\u043D \u0438\u0437 \u043F\u0440\u043E\u0444\u0438\u043B\u044F \u043C\u0430\u0441\u0442\u0435\u0440\u0430"
-        ] })
-      ] })
-    ] })
-  ] });
-}
 function Swatches({ palette }) {
-  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
-    palette.map((c, i) => /* @__PURE__ */ jsx3("span", { title: c, style: { width: 28, height: 28, borderRadius: "50%", background: c, border: `1px solid ${LINE2}`, flex: "0 0 auto" } }, i)),
-    /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 11, letterSpacing: ".04em", color: INK45, marginLeft: 2 }, children: "\u043F\u0430\u043B\u0438\u0442\u0440\u0430 \u0438\u0437 \u0444\u043E\u0442\u043E" })
+  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 10 }, children: [
+    palette.map((c, i) => /* @__PURE__ */ jsx5("span", { title: c, style: { width: 28, height: 28, borderRadius: "50%", background: c, border: `1px solid ${LINE22}`, flex: "0 0 auto" } }, i)),
+    /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 11, letterSpacing: ".04em", color: INK45, marginLeft: 2 }, children: "\u043F\u0430\u043B\u0438\u0442\u0440\u0430 \u0438\u0437 \u0444\u043E\u0442\u043E" })
   ] });
 }
 function Meta({ data }) {
-  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 18, alignSelf: "start", position: "sticky", top: 96 }, children: [
-    /* @__PURE__ */ jsx3("div", { style: { display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }, children: /* @__PURE__ */ jsx3("span", { style: { fontFamily: VT.font.display, fontWeight: 700, fontSize: 34, lineHeight: 1, letterSpacing: "-.01em", color: INK }, children: data.niche }) }),
-    /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: SANS, fontSize: 15.5, lineHeight: 1.5, color: INK70, maxWidth: "34ch", textWrap: "pretty" }, children: data.note }),
-    /* @__PURE__ */ jsx3(Swatches, { palette: data.palette })
+  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 18, alignSelf: "start", position: "sticky", top: 96 }, children: [
+    /* @__PURE__ */ jsx5("div", { style: { display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }, children: /* @__PURE__ */ jsx5("span", { style: { fontFamily: VT.font.display, fontWeight: 700, fontSize: 34, lineHeight: 1, letterSpacing: "-.01em", color: INK2 }, children: data.niche }) }),
+    /* @__PURE__ */ jsx5("p", { style: { margin: 0, fontFamily: SANS2, fontSize: 15.5, lineHeight: 1.5, color: INK702, maxWidth: "34ch", textWrap: "pretty" }, children: data.note }),
+    /* @__PURE__ */ jsx5(Swatches, { palette: data.palette })
   ] });
 }
 function ExampleRowC({ data, row, onView, idx }) {
-  const narrow = useNarrow();
+  const narrow = useNarrow2();
   const Comp = data.Comp;
-  const preview = /* @__PURE__ */ jsx3(PreviewWithCTA, { onView: () => onView(data), label: data.niche, children: /* @__PURE__ */ jsx3(Comp, {}) });
-  const meta = /* @__PURE__ */ jsx3(Meta, { data });
-  if (narrow) return /* @__PURE__ */ jsxs3("div", { "data-example-idx": idx, style: { display: "flex", flexDirection: "column", gap: 22 }, children: [
+  const preview = /* @__PURE__ */ jsx5(PreviewWithCTA, { onView: () => onView(data), label: data.niche, siteId: data.id, children: /* @__PURE__ */ jsx5(Comp, {}) });
+  const meta = /* @__PURE__ */ jsx5(Meta, { data });
+  if (narrow) return /* @__PURE__ */ jsxs5("div", { "data-example-idx": idx, style: { display: "flex", flexDirection: "column", gap: 22 }, children: [
     meta,
     preview
   ] });
   const [a, b] = row.ratio;
   const previewFirst = row.side === "left";
-  return /* @__PURE__ */ jsx3("div", { "data-example-idx": idx, style: { display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: "clamp(24px,3vw,52px)", alignItems: "start" }, children: previewFirst ? /* @__PURE__ */ jsxs3(Fragment2, { children: [
-    /* @__PURE__ */ jsx3("div", { style: { gridColumn: `span ${a}` }, children: preview }),
-    /* @__PURE__ */ jsx3("div", { style: { gridColumn: `span ${b}` }, children: meta })
-  ] }) : /* @__PURE__ */ jsxs3(Fragment2, { children: [
-    /* @__PURE__ */ jsx3("div", { style: { gridColumn: `span ${b}` }, children: meta }),
-    /* @__PURE__ */ jsx3("div", { style: { gridColumn: `span ${a}` }, children: preview })
+  return /* @__PURE__ */ jsx5("div", { "data-example-idx": idx, style: { display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: "clamp(24px,3vw,52px)", alignItems: "start" }, children: previewFirst ? /* @__PURE__ */ jsxs5(Fragment3, { children: [
+    /* @__PURE__ */ jsx5("div", { style: { gridColumn: `span ${a}` }, children: preview }),
+    /* @__PURE__ */ jsx5("div", { style: { gridColumn: `span ${b}` }, children: meta })
+  ] }) : /* @__PURE__ */ jsxs5(Fragment3, { children: [
+    /* @__PURE__ */ jsx5("div", { style: { gridColumn: `span ${b}` }, children: meta }),
+    /* @__PURE__ */ jsx5("div", { style: { gridColumn: `span ${a}` }, children: preview })
   ] }) });
 }
 function CarouselCard({ data, onView }) {
   const Comp = data.Comp;
-  return /* @__PURE__ */ jsxs3("div", { style: { flex: "0 0 auto", width: "clamp(300px,80vw,376px)", scrollSnapAlign: "start", display: "flex", flexDirection: "column", gap: 16 }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 11 }, children: [
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: VT.font.display, fontWeight: 700, fontSize: 26, lineHeight: 1, letterSpacing: "-.01em", color: INK }, children: data.niche }),
-      /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: SANS, fontSize: 15, lineHeight: 1.5, color: INK70, textWrap: "pretty", minHeight: "3em" }, children: data.note }),
-      /* @__PURE__ */ jsx3(Swatches, { palette: data.palette })
+  return /* @__PURE__ */ jsxs5("div", { style: { flex: "0 0 auto", width: "clamp(300px,80vw,376px)", scrollSnapAlign: "start", display: "flex", flexDirection: "column", gap: 16 }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 11 }, children: [
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: VT.font.display, fontWeight: 700, fontSize: 26, lineHeight: 1, letterSpacing: "-.01em", color: INK2 }, children: data.niche }),
+      /* @__PURE__ */ jsx5("p", { style: { margin: 0, fontFamily: SANS2, fontSize: 15, lineHeight: 1.5, color: INK702, textWrap: "pretty", minHeight: "3em" }, children: data.note }),
+      /* @__PURE__ */ jsx5(Swatches, { palette: data.palette })
     ] }),
-    /* @__PURE__ */ jsx3(PreviewWithCTA, { onView: () => onView(data), label: data.niche, children: /* @__PURE__ */ jsx3(Comp, {}) })
+    /* @__PURE__ */ jsx5(PreviewWithCTA, { onView: () => onView(data), label: data.niche, siteId: data.id, children: /* @__PURE__ */ jsx5(Comp, {}) })
   ] });
 }
 function CarouselExamples({ items, onView }) {
-  const scroller = useRef(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
-  const [pos, setPos] = useState(1);
+  const scroller = useRef2(null);
+  const [atStart, setAtStart] = useState3(true);
+  const [atEnd, setAtEnd] = useState3(false);
+  const [pos, setPos] = useState3(1);
   const cardStep = () => {
     const el = scroller.current;
     if (!el) return 0;
@@ -1777,7 +2373,7 @@ function CarouselExamples({ items, onView }) {
     const step = cardStep();
     if (step) setPos(Math.min(items.length, Math.max(1, Math.round(el.scrollLeft / step) + 1)));
   };
-  useEffect(() => {
+  useEffect3(() => {
     onScroll();
     window.addEventListener("resize", onScroll);
     return () => window.removeEventListener("resize", onScroll);
@@ -1795,20 +2391,20 @@ function CarouselExamples({ items, onView }) {
       nudge(-1);
     }
   };
-  const Arrow = ({ dir, disabled }) => /* @__PURE__ */ jsx3("button", { type: "button", "aria-label": dir < 0 ? "\u041D\u0430\u0437\u0430\u0434" : "\u0412\u043F\u0435\u0440\u0451\u0434", onClick: () => nudge(dir), disabled, style: { width: 46, height: 46, flex: "0 0 auto", display: "inline-flex", alignItems: "center", justifyContent: "center", background: disabled ? "transparent" : "#fff", border: `1px solid ${disabled ? LINE : INK}`, color: disabled ? LINE2 : INK, cursor: disabled ? "default" : "pointer", fontSize: 20, lineHeight: 1, transition: "background .15s, border-color .15s, color .15s" }, children: dir < 0 ? "\u2190" : "\u2192" });
-  return /* @__PURE__ */ jsxs3("div", { children: [
-    /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 16, marginBottom: 20 }, children: [
-      /* @__PURE__ */ jsxs3("span", { "aria-live": "polite", style: { fontFamily: MONO, fontSize: 12, letterSpacing: ".1em", color: INK70 }, children: [
+  const Arrow = ({ dir, disabled }) => /* @__PURE__ */ jsx5("button", { type: "button", "aria-label": dir < 0 ? "\u041D\u0430\u0437\u0430\u0434" : "\u0412\u043F\u0435\u0440\u0451\u0434", onClick: () => nudge(dir), disabled, style: { width: 46, height: 46, flex: "0 0 auto", display: "inline-flex", alignItems: "center", justifyContent: "center", background: disabled ? "transparent" : "#fff", border: `1px solid ${disabled ? LINE : INK2}`, color: disabled ? LINE22 : INK2, cursor: disabled ? "default" : "pointer", fontSize: 20, lineHeight: 1, transition: "background .15s, border-color .15s, color .15s" }, children: dir < 0 ? "\u2190" : "\u2192" });
+  return /* @__PURE__ */ jsxs5("div", { children: [
+    /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 16, marginBottom: 20 }, children: [
+      /* @__PURE__ */ jsxs5("span", { "aria-live": "polite", style: { fontFamily: MONO2, fontSize: 12, letterSpacing: ".1em", color: INK702 }, children: [
         pos,
         " / ",
         items.length
       ] }),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", gap: 10 }, children: [
-        /* @__PURE__ */ jsx3(Arrow, { dir: -1, disabled: atStart }),
-        /* @__PURE__ */ jsx3(Arrow, { dir: 1, disabled: atEnd })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", gap: 10 }, children: [
+        /* @__PURE__ */ jsx5(Arrow, { dir: -1, disabled: atStart }),
+        /* @__PURE__ */ jsx5(Arrow, { dir: 1, disabled: atEnd })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3(
+    /* @__PURE__ */ jsx5(
       "div",
       {
         ref: scroller,
@@ -1818,53 +2414,60 @@ function CarouselExamples({ items, onView }) {
         "aria-label": `\u041F\u0440\u0438\u043C\u0435\u0440\u044B \u0441\u0430\u0439\u0442\u043E\u0432, ${items.length} \u043A\u0430\u0440\u0442\u043E\u0447\u0435\u043A \u2014 \u043F\u0440\u043E\u043A\u0440\u0443\u0442\u043A\u0430 \u0441\u0442\u0440\u0435\u043B\u043A\u0430\u043C\u0438`,
         onKeyDown: onKey,
         style: { display: "flex", gap: 24, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 14, margin: "0 calc(-1*var(--pad))", paddingInline: "var(--pad)", scrollPaddingInline: "var(--pad)", WebkitOverflowScrolling: "touch" },
-        children: items.map((e, i) => /* @__PURE__ */ jsx3("div", { "data-card": true, "data-example-idx": i, id: "ex-" + e.id, style: { display: "flex" }, children: /* @__PURE__ */ jsx3(CarouselCard, { data: e, onView }) }, e.id))
+        children: items.map((e, i) => /* @__PURE__ */ jsx5("div", { "data-card": true, "data-example-idx": i, id: "ex-" + e.id, style: { display: "flex" }, children: /* @__PURE__ */ jsx5(CarouselCard, { data: e, onView }) }, e.id))
       }
     )
   ] });
 }
-function V5_Examples({ layout = "carousel", onIntake = noop }) {
-  const [viewer, setViewer] = useState(null);
-  const onView = (data) => setViewer(data);
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "examples", "aria-labelledby": "ex-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsx3("div", { className: "shead", children: /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "ex-h", children: "\u041F\u044F\u0442\u044C \u0441\u0430\u0439\u0442\u043E\u0432, \u0441\u043E\u0431\u0440\u0430\u043D\u043D\u044B\u0445 \u0438\u0437\xA0\u043F\u0440\u043E\u0444\u0438\u043B\u0435\u0439 \u043C\u0430\u0441\u0442\u0435\u0440\u043E\u0432" }) }) }),
-    /* @__PURE__ */ jsx3("div", { id: "examples-root", "data-layout": layout, "aria-label": "\u041F\u0440\u0438\u043C\u0435\u0440\u044B \u0441\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", style: { minHeight: 600 }, children: layout === "carousel" ? /* @__PURE__ */ jsx3(CarouselExamples, { items: EXAMPLES, onView }) : /* @__PURE__ */ jsx3("div", { style: { display: "flex", flexDirection: "column", gap: "clamp(56px,7vw,104px)" }, children: EXAMPLES.map((e, i) => /* @__PURE__ */ jsx3("div", { id: "ex-" + e.id, children: /* @__PURE__ */ jsx3(ExampleRowC, { data: e, row: ROWS[i], onView, idx: i }) }, e.id)) }) }),
-    /* @__PURE__ */ jsx3("p", { className: "lead", style: { marginTop: "clamp(40px,4vw,64px)", maxWidth: "74ch" }, children: "\u041F\u0430\u043B\u0438\u0442\u0440\u0443 \u0438\xA0\u0448\u0440\u0438\u0444\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E. \u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044C \u043D\u0435\xA0\u043F\u043E\u043D\u0440\u0430\u0432\u0438\u0442\u0441\u044F, \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432\xA0\u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A." }),
-    viewer && /* @__PURE__ */ jsx3(V5_SiteViewer, { data: viewer, onClose: () => setViewer(null), onClaim: onIntake })
+function V5_Examples({ layout = "carousel", onIntake = noop, viewerId, onViewerChange }) {
+  const isControlled = viewerId !== void 0;
+  const [internalId, setInternalId] = useState3(null);
+  const activeId = isControlled ? viewerId ?? null : internalId;
+  const setActive = (id) => {
+    if (!isControlled) setInternalId(id);
+    if (onViewerChange) onViewerChange(id);
+  };
+  const onView = (data) => setActive(data.id);
+  const viewerData = activeId != null ? EXAMPLES.find((e) => e.id === activeId) ?? null : null;
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "examples", "aria-labelledby": "ex-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsx5("div", { className: "shead", children: /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "ex-h", children: "\u041F\u044F\u0442\u044C \u0441\u0430\u0439\u0442\u043E\u0432, \u0441\u043E\u0431\u0440\u0430\u043D\u043D\u044B\u0445 \u0438\u0437\xA0\u043F\u0440\u043E\u0444\u0438\u043B\u0435\u0439 \u043C\u0430\u0441\u0442\u0435\u0440\u043E\u0432" }) }) }),
+    /* @__PURE__ */ jsx5("div", { id: "examples-root", "data-layout": layout, "aria-label": "\u041F\u0440\u0438\u043C\u0435\u0440\u044B \u0441\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u0441\u0430\u0439\u0442\u043E\u0432", style: { minHeight: 600 }, children: layout === "carousel" ? /* @__PURE__ */ jsx5(CarouselExamples, { items: EXAMPLES, onView }) : /* @__PURE__ */ jsx5("div", { style: { display: "flex", flexDirection: "column", gap: "clamp(56px,7vw,104px)" }, children: EXAMPLES.map((e, i) => /* @__PURE__ */ jsx5("div", { id: "ex-" + e.id, children: /* @__PURE__ */ jsx5(ExampleRowC, { data: e, row: ROWS[i], onView, idx: i }) }, e.id)) }) }),
+    /* @__PURE__ */ jsx5("p", { className: "lead", style: { marginTop: "clamp(40px,4vw,64px)", maxWidth: "74ch" }, children: "\u041F\u0430\u043B\u0438\u0442\u0440\u0443 \u0438\xA0\u0448\u0440\u0438\u0444\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E. \u0415\u0441\u043B\u0438 \u0441\u0442\u0438\u043B\u044C \u043D\u0435\xA0\u043F\u043E\u043D\u0440\u0430\u0432\u0438\u0442\u0441\u044F, \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432\xA0\u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A." }),
+    viewerData && /* @__PURE__ */ jsx5(V5_SiteViewer, { data: viewerData, onClose: () => setActive(null), onClaim: onIntake })
   ] }) });
 }
 function V5_HeroSite() {
-  const compact = useCompact();
+  const compact = useCompact2();
   const rows = [["\u041C\u0430\u043D\u0438\u043A\u044E\u0440 + \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u0435", "2 400 \u20BD"], ["\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u0430 2 \u043D\u043E\u0433\u0442\u044F", "300 \u20BD"], ["\u0423\u043A\u0440\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0430\u043A\u0440\u0438\u0433\u0435\u043B\u0435\u043C", "600 \u20BD"], ["\u0421\u043D\u044F\u0442\u0438\u0435 \u0447\u0443\u0436\u043E\u0433\u043E \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F", "400 \u20BD"]];
-  return /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", height: compact ? "auto" : "100%", minHeight: 0, background: Pn.bg, color: Pn.ink }, children: [
-    /* @__PURE__ */ jsxs3("div", { style: { flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 16px", borderBottom: `1px solid ${Pn.line}` }, children: [
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: Pn.serif, fontWeight: 600, fontSize: 18, color: Pn.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
-      /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", color: Pn.soft }, children: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" })
+  return /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", height: compact ? "auto" : "100%", minHeight: 0, background: Pn2.bg, color: Pn2.ink }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 16px", borderBottom: `1px solid ${Pn2.line}` }, children: [
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: Pn2.serif, fontWeight: 600, fontSize: 18, color: Pn2.ink }, children: "\u0421\u0442\u0443\u0434\u0438\u044F \u0410\u043D\u043D\u044B" }),
+      /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", color: Pn2.soft }, children: "\u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440" })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { position: "relative", flex: compact ? "0 0 auto" : "1 1 auto", height: compact ? 300 : "auto", minHeight: 0 }, children: [
-      /* @__PURE__ */ jsx3(Img, { src: "img/nails.png", label: "\u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u043C\u0430\u043A\u0440\u043E", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"], style: { objectPosition: "center 28%" } }),
-      /* @__PURE__ */ jsx3("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,15,.66) 0%, rgba(20,16,15,0) 50%)" } }),
-      /* @__PURE__ */ jsxs3("h3", { style: { position: "absolute", left: 16, right: 16, bottom: 14, margin: 0, fontFamily: Pn.serif, fontWeight: 600, fontSize: 25, lineHeight: 1, letterSpacing: "-.01em", color: "#FBFBFC" }, children: [
+    /* @__PURE__ */ jsxs5("div", { style: { position: "relative", flex: compact ? "0 0 auto" : "1 1 auto", height: compact ? 300 : "auto", minHeight: 0 }, children: [
+      /* @__PURE__ */ jsx5(Img2, { src: "img/nails.png", label: "\u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u043C\u0430\u043A\u0440\u043E", ph: ["#E7C9C9", "#D9AEB2", "#7A3A44"], style: { objectPosition: "center 28%" } }),
+      /* @__PURE__ */ jsx5("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,16,15,.66) 0%, rgba(20,16,15,0) 50%)" } }),
+      /* @__PURE__ */ jsxs5("h3", { style: { position: "absolute", left: 16, right: 16, bottom: 14, margin: 0, fontFamily: Pn2.serif, fontWeight: 600, fontSize: 25, lineHeight: 1, letterSpacing: "-.01em", color: "#FBFBFC" }, children: [
         "\u0410\u043F\u043F\u0430\u0440\u0430\u0442\u043D\u044B\u0439 \u043C\u0430\u043D\u0438\u043A\u044E\u0440, ",
-        /* @__PURE__ */ jsx3("span", { style: { fontStyle: "italic", color: "#F4C9C4" }, children: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
+        /* @__PURE__ */ jsx5("span", { style: { fontStyle: "italic", color: "#F4C9C4" }, children: "\u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F 3 \u043D\u0435\u0434\u0435\u043B\u0438" })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs3("div", { style: { flex: "0 0 auto", padding: "11px 16px 14px", display: "flex", flexDirection: "column", gap: 8 }, children: [
-      rows.map((r, i) => /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, paddingBottom: i < rows.length - 1 ? 8 : 0, borderBottom: i < rows.length - 1 ? `1px solid ${Pn.line}` : "none" }, children: [
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: SANS, fontWeight: 600, fontSize: 13.5, color: Pn.ink }, children: r[0] }),
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 12, color: Pn.ink, whiteSpace: "nowrap" }, children: r[1] })
+    /* @__PURE__ */ jsxs5("div", { style: { flex: "0 0 auto", padding: "11px 16px 14px", display: "flex", flexDirection: "column", gap: 8 }, children: [
+      rows.map((r, i) => /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, paddingBottom: i < rows.length - 1 ? 8 : 0, borderBottom: i < rows.length - 1 ? `1px solid ${Pn2.line}` : "none" }, children: [
+        /* @__PURE__ */ jsx5("span", { style: { fontFamily: SANS2, fontWeight: 600, fontSize: 13.5, color: Pn2.ink }, children: r[0] }),
+        /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 12, color: Pn2.ink, whiteSpace: "nowrap" }, children: r[1] })
       ] }, i)),
-      /* @__PURE__ */ jsxs3("div", { style: { display: "flex", flexDirection: "column", gap: 6, padding: "12px 14px", background: "#F0E3DE", borderLeft: `3px solid ${Pn.accent}` }, children: [
-        /* @__PURE__ */ jsxs3("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
-          /* @__PURE__ */ jsx3("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "1.5px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
-          /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".06em", color: Pn.soft }, children: "5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
+      /* @__PURE__ */ jsxs5("div", { style: { display: "flex", flexDirection: "column", gap: 6, padding: "12px 14px", background: "#F0E3DE", borderLeft: `3px solid ${Pn2.accent}` }, children: [
+        /* @__PURE__ */ jsxs5("div", { style: { display: "flex", alignItems: "center", gap: 8 }, children: [
+          /* @__PURE__ */ jsx5("span", { "aria-label": "5 \u0438\u0437 5", style: { color: "#C9922E", fontSize: 13, letterSpacing: "1.5px" }, children: "\u2605\u2605\u2605\u2605\u2605" }),
+          /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 10, letterSpacing: ".06em", color: Pn2.soft }, children: "5,0 \xB7 \u042F\u043D\u0434\u0435\u043A\u0441" })
         ] }),
-        /* @__PURE__ */ jsx3("p", { style: { margin: 0, fontFamily: Pn.serif, fontWeight: 600, fontStyle: "italic", fontSize: 17.5, lineHeight: 1.3, color: Pn.ink }, children: "\xAB\u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u0440\u043E\u0432\u043D\u043E \u0442\u0440\u0438 \u043D\u0435\u0434\u0435\u043B\u0438\xBB" }),
-        /* @__PURE__ */ jsx3("span", { style: { fontFamily: MONO, fontSize: 10, letterSpacing: ".03em", color: Pn.soft }, children: "\u041E\u043B\u0435\u0441\u044F \u041D. \xB7 3 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" })
+        /* @__PURE__ */ jsx5("p", { style: { margin: 0, fontFamily: Pn2.serif, fontWeight: 600, fontStyle: "italic", fontSize: 17.5, lineHeight: 1.3, color: Pn2.ink }, children: "\xAB\u041D\u0438\u043A\u043E\u0433\u0434\u0430 \u043D\u0435 \u0431\u044B\u043B\u043E \u0441\u043A\u043E\u043B\u043E\u0432, \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F \u0440\u043E\u0432\u043D\u043E \u0442\u0440\u0438 \u043D\u0435\u0434\u0435\u043B\u0438\xBB" }),
+        /* @__PURE__ */ jsx5("span", { style: { fontFamily: MONO2, fontSize: 10, letterSpacing: ".03em", color: Pn2.soft }, children: "\u041E\u043B\u0435\u0441\u044F \u041D. \xB7 3 \u0434\u043D\u044F \u043D\u0430\u0437\u0430\u0434" })
       ] }),
-      /* @__PURE__ */ jsxs3(FakeCTA, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: Pn.btn, color: Pn.onAccent, fontFamily: SANS, fontWeight: 700, fontSize: 13.5, padding: "11px 16px", textDecoration: "none", marginTop: 2 }, children: [
+      /* @__PURE__ */ jsxs5(FakeCTA2, { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: Pn2.btn, color: Pn2.onAccent, fontFamily: SANS2, fontWeight: 700, fontSize: 13.5, padding: "11px 16px", textDecoration: "none", marginTop: 2 }, children: [
         "\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u0432 Telegram ",
-        /* @__PURE__ */ jsx3("span", { "aria-hidden": "true", children: "\u2192" })
+        /* @__PURE__ */ jsx5("span", { "aria-hidden": "true", children: "\u2192" })
       ] })
     ] })
   ] });
@@ -1877,115 +2480,115 @@ var DEFAULT_ANCHORS = [
   { href: "#faq", label: "\u0412\u043E\u043F\u0440\u043E\u0441\u044B" }
 ];
 function V5_Header({ anchors = DEFAULT_ANCHORS, onIntake = noop }) {
-  return /* @__PURE__ */ jsxs3("header", { className: "hdr", children: [
-    /* @__PURE__ */ jsxs3("div", { className: "wrap hdr__in", children: [
-      /* @__PURE__ */ jsxs3("a", { className: "logo", href: "#top", children: [
+  return /* @__PURE__ */ jsxs5("header", { className: "hdr", children: [
+    /* @__PURE__ */ jsxs5("div", { className: "wrap hdr__in", children: [
+      /* @__PURE__ */ jsxs5("a", { className: "logo", href: "#top", children: [
         "\u0421\u0430\u043C\u043E",
-        /* @__PURE__ */ jsx3("b", { children: "\u0441\u0430\u0439\u0442" })
+        /* @__PURE__ */ jsx5("b", { children: "\u0441\u0430\u0439\u0442" })
       ] }),
-      /* @__PURE__ */ jsxs3("nav", { className: "hdr__nav", "aria-label": "\u041E\u0441\u043D\u043E\u0432\u043D\u0430\u044F \u043D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", children: [
-        /* @__PURE__ */ jsx3("div", { className: "hdr__links", children: anchors.map((a) => /* @__PURE__ */ jsx3("a", { href: a.href, children: a.label }, a.href)) }),
-        /* @__PURE__ */ jsx3("button", { className: "btn btn--44 hdr__cta", type: "button", "data-entry": "header", onClick: () => onIntake("header"), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
-        /* @__PURE__ */ jsx3("button", { className: "btn btn--44 hdr__cta-m", type: "button", "data-entry": "header", onClick: () => onIntake("header"), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442" })
+      /* @__PURE__ */ jsxs5("nav", { className: "hdr__nav", "aria-label": "\u041E\u0441\u043D\u043E\u0432\u043D\u0430\u044F \u043D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", children: [
+        /* @__PURE__ */ jsx5("div", { className: "hdr__links", children: anchors.map((a) => /* @__PURE__ */ jsx5("a", { href: a.href, children: a.label }, a.href)) }),
+        /* @__PURE__ */ jsx5("button", { className: "btn btn--44 hdr__cta", type: "button", "data-entry": "header", onClick: () => onIntake("header"), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
+        /* @__PURE__ */ jsx5("button", { className: "btn btn--44 hdr__cta-m", type: "button", "data-entry": "header", onClick: () => onIntake("header"), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442" })
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("nav", { className: "hdr__anchors", "aria-label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B", children: anchors.map((a) => /* @__PURE__ */ jsx3("a", { href: a.href, children: a.label }, a.href)) })
+    /* @__PURE__ */ jsx5("nav", { className: "hdr__anchors", "aria-label": "\u0420\u0430\u0437\u0434\u0435\u043B\u044B \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B", children: anchors.map((a) => /* @__PURE__ */ jsx5("a", { href: a.href, children: a.label }, a.href)) })
   ] });
 }
 function V5_Hero({ onIntake = noop }) {
   const [copyRef, copyCls] = useReveal();
   const [prevRef, prevCls] = useReveal();
-  return /* @__PURE__ */ jsx3("section", { className: "hero", id: "top", "aria-label": "\u041E\u0444\u0444\u0435\u0440", children: /* @__PURE__ */ jsxs3("div", { className: "hero__grid wrap", children: [
-    /* @__PURE__ */ jsxs3("div", { ref: copyRef, className: "hero__copy " + copyCls, children: [
-      /* @__PURE__ */ jsxs3("h1", { className: "hero-h", children: [
+  return /* @__PURE__ */ jsx5("section", { className: "hero", id: "top", "aria-label": "\u041E\u0444\u0444\u0435\u0440", children: /* @__PURE__ */ jsxs5("div", { className: "hero__grid wrap", children: [
+    /* @__PURE__ */ jsxs5("div", { ref: copyRef, className: "hero__copy " + copyCls, children: [
+      /* @__PURE__ */ jsxs5("h1", { className: "hero-h", children: [
         "\u0421\u0430\u0439\u0442 \u0434\u043B\u044F \u0431\u044C\u044E\u0442\u0438-\u043C\u0430\u0441\u0442\u0435\u0440\u0430 ",
-        /* @__PURE__ */ jsx3("span", { className: "accent", children: "\u0437\u0430\xA02\xA0\u0447\u0430\u0441\u0430" })
+        /* @__PURE__ */ jsx5("span", { className: "accent", children: "\u0437\u0430\xA02\xA0\u0447\u0430\u0441\u0430" })
       ] }),
-      /* @__PURE__ */ jsx3("p", { className: "lead hero__lead", children: "\u041D\u0430\u0437\u043E\u0432\u0438\u0442\u0435 \u0433\u043E\u0440\u043E\u0434: \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043D\u0430\u0439\u0434\u0451\u0442 \u0432\u0430\u0448\u0443 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0432\xA02\u0413\u0418\u0421 \u0438\u043B\u0438 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441\xA0\u041A\u0430\u0440\u0442\u0430\u0445, \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u043E\u0442\u0442\u0443\u0434\u0430 \u0443\u0441\u043B\u0443\u0433\u0438, \u0446\u0435\u043D\u044B, \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442 \u0438\xA0\u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u043D\u0438\u0445 \u0441\u0430\u0439\u0442 \u0431\u044C\u044E\u0442\u0438-\u043C\u0430\u0441\u0442\u0435\u0440\u0430." }),
-      /* @__PURE__ */ jsxs3("div", { className: "hero__cta", children: [
-        /* @__PURE__ */ jsxs3("button", { className: "btn btn--56", type: "button", "data-entry": "hero", onClick: () => onIntake("hero"), children: [
+      /* @__PURE__ */ jsx5("p", { className: "lead hero__lead", children: "\u041D\u0430\u0437\u043E\u0432\u0438\u0442\u0435 \u0433\u043E\u0440\u043E\u0434: \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043D\u0430\u0439\u0434\u0451\u0442 \u0432\u0430\u0448\u0443 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0443 \u0432\xA02\u0413\u0418\u0421 \u0438\u043B\u0438 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441\xA0\u041A\u0430\u0440\u0442\u0430\u0445, \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u043E\u0442\u0442\u0443\u0434\u0430 \u0443\u0441\u043B\u0443\u0433\u0438, \u0446\u0435\u043D\u044B, \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442 \u0438\xA0\u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u043D\u0438\u0445 \u0441\u0430\u0439\u0442 \u0431\u044C\u044E\u0442\u0438-\u043C\u0430\u0441\u0442\u0435\u0440\u0430." }),
+      /* @__PURE__ */ jsxs5("div", { className: "hero__cta", children: [
+        /* @__PURE__ */ jsxs5("button", { className: "btn btn--56", type: "button", "data-entry": "hero", onClick: () => onIntake("hero"), children: [
           "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430 ",
-          /* @__PURE__ */ jsx3("span", { className: "arw", children: "\u2192" })
+          /* @__PURE__ */ jsx5("span", { className: "arw", children: "\u2192" })
         ] }),
-        /* @__PURE__ */ jsxs3("a", { className: "hero__examples", href: "#examples", children: [
-          /* @__PURE__ */ jsx3("span", { children: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+        /* @__PURE__ */ jsxs5("a", { className: "hero__examples", href: "#examples", children: [
+          /* @__PURE__ */ jsx5("span", { children: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0440\u044B" }),
           " ",
-          /* @__PURE__ */ jsx3("span", { className: "arw", "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx5("span", { className: "arw", "aria-hidden": "true", children: "\u2192" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxs3("p", { className: "hero__proof", children: [
+      /* @__PURE__ */ jsxs5("p", { className: "hero__proof", children: [
         "\u0421\u0442\u0430\u0440\u0442: ",
-        /* @__PURE__ */ jsx3("b", { children: "0\xA0\u20BD" }),
+        /* @__PURE__ */ jsx5("b", { children: "0\xA0\u20BD" }),
         " \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430 \xB7 \u043F\u043B\u0430\u0442\u043D\u044B\u0435 ",
-        /* @__PURE__ */ jsx3("b", { children: "\u043E\u0442\xA0690\xA0\u20BD/\u043C\u0435\u0441" }),
+        /* @__PURE__ */ jsx5("b", { children: "\u043E\u0442\xA0690\xA0\u20BD/\u043C\u0435\u0441" }),
         ", \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u0431\u0435\u0437\xA0\u043A\u0430\u0440\u0442\u044B"
       ] })
     ] }),
-    /* @__PURE__ */ jsx3("figure", { ref: prevRef, className: "hero__preview " + prevCls, "aria-label": "\u041F\u0440\u0438\u043C\u0435\u0440 \u0441\u0430\u0439\u0442\u0430, \u0441\u043E\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u043E\u043C", children: /* @__PURE__ */ jsx3("div", { id: "hero-preview-root", children: /* @__PURE__ */ jsx3(SitePreview, { stretch: true, decorative: true, children: /* @__PURE__ */ jsx3(V5_HeroSite, {}) }) }) })
+    /* @__PURE__ */ jsx5("figure", { ref: prevRef, className: "hero__preview " + prevCls, "aria-label": "\u041F\u0440\u0438\u043C\u0435\u0440 \u0441\u0430\u0439\u0442\u0430, \u0441\u043E\u0431\u0440\u0430\u043D\u043D\u043E\u0433\u043E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u043E\u043C", children: /* @__PURE__ */ jsx5("div", { id: "hero-preview-root", children: /* @__PURE__ */ jsx5(SitePreview, { stretch: true, decorative: true, children: /* @__PURE__ */ jsx5(V5_HeroSite, {}) }) }) })
   ] }) });
 }
 function V5_Story({ onIntake = noop }) {
   const [ref, cls] = useReveal();
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "story", "data-metric": "story_view", "aria-labelledby": "story-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsx3("div", { className: "shead", children: /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "story-h", children: "\u0417\u0430\u043F\u0438\u0441\u044C \u0432\xA0Dikidi, \u0444\u043E\u0442\u043E \u0432\xA02\u0413\u0418\u0421, \u043E\u0442\u0437\u044B\u0432\u044B \u043D\u0430\xA0\u041A\u0430\u0440\u0442\u0430\u0445. \u0412\u043C\u0435\u0441\u0442\u0435 \u043D\u0438\u0433\u0434\u0435" }) }) }),
-    /* @__PURE__ */ jsx3("div", { className: "story", children: /* @__PURE__ */ jsxs3("div", { ref, className: "story__lead " + cls, children: [
-      /* @__PURE__ */ jsx3("p", { className: "lead", children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0432\u0441\u0451 \u0432\xA0\u043E\u0434\u043D\u043E \u043C\u0435\u0441\u0442\u043E. \u0425\u0432\u0430\u0442\u0438\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F \u0432\xA02\u0413\u0418\u0421 \u0438\u043B\u0438 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441\xA0\u041A\u0430\u0440\u0442\u0430\u0445, \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442, \u0441\u043D\u0438\u043C\u043A\u0430 \u043F\u0440\u0430\u0439\u0441\u0430. \u0417\u0430\u043F\u0438\u0441\u044C \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0443\xA0\u0432\u0430\u0441: \u043A\u043D\u043E\u043F\u043A\u0430 \xAB\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F\xBB \u043F\u043E\u0432\u0435\u0434\u0451\u0442 \u0432\xA0\u0432\u0430\u0448 Dikidi \u0438\u043B\u0438 YClients." }),
-      /* @__PURE__ */ jsxs3("div", { className: "src", "aria-label": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438, \u0438\u0437 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u0432\u0438\u0442\u0440\u0438\u043D\u0430", children: [
-        /* @__PURE__ */ jsxs3("span", { className: "src__i", children: [
-          /* @__PURE__ */ jsxs3("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx3("path", { d: "M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" }),
-            /* @__PURE__ */ jsx3("circle", { cx: "12", cy: "10", r: "2.6" })
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "story", "data-metric": "story_view", "aria-labelledby": "story-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsx5("div", { className: "shead", children: /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "story-h", children: "\u0417\u0430\u043F\u0438\u0441\u044C \u0432\xA0Dikidi, \u0444\u043E\u0442\u043E \u0432\xA02\u0413\u0418\u0421, \u043E\u0442\u0437\u044B\u0432\u044B \u043D\u0430\xA0\u041A\u0430\u0440\u0442\u0430\u0445. \u0412\u043C\u0435\u0441\u0442\u0435 \u043D\u0438\u0433\u0434\u0435" }) }) }),
+    /* @__PURE__ */ jsx5("div", { className: "story", children: /* @__PURE__ */ jsxs5("div", { ref, className: "story__lead " + cls, children: [
+      /* @__PURE__ */ jsx5("p", { className: "lead", children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0432\u0441\u0451 \u0432\xA0\u043E\u0434\u043D\u043E \u043C\u0435\u0441\u0442\u043E. \u0425\u0432\u0430\u0442\u0438\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F \u0432\xA02\u0413\u0418\u0421 \u0438\u043B\u0438 \u043D\u0430\xA0\u042F\u043D\u0434\u0435\u043A\u0441\xA0\u041A\u0430\u0440\u0442\u0430\u0445, \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442, \u0441\u043D\u0438\u043C\u043A\u0430 \u043F\u0440\u0430\u0439\u0441\u0430. \u0417\u0430\u043F\u0438\u0441\u044C \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0443\xA0\u0432\u0430\u0441: \u043A\u043D\u043E\u043F\u043A\u0430 \xAB\u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F\xBB \u043F\u043E\u0432\u0435\u0434\u0451\u0442 \u0432\xA0\u0432\u0430\u0448 Dikidi \u0438\u043B\u0438 YClients." }),
+      /* @__PURE__ */ jsxs5("div", { className: "src", "aria-label": "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438, \u0438\u0437 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u0432\u0438\u0442\u0440\u0438\u043D\u0430", children: [
+        /* @__PURE__ */ jsxs5("span", { className: "src__i", children: [
+          /* @__PURE__ */ jsxs5("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
+            /* @__PURE__ */ jsx5("path", { d: "M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z" }),
+            /* @__PURE__ */ jsx5("circle", { cx: "12", cy: "10", r: "2.6" })
           ] }),
           "\u042F.\u041A\u0430\u0440\u0442\u044B"
         ] }),
-        /* @__PURE__ */ jsxs3("span", { className: "src__i", children: [
-          /* @__PURE__ */ jsxs3("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx3("path", { d: "M9 4 3 6.2v14L9 18l6 2.2 6-2.2v-14L15 6.2 9 4z" }),
-            /* @__PURE__ */ jsx3("path", { d: "M9 4v14M15 6.2v14" })
+        /* @__PURE__ */ jsxs5("span", { className: "src__i", children: [
+          /* @__PURE__ */ jsxs5("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
+            /* @__PURE__ */ jsx5("path", { d: "M9 4 3 6.2v14L9 18l6 2.2 6-2.2v-14L15 6.2 9 4z" }),
+            /* @__PURE__ */ jsx5("path", { d: "M9 4v14M15 6.2v14" })
           ] }),
           "2\u0413\u0418\u0421"
         ] }),
-        /* @__PURE__ */ jsxs3("span", { className: "src__i", children: [
-          /* @__PURE__ */ jsxs3("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx3("path", { d: "M22 3 2 11l6 2.3L11 20l3-4.6L20 20z" }),
-            /* @__PURE__ */ jsx3("path", { d: "m8 13.3 9-6.8-6 8" })
+        /* @__PURE__ */ jsxs5("span", { className: "src__i", children: [
+          /* @__PURE__ */ jsxs5("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
+            /* @__PURE__ */ jsx5("path", { d: "M22 3 2 11l6 2.3L11 20l3-4.6L20 20z" }),
+            /* @__PURE__ */ jsx5("path", { d: "m8 13.3 9-6.8-6 8" })
           ] }),
           "Telegram"
         ] }),
-        /* @__PURE__ */ jsxs3("span", { className: "src__i", children: [
-          /* @__PURE__ */ jsxs3("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
-            /* @__PURE__ */ jsx3("rect", { x: "3", y: "4.5", width: "18", height: "15", rx: "0" }),
-            /* @__PURE__ */ jsx3("circle", { cx: "8.5", cy: "10", r: "1.8" }),
-            /* @__PURE__ */ jsx3("path", { d: "m21 16-5-5-8 8" })
+        /* @__PURE__ */ jsxs5("span", { className: "src__i", children: [
+          /* @__PURE__ */ jsxs5("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round", children: [
+            /* @__PURE__ */ jsx5("rect", { x: "3", y: "4.5", width: "18", height: "15", rx: "0" }),
+            /* @__PURE__ */ jsx5("circle", { cx: "8.5", cy: "10", r: "1.8" }),
+            /* @__PURE__ */ jsx5("path", { d: "m21 16-5-5-8 8" })
           ] }),
           "\u0444\u043E\u0442\u043E"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs3("a", { className: "tlink", href: "#start", "data-entry": "story", onClick: (e) => {
+      /* @__PURE__ */ jsxs5("a", { className: "tlink", href: "#start", "data-entry": "story", onClick: (e) => {
         e.preventDefault();
         onIntake("story");
       }, style: { marginTop: 26 }, children: [
-        /* @__PURE__ */ jsx3("span", { className: "u", children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0438\u0437 \u043F\u0440\u043E\u0444\u0438\u043B\u044F" }),
+        /* @__PURE__ */ jsx5("span", { className: "u", children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0438\u0437 \u043F\u0440\u043E\u0444\u0438\u043B\u044F" }),
         " ",
-        /* @__PURE__ */ jsx3("span", { className: "arw", children: "\u2192" })
+        /* @__PURE__ */ jsx5("span", { className: "arw", children: "\u2192" })
       ] })
     ] }) })
   ] }) });
 }
 var STEPS = [
-  ["01", "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442\u0435 \u043F\u0440\u043E\u0444\u0438\u043B\u044C", "2 \u043C\u0438\u043D\u0443\u0442\u044B.", /* @__PURE__ */ jsx3(Fragment2, { children: "\u042F\u043D\u0434\u0435\u043A\u0441 \u041A\u0430\u0440\u0442\u044B, 2\u0413\u0418\u0421, Telegram \u0438\u043B\u0438 \u043F\u0430\u043F\u043A\u0430 \u0441\xA0\u0444\u043E\u0442\u043E. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u0443\u0441\u043B\u0443\u0433\u0438, \u0446\u0435\u043D\u044B, \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0444\u043E\u0442\u043E." })],
-  ["02", "\u0421\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442", "\u0427\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430.", /* @__PURE__ */ jsx3(Fragment2, { children: "\u0422\u0435\u043A\u0441\u0442\u044B \u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C, \u043F\u0430\u043B\u0438\u0442\u0440\u0443 \u0438\xA0\u0448\u0440\u0438\u0444\u0442 \u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E. \u0412\u044B \u0433\u043E\u0432\u043E\u0440\u0438\u0442\u0435 \xAB\u043E\u043A\xBB \u2014 \u0441\u0430\u0439\u0442 \u0432\u044B\u0445\u043E\u0434\u0438\u0442 \u043D\u0430\xA0\u0430\u0434\u0440\u0435\u0441\u0435 \u0432\u0438\u0434\u0430 anna-nails.samosite.online" })],
-  ["03", "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0441\u0430\u043C", "\u0420\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E.", /* @__PURE__ */ jsx3(Fragment2, { children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043E\u0442\u0431\u0438\u0440\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0438\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0432\u044B\u0432\u043E\u0434\u0438\u0442 \u0438\u0445\xA0\u043D\u0430\xA0\u0441\u0430\u0439\u0442, \u0430\xA0\u0435\u0441\u043B\u0438 \u0432\xA0\u043F\u0440\u043E\u0444\u0438\u043B\u0435 \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u0438\u0441\u044C \u0443\u0441\u043B\u0443\u0433\u0438 \u0438\u043B\u0438 \u0446\u0435\u043D\u044B \u2014 \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 \u0438\u0445\xA0\u0443\xA0\u0432\u0430\u0441." })],
-  ["04", "\u041F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0438\u0434\u0435\u0438 \u0440\u043E\u0441\u0442\u0430", "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u0432 9:00.", /* @__PURE__ */ jsx3(Fragment2, { children: "\u0414\u043E\xA0\u0442\u0440\u0451\u0445 \u0438\u0434\u0435\u0439; \u043A\u0430\u0436\u0434\u0430\u044F \u043E\u043F\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u043D\u0430\xA0\u0432\u0430\u0448\u0438 \u0446\u0438\u0444\u0440\u044B \u0438\xA0\u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u043E\u0434\u043D\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435. \u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F \u0432\xA0\u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A." })]
+  ["01", "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442\u0435 \u043F\u0440\u043E\u0444\u0438\u043B\u044C", "2 \u043C\u0438\u043D\u0443\u0442\u044B.", /* @__PURE__ */ jsx5(Fragment3, { children: "\u042F\u043D\u0434\u0435\u043A\u0441 \u041A\u0430\u0440\u0442\u044B, 2\u0413\u0418\u0421, Telegram \u0438\u043B\u0438 \u043F\u0430\u043F\u043A\u0430 \u0441\xA0\u0444\u043E\u0442\u043E. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0437\u0430\u0431\u0435\u0440\u0451\u0442 \u0443\u0441\u043B\u0443\u0433\u0438, \u0446\u0435\u043D\u044B, \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0444\u043E\u0442\u043E." })],
+  ["02", "\u0421\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442", "\u0427\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430.", /* @__PURE__ */ jsx5(Fragment3, { children: "\u0422\u0435\u043A\u0441\u0442\u044B \u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C, \u043F\u0430\u043B\u0438\u0442\u0440\u0443 \u0438\xA0\u0448\u0440\u0438\u0444\u0442 \u0431\u0435\u0440\u0451\u0442 \u0438\u0437\xA0\u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E. \u0412\u044B \u0433\u043E\u0432\u043E\u0440\u0438\u0442\u0435 \xAB\u043E\u043A\xBB \u2014 \u0441\u0430\u0439\u0442 \u0432\u044B\u0445\u043E\u0434\u0438\u0442 \u043D\u0430\xA0\u0430\u0434\u0440\u0435\u0441\u0435 \u0432\u0438\u0434\u0430 anna-nails.samosite.online" })],
+  ["03", "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0441\u0430\u043C", "\u0420\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E.", /* @__PURE__ */ jsx5(Fragment3, { children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043E\u0442\u0431\u0438\u0440\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0438\u0435 \u043E\u0442\u0437\u044B\u0432\u044B \u0438\xA0\u0432\u044B\u0432\u043E\u0434\u0438\u0442 \u0438\u0445\xA0\u043D\u0430\xA0\u0441\u0430\u0439\u0442, \u0430\xA0\u0435\u0441\u043B\u0438 \u0432\xA0\u043F\u0440\u043E\u0444\u0438\u043B\u0435 \u043E\u0431\u043D\u043E\u0432\u0438\u043B\u0438\u0441\u044C \u0443\u0441\u043B\u0443\u0433\u0438 \u0438\u043B\u0438 \u0446\u0435\u043D\u044B \u2014 \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 \u0438\u0445\xA0\u0443\xA0\u0432\u0430\u0441." })],
+  ["04", "\u041F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0438\u0434\u0435\u0438 \u0440\u043E\u0441\u0442\u0430", "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u0432 9:00.", /* @__PURE__ */ jsx5(Fragment3, { children: "\u0414\u043E\xA0\u0442\u0440\u0451\u0445 \u0438\u0434\u0435\u0439; \u043A\u0430\u0436\u0434\u0430\u044F \u043E\u043F\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u043D\u0430\xA0\u0432\u0430\u0448\u0438 \u0446\u0438\u0444\u0440\u044B \u0438\xA0\u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u043E\u0434\u043D\u043E \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435. \u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F \u0432\xA0\u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A." })]
 ];
 function StepRow({ n, t, when, d }) {
   const [ref, cls] = useReveal();
-  return /* @__PURE__ */ jsxs3("div", { ref, className: "steprow " + cls, children: [
-    /* @__PURE__ */ jsx3("span", { className: "steprow__n", children: n }),
-    /* @__PURE__ */ jsxs3("div", { className: "steprow__c", children: [
-      /* @__PURE__ */ jsx3("div", { className: "steprow__head", children: /* @__PURE__ */ jsx3("h3", { className: "steprow__t", children: t }) }),
-      /* @__PURE__ */ jsxs3("p", { className: "steprow__d", children: [
-        /* @__PURE__ */ jsx3("b", { className: "steprow__when", children: when }),
+  return /* @__PURE__ */ jsxs5("div", { ref, className: "steprow " + cls, children: [
+    /* @__PURE__ */ jsx5("span", { className: "steprow__n", children: n }),
+    /* @__PURE__ */ jsxs5("div", { className: "steprow__c", children: [
+      /* @__PURE__ */ jsx5("div", { className: "steprow__head", children: /* @__PURE__ */ jsx5("h3", { className: "steprow__t", children: t }) }),
+      /* @__PURE__ */ jsxs5("p", { className: "steprow__d", children: [
+        /* @__PURE__ */ jsx5("b", { className: "steprow__when", children: when }),
         " ",
         d
       ] })
@@ -1994,93 +2597,93 @@ function StepRow({ n, t, when, d }) {
 }
 function V5_HowItWorks() {
   const [monRef, monCls] = useReveal();
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "how", "aria-labelledby": "how-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsxs3("div", { className: "shead", children: [
-      /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "how-h", children: "\u0421\u043E\u0431\u0440\u0430\u043B\u0438 \u0437\u0430\xA02 \u0447\u0430\u0441\u0430 \u2014 \u0434\u0430\u043B\u044C\u0448\u0435 \u0441\u0430\u0439\u0442 \u0440\u0430\u0437\u0432\u0438\u0432\u0430\u0435\u0442 \u0441\u0435\u0431\u044F \u0441\u0430\u043C" }) }),
-      /* @__PURE__ */ jsx3("p", { className: "small shead__note", children: "\u0427\u0435\u0442\u044B\u0440\u0435 \u0448\u0430\u0433\u0430. \u0412\u044B \u0443\u0447\u0430\u0441\u0442\u0432\u0443\u0435\u0442\u0435 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\xA0\u043F\u0435\u0440\u0432\u043E\u043C" })
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "how", "aria-labelledby": "how-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsxs5("div", { className: "shead", children: [
+      /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "how-h", children: "\u0421\u043E\u0431\u0440\u0430\u043B\u0438 \u0437\u0430\xA02 \u0447\u0430\u0441\u0430 \u2014 \u0434\u0430\u043B\u044C\u0448\u0435 \u0441\u0430\u0439\u0442 \u0440\u0430\u0437\u0432\u0438\u0432\u0430\u0435\u0442 \u0441\u0435\u0431\u044F \u0441\u0430\u043C" }) }),
+      /* @__PURE__ */ jsx5("p", { className: "small shead__note", children: "\u0427\u0435\u0442\u044B\u0440\u0435 \u0448\u0430\u0433\u0430. \u0412\u044B \u0443\u0447\u0430\u0441\u0442\u0432\u0443\u0435\u0442\u0435 \u0442\u043E\u043B\u044C\u043A\u043E \u0432\xA0\u043F\u0435\u0440\u0432\u043E\u043C" })
     ] }),
-    /* @__PURE__ */ jsx3("div", { className: "steps", children: STEPS.map((s) => /* @__PURE__ */ jsx3(StepRow, { n: s[0], t: s[1], when: s[2], d: s[3] }, s[0])) }),
-    /* @__PURE__ */ jsxs3("div", { ref: monRef, className: "how-mon " + monCls, children: [
-      /* @__PURE__ */ jsxs3("div", { className: "how-mon__head", children: [
-        /* @__PURE__ */ jsx3("span", { className: "label", style: { color: "var(--accent)" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440 \xB7 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u0432 9:00" }),
-        /* @__PURE__ */ jsx3("h3", { className: "how-mon__h", children: "\u0422\u0430\u043A \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u043F\u0438\u0441\u044C\u043C\u043E \u0432\xA0\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A" }),
-        /* @__PURE__ */ jsx3("p", { className: "small", children: "\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\xA0\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F, \u043F\u043E\u043A\u0430 \u0432\u044B \u043D\u0435\xA0\u043D\u0430\u0436\u043C\u0451\u0442\u0435 \xAB\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C\xBB. \u041F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u0432\xA0Telegram, MAX, \u043D\u0430\xA0\u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS." })
+    /* @__PURE__ */ jsx5("div", { className: "steps", children: STEPS.map((s) => /* @__PURE__ */ jsx5(StepRow, { n: s[0], t: s[1], when: s[2], d: s[3] }, s[0])) }),
+    /* @__PURE__ */ jsxs5("div", { ref: monRef, className: "how-mon " + monCls, children: [
+      /* @__PURE__ */ jsxs5("div", { className: "how-mon__head", children: [
+        /* @__PURE__ */ jsx5("span", { className: "label", style: { color: "var(--accent)" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440 \xB7 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u0432 9:00" }),
+        /* @__PURE__ */ jsx5("h3", { className: "how-mon__h", children: "\u0422\u0430\u043A \u0432\u044B\u0433\u043B\u044F\u0434\u0438\u0442 \u043F\u0438\u0441\u044C\u043C\u043E \u0432\xA0\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A" }),
+        /* @__PURE__ */ jsx5("p", { className: "small", children: "\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\xA0\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F, \u043F\u043E\u043A\u0430 \u0432\u044B \u043D\u0435\xA0\u043D\u0430\u0436\u043C\u0451\u0442\u0435 \xAB\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C\xBB. \u041F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u0432\xA0Telegram, MAX, \u043D\u0430\xA0\u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS." })
       ] }),
-      /* @__PURE__ */ jsxs3("div", { className: "msg", children: [
-        /* @__PURE__ */ jsxs3("div", { className: "msg__head", children: [
-          /* @__PURE__ */ jsx3("span", { className: "label", children: "\u041F\u043D 09:00 \xB7 \u0418\u0434\u0435\u044F" }),
-          /* @__PURE__ */ jsx3("span", { className: "tag2", children: "1 / 3" })
+      /* @__PURE__ */ jsxs5("div", { className: "msg", children: [
+        /* @__PURE__ */ jsxs5("div", { className: "msg__head", children: [
+          /* @__PURE__ */ jsx5("span", { className: "label", children: "\u041F\u043D 09:00 \xB7 \u0418\u0434\u0435\u044F" }),
+          /* @__PURE__ */ jsx5("span", { className: "tag2", children: "1 / 3" })
         ] }),
-        /* @__PURE__ */ jsx3("p", { className: "msg__t", children: "\xAB\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u043E\u0433\u0442\u0435\u0439\xBB \u0441\u043C\u043E\u0442\u0440\u044F\u0442, \u043D\u043E \u043D\u0435 \u0437\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E\u0442\u0441\u044F" }),
-        /* @__PURE__ */ jsx3("p", { className: "msg__d", children: "\u0423 \u0443\u0441\u043B\u0443\u0433\u0438 \u043D\u0435\u0442 \u0446\u0435\u043D\u044B \u0438 \u0444\u043E\u0442\u043E. \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C 3\u20134 \u0444\u043E\u0442\u043E \u0438 \u0446\u0435\u043D\u0443 \xAB\u043E\u0442 300\xA0\u20BD\xBB?" }),
-        /* @__PURE__ */ jsxs3("div", { className: "msg__act", "aria-hidden": "true", children: [
-          /* @__PURE__ */ jsx3("span", { className: "btn btn--44", style: { cursor: "default" }, children: "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C" }),
-          /* @__PURE__ */ jsx3("span", { className: "tlink glink", children: /* @__PURE__ */ jsx3("span", { className: "u", children: "\u0421\u0432\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442" }) }),
-          /* @__PURE__ */ jsx3("span", { className: "tlink glink", children: /* @__PURE__ */ jsx3("span", { className: "u", children: "\u041D\u0435 \u043D\u0430\u0434\u043E" }) })
+        /* @__PURE__ */ jsx5("p", { className: "msg__t", children: "\xAB\u0414\u0438\u0437\u0430\u0439\u043D \u043D\u043E\u0433\u0442\u0435\u0439\xBB \u0441\u043C\u043E\u0442\u0440\u044F\u0442, \u043D\u043E \u043D\u0435 \u0437\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u044E\u0442\u0441\u044F" }),
+        /* @__PURE__ */ jsx5("p", { className: "msg__d", children: "\u0423 \u0443\u0441\u043B\u0443\u0433\u0438 \u043D\u0435\u0442 \u0446\u0435\u043D\u044B \u0438 \u0444\u043E\u0442\u043E. \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C 3\u20134 \u0444\u043E\u0442\u043E \u0438 \u0446\u0435\u043D\u0443 \xAB\u043E\u0442 300\xA0\u20BD\xBB?" }),
+        /* @__PURE__ */ jsxs5("div", { className: "msg__act", "aria-hidden": "true", children: [
+          /* @__PURE__ */ jsx5("span", { className: "btn btn--44", style: { cursor: "default" }, children: "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C" }),
+          /* @__PURE__ */ jsx5("span", { className: "tlink glink", children: /* @__PURE__ */ jsx5("span", { className: "u", children: "\u0421\u0432\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442" }) }),
+          /* @__PURE__ */ jsx5("span", { className: "tlink glink", children: /* @__PURE__ */ jsx5("span", { className: "u", children: "\u041D\u0435 \u043D\u0430\u0434\u043E" }) })
         ] })
       ] })
     ] })
   ] }) });
 }
 var REVIEWS = [
-  { q: /* @__PURE__ */ jsx3(Fragment2, { children: "\xAB\u0420\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u043B\u0430 \u043F\u0440\u0430\u0439\u0441 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u043E\u043C \u0432\xA0\u0434\u0438\u0440\u0435\u043A\u0442. \u0422\u0435\u043F\u0435\u0440\u044C \u043A\u0438\u0434\u0430\u044E \u0441\u0441\u044B\u043B\u043A\u0443 \u2014 \u0447\u0435\u043B\u043E\u0432\u0435\u043A \u0441\u0430\u043C \u0432\u0441\u0451 \u0432\u0438\u0434\u0438\u0442 \u0438\xA0\u0437\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F\xBB" }), ini: "\u0410", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&q=80", who: "\u0410\u043D\u043D\u0430 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433", site: "anna-nails.samosite.online" },
-  { q: /* @__PURE__ */ jsx3(Fragment2, { children: "\xAB\u0421\u0430\u0439\u0442 \u0441\u043E\u0431\u0440\u0430\u043B\u0441\u044F \u0438\u0437\xA0\u043C\u043E\u0435\u0433\u043E 2\u0413\u0418\u0421, \u043F\u043E\u043A\u0430 \u044F \u0441\u0442\u0440\u0438\u0433 \u043A\u043B\u0438\u0435\u043D\u0442\u0430. \u041F\u043E\u043C\u0435\u043D\u044F\u043B \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E \u0438\xA0\u043D\u0430\u0436\u0430\u043B \xAB\u043E\u043A\xBB\xBB" }), ini: "\u0424", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=96&q=80", who: "\u0424\u0451\u0434\u043E\u0440 \xB7 \u0431\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430", site: "fedor-barber.samosite.online" },
-  { q: /* @__PURE__ */ jsx3(Fragment2, { children: "\xAB\u041F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u0447\u043D\u044B\u0435 \u0438\u0434\u0435\u0438 \u2014 \u043A\u0430\u043A \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440, \u043A\u043E\u0442\u043E\u0440\u043E\u0433\u043E \u0443\xA0\u043C\u0435\u043D\u044F \u043D\u0435\u0442. \u041E\u0434\u043D\u043E \u0434\u0435\u043B\u043E \u0432\xA0\u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u0441\u0434\u0435\u043B\u0430\u043B\u0430 \u0438\xA0\u0437\u0430\u0431\u044B\u043B\u0430\xBB" }), ini: "\u042E", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=96&q=80", who: "\u042E\u043B\u0438\u044F \xB7 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433 \xB7 \u041A\u0430\u0437\u0430\u043D\u044C", site: "yulia-skin.samosite.online" }
+  { q: /* @__PURE__ */ jsx5(Fragment3, { children: "\xAB\u0420\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u044F\u043B\u0430 \u043F\u0440\u0430\u0439\u0441 \u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442\u043E\u043C \u0432\xA0\u0434\u0438\u0440\u0435\u043A\u0442. \u0422\u0435\u043F\u0435\u0440\u044C \u043A\u0438\u0434\u0430\u044E \u0441\u0441\u044B\u043B\u043A\u0443 \u2014 \u0447\u0435\u043B\u043E\u0432\u0435\u043A \u0441\u0430\u043C \u0432\u0441\u0451 \u0432\u0438\u0434\u0438\u0442 \u0438\xA0\u0437\u0430\u043F\u0438\u0441\u044B\u0432\u0430\u0435\u0442\u0441\u044F\xBB" }), ini: "\u0410", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&q=80", who: "\u0410\u043D\u043D\u0430 \xB7 \u043C\u0430\u043D\u0438\u043A\u044E\u0440 \xB7 \u0415\u043A\u0430\u0442\u0435\u0440\u0438\u043D\u0431\u0443\u0440\u0433", site: "anna-nails.samosite.online" },
+  { q: /* @__PURE__ */ jsx5(Fragment3, { children: "\xAB\u0421\u0430\u0439\u0442 \u0441\u043E\u0431\u0440\u0430\u043B\u0441\u044F \u0438\u0437\xA0\u043C\u043E\u0435\u0433\u043E 2\u0413\u0418\u0421, \u043F\u043E\u043A\u0430 \u044F \u0441\u0442\u0440\u0438\u0433 \u043A\u043B\u0438\u0435\u043D\u0442\u0430. \u041F\u043E\u043C\u0435\u043D\u044F\u043B \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E \u0438\xA0\u043D\u0430\u0436\u0430\u043B \xAB\u043E\u043A\xBB\xBB" }), ini: "\u0424", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=96&q=80", who: "\u0424\u0451\u0434\u043E\u0440 \xB7 \u0431\u0430\u0440\u0431\u0435\u0440\u0448\u043E\u043F \xB7 \u041C\u043E\u0441\u043A\u0432\u0430", site: "fedor-barber.samosite.online" },
+  { q: /* @__PURE__ */ jsx5(Fragment3, { children: "\xAB\u041F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u0447\u043D\u044B\u0435 \u0438\u0434\u0435\u0438 \u2014 \u043A\u0430\u043A \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440, \u043A\u043E\u0442\u043E\u0440\u043E\u0433\u043E \u0443\xA0\u043C\u0435\u043D\u044F \u043D\u0435\u0442. \u041E\u0434\u043D\u043E \u0434\u0435\u043B\u043E \u0432\xA0\u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u0441\u0434\u0435\u043B\u0430\u043B\u0430 \u0438\xA0\u0437\u0430\u0431\u044B\u043B\u0430\xBB" }), ini: "\u042E", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=96&q=80", who: "\u042E\u043B\u0438\u044F \xB7 \u043A\u043E\u0441\u043C\u0435\u0442\u043E\u043B\u043E\u0433 \xB7 \u041A\u0430\u0437\u0430\u043D\u044C", site: "yulia-skin.samosite.online" }
 ];
 function ReviewCard({ q, ini, img, who, site }) {
   const [ref, cls] = useReveal();
-  return /* @__PURE__ */ jsxs3("figure", { ref, className: "rev " + cls, children: [
-    /* @__PURE__ */ jsx3("blockquote", { className: "rev__q", children: q }),
-    /* @__PURE__ */ jsxs3("figcaption", { className: "rev__a", children: [
-      /* @__PURE__ */ jsxs3("span", { className: "rev__ph", "aria-hidden": "true", children: [
-        /* @__PURE__ */ jsx3("b", { children: ini }),
-        /* @__PURE__ */ jsx3("img", { src: img, alt: "", loading: "lazy", onError: (e) => e.target.remove() })
+  return /* @__PURE__ */ jsxs5("figure", { ref, className: "rev " + cls, children: [
+    /* @__PURE__ */ jsx5("blockquote", { className: "rev__q", children: q }),
+    /* @__PURE__ */ jsxs5("figcaption", { className: "rev__a", children: [
+      /* @__PURE__ */ jsxs5("span", { className: "rev__ph", "aria-hidden": "true", children: [
+        /* @__PURE__ */ jsx5("b", { children: ini }),
+        /* @__PURE__ */ jsx5("img", { src: img, alt: "", loading: "lazy", onError: (e) => e.target.remove() })
       ] }),
-      /* @__PURE__ */ jsxs3("span", { className: "rev__at", children: [
+      /* @__PURE__ */ jsxs5("span", { className: "rev__at", children: [
         who,
-        /* @__PURE__ */ jsx3("span", { children: site })
+        /* @__PURE__ */ jsx5("span", { children: site })
       ] })
     ] })
   ] });
 }
 function V5_Reviews() {
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "reviews", "data-metric": "reviews_view", "aria-labelledby": "rev-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsx3("div", { className: "shead", children: /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "rev-h", children: "\u041C\u0430\u0441\u0442\u0435\u0440\u0430 \u043E\xA0\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435" }) }) }),
-    /* @__PURE__ */ jsx3("div", { className: "revs", children: REVIEWS.map((r, i) => /* @__PURE__ */ jsx3(ReviewCard, { ...r }, i)) })
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "reviews", "data-metric": "reviews_view", "aria-labelledby": "rev-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsx5("div", { className: "shead", children: /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "rev-h", children: "\u041C\u0430\u0441\u0442\u0435\u0440\u0430 \u043E\xA0\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0435" }) }) }),
+    /* @__PURE__ */ jsx5("div", { className: "revs", children: REVIEWS.map((r, i) => /* @__PURE__ */ jsx5(ReviewCard, { ...r }, i)) })
   ] }) });
 }
 var TIERS = [
-  { entry: "pricing-start", name: "\u0421\u0442\u0430\u0440\u0442", tag: null, sub: /* @__PURE__ */ jsx3(Fragment2, { children: "\u0411\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430" }), price: /* @__PURE__ */ jsx3(Fragment2, { children: "0\xA0\u20BD" }), hi: false, cta: "\u041D\u0430\u0447\u0430\u0442\u044C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", secondary: true, rows: [["\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", "1", false], ["\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435", "1", false], ["\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", "\u043D\u0435\u0442", true], ["\u0418\u0434\u0435\u0439 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C", "\u043D\u0435\u0442", true], ["\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430", "\u043E\u0431\u044B\u0447\u043D\u0430\u044F", false]] },
-  { entry: "pricing-lichny", name: "\u041B\u0438\u0447\u043D\u044B\u0439", tag: "\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439", sub: /* @__PURE__ */ jsx3(Fragment2, { children: "\u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0430 \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u0430" }), price: /* @__PURE__ */ jsxs3(Fragment2, { children: [
+  { entry: "pricing-start", name: "\u0421\u0442\u0430\u0440\u0442", tag: null, sub: /* @__PURE__ */ jsx5(Fragment3, { children: "\u0411\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430" }), price: /* @__PURE__ */ jsx5(Fragment3, { children: "0\xA0\u20BD" }), hi: false, cta: "\u041D\u0430\u0447\u0430\u0442\u044C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", secondary: true, rows: [["\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", "1", false], ["\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435", "1", false], ["\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", "\u043D\u0435\u0442", true], ["\u0418\u0434\u0435\u0439 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C", "\u043D\u0435\u0442", true], ["\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430", "\u043E\u0431\u044B\u0447\u043D\u0430\u044F", false]] },
+  { entry: "pricing-lichny", name: "\u041B\u0438\u0447\u043D\u044B\u0439", tag: "\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439", sub: /* @__PURE__ */ jsx5(Fragment3, { children: "\u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0430 \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u0430" }), price: /* @__PURE__ */ jsxs5(Fragment3, { children: [
     "690\xA0\u20BD",
-    /* @__PURE__ */ jsx3("span", { children: "/\u043C\u0435\u0441" })
+    /* @__PURE__ */ jsx5("span", { children: "/\u043C\u0435\u0441" })
   ] }), hi: true, cta: "\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", secondary: false, rows: [["\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", "1", false], ["\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435", "\u0434\u043E 5", false], ["\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", "\u0434\u0430", false], ["\u0418\u0434\u0435\u0439 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C", "\u0434\u043E 3", false], ["\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430", "\u043E\u0431\u044B\u0447\u043D\u0430\u044F", false]] },
-  { entry: "pricing-biznes", name: "\u0411\u0438\u0437\u043D\u0435\u0441", tag: null, sub: /* @__PURE__ */ jsx3(Fragment2, { children: "\u0414\u043B\u044F \u0441\u0442\u0443\u0434\u0438\u0439 \u0441\xA0\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u0438\u043C\u0438 \u043C\u0430\u0441\u0442\u0435\u0440\u0430\u043C\u0438" }), price: /* @__PURE__ */ jsxs3(Fragment2, { children: [
+  { entry: "pricing-biznes", name: "\u0411\u0438\u0437\u043D\u0435\u0441", tag: null, sub: /* @__PURE__ */ jsx5(Fragment3, { children: "\u0414\u043B\u044F \u0441\u0442\u0443\u0434\u0438\u0439 \u0441\xA0\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u0438\u043C\u0438 \u043C\u0430\u0441\u0442\u0435\u0440\u0430\u043C\u0438" }), price: /* @__PURE__ */ jsxs5(Fragment3, { children: [
     "1 490\xA0\u20BD",
-    /* @__PURE__ */ jsx3("span", { children: "/\u043C\u0435\u0441" })
+    /* @__PURE__ */ jsx5("span", { children: "/\u043C\u0435\u0441" })
   ] }), hi: false, cta: "\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E", secondary: true, rows: [["\u0421\u0430\u0439\u0442\u043E\u0432 \u0432 \u0430\u043A\u043A\u0430\u0443\u043D\u0442\u0435", "3", false], ["\u0421\u0442\u0440\u0430\u043D\u0438\u0446 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435", "\u0434\u043E 15", false], ["\u0421\u0432\u043E\u0439 \u0434\u043E\u043C\u0435\u043D", "\u0434\u0430", false], ["\u0418\u0434\u0435\u0439 \u043F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C", "\u0434\u043E 10", false], ["\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430", "\u043F\u0440\u0438\u043E\u0440\u0438\u0442\u0435\u0442\u043D\u0430\u044F", false]] }
 ];
 function V5_Pricing({ onIntake = noop }) {
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "tariffs", "data-metric": "pricing_view", "aria-labelledby": "tf-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsxs3("div", { className: "shead", children: [
-      /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "tf-h", children: "\u041E\u043A\u0443\u043F\u0438\u0442\u0441\u044F \u0441\xA01 \u0437\u0430\u043A\u0430\u0437\u0430" }) }),
-      /* @__PURE__ */ jsx3("p", { className: "small shead__note", children: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0447\u0435\u043A \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430 \u2014 \u043E\u043A\u043E\u043B\u043E 2\xA0400\xA0\u20BD: \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u0435\u043D\u0442 \u0441\xA0\u0441\u0430\u0439\u0442\u0430 \u043E\u043A\u0443\u043F\u0430\u0435\u0442 \xAB\u041B\u0438\u0447\u043D\u044B\u0439\xBB \u043D\u0430\xA0\u0442\u0440\u0438 \u043C\u0435\u0441\u044F\u0446\u0430 \u0432\u043F\u0435\u0440\u0451\u0434. \u0421\u043E\xA0\xAB\u0421\u0442\u0430\u0440\u0442\u0430\xBB \u043C\u043E\u0436\u043D\u043E \u043F\u0435\u0440\u0435\u0439\u0442\u0438 \u043D\u0430\xA0\u043F\u043B\u0430\u0442\u043D\u044B\u0439: \u0441\u0430\u0439\u0442 \u0438\xA0\u0434\u0430\u043D\u043D\u044B\u0435 \u043E\u0441\u0442\u0430\u043D\u0443\u0442\u0441\u044F" })
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "tariffs", "data-metric": "pricing_view", "aria-labelledby": "tf-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsxs5("div", { className: "shead", children: [
+      /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "tf-h", children: "\u041E\u043A\u0443\u043F\u0438\u0442\u0441\u044F \u0441\xA01 \u0437\u0430\u043A\u0430\u0437\u0430" }) }),
+      /* @__PURE__ */ jsx5("p", { className: "small shead__note", children: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0447\u0435\u043A \u043C\u0430\u043D\u0438\u043A\u044E\u0440\u0430 \u2014 \u043E\u043A\u043E\u043B\u043E 2\xA0400\xA0\u20BD: \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u0435\u043D\u0442 \u0441\xA0\u0441\u0430\u0439\u0442\u0430 \u043E\u043A\u0443\u043F\u0430\u0435\u0442 \xAB\u041B\u0438\u0447\u043D\u044B\u0439\xBB \u043D\u0430\xA0\u0442\u0440\u0438 \u043C\u0435\u0441\u044F\u0446\u0430 \u0432\u043F\u0435\u0440\u0451\u0434. \u0421\u043E\xA0\xAB\u0421\u0442\u0430\u0440\u0442\u0430\xBB \u043C\u043E\u0436\u043D\u043E \u043F\u0435\u0440\u0435\u0439\u0442\u0438 \u043D\u0430\xA0\u043F\u043B\u0430\u0442\u043D\u044B\u0439: \u0441\u0430\u0439\u0442 \u0438\xA0\u0434\u0430\u043D\u043D\u044B\u0435 \u043E\u0441\u0442\u0430\u043D\u0443\u0442\u0441\u044F" })
     ] }),
-    /* @__PURE__ */ jsx3("div", { className: "tcards", "aria-label": "\u0422\u0430\u0440\u0438\u0444\u044B", children: TIERS.map((t) => /* @__PURE__ */ jsxs3("div", { className: "tcard" + (t.hi ? " tcard--hi" : ""), "data-pricing-tier": t.entry.replace("pricing-", ""), children: [
-      /* @__PURE__ */ jsxs3("div", { className: "tcard__head", children: [
-        /* @__PURE__ */ jsx3("span", { className: "pt-name", children: t.name }),
-        t.tag ? /* @__PURE__ */ jsx3("span", { className: "pt-tag", children: t.tag }) : null,
-        /* @__PURE__ */ jsx3("span", { className: "pt-sub", children: t.sub }),
-        /* @__PURE__ */ jsx3("span", { className: "pt-price", children: t.price })
+    /* @__PURE__ */ jsx5("div", { className: "tcards", "aria-label": "\u0422\u0430\u0440\u0438\u0444\u044B", children: TIERS.map((t) => /* @__PURE__ */ jsxs5("div", { className: "tcard" + (t.hi ? " tcard--hi" : ""), "data-pricing-tier": t.entry.replace("pricing-", ""), children: [
+      /* @__PURE__ */ jsxs5("div", { className: "tcard__head", children: [
+        /* @__PURE__ */ jsx5("span", { className: "pt-name", children: t.name }),
+        t.tag ? /* @__PURE__ */ jsx5("span", { className: "pt-tag", children: t.tag }) : null,
+        /* @__PURE__ */ jsx5("span", { className: "pt-sub", children: t.sub }),
+        /* @__PURE__ */ jsx5("span", { className: "pt-price", children: t.price })
       ] }),
-      /* @__PURE__ */ jsx3("ul", { className: "tcard__list", children: t.rows.map((r, i) => /* @__PURE__ */ jsxs3("li", { children: [
-        /* @__PURE__ */ jsx3("span", { children: r[0] }),
-        /* @__PURE__ */ jsx3("b", { className: r[2] ? "no" : void 0, children: r[1] })
+      /* @__PURE__ */ jsx5("ul", { className: "tcard__list", children: t.rows.map((r, i) => /* @__PURE__ */ jsxs5("li", { children: [
+        /* @__PURE__ */ jsx5("span", { children: r[0] }),
+        /* @__PURE__ */ jsx5("b", { className: r[2] ? "no" : void 0, children: r[1] })
       ] }, i)) }),
-      /* @__PURE__ */ jsx3("button", { className: "btn btn--44 btn--block" + (t.secondary ? " btn--sec" : ""), type: "button", "data-entry": t.entry, onClick: () => onIntake(t.entry), children: t.cta })
+      /* @__PURE__ */ jsx5("button", { className: "btn btn--44 btn--block" + (t.secondary ? " btn--sec" : ""), type: "button", "data-entry": t.entry, onClick: () => onIntake(t.entry), children: t.cta })
     ] }, t.entry)) }),
-    /* @__PURE__ */ jsxs3("p", { className: "tcommon", children: [
-      /* @__PURE__ */ jsx3("b", { children: "\u0412\u043E \u0432\u0441\u0435\u0445 \u0442\u0430\u0440\u0438\u0444\u0430\u0445:" }),
+    /* @__PURE__ */ jsxs5("p", { className: "tcommon", children: [
+      /* @__PURE__ */ jsx5("b", { children: "\u0412\u043E \u0432\u0441\u0435\u0445 \u0442\u0430\u0440\u0438\u0444\u0430\u0445:" }),
       " \u0430\u0434\u0440\u0435\u0441 \u043D\u0430\xA0samosite.online, \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0440\u0430\u0437 \u0432\xA0\u043D\u0435\u0434\u0435\u043B\u044E, \u044D\u043A\u0441\u043F\u043E\u0440\u0442 \u0441\u0430\u0439\u0442\u0430 \u0430\u0440\u0445\u0438\u0432\u043E\u043C, \u0443\u0434\u0430\u043B\u0435\u043D\u0438\u0435 \u0434\u0430\u043D\u043D\u044B\u0445 \u043F\u043E\xA0\u043E\u0434\u043D\u043E\u043C\u0443 \u043D\u0430\u0436\u0430\u0442\u0438\u044E."
     ] })
   ] }) });
@@ -2092,15 +2695,15 @@ var HONEST = [
 ];
 function HonestRow({ t, d }) {
   const [ref, cls] = useReveal();
-  return /* @__PURE__ */ jsxs3("div", { ref, className: "hrow " + cls, children: [
-    /* @__PURE__ */ jsx3("p", { className: "hrow__t", children: t }),
-    /* @__PURE__ */ jsx3("p", { className: "hrow__d", children: d })
+  return /* @__PURE__ */ jsxs5("div", { ref, className: "hrow " + cls, children: [
+    /* @__PURE__ */ jsx5("p", { className: "hrow__t", children: t }),
+    /* @__PURE__ */ jsx5("p", { className: "hrow__d", children: d })
   ] });
 }
 function V5_Honest() {
-  return /* @__PURE__ */ jsx3("section", { className: "section", "aria-labelledby": "honest-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsx3("div", { className: "shead", children: /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "honest-h", children: "\u0421\u0430\u0439\u0442 \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0432\u0430\u0448\u0438\u043C" }) }) }),
-    /* @__PURE__ */ jsx3("div", { className: "honest", children: HONEST.map((h, i) => /* @__PURE__ */ jsx3(HonestRow, { t: h[0], d: h[1] }, i)) })
+  return /* @__PURE__ */ jsx5("section", { className: "section", "aria-labelledby": "honest-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsx5("div", { className: "shead", children: /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "honest-h", children: "\u0421\u0430\u0439\u0442 \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0432\u0430\u0448\u0438\u043C" }) }) }),
+    /* @__PURE__ */ jsx5("div", { className: "honest", children: HONEST.map((h, i) => /* @__PURE__ */ jsx5(HonestRow, { t: h[0], d: h[1] }, i)) })
   ] }) });
 }
 var FAQ_ITEMS = [
@@ -2116,97 +2719,97 @@ var FAQ_ITEMS = [
 ];
 function V5_Faq({ items = FAQ_ITEMS, onFaqOpen = () => {
 } }) {
-  const [open, setOpen] = useState(items.length ? items[0].id : null);
+  const [open, setOpen] = useState3(items.length ? items[0].id : null);
   const toggle = (it) => {
     const next = open === it.id ? null : it.id;
     setOpen(next);
     if (next === it.id) onFaqOpen(it.id);
   };
-  return /* @__PURE__ */ jsx3("section", { className: "section", id: "faq", "aria-labelledby": "faq-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsx3("div", { className: "shead", children: /* @__PURE__ */ jsx3("div", { className: "shead__l", children: /* @__PURE__ */ jsx3("h2", { className: "h2", id: "faq-h", children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }) }),
-    /* @__PURE__ */ jsxs3("div", { className: "bento12", children: [
-      /* @__PURE__ */ jsxs3("p", { className: "lead faq-short", children: [
+  return /* @__PURE__ */ jsx5("section", { className: "section", id: "faq", "aria-labelledby": "faq-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsx5("div", { className: "shead", children: /* @__PURE__ */ jsx5("div", { className: "shead__l", children: /* @__PURE__ */ jsx5("h2", { className: "h2", id: "faq-h", children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }) }),
+    /* @__PURE__ */ jsxs5("div", { className: "bento12", children: [
+      /* @__PURE__ */ jsxs5("p", { className: "lead faq-short", children: [
         "\u041D\u0435\xA0\u043D\u0430\u0448\u043B\u0438 \u043E\u0442\u0432\u0435\u0442 \u2014 ",
-        /* @__PURE__ */ jsx3("a", { className: "tlink", href: "https://t.me/samosite", target: "_blank", rel: "noopener", children: "\u043D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043D\u0430\u043C \u0432 Telegram" }),
+        /* @__PURE__ */ jsx5("a", { className: "tlink", href: "https://t.me/samosite", target: "_blank", rel: "noopener", children: "\u043D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043D\u0430\u043C \u0432 Telegram" }),
         ", \u043E\u0442\u0432\u0435\u0447\u0430\u0435\u043C \u0432\xA0\u0442\u0435\u0447\u0435\u043D\u0438\u0435 \u0434\u043D\u044F."
       ] }),
-      /* @__PURE__ */ jsx3("div", { className: "faq", children: items.map((it) => {
+      /* @__PURE__ */ jsx5("div", { className: "faq", children: items.map((it) => {
         const isOpen = open === it.id;
-        return /* @__PURE__ */ jsxs3("div", { className: "acc" + (isOpen ? " is-open" : ""), "data-faq": true, "data-faq-item": it.id, children: [
-          /* @__PURE__ */ jsxs3("button", { className: "acc__btn", "aria-expanded": isOpen, onClick: () => toggle(it), children: [
-            /* @__PURE__ */ jsx3("span", { children: it.q }),
-            /* @__PURE__ */ jsx3("span", { className: "acc__plus", "aria-hidden": "true", children: "+" })
+        return /* @__PURE__ */ jsxs5("div", { className: "acc" + (isOpen ? " is-open" : ""), "data-faq": true, "data-faq-item": it.id, children: [
+          /* @__PURE__ */ jsxs5("button", { className: "acc__btn", "aria-expanded": isOpen, onClick: () => toggle(it), children: [
+            /* @__PURE__ */ jsx5("span", { children: it.q }),
+            /* @__PURE__ */ jsx5("span", { className: "acc__plus", "aria-hidden": "true", children: "+" })
           ] }),
-          /* @__PURE__ */ jsx3("div", { className: "acc__panel", children: /* @__PURE__ */ jsx3("div", { children: /* @__PURE__ */ jsx3("p", { className: "acc__a", children: it.a }) }) })
+          /* @__PURE__ */ jsx5("div", { className: "acc__panel", children: /* @__PURE__ */ jsx5("div", { children: /* @__PURE__ */ jsx5("p", { className: "acc__a", children: it.a }) }) })
         ] }, it.id);
       }) })
     ] })
   ] }) });
 }
 function V5_FinalCta({ onIntake = noop }) {
-  return /* @__PURE__ */ jsx3("section", { className: "final", id: "start", "aria-labelledby": "final-h", children: /* @__PURE__ */ jsxs3("div", { className: "wrap", children: [
-    /* @__PURE__ */ jsxs3("h2", { className: "h2 final__h", id: "final-h", style: { marginTop: 16 }, children: [
+  return /* @__PURE__ */ jsx5("section", { className: "final", id: "start", "aria-labelledby": "final-h", children: /* @__PURE__ */ jsxs5("div", { className: "wrap", children: [
+    /* @__PURE__ */ jsxs5("h2", { className: "h2 final__h", id: "final-h", style: { marginTop: 16 }, children: [
       "\u041D\u0430\u0437\u043E\u0432\u0438\u0442\u0435 \u0441\u0432\u043E\u0451 \u0434\u0435\u043B\u043E \u0438\xA0\u0433\u043E\u0440\u043E\u0434 \u2014 ",
-      /* @__PURE__ */ jsx3("span", { className: "accent", children: "\u0447\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430" }),
+      /* @__PURE__ */ jsx5("span", { className: "accent", children: "\u0447\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430" }),
       " \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0441\u0430\u0439\u0442"
     ] }),
-    /* @__PURE__ */ jsx3("p", { className: "final__p", children: "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u044B\u0439 \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041F\u043B\u0430\u0442\u043D\u044B\u0435 \u043E\u0442\xA0690\xA0\u20BD/\u043C\u0435\u0441, \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0430 \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u0430." }),
-    /* @__PURE__ */ jsxs3("div", { className: "final__cta", children: [
-      /* @__PURE__ */ jsxs3("button", { className: "btn btn--56", type: "button", "data-entry": "final", onClick: () => onIntake("final"), children: [
+    /* @__PURE__ */ jsx5("p", { className: "final__p", children: "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u044B\u0439 \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041F\u043B\u0430\u0442\u043D\u044B\u0435 \u043E\u0442\xA0690\xA0\u20BD/\u043C\u0435\u0441, \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0430 \u043D\u0435\xA0\u043D\u0443\u0436\u043D\u0430." }),
+    /* @__PURE__ */ jsxs5("div", { className: "final__cta", children: [
+      /* @__PURE__ */ jsxs5("button", { className: "btn btn--56", type: "button", "data-entry": "final", onClick: () => onIntake("final"), children: [
         "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430 ",
-        /* @__PURE__ */ jsx3("span", { className: "arw", children: "\u2192" })
+        /* @__PURE__ */ jsx5("span", { className: "arw", children: "\u2192" })
       ] }),
-      /* @__PURE__ */ jsxs3("a", { className: "tlink", href: "https://t.me/samosite", target: "_blank", rel: "noopener", children: [
-        /* @__PURE__ */ jsx3("span", { className: "u", children: "\u041D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u043D\u0430\u043C \u0432 Telegram" }),
+      /* @__PURE__ */ jsxs5("a", { className: "tlink", href: "https://t.me/samosite", target: "_blank", rel: "noopener", children: [
+        /* @__PURE__ */ jsx5("span", { className: "u", children: "\u041D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u043D\u0430\u043C \u0432 Telegram" }),
         " ",
-        /* @__PURE__ */ jsx3("span", { className: "arw", children: "\u2192" })
+        /* @__PURE__ */ jsx5("span", { className: "arw", children: "\u2192" })
       ] })
     ] })
   ] }) });
 }
 function V5_Footer({ links }) {
   const L = links || { politika: "docs/politika.html", oferta: "docs/oferta.html", support: "https://t.me/samosite" };
-  return /* @__PURE__ */ jsx3("footer", { className: "ft", children: /* @__PURE__ */ jsxs3("div", { className: "wrap ft__in", children: [
-    /* @__PURE__ */ jsxs3("span", { className: "ft__logo", children: [
+  return /* @__PURE__ */ jsx5("footer", { className: "ft", children: /* @__PURE__ */ jsxs5("div", { className: "wrap ft__in", children: [
+    /* @__PURE__ */ jsxs5("span", { className: "ft__logo", children: [
       "\u0421\u0430\u043C\u043E",
-      /* @__PURE__ */ jsx3("span", { style: { color: VT.accentOnDark }, children: "\u0441\u0430\u0439\u0442" })
+      /* @__PURE__ */ jsx5("span", { style: { color: VT.accentOnDark }, children: "\u0441\u0430\u0439\u0442" })
     ] }),
-    /* @__PURE__ */ jsx3("span", { className: "ft__meta", children: "\xA9 2026 \xB7 samosite.online \xB7 \u0418\u041F \u0418\u0432\u0430\u043D\u043E\u0432\u0430 \u0410. \u0410. \xB7 \u0418\u041D\u041D 660000000000 \xB7 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432 \u0420\u0424" }),
-    /* @__PURE__ */ jsxs3("nav", { className: "ft__links", "aria-label": "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", children: [
-      /* @__PURE__ */ jsx3("a", { href: L.politika, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445" }),
-      /* @__PURE__ */ jsx3("a", { href: L.oferta, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
-      /* @__PURE__ */ jsx3("a", { href: L.support, target: "_blank", rel: "noopener", children: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430" })
+    /* @__PURE__ */ jsx5("span", { className: "ft__meta", children: "\xA9 2026 \xB7 samosite.online \xB7 \u0418\u041F \u0418\u0432\u0430\u043D\u043E\u0432\u0430 \u0410. \u0410. \xB7 \u0418\u041D\u041D 660000000000 \xB7 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432 \u0420\u0424" }),
+    /* @__PURE__ */ jsxs5("nav", { className: "ft__links", "aria-label": "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", children: [
+      /* @__PURE__ */ jsx5("a", { href: L.politika, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u0434\u0430\u043D\u043D\u044B\u0445" }),
+      /* @__PURE__ */ jsx5("a", { href: L.oferta, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
+      /* @__PURE__ */ jsx5("a", { href: L.support, target: "_blank", rel: "noopener", children: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430" })
     ] })
   ] }) });
 }
 function V5_Page({ onIntake = noop, onFaqOpen = () => {
 }, anchors, withStyles = true }) {
-  return /* @__PURE__ */ jsxs3("div", { className: "v5 js", children: [
-    withStyles && /* @__PURE__ */ jsx3(V5_Styles, {}),
-    /* @__PURE__ */ jsx3(V5_Header, { anchors, onIntake }),
-    /* @__PURE__ */ jsxs3("main", { id: "top", children: [
-      /* @__PURE__ */ jsx3(V5_Hero, { onIntake }),
-      /* @__PURE__ */ jsx3(V5_Story, { onIntake }),
-      /* @__PURE__ */ jsx3(V5_Examples, { layout: "carousel", onIntake }),
-      /* @__PURE__ */ jsx3(V5_HowItWorks, {}),
-      /* @__PURE__ */ jsx3(V5_Reviews, {}),
-      /* @__PURE__ */ jsx3(V5_Pricing, { onIntake }),
-      /* @__PURE__ */ jsx3(V5_Honest, {}),
-      /* @__PURE__ */ jsx3(V5_Faq, { onFaqOpen })
+  return /* @__PURE__ */ jsxs5("div", { className: "v5 js", children: [
+    withStyles && /* @__PURE__ */ jsx5(V5_Styles, {}),
+    /* @__PURE__ */ jsx5(V5_Header, { anchors, onIntake }),
+    /* @__PURE__ */ jsxs5("main", { id: "top", children: [
+      /* @__PURE__ */ jsx5(V5_Hero, { onIntake }),
+      /* @__PURE__ */ jsx5(V5_Story, { onIntake }),
+      /* @__PURE__ */ jsx5(V5_Examples, { layout: "carousel", onIntake }),
+      /* @__PURE__ */ jsx5(V5_HowItWorks, {}),
+      /* @__PURE__ */ jsx5(V5_Reviews, {}),
+      /* @__PURE__ */ jsx5(V5_Pricing, { onIntake }),
+      /* @__PURE__ */ jsx5(V5_Honest, {}),
+      /* @__PURE__ */ jsx5(V5_Faq, { onFaqOpen })
     ] }),
-    /* @__PURE__ */ jsx3(V5_FinalCta, { onIntake }),
-    /* @__PURE__ */ jsx3(V5_Footer, {})
+    /* @__PURE__ */ jsx5(V5_FinalCta, { onIntake }),
+    /* @__PURE__ */ jsx5(V5_Footer, {})
   ] });
 }
 
 // src/landing/index.tsx
-import { Fragment as Fragment3, jsx as jsx4, jsxs as jsxs4 } from "react/jsx-runtime";
+import { Fragment as Fragment4, jsx as jsx6, jsxs as jsxs6 } from "react/jsx-runtime";
 function sectionPad(mobile) {
   const v = mobile ? 20 : 80;
   return { paddingLeft: v, paddingRight: v, boxSizing: "border-box" };
 }
 function H2({ children, mobile, align = "center" }) {
-  return /* @__PURE__ */ jsx4("h2", { style: {
+  return /* @__PURE__ */ jsx6("h2", { style: {
     fontSize: mobile ? 30 : 52,
     lineHeight: mobile ? 1.1 : 1.05,
     fontWeight: 700,
@@ -2217,7 +2820,7 @@ function H2({ children, mobile, align = "center" }) {
   }, children });
 }
 function Sub({ children, mobile, align = "center", maxWidth = 720 }) {
-  return /* @__PURE__ */ jsx4("p", { style: {
+  return /* @__PURE__ */ jsx6("p", { style: {
     fontSize: mobile ? 16 : 19,
     lineHeight: 1.45,
     color: VT.inkSoft,
@@ -2231,79 +2834,79 @@ var SOURCE_ICONS = [
   {
     id: "yandex",
     name: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
     ] })
   },
   {
     id: "tg",
     name: "Telegram",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
-      /* @__PURE__ */ jsx4("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
+      /* @__PURE__ */ jsx6("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
     ] })
   },
   {
     id: "2gis",
     name: "2\u0413\u0418\u0421",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
-      /* @__PURE__ */ jsx4("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
+      /* @__PURE__ */ jsx6("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
     ] })
   },
   {
     id: "avito",
     name: "Avito",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
-      /* @__PURE__ */ jsx4("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
+      /* @__PURE__ */ jsx6("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
     ] })
   },
   {
     id: "ig",
     name: "Instagram",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsxs4("linearGradient", { id: "iggr3a", x1: "0", y1: "1", x2: "1", y2: "0", children: [
-        /* @__PURE__ */ jsx4("stop", { offset: "0%", stopColor: "#FEDA77" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "30%", stopColor: "#F58529" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "60%", stopColor: "#DD2A7B" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "100%", stopColor: "#8134AF" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("defs", { children: /* @__PURE__ */ jsxs6("linearGradient", { id: "iggr3a", x1: "0", y1: "1", x2: "1", y2: "0", children: [
+        /* @__PURE__ */ jsx6("stop", { offset: "0%", stopColor: "#FEDA77" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "30%", stopColor: "#F58529" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "60%", stopColor: "#DD2A7B" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "100%", stopColor: "#8134AF" })
       ] }) }),
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggr3a)" }),
-      /* @__PURE__ */ jsx4("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggr3a)" }),
+      /* @__PURE__ */ jsx6("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
     ] })
   },
   {
     id: "site",
     name: "\u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx4("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx4("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx6("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx6("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
     ] })
   },
   {
     id: "card",
     name: "\u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430",
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
-      /* @__PURE__ */ jsx4("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
-      /* @__PURE__ */ jsx4("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "22", height: "22", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
+      /* @__PURE__ */ jsx6("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
+      /* @__PURE__ */ jsx6("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
     ] })
   }
 ];
 function HeroBlock({ mobile }) {
-  return /* @__PURE__ */ jsx4("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsx6("section", { id: "hero", style: { ...sectionPad(mobile), paddingTop: mobile ? 28 : 56, position: "relative", zIndex: 1 }, children: /* @__PURE__ */ jsxs6("div", { style: {
     maxWidth: mobile ? "100%" : 1200,
     margin: "0 auto",
     textAlign: mobile ? "left" : "center"
   }, children: [
-    /* @__PURE__ */ jsxs4("h1", { style: {
+    /* @__PURE__ */ jsxs6("h1", { style: {
       fontSize: mobile ? "clamp(32px, 8.8vw, 44px)" : 76,
       lineHeight: mobile ? 1.06 : 1.04,
       fontWeight: 700,
@@ -2313,9 +2916,9 @@ function HeroBlock({ mobile }) {
     }, children: [
       "\u0421\u043E\u0431\u0435\u0440\u0451\u043C \u0437\u0430",
       " ",
-      /* @__PURE__ */ jsxs4("span", { style: { position: "relative", color: VT.accent, whiteSpace: "nowrap" }, children: [
+      /* @__PURE__ */ jsxs6("span", { style: { position: "relative", color: VT.accent, whiteSpace: "nowrap" }, children: [
         "2 \u0447\u0430\u0441\u0430",
-        !mobile && /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", style: {
+        !mobile && /* @__PURE__ */ jsx6("span", { "aria-hidden": "true", style: {
           position: "absolute",
           left: 2,
           right: 6,
@@ -2329,12 +2932,12 @@ function HeroBlock({ mobile }) {
       ] }),
       " ",
       "\u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043B\u043E\u0432\u0438\u0442 \u0437\u0430\u044F\u0432\u043A\u0438.",
-      /* @__PURE__ */ jsx4("br", {}),
+      /* @__PURE__ */ jsx6("br", {}),
       "\u0414\u0430\u043B\u044C\u0448\u0435\xA0\u043E\u043D ",
-      /* @__PURE__ */ jsx4("span", { style: { color: VT.accent }, children: "\u0441\u0430\u043C \u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u043B\u0443\u0447\u0448\u0435" }),
+      /* @__PURE__ */ jsx6("span", { style: { color: VT.accent }, children: "\u0441\u0430\u043C \u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u043B\u0443\u0447\u0448\u0435" }),
       " \u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E."
     ] }),
-    /* @__PURE__ */ jsx4("p", { style: {
+    /* @__PURE__ */ jsx6("p", { style: {
       fontSize: mobile ? 16.5 : 20,
       lineHeight: 1.5,
       color: VT.inkSoft,
@@ -2342,7 +2945,7 @@ function HeroBlock({ mobile }) {
       maxWidth: mobile ? "100%" : 860,
       textWrap: "pretty"
     }, children: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0433\u0434\u0435 \u0432\u044B \u0432\u0435\u0434\u0451\u0442\u0435 \u0434\u0435\u043B\u0430: \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram, 2\u0413\u0418\u0421, Avito \u0438\u043B\u0438 Instagram. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442, \u0441\u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0440\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442." }),
-    /* @__PURE__ */ jsx4("p", { style: {
+    /* @__PURE__ */ jsx6("p", { style: {
       fontSize: mobile ? 16.5 : 20,
       lineHeight: 1.5,
       color: VT.inkSoft,
@@ -2350,7 +2953,7 @@ function HeroBlock({ mobile }) {
       maxWidth: mobile ? "100%" : 860,
       textWrap: "balance"
     }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u0439\u0442 \u0441\u043E \u0432\u0441\u0435\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0444\u043E\u0442\u043E. \u0422\u0435\u043A\u0441\u0442\u044B \u043D\u0430\u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C. \u041A\u043E\u0433\u0434\u0430 \u043F\u0440\u0438\u0434\u0443\u0442 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438, \u043D\u0430\u0447\u043D\u0451\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C, \u0447\u0442\u043E \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0434\u0438 \u043D\u043E\u0432\u044B\u0445 \u0437\u0430\u044F\u0432\u043E\u043A." }),
-    /* @__PURE__ */ jsxs4("div", { className: "ss-hero-pill", style: {
+    /* @__PURE__ */ jsxs6("div", { className: "ss-hero-pill", style: {
       marginTop: mobile ? 22 : 32,
       display: "flex",
       flexDirection: mobile ? "column" : "row",
@@ -2365,7 +2968,7 @@ function HeroBlock({ mobile }) {
       boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 12px 32px -16px rgba(120,60,30,0.18)",
       alignItems: mobile ? "stretch" : "center"
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         flex: 1,
         display: "flex",
         alignItems: "center",
@@ -2373,8 +2976,8 @@ function HeroBlock({ mobile }) {
         padding: mobile ? "12px 14px" : "0 18px",
         minWidth: 0
       }, children: [
-        /* @__PURE__ */ jsx4(IconLink, {}),
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx6(IconLink, {}),
+        /* @__PURE__ */ jsx6("span", { style: {
           color: VT.inkFaint,
           fontSize: mobile ? 15 : 16,
           overflow: "hidden",
@@ -2382,12 +2985,12 @@ function HeroBlock({ mobile }) {
           whiteSpace: "nowrap"
         }, children: "\u0412\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0443 \u0438\u043B\u0438 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043E\u0442\u043E" })
       ] }),
-      /* @__PURE__ */ jsx4(Btn, { style: {
+      /* @__PURE__ */ jsx6(Btn, { style: {
         padding: mobile ? "14px 20px" : "14px 26px",
         borderRadius: mobile ? 10 : 999
-      }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" })
+      }, iconRight: /* @__PURE__ */ jsx6(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       marginTop: mobile ? 10 : 12,
       textAlign: mobile ? "left" : "center",
       fontFamily: VT.font.mono,
@@ -2397,13 +3000,13 @@ function HeroBlock({ mobile }) {
       lineHeight: 1.45
     }, children: [
       "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041F\u043B\u0430\u0442\u043D\u044B\u0435 ",
-      /* @__PURE__ */ jsx4("b", { style: { color: VT.accent }, children: "\u043E\u0442 690 \u20BD/\u043C\u0435\u0441" }),
+      /* @__PURE__ */ jsx6("b", { style: { color: VT.accent }, children: "\u043E\u0442 690 \u20BD/\u043C\u0435\u0441" }),
       " \xB7 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430 \u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E"
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 14 : 18,
       textAlign: mobile ? "left" : "center"
-    }, children: /* @__PURE__ */ jsxs4("a", { href: "#examples", style: {
+    }, children: /* @__PURE__ */ jsxs6("a", { href: "#examples", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 6,
@@ -2414,31 +3017,31 @@ function HeroBlock({ mobile }) {
       textDecorationColor: VT.line
     }, children: [
       "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u043F\u0440\u0438\u043C\u0435\u0440\u044B",
-      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2193" })
+      /* @__PURE__ */ jsx6("span", { "aria-hidden": "true", children: "\u2193" })
     ] }) }),
-    /* @__PURE__ */ jsx4(ChipStrip, { mobile })
+    /* @__PURE__ */ jsx6(ChipStrip, { mobile })
   ] }) });
 }
 function ChipStrip({ mobile = false, label = "\u0421\u041E\u0411\u0418\u0420\u0410\u0415\u041C \u0418\u0417", items = SOURCE_ICONS, align }) {
   const a = align ?? (mobile ? "start" : "center");
   const alignItems = a === "center" ? "center" : "flex-start";
   const justify = alignItems === "center" ? "center" : "flex-start";
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     marginTop: mobile ? 22 : 36,
     display: "flex",
     flexDirection: "column",
     gap: 10,
     alignItems
   }, children: [
-    label && /* @__PURE__ */ jsx4("div", { style: {
+    label && /* @__PURE__ */ jsx6("div", { style: {
       fontFamily: VT.font.mono,
       fontSize: 11,
       letterSpacing: "0.12em",
       color: VT.inkFaint,
       fontWeight: 600
     }, children: label }),
-    /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: justify }, children: items.map(
-      (s) => /* @__PURE__ */ jsxs4("span", { style: {
+    /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, justifyContent: justify }, children: items.map(
+      (s) => /* @__PURE__ */ jsxs6("span", { style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -2460,9 +3063,9 @@ function ExamplesSection({ mobile }) {
   const showcase = samplePresets || [];
   const MiniChrome2 = MiniChrome;
   const ExampleCard = ({ item }) => {
-    const [hover, setHover] = React3.useState(false);
-    return /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: "column", width: "100%", minWidth: 0 }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+    const [hover, setHover] = React5.useState(false);
+    return /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", width: "100%", minWidth: 0 }, children: [
+      /* @__PURE__ */ jsxs6("div", { style: {
         display: "flex",
         alignItems: "center",
         gap: 10,
@@ -2470,8 +3073,8 @@ function ExamplesSection({ mobile }) {
         minHeight: 28,
         minWidth: 0
       }, children: [
-        /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent, flex: "0 0 auto" } }),
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx6("span", { style: { width: 8, height: 8, borderRadius: "50%", background: VT.accent, flex: "0 0 auto" } }),
+        /* @__PURE__ */ jsx6("span", { style: {
           fontSize: mobile ? 14 : 15,
           fontWeight: 600,
           letterSpacing: "-0.015em",
@@ -2481,7 +3084,7 @@ function ExamplesSection({ mobile }) {
           minWidth: 0
         }, children: item.tagline })
       ] }),
-      /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsx6(
         "div",
         {
           onMouseEnter: () => !mobile && setHover(true),
@@ -2494,24 +3097,24 @@ function ExamplesSection({ mobile }) {
             boxShadow: hover ? "0 1px 2px rgba(40,28,18,0.04), 0 10px 24px -14px rgba(120,70,40,0.20), 0 4px 10px -8px rgba(40,28,18,0.08)" : "0 1px 2px rgba(40,28,18,0.03), 0 6px 16px -12px rgba(120,70,40,0.14), 0 2px 6px -6px rgba(40,28,18,0.05)",
             transition: "transform .22s cubic-bezier(0.22,0.61,0.36,1), box-shadow .22s ease"
           },
-          children: /* @__PURE__ */ jsx4(MiniChrome2, { host: item.content.meta.host, children: /* @__PURE__ */ jsx4(PresetRenderer, { preset: item.preset, content: item.content }) })
+          children: /* @__PURE__ */ jsx6(MiniChrome2, { host: item.content.meta.host, children: /* @__PURE__ */ jsx6(PresetRenderer, { preset: item.preset, content: item.content }) })
         }
       )
     ] });
   };
-  return /* @__PURE__ */ jsxs4("section", { id: "examples", style: { ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs6("section", { id: "examples", style: { ...sectionPad(mobile), marginTop: mobile ? 56 : 110, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6(H2, { mobile, children: [
         "\u0412\u043E\u0442 \u043A\u0430\u043A \u0431\u0443\u0434\u0435\u0442",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0432\u044B\u0433\u043B\u044F\u0434\u0435\u0442\u044C \u0432\u0430\u0448 \u0441\u0430\u0439\u0442"
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, children: "\u0421\u0442\u0438\u043B\u0438\u0441\u0442\u0438\u043A \u043C\u043D\u043E\u0433\u043E \u2014 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u0442 \u0435\u0451 \u043F\u043E\u0434 \u043D\u0438\u0448\u0443 \u0438 \u043A\u043E\u043D\u0442\u0435\u043D\u0442. \u0415\u0441\u043B\u0438 \u043D\u0435 \u0437\u0430\u0439\u0434\u0451\u0442 \u2014 \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438." })
+      /* @__PURE__ */ jsx6(Sub, { mobile, children: "\u0421\u0442\u0438\u043B\u0438\u0441\u0442\u0438\u043A \u043C\u043D\u043E\u0433\u043E \u2014 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u0442 \u0435\u0451 \u043F\u043E\u0434 \u043D\u0438\u0448\u0443 \u0438 \u043A\u043E\u043D\u0442\u0435\u043D\u0442. \u0415\u0441\u043B\u0438 \u043D\u0435 \u0437\u0430\u0439\u0434\u0451\u0442 \u2014 \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438." })
     ] }),
-    /* @__PURE__ */ jsx4(ExamplesCarousel, { mobile, items: showcase, renderCard: (item) => /* @__PURE__ */ jsx4(ExampleCard, { item }) }),
-    /* @__PURE__ */ jsx4(HowItPicks, { mobile }),
-    /* @__PURE__ */ jsxs4("div", { style: { marginTop: mobile ? 28 : 44, textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+    /* @__PURE__ */ jsx6(ExamplesCarousel, { mobile, items: showcase, renderCard: (item) => /* @__PURE__ */ jsx6(ExampleCard, { item }) }),
+    /* @__PURE__ */ jsx6(HowItPicks, { mobile }),
+    /* @__PURE__ */ jsxs6("div", { style: { marginTop: mobile ? 28 : 44, textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx6("a", { href: "#hero", style: {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
@@ -2527,8 +3130,8 @@ function ExamplesSection({ mobile }) {
         boxShadow: "0 12px 28px -12px rgba(120,60,30,0.45)",
         maxWidth: "100%",
         boxSizing: "border-box"
-      }, children: /* @__PURE__ */ jsx4("span", { children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439\xA0\u0436\u0435 \u0438\u0437\xA0\u043C\u043E\u0435\u0433\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\xA0\u2192" }) }),
-      /* @__PURE__ */ jsx4("div", { style: {
+      }, children: /* @__PURE__ */ jsx6("span", { children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0442\u0430\u043A\u043E\u0439\xA0\u0436\u0435 \u0438\u0437\xA0\u043C\u043E\u0435\u0433\u043E \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430\xA0\u2192" }) }),
+      /* @__PURE__ */ jsx6("div", { style: {
         marginTop: 14,
         fontFamily: VT.font.mono,
         fontSize: 12,
@@ -2539,13 +3142,13 @@ function ExamplesSection({ mobile }) {
   ] });
 }
 function ExamplesCarousel({ mobile, items, renderCard }) {
-  const scrollerRef = React3.useRef(null);
-  const [atStart, setAtStart] = React3.useState(true);
-  const [atEnd, setAtEnd] = React3.useState(false);
-  const [activeIdx, setActiveIdx] = React3.useState(0);
-  const [hoverPrev, setHoverPrev] = React3.useState(false);
-  const [hoverNext, setHoverNext] = React3.useState(false);
-  const updateBounds = React3.useCallback(() => {
+  const scrollerRef = React5.useRef(null);
+  const [atStart, setAtStart] = React5.useState(true);
+  const [atEnd, setAtEnd] = React5.useState(false);
+  const [activeIdx, setActiveIdx] = React5.useState(0);
+  const [hoverPrev, setHoverPrev] = React5.useState(false);
+  const [hoverNext, setHoverNext] = React5.useState(false);
+  const updateBounds = React5.useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
     const maxScroll = el.scrollWidth - el.clientWidth;
@@ -2557,7 +3160,7 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
     const maxIdx = (el.firstElementChild && el.firstElementChild.childElementCount || 1) - 1;
     setActiveIdx(Math.max(0, Math.min(idx, maxIdx)));
   }, []);
-  React3.useEffect(() => {
+  React5.useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
     updateBounds();
@@ -2597,7 +3200,7 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
     fontFamily: "inherit",
     zIndex: 5
   });
-  const ArrowIcon = ({ direction }) => /* @__PURE__ */ jsxs4(
+  const ArrowIcon = ({ direction }) => /* @__PURE__ */ jsxs6(
     "svg",
     {
       width: "22",
@@ -2610,21 +3213,21 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
       strokeLinejoin: "round",
       style: { transform: direction === -1 ? "scaleX(-1)" : void 0 },
       children: [
-        /* @__PURE__ */ jsx4("path", { d: "M5 12 H19" }),
-        /* @__PURE__ */ jsx4("path", { d: "M13 6 L19 12 L13 18" })
+        /* @__PURE__ */ jsx6("path", { d: "M5 12 H19" }),
+        /* @__PURE__ */ jsx6("path", { d: "M13 6 L19 12 L13 18" })
       ]
     }
   );
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     position: "relative",
     marginTop: mobile ? 28 : 56,
     maxWidth: mobile ? "none" : 1200,
     marginLeft: mobile ? void 0 : "auto",
     marginRight: mobile ? void 0 : "auto"
   }, children: [
-    mobile && items.length > 1 && /* @__PURE__ */ jsx4("div", { style: { display: "flex", justifyContent: "center", gap: 7, marginBottom: 14 }, children: items.map((_, i) => {
+    mobile && items.length > 1 && /* @__PURE__ */ jsx6("div", { style: { display: "flex", justifyContent: "center", gap: 7, marginBottom: 14 }, children: items.map((_, i) => {
       const active = i === activeIdx;
-      return /* @__PURE__ */ jsx4(
+      return /* @__PURE__ */ jsx6(
         "button",
         {
           type: "button",
@@ -2649,7 +3252,7 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
         i
       );
     }) }),
-    /* @__PURE__ */ jsxs4(
+    /* @__PURE__ */ jsxs6(
       "div",
       {
         ref: scrollerRef,
@@ -2669,14 +3272,14 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
           transition: "mask-image .25s ease, -webkit-mask-image .25s ease"
         },
         children: [
-          /* @__PURE__ */ jsx4("style", { children: `.ss-preset-carousel::-webkit-scrollbar{display:none}` }),
-          /* @__PURE__ */ jsx4("div", { className: "ss-preset-carousel", style: {
+          /* @__PURE__ */ jsx6("style", { children: `.ss-preset-carousel::-webkit-scrollbar{display:none}` }),
+          /* @__PURE__ */ jsx6("div", { className: "ss-preset-carousel", style: {
             display: "flex",
             gap: mobile ? 12 : 24,
             padding: mobile ? "0 56px 16px 16px" : "0 32px 16px",
             alignItems: "flex-start"
           }, children: items.map(
-            (item, i) => /* @__PURE__ */ jsx4("div", { style: {
+            (item, i) => /* @__PURE__ */ jsx6("div", { style: {
               flex: mobile ? "0 0 94%" : "0 0 calc((100% - 80px) / 3)",
               scrollSnapAlign: "start",
               display: "flex",
@@ -2686,8 +3289,8 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
         ]
       }
     ),
-    !mobile && /* @__PURE__ */ jsxs4(Fragment3, { children: [
-      /* @__PURE__ */ jsx4(
+    !mobile && /* @__PURE__ */ jsxs6(Fragment4, { children: [
+      /* @__PURE__ */ jsx6(
         "button",
         {
           type: "button",
@@ -2697,10 +3300,10 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
           onMouseEnter: () => setHoverPrev(true),
           onMouseLeave: () => setHoverPrev(false),
           style: arrowStyle(atStart, hoverPrev, -1),
-          children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: -1 })
+          children: /* @__PURE__ */ jsx6(ArrowIcon, { direction: -1 })
         }
       ),
-      /* @__PURE__ */ jsx4(
+      /* @__PURE__ */ jsx6(
         "button",
         {
           type: "button",
@@ -2710,7 +3313,7 @@ function ExamplesCarousel({ mobile, items, renderCard }) {
           onMouseEnter: () => setHoverNext(true),
           onMouseLeave: () => setHoverNext(false),
           style: arrowStyle(atEnd, hoverNext, 1),
-          children: /* @__PURE__ */ jsx4(ArrowIcon, { direction: 1 })
+          children: /* @__PURE__ */ jsx6(ArrowIcon, { direction: 1 })
         }
       )
     ] })
@@ -2756,7 +3359,7 @@ function HowItPicks({ mobile }) {
     { n: "03", title: "\u0420\u0430\u0441\u043A\u043B\u0430\u0434\u043A\u0430 \u043F\u043E\u0434 \u043A\u043E\u043D\u0442\u0435\u043D\u0442", body: "\u0426\u0438\u0444\u0440\u044B \u2014 \u0432 \u043F\u043B\u0438\u0442\u043A\u0438, \u043C\u0435\u043D\u044E \u2014 \u0432 \u0436\u0443\u0440\u043D\u0430\u043B, \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u0430 \u2014 \u0432 \u043A\u0440\u0443\u043F\u043D\u044B\u0435 \u0444\u043E\u0442\u043E." },
     { n: "04", title: "\u041D\u0435 \u0437\u0430\u0448\u043B\u043E \u2014 \u043A\u043B\u0438\u043A", body: "\u0411\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430 \u0433\u043E\u0442\u043E\u0432\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439, \u0442\u0435\u043A\u0441\u0442\u044B \u0438 \u0444\u043E\u0442\u043E \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F \u043D\u0430 \u043C\u0435\u0441\u0442\u0430\u0445." }
   ];
-  const ExtractionCard = ({ ex }) => /* @__PURE__ */ jsxs4("div", { style: {
+  const ExtractionCard = ({ ex }) => /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.md,
@@ -2764,15 +3367,15 @@ function HowItPicks({ mobile }) {
     display: "flex",
     flexDirection: "column"
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { position: "relative", height: mobile ? 96 : 88, overflow: "hidden" }, children: [
-      /* @__PURE__ */ jsx4("img", { src: ex.photo, alt: "", loading: "lazy", style: {
+    /* @__PURE__ */ jsxs6("div", { style: { position: "relative", height: mobile ? 96 : 88, overflow: "hidden" }, children: [
+      /* @__PURE__ */ jsx6("img", { src: ex.photo, alt: "", loading: "lazy", style: {
         width: "100%",
         height: "100%",
         objectFit: "cover",
         display: "block",
         filter: ex.filter
       } }),
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: {
         position: "absolute",
         top: 8,
         left: 8,
@@ -2788,24 +3391,24 @@ function HowItPicks({ mobile }) {
         backdropFilter: "blur(4px)"
       }, children: ex.niche })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { padding: "10px 12px 12px" }, children: [
-      /* @__PURE__ */ jsx4("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.06em", color: VT.inkFaint, fontWeight: 600, marginBottom: 6 }, children: "\u0426\u0412\u0415\u0422\u0410 \u0418\u0417 \u0424\u041E\u0422\u041E" }),
-      /* @__PURE__ */ jsx4("div", { style: { display: "flex", borderRadius: 7, overflow: "hidden", boxShadow: `0 1px 2px rgba(40,28,18,0.10)` }, children: ex.palette.map(
-        (c, i) => /* @__PURE__ */ jsx4("span", { style: { flex: 1, height: 22, background: c } }, i)
+    /* @__PURE__ */ jsxs6("div", { style: { padding: "10px 12px 12px" }, children: [
+      /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 9, letterSpacing: "0.06em", color: VT.inkFaint, fontWeight: 600, marginBottom: 6 }, children: "\u0426\u0412\u0415\u0422\u0410 \u0418\u0417 \u0424\u041E\u0422\u041E" }),
+      /* @__PURE__ */ jsx6("div", { style: { display: "flex", borderRadius: 7, overflow: "hidden", boxShadow: `0 1px 2px rgba(40,28,18,0.10)` }, children: ex.palette.map(
+        (c, i) => /* @__PURE__ */ jsx6("span", { style: { flex: 1, height: 22, background: c } }, i)
       ) }),
-      /* @__PURE__ */ jsxs4("div", { style: { marginTop: 9, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }, children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { marginTop: 9, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: {
           fontFamily: ex.fontCss,
           fontStyle: ex.italic ? "italic" : "normal",
           fontSize: 20,
           color: VT.ink,
           lineHeight: 1
         }, children: "\u0410\u0430 \u0411\u0431" }),
-        /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 9.5, color: VT.inkSoft, textAlign: "right" }, children: ex.fontName })
+        /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 9.5, color: VT.inkSoft, textAlign: "right" }, children: ex.fontName })
       ] })
     ] })
   ] });
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     marginTop: 0,
     maxWidth: 1200,
     marginLeft: "auto",
@@ -2815,7 +3418,7 @@ function HowItPicks({ mobile }) {
     border: `1px solid ${VT.line}`,
     borderRadius: VT.r.lg
   }, children: [
-    /* @__PURE__ */ jsxs4("h3", { style: {
+    /* @__PURE__ */ jsxs6("h3", { style: {
       fontSize: mobile ? 23 : 30,
       fontWeight: 800,
       lineHeight: 1.08,
@@ -2829,9 +3432,9 @@ function HowItPicks({ mobile }) {
       textWrap: "balance"
     }, children: [
       "\u0414\u0438\u0437\u0430\u0439\u043D \u0441\u043E\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432\u200A\u2014\u200A",
-      /* @__PURE__ */ jsx4("span", { style: { color: VT.accent }, children: "\u0430 \u043D\u0435 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430" })
+      /* @__PURE__ */ jsx6("span", { style: { color: VT.accent }, children: "\u0430 \u043D\u0435 \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430" })
     ] }),
-    /* @__PURE__ */ jsx4("p", { style: {
+    /* @__PURE__ */ jsx6("p", { style: {
       fontSize: mobile ? 13.5 : 15,
       lineHeight: 1.45,
       color: VT.inkSoft,
@@ -2842,12 +3445,12 @@ function HowItPicks({ mobile }) {
       textAlign: "center",
       textWrap: "pretty"
     }, children: "\u041F\u0430\u043B\u0438\u0442\u0440\u0443 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0432\u044B\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442 \u0438\u0437 \u0432\u0430\u0448\u0438\u0445 \u0444\u043E\u0442\u043E, \u0430 \u0448\u0440\u0438\u0444\u0442 \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u0435\u0442 \u043F\u043E\u0434 \u0442\u043E\u043D. \u041F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u0430\u0439\u0442 \u043A\u043E\u0444\u0435\u0439\u043D\u0438 \u043D\u0435 \u043F\u043E\u0445\u043E\u0436 \u043D\u0430 \u0441\u0430\u0439\u0442 \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441\u0430." }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(3, 1fr)",
       gap: mobile ? 8 : 12
-    }, children: extractions.map((ex, i) => /* @__PURE__ */ jsx4(ExtractionCard, { ex }, i)) }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    }, children: extractions.map((ex, i) => /* @__PURE__ */ jsx6(ExtractionCard, { ex }, i)) }),
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 16 : 20,
       paddingTop: mobile ? 16 : 20,
       borderTop: `1px solid ${VT.line}`,
@@ -2855,12 +3458,12 @@ function HowItPicks({ mobile }) {
       gridTemplateColumns: mobile ? "1fr 1fr" : "repeat(4, 1fr)",
       gap: mobile ? 12 : 18
     }, children: mechanics.map(
-      (m, i) => /* @__PURE__ */ jsxs4("div", { style: { display: "flex", flexDirection: "column", gap: 4 }, children: [
-        /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", gap: 6 }, children: [
-          /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, fontWeight: 700, color: VT.accent }, children: m.n }),
-          /* @__PURE__ */ jsx4("div", { style: { fontSize: mobile ? 13.5 : 14.5, fontWeight: 700, letterSpacing: "-0.015em", color: VT.ink, lineHeight: 1.2 }, children: m.title })
+      (m, i) => /* @__PURE__ */ jsxs6("div", { style: { display: "flex", flexDirection: "column", gap: 4 }, children: [
+        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", gap: 6 }, children: [
+          /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11, fontWeight: 700, color: VT.accent }, children: m.n }),
+          /* @__PURE__ */ jsx6("div", { style: { fontSize: mobile ? 13.5 : 14.5, fontWeight: 700, letterSpacing: "-0.015em", color: VT.ink, lineHeight: 1.2 }, children: m.title })
         ] }),
-        /* @__PURE__ */ jsx4("p", { style: { fontSize: mobile ? 12 : 12.5, lineHeight: 1.45, color: VT.inkSoft, margin: 0 }, children: m.body })
+        /* @__PURE__ */ jsx6("p", { style: { fontSize: mobile ? 12 : 12.5, lineHeight: 1.45, color: VT.inkSoft, margin: 0 }, children: m.body })
       ] }, i)
     ) })
   ] });
@@ -2872,9 +3475,9 @@ var CYCLE_STEPS = [
     cadence: "\u043E\u0434\u0438\u043D \u0440\u0430\u0437",
     body: "\u041F\u043E\u043A\u0430\u0436\u0435\u0442\u0435 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u2014 \u0437\u0430 2 \u0447\u0430\u0441\u0430 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043E\u0431\u0435\u0440\u0451\u0442 \u0441\u0430\u0439\u0442 \u0441\u043E \u0432\u0441\u0435\u043C\u0438 \u0443\u0441\u043B\u0443\u0433\u0430\u043C\u0438, \u0446\u0435\u043D\u0430\u043C\u0438, \u043E\u0442\u0437\u044B\u0432\u0430\u043C\u0438 \u0438 \u0433\u0430\u043B\u0435\u0440\u0435\u0435\u0439 \u0440\u0430\u0431\u043E\u0442. \u0422\u0435\u043A\u0441\u0442\u044B \u043F\u0438\u0448\u0435\u0442 \u0441\u0430\u043C.",
     palette: { bg: "oklch(0.95 0.05 40)", ink: "oklch(0.32 0.14 35)", dec: "oklch(0.86 0.10 40)" },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3" }),
-      /* @__PURE__ */ jsx4("path", { d: "M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M28 36 a8 8 0 0 1 0 -11 l6 -6 a8 8 0 0 1 11 11 l-3 3" }),
+      /* @__PURE__ */ jsx6("path", { d: "M36 28 a8 8 0 0 1 0 11 l-6 6 a8 8 0 0 1 -11 -11 l3 -3" })
     ] })
   },
   {
@@ -2883,11 +3486,11 @@ var CYCLE_STEPS = [
     cadence: "\u043A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E",
     body: "\u0420\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E \u0437\u0430\u0433\u043B\u044F\u0434\u044B\u0432\u0430\u0435\u0442 \u0432 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A. \u041D\u043E\u0432\u044B\u0435 \u0446\u0435\u043D\u044B, \u043F\u043E\u0441\u0442\u044B \u0438\u043B\u0438 \u0444\u043E\u0442\u043E \u2014 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0451\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442. \u041E\u0442 \u0432\u0430\u0441 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0443\u0436\u043D\u043E.",
     palette: { bg: "oklch(0.94 0.06 95)", ink: "oklch(0.36 0.12 85)", dec: "oklch(0.84 0.12 90)" },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M14 32 a18 18 0 0 1 30 -13" }),
-      /* @__PURE__ */ jsx4("path", { d: "M44 12 L44 22 L34 22" }),
-      /* @__PURE__ */ jsx4("path", { d: "M50 32 a18 18 0 0 1 -30 13" }),
-      /* @__PURE__ */ jsx4("path", { d: "M20 52 L20 42 L30 42" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M14 32 a18 18 0 0 1 30 -13" }),
+      /* @__PURE__ */ jsx6("path", { d: "M44 12 L44 22 L34 22" }),
+      /* @__PURE__ */ jsx6("path", { d: "M50 32 a18 18 0 0 1 -30 13" }),
+      /* @__PURE__ */ jsx6("path", { d: "M20 52 L20 42 L30 42" })
     ] })
   },
   {
@@ -2896,11 +3499,11 @@ var CYCLE_STEPS = [
     cadence: "\u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C",
     body: "\u0421\u043C\u043E\u0442\u0440\u0438\u0442, \u043A\u0430\u043A \u0432\u0435\u0434\u0443\u0442 \u0441\u0435\u0431\u044F \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0438: \u043A\u0442\u043E \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B, \u0434\u043E \u0447\u0435\u0433\u043E \u0434\u043E\u043B\u0438\u0441\u0442\u0430\u043B, \u0433\u0434\u0435 \u0437\u0430\u043A\u0440\u044B\u043B \u0432\u043A\u043B\u0430\u0434\u043A\u0443. \u0421\u0447\u0438\u0442\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u0438 \u043E\u0442\u043A\u0443\u0434\u0430 \u043E\u043D\u0438 \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442.",
     palette: { bg: "oklch(0.94 0.05 200)", ink: "oklch(0.34 0.10 220)", dec: "oklch(0.82 0.08 210)" },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M4 32 C 14 18, 50 18, 60 32" }),
-      /* @__PURE__ */ jsx4("path", { d: "M4 32 C 14 46, 50 46, 60 32" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "32", cy: "32", r: "8" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "32", cy: "32", r: "3", fill: "currentColor" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M4 32 C 14 18, 50 18, 60 32" }),
+      /* @__PURE__ */ jsx6("path", { d: "M4 32 C 14 46, 50 46, 60 32" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "32", cy: "32", r: "8" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "32", cy: "32", r: "3", fill: "currentColor" })
     ] })
   },
   {
@@ -2909,15 +3512,15 @@ var CYCLE_STEPS = [
     cadence: "\u043A\u0430\u0436\u0434\u044B\u0439 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A",
     body: "\u041A\u043E\u0433\u0434\u0430 \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430\u0431\u0440\u0430\u043B\u043E\u0441\u044C \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E \u0434\u0430\u043D\u043D\u044B\u0445, \u0432 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0434\u043E \u0442\u0440\u0451\u0445 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0439, \u043A\u0430\u043A \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0441\u0438\u043B\u044C\u043D\u0435\u0435. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C, \u043F\u0435\u0440\u0435\u0434\u0435\u043B\u0430\u0442\u044C \u0438\u043D\u0430\u0447\u0435 \u0438\u043B\u0438 \u043E\u0442\u043A\u0430\u0437\u0430\u0442\u044C\u0441\u044F \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B.",
     palette: { bg: "oklch(0.94 0.05 145)", ink: "oklch(0.32 0.11 145)", dec: "oklch(0.82 0.08 145)" },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M12 14 L52 14 L52 44 L36 44 L28 54 L28 44 L12 44 Z" }),
-      /* @__PURE__ */ jsx4("path", { d: "M22 26 L42 26 M22 34 L36 34" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "36", height: "36", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 14 L52 14 L52 44 L36 44 L28 54 L28 44 L12 44 Z" }),
+      /* @__PURE__ */ jsx6("path", { d: "M22 26 L42 26 M22 34 L36 34" })
     ] })
   }
 ];
 function CycleCard({ step, size = 240 }) {
   const p = step.palette;
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     width: size,
     padding: 18,
     boxSizing: "border-box",
@@ -2930,8 +3533,8 @@ function CycleCard({ step, size = 240 }) {
     display: "flex",
     flexDirection: "column"
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 48,
         height: 48,
         borderRadius: "50%",
@@ -2943,8 +3546,8 @@ function CycleCard({ step, size = 240 }) {
         color: p.ink,
         flex: "0 0 auto"
       }, children: step.icon }),
-      /* @__PURE__ */ jsxs4("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx6("div", { style: {
           fontFamily: VT.font.mono,
           fontSize: 11,
           letterSpacing: "0.08em",
@@ -2952,10 +3555,10 @@ function CycleCard({ step, size = 240 }) {
           opacity: 0.7,
           fontWeight: 600
         }, children: step.n }),
-        /* @__PURE__ */ jsx4("div", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
+        /* @__PURE__ */ jsx6("div", { style: { fontSize: 19, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: 6,
       fontFamily: VT.font.mono,
       fontSize: 11,
@@ -2964,7 +3567,7 @@ function CycleCard({ step, size = 240 }) {
       opacity: 0.75,
       fontStyle: "italic"
     }, children: step.cadence }),
-    /* @__PURE__ */ jsx4("p", { style: {
+    /* @__PURE__ */ jsx6("p", { style: {
       margin: "10px 0 0",
       fontSize: 13.5,
       lineHeight: 1.4,
@@ -2980,17 +3583,17 @@ function DesktopCycle() {
   const arcH = 100;
   const H = cardH + arcH + 60;
   const cx = (i) => i * (cardW + gap) + cardW / 2;
-  return /* @__PURE__ */ jsxs4("div", { style: { position: "relative", width: "100%", maxWidth: W, margin: "0 auto" }, children: [
-    /* @__PURE__ */ jsx4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { position: "relative", width: "100%", maxWidth: W, margin: "0 auto" }, children: [
+    /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: `repeat(4, ${cardW}px)`,
       columnGap: gap,
       alignItems: "stretch",
       position: "relative",
       zIndex: 1
-    }, children: CYCLE_STEPS.map((step, i) => /* @__PURE__ */ jsxs4("div", { style: { position: "relative", display: "flex" }, children: [
-      /* @__PURE__ */ jsx4(CycleCard, { step, size: cardW }),
-      i < 3 && /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+    }, children: CYCLE_STEPS.map((step, i) => /* @__PURE__ */ jsxs6("div", { style: { position: "relative", display: "flex" }, children: [
+      /* @__PURE__ */ jsx6(CycleCard, { step, size: cardW }),
+      i < 3 && /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
         position: "absolute",
         top: 56,
         right: -gap,
@@ -3000,8 +3603,8 @@ function DesktopCycle() {
         alignItems: "center",
         justifyContent: "center",
         color: VT.accent
-      }, children: /* @__PURE__ */ jsxs4("svg", { width: gap, height: "24", viewBox: `0 0 ${gap} 24`, fill: "none", children: [
-        /* @__PURE__ */ jsx4(
+      }, children: /* @__PURE__ */ jsxs6("svg", { width: gap, height: "24", viewBox: `0 0 ${gap} 24`, fill: "none", children: [
+        /* @__PURE__ */ jsx6(
           "path",
           {
             d: `M 2 12 L ${gap - 8} 12`,
@@ -3010,7 +3613,7 @@ function DesktopCycle() {
             strokeLinecap: "round"
           }
         ),
-        /* @__PURE__ */ jsx4(
+        /* @__PURE__ */ jsx6(
           "path",
           {
             d: `M ${gap - 12} 6 L ${gap - 4} 12 L ${gap - 12} 18`,
@@ -3023,7 +3626,7 @@ function DesktopCycle() {
         )
       ] }) })
     ] }, step.n)) }),
-    /* @__PURE__ */ jsxs4(
+    /* @__PURE__ */ jsxs6(
       "svg",
       {
         width: "100%",
@@ -3031,7 +3634,7 @@ function DesktopCycle() {
         preserveAspectRatio: "none",
         style: { display: "block", marginTop: -8, height: arcH + 60 },
         children: [
-          /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsx4(
+          /* @__PURE__ */ jsx6("defs", { children: /* @__PURE__ */ jsx6(
             "marker",
             {
               id: "v3retArr",
@@ -3041,10 +3644,10 @@ function DesktopCycle() {
               markerWidth: "7",
               markerHeight: "7",
               orient: "auto-start-reverse",
-              children: /* @__PURE__ */ jsx4("path", { d: "M0 0 L10 5 L0 10 z", fill: VT.accent })
+              children: /* @__PURE__ */ jsx6("path", { d: "M0 0 L10 5 L0 10 z", fill: VT.accent })
             }
           ) }),
-          /* @__PURE__ */ jsx4(
+          /* @__PURE__ */ jsx6(
             "path",
             {
               d: `M ${cx(3)} 8 C ${cx(3)} ${arcH + 30}, ${cx(1)} ${arcH + 30}, ${cx(1)} 8`,
@@ -3055,7 +3658,7 @@ function DesktopCycle() {
               markerEnd: "url(#v3retArr)"
             }
           ),
-          /* @__PURE__ */ jsx4("foreignObject", { x: (cx(1) + cx(3)) / 2 - 130, y: arcH + 6, width: "260", height: "40", children: /* @__PURE__ */ jsx4("div", { xmlns: "http://www.w3.org/1999/xhtml", style: {
+          /* @__PURE__ */ jsx6("foreignObject", { x: (cx(1) + cx(3)) / 2 - 130, y: arcH + 6, width: "260", height: "40", children: /* @__PURE__ */ jsx6("div", { xmlns: "http://www.w3.org/1999/xhtml", style: {
             textAlign: "center",
             fontFamily: VT.font.mono,
             fontSize: 12,
@@ -3069,11 +3672,11 @@ function DesktopCycle() {
   ] });
 }
 function MobileCycle() {
-  return /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: CYCLE_STEPS.map((step, idx) => {
+  return /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 14 }, children: CYCLE_STEPS.map((step, idx) => {
     const p = step.palette;
     const isLast = idx === CYCLE_STEPS.length - 1;
-    return /* @__PURE__ */ jsxs4("div", { children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+    return /* @__PURE__ */ jsxs6("div", { children: [
+      /* @__PURE__ */ jsxs6("div", { style: {
         background: p.bg,
         border: `2px solid ${p.ink}`,
         borderRadius: 18,
@@ -3081,8 +3684,8 @@ function MobileCycle() {
         padding: 18,
         color: p.ink
       }, children: [
-        /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
-          /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 12 }, children: [
+          /* @__PURE__ */ jsx6("span", { style: {
             width: 48,
             height: 48,
             borderRadius: "50%",
@@ -3094,8 +3697,8 @@ function MobileCycle() {
             flex: "0 0 auto",
             color: p.ink
           }, children: step.icon }),
-          /* @__PURE__ */ jsxs4("div", { children: [
-            /* @__PURE__ */ jsxs4("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { children: [
+            /* @__PURE__ */ jsxs6("div", { style: {
               fontFamily: VT.font.mono,
               fontSize: 11,
               letterSpacing: "0.08em",
@@ -3106,12 +3709,12 @@ function MobileCycle() {
               " \xB7 ",
               step.cadence
             ] }),
-            /* @__PURE__ */ jsx4("div", { style: { fontSize: 20, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
+            /* @__PURE__ */ jsx6("div", { style: { fontSize: 20, fontWeight: 700, letterSpacing: "-0.022em", lineHeight: 1.1 }, children: step.title })
           ] })
         ] }),
-        /* @__PURE__ */ jsx4("p", { style: { margin: "10px 0 0", fontSize: 14.5, lineHeight: 1.45, textWrap: "pretty" }, children: step.body })
+        /* @__PURE__ */ jsx6("p", { style: { margin: "10px 0 0", fontSize: 14.5, lineHeight: 1.45, textWrap: "pretty" }, children: step.body })
       ] }),
-      !isLast && /* @__PURE__ */ jsx4("div", { style: {
+      !isLast && /* @__PURE__ */ jsx6("div", { style: {
         textAlign: "center",
         height: 20,
         color: p.ink,
@@ -3122,26 +3725,26 @@ function MobileCycle() {
   }) });
 }
 function CycleSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "cycle", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs6("section", { id: "cycle", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6(H2, { mobile, children: [
         "\u042D\u0442\u043E \u043D\u0435 \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u044B \u0434\u0435\u043B\u0430\u0435\u0442\u0435 \u043E\u0434\u0438\u043D \u0440\u0430\u0437.",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u042D\u0442\u043E \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u043A\u0430\u0436\u0434\u044B\u0439 \u0434\u0435\u043D\u044C."
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u041E\u0434\u0438\u043D \u0440\u0430\u0437 \u043F\u043E\u043A\u0430\u0437\u0430\u043B\u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0435\u0441\u0442\u044C. \u0414\u0430\u043B\u044C\u0448\u0435 \u043E\u043D \u0441\u0430\u043C \u0445\u043E\u0434\u0438\u0442 \u043F\u043E \u043A\u0440\u0443\u0433\u0443: \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442, \u0441\u043C\u043E\u0442\u0440\u0438\u0442 \u043D\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439, \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A \u0432\u0430\u043C \u0441 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F\u043C\u0438. \u0427\u0442\u043E \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B." })
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 760, children: "\u041E\u0434\u0438\u043D \u0440\u0430\u0437 \u043F\u043E\u043A\u0430\u0437\u0430\u043B\u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0447\u0442\u043E \u0443 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0435\u0441\u0442\u044C. \u0414\u0430\u043B\u044C\u0448\u0435 \u043E\u043D \u0441\u0430\u043C \u0445\u043E\u0434\u0438\u0442 \u043F\u043E \u043A\u0440\u0443\u0433\u0443: \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442, \u0441\u043C\u043E\u0442\u0440\u0438\u0442 \u043D\u0430 \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439, \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u043A \u0432\u0430\u043C \u0441 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F\u043C\u0438. \u0427\u0442\u043E \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u2014 \u0440\u0435\u0448\u0430\u0435\u0442\u0435 \u0432\u044B." })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 36 : 56,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 36 : 56}px auto 0`
-    }, children: !mobile ? /* @__PURE__ */ jsx4(DesktopCycle, {}) : /* @__PURE__ */ jsx4(MobileCycle, {}) }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    }, children: !mobile ? /* @__PURE__ */ jsx6(DesktopCycle, {}) : /* @__PURE__ */ jsx6(MobileCycle, {}) }),
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 28 : 44,
       textAlign: "center",
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 28 : 44}px auto 0`
-    }, children: /* @__PURE__ */ jsx4("p", { style: {
+    }, children: /* @__PURE__ */ jsx6("p", { style: {
       fontSize: mobile ? 15 : 17,
       lineHeight: 1.5,
       color: VT.inkSoft,
@@ -3149,7 +3752,7 @@ function CycleSection({ mobile }) {
       textWrap: "pretty",
       fontStyle: "italic"
     }, children: "\u0421\u0430\u0439\u0442 \u043F\u043E\u043B\u0443\u0447\u0430\u0435\u0442\u0441\u044F \u043D\u0435 \u043A\u0430\u043A \u0433\u043E\u0442\u043E\u0432\u044B\u0439 \u0444\u0430\u0439\u043B \u2014 \u044D\u0442\u043E \u043F\u0440\u043E\u0446\u0435\u0441\u0441. \u041A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u043E\u043D \u043D\u0435\u043C\u043D\u043E\u0433\u043E \u0434\u0440\u0443\u0433\u043E\u0439. \u041A\u0430\u0436\u0434\u0443\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0447\u0443\u0442\u044C \u043B\u0443\u0447\u0448\u0435, \u0447\u0435\u043C \u0431\u044B\u043B." }) }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+    /* @__PURE__ */ jsx6("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx6("a", { href: "#hero", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 8,
@@ -3172,18 +3775,18 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u0430\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441",
     title: "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043F\u0440\u043E\u0445\u043E\u0434\u0438\u0442 \u043C\u0438\u043C\u043E",
     body: [
-      /* @__PURE__ */ jsxs4("span", { children: [
+      /* @__PURE__ */ jsxs6("span", { children: [
         "\u0417\u0430 \u043D\u0435\u0434\u0435\u043B\u044E \u043D\u0430 \u0441\u0430\u0439\u0442 \u0437\u0430\u0448\u043B\u0438 ",
-        /* @__PURE__ */ jsx4("b", { children: "312 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
+        /* @__PURE__ */ jsx6("b", { children: "312 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
         ". ",
-        /* @__PURE__ */ jsx4("b", { children: "224" }),
+        /* @__PURE__ */ jsx6("b", { children: "224" }),
         " \u0437\u0430\u043A\u0440\u044B\u043B\u0438 \u0435\u0433\u043E, \u0434\u043E \u0443\u0441\u043B\u0443\u0433 \u0434\u0430\u0436\u0435 \u043D\u0435 \u0434\u043E\u043B\u0438\u0441\u0442\u0430\u0432."
       ] }),
-      /* @__PURE__ */ jsx4("span", { children: "\u0412 \u0432\u0430\u0448\u0438\u0445 \u043E\u0442\u0437\u044B\u0432\u0430\u0445 \u043B\u044E\u0434\u0438 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E \u043F\u0438\u0448\u0443\u0442: \xAB\u0432\u0441\u0451 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C, \u043A\u0430\u043A \u0447\u0438\u043D\u0438\u0442\u044C\xBB \u0438 \xAB\u043D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u044B\u0432\u0430\u043B\u0438\xBB. \u0412\u043E\u0442 \u0432\u0430\u0448\u0430 \u0441\u0438\u043B\u044C\u043D\u0430\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u0430. \u0412 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0435 \u0435\u0451 \u0441\u0435\u0439\u0447\u0430\u0441 \u043D\u0435\u0442." })
+      /* @__PURE__ */ jsx6("span", { children: "\u0412 \u0432\u0430\u0448\u0438\u0445 \u043E\u0442\u0437\u044B\u0432\u0430\u0445 \u043B\u044E\u0434\u0438 \u043F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E \u043F\u0438\u0448\u0443\u0442: \xAB\u0432\u0441\u0451 \u043E\u0431\u044A\u044F\u0441\u043D\u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u0434 \u0442\u0435\u043C, \u043A\u0430\u043A \u0447\u0438\u043D\u0438\u0442\u044C\xBB \u0438 \xAB\u043D\u0438\u0447\u0435\u0433\u043E \u043B\u0438\u0448\u043D\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0432\u044F\u0437\u044B\u0432\u0430\u043B\u0438\xBB. \u0412\u043E\u0442 \u0432\u0430\u0448\u0430 \u0441\u0438\u043B\u044C\u043D\u0430\u044F \u0441\u0442\u043E\u0440\u043E\u043D\u0430. \u0412 \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043A\u0435 \u0435\u0451 \u0441\u0435\u0439\u0447\u0430\u0441 \u043D\u0435\u0442." })
     ],
-    suggestion: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+    suggestion: /* @__PURE__ */ jsxs6(Fragment4, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: ",
-      /* @__PURE__ */ jsx4("b", { children: "\xAB\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441, \u0433\u0434\u0435 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442, \u043F\u043E\u0442\u043E\u043C \u0447\u0438\u043D\u044F\u0442\xBB" })
+      /* @__PURE__ */ jsx6("b", { children: "\xAB\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441, \u0433\u0434\u0435 \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u044E\u0442, \u043F\u043E\u0442\u043E\u043C \u0447\u0438\u043D\u044F\u0442\xBB" })
     ] }),
     actions: ["\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C", "\u0414\u0440\u0443\u0433\u043E\u0439 \u0432\u0430\u0440\u0438\u0430\u043D\u0442", "\u041D\u0435 \u043D\u0430\u0434\u043E"]
   },
@@ -3194,22 +3797,22 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u043A\u043E\u0444\u0435\u0439\u043D\u044F",
     title: "\xAB\u0417\u0430\u0432\u0442\u0440\u0430\u043A\u0438\xBB \u043D\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u044E\u0442",
     body: [
-      /* @__PURE__ */ jsxs4("span", { children: [
+      /* @__PURE__ */ jsxs6("span", { children: [
         "\u0418\u0437 ",
-        /* @__PURE__ */ jsx4("b", { children: "156 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
+        /* @__PURE__ */ jsx6("b", { children: "156 \u0447\u0435\u043B\u043E\u0432\u0435\u043A" }),
         ", \u043E\u0442\u043A\u0440\u044B\u0432\u0448\u0438\u0445 \u043C\u0435\u043D\u044E, ",
-        /* @__PURE__ */ jsx4("b", { children: "98" }),
+        /* @__PURE__ */ jsx6("b", { children: "98" }),
         " \u043D\u0430\u0436\u0430\u043B\u0438 \u043D\u0430 \xAB\u041A\u043E\u0444\u0435 \u0438 \u0434\u0435\u0441\u0435\u0440\u0442\u044B\xBB. \u041D\u0430 \xAB\u0417\u0430\u0432\u0442\u0440\u0430\u043A\u0438\xBB \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u043B\u0438 ",
-        /* @__PURE__ */ jsx4("b", { children: "72" }),
+        /* @__PURE__ */ jsx6("b", { children: "72" }),
         " \u0438 \u0442\u043E\u043B\u044C\u043A\u043E ",
-        /* @__PURE__ */ jsx4("b", { children: "4" }),
+        /* @__PURE__ */ jsx6("b", { children: "4" }),
         " \u0437\u0430\u043A\u0430\u0437\u0430\u043B\u0438."
       ] }),
-      /* @__PURE__ */ jsx4("span", { children: "\u0423 \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u043E\u0432 \u043D\u0435\u0442 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0438 \u043D\u0435\u0442 \u0441\u043E\u0441\u0442\u0430\u0432\u0430. \u0422\u043E\u043B\u044C\u043A\u043E \u0446\u0435\u043D\u0430 \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435. \u0427\u0435\u043B\u043E\u0432\u0435\u043A \u043F\u0440\u043E\u0441\u0442\u043E \u043D\u0435 \u043F\u043E\u043D\u0438\u043C\u0430\u0435\u0442, \u0447\u0442\u043E \u0442\u0430\u043C \u0432 \u0441\u0435\u0442\u0435 \u0438 \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u043E\u043D\u043E \u0442\u043E\u0433\u043E." })
+      /* @__PURE__ */ jsx6("span", { children: "\u0423 \u0437\u0430\u0432\u0442\u0440\u0430\u043A\u043E\u0432 \u043D\u0435\u0442 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0438 \u043D\u0435\u0442 \u0441\u043E\u0441\u0442\u0430\u0432\u0430. \u0422\u043E\u043B\u044C\u043A\u043E \u0446\u0435\u043D\u0430 \u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435. \u0427\u0435\u043B\u043E\u0432\u0435\u043A \u043F\u0440\u043E\u0441\u0442\u043E \u043D\u0435 \u043F\u043E\u043D\u0438\u043C\u0430\u0435\u0442, \u0447\u0442\u043E \u0442\u0430\u043C \u0432 \u0441\u0435\u0442\u0435 \u0438 \u0441\u0442\u043E\u0438\u0442 \u043B\u0438 \u043E\u043D\u043E \u0442\u043E\u0433\u043E." })
     ],
-    suggestion: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+    suggestion: /* @__PURE__ */ jsxs6(Fragment4, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: \u0434\u043E\u0431\u0430\u0432\u0438\u0442\u044C ",
-      /* @__PURE__ */ jsx4("b", { children: "3\u20134 \u0444\u043E\u0442\u043E" }),
+      /* @__PURE__ */ jsx6("b", { children: "3\u20134 \u0444\u043E\u0442\u043E" }),
       " \u0438 \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u0442\u044C, \u0447\u0442\u043E \u0432\u0445\u043E\u0434\u0438\u0442."
     ] }),
     actions: ["\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0444\u043E\u0442\u043E", "\u0421\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u044C"]
@@ -3221,28 +3824,28 @@ var MONDAY_CARDS = [
     caseLabel: "\u041F\u0440\u0438\u043C\u0435\u0440: \u0447\u0430\u0441\u0442\u043D\u0430\u044F \u043A\u043B\u0438\u043D\u0438\u043A\u0430",
     title: "\u041E\u0442\u0437\u044B\u0432\u044B \u0447\u0438\u0442\u0430\u044E\u0442. \xAB\u041E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u2014 \u043D\u0435\u0442",
     body: [
-      /* @__PURE__ */ jsxs4("span", { children: [
-        /* @__PURE__ */ jsx4("b", { children: "68%" }),
+      /* @__PURE__ */ jsxs6("span", { children: [
+        /* @__PURE__ */ jsx6("b", { children: "68%" }),
         " \u043F\u043E\u0441\u0435\u0442\u0438\u0442\u0435\u043B\u0435\u0439 \u0434\u043E\u043B\u0438\u0441\u0442\u044B\u0432\u0430\u044E\u0442 \u0434\u043E \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u0438\u0434\u044F\u0442 \u043D\u0430 \u043D\u0438\u0445 \u0432 \u0441\u0440\u0435\u0434\u043D\u0435\u043C ",
-        /* @__PURE__ */ jsx4("b", { children: "22 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
+        /* @__PURE__ */ jsx6("b", { children: "22 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
         ". \u0414\u043E \u0431\u043B\u043E\u043A\u0430 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0434\u043E\u0445\u043E\u0434\u044F\u0442 \u0442\u043E\u043B\u044C\u043A\u043E ",
-        /* @__PURE__ */ jsx4("b", { children: "19%" }),
+        /* @__PURE__ */ jsx6("b", { children: "19%" }),
         ". \u041F\u043E\u0447\u0442\u0438 \u0432\u0441\u0435 \u0443\u0445\u043E\u0434\u044F\u0442 \u0437\u0430 ",
-        /* @__PURE__ */ jsx4("b", { children: "4 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
+        /* @__PURE__ */ jsx6("b", { children: "4 \u0441\u0435\u043A\u0443\u043D\u0434\u044B" }),
         "."
       ] }),
-      /* @__PURE__ */ jsx4("span", { children: "\u0421\u0435\u0439\u0447\u0430\u0441 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0438\u0434\u0451\u0442 \u0440\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u044A\u0435\u0434\u0430\u0435\u0442 \u0438\u043C \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435." })
+      /* @__PURE__ */ jsx6("span", { children: "\u0421\u0435\u0439\u0447\u0430\u0441 \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0438\u0434\u0451\u0442 \u0440\u0430\u043D\u044C\u0448\u0435 \u043E\u0442\u0437\u044B\u0432\u043E\u0432 \u0438 \u0441\u044A\u0435\u0434\u0430\u0435\u0442 \u0438\u043C \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u0435." })
     ],
-    suggestion: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+    suggestion: /* @__PURE__ */ jsxs6(Fragment4, { children: [
       "\u041F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u044E: ",
-      /* @__PURE__ */ jsx4("b", { children: "\u043E\u0442\u0437\u044B\u0432\u044B \u043F\u043E\u0434\u043D\u044F\u0442\u044C \u0432\u044B\u0448\u0435" }),
+      /* @__PURE__ */ jsx6("b", { children: "\u043E\u0442\u0437\u044B\u0432\u044B \u043F\u043E\u0434\u043D\u044F\u0442\u044C \u0432\u044B\u0448\u0435" }),
       ", \xAB\u043E \u043A\u043B\u0438\u043D\u0438\u043A\u0435\xBB \u0441\u043E\u043A\u0440\u0430\u0442\u0438\u0442\u044C \u0434\u043E \u0430\u0431\u0437\u0430\u0446\u0430 \u0438 \u0443\u0431\u0440\u0430\u0442\u044C \u0432\u043D\u0438\u0437."
     ] }),
     actions: ["\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C", "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C, \u043A\u0430\u043A \u0431\u0443\u0434\u0435\u0442", "\u041D\u0435 \u043D\u0430\u0434\u043E"]
   }
 ];
 function MondayCard({ card, n, mobile }) {
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     background: VT.white,
     border: `1px solid ${VT.line}`,
     borderRadius: 18,
@@ -3252,7 +3855,7 @@ function MondayCard({ card, n, mobile }) {
     flexDirection: "column",
     height: "100%"
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       padding: "12px 16px",
       background: VT.bgSoft,
       borderBottom: `1px solid ${VT.line}`,
@@ -3260,7 +3863,7 @@ function MondayCard({ card, n, mobile }) {
       alignItems: "center",
       gap: 10
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 32,
         height: 32,
         borderRadius: "50%",
@@ -3273,11 +3876,11 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 800,
         letterSpacing: "-0.04em"
       }, children: "\u0421" }),
-      /* @__PURE__ */ jsxs4("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx4("div", { style: { fontSize: 13, fontWeight: 700, color: VT.ink, lineHeight: 1.15 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
-        /* @__PURE__ */ jsx4("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.04em" }, children: "\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \xB7 9:14" })
+      /* @__PURE__ */ jsxs6("div", { style: { minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx6("div", { style: { fontSize: 13, fontWeight: 700, color: VT.ink, lineHeight: 1.15 }, children: "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442" }),
+        /* @__PURE__ */ jsx6("div", { style: { fontFamily: VT.font.mono, fontSize: 10.5, color: VT.inkFaint, letterSpacing: "0.04em" }, children: "\u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \xB7 9:14" })
       ] }),
-      /* @__PURE__ */ jsxs4("span", { style: {
+      /* @__PURE__ */ jsxs6("span", { style: {
         marginLeft: "auto",
         fontFamily: VT.font.mono,
         fontSize: 10,
@@ -3292,8 +3895,8 @@ function MondayCard({ card, n, mobile }) {
         " / 3"
       ] })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { padding: "18px 18px 14px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: { padding: "18px 18px 14px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }, children: [
+      /* @__PURE__ */ jsxs6("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 10.5,
         letterSpacing: "0.12em",
@@ -3304,11 +3907,11 @@ function MondayCard({ card, n, mobile }) {
         gap: 8,
         flexWrap: "wrap"
       }, children: [
-        /* @__PURE__ */ jsx4("span", { style: { width: 8, height: 8, borderRadius: "50%", background: card.accent } }),
-        /* @__PURE__ */ jsx4("span", { children: card.eyebrow }),
-        /* @__PURE__ */ jsx4("span", { style: { marginLeft: "auto", fontStyle: "italic", fontWeight: 500, color: VT.inkFaint, letterSpacing: "0.02em" }, children: card.caseLabel })
+        /* @__PURE__ */ jsx6("span", { style: { width: 8, height: 8, borderRadius: "50%", background: card.accent } }),
+        /* @__PURE__ */ jsx6("span", { children: card.eyebrow }),
+        /* @__PURE__ */ jsx6("span", { style: { marginLeft: "auto", fontStyle: "italic", fontWeight: 500, color: VT.inkFaint, letterSpacing: "0.02em" }, children: card.caseLabel })
       ] }),
-      /* @__PURE__ */ jsx4("h3", { style: {
+      /* @__PURE__ */ jsx6("h3", { style: {
         fontSize: mobile ? 19 : 22,
         fontWeight: 700,
         letterSpacing: "-0.025em",
@@ -3316,20 +3919,20 @@ function MondayCard({ card, n, mobile }) {
         lineHeight: 1.2,
         color: VT.ink
       }, children: card.title }),
-      card.body.map((p, i) => /* @__PURE__ */ jsx4("p", { style: {
+      card.body.map((p, i) => /* @__PURE__ */ jsx6("p", { style: {
         margin: 0,
         fontSize: mobile ? 14 : 15,
         lineHeight: 1.5,
         color: VT.inkSoft,
         textWrap: "pretty"
       }, children: p }, i)),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         marginTop: 4,
         padding: "12px 14px",
         background: card.accentBg,
         borderRadius: 12
       }, children: [
-        /* @__PURE__ */ jsx4("div", { style: {
+        /* @__PURE__ */ jsx6("div", { style: {
           fontFamily: VT.font.mono,
           fontSize: 10,
           letterSpacing: "0.12em",
@@ -3337,7 +3940,7 @@ function MondayCard({ card, n, mobile }) {
           opacity: 0.8,
           color: card.accent
         }, children: "\u041F\u0420\u0415\u0414\u041B\u041E\u0416\u0415\u041D\u0418\u0415" }),
-        /* @__PURE__ */ jsx4("div", { style: {
+        /* @__PURE__ */ jsx6("div", { style: {
           marginTop: 4,
           fontSize: mobile ? 14.5 : 15.5,
           lineHeight: 1.45,
@@ -3345,7 +3948,7 @@ function MondayCard({ card, n, mobile }) {
         }, children: card.suggestion })
       ] })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       padding: 10,
       borderTop: `1px solid ${VT.line}`,
       background: "#fff",
@@ -3353,7 +3956,7 @@ function MondayCard({ card, n, mobile }) {
       gridTemplateColumns: `1fr auto auto`,
       gap: 6
     }, children: [
-      /* @__PURE__ */ jsx4("button", { type: "button", style: {
+      /* @__PURE__ */ jsx6("button", { type: "button", style: {
         padding: "10px 14px",
         borderRadius: 10,
         border: "none",
@@ -3363,7 +3966,7 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 600,
         cursor: "pointer"
       }, children: card.actions[0] }),
-      /* @__PURE__ */ jsx4("button", { type: "button", style: {
+      /* @__PURE__ */ jsx6("button", { type: "button", style: {
         padding: "10px 12px",
         borderRadius: 10,
         background: "#fff",
@@ -3373,7 +3976,7 @@ function MondayCard({ card, n, mobile }) {
         fontWeight: 500,
         cursor: "pointer"
       }, children: card.actions[1] }),
-      /* @__PURE__ */ jsx4("button", { type: "button", style: {
+      /* @__PURE__ */ jsx6("button", { type: "button", style: {
         padding: "10px 12px",
         borderRadius: 10,
         background: "#fff",
@@ -3387,20 +3990,20 @@ function MondayCard({ card, n, mobile }) {
   ] });
 }
 function MondaySection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "monday", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs6("section", { id: "monday", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6(H2, { mobile, children: [
         "\u041F\u043E \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A\u0430\u043C \u2014 \u0442\u0440\u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F,",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u043A\u0430\u043A \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0441\u0438\u043B\u044C\u043D\u0435\u0435"
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 820, children: "\u0412\u0441\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043C\u043E\u0442\u0440\u0438\u0442, \u0447\u0442\u043E \u043F\u0440\u043E\u0438\u0441\u0445\u043E\u0434\u0438\u0442 \u0443 \u0432\u0430\u0441 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u0412 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0440\u0430\u0437\u0431\u043E\u0440: \u0433\u0434\u0435 \u0447\u0442\u043E \u043F\u0440\u043E\u0441\u0435\u043B\u043E \u0438 \u0447\u0442\u043E \u0441 \u044D\u0442\u0438\u043C \u0434\u0435\u043B\u0430\u0442\u044C. \u041D\u0435 \u043E\u0431\u0449\u0438\u043C\u0438 \u0444\u0440\u0430\u0437\u0430\u043C\u0438 \u2014 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E." })
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 820, children: "\u0412\u0441\u044E \u043D\u0435\u0434\u0435\u043B\u044E \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0441\u043C\u043E\u0442\u0440\u0438\u0442, \u0447\u0442\u043E \u043F\u0440\u043E\u0438\u0441\u0445\u043E\u0434\u0438\u0442 \u0443 \u0432\u0430\u0441 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435. \u0412 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A \u043F\u0440\u0438\u0441\u044B\u043B\u0430\u0435\u0442 \u0440\u0430\u0437\u0431\u043E\u0440: \u0433\u0434\u0435 \u0447\u0442\u043E \u043F\u0440\u043E\u0441\u0435\u043B\u043E \u0438 \u0447\u0442\u043E \u0441 \u044D\u0442\u0438\u043C \u0434\u0435\u043B\u0430\u0442\u044C. \u041D\u0435 \u043E\u0431\u0449\u0438\u043C\u0438 \u0444\u0440\u0430\u0437\u0430\u043C\u0438 \u2014 \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E." })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 36 : 56,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 36 : 56}px auto 0`
-    }, children: mobile ? /* @__PURE__ */ jsxs4("div", { style: {
+    }, children: mobile ? /* @__PURE__ */ jsxs6("div", { style: {
       marginLeft: -20,
       marginRight: -20,
       overflowX: "auto",
@@ -3409,32 +4012,32 @@ function MondaySection({ mobile }) {
       scrollPaddingLeft: 20,
       scrollbarWidth: "none"
     }, children: [
-      /* @__PURE__ */ jsx4("style", { children: `.ss-v3-monday::-webkit-scrollbar{display:none}` }),
-      /* @__PURE__ */ jsx4("div", { className: "ss-v3-monday", style: {
+      /* @__PURE__ */ jsx6("style", { children: `.ss-v3-monday::-webkit-scrollbar{display:none}` }),
+      /* @__PURE__ */ jsx6("div", { className: "ss-v3-monday", style: {
         display: "flex",
         gap: 14,
         padding: "4px 20px 24px",
         alignItems: "stretch"
-      }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx4("div", { style: { flex: "0 0 88%", scrollSnapAlign: "start", display: "flex" }, children: /* @__PURE__ */ jsx4(MondayCard, { card: c, n: i + 1, mobile }) }, i)) })
-    ] }) : /* @__PURE__ */ jsx4("div", { style: {
+      }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx6("div", { style: { flex: "0 0 88%", scrollSnapAlign: "start", display: "flex" }, children: /* @__PURE__ */ jsx6(MondayCard, { card: c, n: i + 1, mobile }) }, i)) })
+    ] }) : /* @__PURE__ */ jsx6("div", { style: {
       display: "grid",
       gridTemplateColumns: "repeat(3, 1fr)",
       gap: 24,
       alignItems: "stretch"
-    }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx4(MondayCard, { card: c, n: i + 1, mobile }, i)) }) }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    }, children: MONDAY_CARDS.map((c, i) => /* @__PURE__ */ jsx6(MondayCard, { card: c, n: i + 1, mobile }, i)) }) }),
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 28 : 44,
       textAlign: "center",
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 28 : 44}px auto 0`
-    }, children: /* @__PURE__ */ jsx4("p", { style: {
+    }, children: /* @__PURE__ */ jsx6("p", { style: {
       fontSize: mobile ? 14.5 : 16,
       lineHeight: 1.5,
       color: VT.inkSoft,
       margin: 0,
       textWrap: "pretty"
     }, children: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \u043F\u0440\u0430\u0432\u043E\u043A \u0431\u0435\u0437 \u0432\u0430\u0448\u0435\u0433\u043E \u0441\u043E\u0433\u043B\u0430\u0441\u043E\u0432\u0430\u043D\u0438\u044F. \u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u043F\u0440\u0438\u0445\u043E\u0434\u044F\u0442 \u0442\u0443\u0434\u0430, \u0433\u0434\u0435 \u0443\u0434\u043E\u0431\u043D\u043E: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS." }) }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+    /* @__PURE__ */ jsx6("div", { style: { marginTop: mobile ? 24 : 32, textAlign: "center" }, children: /* @__PURE__ */ jsx6("a", { href: "#hero", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 8,
@@ -3456,9 +4059,9 @@ var BASE_ITEMS = [
     metric: "4 \u043A\u0430\u043D\u0430\u043B\u0430",
     metricNote: "\u043D\u0430 \u0432\u044B\u0431\u043E\u0440",
     palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("rect", { x: "10", y: "14", width: "44", height: "36", rx: "5" }),
-      /* @__PURE__ */ jsx4("path", { d: "M10 22 L32 36 L54 22" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("rect", { x: "10", y: "14", width: "44", height: "36", rx: "5" }),
+      /* @__PURE__ */ jsx6("path", { d: "M10 22 L32 36 L54 22" })
     ] })
   },
   {
@@ -3467,7 +4070,7 @@ var BASE_ITEMS = [
     metric: "4\u20136",
     metricNote: "\u043B\u0443\u0447\u0448\u0438\u0445 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E",
     palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
-    icon: /* @__PURE__ */ jsx4("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
+    icon: /* @__PURE__ */ jsx6("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "currentColor", children: /* @__PURE__ */ jsx6("path", { d: "M32 8 L37 23 L53 23 L40 33 L45 49 L32 39 L19 49 L24 33 L11 23 L27 23 Z" }) })
   },
   {
     title: "\u0413\u043E\u0442\u043E\u0432 \u043A \u043F\u043E\u0438\u0441\u043A\u0443",
@@ -3475,9 +4078,9 @@ var BASE_ITEMS = [
     metric: "\u042F\u043D\u0434\u0435\u043A\u0441",
     metricNote: "+ Google",
     palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("circle", { cx: "27", cy: "27", r: "14" }),
-      /* @__PURE__ */ jsx4("path", { d: "M38 38 L54 54" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("circle", { cx: "27", cy: "27", r: "14" }),
+      /* @__PURE__ */ jsx6("path", { d: "M38 38 L54 54" })
     ] })
   },
   {
@@ -3486,26 +4089,26 @@ var BASE_ITEMS = [
     metric: "0",
     metricNote: "\u0431\u043E\u0442\u043E\u0432 \u0432 \u0437\u0430\u044F\u0432\u043A\u0430\u0445",
     palette: { bg: "oklch(0.955 0.018 60)", ink: VT.accentInk, stroke: VT.line },
-    icon: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z" }),
-      /* @__PURE__ */ jsx4("path", { d: "M22 32 L29 39 L42 24" })
+    icon: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 64 64", width: "32", height: "32", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M32 8 L52 16 L52 32 C 52 44, 42 54, 32 56 C 22 54, 12 44, 12 32 L12 16 Z" }),
+      /* @__PURE__ */ jsx6("path", { d: "M22 32 L29 39 L42 24" })
     ] })
   }
 ];
 function BaseWorkSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "base", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2014 \u0442\u043E\u0436\u0435 \u043D\u0430 \u043D\u0451\u043C" }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438." })
+  return /* @__PURE__ */ jsxs6("section", { id: "base", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx6(H2, { mobile, children: "\u0411\u0430\u0437\u043E\u0432\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2014 \u0442\u043E\u0436\u0435 \u043D\u0430 \u043D\u0451\u043C" }),
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 720, children: "\u042D\u0442\u043E \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0434\u0440\u0443\u0433\u0438\u0445 \u0441\u0430\u0439\u0442\u0430\u0445 \u043D\u0430\u0434\u043E \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u0442\u044C \u0440\u0443\u043A\u0430\u043C\u0438 \u0438\u043B\u0438 \u043F\u043B\u0430\u0442\u0438\u0442\u044C SMM-\u0449\u0438\u043A\u0443. \u0417\u0434\u0435\u0441\u044C \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0438\u0437 \u043A\u043E\u0440\u043E\u0431\u043A\u0438." })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 14 : 22
-    }, children: BASE_ITEMS.map((item) => /* @__PURE__ */ jsxs4("div", { style: {
+    }, children: BASE_ITEMS.map((item) => /* @__PURE__ */ jsxs6("div", { style: {
       background: VT.white,
       borderRadius: 18,
       border: `1px solid ${VT.line}`,
@@ -3514,8 +4117,8 @@ function BaseWorkSection({ mobile }) {
       display: "flex",
       flexDirection: "column"
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }, children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: {
           flex: "0 0 auto",
           width: 46,
           height: 46,
@@ -3526,7 +4129,7 @@ function BaseWorkSection({ mobile }) {
           alignItems: "center",
           justifyContent: "center"
         }, children: item.icon }),
-        /* @__PURE__ */ jsx4("h3", { style: {
+        /* @__PURE__ */ jsx6("h3", { style: {
           fontSize: mobile ? 20 : 22,
           fontWeight: 800,
           letterSpacing: "-0.025em",
@@ -3535,14 +4138,14 @@ function BaseWorkSection({ mobile }) {
           color: VT.ink
         }, children: item.title })
       ] }),
-      /* @__PURE__ */ jsx4("p", { style: {
+      /* @__PURE__ */ jsx6("p", { style: {
         margin: 0,
         fontSize: mobile ? 14.5 : 15.5,
         lineHeight: 1.5,
         color: VT.inkSoft,
         textWrap: "pretty"
       }, children: item.body }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         marginTop: "auto",
         paddingTop: 18,
         borderTop: `1px solid ${VT.lineSoft}`,
@@ -3550,14 +4153,14 @@ function BaseWorkSection({ mobile }) {
         alignItems: "baseline",
         gap: 9
       }, children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx6("span", { style: {
           fontSize: mobile ? 22 : 26,
           fontWeight: 800,
           letterSpacing: "-0.03em",
           color: VT.accent,
           lineHeight: 1
         }, children: item.metric }),
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx6("span", { style: {
           fontFamily: VT.font.mono,
           fontSize: 11,
           letterSpacing: "0.07em",
@@ -3575,93 +4178,93 @@ var SOURCES_LIST = [
     name: "\u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B",
     pull: "\u043E\u0442\u0437\u044B\u0432\u044B \xB7 \u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u0446\u0435\u043D\u044B \xB7 \u0444\u043E\u0442\u043E \xB7 \u0440\u0435\u0436\u0438\u043C \u0440\u0430\u0431\u043E\u0442\u044B",
     featured: true,
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 2 C 7.5 2, 4 5.5, 4 10 C 4 15, 12 22, 12 22 C 12 22, 20 15, 20 10 C 20 5.5, 16.5 2, 12 2 Z", fill: "#FC3F1D" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "10", r: "3.2", fill: "#fff" })
     ] })
   },
   {
     id: "tg",
     name: "Telegram-\u043A\u0430\u043D\u0430\u043B",
     pull: "\u043F\u043E\u0441\u0442\u044B \xB7 \u0444\u043E\u0442\u043E \u0440\u0430\u0431\u043E\u0442 \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
-      /* @__PURE__ */ jsx4("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#229ED9" }),
+      /* @__PURE__ */ jsx6("path", { d: "M19.5 6 L4 12 L9 14 L15 9.5 L11 14.5 L11.3 18 L13.5 16 L17 18 Z", fill: "#fff" })
     ] })
   },
   {
     id: "ig",
     name: "Instagram",
     pull: "\u0441\u043A\u0440\u0438\u043D\u0448\u043E\u0442 \u043F\u0440\u043E\u0444\u0438\u043B\u044F",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("defs", { children: /* @__PURE__ */ jsxs4("linearGradient", { id: "iggrC", x1: "0", y1: "1", x2: "1", y2: "0", children: [
-        /* @__PURE__ */ jsx4("stop", { offset: "0%", stopColor: "#FEDA77" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "30%", stopColor: "#F58529" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "60%", stopColor: "#DD2A7B" }),
-        /* @__PURE__ */ jsx4("stop", { offset: "100%", stopColor: "#8134AF" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("defs", { children: /* @__PURE__ */ jsxs6("linearGradient", { id: "iggrC", x1: "0", y1: "1", x2: "1", y2: "0", children: [
+        /* @__PURE__ */ jsx6("stop", { offset: "0%", stopColor: "#FEDA77" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "30%", stopColor: "#F58529" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "60%", stopColor: "#DD2A7B" }),
+        /* @__PURE__ */ jsx6("stop", { offset: "100%", stopColor: "#8134AF" })
       ] }) }),
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggrC)" }),
-      /* @__PURE__ */ jsx4("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "url(#iggrC)" }),
+      /* @__PURE__ */ jsx6("rect", { x: "6", y: "6", width: "12", height: "12", rx: "3.5", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "3", fill: "none", stroke: "#fff", strokeWidth: "1.6" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "16", cy: "8", r: "0.9", fill: "#fff" })
     ] })
   },
   {
     id: "2gis",
     name: "2\u0413\u0418\u0421",
     pull: "\u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u043E\u0442\u0437\u044B\u0432\u044B \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
-      /* @__PURE__ */ jsx4("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#19BB4F" }),
+      /* @__PURE__ */ jsx6("text", { x: "12", y: "17", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "14", fill: "#fff", children: "2" })
     ] })
   },
   {
     id: "avito",
     name: "Avito",
     pull: "\u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u0446\u0435\u043D\u044B \xB7 \u043E\u0442\u0437\u044B\u0432\u044B",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
-      /* @__PURE__ */ jsx4("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "#0AF" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "18", cy: "7.5", r: "3", fill: "#FF9C00" }),
+      /* @__PURE__ */ jsx6("text", { x: "9", y: "17", textAnchor: "middle", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "800", fontSize: "10", fill: "#fff", children: "A" })
     ] })
   },
   {
     id: "site",
     name: "\u0412\u0430\u0448 \u0441\u0442\u0430\u0440\u044B\u0439 \u0441\u0430\u0439\u0442",
     pull: "\u0442\u0435\u043A\u0441\u0442\u044B \xB7 \u0444\u043E\u0442\u043E \xB7 \u0443\u0441\u043B\u0443\u0433\u0438",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
-      /* @__PURE__ */ jsx4("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx4("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
-      /* @__PURE__ */ jsx4("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.40 0.04 250)" }),
+      /* @__PURE__ */ jsx6("circle", { cx: "12", cy: "12", r: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx6("ellipse", { cx: "12", cy: "12", rx: "2.8", ry: "6", fill: "none", stroke: "#fff", strokeWidth: "1.5" }),
+      /* @__PURE__ */ jsx6("path", { d: "M6 12h12", stroke: "#fff", strokeWidth: "1.5" })
     ] })
   },
   {
     id: "card",
     name: "\u0424\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430",
     pull: "\u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0451\u043C \u0443\u0441\u043B\u0443\u0433\u0438 \xB7 \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
-    logo: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
-      /* @__PURE__ */ jsx4("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
-      /* @__PURE__ */ jsx4("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
-      /* @__PURE__ */ jsx4("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
+    logo: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 24 24", width: "30", height: "30", children: [
+      /* @__PURE__ */ jsx6("rect", { width: "24", height: "24", rx: "6", fill: "oklch(0.74 0.08 70)" }),
+      /* @__PURE__ */ jsx6("rect", { x: "6", y: "8", width: "12", height: "9", rx: "1.5", fill: "none", stroke: "#fff", strokeWidth: "1.4" }),
+      /* @__PURE__ */ jsx6("path", { d: "M8 11.5h4M8 14h6", stroke: "#fff", strokeWidth: "1.4", strokeLinecap: "round" })
     ] })
   }
 ];
 var SOURCES_SOON = ["\u0412\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u0435", "Ozon", "YouTube"];
 function SourcesSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "sources", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0423 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0432\u0441\u0451 \u0435\u0441\u0442\u044C \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430" }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 720, children: "\u041F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u0432\u0441\u0451, \u0433\u0434\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435 \u0443\u0436\u0435 \u0447\u0442\u043E-\u0442\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u043E. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442 \u2014 \u0445\u0432\u0430\u0442\u0438\u0442 \u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430." })
+  return /* @__PURE__ */ jsxs6("section", { id: "sources", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx6(H2, { mobile, children: "\u0423 \u0432\u0430\u0441 \u0443\u0436\u0435 \u0432\u0441\u0451 \u0435\u0441\u0442\u044C \u0434\u043B\u044F \u0441\u0430\u0439\u0442\u0430" }),
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 720, children: "\u041F\u043E\u0434\u043E\u0439\u0434\u0451\u0442 \u0432\u0441\u0451, \u0433\u0434\u0435 \u043E \u0432\u0430\u0448\u0435\u043C \u0434\u0435\u043B\u0435 \u0443\u0436\u0435 \u0447\u0442\u043E-\u0442\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u043D\u043E. \u0415\u0441\u043B\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442 \u2014 \u0445\u0432\u0430\u0442\u0438\u0442 \u0444\u043E\u0442\u043E \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442\u0430." })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 10 : 14
-    }, children: SOURCES_LIST.map((s) => /* @__PURE__ */ jsxs4("div", { style: {
+    }, children: SOURCES_LIST.map((s) => /* @__PURE__ */ jsxs6("div", { style: {
       display: "flex",
       alignItems: "center",
       gap: mobile ? 14 : 18,
@@ -3671,16 +4274,16 @@ function SourcesSection({ mobile }) {
       borderRadius: 14,
       position: "relative"
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: { flex: "0 0 auto" }, children: s.logo }),
-      /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsx6("span", { style: { flex: "0 0 auto" }, children: s.logo }),
+      /* @__PURE__ */ jsxs6("div", { style: { flex: 1, minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx6("div", { style: {
           fontSize: mobile ? 15.5 : 17,
           fontWeight: 700,
           color: VT.ink,
           letterSpacing: "-0.022em",
           lineHeight: 1.2
         }, children: s.name }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: {
           marginTop: 3,
           fontFamily: VT.font.mono,
           fontSize: mobile ? 11.5 : 12.5,
@@ -3692,7 +4295,7 @@ function SourcesSection({ mobile }) {
         ] })
       ] })
     ] }, s.id)) }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       marginTop: mobile ? 20 : 28,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 20 : 28}px auto 0`,
@@ -3702,14 +4305,14 @@ function SourcesSection({ mobile }) {
       gap: 10,
       justifyContent: mobile ? "flex-start" : "center"
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: {
         fontFamily: VT.font.mono,
         fontSize: 11,
         letterSpacing: "0.12em",
         color: VT.inkFaint,
         fontWeight: 600
       }, children: "\u0421\u041A\u041E\u0420\u041E \u041F\u041E\u0414\u041A\u041B\u042E\u0427\u0418\u041C" }),
-      SOURCES_SOON.map((n) => /* @__PURE__ */ jsx4("span", { style: {
+      SOURCES_SOON.map((n) => /* @__PURE__ */ jsx6("span", { style: {
         padding: "6px 14px",
         background: VT.bgSoft,
         border: `1px solid ${VT.line}`,
@@ -3718,7 +4321,7 @@ function SourcesSection({ mobile }) {
         color: VT.inkSoft,
         fontWeight: 500
       }, children: n }, n)),
-      /* @__PURE__ */ jsx4("a", { style: {
+      /* @__PURE__ */ jsx6("a", { style: {
         fontSize: 13.5,
         color: VT.accent,
         textDecoration: "underline",
@@ -3726,7 +4329,7 @@ function SourcesSection({ mobile }) {
         marginLeft: mobile ? 0 : 6
       }, children: "\u041D\u0435 \u043D\u0430\u0448\u043B\u0438 \u0441\u0432\u043E\u044E? \u041D\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u2192" })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       marginTop: mobile ? 32 : 56,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 32 : 56}px auto 0`,
@@ -3741,16 +4344,16 @@ function SourcesSection({ mobile }) {
       position: "relative",
       overflow: "hidden"
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: {
         flex: "0 0 auto",
         width: mobile ? 64 : 88,
         height: mobile ? 64 : 88
-      }, children: /* @__PURE__ */ jsxs4("svg", { viewBox: "0 0 88 88", width: "100%", height: "100%", children: [
-        /* @__PURE__ */ jsx4("path", { d: "M44 4 C 24 4, 10 18, 10 38 C 10 60, 44 84, 44 84 C 44 84, 78 60, 78 38 C 78 18, 64 4, 44 4 Z", fill: "#FC3F1D" }),
-        /* @__PURE__ */ jsx4("text", { x: "44", y: "48", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "32", fill: "#fff", children: "\u042F" })
+      }, children: /* @__PURE__ */ jsxs6("svg", { viewBox: "0 0 88 88", width: "100%", height: "100%", children: [
+        /* @__PURE__ */ jsx6("path", { d: "M44 4 C 24 4, 10 18, 10 38 C 10 60, 44 84, 44 84 C 44 84, 78 60, 78 38 C 78 18, 64 4, 44 4 Z", fill: "#FC3F1D" }),
+        /* @__PURE__ */ jsx6("text", { x: "44", y: "48", textAnchor: "middle", fontFamily: "Arial Black, Helvetica, sans-serif", fontWeight: "900", fontSize: "32", fill: "#fff", children: "\u042F" })
       ] }) }),
-      /* @__PURE__ */ jsxs4("div", { style: { flex: 1, minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx4("h3", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { flex: 1, minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx6("h3", { style: {
           margin: 0,
           fontSize: mobile ? 21 : 26,
           fontWeight: 700,
@@ -3759,7 +4362,7 @@ function SourcesSection({ mobile }) {
           color: VT.ink,
           textWrap: "balance"
         }, children: "\xAB\u0423 \u043C\u0435\u043D\u044F \u0436\u0435 \u0435\u0441\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u0430\u0445. \u0417\u0430\u0447\u0435\u043C \u043C\u043D\u0435 \u0435\u0449\u0451 \u0441\u0430\u0439\u0442?\xBB" }),
-        /* @__PURE__ */ jsxs4("p", { style: {
+        /* @__PURE__ */ jsxs6("p", { style: {
           margin: "10px 0 0",
           fontSize: mobile ? 14.5 : 16,
           lineHeight: 1.5,
@@ -3767,7 +4370,7 @@ function SourcesSection({ mobile }) {
           textWrap: "pretty"
         }, children: [
           "\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u041A\u0430\u0440\u0442\u0430\u0445 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u0442 \u0432\u0430\u0441 \u0442\u0435\u043C, \u043A\u0442\u043E \u0438 \u0442\u0430\u043A \u0438\u0449\u0435\u0442 \u0438\u043C\u0435\u043D\u043D\u043E \u0432\u0430\u0441. ",
-          /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "\u0421\u0430\u0439\u0442 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u0438 \u043F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0448\u0438\u0440\u043E\u043A\u0438\u043C \u0437\u0430\u043F\u0440\u043E\u0441\u0430\u043C" }),
+          /* @__PURE__ */ jsx6("b", { style: { color: VT.ink }, children: "\u0421\u0430\u0439\u0442 \u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0435\u0442 \u0437\u0430\u044F\u0432\u043A\u0438 \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u0438 \u043F\u043E\u043F\u0430\u0434\u0430\u0435\u0442 \u0432 \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0448\u0438\u0440\u043E\u043A\u0438\u043C \u0437\u0430\u043F\u0440\u043E\u0441\u0430\u043C" }),
           " \u2014 \u0442\u0443\u0434\u0430, \u043A\u0443\u0434\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u043D\u0435 \u0434\u043E\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442\u0441\u044F. \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0431\u0435\u0440\u0451\u0442 \u043E\u0442\u0442\u0443\u0434\u0430 \u0434\u0430\u043D\u043D\u044B\u0435 \u0438 \u0434\u0435\u043B\u0430\u0435\u0442 \u0438\u0437 \u043D\u0438\u0445 \u0442\u043E, \u0447\u0435\u0433\u043E \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0430 \u0432 \u041A\u0430\u0440\u0442\u0430\u0445 \u043D\u0435 \u0443\u043C\u0435\u0435\u0442."
         ] })
       ] })
@@ -3779,43 +4382,43 @@ var OWNER_POINTS = [
     title: "\u041D\u0435 \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u043B\u0430\u0441\u044C \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u044F \u2014 \u043E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u0435, \u0438 \u043E\u043D\u0430 \u0438\u0441\u0447\u0435\u0437\u043D\u0435\u0442",
     body: "\u041D\u0438\u043A\u0430\u043A\u0438\u0445 \xAB\u043D\u0435\u0439\u0440\u043E\u0441\u0435\u0442\u044C \u0437\u043D\u0430\u0435\u0442 \u043B\u0443\u0447\u0448\u0435\xBB.",
     demo: "approve",
-    icon: /* @__PURE__ */ jsxs4("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }),
-      /* @__PURE__ */ jsx4("path", { d: "M8.5 12l2.2 2.2 4.8-4.8" })
+    icon: /* @__PURE__ */ jsxs6("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }),
+      /* @__PURE__ */ jsx6("path", { d: "M8.5 12l2.2 2.2 4.8-4.8" })
     ] })
   },
   {
     title: "\u0422\u0435\u043A\u0441\u0442 \u0438 \u0444\u043E\u0442\u043E \u043F\u0440\u0430\u0432\u0438\u0442\u0435 \u0432 \u043E\u0434\u0438\u043D \u043A\u043B\u0438\u043A",
     body: "\u041F\u0440\u044F\u043C\u043E \u043D\u0430 \u0441\u0430\u0439\u0442\u0435, \u0431\u0435\u0437 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u044B\u0445 \u0440\u0435\u0434\u0430\u043A\u0442\u043E\u0440\u043E\u0432.",
     demo: "edit",
-    icon: /* @__PURE__ */ jsxs4("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M12 20h9" }),
-      /* @__PURE__ */ jsx4("path", { d: "M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" })
+    icon: /* @__PURE__ */ jsxs6("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M12 20h9" }),
+      /* @__PURE__ */ jsx6("path", { d: "M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" })
     ] })
   },
   {
     title: "\u0421\u0430\u0439\u0442 \u0432\u0430\u0448, \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0432 \u043B\u044E\u0431\u043E\u0439 \u043C\u043E\u043C\u0435\u043D\u0442",
     body: "\u0410\u0440\u0445\u0438\u0432 HTML \u0438 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439 \u0441\u043A\u0430\u0447\u0438\u0432\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u043D\u043E\u0439 \u043A\u043D\u043E\u043F\u043A\u043E\u0439. \u0414\u043E\u0441\u0442\u0443\u043F \u043A \u043D\u0435\u043C\u0443 \u2014 \u043F\u043E\u043A\u0430 \u0430\u043A\u0442\u0438\u0432\u0435\u043D \u0430\u043A\u043A\u0430\u0443\u043D\u0442 \u0438 \u0435\u0449\u0451 10 \u0434\u043D\u0435\u0439, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0443\u0439\u0442\u0438.",
     demo: "export",
-    icon: /* @__PURE__ */ jsxs4("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
-      /* @__PURE__ */ jsx4("path", { d: "M7 10l5 5 5-5" }),
-      /* @__PURE__ */ jsx4("path", { d: "M12 15V3" })
+    icon: /* @__PURE__ */ jsxs6("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
+      /* @__PURE__ */ jsx6("path", { d: "M7 10l5 5 5-5" }),
+      /* @__PURE__ */ jsx6("path", { d: "M12 15V3" })
     ] })
   },
   {
     title: "\u0423\u0434\u0430\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \u043E\u0434\u043D\u043E \u043D\u0430\u0436\u0430\u0442\u0438\u0435",
     body: "\u0411\u0435\u0437 \u0437\u0432\u043E\u043D\u043A\u043E\u0432 \u0432 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0443 \u0438 \u0443\u0433\u043E\u0432\u043E\u0440\u043E\u0432 \xAB\u043F\u043E\u0434\u0443\u043C\u0430\u0439\u0442\u0435 \u0435\u0449\u0451\xBB.",
     demo: "delete",
-    icon: /* @__PURE__ */ jsxs4("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-      /* @__PURE__ */ jsx4("path", { d: "M3 6h18" }),
-      /* @__PURE__ */ jsx4("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" }),
-      /* @__PURE__ */ jsx4("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" })
+    icon: /* @__PURE__ */ jsxs6("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+      /* @__PURE__ */ jsx6("path", { d: "M3 6h18" }),
+      /* @__PURE__ */ jsx6("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" }),
+      /* @__PURE__ */ jsx6("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" })
     ] })
   }
 ];
 function OwnerDemo({ kind, mobile }) {
-  const pill = (label, opts = {}) => /* @__PURE__ */ jsx4("span", { style: {
+  const pill = (label, opts = {}) => /* @__PURE__ */ jsx6("span", { style: {
     display: "inline-flex",
     alignItems: "center",
     gap: 5,
@@ -3827,9 +4430,9 @@ function OwnerDemo({ kind, mobile }) {
     ...opts
   }, children: label });
   if (kind === "approve") {
-    return /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }, children: [
-      pill(/* @__PURE__ */ jsxs4(Fragment3, { children: [
-        /* @__PURE__ */ jsx4("span", { style: { fontSize: 14 }, children: "\u2713" }),
+    return /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }, children: [
+      pill(/* @__PURE__ */ jsxs6(Fragment4, { children: [
+        /* @__PURE__ */ jsx6("span", { style: { fontSize: 14 }, children: "\u2713" }),
         "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C"
       ] }), { background: VT.accent, color: "#fff" }),
       pill("\u0418\u043D\u0430\u0447\u0435", { background: VT.white, color: VT.ink, border: `1px solid ${VT.line}` }),
@@ -3837,7 +4440,7 @@ function OwnerDemo({ kind, mobile }) {
     ] });
   }
   if (kind === "edit") {
-    return /* @__PURE__ */ jsxs4("div", { style: {
+    return /* @__PURE__ */ jsxs6("div", { style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 8,
@@ -3850,12 +4453,12 @@ function OwnerDemo({ kind, mobile }) {
       fontWeight: 500
     }, children: [
       "\u041A\u0430\u043F\u0443\u0447\u0438\u043D\u043E \u043D\u0430 \u043E\u0432\u0441\u044F\u043D\u043E\u043C",
-      /* @__PURE__ */ jsx4("span", { style: { width: 1.5, height: 16, background: VT.accent, animation: "none" } }),
-      /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent }, children: "\u043F\u0440\u0430\u0432\u043A\u0430" })
+      /* @__PURE__ */ jsx6("span", { style: { width: 1.5, height: 16, background: VT.accent, animation: "none" } }),
+      /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.accent }, children: "\u043F\u0440\u0430\u0432\u043A\u0430" })
     ] });
   }
   if (kind === "export") {
-    return /* @__PURE__ */ jsxs4("div", { style: {
+    return /* @__PURE__ */ jsxs6("div", { style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 10,
@@ -3864,9 +4467,9 @@ function OwnerDemo({ kind, mobile }) {
       background: VT.white,
       border: `1px solid ${VT.line}`
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: "\u0441\u0430\u0439\u0442.zip" }),
-      /* @__PURE__ */ jsx4("span", { style: { fontSize: 11, color: VT.inkFaint }, children: "HTML + \u0444\u043E\u0442\u043E" }),
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 13, color: VT.ink, fontWeight: 600 }, children: "\u0441\u0430\u0439\u0442.zip" }),
+      /* @__PURE__ */ jsx6("span", { style: { fontSize: 11, color: VT.inkFaint }, children: "HTML + \u0444\u043E\u0442\u043E" }),
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 24,
         height: 24,
         borderRadius: 7,
@@ -3879,8 +4482,8 @@ function OwnerDemo({ kind, mobile }) {
       }, children: "\u2193" })
     ] });
   }
-  return /* @__PURE__ */ jsxs4("div", { style: { display: "inline-flex", alignItems: "center", gap: 10 }, children: [
-    /* @__PURE__ */ jsxs4("span", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: { display: "inline-flex", alignItems: "center", gap: 10 }, children: [
+    /* @__PURE__ */ jsxs6("span", { style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 7,
@@ -3892,34 +4495,34 @@ function OwnerDemo({ kind, mobile }) {
       color: VT.ink,
       border: `1px solid ${VT.line}`
     }, children: [
-      /* @__PURE__ */ jsxs4("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
-        /* @__PURE__ */ jsx4("path", { d: "M3 6h18" }),
-        /* @__PURE__ */ jsx4("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" }),
-        /* @__PURE__ */ jsx4("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })
+      /* @__PURE__ */ jsxs6("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
+        /* @__PURE__ */ jsx6("path", { d: "M3 6h18" }),
+        /* @__PURE__ */ jsx6("path", { d: "M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" }),
+        /* @__PURE__ */ jsx6("path", { d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })
       ] }),
       "\u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0441\u0430\u0439\u0442"
     ] }),
-    /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "1 \u043A\u043B\u0438\u043A" })
+    /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "1 \u043A\u043B\u0438\u043A" })
   ] });
 }
 function OwnershipSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "ownership", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs6("section", { id: "ownership", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6(H2, { mobile, children: [
         "\u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u0434\u0435\u043B\u0430\u0435\u0442 \u0440\u0443\u0442\u0438\u043D\u0443.",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0420\u0435\u0448\u0435\u043D\u0438\u044F \u043E\u0441\u0442\u0430\u044E\u0442\u0441\u044F \u0437\u0430 \u0432\u0430\u043C\u0438"
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442, \u0438\u0434\u0451\u0442 \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B, \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u0435. \u0417\u0430\u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0438 \u0443\u0439\u0434\u0451\u0442\u0435." })
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 760, children: "\u0412\u0441\u0451, \u0447\u0442\u043E \u043F\u0440\u0435\u0434\u043B\u0430\u0433\u0430\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442, \u0438\u0434\u0451\u0442 \u0447\u0435\u0440\u0435\u0437 \u0432\u0430\u0448\u0435 \xAB\u0434\u0430\xBB. \u0412\u0441\u0451, \u0447\u0442\u043E \u0441\u043E\u0431\u0440\u0430\u043B, \u043F\u043E\u043F\u0440\u0430\u0432\u0438\u0442\u0435. \u0417\u0430\u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0439\u0442\u0438 \u2014 \u0437\u0430\u0431\u0435\u0440\u0451\u0442\u0435 \u0438 \u0443\u0439\u0434\u0451\u0442\u0435." })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
       display: "grid",
       gridTemplateColumns: mobile ? "1fr" : "repeat(2, 1fr)",
       gap: mobile ? 12 : 16
-    }, children: OWNER_POINTS.map((pt, i) => /* @__PURE__ */ jsxs4("div", { style: {
+    }, children: OWNER_POINTS.map((pt, i) => /* @__PURE__ */ jsxs6("div", { style: {
       display: "flex",
       flexDirection: "column",
       padding: mobile ? "20px 20px" : "26px 28px",
@@ -3927,8 +4530,8 @@ function OwnershipSection({ mobile }) {
       border: `1px solid ${VT.line}`,
       borderRadius: 18
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 13, marginBottom: 12 }, children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 13, marginBottom: 12 }, children: [
+        /* @__PURE__ */ jsx6("span", { style: {
           flex: "0 0 auto",
           width: 44,
           height: 44,
@@ -3939,7 +4542,7 @@ function OwnershipSection({ mobile }) {
           alignItems: "center",
           justifyContent: "center"
         }, children: pt.icon }),
-        /* @__PURE__ */ jsx4("div", { style: {
+        /* @__PURE__ */ jsx6("div", { style: {
           fontSize: mobile ? 19 : 22,
           fontWeight: 800,
           color: VT.ink,
@@ -3947,14 +4550,14 @@ function OwnershipSection({ mobile }) {
           lineHeight: 1.12
         }, children: pt.title })
       ] }),
-      /* @__PURE__ */ jsx4("p", { style: {
+      /* @__PURE__ */ jsx6("p", { style: {
         margin: 0,
         fontSize: mobile ? 14 : 15,
         lineHeight: 1.5,
         color: VT.inkSoft,
         textWrap: "pretty"
       }, children: pt.body }),
-      /* @__PURE__ */ jsx4("div", { style: { marginTop: "auto", paddingTop: 18 }, children: /* @__PURE__ */ jsx4(OwnerDemo, { kind: pt.demo, mobile }) })
+      /* @__PURE__ */ jsx6("div", { style: { marginTop: "auto", paddingTop: 18 }, children: /* @__PURE__ */ jsx6(OwnerDemo, { kind: pt.demo, mobile }) })
     ] }, i)) })
   ] });
 }
@@ -3967,41 +4570,41 @@ function AnalyticsSection({ mobile }) {
     {
       tag: "\u041F\u0418\u041A",
       tagColor: "oklch(0.60 0.15 35)",
-      text: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+      text: /* @__PURE__ */ jsxs6(Fragment4, { children: [
         "\u0412 ",
-        /* @__PURE__ */ jsx4("b", { children: "\u043F\u044F\u0442\u043D\u0438\u0446\u0443" }),
+        /* @__PURE__ */ jsx6("b", { children: "\u043F\u044F\u0442\u043D\u0438\u0446\u0443" }),
         " \u0437\u0430\u044F\u0432\u043E\u043A \u0432 \u0434\u0432\u0430 \u0440\u0430\u0437\u0430 \u0431\u043E\u043B\u044C\u0448\u0435, \u0447\u0435\u043C \u0432 \u0432\u043E\u0441\u043A\u0440\u0435\u0441\u0435\u043D\u044C\u0435. \u041F\u043E\u0445\u043E\u0436\u0435 \u043D\u0430 \u043F\u0440\u0438\u0432\u044B\u0447\u043A\u0443 \xAB\u0440\u0435\u0448\u0438\u0442\u044C \u0434\u0435\u043B\u0430 \u043F\u0435\u0440\u0435\u0434 \u0432\u044B\u0445\u043E\u0434\u043D\u044B\u043C\u0438\xBB."
       ] })
     },
     {
       tag: "\u0420\u041E\u0421\u0422",
       tagColor: "oklch(0.50 0.13 145)",
-      text: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+      text: /* @__PURE__ */ jsxs6(Fragment4, { children: [
         "\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430 ",
-        /* @__PURE__ */ jsx4("b", { children: "+34%" }),
+        /* @__PURE__ */ jsx6("b", { children: "+34%" }),
         " \u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E. \u041F\u043E\u0441\u043B\u0435 \u0442\u043E\u0433\u043E, \u043A\u0430\u043A \u043F\u043E\u0434\u043D\u044F\u043B\u0438 \u0431\u043B\u043E\u043A \u043D\u0430\u0432\u0435\u0440\u0445 \u0433\u043B\u0430\u0432\u043D\u043E\u0439."
       ] })
     },
     {
       tag: "\u041F\u0420\u041E\u0412\u0410\u041B",
       tagColor: "oklch(0.50 0.16 270)",
-      text: /* @__PURE__ */ jsxs4(Fragment3, { children: [
+      text: /* @__PURE__ */ jsxs6(Fragment4, { children: [
         "\xAB\u0428\u0438\u043D\u043E\u043C\u043E\u043D\u0442\u0430\u0436\xBB \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u044E\u0442, \u043D\u043E ",
-        /* @__PURE__ */ jsx4("b", { children: "\u043D\u0435 \u043D\u0430\u0436\u0438\u043C\u0430\u044E\u0442" }),
+        /* @__PURE__ */ jsx6("b", { children: "\u043D\u0435 \u043D\u0430\u0436\u0438\u043C\u0430\u044E\u0442" }),
         ". \u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E, \u043D\u0435\u0442 \u0446\u0435\u043D \u2014 \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0438\u0442\u0435 \u0432 \u043F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A."
       ] })
     }
   ];
-  return /* @__PURE__ */ jsxs4("section", { id: "analytics", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4(H2, { mobile, children: [
+  return /* @__PURE__ */ jsxs6("section", { id: "analytics", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6(H2, { mobile, children: [
         "\u0412\u0438\u0434\u0438\u0442\u0435 \u0440\u043E\u0432\u043D\u043E \u0442\u043E \u0436\u0435,",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0447\u0442\u043E \u0438 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442"
       ] }),
-      /* @__PURE__ */ jsx4(Sub, { mobile, maxWidth: 760, children: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0448\u043B\u0438, \u043E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438, \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B\u0438, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043E\u043A. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u043B \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u0440\u0430\u0432\u043A\u0443 \u2014 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u043D\u0435\u0434\u0435\u043B\u0435 \u0432\u0438\u0434\u0438\u0442\u0435, \u043A\u0430\u043A \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C \u0446\u0438\u0444\u0440\u044B." })
+      /* @__PURE__ */ jsx6(Sub, { mobile, maxWidth: 760, children: "\u0421\u043A\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0448\u043B\u0438, \u043E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438, \u0447\u0442\u043E \u043D\u0430\u0436\u0430\u043B\u0438, \u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043E\u0441\u0442\u0430\u0432\u0438\u043B\u0438 \u0437\u0430\u044F\u0432\u043E\u043A. \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u043B \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442 \u043F\u0440\u0430\u0432\u043A\u0443 \u2014 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439 \u043D\u0435\u0434\u0435\u043B\u0435 \u0432\u0438\u0434\u0438\u0442\u0435, \u043A\u0430\u043A \u0438\u0437\u043C\u0435\u043D\u0438\u043B\u0438\u0441\u044C \u0446\u0438\u0444\u0440\u044B." })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 1200,
       margin: `${mobile ? 28 : 48}px auto 0`,
@@ -4012,7 +4615,7 @@ function AnalyticsSection({ mobile }) {
       boxShadow: "0 24px 50px -28px rgba(120,60,30,0.25), 0 0 0 1px rgba(0,0,0,0.02)",
       position: "relative"
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         padding: mobile ? "12px 16px" : "14px 22px",
         borderBottom: `1px solid ${VT.line}`,
         display: "flex",
@@ -4020,12 +4623,12 @@ function AnalyticsSection({ mobile }) {
         gap: 14,
         background: VT.bgSoft
       }, children: [
-        /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 6 }, children: [
-          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FF5F57" } }),
-          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FEBC2E" } }),
-          /* @__PURE__ */ jsx4("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#28C840" } })
+        /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 6 }, children: [
+          /* @__PURE__ */ jsx6("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FF5F57" } }),
+          /* @__PURE__ */ jsx6("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#FEBC2E" } }),
+          /* @__PURE__ */ jsx6("span", { style: { width: 11, height: 11, borderRadius: "50%", background: "#28C840" } })
         ] }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: {
           flex: 1,
           padding: "5px 12px",
           background: VT.white,
@@ -4039,13 +4642,13 @@ function AnalyticsSection({ mobile }) {
           alignItems: "center",
           gap: 8
         }, children: [
-          /* @__PURE__ */ jsxs4("svg", { width: "10", height: "10", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: [
-            /* @__PURE__ */ jsx4("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2" }),
-            /* @__PURE__ */ jsx4("path", { d: "M7 11 V7 a5 5 0 0 1 10 0 V11" })
+          /* @__PURE__ */ jsxs6("svg", { width: "10", height: "10", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", children: [
+            /* @__PURE__ */ jsx6("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2" }),
+            /* @__PURE__ */ jsx6("path", { d: "M7 11 V7 a5 5 0 0 1 10 0 V11" })
           ] }),
           "app.samosite.online/analytics"
         ] }),
-        /* @__PURE__ */ jsxs4("span", { style: {
+        /* @__PURE__ */ jsxs6("span", { style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
@@ -4055,7 +4658,7 @@ function AnalyticsSection({ mobile }) {
           color: VT.ink,
           fontWeight: 600
         }, children: [
-          /* @__PURE__ */ jsx4("span", { style: {
+          /* @__PURE__ */ jsx6("span", { style: {
             width: 8,
             height: 8,
             borderRadius: "50%",
@@ -4065,7 +4668,7 @@ function AnalyticsSection({ mobile }) {
           "LIVE"
         ] })
       ] }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         padding: mobile ? "12px 16px" : "14px 26px",
         display: "flex",
         alignItems: "center",
@@ -4073,9 +4676,9 @@ function AnalyticsSection({ mobile }) {
         flexWrap: "wrap",
         borderBottom: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsx4("span", { style: { fontSize: mobile ? 14 : 16, fontWeight: 700, letterSpacing: "-0.02em" }, children: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 Park \xB7 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }),
-        /* @__PURE__ */ jsx4("span", { style: { flex: 1 } }),
-        ["7 \u0434\u043D\u0435\u0439", "30 \u0434\u043D\u0435\u0439", "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F"].map((p, i) => /* @__PURE__ */ jsx4("button", { type: "button", style: {
+        /* @__PURE__ */ jsx6("span", { style: { fontSize: mobile ? 14 : 16, fontWeight: 700, letterSpacing: "-0.02em" }, children: "\u0410\u0432\u0442\u043E\u0441\u0435\u0440\u0432\u0438\u0441 Park \xB7 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430" }),
+        /* @__PURE__ */ jsx6("span", { style: { flex: 1 } }),
+        ["7 \u0434\u043D\u0435\u0439", "30 \u0434\u043D\u0435\u0439", "\u0412\u0441\u0451 \u0432\u0440\u0435\u043C\u044F"].map((p, i) => /* @__PURE__ */ jsx6("button", { type: "button", style: {
           padding: "6px 12px",
           borderRadius: 8,
           border: "none",
@@ -4087,8 +4690,8 @@ function AnalyticsSection({ mobile }) {
           fontFamily: "inherit"
         }, children: p }, p))
       ] }),
-      /* @__PURE__ */ jsxs4("div", { style: { padding: mobile ? "18px 16px" : "24px 26px" }, children: [
-        /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { padding: mobile ? "18px 16px" : "24px 26px" }, children: [
+        /* @__PURE__ */ jsx6("div", { style: {
           display: "grid",
           gridTemplateColumns: mobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
           gap: mobile ? 10 : 14
@@ -4097,7 +4700,7 @@ function AnalyticsSection({ mobile }) {
           { label: "\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u044B \u0443\u0441\u043B\u0443\u0433", value: "892", delta: "+24%" },
           { label: "\u0437\u0430\u044F\u0432\u043E\u043A", value: "47", delta: "+12%", accent: true },
           { label: "\u043A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F", value: "3.7%", delta: "+0.4 \u043F.\u043F." }
-        ].map((k, i) => /* @__PURE__ */ jsxs4("div", { style: {
+        ].map((k, i) => /* @__PURE__ */ jsxs6("div", { style: {
           padding: mobile ? 14 : 16,
           borderRadius: 12,
           background: k.accent ? VT.accentSoft : VT.bgSoft,
@@ -4105,7 +4708,7 @@ function AnalyticsSection({ mobile }) {
           position: "relative",
           overflow: "hidden"
         }, children: [
-          /* @__PURE__ */ jsx4("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 10.5,
             letterSpacing: "0.08em",
@@ -4113,7 +4716,7 @@ function AnalyticsSection({ mobile }) {
             fontWeight: 600,
             textTransform: "uppercase"
           }, children: k.label }),
-          /* @__PURE__ */ jsx4("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             marginTop: 8,
             fontSize: mobile ? 26 : 32,
             fontWeight: 700,
@@ -4122,7 +4725,7 @@ function AnalyticsSection({ mobile }) {
             lineHeight: 1,
             fontFamily: VT.font.mono
           }, children: k.value }),
-          /* @__PURE__ */ jsxs4("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { style: {
             marginTop: 6,
             display: "inline-flex",
             alignItems: "center",
@@ -4131,13 +4734,13 @@ function AnalyticsSection({ mobile }) {
             color: "oklch(0.50 0.13 145)",
             fontWeight: 600
           }, children: [
-            /* @__PURE__ */ jsx4("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: /* @__PURE__ */ jsx4("path", { d: "M5 1 L9 7 L1 7 Z" }) }),
+            /* @__PURE__ */ jsx6("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: /* @__PURE__ */ jsx6("path", { d: "M5 1 L9 7 L1 7 Z" }) }),
             k.delta,
             " ",
-            /* @__PURE__ */ jsx4("span", { style: { color: VT.inkFaint, fontWeight: 500 }, children: "\u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E" })
+            /* @__PURE__ */ jsx6("span", { style: { color: VT.inkFaint, fontWeight: 500 }, children: "\u0437\u0430 \u043D\u0435\u0434\u0435\u043B\u044E" })
           ] })
         ] }, i)) }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: {
           marginTop: 18,
           padding: 18,
           borderRadius: 14,
@@ -4145,15 +4748,15 @@ function AnalyticsSection({ mobile }) {
           border: `1px solid ${VT.line}`,
           position: "relative"
         }, children: [
-          /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
-            /* @__PURE__ */ jsx4("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u043E \u0434\u043D\u044F\u043C" }),
-            /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "\u043F\u043D \u2013 \u0432\u0441" }),
-            /* @__PURE__ */ jsxs4("span", { style: { marginLeft: "auto", fontFamily: VT.font.mono, fontSize: 11, color: VT.inkSoft }, children: [
+          /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", gap: 8 }, children: [
+            /* @__PURE__ */ jsx6("span", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink }, children: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u043E \u0434\u043D\u044F\u043C" }),
+            /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, fontSize: 11, color: VT.inkFaint }, children: "\u043F\u043D \u2013 \u0432\u0441" }),
+            /* @__PURE__ */ jsxs6("span", { style: { marginLeft: "auto", fontFamily: VT.font.mono, fontSize: 11, color: VT.inkSoft }, children: [
               "\u0432\u0441\u0435\u0433\u043E ",
-              /* @__PURE__ */ jsx4("b", { style: { color: VT.ink }, children: "47" })
+              /* @__PURE__ */ jsx6("b", { style: { color: VT.ink }, children: "47" })
             ] })
           ] }),
-          /* @__PURE__ */ jsxs4("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { style: {
             marginTop: 22,
             position: "relative",
             display: "grid",
@@ -4162,21 +4765,21 @@ function AnalyticsSection({ mobile }) {
             alignItems: "end",
             height: mobile ? 140 : 180
           }, children: [
-            /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+            /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
               position: "absolute",
               inset: 0,
               pointerEvents: "none",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between"
-            }, children: [0, 1, 2, 3].map((i) => /* @__PURE__ */ jsx4("div", { style: { borderTop: `1px dashed ${VT.line}` } }, i)) }),
-            days.map((d, i) => /* @__PURE__ */ jsx4("div", { style: {
+            }, children: [0, 1, 2, 3].map((i) => /* @__PURE__ */ jsx6("div", { style: { borderTop: `1px dashed ${VT.line}` } }, i)) }),
+            days.map((d, i) => /* @__PURE__ */ jsx6("div", { style: {
               height: `${d / max * 100}%`,
               background: i === peakIdx ? `linear-gradient(180deg, ${VT.accent}, oklch(0.50 0.16 35))` : "oklch(0.84 0.06 50)",
               borderRadius: "6px 6px 0 0",
               position: "relative",
               boxShadow: i === peakIdx ? "0 -2px 16px rgba(217, 119, 87, 0.4)" : "none"
-            }, children: /* @__PURE__ */ jsx4("span", { style: {
+            }, children: /* @__PURE__ */ jsx6("span", { style: {
               position: "absolute",
               top: -20,
               left: "50%",
@@ -4187,7 +4790,7 @@ function AnalyticsSection({ mobile }) {
               fontWeight: i === peakIdx ? 700 : 500
             }, children: d }) }, i))
           ] }),
-          /* @__PURE__ */ jsx4("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             marginTop: 6,
             display: "grid",
             gridTemplateColumns: `repeat(${days.length}, 1fr)`,
@@ -4197,75 +4800,75 @@ function AnalyticsSection({ mobile }) {
             color: VT.inkFaint,
             textAlign: "center",
             letterSpacing: "0.04em"
-          }, children: dayLabels.map((l, i) => /* @__PURE__ */ jsx4("span", { style: {
+          }, children: dayLabels.map((l, i) => /* @__PURE__ */ jsx6("span", { style: {
             color: i === peakIdx ? VT.accentSoft : "inherit",
             fontWeight: i === peakIdx ? 700 : 500
           }, children: l }, l)) })
         ] }),
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: {
           marginTop: 16,
           display: "grid",
           gridTemplateColumns: mobile ? "1fr" : "1fr 1fr",
           gap: mobile ? 12 : 16
         }, children: [
-          /* @__PURE__ */ jsxs4("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { style: {
             padding: 18,
             borderRadius: 14,
             background: VT.bgSoft,
             border: `1px solid ${VT.line}`
           }, children: [
-            /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438" }),
+            /* @__PURE__ */ jsx6("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u041E\u0442\u043A\u0443\u0434\u0430 \u043F\u0440\u0438\u0448\u043B\u0438" }),
             [
               ["\u042F\u043D\u0434\u0435\u043A\u0441", 48, "oklch(0.55 0.14 30)"],
               ["Google", 22, "oklch(0.48 0.13 240)"],
               ["\u041F\u0440\u044F\u043C\u044B\u0435 \u0437\u0430\u0445\u043E\u0434\u044B", 12, "oklch(0.50 0.12 145)"],
               ["\u0421\u043E\u0446\u0441\u0435\u0442\u0438", 11, "oklch(0.55 0.10 280)"],
               ["\u0414\u0440\u0443\u0433\u043E\u0435", 7, "oklch(0.60 0.04 60)"]
-            ].map(([label, v, color]) => /* @__PURE__ */ jsxs4("div", { style: { marginBottom: 9 }, children: [
-              /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", fontSize: 12.5 }, children: [
-                /* @__PURE__ */ jsx4("span", { style: { color: VT.ink }, children: label }),
-                /* @__PURE__ */ jsxs4("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600 }, children: [
+            ].map(([label, v, color]) => /* @__PURE__ */ jsxs6("div", { style: { marginBottom: 9 }, children: [
+              /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", fontSize: 12.5 }, children: [
+                /* @__PURE__ */ jsx6("span", { style: { color: VT.ink }, children: label }),
+                /* @__PURE__ */ jsxs6("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600 }, children: [
                   v,
                   "%"
                 ] })
               ] }),
-              /* @__PURE__ */ jsx4("div", { style: { marginTop: 5, height: 6, background: VT.line, borderRadius: 3, overflow: "hidden" }, children: /* @__PURE__ */ jsx4("div", { style: { width: `${v}%`, height: "100%", background: color } }) })
+              /* @__PURE__ */ jsx6("div", { style: { marginTop: 5, height: 6, background: VT.line, borderRadius: 3, overflow: "hidden" }, children: /* @__PURE__ */ jsx6("div", { style: { width: `${v}%`, height: "100%", background: color } }) })
             ] }, label))
           ] }),
-          /* @__PURE__ */ jsxs4("div", { style: {
+          /* @__PURE__ */ jsxs6("div", { style: {
             padding: 18,
             borderRadius: 14,
             background: VT.bgSoft,
             border: `1px solid ${VT.line}`
           }, children: [
-            /* @__PURE__ */ jsx4("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u0421\u0430\u043C\u044B\u0435 \u043A\u043B\u0438\u043A\u0430\u0431\u0435\u043B\u044C\u043D\u044B\u0435 \u0443\u0441\u043B\u0443\u0433\u0438" }),
+            /* @__PURE__ */ jsx6("div", { style: { fontSize: 13.5, fontWeight: 600, color: VT.ink, marginBottom: 12 }, children: "\u0421\u0430\u043C\u044B\u0435 \u043A\u043B\u0438\u043A\u0430\u0431\u0435\u043B\u044C\u043D\u044B\u0435 \u0443\u0441\u043B\u0443\u0433\u0438" }),
             [
               ["\u0417\u0430\u043C\u0435\u043D\u0430 \u043C\u0430\u0441\u043B\u0430", 142, "+34%"],
               ["\u0414\u0438\u0430\u0433\u043D\u043E\u0441\u0442\u0438\u043A\u0430", 98, "+8%"],
               ["\u0420\u0430\u0437\u0432\u0430\u043B-\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435", 64, "+2%"],
               ["\u0428\u0438\u043D\u043E\u043C\u043E\u043D\u0442\u0430\u0436", 41, "\u221212%"]
-            ].map(([n, v, delta]) => /* @__PURE__ */ jsxs4("div", { style: {
+            ].map(([n, v, delta]) => /* @__PURE__ */ jsxs6("div", { style: {
               display: "flex",
               alignItems: "baseline",
               gap: 10,
               padding: "8px 0",
               borderBottom: `1px dashed ${VT.line}`
             }, children: [
-              /* @__PURE__ */ jsx4("span", { style: { color: VT.ink, fontSize: 13 }, children: n }),
-              /* @__PURE__ */ jsx4("span", { style: {
+              /* @__PURE__ */ jsx6("span", { style: { color: VT.ink, fontSize: 13 }, children: n }),
+              /* @__PURE__ */ jsx6("span", { style: {
                 fontFamily: VT.font.mono,
                 fontSize: 11,
                 fontWeight: 600,
                 color: String(delta).startsWith("+") ? "oklch(0.75 0.16 145)" : "oklch(0.70 0.14 30)"
               }, children: delta }),
-              /* @__PURE__ */ jsx4("span", { style: { flex: 1 } }),
-              /* @__PURE__ */ jsx4("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600, fontSize: 13 }, children: v })
+              /* @__PURE__ */ jsx6("span", { style: { flex: 1 } }),
+              /* @__PURE__ */ jsx6("span", { style: { fontFamily: VT.font.mono, color: VT.ink, fontWeight: 600, fontSize: 13 }, children: v })
             ] }, n))
           ] })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx4("p", { style: {
+    /* @__PURE__ */ jsx6("p", { style: {
       marginTop: mobile ? 22 : 30,
       maxWidth: mobile ? "100%" : 720,
       margin: `${mobile ? 22 : 30}px auto 0`,
@@ -4275,7 +4878,7 @@ function AnalyticsSection({ mobile }) {
       textAlign: "center",
       textWrap: "pretty"
     }, children: "\u0421\u0432\u043E\u0434\u043A\u0430 \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u0440\u0430\u0437 \u0432 \u043D\u0435\u0434\u0435\u043B\u044E \u0442\u0443\u0434\u0430 \u0436\u0435, \u043A\u0443\u0434\u0430 \u0438 \u0432\u0441\u0451 \u043E\u0441\u0442\u0430\u043B\u044C\u043D\u043E\u0435: \u0432 Telegram, MAX, \u043D\u0430 \u043F\u043E\u0447\u0442\u0443 \u0438\u043B\u0438 SMS. \u0412 \u043A\u0430\u0431\u0438\u043D\u0435\u0442 \u0437\u0430\u0445\u043E\u0434\u0438\u0442\u044C \u043D\u0435\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E, \u0434\u0430\u043D\u043D\u044B\u0435 \u0441\u0430\u043C\u0438 \u043D\u0430\u0439\u0434\u0443\u0442 \u0432\u0430\u0441." }),
-    /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 20 : 28, textAlign: "center" }, children: /* @__PURE__ */ jsxs4("a", { href: "client-admin-demo.html", style: {
+    /* @__PURE__ */ jsx6("div", { style: { marginTop: mobile ? 20 : 28, textAlign: "center" }, children: /* @__PURE__ */ jsxs6("a", { href: "client-admin-demo.html", style: {
       display: "inline-flex",
       alignItems: "center",
       gap: 10,
@@ -4289,7 +4892,7 @@ function AnalyticsSection({ mobile }) {
       textDecoration: "none",
       boxShadow: "0 6px 18px -10px rgba(120,60,30,0.20)"
     }, children: [
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("span", { style: {
         width: 22,
         height: 22,
         borderRadius: "50%",
@@ -4301,7 +4904,7 @@ function AnalyticsSection({ mobile }) {
         fontSize: 9
       }, children: "\u25B6" }),
       "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0434\u0435\u043C\u043E \u043B\u0438\u0447\u043D\u043E\u0433\u043E \u043A\u0430\u0431\u0438\u043D\u0435\u0442\u0430",
-      /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2197" })
+      /* @__PURE__ */ jsx6("span", { "aria-hidden": "true", children: "\u2197" })
     ] }) })
   ] });
 }
@@ -4392,12 +4995,12 @@ var PRICING_MATRIX = [
 ];
 function MatrixCell({ v, hi }) {
   if (v === true) {
-    return /* @__PURE__ */ jsx4("span", { style: { display: "inline-flex", width: 22, height: 22, borderRadius: "50%", background: VT.successSoft, color: VT.success, alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx4("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M5 12 l4 4 10 -10" }) }) });
+    return /* @__PURE__ */ jsx6("span", { style: { display: "inline-flex", width: 22, height: 22, borderRadius: "50%", background: VT.successSoft, color: VT.success, alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsx6("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M5 12 l4 4 10 -10" }) }) });
   }
   if (v === false) {
-    return /* @__PURE__ */ jsx4("span", { style: { color: VT.inkFaint, fontSize: 16 }, children: "\u2014" });
+    return /* @__PURE__ */ jsx6("span", { style: { color: VT.inkFaint, fontSize: 16 }, children: "\u2014" });
   }
-  return /* @__PURE__ */ jsx4("span", { style: { fontSize: 13.5, lineHeight: 1.35, textAlign: "center", fontVariantNumeric: "tabular-nums", fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }, children: v });
+  return /* @__PURE__ */ jsx6("span", { style: { fontSize: 13.5, lineHeight: 1.35, textAlign: "center", fontVariantNumeric: "tabular-nums", fontWeight: hi ? 700 : 500, color: hi ? VT.ink : VT.inkSoft }, children: v });
 }
 function PricingMatrix({ mobile }) {
   const firstCol = mobile ? 132 : 240;
@@ -4407,7 +5010,7 @@ function PricingMatrix({ mobile }) {
   const cols = `${firstCol}px repeat(5, ${planCol}px)`;
   const hiBg = (ci) => ci === PLAN_HILITE ? VT.accentSoft : "transparent";
   const hiSide = (ci) => ci === PLAN_HILITE ? { boxShadow: `inset 1px 0 0 ${VT.accent}33, inset -1px 0 0 ${VT.accent}33` } : {};
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     marginTop: mobile ? 24 : 40,
     border: `1px solid ${VT.line}`,
     borderRadius: 20,
@@ -4415,8 +5018,8 @@ function PricingMatrix({ mobile }) {
     background: VT.white,
     boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 24px 60px -30px rgba(120,60,30,0.28)"
   }, children: [
-    /* @__PURE__ */ jsx4("div", { style: mobile ? { overflowX: "auto", WebkitOverflowScrolling: "touch" } : { overflow: "visible" }, children: /* @__PURE__ */ jsxs4("div", { style: { minWidth: mobile ? totalW : 0 }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: mobile ? { overflowX: "auto", WebkitOverflowScrolling: "touch" } : { overflow: "visible" }, children: /* @__PURE__ */ jsxs6("div", { style: { minWidth: mobile ? totalW : 0 }, children: [
+      /* @__PURE__ */ jsxs6("div", { style: {
         display: "grid",
         gridTemplateColumns: cols,
         position: "sticky",
@@ -4425,7 +5028,7 @@ function PricingMatrix({ mobile }) {
         background: VT.white,
         borderBottom: `1px solid ${VT.line}`
       }, children: [
-        /* @__PURE__ */ jsxs4("div", { style: {
+        /* @__PURE__ */ jsxs6("div", { style: {
           padding: mobile ? "14px 10px" : "20px 18px",
           position: "sticky",
           left: 0,
@@ -4435,7 +5038,7 @@ function PricingMatrix({ mobile }) {
           flexDirection: "column",
           justifyContent: "flex-end"
         }, children: [
-          /* @__PURE__ */ jsx4("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             fontFamily: VT.font.mono,
             fontSize: 10.5,
             letterSpacing: "0.1em",
@@ -4443,18 +5046,18 @@ function PricingMatrix({ mobile }) {
             fontWeight: 700,
             textTransform: "uppercase"
           }, children: "5 \u0442\u0430\u0440\u0438\u0444\u043E\u0432" }),
-          /* @__PURE__ */ jsx4("div", { style: { marginTop: 4, fontSize: mobile ? 11.5 : 13, color: VT.inkSoft, lineHeight: 1.35 }, children: "\u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" })
+          /* @__PURE__ */ jsx6("div", { style: { marginTop: 4, fontSize: mobile ? 11.5 : 13, color: VT.inkSoft, lineHeight: 1.35 }, children: "\u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E" })
         ] }),
         PLAN_META.map((p, i) => {
           const hot = i === PLAN_HILITE;
-          return /* @__PURE__ */ jsxs4("div", { style: {
+          return /* @__PURE__ */ jsxs6("div", { style: {
             padding: mobile ? "14px 8px 14px" : `${hot ? 14 : 20}px 12px 18px`,
             textAlign: "center",
             position: "relative",
             background: hot ? VT.accentSoft : "transparent",
             ...hiSide(i)
           }, children: [
-            hot && /* @__PURE__ */ jsx4("div", { style: {
+            hot && /* @__PURE__ */ jsx6("div", { style: {
               display: "inline-block",
               marginBottom: 8,
               fontFamily: VT.font.mono,
@@ -4467,13 +5070,13 @@ function PricingMatrix({ mobile }) {
               borderRadius: 999,
               textTransform: "uppercase"
             }, children: "\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0439" }),
-            /* @__PURE__ */ jsx4("div", { style: {
+            /* @__PURE__ */ jsx6("div", { style: {
               fontSize: mobile ? 13.5 : 15,
               fontWeight: 700,
               letterSpacing: "-0.015em",
               color: hot ? VT.accent : VT.ink
             }, children: p.name }),
-            /* @__PURE__ */ jsxs4("div", { style: {
+            /* @__PURE__ */ jsxs6("div", { style: {
               marginTop: 6,
               display: "flex",
               alignItems: "baseline",
@@ -4481,16 +5084,16 @@ function PricingMatrix({ mobile }) {
               gap: 3,
               fontVariantNumeric: "tabular-nums"
             }, children: [
-              /* @__PURE__ */ jsx4("span", { style: {
+              /* @__PURE__ */ jsx6("span", { style: {
                 fontSize: mobile ? 19 : 26,
                 fontWeight: 800,
                 letterSpacing: "-0.03em",
                 color: VT.ink,
                 lineHeight: 1
               }, children: p.price }),
-              /* @__PURE__ */ jsx4("span", { style: { fontSize: mobile ? 10.5 : 12, fontWeight: 600, color: VT.inkSoft }, children: p.unit })
+              /* @__PURE__ */ jsx6("span", { style: { fontSize: mobile ? 10.5 : 12, fontWeight: 600, color: VT.inkSoft }, children: p.unit })
             ] }),
-            /* @__PURE__ */ jsx4("div", { style: {
+            /* @__PURE__ */ jsx6("div", { style: {
               marginTop: 4,
               fontSize: mobile ? 9.5 : 11,
               color: VT.inkFaint,
@@ -4499,8 +5102,8 @@ function PricingMatrix({ mobile }) {
           ] }, p.name);
         })
       ] }),
-      PRICING_MATRIX.map((group, gi) => /* @__PURE__ */ jsxs4("div", { children: [
-        group.title && /* @__PURE__ */ jsx4("div", { style: {
+      PRICING_MATRIX.map((group, gi) => /* @__PURE__ */ jsxs6("div", { children: [
+        group.title && /* @__PURE__ */ jsx6("div", { style: {
           gridColumn: "1 / -1",
           padding: mobile ? "9px 10px" : "10px 18px",
           background: VT.bgSoft,
@@ -4513,14 +5116,14 @@ function PricingMatrix({ mobile }) {
           borderTop: `1px solid ${VT.line}`,
           borderBottom: `1px solid ${VT.line}`
         }, children: group.title }),
-        group.rows.map((row, ri) => /* @__PURE__ */ jsxs4("div", { style: {
+        group.rows.map((row, ri) => /* @__PURE__ */ jsxs6("div", { style: {
           display: "grid",
           gridTemplateColumns: cols,
           borderBottom: `1px solid ${VT.lineSoft}`,
           alignItems: "stretch",
           background: ri % 2 === 1 ? VT.bgSoft + "80" : "transparent"
         }, children: [
-          /* @__PURE__ */ jsx4("div", { style: {
+          /* @__PURE__ */ jsx6("div", { style: {
             padding: cellPad,
             fontSize: mobile ? 12 : 13.5,
             color: VT.inkSoft,
@@ -4533,7 +5136,7 @@ function PricingMatrix({ mobile }) {
             display: "flex",
             alignItems: "center"
           }, children: row.label }),
-          row.vals.map((v, ci) => /* @__PURE__ */ jsx4("div", { style: {
+          row.vals.map((v, ci) => /* @__PURE__ */ jsx6("div", { style: {
             padding: cellPad,
             textAlign: "center",
             background: hiBg(ci),
@@ -4541,11 +5144,11 @@ function PricingMatrix({ mobile }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
-          }, children: /* @__PURE__ */ jsx4(MatrixCell, { v, hi: ci === PLAN_HILITE }) }, ci))
+          }, children: /* @__PURE__ */ jsx6(MatrixCell, { v, hi: ci === PLAN_HILITE }) }, ci))
         ] }, ri))
       ] }, gi)),
-      /* @__PURE__ */ jsxs4("div", { style: { display: "grid", gridTemplateColumns: cols, alignItems: "stretch" }, children: [
-        /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: { display: "grid", gridTemplateColumns: cols, alignItems: "stretch" }, children: [
+        /* @__PURE__ */ jsx6("div", { style: {
           position: "sticky",
           left: 0,
           zIndex: 3,
@@ -4554,12 +5157,12 @@ function PricingMatrix({ mobile }) {
         } }),
         PLAN_META.map((p, i) => {
           const hot = i === PLAN_HILITE;
-          return /* @__PURE__ */ jsx4("div", { style: {
+          return /* @__PURE__ */ jsx6("div", { style: {
             padding: mobile ? "12px 6px" : "16px 10px",
             textAlign: "center",
             background: hot ? VT.accentSoft : "transparent",
             ...hiSide(i)
-          }, children: /* @__PURE__ */ jsx4("a", { href: "#hero", style: {
+          }, children: /* @__PURE__ */ jsx6("a", { href: "#hero", style: {
             display: "inline-block",
             width: "100%",
             boxSizing: "border-box",
@@ -4576,7 +5179,7 @@ function PricingMatrix({ mobile }) {
         })
       ] })
     ] }) }),
-    mobile && /* @__PURE__ */ jsx4("div", { style: {
+    mobile && /* @__PURE__ */ jsx6("div", { style: {
       padding: "10px 14px",
       textAlign: "center",
       fontSize: 12,
@@ -4587,10 +5190,10 @@ function PricingMatrix({ mobile }) {
   ] });
 }
 function PricingSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "pricing", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { textAlign: "center" }, children: [
-      /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0422\u0430\u0440\u0438\u0444 \u043F\u043E\u0434 \u0432\u0430\u0448 \u043C\u0430\u0441\u0448\u0442\u0430\u0431" }),
-      /* @__PURE__ */ jsx4("p", { style: {
+  return /* @__PURE__ */ jsxs6("section", { id: "pricing", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsxs6("div", { style: { textAlign: "center" }, children: [
+      /* @__PURE__ */ jsx6(H2, { mobile, children: "\u0422\u0430\u0440\u0438\u0444 \u043F\u043E\u0434 \u0432\u0430\u0448 \u043C\u0430\u0441\u0448\u0442\u0430\u0431" }),
+      /* @__PURE__ */ jsx6("p", { style: {
         margin: `${mobile ? 14 : 18}px auto 0`,
         maxWidth: 600,
         fontSize: mobile ? 15 : 17,
@@ -4599,14 +5202,14 @@ function PricingSection({ mobile }) {
         textWrap: "pretty"
       }, children: "\u041E\u0442 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u0433\u043E \u0441\u0442\u0430\u0440\u0442\u0430 \u0434\u043E \u0441\u0442\u0443\u0434\u0438\u0439\u043D\u043E\u0433\u043E. \u041F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u043D\u0430 \u043B\u044E\u0431\u043E\u043C \u043F\u043B\u0430\u0442\u043D\u043E\u043C \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u043A\u0430\u0440\u0442\u0443 \u043F\u0440\u0438\u0432\u044F\u0437\u044B\u0432\u0430\u0442\u044C \u043D\u0435 \u043D\u0430\u0434\u043E." })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { maxWidth: 1200, margin: "0 auto" }, children: [
-      /* @__PURE__ */ jsx4(PricingMatrix, { mobile }),
-      /* @__PURE__ */ jsx4("div", { style: { marginTop: 10, fontSize: 12, color: VT.inkFaint, textAlign: mobile ? "left" : "center" }, children: "* \u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439 \u0432 \u0440\u0430\u043C\u043A\u0430\u0445 \u0447\u0435\u0441\u0442\u043D\u043E\u0433\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F" }),
-      /* @__PURE__ */ jsxs4("div", { style: { marginTop: mobile ? 18 : 28, textAlign: "center" }, children: [
-        /* @__PURE__ */ jsx4(Btn, { style: { padding: mobile ? "14px 26px" : "16px 36px", fontSize: mobile ? 15 : 16 }, iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
-        /* @__PURE__ */ jsx4("div", { style: { marginTop: 12, fontSize: 12.5, color: VT.inkSoft, fontStyle: "italic" }, children: "\u041D\u0430\u0447\u043D\u0438\u0442\u0435 \u043D\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0442\u0430\u0440\u0438\u0444\u0435 \u2014 \u043E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0440\u0430\u0441\u0442\u0438." })
+    /* @__PURE__ */ jsxs6("div", { style: { maxWidth: 1200, margin: "0 auto" }, children: [
+      /* @__PURE__ */ jsx6(PricingMatrix, { mobile }),
+      /* @__PURE__ */ jsx6("div", { style: { marginTop: 10, fontSize: 12, color: VT.inkFaint, textAlign: mobile ? "left" : "center" }, children: "* \u0431\u0435\u0437 \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0439 \u0432 \u0440\u0430\u043C\u043A\u0430\u0445 \u0447\u0435\u0441\u0442\u043D\u043E\u0433\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044F" }),
+      /* @__PURE__ */ jsxs6("div", { style: { marginTop: mobile ? 18 : 28, textAlign: "center" }, children: [
+        /* @__PURE__ */ jsx6(Btn, { style: { padding: mobile ? "14px 26px" : "16px 36px", fontSize: mobile ? 15 : 16 }, iconRight: /* @__PURE__ */ jsx6(IconArrow, {}), children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }),
+        /* @__PURE__ */ jsx6("div", { style: { marginTop: 12, fontSize: 12.5, color: VT.inkSoft, fontStyle: "italic" }, children: "\u041D\u0430\u0447\u043D\u0438\u0442\u0435 \u043D\u0430 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E\u043C \u0442\u0430\u0440\u0438\u0444\u0435 \u2014 \u043E\u043F\u043B\u0430\u0442\u0443 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u043E\u0442\u043E\u043C, \u0435\u0441\u043B\u0438 \u0440\u0435\u0448\u0438\u0442\u0435 \u0440\u0430\u0441\u0442\u0438." })
       ] }),
-      /* @__PURE__ */ jsx4("p", { style: {
+      /* @__PURE__ */ jsx6("p", { style: {
         margin: `${mobile ? 22 : 30}px auto 0`,
         maxWidth: 600,
         fontSize: mobile ? 14 : 15,
@@ -4675,7 +5278,7 @@ var FAQ_REST = [
   }
 ];
 function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
-  return /* @__PURE__ */ jsxs4("details", { open: defaultOpen, style: {
+  return /* @__PURE__ */ jsxs6("details", { open: defaultOpen, style: {
     background: VT.white,
     border: `1px solid ${highlight ? VT.accent : VT.line}`,
     borderRadius: 14,
@@ -4683,7 +5286,7 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
     overflow: "hidden",
     position: "relative"
   }, children: [
-    /* @__PURE__ */ jsxs4("summary", { style: {
+    /* @__PURE__ */ jsxs6("summary", { style: {
       listStyle: "none",
       cursor: "pointer",
       padding: mobile ? "16px 18px" : "18px 22px",
@@ -4695,9 +5298,9 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
       color: VT.ink,
       lineHeight: 1.35
     }, children: [
-      /* @__PURE__ */ jsx4("style", { children: `details > summary::-webkit-details-marker { display: none; }` }),
-      /* @__PURE__ */ jsx4("span", { style: { flex: 1 }, children: q }),
-      /* @__PURE__ */ jsx4("span", { style: {
+      /* @__PURE__ */ jsx6("style", { children: `details > summary::-webkit-details-marker { display: none; }` }),
+      /* @__PURE__ */ jsx6("span", { style: { flex: 1 }, children: q }),
+      /* @__PURE__ */ jsx6("span", { style: {
         flex: "0 0 auto",
         width: 28,
         height: 28,
@@ -4712,7 +5315,7 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
         lineHeight: 1
       }, children: "+" })
     ] }),
-    /* @__PURE__ */ jsx4("div", { style: {
+    /* @__PURE__ */ jsx6("div", { style: {
       padding: mobile ? "0 18px 16px" : "0 22px 20px",
       fontSize: mobile ? 14.5 : 15.5,
       lineHeight: 1.55,
@@ -4722,14 +5325,14 @@ function FaqItem({ q, a, defaultOpen, mobile, highlight }) {
   ] });
 }
 function FaqSection({ mobile }) {
-  return /* @__PURE__ */ jsxs4("section", { id: "faq", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
-    /* @__PURE__ */ jsx4("div", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx4(H2, { mobile, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("section", { id: "faq", style: { ...sectionPad(mobile), marginTop: mobile ? 64 : 130, position: "relative", zIndex: 1 }, children: [
+    /* @__PURE__ */ jsx6("div", { style: { textAlign: "center" }, children: /* @__PURE__ */ jsx6(H2, { mobile, children: "\u0427\u0442\u043E \u043E\u0431\u044B\u0447\u043D\u043E \u0445\u043E\u0442\u044F\u0442 \u0443\u0442\u043E\u0447\u043D\u0438\u0442\u044C" }) }),
+    /* @__PURE__ */ jsxs6("div", { style: {
       marginTop: mobile ? 28 : 48,
       maxWidth: mobile ? "100%" : 860,
       margin: `${mobile ? 28 : 48}px auto 0`
     }, children: [
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         fontFamily: VT.font.mono,
         fontSize: 11,
         letterSpacing: "0.12em",
@@ -4740,11 +5343,11 @@ function FaqSection({ mobile }) {
         alignItems: "center",
         gap: 8
       }, children: [
-        /* @__PURE__ */ jsx4("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
+        /* @__PURE__ */ jsx6("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
         "\u041F\u0420\u041E \u0415\u0416\u0415\u041D\u0415\u0414\u0415\u041B\u042C\u041D\u042B\u0415 \u0420\u0415\u041A\u041E\u041C\u0415\u041D\u0414\u0410\u0426\u0418\u0418"
       ] }),
-      /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_NEW.map((f, i) => /* @__PURE__ */ jsx4(FaqItem, { q: f.q, a: f.a, defaultOpen: i === 0, mobile, highlight: true }, f.q)) }),
-      /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_NEW.map((f, i) => /* @__PURE__ */ jsx6(FaqItem, { q: f.q, a: f.a, defaultOpen: i === 0, mobile, highlight: true }, f.q)) }),
+      /* @__PURE__ */ jsx6("div", { style: {
         marginTop: 28,
         fontFamily: VT.font.mono,
         fontSize: 11,
@@ -4753,7 +5356,7 @@ function FaqSection({ mobile }) {
         fontWeight: 600,
         marginBottom: 12
       }, children: "\u041E\u0421\u0422\u0410\u041B\u042C\u041D\u042B\u0415 \u0412\u041E\u041F\u0420\u041E\u0421\u042B" }),
-      /* @__PURE__ */ jsx4("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_REST.map((f) => /* @__PURE__ */ jsx4(FaqItem, { q: f.q, a: f.a, mobile }, f.q)) })
+      /* @__PURE__ */ jsx6("div", { style: { display: "flex", flexDirection: "column", gap: 10 }, children: FAQ_REST.map((f) => /* @__PURE__ */ jsx6(FaqItem, { q: f.q, a: f.a, mobile }, f.q)) })
     ] })
   ] });
 }
@@ -4763,14 +5366,14 @@ function FinalCtaSection({ mobile }) {
     { when: "\u0427\u0435\u0440\u0435\u0437 \u043D\u0435\u0434\u0435\u043B\u044E", what: "\u043F\u043E\u0434\u0442\u044F\u043D\u0435\u0442 \u0441\u0432\u0435\u0436\u0438\u0435 \u043F\u043E\u0441\u0442\u044B, \u0446\u0435\u043D\u044B \u0438 \u0444\u043E\u0442\u043E \u0438\u0437 \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0430" },
     { when: "\u0427\u0435\u0440\u0435\u0437 \u043C\u0435\u0441\u044F\u0446", what: "\u043D\u0430\u0431\u0435\u0440\u0451\u0442\u0441\u044F \u0434\u0430\u043D\u043D\u044B\u0445 \u2014 \u0438 \u043D\u0430\u0447\u043D\u0451\u0442 \u043F\u043E\u0434\u0441\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C, \u0447\u0442\u043E \u0443\u043B\u0443\u0447\u0448\u0438\u0442\u044C" }
   ];
-  return /* @__PURE__ */ jsx4("section", { id: "cta", style: {
+  return /* @__PURE__ */ jsx6("section", { id: "cta", style: {
     ...sectionPad(mobile),
     marginTop: mobile ? 64 : 130,
     position: "relative",
     zIndex: 1,
     maxWidth: mobile ? "100%" : 1200,
     margin: `${mobile ? 64 : 130}px auto 0`
-  }, children: /* @__PURE__ */ jsxs4("div", { style: {
+  }, children: /* @__PURE__ */ jsxs6("div", { style: {
     background: "oklch(0.20 0.020 60)",
     color: VT.bg,
     borderRadius: mobile ? 22 : 28,
@@ -4778,7 +5381,7 @@ function FinalCtaSection({ mobile }) {
     position: "relative",
     overflow: "hidden"
   }, children: [
-    /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+    /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
       position: "absolute",
       right: -140,
       top: -120,
@@ -4788,7 +5391,7 @@ function FinalCtaSection({ mobile }) {
       background: `radial-gradient(circle, ${VT.accent} 0%, transparent 60%)`,
       opacity: 0.4
     } }),
-    /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+    /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
       position: "absolute",
       left: -100,
       bottom: -120,
@@ -4798,8 +5401,8 @@ function FinalCtaSection({ mobile }) {
       background: `radial-gradient(circle, oklch(0.6 0.10 50) 0%, transparent 65%)`,
       opacity: 0.3
     } }),
-    /* @__PURE__ */ jsxs4("div", { style: { position: "relative", maxWidth: 920, margin: "0 auto", textAlign: "center" }, children: [
-      /* @__PURE__ */ jsxs4("h2", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: { position: "relative", maxWidth: 920, margin: "0 auto", textAlign: "center" }, children: [
+      /* @__PURE__ */ jsxs6("h2", { style: {
         fontSize: mobile ? 28 : 50,
         fontWeight: 700,
         letterSpacing: "-0.03em",
@@ -4808,14 +5411,14 @@ function FinalCtaSection({ mobile }) {
         textWrap: "balance"
       }, children: [
         "\u0427\u0435\u0440\u0435\u0437 2 \u0447\u0430\u0441\u0430 \u2014 \u0441\u0430\u0439\u0442.",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0427\u0435\u0440\u0435\u0437 \u043D\u0435\u0434\u0435\u043B\u044E \u2014 \u043F\u0435\u0440\u0432\u044B\u0435 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u044F.",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0427\u0435\u0440\u0435\u0437 \u043C\u0435\u0441\u044F\u0446 \u2014 \u0441\u0430\u0439\u0442, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0432\u044B \u0441\u0430\u043C\u0438",
-        /* @__PURE__ */ jsx4("br", {}),
+        /* @__PURE__ */ jsx6("br", {}),
         "\u0431\u044B \u043D\u0435 \u0434\u043E\u0433\u0430\u0434\u0430\u043B\u0438\u0441\u044C \u0441\u043E\u0431\u0440\u0430\u0442\u044C."
       ] }),
-      /* @__PURE__ */ jsx4("p", { style: {
+      /* @__PURE__ */ jsx6("p", { style: {
         fontSize: mobile ? 16 : 19,
         lineHeight: 1.5,
         color: "oklch(0.85 0.014 60)",
@@ -4823,7 +5426,7 @@ function FinalCtaSection({ mobile }) {
         maxWidth: 720,
         textWrap: "pretty"
       }, children: "\u041F\u043E\u043A\u0430\u0436\u0438\u0442\u0435 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442\u0443, \u0433\u0434\u0435 \u0432\u044B \u0441\u0435\u0439\u0447\u0430\u0441 \u0432\u0435\u0434\u0451\u0442\u0435 \u0441\u0432\u043E\u0438 \u0434\u0435\u043B\u0430: \u042F\u043D\u0434\u0435\u043A\u0441.\u041A\u0430\u0440\u0442\u044B, Telegram, 2\u0413\u0418\u0421, Avito \u0438\u043B\u0438 Instagram. \u0418\u043B\u0438 \u043F\u0440\u043E\u0441\u0442\u043E \u0441\u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0440\u0443\u0439\u0442\u0435 \u043C\u0435\u043D\u044E \u0438\u043B\u0438 \u0431\u0443\u043A\u043B\u0435\u0442. \u0414\u0430\u043B\u044C\u0448\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442 \u0421\u0430\u043C\u043E\u0441\u0430\u0439\u0442." }),
-      /* @__PURE__ */ jsxs4("p", { style: {
+      /* @__PURE__ */ jsxs6("p", { style: {
         fontSize: mobile ? 15 : 17,
         lineHeight: 1.5,
         color: "oklch(0.92 0.012 60)",
@@ -4833,10 +5436,10 @@ function FinalCtaSection({ mobile }) {
         fontWeight: 500
       }, children: [
         "\u0422\u0430\u0440\u0438\u0444 \xAB\u0421\u0442\u0430\u0440\u0442\xBB \u2014 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E \u043D\u0430\u0432\u0441\u0435\u0433\u0434\u0430. \u041D\u0430 \u043F\u043B\u0430\u0442\u043D\u044B\u0445 \u043F\u0435\u0440\u0432\u044B\u0439 \u043C\u0435\u0441\u044F\u0446 \u0431\u0435\u0441\u043F\u043B\u0430\u0442\u043D\u043E, \u0434\u0430\u043B\u044C\u0448\u0435 ",
-        /* @__PURE__ */ jsx4("b", { style: { color: VT.accentSoft }, children: "\u043E\u0442 690 \u20BD \u0432 \u043C\u0435\u0441\u044F\u0446" }),
+        /* @__PURE__ */ jsx6("b", { style: { color: VT.accentSoft }, children: "\u043E\u0442 690 \u20BD \u0432 \u043C\u0435\u0441\u044F\u0446" }),
         "."
       ] }),
-      /* @__PURE__ */ jsx4("div", { style: {
+      /* @__PURE__ */ jsx6("div", { style: {
         marginTop: mobile ? 26 : 36,
         display: "grid",
         gridTemplateColumns: mobile ? "1fr" : "repeat(3, 1fr)",
@@ -4845,7 +5448,7 @@ function FinalCtaSection({ mobile }) {
         maxWidth: 880,
         margin: `${mobile ? 26 : 36}px auto 0`,
         position: "relative"
-      }, children: ladder.map((rung, i) => /* @__PURE__ */ jsxs4("div", { style: {
+      }, children: ladder.map((rung, i) => /* @__PURE__ */ jsxs6("div", { style: {
         padding: mobile ? "16px 16px" : "20px 20px",
         background: "rgba(255,255,255,0.06)",
         border: "1px solid rgba(255,255,255,0.10)",
@@ -4855,7 +5458,7 @@ function FinalCtaSection({ mobile }) {
         gap: 6,
         position: "relative"
       }, children: [
-        /* @__PURE__ */ jsxs4("span", { style: {
+        /* @__PURE__ */ jsxs6("span", { style: {
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
@@ -4865,29 +5468,29 @@ function FinalCtaSection({ mobile }) {
           color: VT.accentSoft,
           fontWeight: 700
         }, children: [
-          /* @__PURE__ */ jsx4("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
+          /* @__PURE__ */ jsx6("span", { style: { width: 6, height: 6, borderRadius: "50%", background: VT.accent } }),
           "\u0428\u0410\u0413 ",
           i + 1
         ] }),
-        /* @__PURE__ */ jsx4("div", { style: {
+        /* @__PURE__ */ jsx6("div", { style: {
           fontSize: mobile ? 18 : 21,
           fontWeight: 700,
           color: "#fff",
           letterSpacing: "-0.025em",
           lineHeight: 1.15
         }, children: rung.when }),
-        /* @__PURE__ */ jsx4("div", { style: {
+        /* @__PURE__ */ jsx6("div", { style: {
           fontSize: mobile ? 14 : 14.5,
           color: "oklch(0.85 0.014 60)",
           lineHeight: 1.4,
           textWrap: "pretty"
         }, children: rung.what })
       ] }, i)) }),
-      /* @__PURE__ */ jsx4("div", { style: { marginTop: mobile ? 28 : 36, display: "inline-flex" }, children: /* @__PURE__ */ jsx4(Btn, { iconRight: /* @__PURE__ */ jsx4(IconArrow, {}), style: {
+      /* @__PURE__ */ jsx6("div", { style: { marginTop: mobile ? 28 : 36, display: "inline-flex" }, children: /* @__PURE__ */ jsx6(Btn, { iconRight: /* @__PURE__ */ jsx6(IconArrow, {}), style: {
         padding: mobile ? "14px 24px" : "18px 32px",
         fontSize: mobile ? 16 : 18
       }, children: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0441\u0430\u0439\u0442 \u0437\u0430 2 \u0447\u0430\u0441\u0430" }) }),
-      /* @__PURE__ */ jsxs4("div", { style: {
+      /* @__PURE__ */ jsxs6("div", { style: {
         marginTop: mobile ? 20 : 26,
         paddingTop: mobile ? 16 : 22,
         borderTop: "1px solid rgba(255,255,255,0.10)",
@@ -4895,7 +5498,7 @@ function FinalCtaSection({ mobile }) {
         color: "oklch(0.82 0.014 60)"
       }, children: [
         "\u041E\u0441\u0442\u0430\u043B\u0438\u0441\u044C \u0432\u043E\u043F\u0440\u043E\u0441\u044B? ",
-        /* @__PURE__ */ jsx4("a", { style: {
+        /* @__PURE__ */ jsx6("a", { style: {
           color: VT.accentSoft,
           textDecoration: "underline",
           textUnderlineOffset: 3
@@ -4937,7 +5540,7 @@ function StickyHeader({ mobile = false }) {
     flex: "0 0 auto"
   };
   const primaryLabel = mobile ? "\u0421\u043E\u0431\u0440\u0430\u0442\u044C" : "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u0437\u0430 2 \u0447\u0430\u0441\u0430";
-  return /* @__PURE__ */ jsxs4("div", { className: "ss-sticky-header", style: {
+  return /* @__PURE__ */ jsxs6("div", { className: "ss-sticky-header", style: {
     position: "sticky",
     top: 0,
     zIndex: 10,
@@ -4952,7 +5555,7 @@ function StickyHeader({ mobile = false }) {
     borderBottom: `1px solid ${VT.lineSoft}`,
     boxSizing: "border-box"
   }, children: [
-    /* @__PURE__ */ jsx4("style", { children: `
+    /* @__PURE__ */ jsx6("style", { children: `
         /* \u0415\u0434\u0438\u043D\u044B\u0439 hover \u0434\u043B\u044F \u0432\u0441\u0435\u0445 \u043F\u0443\u043D\u043A\u0442\u043E\u0432 \u043C\u0435\u043D\u044E (\u0432\u043A\u043B\u044E\u0447\u0430\u044F \xAB\u0412\u043E\u0439\u0442\u0438\xBB).
            !important \u2014 \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0432\u0435\u0434\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0435\u0436\u0438\u0432\u0430\u043B\u043E \u044D\u043A\u0441\u043F\u043E\u0440\u0442/\u0437\u0430\u043F\u0435\u043A\u0430\u043D\u0438\u0435
            \u0432\u044B\u0447\u0438\u0441\u043B\u0435\u043D\u043D\u044B\u0445 \u0441\u0442\u0438\u043B\u0435\u0439 \u0438\u043D\u043B\u0430\u0439\u043D\u043E\u043C (\u0438\u043D\u043B\u0430\u0439\u043D\u043E\u0432\u044B\u0439 color/background
@@ -4967,40 +5570,40 @@ function StickyHeader({ mobile = false }) {
           background: ${VT.bgSoft} !important;
         }
       ` }),
-    /* @__PURE__ */ jsxs4("div", { style: {
+    /* @__PURE__ */ jsxs6("div", { style: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       gap: 16
     }, children: [
-      /* @__PURE__ */ jsx4("a", { href: "#hero", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx4(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
-      !mobile ? /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: "clamp(12px, 1.6vw, 24px)", fontSize: 14, flexWrap: "nowrap", minWidth: 0 }, children: [
-        /* @__PURE__ */ jsx4("a", { href: "#examples", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
-        /* @__PURE__ */ jsx4("a", { href: "#pricing", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u0426\u0435\u043D\u0430" }),
-        /* @__PURE__ */ jsx4("a", { href: "#faq", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
-        /* @__PURE__ */ jsx4("a", { href: "#login", className: "ss-nav-link", style: {
+      /* @__PURE__ */ jsx6("a", { href: "#hero", style: { textDecoration: "none", color: "inherit" }, children: /* @__PURE__ */ jsx6(BrandMark, { size: mobile ? 22 : 26, fontSize: mobile ? 18 : 20 }) }),
+      !mobile ? /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: "clamp(12px, 1.6vw, 24px)", fontSize: 14, flexWrap: "nowrap", minWidth: 0 }, children: [
+        /* @__PURE__ */ jsx6("a", { href: "#examples", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u0440\u0438\u043C\u0435\u0440\u044B" }),
+        /* @__PURE__ */ jsx6("a", { href: "#pricing", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u0426\u0435\u043D\u0430" }),
+        /* @__PURE__ */ jsx6("a", { href: "#faq", className: "ss-nav-link", style: { whiteSpace: "nowrap" }, children: "\u041F\u043E\u043C\u043E\u0449\u044C" }),
+        /* @__PURE__ */ jsx6("a", { href: "#login", className: "ss-nav-link", style: {
           fontWeight: 500,
           fontSize: 14,
           whiteSpace: "nowrap"
         }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-        /* @__PURE__ */ jsxs4("a", { href: "#hero", style: primaryStyle, children: [
+        /* @__PURE__ */ jsxs6("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
           " ",
-          /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx6("span", { "aria-hidden": "true", children: "\u2192" })
         ] })
-      ] }) : /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
-        /* @__PURE__ */ jsx4("a", { href: "#login", className: "ss-nav-link", style: { fontWeight: 500, fontSize: 13.5 }, children: "\u0412\u043E\u0439\u0442\u0438" }),
-        /* @__PURE__ */ jsxs4("a", { href: "#hero", style: primaryStyle, children: [
+      ] }) : /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 6 }, children: [
+        /* @__PURE__ */ jsx6("a", { href: "#login", className: "ss-nav-link", style: { fontWeight: 500, fontSize: 13.5 }, children: "\u0412\u043E\u0439\u0442\u0438" }),
+        /* @__PURE__ */ jsxs6("a", { href: "#hero", style: primaryStyle, children: [
           primaryLabel,
           " ",
-          /* @__PURE__ */ jsx4("span", { "aria-hidden": "true", children: "\u2192" })
+          /* @__PURE__ */ jsx6("span", { "aria-hidden": "true", children: "\u2192" })
         ] })
       ] })
     ] })
   ] });
 }
 function FloatingFeedback({ mobile }) {
-  return /* @__PURE__ */ jsxs4(
+  return /* @__PURE__ */ jsxs6(
     "a",
     {
       href: "#feedback",
@@ -5027,7 +5630,7 @@ function FloatingFeedback({ mobile }) {
         cursor: "pointer"
       },
       children: [
-        /* @__PURE__ */ jsx4("span", { style: {
+        /* @__PURE__ */ jsx6("span", { style: {
           flex: "0 0 auto",
           width: 26,
           height: 26,
@@ -5037,14 +5640,14 @@ function FloatingFeedback({ mobile }) {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center"
-        }, children: /* @__PURE__ */ jsx4("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx4("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }) }) }),
+        }, children: /* @__PURE__ */ jsx6("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", children: /* @__PURE__ */ jsx6("path", { d: "M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3 21l1.9-5.8A8.5 8.5 0 1 1 21 11.5Z" }) }) }),
         "\u0427\u0435\u0433\u043E \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442?"
       ]
     }
   );
 }
 function Footer({ mobile }) {
-  return /* @__PURE__ */ jsxs4("div", { style: {
+  return /* @__PURE__ */ jsxs6("div", { style: {
     ...sectionPad(mobile),
     marginTop: mobile ? 40 : 64,
     paddingTop: mobile ? 22 : 28,
@@ -5059,24 +5662,24 @@ function Footer({ mobile }) {
     position: "relative",
     zIndex: 1
   }, children: [
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx4(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
-      /* @__PURE__ */ jsxs4("span", { children: [
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx6(BrandMark, { size: 20, fontSize: 15, color: VT.inkSoft }),
+      /* @__PURE__ */ jsxs6("span", { children: [
         "\xA9 2026 \xB7 ",
         BRAND.domain,
         " \xB7 \u0432\u0441\u0435 \u0434\u0430\u043D\u043D\u044B\u0435 \u0445\u0440\u0430\u043D\u044F\u0442\u0441\u044F \u0432 \u0420\u0424"
       ] })
     ] }),
-    /* @__PURE__ */ jsxs4("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
-      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
-      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
-      /* @__PURE__ */ jsx4("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
+    /* @__PURE__ */ jsxs6("div", { style: { display: "flex", gap: 18, flexWrap: "wrap" }, children: [
+      /* @__PURE__ */ jsx6("a", { style: { color: "inherit" }, children: "\u041F\u043E\u043B\u0438\u0442\u0438\u043A\u0430 \u043A\u043E\u043D\u0444\u0438\u0434\u0435\u043D\u0446\u0438\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438" }),
+      /* @__PURE__ */ jsx6("a", { style: { color: "inherit" }, children: "\u041E\u0444\u0435\u0440\u0442\u0430" }),
+      /* @__PURE__ */ jsx6("a", { style: { color: "inherit" }, children: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C" })
     ] })
   ] });
 }
 function SamosaytLandingV3({ mobile = false }) {
-  const rootRef = React3.useRef(null);
-  React3.useEffect(() => {
+  const rootRef = React5.useRef(null);
+  React5.useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
     const PREPS = /(^|[\s\u00A0(])([иваоксуяАИВОКСУЯ]|[Нн][еаио]|[Пп]о|[Зз]а|[Дд]о|[Оо]т|[Ии]з)(\s)/g;
@@ -5111,8 +5714,8 @@ function SamosaytLandingV3({ mobile = false }) {
       last.nodeValue = v.replace(/\.[\s\u00A0]*$/, "");
     });
   }, [mobile]);
-  return /* @__PURE__ */ jsxs4(Fragment3, { children: [
-    /* @__PURE__ */ jsx4("style", { children: `
+  return /* @__PURE__ */ jsxs6(Fragment4, { children: [
+    /* @__PURE__ */ jsx6("style", { children: `
         .ss-hero-pill:focus-within {
           border-color: ${VT.accent} !important;
           box-shadow: 0 0 0 4px ${VT.accentSoft}, 0 12px 32px -16px rgba(120,60,30,0.25) !important;
@@ -5125,7 +5728,7 @@ function SamosaytLandingV3({ mobile = false }) {
         details summary:hover { background-color: ${VT.bgSoft}; }
         html { scroll-behavior: smooth; }
       ` }),
-    /* @__PURE__ */ jsxs4("div", { ref: rootRef, className: "ss-v3-root", style: {
+    /* @__PURE__ */ jsxs6("div", { ref: rootRef, className: "ss-v3-root", style: {
       width: "100%",
       minHeight: "100%",
       background: VT.bg,
@@ -5137,7 +5740,7 @@ function SamosaytLandingV3({ mobile = false }) {
       overflow: "hidden",
       letterSpacing: "-0.01em"
     }, children: [
-      /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+      /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
         position: "absolute",
         right: mobile ? -120 : -180,
         top: mobile ? -100 : -160,
@@ -5148,7 +5751,7 @@ function SamosaytLandingV3({ mobile = false }) {
         opacity: 0.85,
         pointerEvents: "none"
       } }),
-      /* @__PURE__ */ jsx4("div", { "aria-hidden": "true", style: {
+      /* @__PURE__ */ jsx6("div", { "aria-hidden": "true", style: {
         position: "absolute",
         left: mobile ? -100 : -120,
         top: mobile ? 700 : 600,
@@ -5159,28 +5762,28 @@ function SamosaytLandingV3({ mobile = false }) {
         opacity: 0.7,
         pointerEvents: "none"
       } }),
-      /* @__PURE__ */ jsx4(StickyHeader, { mobile }),
-      /* @__PURE__ */ jsx4(HeroBlock, { mobile }),
-      /* @__PURE__ */ jsx4(ExamplesSection, { mobile }),
-      /* @__PURE__ */ jsx4(CycleSection, { mobile }),
-      /* @__PURE__ */ jsx4(MondaySection, { mobile }),
-      /* @__PURE__ */ jsx4(BaseWorkSection, { mobile }),
-      /* @__PURE__ */ jsx4(SourcesSection, { mobile }),
-      /* @__PURE__ */ jsx4(AnalyticsSection, { mobile }),
-      /* @__PURE__ */ jsx4(OwnershipSection, { mobile }),
-      /* @__PURE__ */ jsx4(PricingSection, { mobile }),
-      /* @__PURE__ */ jsx4(FaqSection, { mobile }),
-      /* @__PURE__ */ jsx4(FinalCtaSection, { mobile }),
-      /* @__PURE__ */ jsx4(Footer, { mobile }),
-      /* @__PURE__ */ jsx4(FloatingFeedback, { mobile })
+      /* @__PURE__ */ jsx6(StickyHeader, { mobile }),
+      /* @__PURE__ */ jsx6(HeroBlock, { mobile }),
+      /* @__PURE__ */ jsx6(ExamplesSection, { mobile }),
+      /* @__PURE__ */ jsx6(CycleSection, { mobile }),
+      /* @__PURE__ */ jsx6(MondaySection, { mobile }),
+      /* @__PURE__ */ jsx6(BaseWorkSection, { mobile }),
+      /* @__PURE__ */ jsx6(SourcesSection, { mobile }),
+      /* @__PURE__ */ jsx6(AnalyticsSection, { mobile }),
+      /* @__PURE__ */ jsx6(OwnershipSection, { mobile }),
+      /* @__PURE__ */ jsx6(PricingSection, { mobile }),
+      /* @__PURE__ */ jsx6(FaqSection, { mobile }),
+      /* @__PURE__ */ jsx6(FinalCtaSection, { mobile }),
+      /* @__PURE__ */ jsx6(Footer, { mobile }),
+      /* @__PURE__ */ jsx6(FloatingFeedback, { mobile })
     ] })
   ] });
 }
 function SamosaytLandingV3_Desktop() {
-  return /* @__PURE__ */ jsx4(SamosaytLandingV3, { mobile: false });
+  return /* @__PURE__ */ jsx6(SamosaytLandingV3, { mobile: false });
 }
 function SamosaytLandingV3_Mobile() {
-  return /* @__PURE__ */ jsx4(SamosaytLandingV3, { mobile: true });
+  return /* @__PURE__ */ jsx6(SamosaytLandingV3, { mobile: true });
 }
 var SamosaytLanding = SamosaytLandingV3;
 var Landing = SamosaytLandingV3;
@@ -5191,8 +5794,11 @@ var SamosaytLanding_Mobile = SamosaytLandingV3_Mobile;
 var HeroSection = HeroBlock;
 export {
   AnalyticsSection,
+  BarberSite,
   BaseWorkSection,
+  BrowSite,
   ChipStrip,
+  ColoristSite,
   ConceptA_Desktop,
   ConceptA_Mobile,
   CycleSection,
@@ -5206,6 +5812,7 @@ export {
   HeroSection,
   Landing,
   MondaySection,
+  NailSite,
   OwnershipSection,
   PricingSection,
   SamosaytLanding,
@@ -5214,6 +5821,7 @@ export {
   SamosaytLandingV3_Mobile,
   SamosaytLanding_Desktop,
   SamosaytLanding_Mobile,
+  SkinSite,
   SourcesSection,
   StickyHeader,
   V5_CSS,

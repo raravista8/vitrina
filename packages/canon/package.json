@@ -1,7 +1,7 @@
 {
   "name": "@samosite/canon",
-  "version": "0.13.0",
-  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.13.0 «Фидбек v2»: vote-first S9_FeedbackModal удалён (breaking, без депрекейта); новый модуль @samosite/canon/feedback — одна модалка FeedbackV2Modal, два режима (blocker: причина отказа уходящего посетителя + оффер бесплатного черновика; question: личный канал вопросов, «отвечаю лично»), controlled, REASONS = enum консьерж-таблицы 1:1, data-fb-* хуки. Токены «Фарфор и лак» и прочие модули (лендинг v5/v3, интейк In2_*/S3_*, customer S7/S8, admin-*) — byte-identical.",
+  "version": "0.14.0",
+  "description": "Canonical UI for Самосайт — single source of truth for visual design. 0.14.0 «Примеры v2»: секция 03 лендинга v5 «Примеры» получила 5 полноразмерных сайтов-примеров (FullComp: Nail/Barber/Skin/Brow/ColoristSite — развитые версии миниатюр с полным прайсом, галереей, отзывами, «о мастере», контактами и футером-watermark) и takeover-просмотрщик V5_SiteViewer во всю ширину с навигацией назад («Все примеры») и всегда-доступным CTA «Собрать такой же за 2 часа»; V5_Examples получил controlled-API (viewerId/onViewerChange) + хуки data-example-site/-open/-back; фикс scroll-lock (body.is-locked впервые получил CSS-правило). Новые файлы landing/v5-sites.tsx + v5-sites-kit.tsx бандлятся в существующий чанк ./landing (карта exports не менялась). Прочие модули (intake, customer, feedback, admin-*, auth, source, presets, primitives) и значения токенов «Фарфор и лак» — byte-identical 0.13.0.",
   "type": "module",
   "sideEffects": [
     "*.css"
