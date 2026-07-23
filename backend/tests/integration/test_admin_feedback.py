@@ -26,7 +26,7 @@ async def seeded(db_session):  # type: ignore[no-untyped-def]
         Feedback(
             type="blocker",
             trigger="exit",
-            reason="too_expensive",
+            reason="price",
             message="дороговато",
             contact_channel="telegram",
             contact="@anna_nails",
@@ -78,7 +78,7 @@ async def test_list_shows_v2_and_legacy_rows(client, seeded) -> None:  # type: i
     assert resp.status_code == 200
     html = resp.text
     # v2-блокер: причина, триггер, текст, контакт открыт (политика applications)
-    assert "too_expensive" in html
+    assert "price" in html
     assert "exit-intent" in html
     assert "дороговато" in html
     assert "@anna_nails" in html
@@ -93,7 +93,7 @@ async def test_list_shows_v2_and_legacy_rows(client, seeded) -> None:  # type: i
 async def test_type_filter(client, seeded) -> None:  # type: ignore[no-untyped-def]
     resp = await client.get("/admin/feedback?type=blocker")
     assert resp.status_code == 200
-    assert "too_expensive" in resp.text
+    assert "price" in resp.text
     assert "Можно свой домен?" not in resp.text
     # мусорный фильтр игнорируется (показывает всё), не 500
     resp = await client.get("/admin/feedback?type=%27--")
