@@ -107,6 +107,13 @@ export type MetrikaGoal =
   | "feedback_reason"
   | "feedback_contact_left"
   | "feedback_question_sent"
+  // ── Примеры v2 (canon 0.14.0) — полноразмерные сайты-примеры ──
+  // `example_site_open {example}` — открыл сайт-пример (nails|barber|skin|
+  // brows|colorist); `example_site_back` — вернулся в карусель. Клик по CTA
+  // «Собрать такой же» из просмотрщика уже ловится `form_open {entry:
+  // "example-<id>"}` — отдельной цели не нужно.
+  | "example_site_open"
+  | "example_site_back"
   | "analytics_demo_click";
 
 const METRIKA_ID = process.env["NEXT_PUBLIC_YANDEX_METRIKA_ID"]?.trim() ?? "";

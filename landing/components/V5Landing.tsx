@@ -35,7 +35,7 @@
  *     в первичный HTML для краулеров.
  */
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   DEFAULT_ANCHORS,
@@ -91,6 +91,47 @@ const FOOTER_LINKS = {
 export function V5Landing() {
   const rootRef = useRef<HTMLDivElement>(null);
 
+  /* ── Примеры v2 (canon 0.14.0): controlled-просмотрщик + browser-Back ──
+     Канон умеет держать стейт сам, но тогда системная кнопка «Назад» уводит
+     с лендинга вместо закрытия просмотра — на мобиле это выглядит как потеря
+     страницы. Держим `viewerId` у себя и вешаем его на history:
+       • открытие  → pushState (появляется запись, которую съест Back);
+       • ЕДИНСТВЕННАЯ точка фактического закрытия — обработчик popstate;
+       • закрытие из UI (кнопка назад / Esc / ×) → history.back(), который
+         и приведёт нас в popstate. Иначе запись осталась бы в стеке и
+         следующий Back «проглотился» бы вхолостую. */
+  const [viewerId, setViewerId] = useState<string | null>(null);
+  // Зеркало стейта для обработчиков, которые живут вне рендера (popstate
+  // подписан один раз, клик канона приходит синхронно) — синк в эффекте,
+  // писать ref во время рендера нельзя.
+  const viewerIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    viewerIdRef.current = viewerId;
+  }, [viewerId]);
+
+  useEffect(() => {
+    const onPop = () => {
+      if (viewerIdRef.current) {
+        ssTrack("example_site_back");
+        setViewerId(null);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const onViewerChange = useCallback((id: string | null) => {
+    const current = viewerIdRef.current;
+    if (id) {
+      if (!current) window.history.pushState({ exampleViewer: id }, "");
+      setViewerId(id);
+      ssTrack("example_site_open", { example: id });
+      return;
+    }
+    // UI-закрытие: откручиваем свою запись — реальное закрытие сделает popstate.
+    if (current) window.history.back();
+  }, []);
+
   /* Section-view goals — IntersectionObserver по canon-овским
      `[data-metric]`, threshold 0.4, fire-once per section. */
   useEffect(() => {
@@ -139,7 +180,12 @@ export function V5Landing() {
           <V5_Story onIntake={onIntake} />
         </div>
         <div data-section="examples">
-          <V5_Examples layout="carousel" onIntake={onIntake} />
+          <V5_Examples
+            layout="carousel"
+            onIntake={onIntake}
+            viewerId={viewerId}
+            onViewerChange={onViewerChange}
+          />
         </div>
         <div data-section="how">
           <V5_HowItWorks />
