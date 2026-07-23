@@ -64,10 +64,10 @@
 - **Спека:** `specs/00 §6`
 - **API:** `POST /api/leads`, rate-limit >3/час/IP → 429 (FR-052), SmartCaptcha + honeypot
 
-### #9 · Feedback — vote-first modal (canon 0.9.1 controlled API)
-- **Канон:** `@samosite/canon/customer` → `S9_FeedbackModal` (canon 0.9.1 — **controlled** API: `open`/`onOpenChange`/`tally`/`onSubmit`/`submitting`/`error`/`embedded` + 5 TS-типов; zero-prop = canvas-mock; 0.9.5 — фикс ремаунта: `Dialog`/`FauxPage`/`FloatingBtn` вызываются функциями, не монтируются, иначе скролл/фокус слетали на каждый клик/ввод). Алиасы `S9_FeedbackPage` / `FeedbackPage` резолвятся в модалку. ADR-0009 rev.2.
-- **Прод:** `landing/components/FeedbackModal.tsx` — тонкий адаптер вокруг canon `S9_FeedbackModal`, смонтирован глобально в `app/layout.tsx` (`tally`←`GET /api/feedback/tally`, `onSubmit`→`POST /api/feedback` votes[], `embedded={false}`; self-hide на `/admin*`+`/login`). `/feedback` ретайрнут (301 → `/`), hand-rolled `FeedbackForm` удалён. Backend (votes/tally + миграция 0012) — live (PR3).
-- **Спека:** `specs/00 §7` (ADR-0009) + `docs/handoff/FEEDBACK_BACKEND.md` (backend contract) + `docs/handoff/CANON_FEEDBACK_INTERACTIVE_TZ.md` (controlled-API ТЗ)
+### #9 · Feedback v2 — «Что останавливает?» / «Задать вопрос» (canon 0.13.0)
+- **Канон:** `@samosite/canon/feedback` → `FeedbackV2Modal` + `FeedbackV2Fab` (canon 0.13.0 — controlled; режим `blocker` = причина отказа + оффер бесплатного черновика с контактом tg/wa/email, режим `question` = личный канал вопросов «отвечаю лично»; `REASONS` = замороженный enum 7 причин консьерж-таблицы + резерв `no_reply`). Vote-first `S9_FeedbackModal` и весь его API **удалены** из canon (breaking 0.13.0, без депрекейта).
+- **Прод:** `landing/components/FeedbackModal.tsx` — адаптер: авто-триггер блокера (exit-intent / скролл ≥60%, 1 раз на посетителя `ss_fb2_blocker_shown`, подавление по клику CTA `[data-entry]`/открытию интейка), FAB «Задать вопрос», SmartCaptcha → `POST /api/feedback/v2` (202), Метрика `feedback_open{trigger}`/`feedback_reason`/`feedback_contact_left`/`feedback_question_sent`. Смонтирован глобально в `app/layout.tsx`, self-hide на `/admin*`+`/login`. Backend: enum заморожен (`FEEDBACK_V2_REASON_CODES`, миграция 0021 CHECK), admin-инбокс мапит v2-поля (#258). Легаси `GET /api/feedback/tally` + votes-ветка `POST /api/feedback` — deprecated, ретайр follow-up.
+- **Спека:** `docs/handoff/CANON_FEEDBACK_V2_TZ.md` (дизайн-ТЗ + backend-план) + `packages/canon/CHANGELOG.md` 0.13.0
 
 ---
 
