@@ -343,6 +343,20 @@ FEEDBACK_TYPES = (
 )
 FEEDBACK_V2_TRIGGERS = ("exit", "scroll", "button")
 FEEDBACK_V2_CHANNELS = ("telegram", "whatsapp", "email")
+# Замороженный enum причин (консьерж-таблица founder'а, 23.07.2026) + резерв
+# no_reply (только консьерж-канал: «молчание»; API-форма его отклоняет).
+# Единственный источник для БД-CHECK; форма/Метрика читают
+# core.feedback.service.FEEDBACK_V2_REASON_CODES (без no_reply).
+FEEDBACK_V2_REASONS_DB = (
+    "enough_maps",
+    "booking_covers",
+    "unclear_value",
+    "price",
+    "no_trust",
+    "not_now",
+    "other",
+    "no_reply",
+)
 
 
 class Feedback(UUIDPrimaryKey, Timestamped, Base):
@@ -370,8 +384,9 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
     )
 
     # ── Feedback v2 (июль 2026): живут только на type='blocker'|'question'.
-    # Инварианты режимов проверяет api-слой (паттерн intake v2); enum причин —
-    # консьерж-таблица founder'а, в БД без CHECK (заморозится на api-слое).
+    # Инварианты режимов проверяет api-слой (паттерн intake v2); enum причин
+    # заморожен 23.07.2026 (CHECK в 0021): 7 кодов формы + резерв no_reply
+    # (только консьерж-канал — API отклоняет, БД допускает).
     trigger: Mapped[str | None] = mapped_column(String(16), nullable=True)
     reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
     contact_channel: Mapped[str | None] = mapped_column(String(16), nullable=True)
@@ -391,6 +406,10 @@ class Feedback(UUIDPrimaryKey, Timestamped, Base):
         CheckConstraint(
             f"contact_channel IS NULL OR contact_channel IN {FEEDBACK_V2_CHANNELS!r}",
             name="feedback_contact_channel_valid",
+        ),
+        CheckConstraint(
+            f"reason IS NULL OR reason IN {FEEDBACK_V2_REASONS_DB!r}",
+            name="feedback_reason_enum",
         ),
     )
 

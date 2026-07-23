@@ -104,11 +104,22 @@ async def submit_feedback(
 # Feedback v2 (CANON_FEEDBACK_V2_TZ, июль 2026)
 # ===========================================================================
 
-# Причина отказа — слаг из консьерж-таблицы founder'а. Пока таблица не
-# заморожена, принимаем любой слаг корректной формы; после заморозки —
-# сузить до кортежа кодов (одно место правки).
-# TODO(founder): заменить None на кортеж кодов консьерж-таблицы (ТЗ §4).
-FEEDBACK_V2_REASON_CODES: tuple[str, ...] | None = None
+# Причины отказа — ЗАМОРОЖЕННЫЙ enum консьерж-таблицы founder'а (ТЗ §4,
+# 23.07.2026). Один enum живёт в трёх местах 1:1: форма (canon 0.13.0),
+# БД/Метрика (CHECK в миграции 0021), консьерж-таблица. Менять — только
+# синхронно во всех трёх.
+FEEDBACK_V2_REASON_CODES: tuple[str, ...] | None = (
+    "enough_maps",  # Мне хватает Яндекс.Карт и 2ГИС
+    "booking_covers",  # Запись уже в Dikidi/YClients — зачем ещё сайт?
+    "unclear_value",  # Не понял, что именно получу
+    "price",  # Дорого
+    "no_trust",  # Не доверяю: непонятно, кто вы
+    "not_now",  # Пока просто смотрю — вернусь позже
+    "other",  # Другое — напишу словами (note обязательна)
+)
+# Зарезервировано ТОЛЬКО для консьерж-канала («молчание»): в БД-CHECK входит,
+# из формы всегда 400 invalid_reason (нет в кортеже выше).
+FEEDBACK_V2_RESERVED_CODES: tuple[str, ...] = ("no_reply",)
 _REASON_SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,31}$")
 
 _FEEDBACK_V2_CONSENT_TEXT = (
@@ -154,6 +165,10 @@ async def submit_feedback_v2(
             FEEDBACK_V2_REASON_CODES is not None and reason not in FEEDBACK_V2_REASON_CODES
         ):
             return Err(DomainError(code="invalid_reason"))
+        # «other» без текста — мусорная корзина без содержимого (ТЗ §4):
+        # для остальных причин note опциональна.
+        if reason == "other" and not note:
+            return Err(DomainError(code="note_required_for_other"))
         if question:
             return Err(DomainError(code="question_not_allowed"))
     else:  # question

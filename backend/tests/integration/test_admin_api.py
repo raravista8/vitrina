@@ -679,7 +679,7 @@ async def test_feedback_list_v2_rows_mapped(
         Feedback(
             type="blocker",
             trigger="exit",
-            reason="too_expensive",
+            reason="price",
             message="дороговато",
             contact_channel="telegram",
             contact="@anna_nails",
@@ -699,7 +699,7 @@ async def test_feedback_list_v2_rows_mapped(
     assert row["type"] == "blocker"
     assert row["message"] == "дороговато"
     assert row["email_or_contact_masked"] == "telegram: @anna_nails"
-    assert row["checkboxes"]["reason"] == "too_expensive"
+    assert row["checkboxes"]["reason"] == "price"
     assert row["checkboxes"]["trigger"] == "exit"
 
 
